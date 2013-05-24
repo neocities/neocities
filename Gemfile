@@ -11,10 +11,20 @@ gem 'puma', require: nil
 platform :mri do
   gem 'pg'
   gem 'hiredis'
-  
+
   group :development, :test do
     gem 'pry'
     gem 'pry-debugger'
+  end
+end
+
+platform :jruby do
+  gem 'jruby-openssl'
+  gem 'json'
+  gem 'jdbc-postgres'
+
+  group :development do
+    gem 'ruby-debug', require: nil
   end
 end
 
