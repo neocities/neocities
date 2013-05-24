@@ -1,0 +1,38 @@
+.row
+  .span8.offset3
+    form method="POST" action="/create"    
+      h2 Create a new Home Page
+    
+    
+      .row
+        .span6
+          p First, enter a username. This will be used to login to your site.
+    
+      .row
+        .span1
+          h5 Username
+        .span6
+          input name="username" type="text" style="color: #000000" placeholder="bulbasaur1000"
+  
+      .row
+        .span6
+          p Next, enter a password. This will be used to allow you to login. Minimum 5 characters.
+  
+      .row
+        .span1
+          h5 Password
+        .span6
+          input name="password" type="password" style="color: #000000"
+  
+      .row
+        .span6
+          p Now, you can enter an e-mail address if you want to be able to reset your password incase you lose it. This is optional, but recommended. <b>We will not give your email to anybody</b>.
+      .row
+        .span1
+          h5 Email
+        .span6
+          input name="email" type="text" style="color: #000000" placeholder="youremail@example.com"
+    
+      .row style="margin-top: 30px"
+        .span3.offset1
+          input.btn.btn-success.btn-large type="submit" value="Create Home Page"

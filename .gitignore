@@ -16,3 +16,5 @@ tmp
 .yardoc
 _yardoc
 doc/
+tests/coverage
+config.yml

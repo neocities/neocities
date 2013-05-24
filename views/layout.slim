@@ -1,0 +1,28 @@
+doctype html
+html
+  head
+    title NeoCities #{@title.nil? ? '' : " - #{@title}"}
+    link href="/favicon.ico" rel="icon" type="image/x-icon"
+    link href="/css/bootstrap.min.css" rel="stylesheet"
+    link href="/css/bootstrap-responsive.min.css" rel="stylesheet"
+    link href="/css/font-awesome.min.css" rel="stylesheet"
+    link href="/css/styles.css" rel="stylesheet"
+    script src="/js/jquery.min.js"
+  body
+    a id="top"
+    
+    .container
+      .row
+        .span12
+          .navbar
+            .navbar-inner
+              a.brand href="/" NeoCities
+
+      - flash.keys.each do |key|
+        div class="alert alert-#{key}"
+          button.close type="button" data-dismiss="alert" &times;
+          = flash[key]
+      container
+        == yield
+
+  script src="/js/bootstrap.min.js"
