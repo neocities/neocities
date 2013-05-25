@@ -13,6 +13,10 @@ get '/dashboard' do
   slim :'dashboard'
 end
 
+get '/signin' do
+  slim :'signin'
+end
+
 post '/create' do
   @site = Site.new username: params[:username], password: params[:password], email: params[:email]
   if @site.valid?
@@ -39,7 +43,7 @@ post '/signin' do
     redirect '/dashboard'
   else
     flash[:error] = 'Invalid login.'
-    redirect '/'
+    redirect '/signin'
   end
 end
 

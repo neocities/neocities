@@ -1,0 +1,14 @@
+.text-center
+  .row
+    .span12
+      h1 Welcome back!
+  .row
+    .span12
+      form method="POST" action="/signin"
+        fieldset
+          div: input name="username" type="text" placeholder="Your username"
+          div: input name="password" type="password" placeholder="Your password"
+          div: button class="btn btn-large btn-success" href="#" style="margin-top: 10px" Sign in
+  .row
+    .span12
+      a href="/new" I don't have an account yet.

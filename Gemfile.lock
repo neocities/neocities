@@ -82,6 +82,9 @@ DEPENDENCIES
   fabrication
   faker
   hiredis
+  jdbc-postgres
+  jruby-openssl
+  json
   minitest
   minitest-reporters
   mocha
@@ -92,6 +95,7 @@ DEPENDENCIES
   rack-test
   rake
   redis
+  ruby-debug
   sequel
   shotgun
   simplecov

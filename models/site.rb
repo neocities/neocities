@@ -34,17 +34,17 @@ class Site < Sequel::Model
     super
 
     if values[:username].nil? || values[:username].empty?
-      errors.add :username, 'valid username is required'
+      errors.add :username, 'A valid username is required.'
     end
 
     # Check for existing user
     user = self.class.select(:username).filter(username: values[:username]).first
     if !user.nil? && (user.id != values[:id])
-      errors.add :username, 'this username is already taken'
+      errors.add :username, 'This username is already taken. Try using another one.'
     end
 
     if values[:password].nil? || (@password_length && @password_length < MINIMUM_PASSWORD_LENGTH)
-      errors.add :password, "password must be at least #{MINIMUM_PASSWORD_LENGTH} characters" 
+      errors.add :password, "Password must be at least #{MINIMUM_PASSWORD_LENGTH} characters."
     end
   end
 end
