@@ -1,8 +1,7 @@
 class Site < Sequel::Model
   MINIMUM_PASSWORD_LENGTH = 5
-  
-  unrestrict_primary_key
   many_to_one :server
+  many_to_many :tags
   
   class << self
     def valid_login?(username, plaintext)
@@ -30,10 +29,37 @@ class Site < Sequel::Model
     values[:password] = BCrypt::Password.create plaintext, cost: (self.class.bcrypt_cost || BCrypt::Engine::DEFAULT_COST)
   end
 
+  def after_save
+    if @new_tag_strings
+      @new_tag_strings.each do |new_tag_string|
+        add_tag Tag[name: new_tag_string] || Tag.create(name: new_tag_string)
+      end
+    end
+  end
+
+  def after_create
+    DB['update servers set slots_available=slots_available-1 where id=?', self.server.id].first
+  end
+
+  def new_tags=(tags_string)
+    tags_string.gsub! /[^a-zA-Z0-9, ]/, ''
+    tags = tags_string.split ','
+    tags.collect! {|c| (c.match(/^\w+\s\w+/) || c.match(/^\w+/)).to_s }
+    @new_tag_strings = tags
+  end
+
+  def before_validation
+    self.server ||= Server.with_slots_available
+  end
+
   def validate
     super
 
-    if values[:username].nil? || values[:username].empty?
+    if server.nil?
+      errors.add :over_capacity, 'We are currently at capacity, and cannot create your home page. We will fix this shortly. Please come back later and try again, our apologies.'
+    end
+
+    if values[:username].nil? || values[:username].empty? || values[:username].match(/[^\w.-]/i)
       errors.add :username, 'A valid username is required.'
     end
 

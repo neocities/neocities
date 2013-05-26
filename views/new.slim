@@ -3,7 +3,7 @@
   .row
     .span8.offset2
       .alert.alert-block.alert-error
-        p Please correct the following errors:
+        p There were errors creating your home page:
         - @site.errors.each do |error|
           p = error.last.first
 
@@ -14,17 +14,17 @@
     
       .row
         .span6
-          p First, enter a username. This will be used to login to your site.<br>It will also be the path of your web site.
+          p First, enter a username. This will also be used as your site path.<br><b>Do not forget this, it will be used to sign in to and manage your home page.</b><br>It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 . _ -
     
       .row
         .span1
           h5 Username
         .span6
-          p http://neocities.org/<input name="username" type="text" placeholder="yourusername">
+          p http://neocities.org/<input name="username" type="text" placeholder="yourusername" value="#{@site.username}">
   
       .row
         .span6
-          p Next, enter a password. This will be used to allow you to login. Minimum 5 characters.
+          p Next, enter a password. This will be used to allow you to login. Minimum 5 characters. If you don't make it a good password, Dade Murphy from the movie Hackers will come in and steal your "garbage files".
   
       .row
         .span1
@@ -34,25 +34,29 @@
   
       .row
         .span6
-          p Now you can enter an e-mail address. You don't have to provide one, but <b>we will not be able to reset your password without it, so don't lose your username and password if you leave this blank!</b>
+          p Now you can enter an e-mail address. Your e-mail address is private and we will not show it to anyone for any reason. You don't have to provide one, but <b>we will not be able to reset your password without it, so don't lose your username and password if you leave this blank!</b>
       .row
         .span1
           h5 Email
         .span6
-          input name="email" type="text" placeholder="youremail@example.com"
+          input name="email" type="text" placeholder="youremail@example.com" value="#{@site.email}"
       
     
       .row
         .span6
           p 
-            | Enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of ten tags, and there is a two word per tag maximum.
+            | You can optionally enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of ten tags, and there is a two word per tag maximum (extra words in a tag will be removed).
           
       .row
         .span1
           h5 Tags
         .span6
-          p: input name="tags" type="text" style="width: 400px" placeholder="pokemon, video games, bulbasaur"
+          p: input name="tags" type="text" style="width: 400px" placeholder="pokemon, video games, bulbasaur" value="#{params[:tags]}"
 
+
+      .row
+        .span6
+          h3 You're done. Just click the button below!
 
       .row style="margin-top: 30px"
         .span3.offset1

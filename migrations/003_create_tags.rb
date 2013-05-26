@@ -3,7 +3,6 @@ Sequel.migration do
     DB.create_table! :tags do
       primary_key :id
       String      :name
-      DateTime    :created_at
     end
   }
 

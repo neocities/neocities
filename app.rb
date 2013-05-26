@@ -1,10 +1,17 @@
 require './environment.rb'
 
+use Rack::Session::Cookie, key:          'neocities',
+                           path:         '/',
+                           expire_after: 31556926, # one year in seconds
+                           secret:       $config['session_secret']
+
 get '/' do
+  dashboard_if_signed_in
   slim :index
 end
 
 get '/new' do
+  dashboard_if_signed_in
   @site = Site.new
   slim :'new'
 end
@@ -14,23 +21,17 @@ get '/dashboard' do
 end
 
 get '/signin' do
+  dashboard_if_signed_in
   slim :'signin'
 end
 
 post '/create' do
-  @site = Site.new username: params[:username], password: params[:password], email: params[:email]
+  dashboard_if_signed_in
+  @site = Site.new username: params[:username], password: params[:password], email: params[:email], new_tags: params[:tags]
   if @site.valid?
+    DB.transaction { @site.save }
 
-    @server = Server.with_slots_available
-
-    if @server.nil?
-      raise 'no slots available'
-    end
-
-    @site.server = @server
-    @site.save
-
-    session[:username] = @site.username
+    session[:id] = @site.id
     redirect '/dashboard'
   else
     slim :'/new'
@@ -38,8 +39,10 @@ post '/create' do
 end
 
 post '/signin' do
+  dashboard_if_signed_in
   if Site.valid_login? params[:username], params[:password]
-    session[:username] = params[:username]
+    site = Site[username: params[:username]]
+    session[:id] = site.id
     redirect '/dashboard'
   else
     flash[:error] = 'Invalid login.'
@@ -49,8 +52,7 @@ end
 
 get '/signout' do
   require_login
-  session[:username] = nil
-  session[:timezone] = nil
+  session[:id] = nil
   redirect '/'
 end
 
@@ -63,5 +65,9 @@ def require_login
 end
 
 def signed_in?
-  !session[:username].nil?
+  !session[:id].nil?
+end
+
+def current_site
+  @site ||= Site[id: session[:id]]
 end

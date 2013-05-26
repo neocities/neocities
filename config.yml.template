@@ -1,2 +1,3 @@
 development:
   database: 'postgres://localhost/neocities'
+  session_secret: SETSOMETHINGHERE
