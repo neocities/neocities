@@ -12,6 +12,7 @@ gem 'puma', require: nil
 platform :mri do
   gem 'pg'
   gem 'hiredis'
+  gem 'rainbows', require: nil
 
   group :development, :test do
     gem 'pry'
