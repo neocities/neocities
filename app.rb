@@ -14,6 +14,8 @@ get %r{.+} do
   base_path = site_base_path subname
   path = File.join(base_path, (request.path =~ /\/$/ ? (request.path + 'index.html') : request.path))
 
+  cache_control :public, max_age: 10
+
   if File.exist?(path)
     send_file path
   else
