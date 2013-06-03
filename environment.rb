@@ -12,7 +12,7 @@ Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
 $config = YAML.load_file(File.join(DIR_ROOT, 'config.yml'))[ENV['RACK_ENV']]
 
-DB = Sequel.connect $config['database']
+DB = Sequel.connect $config['database'], sslmode: 'disable'
 
 Dir.glob('workers/*.rb').each {|w| require File.join(DIR_ROOT, "/#{w}") }
 

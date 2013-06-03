@@ -11,6 +11,7 @@ gem 'puma', require: nil
 
 platform :mri do
   gem 'pg'
+  gem 'sequel_pg', require: nil
   gem 'hiredis'
   gem 'rainbows', require: nil
 

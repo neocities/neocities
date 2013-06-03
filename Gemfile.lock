@@ -58,6 +58,9 @@ GEM
     rake (10.0.4)
     redis (3.0.4)
     sequel (3.47.0)
+    sequel_pg (1.6.6)
+      pg (>= 0.8.0)
+      sequel (>= 3.39.0)
     shotgun (0.9)
       rack (>= 1.0)
     simplecov (0.7.1)
@@ -110,6 +113,7 @@ DEPENDENCIES
   redis
   ruby-debug
   sequel
+  sequel_pg
   shotgun
   simplecov
   sinatra

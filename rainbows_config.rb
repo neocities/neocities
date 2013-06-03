@@ -27,4 +27,8 @@ Rainbows! do
       end
     end
   end
+  
+  after_fork do |server, worker|
+    DB.disconnect
+  end
 end
