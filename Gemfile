@@ -6,6 +6,7 @@ gem 'sequel'
 gem 'slim'
 gem 'bcrypt-ruby', require: 'bcrypt'
 gem 'sinatra-flash', require: 'sinatra/flash'
+gem 'sinatra-xsendfile', require: 'sinatra/xsendfile'
 gem 'puma', require: nil
 
 platform :mri do
