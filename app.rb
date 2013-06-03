@@ -26,7 +26,7 @@ get %r{.+} do
   send_file path
 end
 
-get '/' do
+get '/?' do
   dashboard_if_signed_in
   slim :index
 end
@@ -92,7 +92,7 @@ get '/signout' do
 end
 
 # Helper routes to get webalizer stats working, not used by anything important
-get '/sites/:name' do  
+get '/sites/:name/?' do  
  sites_name_redirect
 end
 
