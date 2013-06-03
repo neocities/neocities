@@ -6,8 +6,9 @@ use Rack::Session::Cookie, key:          'neocities',
                            secret:       $config['session_secret']
 
 get %r{.+} do
+  pass if request.host == '127.0.0.1'
   subname = request.host.match /[\w-]+/
-  pass if subname.nil?  
+  pass if subname.nil?
   subname = subname.to_s
   pass if subname == 'www' || subname == 'neocities' || subname == 'testneocities'
 
@@ -88,6 +89,22 @@ get '/signout' do
   require_login
   session[:id] = nil
   redirect '/'
+end
+
+# Helper routes to get webalizer stats working, not used by anything important
+get '/sites/:name' do  
+ sites_name_redirect
+end
+
+get '/sites/:name/:file' do
+  sites_name_redirect
+end
+
+def sites_name_redirect
+  path = request.path.gsub "/sites/#{params[:name]}", ''
+  # path += "/#{params[:file]}" unless params[:file].nil?
+
+  redirect "http://#{params[:name]}.neocities.org#{path}"  
 end
 
 def dashboard_if_signed_in
