@@ -34,5 +34,10 @@ Sequel.default_timezone = 'UTC'
 Sequel::Migrator.apply DB, './migrations'
 
 Dir.glob('models/*.rb').each {|m| require File.join(DIR_ROOT, "#{m}") }
-
 DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
+
+# If new, throw up a random Server for development.
+
+if ENV['RACK_ENV'] == 'development' && Server.count == 0
+  Server.create ip: '127.0.0.1', slots_available: 999999
+end

@@ -10,6 +10,7 @@ gem 'sinatra-xsendfile', require: 'sinatra/xsendfile'
 gem 'puma', require: nil
 
 platform :mri do
+  gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
   gem 'pg'
   gem 'sequel_pg', require: nil
   gem 'hiredis'

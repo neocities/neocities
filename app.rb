@@ -100,11 +100,60 @@ get '/sites/:name/:file' do
   sites_name_redirect
 end
 
+get '/site_files/new' do
+  require_login
+  slim :'site_files/new'
+end
+
+post '/site_files/upload' do
+  require_login
+  @errors = []
+  
+  if params[:newfile] == '' || params[:newfile].nil?
+    @errors << 'You must select a file to upload.'
+    halt slim(:'site_files/new')
+  end
+  
+  if params[:newfile][:tempfile].size > Site::MAX_SPACE || (params[:newfile][:tempfile].size + current_site.total_space) > Site::MAX_SPACE
+    @errors << 'File size must be smaller than available space.'
+    halt slim(:'site_files/new')
+  end
+  
+  mime_type = Magic.guess_file_mime_type params[:newfile][:tempfile].path
+  
+  unless Site::VALID_MIME_TYPES.include?(mime_type) && Site::VALID_EXTENSIONS.include?(File.extname(params[:newfile][:filename]).sub(/^./, ''))
+    @errors << 'File must me one of the following: HTML, Text, Image (JPG PNG GIF JPEG SVG), JS, CSS, Markdown.'
+    halt slim(:'site_files/new')
+  end
+
+  sanitized_filename = params[:newfile][:filename].gsub(/[^a-zA-Z_\-.]/, '')
+
+  FileUtils.mv params[:newfile][:tempfile].path, File.join(site_base_path(current_site.username), sanitized_filename)
+  flash[:success] = "Successfully uploaded file #{sanitized_filename}."
+  redirect '/dashboard'
+end
+
+post '/site_files/delete' do
+  require_login
+  sanitized_filename = params[:filename].gsub(/[^a-zA-Z_\-.]/, '')
+  FileUtils.rm File.join(site_base_path(current_site.username), sanitized_filename)
+  flash[:success] = "Deleted file #{params[:filename]}."
+  redirect '/dashboard'
+end
+
+get '/terms' do
+  slim :'terms'
+end
+
+get '/privacy' do
+  slim :'privacy'
+end
+
 def sites_name_redirect
   path = request.path.gsub "/sites/#{params[:name]}", ''
   # path += "/#{params[:file]}" unless params[:file].nil?
 
-  redirect "http://#{params[:name]}.neocities.org#{path}"  
+  redirect "http://#{params[:name]}.neocities.org#{path}"
 end
 
 def dashboard_if_signed_in

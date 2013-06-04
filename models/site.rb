@@ -1,4 +1,8 @@
 class Site < Sequel::Model
+  # We might need to include fonts in here..
+  VALID_MIME_TYPES = ['text/plain', 'text/html', 'text/css', 'application/javascript', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml']
+  VALID_EXTENSIONS = %w{ html htm txt text css js jpg jpeg png gif svg md markdown }
+  MAX_SPACE = 5242880 # 5MB
   MINIMUM_PASSWORD_LENGTH = 5
   USERNAME_REGEX = /[^\w-]/i
   many_to_one :server
@@ -73,5 +77,19 @@ class Site < Sequel::Model
     if values[:password].nil? || (@password_length && @password_length < MINIMUM_PASSWORD_LENGTH)
       errors.add :password, "Password must be at least #{MINIMUM_PASSWORD_LENGTH} characters."
     end
+  end
+  
+  def file_list
+    Dir.glob(File.join(DIR_ROOT, 'public', 'sites', username, '*')).collect {|p| File.basename(p)}.sort.collect {|sitename| SiteFile.new sitename}
+  end
+
+  def total_space
+    space = Dir.glob(File.join(DIR_ROOT, 'public', 'sites', username, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
+    space.nil? ? 0 : space
+  end
+
+  def available_space
+    remaining = MAX_SPACE - total_space
+    remaining < 0 ? 0 : remaining
   end
 end
