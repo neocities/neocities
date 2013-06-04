@@ -51,7 +51,7 @@ post '/create' do
   @site = Site.new username: params[:username], password: params[:password], email: params[:email], new_tags: params[:tags]
 
   if @site.valid?
-    
+
     base_path = site_base_path @site.username
 
     DB.transaction {
@@ -92,7 +92,7 @@ get '/signout' do
 end
 
 # Helper routes to get webalizer stats working, not used by anything important
-get '/sites/:name/?' do  
+get '/sites/:name/?' do
  sites_name_redirect
 end
 
@@ -112,25 +112,25 @@ end
 post '/site_files/upload' do
   require_login
   @errors = []
-  
+
   if params[:newfile] == '' || params[:newfile].nil?
     @errors << 'You must select a file to upload.'
     halt slim(:'site_files/new')
   end
-  
+
   if params[:newfile][:tempfile].size > Site::MAX_SPACE || (params[:newfile][:tempfile].size + current_site.total_space) > Site::MAX_SPACE
     @errors << 'File size must be smaller than available space.'
     halt slim(:'site_files/new')
   end
-  
+
   mime_type = Magic.guess_file_mime_type params[:newfile][:tempfile].path
-  
+
   unless Site::VALID_MIME_TYPES.include?(mime_type) && Site::VALID_EXTENSIONS.include?(File.extname(params[:newfile][:filename]).sub(/^./, ''))
     @errors << 'File must me one of the following: HTML, Text, Image (JPG PNG GIF JPEG SVG), JS, CSS, Markdown.'
     halt slim(:'site_files/new')
   end
 
-  sanitized_filename = params[:newfile][:filename].gsub(/[^a-zA-Z_\-.]/, '')
+  sanitized_filename = params[:newfile][:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')
 
   dest_path = File.join(site_base_path(current_site.username), sanitized_filename)
   FileUtils.mv params[:newfile][:tempfile].path, dest_path
@@ -142,7 +142,7 @@ end
 
 post '/site_files/delete' do
   require_login
-  sanitized_filename = params[:filename].gsub(/[^a-zA-Z_\-.]/, '')
+  sanitized_filename = params[:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')
   FileUtils.rm File.join(site_base_path(current_site.username), sanitized_filename)
   flash[:success] = "Deleted file #{params[:filename]}."
   redirect '/dashboard'
