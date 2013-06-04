@@ -132,7 +132,10 @@ post '/site_files/upload' do
 
   sanitized_filename = params[:newfile][:filename].gsub(/[^a-zA-Z_\-.]/, '')
 
-  FileUtils.mv params[:newfile][:tempfile].path, File.join(site_base_path(current_site.username), sanitized_filename)
+  dest_path = File.join(site_base_path(current_site.username), sanitized_filename)
+  FileUtils.mv params[:newfile][:tempfile].path, dest_path
+  File.chmod(0640, dest_path) if self.class.production?
+
   flash[:success] = "Successfully uploaded file #{sanitized_filename}."
   redirect '/dashboard'
 end
