@@ -7,7 +7,7 @@ class Site < Sequel::Model
   USERNAME_REGEX = /[^\w-]/i
   many_to_one :server
   many_to_many :tags
-  
+
   class << self
     def valid_login?(username, plaintext)
       site = self[username: username]
@@ -23,7 +23,11 @@ class Site < Sequel::Model
       @bcrypt_cost = cost
     end
   end
-  
+
+  def username=(val)
+    super val.downcase
+  end
+
   def valid_password?(plaintext)
     BCrypt::Password.new(values[:password]) == plaintext
   end
@@ -78,7 +82,7 @@ class Site < Sequel::Model
       errors.add :password, "Password must be at least #{MINIMUM_PASSWORD_LENGTH} characters."
     end
   end
-  
+
   def file_list
     Dir.glob(File.join(DIR_ROOT, 'public', 'sites', username, '*')).collect {|p| File.basename(p)}.sort.collect {|sitename| SiteFile.new sitename}
   end
