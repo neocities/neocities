@@ -149,7 +149,7 @@ post '/site_files/delete' do
 end
 
 get '/site_files/text_editor/:filename' do |filename|
-  @file_url = "http://#{current_site.username}.neocities.org/#{filename}"
+  @file_data = File.read File.join(site_base_path(current_site.username), filename)
   slim :'site_files/text_editor'
 end
 
