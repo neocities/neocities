@@ -10,7 +10,7 @@ javascript:
   }
 
 .row
-  .span8.offset4
+  .span5.offset1
     
     h1 Your home page
     
@@ -40,6 +40,12 @@ javascript:
               a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
             
     <a href="/site_files/new" class="btn btn-large btn-success">Upload New File</a>
+  .span5
+  
+    .progress.progress-info.progress-striped
+      .bar style="width: #{(current_site.total_space / Site::MAX_SPACE) * 100}%"
+
+    h4 You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{(current_site.total_space.to_f / 2**20).round(2)}MB) of your total #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of total space.
 
 form method="POST" action="/site_files/delete" id="deleteFilenameForm"
   input type="hidden" id="deleteFilenameInput" name="filename"
