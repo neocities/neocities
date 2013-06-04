@@ -150,7 +150,26 @@ end
 
 get '/site_files/text_editor/:filename' do |filename|
   @file_url = "http://#{current_site.username}.neocities.org/#{filename}"
+  
   slim :'site_files/text_editor'
+end
+
+post '/site_files/save/:filename' do |filename|
+  tmpfile = Tempfile.new 'neocities_saving_file'
+  
+  if (tmpfile.size + current_site.total_space) > Site::MAX_SPACE
+    halt 'File is too large, it has NOT been saved. Please make a local copy and then try to reduce the size.'
+  end
+
+  tmpfile.write request.body.read
+  tmpfile.close
+  
+  sanitized_filename = filename.gsub(/[^a-zA-Z_\-.]/, '')
+  dest_path = File.join site_base_path(current_site.username), sanitized_filename
+
+  FileUtils.mv tmpfile.path, dest_path
+  File.chmod(0640, dest_path) if self.class.production?
+  'ok'
 end
 
 get '/terms' do

@@ -8,6 +8,11 @@ css:
   }
 
 .row
+  .span6.offset3
+    div id="editorUpdates" class="alert alert-success hidden"
+      button type="button" class="close" onclick="$('#editorUpdates').addClass('hidden');" &times;
+      span
+.row
   .span6
     font style="font-size: 27pt" Editing #{params[:filename]}
   .span6
@@ -54,11 +59,11 @@ css:
     
 .row.text-center style="margin-top: 10px"
   .span4
-    a.btn.btn-large.btn-warning href="" Cancel
+    a.btn.btn-large.btn-warning href="" Finish Without Saving
   .span4
-    a.btn.btn-large.btn-success href="" Save Changes
+    a.btn.btn-large.btn-success href="#" onclick="saveTextFile()" Save Changes
   .span4
-    a.btn.btn-large.btn-info href="" Save and Finish Editing
+    a.btn.btn-large.btn-info href="" Save and Finish
     
     
 script src="http://rawgithub.com/ajaxorg/ace-builds/master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"
@@ -66,6 +71,33 @@ javascript:
 
   function setTheme(name) {
     editor.setTheme($('#theme').val());
+  }
+  
+  function saveTextFile() {
+  /*
+    $.post('/site_files/save/#{params[:filename]}', editor.getValue(), function(resp) {
+      if(resp == 'ok') {
+        $('#editorUpdates span').text('Your file has been saved.');
+        $('#editorUpdates').removeClass('hidden');
+      }
+    });
+    */
+    
+    $.ajax({
+      url: '/site_files/save/#{params[:filename]}',
+      data: editor.getValue(),
+      processData: false,
+      contentType: false,
+      type: 'POST',
+      success: function(response){
+        if(response == 'ok') {
+          $('#editorUpdates span').text('Your file has been saved.');
+        } else {
+          $('#editorUpdates span').text(response);
+        }
+        $('#editorUpdates').removeClass('hidden');
+      }
+    });
   }
 
   var editor = {};
