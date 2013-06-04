@@ -3,7 +3,7 @@ javascript:
     $('#deleteFileName').html(name);
     $('#deleteConfirmModal').modal();
   }
-  
+
   function fileDelete() {
     $('#deleteFilenameInput').val($('#deleteFileName').html());
     $('#deleteFilenameForm').submit();
@@ -11,9 +11,9 @@ javascript:
 
 .row
   .span5.offset1
-    
+
     h1 Your home page
-    
+
     - current_site.file_list.each do |file|
       .row
         .span4
@@ -22,14 +22,14 @@ javascript:
             div style="margin-bottom: 30px"
               span
                 i class="icon-globe" &nbsp;&nbsp;
-                  
+
                 a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br>
               span
                 i class="icon-edit" &nbsp;&nbsp;
-                a href="#" Edit with visual editor <br>
+                a href="#" Edit with visual editor <small>not implemented yet.. ETA one week</small> <br>
               span
                 i class="icon-edit" &nbsp;&nbsp;
-                a href="#" Edit with text editor <br>
+                a href="#" Edit with text editor <small>not implemented yet.. ETA one day</small><br>
               span
                 i class="icon-trash" &nbsp;&nbsp;
                 a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
@@ -38,13 +38,13 @@ javascript:
             div style="margin-bottom: 30px"
               a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br>
               a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
-            
+
     <a href="/site_files/new" class="btn btn-large btn-success">Upload New File</a>
   .span5
 
     h3 style="color: green": a href="http://#{current_site.username}.neocities.org" target="_blank" http://#{current_site.username}.neocities.org
     br
-  
+
     .progress.progress-info.progress-striped
       .bar style="width: #{(current_site.total_space / Site::MAX_SPACE) * 100}%"
 
