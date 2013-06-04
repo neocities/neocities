@@ -150,7 +150,6 @@ end
 
 get '/site_files/text_editor/:filename' do |filename|
   @file_url = "http://#{current_site.username}.neocities.org/#{filename}"
-  
   slim :'site_files/text_editor'
 end
 

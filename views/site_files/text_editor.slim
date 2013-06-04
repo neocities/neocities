@@ -8,11 +8,6 @@ css:
   }
 
 .row
-  .span6.offset3
-    div id="editorUpdates" class="alert alert-success hidden"
-      button type="button" class="close" onclick="$('#editorUpdates').addClass('hidden');" &times;
-      span
-.row
   .span6
     font style="font-size: 27pt" Editing #{params[:filename]}
   .span6
@@ -59,12 +54,16 @@ css:
     
 .row.text-center style="margin-top: 10px"
   .span4
-    a.btn.btn-large.btn-warning href="" Finish Without Saving
+    a.btn.btn-large.btn-warning href="/dashboard" <i class="icon-remove"></i>&nbsp;&nbsp;Finish Without Saving
   .span4
-    a.btn.btn-large.btn-success href="#" onclick="saveTextFile()" Save Changes
+    a.btn.btn-large.btn-success href="#" onclick="saveTextFile(false)" <i class="icon-save"></i>&nbsp;&nbsp;Save Changes
   .span4
-    a.btn.btn-large.btn-info href="" Save and Finish
+    a.btn.btn-large.btn-info href="#" onclick="saveTextFile(true);" <i class="icon-save"></i>&nbsp;&nbsp;Save and Finish
     
+.row style="margin-top: 20px"
+  .span6.offset3.text-center
+    div id="editorUpdates" class="alert alert-success hidden"
+      span
     
 script src="http://rawgithub.com/ajaxorg/ace-builds/master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"
 javascript:
@@ -73,8 +72,8 @@ javascript:
     editor.setTheme($('#theme').val());
   }
   
-  function saveTextFile() {
-  /*
+  function saveTextFile(quit) {
+    /*
     $.post('/site_files/save/#{params[:filename]}', editor.getValue(), function(resp) {
       if(resp == 'ok') {
         $('#editorUpdates span').text('Your file has been saved.');
@@ -91,11 +90,20 @@ javascript:
       type: 'POST',
       success: function(response){
         if(response == 'ok') {
-          $('#editorUpdates span').text('Your file has been saved.');
+          if(quit === true) {
+            window.location = '/dashboard';
+          }
+          $('#editorUpdates span').html('<i class="icon-save icon-2x"></i>&nbsp;&nbsp;<font style="font-size: 14pt">Your file has been saved.</font>');
+          setTimeout(function() {
+            $('#editorUpdates').fadeOut();  //.addClass('hidden');
+          }, 2000);
+          
         } else {
           $('#editorUpdates span').text(response);
         }
+        $('#editorUpdates').fadeIn();
         $('#editorUpdates').removeClass('hidden');
+        
       }
     });
   }
