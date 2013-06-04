@@ -105,6 +105,10 @@ get '/site_files/new' do
   slim :'site_files/new'
 end
 
+get '/donate' do
+  slim :'donate'
+end
+
 post '/site_files/upload' do
   require_login
   @errors = []
