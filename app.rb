@@ -148,6 +148,10 @@ post '/site_files/delete' do
   redirect '/dashboard'
 end
 
+get '/site_files/download/:filename' do |filename|
+  send_file File.join(site_base_path(current_site.username), filename), filename: filename, type: 'Application/octet-stream'
+end
+
 get '/site_files/text_editor/:filename' do |filename|
   @file_data = File.read File.join(site_base_path(current_site.username), filename)
   slim :'site_files/text_editor'
