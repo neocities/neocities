@@ -6,6 +6,7 @@ Encoding.default_internal = 'UTF-8'
 require 'yaml'
 require 'json'
 require 'logger'
+require 'zip/zip'
 
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'

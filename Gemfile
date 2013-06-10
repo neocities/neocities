@@ -8,6 +8,7 @@ gem 'bcrypt-ruby', require: 'bcrypt'
 gem 'sinatra-flash', require: 'sinatra/flash'
 gem 'sinatra-xsendfile', require: 'sinatra/xsendfile'
 gem 'puma', require: nil
+gem 'rubyzip'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

@@ -148,6 +148,27 @@ post '/site_files/delete' do
   redirect '/dashboard'
 end
 
+get '/site_files/:username.zip' do |username|
+  file_path = "/tmp/neocities-site-#{username}.zip"
+
+  Zip::ZipFile.open(file_path, Zip::ZipFile::CREATE) do |zipfile|
+    current_site.file_list.collect {|f| f.filename}.each do |filename|
+      puts filename
+      puts site_file_path(filename)
+      zipfile.add filename, site_file_path(filename)
+    end
+  end
+
+  # I don't want to have to deal with cleaning up old tmpfiles
+  zipfile = File.read file_path
+  File.delete file_path
+
+  content_type 'application/octet-stream'
+  attachment   "#{current_site.username}.zip"
+  
+  return zipfile
+end
+
 get '/site_files/download/:filename' do |filename|
   send_file File.join(site_base_path(current_site.username), filename), filename: filename, type: 'Application/octet-stream'
 end
@@ -208,6 +229,10 @@ end
 
 def site_base_path(subname)
   File.join settings.public_folder, 'sites', subname
+end
+
+def site_file_path(filename)
+  File.join(site_base_path(current_site.username), filename)
 end
 
 def template_site_title(username)

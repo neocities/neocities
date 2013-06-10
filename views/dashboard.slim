@@ -50,13 +50,20 @@ javascript:
     <a href="/site_files/new" class="btn btn-large btn-success">Upload New File</a>
   .span5
 
-    h3 style="color: green": a href="http://#{current_site.username}.neocities.org" target="_blank" http://#{current_site.username}.neocities.org
-    br
+    .row
+      .span5
 
-    .progress.progress-info.progress-striped
-      .bar style="width: #{(current_site.total_space / Site::MAX_SPACE) * 100}%"
+        h3 style="color: green": a href="http://#{current_site.username}.neocities.org" target="_blank" http://#{current_site.username}.neocities.org
+        br
 
-    h4 You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{(current_site.total_space.to_f / 2**20).round(2)}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
+        .progress.progress-info.progress-striped
+          .bar style="width: #{(current_site.total_space / Site::MAX_SPACE) * 100}%"
+
+        h4 You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{(current_site.total_space.to_f / 2**20).round(2)}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
+    
+    .row style="margin-top: 20px"
+      .span5
+        h4: a href="/site_files/#{current_site.username}.zip" Download Entire Site
 
 form method="POST" action="/site_files/delete" id="deleteFilenameForm"
   input type="hidden" id="deleteFilenameInput" name="filename"
