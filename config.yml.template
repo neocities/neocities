@@ -1,3 +1,5 @@
 development:
   database: 'postgres://localhost/neocities'
   session_secret: SETSOMETHINGHERE
+  recaptcha_public_key: ddsfsdfsdf
+  recaptcha_private_key: fsdgfdsdfd

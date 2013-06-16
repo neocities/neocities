@@ -21,6 +21,7 @@ GEM
     hashie (2.0.5)
     hiredis (0.4.5)
     i18n (0.6.4)
+    json (1.8.0)
     kgio (2.8.0)
     magic (0.2.6)
       ffi (>= 0.6.3)
@@ -51,6 +52,8 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
+    rack-recaptcha (0.6.6)
+      json
     rack-test (0.6.2)
       rack (>= 1.0)
     rainbows (4.5.0)
@@ -112,6 +115,7 @@ DEPENDENCIES
   pry
   pry-debugger
   puma
+  rack-recaptcha
   rack-test
   rainbows
   rake

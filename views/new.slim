@@ -1,4 +1,9 @@
 
+javascript:
+  var RecaptchaOptions = {
+    theme : 'clean'
+  };
+
 - if !@site.errors.empty?
   .row
     .span8.offset2
@@ -56,8 +61,14 @@
 
       .row
         .span6
+          p Last thing! Enter these two words correctly (with spaces) so we know you're not a robot (don't worry robots, we still love you).
+          div
+            == recaptcha_tag :challenge
+
+      .row
+        .span6
           h3 You're done. Just click the button below!
 
-      .row style="margin-top: 30px"
+      .row style="margin-top: 10px"
         .span3.offset1
           input.btn.btn-success.btn-large type="submit" value="Create Home Page"

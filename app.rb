@@ -5,6 +5,9 @@ use Rack::Session::Cookie, key:          'neocities',
                            expire_after: 31556926, # one year in seconds
                            secret:       $config['session_secret']
 
+use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $config['recaptcha_private_key']
+helpers Rack::Recaptcha::Helpers
+
 get %r{.+} do
   pass if request.host == '127.0.0.1'
   subname = request.host.match /[\w-]+/
@@ -50,7 +53,9 @@ post '/create' do
   dashboard_if_signed_in
   @site = Site.new username: params[:username], password: params[:password], email: params[:email], new_tags: params[:tags]
 
-  if @site.valid?
+  recaptcha_is_valid = recaptcha_valid?
+
+  if @site.valid? && recaptcha_is_valid
 
     base_path = site_base_path @site.username
 
@@ -69,6 +74,8 @@ post '/create' do
     session[:id] = @site.id
     redirect '/dashboard'
   else
+    @site.errors.add :captcha, 'You must type in the two words correctly! Try again.' if !recaptcha_is_valid
+    
     slim :'/new'
   end
 end
