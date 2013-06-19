@@ -75,7 +75,7 @@ post '/create' do
     redirect '/dashboard'
   else
     @site.errors.add :captcha, 'You must type in the two words correctly! Try again.' if !recaptcha_is_valid
-    
+
     slim :'/new'
   end
 end
@@ -142,8 +142,8 @@ post '/site_files/upload' do
   dest_path = File.join(site_base_path(current_site.username), sanitized_filename)
   FileUtils.mv params[:newfile][:tempfile].path, dest_path
   File.chmod(0640, dest_path) if self.class.production?
-  
-  Backburner.enqueue ScreenshotJob, current_site.username
+
+  Backburner.enqueue(ScreenshotJob, current_site.username) if sanitized_filename =~ /index\.html/
 
   flash[:success] = "Successfully uploaded file #{sanitized_filename}."
   redirect '/dashboard'
@@ -174,7 +174,7 @@ get '/site_files/:username.zip' do |username|
 
   content_type 'application/octet-stream'
   attachment   "#{current_site.username}.zip"
-  
+
   return zipfile
 end
 
@@ -189,21 +189,21 @@ end
 
 post '/site_files/save/:filename' do |filename|
   tmpfile = Tempfile.new 'neocities_saving_file'
-  
+
   if (tmpfile.size + current_site.total_space) > Site::MAX_SPACE
     halt 'File is too large, it has NOT been saved. Please make a local copy and then try to reduce the size.'
   end
 
   tmpfile.write request.body.read
   tmpfile.close
-  
+
   sanitized_filename = filename.gsub(/[^a-zA-Z_\-.]/, '')
   dest_path = File.join site_base_path(current_site.username), sanitized_filename
 
   FileUtils.mv tmpfile.path, dest_path
   File.chmod(0640, dest_path) if self.class.production?
 
-  Backburner.enqueue ScreenshotJob, current_site.username
+  Backburner.enqueue(ScreenshotJob, current_site.username) if sanitized_filename =~ /index\.html/
 
   'ok'
 end
