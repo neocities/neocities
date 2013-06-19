@@ -10,7 +10,9 @@ class ScreenshotJob
     screenshot = Tempfile.new 'neocities_screenshot'
     screenshot.close
 
-    driver = Selenium::WebDriver.for :remote, url: $config['phantomjs_url']
+    caps = Selenium::WebDriver::Remote::Capabilities.htmlunit javascript_enabled: false, takesScreenshot: true
+
+    driver = Selenium::WebDriver.for :remote, url: $config['phantomjs_url'], desired_capabilities: caps
     driver.manage.window.resize_to 1280, 720
 
     wait = Selenium::WebDriver::Wait.new(:timeout => 5) # seconds
@@ -21,8 +23,14 @@ class ScreenshotJob
 
     driver.quit
 
-    img = Magick::Image.read(screenshot.path).first
-    img.crop_resized!(600, 400, Magick::NorthGravity)
-    img.write File.join(DIR_ROOT, 'public', 'site_screenshots', "#{user}.jpg")
+    img_list = Magick::ImageList.new
+    img_list.read screenshot.path
+    screenshot.unlink
+    img_list.new_image(img_list.first.columns, img_list.first.rows) { self.background_color = "white" }
+    img = img_list.reverse.flatten_images
+    puts 'boners'
+    img.crop!(0, 0, 1280, 720)
+    img.resize! 600, 400
+    img.write File.join(DIR_ROOT, 'public', 'site_screenshots', "#{username}.jpg")
   end
 end

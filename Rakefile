@@ -1,6 +1,10 @@
 require "rake/testtask"
 require 'backburner/tasks'
 
+task :environment do
+  require './environment.rb'
+end
+
 desc "Run all tests"
 Rake::TestTask.new do |t|
   t.libs << "spec"
