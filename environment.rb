@@ -24,6 +24,8 @@ if defined?(Pry)
   Pry.commands.alias_command 'f', 'finish'
 end
 
+require File.join(DIR_ROOT, 'jobs', 'screenshot_job.rb')
+
 Sequel.datetime_class = Time
 Sequel.extension :pagination
 Sequel.extension :migration

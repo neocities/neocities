@@ -3,11 +3,18 @@ GEM
   specs:
     addressable (2.3.4)
     ansi (1.4.3)
+    backburner (0.3.4)
+      beaneater (~> 0.3.0)
+      dante (~> 0.1.5)
     bcrypt-ruby (3.0.1)
+    beaneater (0.3.0)
     builder (3.2.0)
+    childprocess (0.3.9)
+      ffi (~> 1.0, >= 1.0.11)
     coderay (1.0.9)
     columnize (0.3.6)
     crack (0.3.2)
+    dante (0.1.5)
     debugger (1.6.0)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
@@ -63,7 +70,13 @@ GEM
     raindrops (0.10.0)
     rake (10.0.4)
     redis (3.0.4)
+    rmagick (2.13.2)
     rubyzip (0.9.9)
+    selenium-webdriver (2.33.0)
+      childprocess (>= 0.2.5)
+      multi_json (~> 1.0)
+      rubyzip
+      websocket (~> 1.0.4)
     sequel (3.47.0)
     sequel_pg (1.6.6)
       pg (>= 0.8.0)
@@ -95,11 +108,13 @@ GEM
     webmock (1.11.0)
       addressable (>= 2.2.7)
       crack (>= 0.3.2)
+    websocket (1.0.7)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  backburner
   bcrypt-ruby
   fabrication
   faker
@@ -120,8 +135,10 @@ DEPENDENCIES
   rainbows
   rake
   redis
+  rmagick
   ruby-debug
   rubyzip
+  selenium-webdriver
   sequel
   sequel_pg
   shotgun

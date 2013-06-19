@@ -4,19 +4,22 @@ gem 'sinatra'
 gem 'redis'
 gem 'sequel'
 gem 'slim'
-gem 'bcrypt-ruby', require: 'bcrypt'
-gem 'sinatra-flash', require: 'sinatra/flash'
-gem 'sinatra-xsendfile', require: 'sinatra/xsendfile'
-gem 'puma', require: nil
+gem 'bcrypt-ruby',        require: 'bcrypt'
+gem 'sinatra-flash',      require: 'sinatra/flash'
+gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
+gem 'puma',               require: nil
 gem 'rubyzip'
-gem 'rack-recaptcha', require: 'rack/recaptcha'
+gem 'rack-recaptcha',     require: 'rack/recaptcha'
+gem 'rmagick',            require: nil
+gem 'selenium-webdriver', require: nil
+gem 'backburner'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
   gem 'pg'
   gem 'sequel_pg', require: nil
   gem 'hiredis'
-  gem 'rainbows', require: nil
+  gem 'rainbows',  require: nil
 
   group :development, :test do
     gem 'pry'

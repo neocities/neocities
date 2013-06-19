@@ -3,3 +3,4 @@ development:
   session_secret: SETSOMETHINGHERE
   recaptcha_public_key: ddsfsdfsdf
   recaptcha_private_key: fsdgfdsdfd
+  phantomjs_url: http://localhost:40000

@@ -142,6 +142,8 @@ post '/site_files/upload' do
   dest_path = File.join(site_base_path(current_site.username), sanitized_filename)
   FileUtils.mv params[:newfile][:tempfile].path, dest_path
   File.chmod(0640, dest_path) if self.class.production?
+  
+  Backburner.enqueue ScreenshotJob, current_site.username
 
   flash[:success] = "Successfully uploaded file #{sanitized_filename}."
   redirect '/dashboard'
@@ -200,6 +202,9 @@ post '/site_files/save/:filename' do |filename|
 
   FileUtils.mv tmpfile.path, dest_path
   File.chmod(0640, dest_path) if self.class.production?
+
+  Backburner.enqueue ScreenshotJob, current_site.username
+
   'ok'
 end
 
