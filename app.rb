@@ -34,6 +34,11 @@ get '/?' do
   slim :index
 end
 
+get '/browse' do
+  @sites = Site.order(:id.desc).filter(initial_index_changed: true).all
+  slim :browse
+end
+
 get '/new' do
   dashboard_if_signed_in
   @site = Site.new
@@ -145,6 +150,8 @@ post '/site_files/upload' do
 
   Backburner.enqueue(ScreenshotJob, current_site.username) if sanitized_filename =~ /index\.html/
 
+  current_site.update initial_index_changed: true if current_site.initial_index_changed == false
+
   flash[:success] = "Successfully uploaded file #{sanitized_filename}."
   redirect '/dashboard'
 end
@@ -204,6 +211,8 @@ post '/site_files/save/:filename' do |filename|
   File.chmod(0640, dest_path) if self.class.production?
 
   Backburner.enqueue(ScreenshotJob, current_site.username) if sanitized_filename =~ /index\.html/
+
+  current_site.update initial_index_changed: true if current_site.initial_index_changed == false
 
   'ok'
 end
