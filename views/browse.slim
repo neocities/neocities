@@ -1,0 +1,12 @@
+.row
+  .span12.text-center
+    h1 Home Pages on NeoCities
+    p Want to make your own? <a href="/new">Click here</a>!
+
+  - @sites.each_with_index do |site,i|
+    - if i.even? && i != 0
+      .row
+
+    .span6.text-center
+      = site.username
+      img src="/site_screenshots/#{ENV['RACK_ENV'] == 'development' ? 'victoria' : site.username}.jpg"
