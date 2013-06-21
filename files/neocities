@@ -1,0 +1,41 @@
+  server {
+    root /home/web/neocities-web/public;
+    server_name neocities.org www.neocities.org;
+    access_log /var/log/nginx/neocities-web.log;
+
+#    location ~*  \.(jpg|jpeg|png|gif|ico|css|js)$ {
+#      expires 60s;
+#      log_not_found off;
+#    }
+
+    try_files $uri @neocities;
+
+    location @neocities {
+      proxy_set_header  X-Real-IP  $remote_addr;
+      proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Host $http_host;
+      proxy_max_temp_file_size 0;
+
+      proxy_pass http://127.0.0.1:20000;
+      break;
+    }
+  }
+
+	server {
+		server_name ~^(?<subdomain>.+)\.neocities.org$;
+    access_log /var/log/nginx/neocities-sites.log neocities;
+    root /home/web/neocities-web/public/sites/$subdomain;
+    index /index.html;
+    error_page 404 = /not_found.html;
+
+    location ~*  \.(html|jpg|jpeg|png|gif|ico|css|js)$ {
+      # expires 20s;
+      log_not_found off;
+    }
+	}
+
+  server {
+    server_name webalizer.neocities.org;
+    root /var/www/webalizer;
+    index index.html;
+  }
