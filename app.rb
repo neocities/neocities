@@ -200,7 +200,7 @@ get '/site_files/text_editor/:filename' do |filename|
 end
 
 post '/site_files/save/:filename' do |filename|
-  halt 'You are not logged in!' if current_site.nil?
+  require_login_ajax
 
   tmpfile = Tempfile.new 'neocities_saving_file'
 
@@ -243,8 +243,16 @@ def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
 end
 
+def require_login_ajax
+  halt 'You are not logged in!' unless signed_in? && csrf_safe
+end
+
+def csrf_safe
+  (request.referer =~ /.+\.neocities\.org/i).nil?
+end
+
 def require_login
-  redirect '/' unless signed_in?
+  redirect '/' unless signed_in? && csrf_safe
 end
 
 def signed_in?
