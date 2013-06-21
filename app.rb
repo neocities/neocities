@@ -35,7 +35,13 @@ get '/?' do
 end
 
 get '/browse' do
-  @sites = Site.order(:id.desc).filter(~{updated_at: nil}).all
+  @current_page = params[:current_page] || 1
+  @current_page = @current_page.to_i
+  site_dataset = Site.order(:id.desc).filter(~{updated_at: nil}).paginate(@current_page, 100)
+
+  @page_count = site_dataset.page_count
+
+  @sites = site_dataset.all
   slim :browse
 end
 

@@ -15,3 +15,15 @@
         .span3.text-right
           p style="margin-right: 20px; margin-top: 10px" #{site.hits} hits<br>last updated #{site.updated_at.ago}
       a href="http://#{site.username}.neocities.org" target="_blank": img src="/site_screenshots/#{ENV['RACK_ENV'] == 'development' ? 'victoria' : site.username}.jpg"
+
+- if @page_count > 1
+  .pagination.pagination-large.text-center
+    ul
+      - if @current_page != 1
+        li: a href="/browse?current_page=#{@current_page - 1}": i.icon-arrow-left style="font-size: 12pt"
+
+      - 1.upto(@page_count) do |num|
+        li class="#{"active" if num == @current_page}": a href="/browse?current_page=#{num}" #{num}
+
+      - if @current_page != @page_count
+        li: a href="/browse?current_page=#{@current_page + 1}": i.icon-arrow-right style="font-size: 12pt"
