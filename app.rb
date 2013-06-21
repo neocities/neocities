@@ -121,8 +121,8 @@ get '/site_files/new' do
   slim :'site_files/new'
 end
 
-get '/donate' do
-  slim :'donate'
+get '/about' do
+  slim :'about'
 end
 
 post '/site_files/upload' do

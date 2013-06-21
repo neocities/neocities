@@ -20,8 +20,11 @@ html
           .navbar
             .navbar-inner
               a.brand href="/" NeoCities
-              ul.nav.pull-right
+              ul.nav
                 li: a href="/browse" <b>Browse</b>
+                li: a href="/about" <b>About</b>
+
+              ul.nav.pull-right
                 - if signed_in?
                   li.navbar-text: strong style="color: #7AB800" #{current_site.username}
                   li: a href="/signout" style="color: #B94A48" Signout
