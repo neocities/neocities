@@ -13,7 +13,7 @@
         .span3
           h3 style="margin-left: 20px": a href="http://#{site.username}.neocities.org" target="_blank" #{site.username}
         .span3.text-right
-          p style="margin-right: 20px; margin-top: 10px" #{site.hits} hits<br>last updated #{site.updated_at.ago}
+          p style="margin-right: 20px; margin-top: 10px" #{site.hits} visits<br>last updated #{site.updated_at.ago}
       a href="http://#{site.username}.neocities.org" target="_blank": img src="/site_screenshots/#{ENV['RACK_ENV'] == 'development' ? 'victoria' : site.username}.jpg"
 
 - if @page_count > 1
