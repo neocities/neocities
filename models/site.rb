@@ -75,7 +75,7 @@ class Site < Sequel::Model
     # Check for existing user
     
     user = self.class.select(:username).filter(username: values[:username]).first
-    if !user.nil? && (user.id != values[:id])
+    if !user.nil? || (!new? && user.id != values[:id])
       errors.add :username, 'This username is already taken. Try using another one.'
     end
 
