@@ -38,9 +38,7 @@ get '/browse' do
   @current_page = params[:current_page] || 1
   @current_page = @current_page.to_i
   site_dataset = Site.order(:id.desc).filter(~{updated_at: nil}).paginate(@current_page, 100)
-
-  @page_count = site_dataset.page_count
-
+  @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
   slim :browse
 end
@@ -175,8 +173,6 @@ get '/site_files/:username.zip' do |username|
 
   Zip::ZipFile.open(file_path, Zip::ZipFile::CREATE) do |zipfile|
     current_site.file_list.collect {|f| f.filename}.each do |filename|
-      puts filename
-      puts site_file_path(filename)
       zipfile.add filename, site_file_path(filename)
     end
   end
