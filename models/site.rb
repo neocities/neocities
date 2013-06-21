@@ -74,11 +74,9 @@ class Site < Sequel::Model
 
     # Check for existing user
     
-    if new?
-      user = self.class.select(:username).filter(username: values[:username]).first
-      if !user.nil? && (user.id != values[:id])
-        errors.add :username, 'This username is already taken. Try using another one.'
-      end
+    user = self.class.select(:username).filter(username: values[:username]).first
+    if !user.nil? && (user.id != values[:id])
+      errors.add :username, 'This username is already taken. Try using another one.'
     end
 
     if values[:password].nil? || (@password_length && @password_length < MINIMUM_PASSWORD_LENGTH)
