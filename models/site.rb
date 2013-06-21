@@ -2,7 +2,7 @@ class Site < Sequel::Model
   # We might need to include fonts in here..
   VALID_MIME_TYPES = ['text/plain', 'text/html', 'text/css', 'application/javascript', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml']
   VALID_EXTENSIONS = %w{ html htm txt text css js jpg jpeg png gif svg md markdown }
-  MAX_SPACE = 5242880 # 5MB
+  MAX_SPACE = (5242880*2) # 10MB
   MINIMUM_PASSWORD_LENGTH = 5
   USERNAME_REGEX = /[^\w-]/i
   many_to_one :server

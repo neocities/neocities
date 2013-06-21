@@ -204,7 +204,7 @@ post '/site_files/save/:filename' do |filename|
   tmpfile = Tempfile.new 'neocities_saving_file'
 
   if (tmpfile.size + current_site.total_space) > Site::MAX_SPACE
-    halt 'File is too large, it has NOT been saved. Please make a local copy and then try to reduce the size.'
+    halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
   end
 
   tmpfile.write request.body.read
