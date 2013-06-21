@@ -8,5 +8,5 @@
       .row
 
     .span6.text-center
-      = site.username
-      img src="/site_screenshots/#{ENV['RACK_ENV'] == 'development' ? 'victoria' : site.username}.jpg"
+      h3: a href="http://#{site.username}.neocities.org" target="_blank" #{site.username}
+      a href="http://#{site.username}.neocities.org" target="_blank": img src="/site_screenshots/#{ENV['RACK_ENV'] == 'development' ? 'victoria' : site.username}.jpg"
