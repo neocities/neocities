@@ -35,7 +35,7 @@ get '/?' do
 end
 
 get '/browse' do
-  @sites = Site.order(:id.desc).filter(initial_index_changed: true).all
+  @sites = Site.order(:id.desc).filter(~{updated_at: nil}).all
   slim :browse
 end
 
@@ -150,7 +150,7 @@ post '/site_files/upload' do
 
   Backburner.enqueue(ScreenshotJob, current_site.username) if sanitized_filename =~ /index\.html/
 
-  current_site.update initial_index_changed: true if current_site.initial_index_changed == false
+  current_site.update updated_at: Time.now
 
   flash[:success] = "Successfully uploaded file #{sanitized_filename}."
   redirect '/dashboard'
@@ -212,7 +212,7 @@ post '/site_files/save/:filename' do |filename|
 
   Backburner.enqueue(ScreenshotJob, current_site.username) if sanitized_filename =~ /index\.html/
 
-  current_site.update initial_index_changed: true if current_site.initial_index_changed == false
+  current_site.update updated_at: Time.now
 
   'ok'
 end

@@ -1,12 +1,17 @@
 .row
   .span12.text-center
     h1 Home Pages on NeoCities
-    p Want to make your own? <a href="/new">Click here</a>!
+    p If you like a site, don't forget to bookmark it!<br>Want to make your own? <a href="/new">Click here</a>!
 
   - @sites.each_with_index do |site,i|
     - if i.even? && i != 0
       .row
 
-    .span6.text-center
-      h3: a href="http://#{site.username}.neocities.org" target="_blank" #{site.username}
+    .span6 style="background-color: #F8F8F8; margin-bottom: 30px"
+      
+      .row
+        .span3
+          h3 style="margin-left: 20px": a href="http://#{site.username}.neocities.org" target="_blank" #{site.username}
+        .span3.text-right
+          p style="margin-right: 20px; margin-top: 10px" #{site.hits} hits<br>last updated #{site.updated_at.ago}
       a href="http://#{site.username}.neocities.org" target="_blank": img src="/site_screenshots/#{ENV['RACK_ENV'] == 'development' ? 'victoria' : site.username}.jpg"

@@ -13,6 +13,7 @@ gem 'rack-recaptcha',     require: 'rack/recaptcha'
 gem 'rmagick',            require: nil
 gem 'selenium-webdriver', require: nil
 gem 'backburner'
+gem 'ago'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
