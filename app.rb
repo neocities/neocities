@@ -169,6 +169,7 @@ post '/site_files/delete' do
 end
 
 get '/site_files/:username.zip' do |username|
+  require_login
   file_path = "/tmp/neocities-site-#{username}.zip"
 
   Zip::ZipFile.open(file_path, Zip::ZipFile::CREATE) do |zipfile|
@@ -188,15 +189,19 @@ get '/site_files/:username.zip' do |username|
 end
 
 get '/site_files/download/:filename' do |filename|
+  require_login
   send_file File.join(site_base_path(current_site.username), filename), filename: filename, type: 'Application/octet-stream'
 end
 
 get '/site_files/text_editor/:filename' do |filename|
+  require_login
   @file_data = File.read File.join(site_base_path(current_site.username), filename)
   slim :'site_files/text_editor'
 end
 
 post '/site_files/save/:filename' do |filename|
+  halt 'You are not logged in!' if current_site.nil?
+
   tmpfile = Tempfile.new 'neocities_saving_file'
 
   if (tmpfile.size + current_site.total_space) > Site::MAX_SPACE
