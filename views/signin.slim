@@ -5,6 +5,8 @@
   .row
     .span12
       form method="POST" action="/signin"
+        input name="csrf_token" type="hidden" value="#{csrf_token}"
+
         fieldset
           div: input name="username" type="text" placeholder="Your username"
           div: input name="password" type="password" placeholder="Your password"

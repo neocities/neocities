@@ -66,6 +66,7 @@ javascript:
         h4: a href="/site_files/#{current_site.username}.zip" Download Entire Site
 
 form method="POST" action="/site_files/delete" id="deleteFilenameForm"
+  input name="csrf_token" type="hidden" value="#{csrf_token}"
   input type="hidden" id="deleteFilenameInput" name="filename"
 
 .modal.hide.fade id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true"

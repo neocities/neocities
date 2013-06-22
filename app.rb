@@ -201,7 +201,7 @@ get '/site_files/text_editor/:filename' do |filename|
 end
 
 post '/site_files/save/:filename' do |filename|
-  halt 'You are not logged in!' if current_site.nil?
+  require_login_ajax
 
   tmpfile = Tempfile.new 'neocities_saving_file'
 
@@ -235,6 +235,10 @@ get '/privacy' do
   slim :'privacy'
 end
 
+before do
+  redirect '/' if request.post? && !csrf_safe?
+end
+
 def sites_name_redirect
   path = request.path.gsub "/sites/#{params[:name]}", ''
   # path += "/#{params[:file]}" unless params[:file].nil?
@@ -244,6 +248,18 @@ end
 
 def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
+end
+
+def require_login_ajax
+  halt 'You are not logged in!' unless signed_in?
+end
+
+def csrf_safe?
+  csrf_token == params[:csrf_token] || csrf_token == request.env['HTTP_X_CSRF_TOKEN']
+end
+
+def csrf_token
+   session[:_csrf_token] ||= SecureRandom.base64(32)
 end
 
 def require_login
