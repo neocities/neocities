@@ -14,9 +14,10 @@ javascript:
 
 .row
   .span8.offset3
-    form method="POST" action="/create"    
+    form method="POST" action="/create"
+      input name="csrf_token" type="hidden" value="#{csrf_token}"
       h2 Create a new Home Page
-    
+
       .row
         .span6
           p First, enter a username. This will also be used as your site path.<br><b>Do not forget this, it will be used to sign in to and manage your home page.</b><br>It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -

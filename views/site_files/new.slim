@@ -13,6 +13,7 @@
 .row
   .span12.text-center
     form method="POST" action="/site_files/upload" enctype="multipart/form-data"
+      input name="csrf_token" type="hidden" value="#{csrf_token}"
       h4 Select a file from your computer:
       h4: input type="file" name="newfile"
       p: input.btn.btn-success.btn-large type="submit" value="Upload File"

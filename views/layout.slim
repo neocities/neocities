@@ -9,6 +9,7 @@ html
     link href="/css/styles.css" rel="stylesheet"
     meta property="og:title" content="NeoCities"
     meta property="og:description" content="NeoCities is the new Geocities. Create your own free home page, and do whatever you want with it."
+    meta name="csrf-token" content="#{csrf_token}"
     script src="/js/jquery.min.js"
 
   body
@@ -39,6 +40,16 @@ html
         == yield
 
   script src="/js/bootstrap.min.js"
+
+  javascript:
+    !function(){
+      var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+      $(document).ajaxSend(function(ev, jqxhr){
+        jqxhr.setRequestHeader('X-CSRF-Token', csrf_token);
+      });
+    }();
+
 
   javascript:
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

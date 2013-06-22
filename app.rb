@@ -232,6 +232,10 @@ get '/privacy' do
   slim :'privacy'
 end
 
+before do
+  redirect '/' if request.post? && !csrf_safe?
+end
+
 def sites_name_redirect
   path = request.path.gsub "/sites/#{params[:name]}", ''
   # path += "/#{params[:file]}" unless params[:file].nil?
@@ -244,15 +248,19 @@ def dashboard_if_signed_in
 end
 
 def require_login_ajax
-  halt 'You are not logged in!' unless signed_in? && csrf_safe
+  halt 'You are not logged in!' unless signed_in?
 end
 
-def csrf_safe
-  (request.referer =~ /.+\.neocities\.org/i).nil?
+def csrf_safe?
+  csrf_token == params[:csrf_token] || csrf_token == request.env['HTTP_X_CSRF_TOKEN']
+end
+
+def csrf_token
+   session[:_csrf_token] ||= SecureRandom.base64(32)
 end
 
 def require_login
-  redirect '/' unless signed_in? && csrf_safe
+  redirect '/' unless signed_in?
 end
 
 def signed_in?
