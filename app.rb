@@ -50,6 +50,7 @@ get '/new' do
 end
 
 get '/dashboard' do
+  require_login
   slim :'dashboard'
 end
 
@@ -208,7 +209,9 @@ post '/site_files/save/:filename' do |filename|
     halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
   end
 
-  tmpfile.write request.body.read
+  input = request.body.read
+  tmpfile.set_encoding input.encoding
+  tmpfile.write input
   tmpfile.close
 
   sanitized_filename = filename.gsub(/[^a-zA-Z_\-.]/, '')
