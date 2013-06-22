@@ -252,7 +252,7 @@ def require_login_ajax
 end
 
 def csrf_safe?
-  csrf_token == params[:csrf_token]
+  csrf_token == params[:csrf_token] || csrf_token == request.env['HTTP_X_CSRF_TOKEN']
 end
 
 def csrf_token
