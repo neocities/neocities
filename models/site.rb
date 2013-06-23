@@ -2,9 +2,10 @@ class Site < Sequel::Model
   # We might need to include fonts in here..
   VALID_MIME_TYPES = ['text/plain', 'text/html', 'text/css', 'application/javascript', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml']
   VALID_EXTENSIONS = %w{ html htm txt text css js jpg jpeg png gif svg md markdown }
+  USERNAME_SHITLIST = %w{ payment secure login signin www ww web } # I thought they were funny personally, but everybody is freaking out so..
   MAX_SPACE = (5242880*2) # 10MB
   MINIMUM_PASSWORD_LENGTH = 5
-  USERNAME_REGEX = /[^\w-]/i
+  BAD_USERNAME_REGEX = /[^\w-]/i
   many_to_one :server
   many_to_many :tags
 
@@ -68,7 +69,7 @@ class Site < Sequel::Model
       errors.add :over_capacity, 'We are currently at capacity, and cannot create your home page. We will fix this shortly. Please come back later and try again, our apologies.'
     end
 
-    if values[:username].nil? || values[:username].empty? || values[:username].match(USERNAME_REGEX)
+    if values[:username].nil? || values[:username].empty? || values[:username].match(BAD_USERNAME_REGEX) || USERNAME_SHITLIST.include?(values[:username])
       errors.add :username, 'A valid username is required.'
     end
 
