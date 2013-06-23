@@ -3,7 +3,7 @@
     div
       h1 Web Sites on NeoCities
       p If you like a site, don't forget to bookmark it!<br>Visitor counts are updated hourly.
-      div style="margin-bottom: 40px": .btn.btn-success Create your NeoCities site now
+      div style="margin-bottom: 40px": a.btn.btn-success href="/new" Create your NeoCities site now
   - count = 0
   - @sites.each_with_index do |site,i|
     - if count == 0
@@ -16,7 +16,7 @@
         .span1
           h5: b style="margin-left: 20px": a href="http://#{site.username}.neocities.org" target="_blank" #{site.username}
         .span3.text-right
-          p style="margin-right: 20px; margin-top: 10px; font-size: 10pt" #{site.hits} visits, updated #{site.updated_at.ago}
+          p style="margin-right: 20px; margin-top: 10px; font-size: 10pt" <strong>#{site.hits} visits</strong>, updated #{site.updated_at.ago}
       a href="http://#{site.username}.neocities.org" target="_blank": img src="/site_screenshots/#{ENV['RACK_ENV'] == 'development' ? 'victoria' : site.username}.jpg"
 
 - if @page_count > 1
