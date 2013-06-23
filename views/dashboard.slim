@@ -44,8 +44,11 @@ javascript:
           - else
             <i class="icon-picture icon-3x"></i>&nbsp;&nbsp; <font style="font-size: 20pt">#{file.filename}</font>
             div style="margin-bottom: 30px"
-              a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br>
-              a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
+              span
+                p To use in an HTML file, paste this text: <code><small>&lt;img src="/#{file.filename}"&gt;</small></code>
+              div
+                a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br>
+                a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
 
     <a href="/site_files/new" class="btn btn-large btn-success">Upload New File</a>
   .span5
