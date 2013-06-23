@@ -45,3 +45,9 @@ DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
 if ENV['RACK_ENV'] == 'development' && Server.count == 0
   Server.create ip: '127.0.0.1', slots_available: 999999
 end
+
+Backburner.configure do |config|
+  config.max_job_retries = 3
+  config.retry_delay = 200
+  config.respond_timeout = 20
+end
