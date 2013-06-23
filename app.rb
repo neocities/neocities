@@ -209,6 +209,23 @@ get '/privacy' do
   slim :'privacy'
 end
 
+get '/admin' do
+  require_admin
+  slim :'admin'
+end
+
+post '/admin/banhammer' do
+  require_admin
+  site = Site[username: params[:username]]
+  binding.pry
+  
+  flash[:success] = 'MISSION ACCOMPLISHED'
+end
+
+def require_admin
+  redirect '/' unless signed_in? && current_site.is_admin
+end
+
 def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
 end

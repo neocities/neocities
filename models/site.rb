@@ -39,18 +39,6 @@ class Site < Sequel::Model
     values[:password] = BCrypt::Password.create plaintext, cost: (self.class.bcrypt_cost || BCrypt::Engine::DEFAULT_COST)
   end
 
-  def after_save
-    if @new_tag_strings
-      @new_tag_strings.each do |new_tag_string|
-        add_tag Tag[name: new_tag_string] || Tag.create(name: new_tag_string)
-      end
-    end
-  end
-
-  def after_create
-    DB['update servers set slots_available=slots_available-1 where id=?', self.server.id].first
-  end
-
   def new_tags=(tags_string)
     tags_string.gsub! /[^a-zA-Z0-9, ]/, ''
     tags = tags_string.split ','
@@ -60,6 +48,26 @@ class Site < Sequel::Model
 
   def before_validation
     self.server ||= Server.with_slots_available
+    super
+  end
+
+  def after_save
+    if @new_tag_strings
+      @new_tag_strings.each do |new_tag_string|
+        add_tag Tag[name: new_tag_string] || Tag.create(name: new_tag_string)
+      end
+    end
+    super
+  end
+
+  def after_create
+    DB['update servers set slots_available=slots_available-1 where id=?', self.server.id].first
+    super
+  end
+
+  def after_destroy
+    FileUtils.rm_rf file_path
+    super
   end
 
   def validate
@@ -88,12 +96,16 @@ class Site < Sequel::Model
     end
   end
 
+  def file_path
+    File.join DIR_ROOT, 'public', 'sites', username
+  end
+
   def file_list
-    Dir.glob(File.join(DIR_ROOT, 'public', 'sites', username, '*')).collect {|p| File.basename(p)}.sort.collect {|sitename| SiteFile.new sitename}
+    Dir.glob(File.join(file_path, '*')).collect {|p| File.basename(p)}.sort.collect {|sitename| SiteFile.new sitename}
   end
 
   def total_space
-    space = Dir.glob(File.join(DIR_ROOT, 'public', 'sites', username, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
+    space = Dir.glob(File.join(file_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
     space.nil? ? 0 : space
   end
 
