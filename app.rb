@@ -8,6 +8,10 @@ use Rack::Session::Cookie, key:          'neocities',
 use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $config['recaptcha_private_key']
 helpers Rack::Recaptcha::Helpers
 
+before do
+  redirect '/' if request.post? && !csrf_safe?
+end
+
 get '/?' do
   dashboard_if_signed_in
   slim :index
@@ -203,10 +207,6 @@ end
 
 get '/privacy' do
   slim :'privacy'
-end
-
-before do
-  redirect '/' if request.post? && !csrf_safe?
 end
 
 def dashboard_if_signed_in
