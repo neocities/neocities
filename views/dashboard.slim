@@ -16,7 +16,7 @@ javascript:
 
     - current_site.file_list.each do |file|
       .row
-        .span4 style="position:relative"
+        .span4
           - if file.ext == 'html' || file.ext == 'htm' || file.ext == 'txt' || file.ext == 'js' || file.ext == 'css' || file.ext == 'md'
             span
               <i class="icon-file-alt icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">#{file.filename}</span>
