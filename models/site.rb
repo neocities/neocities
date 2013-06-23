@@ -65,10 +65,10 @@ class Site < Sequel::Model
     super
   end
 
-  def after_destroy
-    FileUtils.rm_rf file_path
-    super
-  end
+#  def after_destroy
+#    FileUtils.rm_rf file_path
+#    super
+#  end
 
   def validate
     super

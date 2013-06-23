@@ -1,12 +1,19 @@
 .row
-  .span12
+  .span12  
     h1 SECRET NSA BACKDOOR REPORTING ZONE
+
+.row
+  .span6
     
     h2 Ban User for REASONS OF TERRRROROR!
     
     form action="/admin/banhammer" method="POST"
       input name="csrf_token" type="hidden" value="#{csrf_token}"
       p TerrRRRROR Suspect:
-      input type="text" name="username" place=""
+      input type="text" name="username" placeholder="edwardsnowden"
       br
-      input.btn.btn-danger type="submit" value="Warrantlessly Delete"
+      input.btn.btn-danger type="submit" value="Ban"
+  .span6
+    h2 Banned Terrorists
+    - @banned_sites.each do |banned_site|
+      = banned_site.username

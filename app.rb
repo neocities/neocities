@@ -20,7 +20,7 @@ end
 get '/browse' do
   @current_page = params[:current_page] || 1
   @current_page = @current_page.to_i
-  site_dataset = Site.order(:hits.desc, :updated_at.desc).filter(~{updated_at: nil}).paginate(@current_page, 100)
+  site_dataset = Site.order(:hits.desc, :updated_at.desc).filter(is_banned: false).filter(~{updated_at: nil}).paginate(@current_page, 100)
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
   slim :browse
@@ -55,10 +55,7 @@ post '/create' do
     DB.transaction {
       @site.save
 
-      begin
-        FileUtils.mkdir base_path
-      rescue Errno::EEXIST
-      end
+      FileUtils.mkdir base_path
 
       File.write File.join(base_path, 'index.html'), slim(:'templates/index', pretty: true, layout: false)
       File.write File.join(base_path, 'not_found.html'), slim(:'templates/not_found', pretty: true, layout: false)
@@ -77,6 +74,12 @@ post '/signin' do
   dashboard_if_signed_in
   if Site.valid_login? params[:username], params[:password]
     site = Site[username: params[:username]]
+
+    if site.is_banned
+      flash[:error] = 'Invalid login.'
+      redirect '/signin'
+    end
+
     session[:id] = site.id
     redirect '/dashboard'
   else
@@ -211,15 +214,31 @@ end
 
 get '/admin' do
   require_admin
+  @banned_sites = Site.filter(is_banned: true).order(:username).all
   slim :'admin'
 end
 
 post '/admin/banhammer' do
   require_admin
   site = Site[username: params[:username]]
-  binding.pry
-  
+
+  if site.is_banned
+    flash[:error] = 'User is already banned'
+    redirect '/admin'
+  end
+
+  if site.nil?
+    flash[:error] = 'User not found'
+    redirect '/admin'
+  end
+
+  DB.transaction {
+    FileUtils.mv site_base_path(site.username), File.join(settings.public_folder, 'banned_sites', site.username)
+    site.update is_banned: true
+  }
+
   flash[:success] = 'MISSION ACCOMPLISHED'
+  redirect '/admin'
 end
 
 def require_admin
