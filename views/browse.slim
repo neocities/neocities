@@ -1,8 +1,9 @@
 .row
   .span12.text-center
-    h1 Web Sites on NeoCities
-    p If you like a site, don't forget to bookmark it!<br>Visitor counts are updated hourly.<br>Want to make your own site? <a href="/new">Click here</a>!
-
+    div
+      h1 Web Sites on NeoCities
+      p If you like a site, don't forget to bookmark it!<br>Visitor counts are updated hourly.
+      div style="margin-bottom: 40px": .btn.btn-success Create your NeoCities site now
   - count = 0
   - @sites.each_with_index do |site,i|
     - if count == 0
