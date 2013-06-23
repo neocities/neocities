@@ -234,7 +234,8 @@ post '/admin/banhammer' do
 
   DB.transaction {
     FileUtils.mv site_base_path(site.username), File.join(settings.public_folder, 'banned_sites', site.username)
-    site.update is_banned: true
+    site.is_banned = true
+    site.save(validate: false)
   }
 
   flash[:success] = 'MISSION ACCOMPLISHED'

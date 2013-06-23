@@ -77,7 +77,7 @@ class Site < Sequel::Model
       errors.add :over_capacity, 'We are currently at capacity, and cannot create your home page. We will fix this shortly. Please come back later and try again, our apologies.'
     end
 
-    if values[:username].nil? || values[:username].empty? || values[:username].match(BAD_USERNAME_REGEX) # || USERNAME_SHITLIST.include?(values[:username])
+    if new? && (values[:username].nil? || values[:username].empty? || values[:username].match(BAD_USERNAME_REGEX)) # || USERNAME_SHITLIST.include?(values[:username])
       errors.add :username, 'A valid username is required.'
     end
 
