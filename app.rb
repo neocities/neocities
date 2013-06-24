@@ -54,7 +54,7 @@ end
 
 post '/create' do
   dashboard_if_signed_in
-  @site = Site.new username: params[:username], password: params[:password], email: params[:email], new_tags: params[:tags], is_nsfw: params[:is_nsfw]
+  @site = Site.new username: params[:username], password: params[:password], email: params[:email], new_tags: params[:tags], is_nsfw: params[:is_nsfw], ip: request.ip
 
   recaptcha_is_valid = recaptcha_valid?
 
