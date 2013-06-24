@@ -281,7 +281,7 @@ post '/admin/banhammer' do
     site.save validate: false
   }
 
-  if !['127.0.0.1', 'nil', ''].include? site.ip
+  if !['127.0.0.1', nil, ''].include? site.ip
     `sudo ufw deny from #{site.ip}`
   end
 
