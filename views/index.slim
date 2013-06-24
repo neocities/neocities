@@ -2,36 +2,36 @@
   .span12
     
     h1 Your free home page is waiting.. once again.
-  
     h3 NeoCities allows you to create your own free web site!
     
     div style="margin-top: 30px"
-    
-      table.table.table-bordered
-        tbody
-          tr
-            td: b What kind of look and feel can my web site have?
-            td Anything you want! It's just HTML. It's your site, your vision. You can make it as normal or crazy as you want. You're the artist, you're in control. Make a site about you, or make it about cats that play Dungeons and Dragons, or make a Daft Punk Fan Site, or a Daft Punk Sucks Site.
-          tr
-            td: b What information can I put on it?
-            td Anything you want, as long as it's not illegal to host it in the United States (note to government: stuff that is <i>actually illegal</i>, not just stuff that embarrasses you or reveals your unconstitutional (and hence illegal) spying programs). We don't care if it offends somebody, or you remain anonymous.
-          tr
-            td: b Do I own my content?
-            td Yes, you do. It's yours. We're just giving you a place to host it.
-          tr
-            td: b How much space do I get?
-            td 10 Megabytes. You can have HTML, Images, Text, CSS, Markdown, and JavaScript. That's it.
-          tr
-            td: b How are you paying for this?
-            td With donations. It's not that expensive. If you feel this is a useful service, <a href="/about">click here to contribute!</a>
 
+.row
+  .span4
+    a.btn.btn-large.btn-success style="font-size: 20pt; margin-bottom: 30px" href="/browse" Browse Existing Sites
+    a.btn.btn-large.btn-success style="font-size: 20pt" href="/new" Create a Web Site
+    h5 Returning users: <a href="/signin">Sign In</a>
+  .span8
     .row
-      .span5.offset2
-        a.btn.btn-large.btn-success style="font-size: 20pt" href="/browse" Browse Existing Sites
-      .span5
-        a.btn.btn-large.btn-success style="font-size: 20pt" href="/new" Create a Web Site
-        h5 Returning users: <a href="/signin">Sign In</a>
+      .span4
+        strong What kind of look and feel can my web site have?
+        p Anything you want! It's just HTML. It's your site, your vision. You can make it as normal or crazy as you want. You're the artist, you're in control. Make a site about you, or make it about cats that play Dungeons and Dragons, or make a Daft Punk Fan Site, or a Daft Punk Sucks Site.
+      .span4
+        strong What information can I put on it?
+        p Almost anything, as long as it's not illegal to host it. We don't care if it offends somebody, or you remain anonymous. And no spam.
     .row
-      .span6.offset3
-        h4 style="line-height: 22pt" There are <b>#{Server.first.slots_available}</b> web site spaces remaining.<br>After that, we need your help to get another server.
-        div.text-center: a class="btn btn-large btn-success" href="/about" Help Neocities Prosper
+      .span4
+        strong Do I own my content?
+        p Yes, you do. It's yours. We're just giving you a place to host it.
+      .span4
+        strong How much space do I get?
+        p 10 Megabytes. You can have HTML, Images, Text, CSS, Markdown, and JavaScript. That's it.
+    .row
+      .span4
+        strong How are you paying for this?
+        p With donations. If you feel this is a useful service,<br><a href="/about">help us by contributing!</a>        
+        
+.row
+  .span6.offset3
+    h4 style="line-height: 22pt" There are <b>#{Server.first.slots_available}</b> web site spaces remaining.<br>After that, we need your help to get another server.
+    div.text-center: a class="btn btn-large btn-success" href="/about" Help Neocities Prosper
