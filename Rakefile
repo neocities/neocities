@@ -34,3 +34,8 @@ task :parse_logs => [:environment] do
   end
 
 end
+
+desc 'Update screenshots'
+task :update_screenshots => [:environment] do
+  Site.select(:username).filter(is_banned: false).filter(~{updated_at: nil}).order(:updated_at.desc).all.collect {|s| Backburner.enqueue ScreenshotJob, s.username }
+end
