@@ -26,11 +26,12 @@
             td With donations. It's not that expensive. If you feel this is a useful service, <a href="/about">click here to contribute!</a>
 
     .row
-      .span5.offset1
-        h2: a href="/browse" BROWSE EXISTING SITES
-      .span5.offset1
-        h2: a href="/new" CREATE A WEB SITE
+      .span5.offset2
+        a.btn.btn-large.btn-success style="font-size: 20pt" href="/browse" Browse Existing Sites
+      .span5
+        a.btn.btn-large.btn-success style="font-size: 20pt" href="/new" Create a Web Site
         h5 Returning users: <a href="/signin">Sign In</a>
     .row
       .span6.offset3
-        h4 style="line-height: 22pt" There are <b>#{Server.first.slots_available}</b> web site spaces remaining.<br>After that, we need your help to get another server.<br><a href="/about">HELP NEOCITIES PROSPER</a>
+        h4 style="line-height: 22pt" There are <b>#{Server.first.slots_available}</b> web site spaces remaining.<br>After that, we need your help to get another server.
+        div.text-center: a class="btn btn-large btn-success" href="/about" Help Neocities Prosper

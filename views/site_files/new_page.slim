@@ -1,0 +1,25 @@
+- if @errors
+  .row
+    .span8.offset2
+      div.alert.alert-error
+        h3 There were errors, please correct:
+        - @errors.each do |error|
+          h5 = error
+
+.row
+  .span12.text-center
+    h1 Create new HTML page
+
+.row
+  .span12.text-center
+    form method="POST" action="/site_files/create_page" enctype="multipart/form-data"
+      input name="csrf_token" type="hidden" value="#{csrf_token}"
+      h4 What's the name of your page?
+      h4: input type="text" name="pagefilename".html
+      p: input.btn.btn-success.btn-large type="submit" value="Create Page"
+
+.row
+  .span6.offset3
+    h5 Note: We will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .
+    h5 Page must not already exist.
+    h5 If you want to make this the index page (and an index page doesn't exist), name it <strong>index.html</strong>.

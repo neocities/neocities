@@ -35,7 +35,7 @@ html
       - flash.keys.each do |key|
         div class="alert alert-#{key}"
           button.close type="button" data-dismiss="alert" &times;
-          = flash[key]
+          == flash[key]
       container
         == yield
 

@@ -28,7 +28,12 @@ end
 
 get '/blog' do
   # expires 500, :public, :must_revalidate
-  return File.read File.join(DIR_ROOT, 'public', 'sites', 'kyledrake', 'blog.html')
+  return File.read File.join(DIR_ROOT, 'public', 'sites', 'blog', 'blog.html')
+end
+
+get '/blog/:id-:name' do
+  # expires 500, :public, :must_revalidate
+  return File.read File.join(DIR_ROOT, 'public', 'sites', 'blog', "blog-#{params[:id]}.html")
 end
 
 get '/new' do
@@ -99,13 +104,45 @@ get '/signout' do
   redirect '/'
 end
 
+get '/about' do
+  slim :'about'
+end
+
+get '/site_files/new_page' do
+  require_login
+  slim :'site_files/new_page'
+end
+
+post '/site_files/create_page' do
+  require_login
+  @errors = []
+
+  params[:pagefilename].gsub!(/[^a-zA-Z0-9_\-.]/, '')
+  params[:pagefilename].gsub!(/\.html$/i, '')
+
+  if params[:pagefilename].nil? || params[:pagefilename].empty?
+    @errors << 'You must provide a file name.'
+    halt slim(:'site_files/new_page')
+  end
+
+  name = "#{params[:pagefilename]}.html"
+  path = site_file_path name
+
+  if File.exist? path
+    @errors << %{Web page "#{name}" already exists! Choose another name.}
+    halt slim(:'site_files/new_page')
+  end
+
+  File.write path, slim(:'templates/index', pretty: true, layout: false)
+
+  flash[:success] = %{#{name} was created! <a style="color: #FFFFFF; text-decoration: underline" href="/site_files/text_editor/#{name}">Click here to edit it</a>.}
+
+  redirect '/dashboard'
+end
+
 get '/site_files/new' do
   require_login
   slim :'site_files/new'
-end
-
-get '/about' do
-  slim :'about'
 end
 
 post '/site_files/upload' do

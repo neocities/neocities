@@ -64,8 +64,11 @@ javascript:
     
     .row style="margin-top: 20px"
       .span5
-      
-        <a href="/site_files/new" class="btn btn-large btn-success" style="margin-bottom:20px">Upload New File</a>
+        div
+          a href="/site_files/new" class="btn btn-large btn-success" style="margin-bottom:20px" Upload New File
+        div
+          a href="/site_files/new_page" class="btn btn-large btn-success" style="margin-bottom: 20px" Create New HTML Page
+        
         h4: a href="/site_files/#{current_site.username}.zip" Download Entire Site
 
 form method="POST" action="/site_files/delete" id="deleteFilenameForm"
