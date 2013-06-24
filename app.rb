@@ -26,6 +26,11 @@ get '/browse' do
   slim :browse
 end
 
+get '/blog' do
+  # expires 500, :public, :must_revalidate
+  return File.read File.join(DIR_ROOT, 'public', 'sites', 'kyledrake', 'blog.html')
+end
+
 get '/new' do
   dashboard_if_signed_in
   @site = Site.new
