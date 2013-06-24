@@ -256,7 +256,8 @@ end
 
 get '/admin' do
   require_admin
-  @banned_sites = Site.filter(is_banned: true).order(:username).all
+  @banned_sites = Site.select(:username).filter(is_banned: true).order(:username).all
+  @nsfw_sites = Site.select(:username).filter(is_nsfw: true).order(:username).all
   slim :'admin'
 end
 
@@ -277,8 +278,28 @@ post '/admin/banhammer' do
   DB.transaction {
     FileUtils.mv site_base_path(site.username), File.join(settings.public_folder, 'banned_sites', site.username)
     site.is_banned = true
-    site.save(validate: false)
+    site.save validate: false
   }
+
+  if !['127.0.0.1', 'nil', ''].include? site.ip
+    `sudo ufw deny from #{site.ip}`
+  end
+
+  flash[:success] = 'MISSION ACCOMPLISHED'
+  redirect '/admin'
+end
+
+post '/admin/mark_nsfw' do
+  require_admin
+  site = Site[username: params[:username]]
+
+  if site.nil?
+    flash[:error] = 'User not found'
+    redirect '/admin'
+  end
+
+  site.is_nsfw = true
+  site.save validate: false
 
   flash[:success] = 'MISSION ACCOMPLISHED'
   redirect '/admin'

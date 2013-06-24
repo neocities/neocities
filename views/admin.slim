@@ -5,11 +5,11 @@
 .row
   .span6
     
-    h2 Ban User for REASONS OF TERRRROROR!
+    h2 Ban User
     
     form action="/admin/banhammer" method="POST"
       input name="csrf_token" type="hidden" value="#{csrf_token}"
-      p TerrRRRROR Suspect:
+      p Site Name:
       input type="text" name="username" placeholder="edwardsnowden"
       br
       input.btn.btn-danger type="submit" value="Ban"
@@ -17,4 +17,21 @@
     h2 Banned Terrorists
     - @banned_sites.each do |banned_site|
       = banned_site.username
+      br
+
+
+.row
+  .span6
+    h2 Mark NSFW
+    
+    form action="/admin/mark_nsfw" method="POST"
+      input name="csrf_token" type="hidden" value="#{csrf_token}"
+      p Site name:
+      input type="text" name="username" placeholder="edwardsnowden"
+      br
+      input.btn.btn-danger type="submit" value="Mark NSFW"
+  .span6
+    h2 NSFW Sites
+    - @nsfw_sites.each do |nsfw_site|
+      = nsfw_site.username
       br
