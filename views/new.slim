@@ -58,6 +58,14 @@ javascript:
         .span6
           p: input name="tags" type="text" style="width: 400px" placeholder="pokemon, video games, bulbasaur" value="#{params[:tags]}"
 
+      .row
+        .span6
+          p 
+            | If your page contains objectionable (adult) content, check this box. Any objectionable sites without this checkbox will be removed.
+          label.checkbox style="margin-bottom: 20px"
+            input name="is_nsfw" type="hidden" value="false"
+            input name="is_nsfw" type="checkbox" value="true" My page contains objectionable content
+          
 
       .row
         .span6
