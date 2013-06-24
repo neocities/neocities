@@ -15,7 +15,7 @@ class ScreenshotJob
     driver = Selenium::WebDriver.for :remote, url: $config['phantomjs_url'][rand($config['phantomjs_url'].length)], desired_capabilities: caps
     driver.manage.window.resize_to 1280, 720
 
-    wait = Selenium::WebDriver::Wait.new(:timeout => 5) # seconds
+    wait = Selenium::WebDriver::Wait.new(:timeout => 30) # seconds
     wait.until {
       driver.navigate.to "http://#{username}.neocities.org"
       driver.save_screenshot screenshot.path

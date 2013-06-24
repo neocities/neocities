@@ -49,5 +49,5 @@ end
 Backburner.configure do |config|
   config.max_job_retries = 3
   config.retry_delay = 200
-  config.respond_timeout = 20
+  config.respond_timeout = 120
 end
