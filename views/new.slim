@@ -60,11 +60,8 @@ javascript:
 
       .row
         .span6
-          p 
-            | If your page will contain objectionable (adult) content, check this box.
-          label.checkbox style="margin-bottom: 20px"
-            input name="is_nsfw" type="hidden" value="false"
-            input name="is_nsfw" type="checkbox" value="true" My page contains objectionable content
+          input name="is_nsfw" type="hidden" value="false"
+          p: strong If your page will contain objectionable (adult) content, check this box:&nbsp;&nbsp;&nbsp;<input name="is_nsfw" type="checkbox" value="true" style="margin-top: 0px">
           
 
       .row
