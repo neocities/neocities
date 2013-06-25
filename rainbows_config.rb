@@ -3,7 +3,7 @@ Rainbows! do
 
   use :ThreadPool
 
-  client_max_body_size 1*1024*1024 # 1 Megabyte
+  client_max_body_size 12*1024*1024 # 12 Megabytes
 
   worker_processes 6
   worker_connections 32
