@@ -28,12 +28,12 @@ end
 
 get '/blog' do
   # expires 500, :public, :must_revalidate
-  return File.read File.join(DIR_ROOT, 'public', 'sites', 'blog', 'blog.html')
+  return File.read File.join(DIR_ROOT, 'public', 'sites', 'blog', 'index.html')
 end
 
-get '/blog/:id-:name' do
+get '/blog/:article' do |article|
   # expires 500, :public, :must_revalidate
-  return File.read File.join(DIR_ROOT, 'public', 'sites', 'blog', "blog-#{params[:id]}.html")
+  return File.read File.join(DIR_ROOT, 'public', 'sites', 'blog', "#{article}.html")
 end
 
 get '/new' do

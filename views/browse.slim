@@ -14,7 +14,14 @@
 
       .row
         .span1
-          h5: b style="margin-left: 20px": a href="http://#{site.username}.neocities.org" target="_blank" #{site.username}
+          h5
+            b style="margin-left: 20px"
+              - if site.username.length > 14
+                a href="http://#{site.username}.neocities.org" target="_blank" rel="tooltip" title="#{site.username}" = site.username[0..14]+'..'
+              - else
+                a href="http://#{site.username}.neocities.org" target="_blank" = site.username
+            
+              
         .span3.text-right
           p style="margin-right: 20px; margin-top: 10px; font-size: 10pt" <strong>#{site.hits} visits</strong>, updated #{site.updated_at.ago}
       a href="http://#{site.username}.neocities.org" target="_blank": img src="/site_screenshots/#{ENV['RACK_ENV'] == 'development' ? 'victoria' : site.username}.jpg"
@@ -30,3 +37,9 @@
 
       - if @current_page != @page_count
         li: a href="/browse?current_page=#{@current_page + 1}": i.icon-arrow-right style="font-size: 12pt"
+
+javascript:
+
+  $(document).ready(function () {
+    $("[rel='tooltip']").tooltip();
+  });
