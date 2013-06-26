@@ -17,7 +17,7 @@
           h5
             b style="margin-left: 20px"
               - if site.username.length > 17
-                a href="http://#{site.username}.neocities.org" target="_blank" data-toggle="tooltip" data-original-title="Default tooltip" = site.username[0..17]+'..'
+                a href="http://#{site.username}.neocities.org" target="_blank" rel="tooltip" title="#{site.username}" = site.username[0..17]+'..'
               - else
                 a href="http://#{site.username}.neocities.org" target="_blank" = site.username
             
