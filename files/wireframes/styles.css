@@ -1,0 +1,68 @@
+a { text-decoration: none; }
+h1, h2, h3, h4, h5, h6, pre, code, li, p {
+	font-size: 1em;
+	font-weight: normal;
+}
+ul, ol, dl, ul, li, dl, dt, dd, h1, h2, h3, h4, h5, h6, pre,
+form, body, html, p, blockquote, fieldset, input, td, th, textarea, abbr, code{
+	padding: 0;
+	margin: 0;
+    font-family: inherit;
+    border: 0;
+}
+a img, a:link img, a:visited img, a:hover img, a:visited:hover img {
+	border: 0;
+}
+li {
+    list-style: none;
+}
+a {
+    color: #2D63B9;
+}
+a:hover {
+	color: #3A7EE6;
+}
+body {
+    font-family: "Lucida Grande";
+    font-size: 11px;
+    -webkit-user-select: none;
+	float: left;
+	width: 100%;
+	margin-bottom: 2em;
+    background: #FBF4D5;
+}
+#header {
+    background: #F5E190;
+    border-top: 6px solid #85B5B6;
+    padding-top: 42px;
+    padding-bottom: 35px;
+}
+h1 {
+    width: 341px;
+    height: 94px;
+    background: url(logo.png);
+    margin: 0 auto 0 auto;
+}
+h1 span {
+    display: none;
+}
+#content {
+    background: #fff;
+    padding: 23px 0;
+}
+#home-buttons {
+    width: 804px;
+    height: 482px;
+    position: relative;
+    margin: 0 auto 0 auto;
+}
+#home-buttons .button {
+    position: absolute;
+}
+#home-buttons .button.about { left: 0; top: 0; }
+#home-buttons .button.weddingparty { left: 0; top: 328px; }
+#home-buttons .button.wedding { left: 269px; top: 0; }
+#home-buttons .button.photos { left: 539px; top: 0; }
+#home-buttons .button.accommodations { left: 539px; top: 328px; }
+#footer {
+}
