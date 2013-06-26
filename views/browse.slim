@@ -16,8 +16,8 @@
         .span1
           h5
             b style="margin-left: 20px"
-              - if site.username.length > 17
-                a href="http://#{site.username}.neocities.org" target="_blank" rel="tooltip" title="#{site.username}" = site.username[0..17]+'..'
+              - if site.username.length > 14
+                a href="http://#{site.username}.neocities.org" target="_blank" rel="tooltip" title="#{site.username}" = site.username[0..14]+'..'
               - else
                 a href="http://#{site.username}.neocities.org" target="_blank" = site.username
             
