@@ -15,7 +15,7 @@
     form method="POST" action="/site_files/create_page" enctype="multipart/form-data"
       input name="csrf_token" type="hidden" value="#{csrf_token}"
       h4 What's the name of your page?
-      h4: input type="text" name="pagefilename".html
+      h4: input type="text" name="pagefilename" autocapitalize="off" autocorrect="off".html
       p: input.btn.btn-success.btn-large type="submit" value="Create Page"
 
 .row
