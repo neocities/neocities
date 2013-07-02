@@ -73,6 +73,17 @@ javascript:
         
         h4: a href="/site_files/#{current_site.username}.zip" Download Entire Site
 
+    .row style="margin-top: 20px"
+      .span5
+        <i class="icon-question-sign icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">Need to learn web design?</span>
+        div
+          span
+            i class="icon-globe" &nbsp;&nbsp;
+            a href="http://codepupil.com/" target="_blank" CodePupil.com teaches with games<br>
+          span
+            i class="icon-globe" &nbsp;&nbsp;
+            a href="http://www.codecademy.com/tracks/web" target="_blank" Online lessons at Codecademy.com<br>
+
 form method="POST" action="/site_files/delete" id="deleteFilenameForm"
   input name="csrf_token" type="hidden" value="#{csrf_token}"
   input type="hidden" id="deleteFilenameInput" name="filename"
