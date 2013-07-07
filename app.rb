@@ -52,6 +52,11 @@ get '/signin' do
   slim :'signin'
 end
 
+get '/settings' do
+  require_login
+  slim :'settings'
+end
+
 post '/create' do
   dashboard_if_signed_in
   @site = Site.new username: params[:username], password: params[:password], email: params[:email], new_tags: params[:tags], is_nsfw: params[:is_nsfw], ip: request.ip
@@ -111,6 +116,60 @@ end
 get '/site_files/new_page' do
   require_login
   slim :'site_files/new_page'
+end
+
+post '/change_password' do
+  require_login
+
+  if !Site.valid_login?(current_site.username, params[:current_password])
+    current_site.errors.add :password, 'Your provided password does not match the current one.'
+    halt slim(:'settings')
+  end
+
+  current_site.password = params[:new_password]
+  current_site.valid?
+
+  if params[:new_password] != params[:new_password_confirm]
+    current_site.errors.add :password, 'New passwords do not match.'
+  end
+
+  if current_site.errors.empty?
+    current_site.save
+    flash[:success] = 'Successfully changed password.'
+    redirect '/settings'
+  else
+    halt slim(:'settings')
+  end
+end
+
+post '/change_name' do
+  require_login
+  current_username = current_site.username
+  
+  if current_site.username == params[:name]
+    flash[:error] = 'You already have this name.'
+    redirect '/settings'
+  end
+  
+  current_site.username = params[:name]
+  
+  if current_site.valid?
+    DB.transaction {
+      current_site.save
+      FileUtils.mv site_base_path(current_username), site_base_path(current_site.username)
+    }
+    
+    flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
+    redirect '/settings'
+  else
+    halt slim(:'settings')
+  end
+end
+
+post '/change_nsfw' do
+  require_login
+  current_site.update is_nsfw: params[:is_nsfw]
+  redirect '/settings'
 end
 
 post '/site_files/create_page' do
