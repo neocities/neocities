@@ -1,7 +1,8 @@
 development:
-  database: 'postgres://localhost/neocities'
+  database: 'postgres://neocities@127.0.0.1/neocities'
   database_pool: 1
-  session_secret: SETSOMETHINGHERE
-  recaptcha_public_key: ddsfsdfsdf
-  recaptcha_private_key: fsdgfdsdfd
-  phantomjs_url: http://localhost:40000
+  session_secret: SECRET GOES HERE
+  recaptcha_public_key: ENTER PUBLIC KEY HERE
+  recaptcha_private_key: ENTER PRIVATE KEY HERE
+  phantomjs_url:
+    - http://localhost:8910

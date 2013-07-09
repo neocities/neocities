@@ -20,7 +20,10 @@ end
 get '/browse' do
   @current_page = params[:current_page] || 1
   @current_page = @current_page.to_i
-  site_dataset = Site.order(:updated_at.desc, :hits.desc).filter(is_nsfw: false).filter(is_banned: false).filter(~{updated_at: nil}).paginate(@current_page, 201)
+  site_dataset = Site.order(:updated_at.desc, :hits.desc).filter(is_banned: false).filter(~{updated_at: nil}).paginate(@current_page, 201)
+
+  site_dataset.filter! is_nsfw: (!params[:is_nsfw].nil? ? true : false)
+
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
   slim :browse
