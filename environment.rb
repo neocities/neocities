@@ -18,6 +18,10 @@ DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $c
 
 Dir.glob('workers/*.rb').each {|w| require File.join(DIR_ROOT, "/#{w}") }
 
+Backburner.configure do |config|
+  config.default_worker = Backburner::Workers::ThreadsOnFork
+end
+
 if defined?(Pry)
   Pry.commands.alias_command 'c', 'continue'
   Pry.commands.alias_command 's', 'step'
@@ -47,7 +51,7 @@ if ENV['RACK_ENV'] == 'development' && Server.count == 0
 end
 
 Backburner.configure do |config|
-  config.max_job_retries = 3
+  config.max_job_retries = 10
   config.retry_delay = 200
   config.respond_timeout = 120
 end

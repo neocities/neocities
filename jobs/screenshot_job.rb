@@ -29,7 +29,7 @@ class ScreenshotJob
     img_list.new_image(img_list.first.columns, img_list.first.rows) { self.background_color = "white" }
     img = img_list.reverse.flatten_images
     img.crop!(0, 0, 1280, 720)
-    img.resize! 600, 400
+    img.resize! 500, 300
     img.write File.join(DIR_ROOT, 'public', 'site_screenshots', "#{username}.jpg")
   end
 end
