@@ -295,7 +295,7 @@ post '/site_files/save/:filename' do |filename|
   tmpfile.write input
   tmpfile.close
 
-  sanitized_filename = filename.gsub(/[^a-zA-Z_\-.]/, '')
+  sanitized_filename = filename.gsub(/[^a-zA-Z0-9_\-.]/, '')
   dest_path = File.join site_base_path(current_site.username), sanitized_filename
 
   FileUtils.mv tmpfile.path, dest_path
