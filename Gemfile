@@ -12,7 +12,7 @@ gem 'rubyzip'
 gem 'rack-recaptcha',     require: 'rack/recaptcha'
 gem 'rmagick',            require: nil
 gem 'selenium-webdriver', require: nil
-gem 'backburner'
+gem 'sidekiq'
 gem 'ago'
 
 platform :mri do

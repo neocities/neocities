@@ -1,5 +1,4 @@
 require "rake/testtask"
-require 'backburner/tasks'
 
 task :environment do
   require './environment.rb'
@@ -37,5 +36,7 @@ end
 
 desc 'Update screenshots'
 task :update_screenshots => [:environment] do
-  Site.select(:username).filter(is_banned: false).filter(~{updated_at: nil}).order(:updated_at.desc).all.collect {|s| Backburner.enqueue ScreenshotJob, s.username }
+  Site.select(:username).filter(is_banned: false).filter(~{updated_at: nil}).order(:updated_at.desc).all.collect {|s|
+    ScreenshotWorker.perform_async s.username
+  }
 end

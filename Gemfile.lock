@@ -5,18 +5,16 @@ GEM
     ago (0.1.5)
       hoe (>= 1.12.2)
     ansi (1.4.3)
-    backburner (0.4.2)
-      beaneater (~> 0.3.1)
-      dante (~> 0.1.5)
     bcrypt-ruby (3.0.1)
-    beaneater (0.3.1)
     builder (3.2.0)
+    celluloid (0.14.1)
+      timers (>= 1.0.0)
     childprocess (0.3.9)
       ffi (~> 1.0, >= 1.0.11)
     coderay (1.0.9)
     columnize (0.3.6)
+    connection_pool (1.1.0)
     crack (0.3.2)
-    dante (0.1.5)
     debugger (1.6.0)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
@@ -74,6 +72,8 @@ GEM
     raindrops (0.10.0)
     rake (10.0.4)
     redis (3.0.4)
+    redis-namespace (1.3.0)
+      redis (~> 3.0.0)
     rmagick (2.13.2)
     rubyzip (0.9.9)
     selenium-webdriver (2.33.0)
@@ -87,6 +87,12 @@ GEM
       sequel (>= 3.39.0)
     shotgun (0.9)
       rack (>= 1.0)
+    sidekiq (2.12.4)
+      celluloid (>= 0.14.1)
+      connection_pool (>= 1.0.0)
+      json
+      redis (>= 3.0)
+      redis-namespace
     simplecov (0.7.1)
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
@@ -105,6 +111,7 @@ GEM
     slop (3.4.5)
     temple (0.6.5)
     tilt (1.4.1)
+    timers (1.1.0)
     unicorn (4.6.2)
       kgio (~> 2.6)
       rack
@@ -119,7 +126,6 @@ PLATFORMS
 
 DEPENDENCIES
   ago
-  backburner
   bcrypt-ruby
   fabrication
   faker
@@ -147,6 +153,7 @@ DEPENDENCIES
   sequel
   sequel_pg
   shotgun
+  sidekiq
   simplecov
   sinatra
   sinatra-flash

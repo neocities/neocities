@@ -234,7 +234,7 @@ post '/site_files/upload' do
   FileUtils.mv params[:newfile][:tempfile].path, dest_path
   File.chmod(0640, dest_path) if self.class.production?
 
-  Backburner.enqueue(ScreenshotJob, current_site.username) if sanitized_filename =~ /index\.html/
+  ScreenshotWorker.perform_async(current_site.username) if sanitized_filename =~ /index\.html/
 
   current_site.update updated_at: Time.now
 
@@ -301,7 +301,7 @@ post '/site_files/save/:filename' do |filename|
   FileUtils.mv tmpfile.path, dest_path
   File.chmod(0640, dest_path) if self.class.production?
 
-  Backburner.enqueue(ScreenshotJob, current_site.username) if sanitized_filename =~ /index\.html/
+  ScreenshotWorker.perform_async(current_site.username) if sanitized_filename =~ /index\.html/
 
   current_site.update updated_at: Time.now
 

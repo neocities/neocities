@@ -18,10 +18,6 @@ DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $c
 
 Dir.glob('workers/*.rb').each {|w| require File.join(DIR_ROOT, "/#{w}") }
 
-Backburner.configure do |config|
-  config.default_worker = Backburner::Workers::ThreadsOnFork
-end
-
 if defined?(Pry)
   Pry.commands.alias_command 'c', 'continue'
   Pry.commands.alias_command 's', 'step'
@@ -48,12 +44,6 @@ DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
 
 if ENV['RACK_ENV'] == 'development' && Server.count == 0
   Server.create ip: '127.0.0.1', slots_available: 999999
-end
-
-Backburner.configure do |config|
-  config.max_job_retries = 10
-  config.retry_delay = 200
-  config.respond_timeout = 120
 end
 
 class Sinatra::Base

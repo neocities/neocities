@@ -1,12 +1,10 @@
 require 'selenium-webdriver'
 require 'RMagick'
 
-class ScreenshotJob
-  include Backburner::Queue
+class ScreenshotWorker
+  include Sidekiq::Worker
 
-  queue_priority 1000
-
-  def self.perform(username)
+  def perform(username)
     screenshot = Tempfile.new 'neocities_screenshot'
     screenshot.close
 
