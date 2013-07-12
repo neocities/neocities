@@ -367,6 +367,57 @@ post '/admin/mark_nsfw' do
   redirect '/admin'
 end
 
+get '/password_reset' do
+  slim :'password_reset'
+end
+
+post '/send_password_reset' do
+  site = Site[email: params[:email]]
+
+  if site
+    site.update password_reset_token: token
+
+    token = SecureRandom.uuid.gsub('-', '')
+
+    body = <<-EOT
+Hello! This is the NeoCities cat, and I have received a password reset request for your e-mail address. Purrrr.
+
+Go to this URL to reset your password: http://neocities.org/password_reset_confirm?code=#{token}
+
+If you didn't request this reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
+
+Meow,
+the NeoCities Cat
+    EOT
+
+    body.strip!
+
+    EmailWorker.perform_async({
+      to: params[:email],
+      subject: '[NeoCities] Password Reset',
+      body: body
+    })
+  end
+
+  flash[:success] = 'If your email was valid (and used by a site), the NeoCities Cat will send an e-mail to your account with password reset instructions.'
+  redirect '/'
+end
+
+get '/password_reset_confirm' do
+  site = Site[password_reset_token: params[:token]]
+
+  if site
+    site.password = params[:token]
+    site.save
+
+    flash[:success] = 'Your password has been changed to the token sent in your e-mail. Please login and change your password in the settings page as soon as possible.'
+  else
+    flash[:error] = 'Could not find a site with this token.'
+  end
+  
+  redirect '/'
+end
+
 def require_admin
   redirect '/' unless signed_in? && current_site.is_admin
 end

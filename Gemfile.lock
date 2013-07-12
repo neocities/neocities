@@ -34,8 +34,12 @@ GEM
     kgio (2.8.0)
     magic (0.2.6)
       ffi (>= 0.6.3)
+    mail (2.5.4)
+      mime-types (~> 1.16)
+      treetop (~> 1.4.8)
     metaclass (0.0.1)
     method_source (0.8.1)
+    mime-types (1.23)
     minitest (4.7.4)
     minitest-reporters (0.14.19)
       ansi
@@ -46,6 +50,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.7.3)
     pg (0.15.1)
+    polyglot (0.3.3)
     powerbar (1.0.11)
       ansi (~> 1.4.0)
       hashie (>= 1.1.0)
@@ -112,6 +117,9 @@ GEM
     temple (0.6.5)
     tilt (1.4.1)
     timers (1.1.0)
+    treetop (1.4.14)
+      polyglot
+      polyglot (>= 0.3.1)
     unicorn (4.6.2)
       kgio (~> 2.6)
       rack
@@ -134,6 +142,7 @@ DEPENDENCIES
   jruby-openssl
   json
   magic
+  mail
   minitest
   minitest-reporters
   mocha

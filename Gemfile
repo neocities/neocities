@@ -14,6 +14,7 @@ gem 'rmagick',            require: nil
 gem 'selenium-webdriver', require: nil
 gem 'sidekiq'
 gem 'ago'
+gem 'mail'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

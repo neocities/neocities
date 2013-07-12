@@ -34,6 +34,7 @@ Sidekiq.configure_client do |config|
 end
 
 require File.join(DIR_ROOT, 'workers', 'screenshot_worker.rb')
+require File.join(DIR_ROOT, 'workers', 'email_worker.rb')
 
 Sequel.datetime_class = Time
 Sequel.extension :pagination
