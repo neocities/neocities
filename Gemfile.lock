@@ -87,7 +87,7 @@ GEM
       sequel (>= 3.39.0)
     shotgun (0.9)
       rack (>= 1.0)
-    sidekiq (2.12.4)
+    sidekiq (2.13.0)
       celluloid (>= 0.14.1)
       connection_pool (>= 1.0.0)
       json
