@@ -3,7 +3,7 @@ require 'RMagick'
 
 class ScreenshotWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :screenshots, retry: true, backtrace: true
+  sidekiq_options queue: :screenshots, retry: 1, backtrace: true
 
   def perform(username)
     screenshot = Tempfile.new 'neocities_screenshot'
@@ -14,7 +14,7 @@ class ScreenshotWorker
     driver = Selenium::WebDriver.for :remote, url: $config['phantomjs_url'][rand($config['phantomjs_url'].length)], desired_capabilities: caps
     driver.manage.window.resize_to 1280, 720
 
-    wait = Selenium::WebDriver::Wait.new(timeout: 30) # seconds
+    wait = Selenium::WebDriver::Wait.new(timeout: 10) # seconds
     wait.until {
       driver.navigate.to "http://#{username}.neocities.org"
       driver.save_screenshot screenshot.path
