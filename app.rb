@@ -375,9 +375,8 @@ post '/send_password_reset' do
   site = Site[email: params[:email]]
 
   if site
-    site.update password_reset_token: token
-
     token = SecureRandom.uuid.gsub('-', '')
+    site.update password_reset_token: token
 
     body = <<-EOT
 Hello! This is the NeoCities cat, and I have received a password reset request for your e-mail address. Purrrr.
@@ -393,6 +392,7 @@ the NeoCities Cat
     body.strip!
 
     EmailWorker.perform_async({
+      from: 'web@neocities.org',
       to: params[:email],
       subject: '[NeoCities] Password Reset',
       body: body
