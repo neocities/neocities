@@ -25,6 +25,14 @@ if defined?(Pry)
   Pry.commands.alias_command 'f', 'finish'
 end
 
+Sidekiq.configure_server do |config|
+  config.redis = { namespace: 'neocitiesworker' }
+end
+
+Sidekiq.configure_client do |config|
+  config.redis = { namespace: 'neocitiesworker' }
+end
+
 require File.join(DIR_ROOT, 'jobs', 'screenshot_job.rb')
 
 Sequel.datetime_class = Time
