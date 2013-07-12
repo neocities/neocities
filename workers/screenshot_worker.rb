@@ -3,8 +3,7 @@ require 'RMagick'
 
 class ScreenshotWorker
   include Sidekiq::Worker
-  queue :screenshots
-  retry 10
+  sidekiq_options queue: :screenshots, retry: true, backtrace: true
 
   def perform(username)
     screenshot = Tempfile.new 'neocities_screenshot'

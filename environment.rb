@@ -33,7 +33,7 @@ Sidekiq.configure_client do |config|
   config.redis = { namespace: 'neocitiesworker' }
 end
 
-require File.join(DIR_ROOT, 'jobs', 'screenshot_job.rb')
+require File.join(DIR_ROOT, 'workers', 'screenshot_worker.rb')
 
 Sequel.datetime_class = Time
 Sequel.extension :pagination
