@@ -344,7 +344,7 @@ post '/admin/banhammer' do
   }
 
   if !['127.0.0.1', nil, ''].include? site.ip
-    `sudo ufw deny from #{site.ip}`
+    `sudo ufw insert 1 deny from #{site.ip}`
   end
 
   flash[:success] = 'MISSION ACCOMPLISHED'
@@ -404,10 +404,10 @@ the NeoCities Cat
 end
 
 get '/password_reset_confirm' do
-  site = Site[password_reset_token: params[:token]]
+  site = Site[password_reset_token: params[:code]]
 
   if site
-    site.password = params[:token]
+    site.password = params[:code]
     site.save
 
     flash[:success] = 'Your password has been changed to the token sent in your e-mail. Please login and change your password in the settings page as soon as possible.'

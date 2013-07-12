@@ -9,7 +9,7 @@ class ScreenshotWorker
     screenshot = Tempfile.new 'neocities_screenshot'
     screenshot.close
 
-    caps = Selenium::WebDriver::Remote::Capabilities.htmlunit javascript_enabled: true, takesScreenshot: true
+    caps = Selenium::WebDriver::Remote::Capabilities.htmlunit javascript_enabled: false, takesScreenshot: true
 
     driver = Selenium::WebDriver.for :remote, url: $config['phantomjs_url'][rand($config['phantomjs_url'].length)], desired_capabilities: caps
     driver.manage.window.resize_to 1280, 720

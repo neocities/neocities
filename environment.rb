@@ -55,6 +55,19 @@ if ENV['RACK_ENV'] == 'development' && Server.count == 0
   Server.create ip: '127.0.0.1', slots_available: 999999
 end
 
+Mail.defaults do
+  #options = { :address => "smtp.gmail.com",
+  # :port => 587,
+  # :domain => 'your.host.name',
+  # :user_name => '<username>',
+  # :password => '<password>',
+  # :authentication => 'plain',
+  # :enable_starttls_auto => true }
+
+  options = {}
+  delivery_method :sendmail, options
+end
+
 class Sinatra::Base
   alias_method :render_original, :render
   def render(engine, data, options = {}, locals = {}, &block)
