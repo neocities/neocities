@@ -5,7 +5,7 @@ Sequel.migration do
   }
 
   down {
-    DB.add_column :sites, :password_reset_token
-    DB.drop_index :sites, :password_reset_token
+    DB.drop_column :sites, :password_reset_token
+    DB.drop_index  :sites, :password_reset_token
   }
 end
