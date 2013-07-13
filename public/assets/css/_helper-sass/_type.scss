@@ -1,0 +1,86 @@
+// ----------------------------------------------------------------
+//		List Helpers
+// ----------------------------------------------------------------
+
+// Kill list styling - extend into Navigations & for lists that don't require markings
+.kill-List, %kill-List{list-style:none; padding:0}
+
+// Numbered lists for non-ol list types
+.numbered{list-style-type:decimal;}
+
+
+// ----------------------------------------------------------------
+//		Emphasize Text Helpers
+// ----------------------------------------------------------------
+
+// Shout Out - blockquote / blockquote like styling for emphasizing text
+.shout-Out{
+	background:$c-Lighter;
+	border-left:4px solid $c-Dark;
+	padding:$spacing*4;
+	&:before, &:after{display:none}
+}
+
+// ----------------------------------------------------------------
+//		Formatting Text Helpers
+// ----------------------------------------------------------------
+
+// :after Symbols
+%degree:after {content:"\00BA"}  // degree
+%go:after     {content:"\00A0" "\00BB"}  // >> (use on link / btn
+
+// Align Text
+.txt-Center {text-align:center}
+.txt-Left   {text-align:left}
+.txt-Right  {text-align:right}
+.txt-Just   {text-align:justify}
+
+// Highlight Text
+.highlight, %highlight{
+	background:$c-Highlight;
+	color:$c-Darker;
+	@include border-radius(3px);
+	display:inline-block;
+	padding:$spacing;
+	vertical-align:text-top;
+}
+
+// Highlight Text - Skewed
+.slant{
+	@extend %highlight;
+	@include vendor(transform, skewX(-16deg));
+}
+
+.text-Correct{
+	display:inline-block;
+	@include vendor(transform, skewX(16deg));
+}
+	
+/*
+	Code Example: Slanted Text w/Highlight
+	--------------------------
+	<span class="slant">
+		Text Goes here
+	</span>
+	
+	Code Example: Normal flowing text w/slanted highlight
+	--------------------------
+	<span class="slant">
+		<span class="text-Correct">Text Goes here</span>
+	</span>
+*/
+
+// Multi-Columned Text
+.multi{
+	@include base-vendor(column-count, 3);
+	@include base-vendor(column-gap, $spacing*10);
+	@include base-vendor(column-rule, 1px outset #eee);
+}
+
+// Truncate Text
+%truncate{@include truncate(100%)}
+
+// Word Wraps
+%auto-wrap	  {word-wrap:auto}
+%breakword	  {word-wrap:break-word}
+%normal-wrap  {word-wrap:normal}

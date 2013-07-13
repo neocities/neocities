@@ -1,0 +1,106 @@
+// ----------------------------------------------------------------
+//		Project Specific: Footer Area
+// ----------------------------------------------------------------
+
+// Apply to <footer> for styling
+.footer-Base{
+	color:#5e5b56;
+	
+	h1, h2, h3, h4{
+  	color:#8b9a7a;
+	}
+}
+
+// Apply to internal wrapper for footer content
+.footer-Content{
+	@extend .content;
+}
+
+// Footer Intro Area
+.footer-Intro{
+  background:#daeea5;
+	border-top:1px solid #cedbab;
+	@include box-shadow($bs-4);
+	position:relative;
+}
+
+.f-Col{
+  @include box-sizing(content-box);
+  min-height:130px;
+  padding-bottom:$spacing*8;
+  position:relative;
+  
+  @media (max-device-width:480px), screen and (max-width:800px){
+    min-height:2px;
+    padding:0;
+  }
+  
+  .action-Link{
+    bottom:0;
+    position:absolute;
+    right:$spacing*3;
+    
+    @media (max-device-width:480px), screen and (max-width:800px){
+      position: static
+    }
+  }
+}
+
+.f-Col-1{padding-right:$spacing*3}
+
+.f-Col-2{
+  padding-left:6px;
+  padding-right:6px;
+  position:relative;
+  @media (max-device-width:480px), screen and (max-width:800px){
+    border-bottom:1px solid rgba(0,0,0,.1);
+    border-top:1px solid rgba(0,0,0,.1);
+    margin:20px 0;
+    overflow: hidden;
+    padding:20px 0;
+  }
+
+  &:before, &:after {
+      background:url("../img/border.png") no-repeat 0 -20px;
+      content:"";
+      height:200px;
+      opacity:0.2;
+      position:absolute;
+      top:0;
+      width:1px;
+      
+      @media (max-device-width:480px), screen and (max-width:800px){
+        display:none
+      }
+  }
+  
+  &:before{left:-14px}
+  &:after{right:-14px}
+}
+
+.f-Col-3{padding-left:$spacing*3}
+
+
+// Footer Outro Area
+.footer-Outro{
+  background:#ccdf9b;
+  border-top:1px solid #b3c388;
+  overflow:hidden;
+  
+  a{color:#5e5b56}
+}
+.credits{margin-bottom:0}
+.footer-Nav{
+  text-transform:uppercase;
+  
+  .h-Nav{float:right;
+    @media (max-device-width:480px), screen and (max-width:800px){
+      float:none;
+      margin-top:15px;
+      
+      li:first-child a{padding-left:0}
+    }
+  }
+  .h-Nav a{padding:0 $spacing*2}
+  .h-Nav li:last-child a{padding-right:0}
+}

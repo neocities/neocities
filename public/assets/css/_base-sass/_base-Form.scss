@@ -1,0 +1,29 @@
+// ----------------------------------------------------------------
+//		Form Elements Standardization
+// ----------------------------------------------------------------
+// Consistent Margins
+form{@extend %margin-bottom;}
+
+// Corrects font-family and size not being inherited in all browsers, inconsistent margins, line-heights and transforms
+button, input, select, textarea{border:0; font:{family:inherit; size:100%}; line-height:normal; margin:0; text-transform:none}
+
+// Makes buttons look like buttons with appropriate cursors
+button, html input[type='button'], input[type='reset'], input[type='submit']{cursor:pointer; -webkit-appearance:button}
+
+// Makes it look like a normal text input, only with a (x) when text has been entered
+input[type='search']{-webkit-appearance:textfield} 
+
+// Disabled input styling
+input[disabled]{background:$c-Light; cursor:not-allowed}
+
+// Read Only input styling
+input[readonly]{background:$c-Disabled}
+
+// Removes extra inner padding for webkit
+input[type='search']::-webkit-search-decoration{-webkit-appearance:none} 
+
+// Removes inner padding & border in Firefox 4+
+buton::-moz-focus-inner, input::-moz-focus-inner{border:0; padding:0}
+
+// Makes sure that overflow shows and text is aligned to top of area
+textarea{overflow:auto; vertical-align:top}

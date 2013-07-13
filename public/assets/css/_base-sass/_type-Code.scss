@@ -1,0 +1,41 @@
+// ----------------------------------------------------------------
+//		Basic Styling: Code Elements
+// ----------------------------------------------------------------
+
+code, kbd, pre, samp{
+  @extend %margin-bottom;
+  background:#16414c;
+  border-left:6px solid #acd473;
+  color:#a9b9b9;
+  display:block;
+  font-family:monospace, serif; 
+  font-size:$base;
+  padding:$spacing*3 $spacing*2 $spacing*3 $spacing*5;
+}
+
+pre{
+  overflow:auto; 
+  white-space:pre-wrap;
+  
+  mark{   // test out styling for this
+    background:#eee;
+    border-bottom:1px solid #ddd;
+    color:#333;
+  }
+}
+
+p, li, pre{
+  code, kbd, pre, samp{
+    display:inline-block; 
+    margin:0;
+    padding:$spacing;
+  }
+}
+
+.code-Value{
+  color:#24b9af;
+}
+
+.code-Tag{
+  color:#8ab04c;
+}

@@ -31,7 +31,7 @@ end
 
 get '/?' do
   dashboard_if_signed_in
-  slim :index
+  erb :index
 end
 
 get '/browse' do
@@ -58,7 +58,7 @@ end
 
 get '/new' do
   dashboard_if_signed_in
-  @site = Site.new
+  @site = Site.new username: params[:username]
   slim :'new'
 end
 
