@@ -1,0 +1,7 @@
+.row
+  .span8.offset2.text-center
+    h2 Not Found
+    h4 We could not find the requested page. Our apologies.
+    h5 It you believe this to be in error, please <a href="/contact">contact us</a> and report the problem. Thank you!
+    - if request.referer
+      a href="#{request.referer}" Go Back

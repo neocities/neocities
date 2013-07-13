@@ -1,0 +1,33 @@
+javascript:
+  var RecaptchaOptions = {
+    theme : 'clean'
+  };
+
+- if !@errors.empty?
+  .row
+    .span8.offset2
+      .alert.alert-block.alert-error
+        - @errors.each do |error|
+          p = error
+
+.row
+  .span8.offset2
+    h2 style="margin-bottom: 20px" Contact Us
+
+    form action="/contact" method="POST"
+      input name="csrf_token" type="hidden" value="#{csrf_token}"
+    
+      label Email address
+      input type="email" name="email" placeholder="Your Email" style="width: 300px" value="#{params[:email]}"
+      
+      label Subject
+      input type="text" name="subject" placeholder="Subject" style="width: 400px" value="#{params[:subject]}"
+      
+      label Comments
+      textarea name="body" style="width: 600px" rows="10" #{params[:body]}
+      
+      label Fill out captcha so we know you're not a robot
+      == recaptcha_tag :challenge, ssl: true
+      
+      div style="margin-top: 30px; margin-bottom: 50px"
+        input.btn.btn-large.btn-success type="submit" value="Send"

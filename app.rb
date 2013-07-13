@@ -12,6 +12,10 @@ before do
   redirect '/' if request.post? && !csrf_safe?
 end
 
+not_found do
+  slim :'not_found'
+end
+
 get '/?' do
   dashboard_if_signed_in
   slim :index
@@ -416,6 +420,38 @@ get '/password_reset_confirm' do
   end
   
   redirect '/'
+end
+
+get '/contact' do
+  slim :'contact'
+end
+
+post '/contact' do
+  
+  @errors = []
+  
+  if params[:email].empty? || params[:subject].empty? || params[:body].empty?
+    @errors << 'Please fill out all fields'
+  end
+  
+  if !recaptcha_valid?
+    @errors << 'Captcha was not filled out (or was filled out incorrectly)'
+  end
+  
+  if !@errors.empty?
+    slim :'contact'
+  else
+    EmailWorker.perform_async({
+      from: 'web@neocities.org',
+      replyto: params[:email],
+      to: 'contact@neocities.org',
+      subject: "[NeoCities] Contact: #{params[:subject]}",
+      body: params[:body]
+    })
+    
+    flash[:success] = 'Your contact has been sent.'
+    redirect '/'
+  end
 end
 
 def require_admin
