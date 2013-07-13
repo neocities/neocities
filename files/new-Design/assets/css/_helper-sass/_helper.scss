@@ -1,0 +1,116 @@
+// ----------------------------------------------------------------
+//		Floats & Clearing
+// ----------------------------------------------------------------
+.float-Left	  {float:left}
+.float-Right  {float:right}
+.float-None	  {float:none}
+.clear		  {clear:both}
+.clearfix	  {@include clearfix}
+.overflow	  {overflow:hidden}
+
+
+// Consistent Margin Bottom
+%margin-bottom{margin-bottom:$spacing*3}
+
+// ----------------------------------------------------------------
+//		Showing & Hiding
+// ----------------------------------------------------------------
+.d-Block, .show{display:block}
+.d-None, .mobile-Show{display:none} 
+	// change display value for .mobile-Show in the appropriate @media break-point
+	
+// Hides from screenreaders and browsers
+.hidden{display:none!important; visibility:hidden}
+
+// Hide from browsers but not from screen readers
+.invis, %invis{@include invisible}
+
+// ----------------------------------------------------------------
+//		Reoccuring HTML Elements
+// ----------------------------------------------------------------
+// Profile Picture
+.pic, %pic{
+	border:1px solid $c-White;
+	@include border-radius(4px);
+	@include box-shadow($bs-4);
+	display:inline-block;
+	overflow:hidden;
+	width:90px;
+	
+	img{display:block}
+}
+
+// Make picture into a circle
+.pic-Rounded{
+	@extend %pic;
+	@include border-radius(100px);
+}
+/* 
+	Code Example
+	--------------------------
+	<a href="#" title="TITLE" class="pic-Rounded">
+		<img src="assets/img/little-V.jpg" alt="" />
+	</a>
+*/
+
+// Media Item
+.media, %media{
+	margin-bottom:$spacing*4;
+	@extend .clearfix;
+	position:relative;
+	z-index:2;
+	.media-Text >:last-child{margin-bottom:0}
+	.media-Object{float:left; margin:0 $spacing*4 $spacing*2 0; max-width:30%;}
+}
+
+// Have media element appear on the right hand side
+.media-Reverse, %media-Reverse{
+	@extend %media;
+	.media-Object{float:right; margin:0 0 $spacing*2 $spacing*4; max-width:30%}
+}
+
+.media-No-Wrap{
+	@extend %media;
+	padding-left:100px;
+	.media-Text{float:left; width:100%}
+	.media-Object{margin-left:-100px; margin-right:0}
+}
+
+.media-No-Wrap-Reverse{
+	@extend %media-Reverse;
+	padding-right:100px;
+	.media-Object{margin-right:-100px; margin-left:0}
+}
+/* 
+	Code Example
+	--------------------------
+	<div class="media">
+		<div class="media-Object">
+			<img src="assets/img/little-V.jpg" alt="" />
+		</div>
+		<div class="media-Text">
+			<h1>Title for Meida Element</h1>
+			<p>Paragraph text to go along with media element.</p>
+		</div>
+	</div>
+	
+	-- 	Divs were used in this example, but the media element could be applied to various situations.
+		Ie. could be used for a header or footer area where a logo is placed on the right or left w/text to the side.
+*/
+
+
+// Call out boxes
+.emph-Block{
+	background:#fafafa;
+	border:1px solid #ddd;
+	@include border-radius(4px);
+	@include box-shadow($bs-4);
+	margin-bottom:$spacing*4;
+	min-height:50px;
+	padding:$spacing*4;
+	
+	& > :last-child{margin-bottom:0}
+}
+
+
+

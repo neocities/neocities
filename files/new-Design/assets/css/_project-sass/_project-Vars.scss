@@ -1,0 +1,112 @@
+// ----------------------------------------------------------------
+// Colors
+// ----------------------------------------------------------------
+// Base Branding Colors
+$c-Brand-1:		#e93250;  //pink/red
+$c-Brand-2:		#daeea5;  // green
+$c-Brand-3:		#f6f0e6;    // tan
+
+// 2f4149 dark blue
+// lighter blue 65a0ad
+// nav bg blue 5e95a1
+
+// Base Darker Colors
+$c-Dark:      #343434;
+$c-Darker:		#131313;
+
+// Base Ligher Colors
+$c-White:     #fff;
+$c-Light:     #eee;
+$c-Lighter:   #f8f8f8;
+
+$c-Body-Copy:	$c-Dark;
+$c-Heading:		$c-Brand-1;
+
+$c-BG:			  $c-Lighter;
+
+$c-Link:		  $c-Brand-1;
+
+// Button Colors
+$c-Btn-1:     $c-Brand-1;
+$c-Btn-2:     $c-Brand-2;
+$c-Btn-3:     $c-Brand-3;
+
+$c-Btn-Neg:		#aaa;
+$c-Disabled:	#fafafa;
+
+// Color for Radio/Check box buttons
+$c-Btn-RC:		$c-Light;
+
+// Required / Error Text Color
+$c-Required:	#f00;
+
+// Underlines & Highlights
+$c-Highlight:	#ff0;
+$c-Underline:	#ccc; // not for links
+$c-Border:		#ccc;
+
+
+// ----------------------------------------------------------------
+// Fonts Families
+// ----------------------------------------------------------------
+$arial:     Arial, "Helvetica Neue", Helvetica, sans-serif;
+$georgia:   Georgia, "Times New Roman", Times, serif;
+$helvetica: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$brand:     'Open Sans', $helvetica; 
+$headings:  'Droid Serif', $georgia;
+
+
+// ----------------------------------------------------------------
+// Font Size Declarations 
+// ----------------------------------------------------------------
+$base-font-multiplier:1em; // 1em = 16px
+
+$giga:	$base-font-multiplier * 4.375;   // 70px
+$ultra: $base-font-multiplier * 3.75;    // 60px
+$mega:  $base-font-multiplier * 3.5;     // 56px
+
+$alpha: $base-font-multiplier * 3.125;   // 50px
+$beta:  $base-font-multiplier * 2.5;     // 40px
+$gamma: $base-font-multiplier * 2;       // 32px
+$delta: $base-font-multiplier * 1.625;   // 26px
+$eps:	  $base-font-multiplier * 1.25;    // 20px
+$zeta:	$base-font-multiplier * 1.125;   // 18px
+
+$base:  $base-font-multiplier;		       // 16px
+$tiny:  $base-font-multiplier * .875;		 // 14px
+$mini:  $base-font-multiplier * .75;		 // 12px
+
+
+// ----------------------------------------------------------------
+// Border Radius Base Default	- t-l  t-r  b-r  b-l
+// ----------------------------------------------------------------
+$radius:	3px;
+
+
+// ----------------------------------------------------------------
+// Box Shadow Types  (these are just examples.  Make your own!)
+// ----------------------------------------------------------------
+$bs-1:		0 0 6px rgba(0,0,0,.25);
+$bs-2:		$bs-1 inset;
+$bs-3:		$bs-1, $bs-1 inset;
+$bs-4:		0 8px 8px -8px rgba(0,0,0,.2);
+$bs-5:		$bs-4, 0 0 6px rgba(0,0,0,.75) inset;
+$bs-6:		0 0 6px rgba(255,255,255,.5) inset;
+
+
+// ----------------------------------------------------------------
+// Layout
+// ----------------------------------------------------------------
+$spacing:4px;
+
+
+// ----------------------------------------------------------------
+//		Media Query Break Points
+// ----------------------------------------------------------------
+$break-Mini:    480px;
+$break-Tiny:    500px;
+$break-Small:   600px;
+$break-Medium:  800px;
+$break-Large:   1000px;
+$break-xLarge:  1200px;
+$break-xxLarge: 1600px;

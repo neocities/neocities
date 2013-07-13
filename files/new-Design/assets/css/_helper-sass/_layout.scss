@@ -1,0 +1,67 @@
+// ----------------------------------------------------------------
+//		Layout - Responsive & Static Grid Elements
+// ----------------------------------------------------------------
+
+// A container for each row of our layout. 
+// Simply styled with only a base margin-bottom and extending the clearfix class,
+// a row can also have helper classes added onto it for other general styling purposes
+.row{
+	margin-left:-$spacing*5;
+	margin-bottom:$spacing*5;
+	@extend .clearfix;
+}
+
+// The grid columns within a row.  
+// Do not apply styling to this class as its purpose is for layout only.
+.col{
+	float:left;
+	margin-bottom:0!important; 
+		// row has a margin-bottom applied to it already, 
+		// to absolutely make sure there is no extra margin, 0!important is used
+	padding-left:$spacing*5;
+	position:relative;
+	width:100%; // default width is 100%.  
+}
+
+// Convert columns to inline-blocks so we can center them when our row does not add up to 100%
+.c-Row{
+	@extend .row;
+	font-size:0; // **
+	text-align:center;
+	.col{
+		display:inline-block; 
+		float:none; 
+		font-size:16px; // resets the font back to the default base to fix the font-size:0 needed for centering
+		text-align:left;
+	}
+		// ** This kills the extra white-space created by the inline-blocks.  
+		//    Make sure interior elements have a font-size reaplied to them to make text visible. 
+		//    (as long as they're using semantic tags or the font-size class names,  
+		//    then this should not be a problem).
+}
+
+// Base responsive grid column classes. 
+// Do not apply styling to these as their purpose is for width only. 
+.col-90	{width:90%}
+.col-80 {width:80%}
+.col-75 {width:75%}
+.col-66 {width:66.6666%}
+.col-60 {width:60%}
+.col-50 {width:50%}
+.col-40 {width:40%}
+.col-33 {width:33.3333%}
+.col-25 {width:25%}
+.col-20 {width:20%}
+.col-10 {width:10%}
+
+.rfl{@include row-fixed-Left(300px)}
+.rfr{@include row-fixed-Right(300px)}
+	// make sure to use .f-Col for the fixed column in the row
+
+// The block class can be modified or deleted and replaced with other classes (like .media or .callout) 
+// The main purpose of a class like this is to apply to an inner HTML element of the column structure
+// so we can apply styling to the columns.
+.block{
+	background:#ccc; color:#333; padding:$spacing;
+	& > :last-child{margin-bottom:0}
+}

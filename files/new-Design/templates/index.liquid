@@ -1,0 +1,102 @@
+{% block title %}Create a Free website today{% endblock %}
+
+{% block content %} 
+<div class="content">
+  
+  <section class="featured-Websites clearfix">
+  
+    <h2 class="delta">Featured Websites</h2>
+    
+    <ul class="row website-Gallery">
+      <li>
+        <a href="http://dragonquest.neocities.org/" title="The Quest of Dragons" target="_blank">
+          <img src="http://neocities.org/site_screenshots/dragonquest.jpg" alt="Thumbnail of The Quest of Dragons" />
+        </a>
+      </li>
+      <li>
+        <a href="http://codeventurer.neocities.org/" title="codeventurer" target="_blank">
+          <img src="http://neocities.org/site_screenshots/codeventurer.jpg" alt="Thumbnail of codeventurer" />
+        </a>
+      </li>
+      <li>
+        <a href="http://clouds.neocities.org/" title="Cloud Quotes" target="_blank">
+          <img src="http://neocities.org/site_screenshots/clouds.jpg" alt="Thumbnail of Cloud Quotes" />
+        </a>
+      </li>
+      <li>
+        <a href="http://manatee.neocities.org/" title="Title of Website" target="_blank">
+          <img src="http://neocities.org/site_screenshots/manatee.jpg" alt="Thumbnail of TITLE OF WEBSITE" />
+        </a>
+      </li>
+      <li>
+        <a href="http://suppilulemur.neocities.org/" title="Sokoban" target="_blank">
+          <img src="http://neocities.org/site_screenshots/suppilulemur.jpg" alt="Thumbnail of Sokoban" />
+        </a>
+      </li>
+      <li>
+        <a href="http://drawinglair.neocities.org/" title="Tomasz Zawadzki" target="_blank">
+          <img src="http://neocities.org/site_screenshots/drawinglair.jpg" alt="Thumbnail of Tomasz Zawadzki" />
+        </a>
+      </li>
+      <li>
+        <a href="http://eleanor.neocities.org/" title="Eleanor Holroyd's Website" target="_blank">
+          <img src="http://neocities.org/site_screenshots/eleanor.jpg" alt="Thumbnail of Eleanor Holroyd's Website" />
+        </a>
+      </li>
+      <li>
+        <a href="http://cute-animation.neocities.org/" title="Cute Animation" target="_blank">
+          <img src="http://neocities.org/site_screenshots/cute-animation.jpg" alt="Thumbnail of Cute Animation" />
+        </a>
+      </li>
+    </ul>
+	
+    <a href="browse" title="Browse all Neocities websites" class="action-Link">Browse all Websites</a>
+    
+  </section>  <!-- end .featured-Websites -->
+  
+  <hr />
+  
+  <aside class="row">
+  
+    <div class="col col-50">
+      <div class="content">
+      
+        <h3 class="delta">Learn to Code</h3>
+        
+        <p>
+          Don't know how to code a website? No problem! 
+          We're working on a batch of tutorials that will show you the way.
+        </p>
+        
+        <code>
+          <span class="code-Tag">&lt;h1&gt;</span>Welcome to my website!<span class="code-Tag">&lt;/h1&gt;</span><br />
+          <span class="code-Tag">&lt;a</span> href="<span class="code-Value">about.html</span>">About Me<span class="code-Tag">&lt;/a&gt;</span><br />
+          <span class="code-Tag">&lt;img</span> src="<span class="code-Value">me.jpg</span>" alt="<span class="code-Value">photo of me</span>" <span class="code-Tag">/&gt;</span>
+        </code>
+        
+      </div>
+    </div> <!-- end .col-50 -->
+    
+    <div class="col col-50">
+      <div class="content">
+      
+        <h3 class="delta">What People Are Saying</h3>
+        
+        <ul class="quote-Slider kill-List">
+          <li class="quote">
+            <blockquote>
+              A quote goes here
+            </blockquote>
+            <a href="#!" title="Title of Source" class="action-Link">Source link</a>
+          </li>
+        </ul>
+        
+      </div>
+    </div> <!-- end .col-50 -->
+  
+  </aside> <!-- end .row -->
+	
+</div> <!-- end .content -->
+{% endblock %}
+
+{% block js %}{{ "app.js" | asset_url | script_tag }}{% endblock %}

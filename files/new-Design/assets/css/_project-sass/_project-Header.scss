@@ -1,0 +1,260 @@
+// ----------------------------------------------------------------
+//		Project Specific: Header Area
+// ----------------------------------------------------------------
+
+// Apply to <header> for styling
+.header-Base{
+  background:#65a0ad;
+  border-bottom:6px solid #e93250;
+  overflow:hidden;
+}
+
+.header-Content{
+	@extend .content;
+	@media (max-device-width:480px), screen and (max-width:800px){
+	  padding:0
+	}
+}
+
+.blurb{background:#fff}
+
+.header-Intro{
+  background:url(../img/neocity.jpg) 95% bottom no-repeat;
+  min-height:214px;
+  
+  @media (max-device-width:480px), screen and (max-width:800px){
+    @include vendor(background-size, cover);
+    min-height:2px
+  }
+}
+
+.header-Outro{
+  background:#30424b;
+  color:#fafafa;
+}
+
+.intro-List{
+  @extend %kill-List;
+  @media (max-device-width:480px), screen and (max-width:800px){
+    margin-bottom:20px;
+    padding:20px!important;
+  }
+  
+  li{
+    padding-left:$spacing*9;
+    padding-right:$spacing*3;
+  }
+  
+  h2{
+    font-size:24px;
+    margin-bottom:10px  
+  }
+}
+
+.intro-Icon{
+  background:url(../img/icons.png) no-repeat;
+  display:block;
+  height:37px;
+  left:-10px;
+  position:absolute;
+  top:2px;
+  width:37px;
+}
+
+.intro-Tools{position:relative}
+.intro-Question{
+  position:relative;
+  
+  .intro-Icon{
+    background-position:0 -40px;
+    
+  }  
+}
+
+.signup-Area{
+  min-height:100px;
+  position:relative
+}
+
+.signup-Form{
+  background:#354751;
+  border-radius:4px 4px 0 0;
+  height:600%;
+  overflow:hidden;
+  position:absolute;
+  top:-45px;
+  
+  @media (max-device-width:480px), screen and (max-width:800px){
+    height:auto;
+    margin:0;
+    overflow:visible;
+    position:static;
+}
+  
+  h2{
+    margin-bottom:0;
+    text-shadow:0 1px 1px rgba(0,0,0,.5);
+  }
+  hr{
+    border-bottom:1px solid #4a6677;
+    border-top:1px solid #1d282d;
+    margin:5px 0 15px;
+  }
+  fieldset{
+    background:url(../img/sign-up-bg.png) repeat-x center top; 
+  }
+  label{
+    color:#81b8c6;
+    @media (max-device-width:480px), screen and (max-width:800px){
+      font-size:70%
+    }
+  }
+  .input-Area{
+    background:#29383f;
+    border:0px solid black;
+    @include box-shadow($bs-2);
+    color:#557380; 
+    margin-bottom:$spacing*8;
+    margin-right:$spacing;
+    width:62%;
+    
+    &:focus{color:#eee}
+  }
+}
+
+.small-Nav{
+  background:#30424B;
+  display:none;
+  position:fixed;
+  right:0;
+  top:0;
+  width:50px;
+  z-index:9999;
+  
+  @media (max-device-width:480px), screen and (max-width:800px){
+    display:block
+  }
+}
+
+
+// Top nav area
+.header-Nav{
+	background:#5e95a1;
+	border-bottom:1px solid #a1cad4;
+	
+	@include vendor(transition, all 0.35s);
+	
+	@media (max-device-width:480px), screen and (max-width:800px){
+	  position:fixed;
+	  top:-900px!important;
+	}
+	
+	&.show-Nav{
+  	top:0!important;
+	}
+	
+	a, a:visited{
+	  color:#fff; 
+	  padding:$spacing*2 $spacing*3; 
+	  text-decoration:none;
+	  
+	  @media (max-device-width:480px), screen and (max-width:800px){
+	    display:block;
+	  }
+	  
+		&:hover{background:#528995; text-decoration:underline}
+		&.selected, &:active{background:#528995; text-decoration:underline}
+	}
+}
+.constant-Nav{
+  float:left;
+  position:relative;
+  
+  @media (max-device-width:480px), screen and (max-width:800px){
+    float:none;
+    
+    li{float:none;}
+  }
+}
+
+.status-Nav{
+  float:right;
+  @media (max-device-width:480px), screen and (max-width:800px){
+    float:none
+  }
+}
+
+// hp CSS
+.hp .header-Base{
+  padding-top:46px;
+}
+.hp .header-Nav{
+  left:0;
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:3
+}
+
+.hp .hp-Logo{
+  left:-90px;
+  position:fixed;
+  @include vendor(transition, all 0.35s);
+  
+  
+  &.in-View{
+    left:0!important;
+    z-index:99;
+    
+    @media (max-device-width:480px), screen and (max-width:800px){
+      left:-90px!important;
+    }
+  }
+}
+
+.constant-Nav{
+  margin-left:-88px;
+  @include vendor(transition, all 0.35s);
+  @media (max-device-width:480px), screen and (max-width:800px){
+    margin-left:0;
+  }
+  
+  &.in-View{
+    margin-left:0;
+    padding-left:70px;
+    
+    @media (max-device-width:480px), screen and (max-width:800px){
+      padding-left:0
+    }
+  }
+}
+
+.add-Stripe{
+  border-bottom:6px solid #E93250;
+  @media (max-device-width:480px), screen and (max-width:800px){
+    border:0;
+  }
+}
+
+// Interior CSS
+.interior .page{
+  padding-top:46px
+}
+.interior .header-Base{
+  left:0;
+  overflow:visible;
+  position:fixed;
+  top:0;
+  width:100%
+}
+
+.int-Logo{
+  left:0;
+  position:absolute;
+  top:0;
+  width:70px;
+}
+
+.interior .header-Nav{
+  padding-left:70px
+}

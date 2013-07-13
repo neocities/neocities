@@ -1,0 +1,125 @@
+// ----------------------------------------------------------------
+//		Basic Setups for Navigation Elements
+// ----------------------------------------------------------------
+
+// The main navigation class to be placed on the <nav>
+.nav{
+	ul, 
+	ol{border:1px solid #ccc; padding:$spacing;}
+	
+	li{margin:0}
+	
+	a{display:block; padding:$spacing $spacing*2; text-decoration:underline;
+		&:hover{text-decoration:none}
+		
+		.selected{}
+	}
+}
+
+// ----------------------------------------------------------------
+// Basic rules for Horizontal Navigations
+// ----------------------------------------------------------------
+// to be placed on the <ul> or <ol>
+.h-Nav{
+	& > li{float:left}
+	
+	// Set drop menu location to the bottom of the hovered link
+	.drop-Menu{
+		@extend %drop-H;
+	}	
+}
+
+// to be placed on the <ul> or <ol> -- don't use floats, but instead use display inline-block and center navigation links
+.c-Nav{
+	font-size:0; text-align:center;
+			// font-size:0; deletes the white space between the <li>s 
+			// However, the font size inside of the <li>'s must be reset when using this trick.
+			
+	& > li{@extend %reset-Type;}
+}
+
+// Sets links to the base font-size, while also making them inline-block.  Update for your own uses.
+%reset-Type{display:inline-block; font-size:16px}
+	
+// ----------------------------------------------------------------
+// Basic rules for Vertical Navigations
+// ----------------------------------------------------------------
+// to be placed on the <ul> or <ol>
+.v-Nav{
+	/* really only needs styling applied to it, as vertical nav is default */
+	.drop-Menu{@extend %drop-V;} // Set drop menu location to the right of the hovered link
+}
+
+
+// ----------------------------------------------------------------
+// Basic rules for Listless Horizontal Navigations
+// ----------------------------------------------------------------
+.ah-Nav{
+	font-size:0;
+	
+	a{@extend %reset-Type;}
+	// Set drop menu location to the bottom of the hovered link
+	.drop-Menu{
+		@extend %drop-H;
+	}
+}
+
+
+// ----------------------------------------------------------------
+// Basic rules for Listless Vertical Navigations
+// ----------------------------------------------------------------
+.av-Nav{
+	// Set drop menu location to the bottom of the hovered link
+	.drop-Start{display:block}
+	.drop-Menu{
+		@extend %drop-V;
+	}
+}
+
+	
+// ----------------------------------------------------------------
+// Basic rules for Drop Down Menus (applied to both horizontal & vertical navs)
+// ----------------------------------------------------------------
+.drop-Start{
+  position:relative;
+  
+	&:hover{
+		background:#eee;
+		.drop-Menu{visibility:visible}
+	}
+	
+	a{white-space:nowrap} // makes it so the dd doesn't get stuck only being as big as the top level button
+}
+.drop-Menu{
+  background:#eee; 
+  border:1px solid #ddd; 
+  position:absolute; 
+  visibility:hidden; 
+  z-index:5;
+}
+
+%drop-V{
+  left:100%;
+  top:0;
+}
+
+%drop-H{
+  left:0;
+  top:100%;
+}
+
+
+// ----------------------------------------------------------------
+// Basic rules for Breadcrumb Navigations
+// ----------------------------------------------------------------
+.bread{
+	@extend .h-Nav;
+	li{
+		&:last-child:after{content:none;}
+		&:after{content:">"; display:inline-block;}
+	}
+	a{display:inline-block}
+
+	span{display:inline-block; padding:$spacing $spacing*2}
+}
+

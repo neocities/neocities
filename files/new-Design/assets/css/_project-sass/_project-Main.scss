@@ -1,0 +1,61 @@
+// ----------------------------------------------------------------
+//		Project Specific: Main Content Area
+// ----------------------------------------------------------------
+
+// Apply to <main> or top level <section> for styling
+.content-Base{
+  background:#f6f0e6;
+	min-height:500px;
+	padding-bottom:$spacing*5;
+	padding-top:20px;
+	
+	h1, h2, h3, h4, h5, h6{
+  	color:#e93250
+	}
+	
+	.content{
+		
+	}
+}
+
+.single-Col{
+  max-width:800px;
+}
+
+// Additional Content Area stylings go below...
+
+.website-Gallery{
+  list-style:none;
+  margin:0;
+  padding:0;
+  
+  li{
+    @extend .col-25;
+    float:left;
+    margin-bottom:$spacing*2;
+    
+     @media (max-device-width:480px), screen and (max-width:800px){
+      width:50%
+     }
+  }
+  
+  a{
+    padding:0 $spacing*2;
+    display:block;
+		  
+    &:hover{
+      
+    }
+    
+    img{
+      background:#fff;
+      @include box-shadow($bs-4);
+      display:block;
+      padding:$spacing*2;
+    }
+  }
+}
+
+// About page
+.twitter-tweet.twitter-tweet-rendered{margin:0 auto 30px!important}
+

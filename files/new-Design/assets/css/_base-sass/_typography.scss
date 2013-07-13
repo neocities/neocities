@@ -1,0 +1,59 @@
+// ----------------------------------------------------------------
+//		Basic Styling: Typography Elements
+// ----------------------------------------------------------------
+
+// Consistent margin-bottom for block text elements
+blockquote, h1, h2, h3, h4, h5, h6, li, p, small{@extend %margin-bottom;}
+
+// Give small some weight when used outside of <p> or <li>, 
+// but make it an inline element again inside of these elements
+small{display:block}
+p, li{
+  small{
+    display:inline; 
+    margin:0;   
+  }
+}
+
+// Bold these things.  Bold 'em good.
+b, strong{font-weight:bold}
+
+// Italicize these things.  Italicize them gooder.
+i, em, dfn{font-style:italic}
+
+// Blockquote base styling
+blockquote{
+	font:{size:$zeta; style:italic};
+	&:before, 
+	&:after{
+	  font:{size:$eps; weight:400}; 
+	  line-height:1; 
+	  position:relative; 
+	  top:2px;
+	}
+	&:before{
+	  content:'"';
+	  left:-1px;
+	}
+	&:after{
+  	content:'"';
+  	right:-1px;
+	}
+}
+
+// sets consistent quotes across browsers
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+
+// An underline & help cursor in all browsers when a title tag is present
+abbr[title], dfn[title]{border-bottom:1px dotted $c-Underline; cursor:help}
+
+// IE 8/9 doesn't do this by default.  shame.  shame IE.  shame...
+mark{background:$c-Highlight; color:$c-Darker}
+
+// Prevents sub & sup from affecting the line-height
+sub, sup{font-size:75%; line-height:0; position:relative; vertical-align:baseline}
+	sub{bottom:-.25em}
+	sup{top:-.5em}	
+
+@import 'type-Code';          // Code styling
+@import 'type-Lists';         // Lists styling

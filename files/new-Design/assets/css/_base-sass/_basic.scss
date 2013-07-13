@@ -1,0 +1,24 @@
+// ----------------------------------------------------------------
+//		Basic Style Normalizing/Resetting
+// ----------------------------------------------------------------
+
+// Make a smarter Box Model
+*, *:before, *:after{@include box-sizing(border-box)}
+
+// Just to make sure the HTML doesn't act like a bitch
+html{overflow-y:scroll; min-height:100%}
+
+// Default body text styling
+body{font-size:100%; line-height:1.5}
+
+// Reset the Standard Tags
+body, blockquote, h1, h2, h3, h4, h5, h6, p, pre, form, fieldset, img, 
+legend, table, th, td, caption, hr{border:0; margin:0; outline:0; padding:0}
+
+// Easy re-styling for <hr /> tags
+hr{border-top:1px solid #ddd; display:block; height:1px; margin:$spacing*6 0}
+
+@import 'base-HTML5';		// Styling for HTML5 sepecific elements/selectors
+@import 'base-Media';		// Styling for base media elements
+@import 'typography';		// Styling for base typographical elements
+@import 'base-Form';		// Styling for base form elements
