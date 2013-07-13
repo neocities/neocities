@@ -3,7 +3,7 @@ javascript:
     theme : 'clean'
   };
 
-- if !@errors.empty?
+- if !@errors.nil? && !@errors.empty?
   .row
     .span8.offset2
       .alert.alert-block.alert-error

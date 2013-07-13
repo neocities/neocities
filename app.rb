@@ -443,9 +443,9 @@ post '/contact' do
   else
     EmailWorker.perform_async({
       from: 'web@neocities.org',
-      replyto: params[:email],
+      reply_to: params[:email],
       to: 'contact@neocities.org',
-      subject: "[NeoCities] Contact: #{params[:subject]}",
+      subject: "[NeoCities Contact]: #{params[:subject]}",
       body: params[:body]
     })
     
