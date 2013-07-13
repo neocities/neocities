@@ -20,8 +20,10 @@ error do
   EmailWorker.perform_async({
     from: 'web@neocities.org',
     to: 'errors@neocities.org',
-    subject: "[NeoCities Error] #{env['sinatra.error'].name}",
-    body: "#{env['sinatra.error'].message}\n\n#{env['sinatra.error'].backtrace}"
+    subject: "[NeoCities Error] #{env['sinatra.error'].message}",
+    body: "#{request.method} #{request.path}\n\n" +
+          (current_site ? "Site: #{current_site.username}\nEmail: #{current_site.email}\n\n" : '') +
+          env['sinatra.error'].backtrace.to_s
   })
 
   slim :'error'
