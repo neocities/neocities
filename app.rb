@@ -20,10 +20,10 @@ error do
   EmailWorker.perform_async({
     from: 'web@neocities.org',
     to: 'errors@neocities.org',
-    subject: "[NeoCities Error] #{env['sinatra.error'].message}",
-    body: "#{request.method} #{request.path}\n\n" +
+    subject: "[NeoCities Error] #{env['sinatra.error'].class}: #{env['sinatra.error'].message}",
+    body: "#{request.request_method} #{request.path}\n\n" +
           (current_site ? "Site: #{current_site.username}\nEmail: #{current_site.email}\n\n" : '') +
-          env['sinatra.error'].backtrace.to_s
+          env['sinatra.error'].backtrace.join("\n")
   })
 
   slim :'error'
@@ -436,7 +436,6 @@ get '/password_reset_confirm' do
 end
 
 get '/contact' do
-  raise 'hell'
   slim :'contact'
 end
 
