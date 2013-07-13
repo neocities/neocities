@@ -16,6 +16,17 @@ not_found do
   slim :'not_found'
 end
 
+error do
+  EmailWorker.perform_async({
+    from: 'web@neocities.org',
+    to: 'errors@neocities.org',
+    subject: "[NeoCities Error] #{env['sinatra.error'].name}",
+    body: "#{env['sinatra.error'].message}\n\n#{env['sinatra.error'].backtrace}"
+  })
+
+  slim :'error'
+end
+
 get '/?' do
   dashboard_if_signed_in
   slim :index
@@ -423,6 +434,7 @@ get '/password_reset_confirm' do
 end
 
 get '/contact' do
+  raise 'hell'
   slim :'contact'
 end
 
