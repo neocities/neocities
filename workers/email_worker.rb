@@ -4,10 +4,11 @@ class EmailWorker
 
   def perform(args={})
     Mail.deliver do
-       from    args['from']
-       to      args['to']
-       subject args['subject']
-       body    args['body']
+       from     args['from']
+       reply_to args['reply_to']
+       to       args['to']
+       subject  args['subject']
+       body     args['body']
     end
   end
 end
