@@ -934,7 +934,7 @@ a {
 .header-Base {
   background: #65a0ad;
   border-bottom: 6px solid #e93250;
-  min-height: 47px;
+  min-height: 42px;
   overflow: hidden; }
 
 @media (max-device-width: 480px), screen and (max-width: 800px) {
@@ -1083,11 +1083,14 @@ a {
 
 .status-Nav {
   float: right; }
-  .status-Nav li {
-    float: left; }
   @media (max-device-width: 480px), screen and (max-width: 800px) {
     .status-Nav {
       float: none; } }
+  .status-Nav li {
+    float: left; }
+    @media (max-device-width: 480px), screen and (max-width: 800px) {
+      .status-Nav li {
+        float: none; } }
 
 .hp .header-Base {
   padding-top: 46px; }
@@ -1156,6 +1159,9 @@ a {
 
 .interior .header-Nav {
   padding-left: 70px; }
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    .interior .header-Nav {
+      width: 100%; } }
 
 .interior .constant-Nav {
   margin: 0; }

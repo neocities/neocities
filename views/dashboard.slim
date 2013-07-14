@@ -57,13 +57,13 @@ javascript:
   
           a href="http://#{current_site.username}.neocities.org" target="_blank": img src="/site_screenshots/#{current_site.username}.jpg"
   
-          h3 style="color: green": a href="http://#{current_site.username}.neocities.org" target="_blank" http://#{current_site.username}.neocities.org
+          h3 class="eps": a href="http://#{current_site.username}.neocities.org" target="_blank" http://#{current_site.username}.neocities.org
           br
   
           .progress.progress-info.progress-striped
             .bar style="width: #{(current_site.total_space / Site::MAX_SPACE.to_f) * 100}%"
   
-          h4 You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{(current_site.total_space.to_f / 2**20).round(2)}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
+          h4 class="base": You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{(current_site.total_space.to_f / 2**20).round(2)}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
       
       .row style="margin-top: 20px"
         .span5
