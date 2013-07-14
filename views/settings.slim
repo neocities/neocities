@@ -1,58 +1,59 @@
-.row
-  .span12.text-center
-    h1 Site Settings
-
-.row
-  .span12.text-center
-    - if !current_site.errors.empty?
-      .row
-        .span8.offset2
-          .alert.alert-block.alert-error
-            - current_site.errors.each do |error|
-              p = error.last.first
-
-.row
-  .span4
-    h2 Change Password
-    form method="POST" action="/change_password"
-      input name="csrf_token" type="hidden" value="#{csrf_token}"
+.page
+  .row.content
+    .span12.text-center
+      h1 Site Settings
+  
+  .row
+    .span12.text-center
+      - if !current_site.errors.empty?
+        .row
+          .span8.offset2
+            .alert.alert-block.alert-error
+              - current_site.errors.each do |error|
+                p = error.last.first
+  
+  .row
+    .span4
+      h2 Change Password
+      form method="POST" action="/change_password"
+        input name="csrf_token" type="hidden" value="#{csrf_token}"
+        
+        div
+          p Current Password: 
+          input name="current_password" type="password"
+        
+        div
+          p New Password:
+          input name="new_password" type="password"
+        
+        div
+          p Confirm New Password:
+          input name="new_password_confirm" type="password"
+        
+        input.btn-Action type="submit" value="Change Password"
+    .span4
+      h2 Change Site (User) Name
       
-      div
-        p Current Password: 
-        input name="current_password" type="password"
+      form method="POST" action="/change_name"
+        input name="csrf_token" type="hidden" value="#{csrf_token}"
+  
+        p It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
       
-      div
-        p New Password:
-        input name="new_password" type="password"
+        div
+          p Current name: <span style="color: green"><strong>#{current_site.username}</strong></span>
+        div
+          p New name:
+          input name="name" type="text" placeholder="newname"
+        div
+          input.btn-Action type="submit" value="Change Name"
+  
+    .span4
+      h2 Mark Adult Content
+      p If your site contains objectionable (adult) content, check this box. Your site will not be removed, but it will be listed on a special browse page. We don't have an official policy on what defines "adult" content yet, we are still working on this. In the interim, best guesses. Thanks for your patience as we try to find a way to balance out the needs of everyone.
+  
+      form method="POST" action="/change_nsfw"
+        input name="csrf_token" type="hidden" value="#{csrf_token}"
+        input name="is_nsfw" type="hidden" value="false"
+        p: strong My page contains objectionable (adult) content:&nbsp;&nbsp;&nbsp;<input name="is_nsfw" type="checkbox" value="true" style="margin-top: 0px" #{"checked" if current_site.is_nsfw}>
       
-      div
-        p Confirm New Password:
-        input name="new_password_confirm" type="password"
-      
-      input.btn.btn-success type="submit" value="Change Password"
-  .span4
-    h2 Change Site (User) Name
-    
-    form method="POST" action="/change_name"
-      input name="csrf_token" type="hidden" value="#{csrf_token}"
-
-      p It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
-    
-      div
-        p Current name: <span style="color: green"><strong>#{current_site.username}</strong></span>
-      div
-        p New name:
-        input name="name" type="text" placeholder="newname"
-      div
-        input.btn.btn-success type="submit" value="Change Name"
-
-  .span4
-    h2 Mark Adult Content
-    p If your site contains objectionable (adult) content, check this box. Your site will not be removed, but it will be listed on a special browse page. We don't have an official policy on what defines "adult" content yet, we are still working on this. In the interim, best guesses. Thanks for your patience as we try to find a way to balance out the needs of everyone.
-
-    form method="POST" action="/change_nsfw"
-      input name="csrf_token" type="hidden" value="#{csrf_token}"
-      input name="is_nsfw" type="hidden" value="false"
-      p: strong My page contains objectionable (adult) content:&nbsp;&nbsp;&nbsp;<input name="is_nsfw" type="checkbox" value="true" style="margin-top: 0px" #{"checked" if current_site.is_nsfw}>
-    
-      input.btn.btn-success type="submit" value="Update"
+        input.btn-Action type="submit" value="Update"

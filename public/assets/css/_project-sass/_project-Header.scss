@@ -6,7 +6,7 @@
 .header-Base{
   background:#65a0ad;
   border-bottom:6px solid #e93250;
-  min-height:47px;
+  min-height:42px;
   overflow:hidden;
 }
 
@@ -181,11 +181,16 @@
 .status-Nav{
   float:right;
   
-  li{float:left}
-  
   @media (max-device-width:480px), screen and (max-width:800px){
     float:none;
   }
+  
+  li{
+    float:left;
+    @media (max-device-width:480px), screen and (max-width:800px){
+      float:none
+    }
+  } 
 }
 
 // hp CSS
@@ -261,5 +266,10 @@
 }
 
 .interior .header-Nav{
-  padding-left:70px
+  padding-left:70px;
+  @media (max-device-width:480px), screen and (max-width:800px){
+    width:100%;
+  }  
 }
+
+.interior .constant-Nav{margin:0}

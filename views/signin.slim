@@ -1,16 +1,15 @@
-.text-center
-  .row
-    .span12
-      h1 Welcome back!
-  .row
-    .span12
-      form method="POST" action="/signin"
+.page
+  .content.single-Col
+    h1 Welcome back!
+    
+    
+    form method="POST" action="/signin"
         input name="csrf_token" type="hidden" value="#{csrf_token}"
 
         fieldset
-          div: input name="username" type="text" placeholder="Your username" autocapitalize="off" autocorrect="off"
-          div: input name="password" type="password" placeholder="Your password"
-          div: button class="btn btn-large btn-success" href="#" style="margin-top: 10px" Sign in
+          div: input name="username" type="text" placeholder="Your username" class="input-Area" autocapitalize="off" autocorrect="off"
+          div: input name="password" type="password" class="input-Area" placeholder="Your password"
+          div: button class="btn-Action" href="#" Sign in
   .row
     .span12
       div
