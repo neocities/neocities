@@ -67,7 +67,7 @@ end
 get '/new' do
   dashboard_if_signed_in
   @site = Site.new
-  @site.username params[:username] unless params[:username].nil?
+  @site.username = params[:username] unless params[:username].nil?
   slim :'new'
 end
 
