@@ -1083,6 +1083,8 @@ a {
 
 .status-Nav {
   float: right; }
+  .status-Nav li {
+    float: left; }
   @media (max-device-width: 480px), screen and (max-width: 800px) {
     .status-Nav {
       float: none; } }

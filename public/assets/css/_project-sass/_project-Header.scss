@@ -180,8 +180,11 @@
 
 .status-Nav{
   float:right;
+  
+  li{float:left}
+  
   @media (max-device-width:480px), screen and (max-width:800px){
-    float:none
+    float:none;
   }
 }
 
