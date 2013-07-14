@@ -30,7 +30,6 @@ error do
 end
 
 get '/?' do
-  dashboard_if_signed_in
   erb :index, layout: false
 end
 

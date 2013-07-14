@@ -73,9 +73,23 @@
   </ul>
   
   <ul class="status-Nav">
-    <li>
-      <a href="/signin" class="sign-In" title="Sign into your account">Sign In</a>
-    </li>
+    
+    <% if !signed_in? %>
+      <li>
+        <a href="/signin" class="sign-In" title="Sign into your account">Sign In</a>
+      </li>
+    <% else %>
+      <li>
+        <a href="/dashboard" class="sign-In">Dashboard</a>
+      </li>
+      <li>
+        <a href="/settings" class="sign-In">Settings</a>
+      </li>
+      <li>
+        <a href="/signout" class="sign-In">Signout</a>
+      </li>
+    <% end %>
+
   </ul>
   
 </nav>
