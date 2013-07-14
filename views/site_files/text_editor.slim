@@ -8,7 +8,8 @@ css:
   }
   .theme-Code{
     float:right;
-    margin-top:20px;
+    position:relative;
+    top:-50px;
   }
 
 .page
@@ -17,7 +18,7 @@ css:
     h2 Editing #{params[:filename]}
     
     div.theme-Code
-      p Theme: 
+      p style="display:inline-block; margin-right:10px" Theme: 
       select id="theme" size="1" onchange="setTheme();" onkeyup="setTheme();"
         optgroup label="Bright"
           option value="ace/theme/chrome" Chrome
