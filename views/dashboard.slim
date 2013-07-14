@@ -46,9 +46,8 @@ javascript:
                   a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
             - else
               <i class="icon-picture icon-3x"></i>&nbsp;&nbsp; <font style="font-size: 20pt">#{file.filename}</font>
-              div style="margin-top: 3px; margin-bottom: 30px"
-                  | To use in an HTML file, paste this text: <code><small>&lt;img src="/#{file.filename}"&gt;</small></code>
-                  <br>
+              div style="margin-top: 3px; margin-bottom:10px"
+                  | To use in an HTML file, paste this text: <code class="tiny" style="margin:0">&lt;img src="/#{file.filename}"&gt;</code>
                   a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br>
                   a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
   
@@ -72,7 +71,7 @@ javascript:
           div
             a href="/site_files/new" class="btn-Action" style="margin-bottom:20px" Upload New File
           div
-            a href="/site_files/new_page" class="btn-Action" style="margin-bottom: 20px" Create New HTML Page
+            a href="/site_files/new_page" class="btn-Action" Create New HTML Page
           
           <hr />
           
