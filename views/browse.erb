@@ -1,20 +1,11 @@
 <div class="content single-Col">
-
-	<% count = 0 %>
-  <% @sites.each_with_index do |site,i| %>
-    <% if count == 0 %>
-      <div class="row">
+  <ul class="row website-Gallery">    
+    <% @sites.each do |site| %>
+      <li>
+        <a href="http://<%= site.username %>.neocities.org" target="_blank">
+          <img src="http://neocities.org/site_screenshots/<%= site.username %>.jpg" />
+        </a>
+      </li>
     <% end %>
-    <% count += 1 %>
-    
-    <div class="col col-25">
-      DERPIE PIKACHU
-    </div>
-      
-    <% if count == 4 || @sites.length-1 == i %>
-      </div>
-      <% count = 0 %>
-    <% end %>
-	<% end %>
-	
+  </ul>
 </div> <!-- end .content -->
