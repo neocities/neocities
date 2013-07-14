@@ -1,0 +1,50 @@
+      <header class="header-Base">
+        <nav class="header-Nav clearfix" role="navigation">
+  <a href="#!" title="show small screen nav" class="small-Nav">
+    <img src="assets/img/nav-Icon.png" alt="navigation icon" />
+  </a>
+  <ul class="h-Nav constant-Nav">
+    <li>
+      <a href="/" title="back to the start">NeoCities</a>
+    </li>
+    <li>
+      <a href="/browse" title="Browse NeoCities member websites">Browse</a>
+    </li>
+    <li>
+      <a href="/tutorials" title="Learn to code with these tutorials">Tutorials</a>
+    </li>
+    <li>
+      <a href="/about" title="About NeoCities">About</a>
+    </li>
+  </ul>
+  
+  <ul class="status-Nav">
+    
+    <% if !signed_in? %>
+      <li>
+        <a href="/signin" class="sign-In" title="Sign into your account">Sign In</a>
+      </li>
+    <% else %>
+      <li>
+        <a href="/dashboard" class="sign-In">Dashboard</a>
+      </li>
+      <li>
+        <a href="/settings" class="sign-In">Settings</a>
+      </li>
+      <li>
+        <a href="/signout" class="sign-In">Signout</a>
+      </li>
+    <% end %>
+
+  </ul>
+  
+</nav>
+
+        <h1 class="logo int-Logo">
+  <a href="/" title="back to home">
+    <span class="hidden">NeoCities.org</span>
+    <img src="/assets/img/cat.png" alt="Neocities.org" />
+  </a>
+</h1>
+
+      </header>

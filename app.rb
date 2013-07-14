@@ -31,7 +31,7 @@ end
 
 get '/?' do
   dashboard_if_signed_in
-  erb :index
+  erb :index, layout: false
 end
 
 get '/browse' do
@@ -43,7 +43,15 @@ get '/browse' do
 
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
-  slim :browse
+  erb :browse
+end
+
+get '/tutorials' do
+  erb :'tutorials'
+end
+
+get '/donate' do
+  erb :'donate'
 end
 
 get '/blog' do
@@ -130,7 +138,7 @@ get '/signout' do
 end
 
 get '/about' do
-  slim :'about'
+  erb :'about'
 end
 
 get '/site_files/new_page' do

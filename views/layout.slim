@@ -11,35 +11,22 @@ html
     meta property="og:description" content="NeoCities is the new Geocities. Create your own free home page, and do whatever you want with it."
     meta name="csrf-token" content="#{csrf_token}"
     script src="/js/jquery.min.js"
-
+    link href="/assets/css/neo.min.css" rel="stylesheet" type="text/css" media="all"
+    script src="/assets/scripts/app.min.js"
+    css:
+      body {
+        background-color: #f6f0e6;
+      }
+    
   body
     a id="top"
 
+    == erb :'_header', layout: false
+
     .container
-      .row
-        .span12
-          .navbar
-            .navbar-inner
-              a.brand href="/" NeoCities
-              ul.nav
-                li: a href="/browse" <b>Browse</b>
-                li: a href="/blog" <b>Blog</b>
-                li: a href="/about" <b>About</b>
-
-
-
-              ul.nav.pull-right
-                - if !signed_in?
-                  li: a href="/signin" <b>Sign in</b>
-                  
-              - if signed_in?
-                .dropdown.pull-right
-                  a.dropdown-toggle.navbar-text data-toggle="dropdown" href="#": strong style="color: #7AB800" #{current_site.username}
-                  ul.dropdown-menu role="menu" aria-labelledby="dLabel"
-                    li: a href="/dashboard" Dashboard
-                    li: a href="/settings" Settings
-                    li: a href="/signout" Signout
-
+    
+      
+    
       - flash.keys.each do |key|
         div class="alert alert-#{key}"
           button.close type="button" data-dismiss="alert" &times;
