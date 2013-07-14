@@ -12,49 +12,46 @@ javascript:
           p = error.last.first
 
 .page
-  .txt-Center.row
+  .row
       form method="POST" action="/create"
         input name="csrf_token" type="hidden" value="#{csrf_token}"
-        h2 Create a new Home Page
+        h2.txt-Center Create a New Home Page
   
-        .col.col-50
-          p First, enter a username. This will also be used as your site path.<br><b>Do not forget this, it will be used to sign in to 
-          and manage your home page.</b><br>It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
-      
-          hr
+        .col.col-50 style="margin:0 auto; float:none"
+          p.tiny First, enter a username. This will also be used as your site path.<br><b>Do not forget this, it will be used to sign in to and manage your home page.</b> It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
+          br
           h5 Username
-          p <input name="username" type="text" placeholder="yourusername" value="#{@site.username}" autocapitalize="off" autocorrect="off">.neocities.org
-          br
-          p Next, enter a password. This will be used to allow you to login. Minimum 5 characters. If you don't make it a good password, Dade Murphy from the movie Hackers will come in and steal your "garbage files".
+          p.tiny <input class="input-Area" name="username" type="text" placeholder="yourusername" value="#{@site.username}" autocapitalize="off" autocorrect="off">.neocities.org
+
+          p.tiny Next, enter a password. This will be used to allow you to login. Minimum 5 characters. If you don't make it a good password, Dade Murphy from the movie Hackers will come in and steal your "garbage files".
         
-          br
+          hr
           h5 Password
-          input name="password" type="password"
+          input class="input-Area" name="password" type="password"
         
           br
-          p Now you can enter an e-mail address. Your e-mail address is private and we will not show it to anyone for any reason. You don't have to provide one, but <b>we will not be able to reset your password without it, so don't lose your username and password if you leave this blank!</b>
+          p.tiny Now you can enter an e-mail address. Your e-mail address is private and we will not show it to anyone for any reason. You don't have to provide one, but <b>we will not be able to reset your password without it, so don't lose your username and password if you leave this blank!</b>
         
-          br
+          hr
           h5 Email
-          input name="email" type="email" placeholder="youremail@example.com" value="#{@site.email}"
+          input class="input-Area" name="email" type="email" placeholder="youremail@example.com" value="#{@site.email}"
         
           br
       
-          p You can optionally enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of ten tags, and there is a two word per tag maximum (extra words in a tag will be removed).
+          p.tiny You can optionally enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of ten tags, and there is a two word per tag maximum (extra words in a tag will be removed).
 
           hr
           h5 Tags
-          p: input name="tags" type="text" style="width: 400px" placeholder="pokemon, video games, bulbasaur" value="#{params[:tags]}" autocapitalize="off" autocorrect="off"
+          p: input class="input-Area" name="tags" type="text" style="width: 400px" placeholder="pokemon, video games, bulbasaur" value="#{params[:tags]}" autocapitalize="off" autocorrect="off"
   
           input name="is_nsfw" type="hidden" value="false"
-          p: strong If your page will contain objectionable (adult) content, check this box:&nbsp;&nbsp;&nbsp;<input name="is_nsfw" type="checkbox" value="true" style="margin-top: 0px">
+          p: strong If your page will contain objectionable (adult) content, check this box:&nbsp;&nbsp;&nbsp;<input name="is_nsfw" type="checkbox" value="true" style="margin-top:0">
 
-          br
-          p Last thing! Enter these two words correctly (with spaces) so we know you're not a robot (don't worry robots, we still love you).
-          div
+          p.tiny <b>Last thing!</b> Enter these two words correctly (with spaces) so we know you're not a robot (don't worry robots, we still love you).
+          div style="background:#fff"
             == recaptcha_tag :challenge, ssl: true
           br
         
           h3 You're done. Just click the button below!
-  
-          input.btn-Action type="submit" value="Create Home Page"
+          .txt-Center
+            input.btn-Action type="submit" value="Create Home Page"
