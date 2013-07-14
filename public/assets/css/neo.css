@@ -1157,6 +1157,9 @@ a {
 .interior .header-Nav {
   padding-left: 70px; }
 
+.interior .constant-Nav {
+  margin: 0; }
+
 .content-Base {
   background: #f6f0e6;
   min-height: 500px;
