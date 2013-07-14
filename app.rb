@@ -51,7 +51,7 @@ get '/tutorials' do
 end
 
 get '/donate' do
-  erb :'donate'
+  redirect '/about'
 end
 
 get '/blog' do
