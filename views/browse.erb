@@ -1,6 +1,39 @@
 <div class="content">
 
+  <div class="c-Row">
+    <div class="col col-25">
+      DERPIE PIKACHU
+    </div>
+    <div class="col col-25">
+      DERPIE PIKACHU
+    </div>
+    <div class="col col-25">
+      DERPIE PIKACHU
+    </div>
+    <div class="col col-25">
+      DERPIE PIKACHU
+    </div>
+  </div>
+
   Put browse code here
 	
+	
+	
+	<% count = 0 %>
+  <% @sites.each_with_index do |site,i| %>
+    <% if count == 0 %>
+      <div class="c-Row">
+    <% end %>
+    <% count += 1 %>
+    
+    <div class="col col-25">
+      DERPIE PIKACHU
+    </div>
+      
+    <% if count == 4 %>
+      </div>
+      <% count = 0 %>
+    <% end %>
+	<% end %>
 	
 </div> <!-- end .content -->
