@@ -1,5 +1,12 @@
 <div class="content">
-  <ul class="row website-Gallery">    
+  <ul class="row website-Gallery">
+    
+    <div>
+      <h2>Web Sites on NeoCities</h2>
+      <p>If you like a site, don't forget to bookmark it!<br>Visitor counts are updated hourly.</p>
+      <div style="margin-bottom: 40px; width: 280px;"><a class="btn-Action" style="padding-top: 10px; padding-bottom: 10px" href="/new">Create your NeoCities site now</a></div>
+    </div>
+    
     <% @sites.each do |site| %>
       <li>
         <a href="http://<%= site.username %>.neocities.org" target="_blank">
