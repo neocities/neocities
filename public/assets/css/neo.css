@@ -903,6 +903,12 @@ body {
   color: #eeeeee;
   text-shadow: none; }
 
+.page {
+  min-height: 600px; }
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    .page {
+      min-height: 25px; } }
+
 .content, .header-Content, .footer-Content {
   margin: 0 auto;
   max-width: 1000px;

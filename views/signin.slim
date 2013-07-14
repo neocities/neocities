@@ -1,5 +1,5 @@
 .page
-  .content.single-Col
+  .content.single-Col.txt-Center
     h1 Welcome back!
     
     
@@ -7,12 +7,13 @@
         input name="csrf_token" type="hidden" value="#{csrf_token}"
 
         fieldset
-          div: input name="username" type="text" placeholder="Your username" class="input-Area" autocapitalize="off" autocorrect="off"
-          div: input name="password" type="password" class="input-Area" placeholder="Your password"
+          div: input name="username" style="height:auto!important" type="text" placeholder="Your username" class="input-Area" autocapitalize="off" autocorrect="off"
+          div: input name="password" style="height:auto!important" type="password" class="input-Area" placeholder="Your password"
           div: button class="btn-Action" href="#" Sign in
-  .row
-    .span12
-      div
-        a href="/new" I don't have an account yet.
-      div
-        a href="/password_reset" I forgot my password.
+          
+          hr
+          
+          p
+            a href="/new" title="Sign me up!" I don't have an account yet.
+          p
+            a href="/password_reset" title="What did I huh?" I forgot my password. 
