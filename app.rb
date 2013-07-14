@@ -36,7 +36,7 @@ end
 get '/browse' do
   @current_page = params[:current_page] || 1
   @current_page = @current_page.to_i
-  site_dataset = Site.order(:updated_at.desc, :hits.desc).filter(is_banned: false).filter(site_changed: true).paginate(@current_page, 201)
+  site_dataset = Site.order(:updated_at.desc, :hits.desc).filter(is_banned: false).filter(site_changed: true).paginate(@current_page, 400)
 
   site_dataset.filter! is_nsfw: (!params[:is_nsfw].nil? ? true : false)
 

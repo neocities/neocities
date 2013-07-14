@@ -8,4 +8,20 @@
       </li>
     <% end %>
   </ul>
+  
+  <% if @page_count > 1 %>
+    <div style="font-size: 30pt">
+      <% if @current_page != 1 %>
+        <a href="/browse?current_page=<%= @current_page - 1 %>"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
+      <% end %>
+
+      <% 1.upto(@page_count) do |num| %>
+        <a href="/browse?current_page=<%= num %>" style="<%= "text-decoration: none" if num == @current_page %>"><%= num %></a>&nbsp;
+      <% end %>
+      
+      <% if @current_page != @page_count %>
+        <a href="/browse?current_page=<%= @current_page + 1 %>"><i class="icon-arrow-right" style="text-decoration: none"></i></a>
+      <% end %>
+    </div>
+  <% end %>
 </div> <!-- end .content -->
