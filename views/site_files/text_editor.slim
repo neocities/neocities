@@ -52,14 +52,15 @@ css:
     div id="editor" style="width: 100%; height: 600px; position: relative;"
       #{@file_data}
     
-.row.text-center style="margin-top: 10px"
-  .span4
-    a.btn.btn-large.btn-warning href="/dashboard" <i class="icon-remove"></i>&nbsp;&nbsp;Finish Without Saving
-  .span4
-    a.btn.btn-large.btn-success href="#" onclick="saveTextFile(false); return false" <i class="icon-save"></i>&nbsp;&nbsp;Save Changes
-  .span4
-    a.btn.btn-large.btn-info href="#" onclick="saveTextFile(true); return false" <i class="icon-save"></i>&nbsp;&nbsp;Save and Finish
     
+.row
+  .col.col-33.txt-Center
+    a.btn-Action href="/dashboard" <i class="icon-remove"></i>&nbsp;&nbsp;Finish Without Saving
+  .col.col-33.txt-Center
+    a.btn-Action href="#" onclick="saveTextFile(false); return false" <i class="icon-save"></i>&nbsp;&nbsp;Save Changes
+  .col.col-33.txt-Center
+    a.btn-Action href="#" onclick="saveTextFile(true); return false" <i class="icon-save"></i>&nbsp;&nbsp;Save and Finish
+
 .row style="margin-top: 20px"
   .span6.offset3.text-center
     div id="editorUpdates" class="alert alert-success hidden"
