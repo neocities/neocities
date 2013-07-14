@@ -37,7 +37,7 @@ end
 get '/browse' do
   @current_page = params[:current_page] || 1
   @current_page = @current_page.to_i
-  site_dataset = Site.order(:updated_at.desc, :hits.desc).filter(is_banned: false).filter(~{updated_at: nil}).paginate(@current_page, 201)
+  site_dataset = Site.order(:updated_at.desc, :hits.desc).filter(is_banned: false).filter(site_changed: true).paginate(@current_page, 201)
 
   site_dataset.filter! is_nsfw: (!params[:is_nsfw].nil? ? true : false)
 
@@ -260,7 +260,10 @@ post '/site_files/upload' do
   FileUtils.mv params[:newfile][:tempfile].path, dest_path
   File.chmod(0640, dest_path) if self.class.production?
 
-  ScreenshotWorker.perform_async(current_site.username) if sanitized_filename =~ /index\.html/
+  if sanitized_filename =~ /index\.html/
+    ScreenshotWorker.perform_async current_site.username
+    current_site.update site_changed: true
+  end
 
   current_site.update updated_at: Time.now
 
@@ -327,7 +330,10 @@ post '/site_files/save/:filename' do |filename|
   FileUtils.mv tmpfile.path, dest_path
   File.chmod(0640, dest_path) if self.class.production?
 
-  ScreenshotWorker.perform_async(current_site.username) if sanitized_filename =~ /index\.html/
+  if sanitized_filename =~ /index\.html/
+    ScreenshotWorker.perform_async current_site.username
+    current_site.update site_changed: true
+  end
 
   current_site.update updated_at: Time.now
 
