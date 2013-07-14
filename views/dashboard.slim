@@ -9,97 +9,98 @@ javascript:
     $('#deleteFilenameForm').submit();
   }
 
-.row
-  .span5.offset1
-
-    h1 Your home page
-
-    - current_site.file_list.each do |file|
+.content-Base
+  .row.content
+    .span5.offset1
+  
+      h1 Your Website
+  
+      - current_site.file_list.each do |file|
+        .row
+          .span4
+            - if file.ext == 'html' || file.ext == 'htm' || file.ext == 'txt' || file.ext == 'js' || file.ext == 'css' || file.ext == 'md'
+              span
+                <i class="icon-file-alt icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">#{file.filename}</span>
+                - if file.filename == 'index.html'
+                  p 
+                  | This is your index file! It is the "default file" that loads when you go to <a href="http://#{current_site.username}.neocities.org">#{current_site.username}.neocities.org</a>. In effect, it's your front page. If you want to change your front page, you need to edit (or overwrite) this file. The default file is always named <b>index.html</b>.<br><br>
+              
+              div style="margin-bottom: 30px"
+                span
+                  i class="icon-globe" &nbsp;&nbsp;
+  
+                  a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br>
+                span
+                  i class="icon-edit" &nbsp;&nbsp;
+                  a href="/site_files/text_editor/#{file.filename}" Edit with text editor <br>
+                span
+                  i class="icon-edit" &nbsp;&nbsp;
+                  span Edit with visual editor <small>(coming soon)</small> <br>
+                span
+                  i class="icon-edit" &nbsp;&nbsp;
+                  span: a href="/site_files/download/#{file.filename}" Download <br>
+                span
+                  i class="icon-trash" &nbsp;&nbsp;
+                  a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
+            - else
+              <i class="icon-picture icon-3x"></i>&nbsp;&nbsp; <font style="font-size: 20pt">#{file.filename}</font>
+              div style="margin-top: 3px; margin-bottom: 30px"
+                  | To use in an HTML file, paste this text: <code><small>&lt;img src="/#{file.filename}"&gt;</small></code>
+                  <br>
+                  a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br>
+                  a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
+  
+    .span5
+  
       .row
-        .span4
-          - if file.ext == 'html' || file.ext == 'htm' || file.ext == 'txt' || file.ext == 'js' || file.ext == 'css' || file.ext == 'md'
-            span
-              <i class="icon-file-alt icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">#{file.filename}</span>
-              - if file.filename == 'index.html'
-                p 
-                | This is your index file! It is the "default file" that loads when you go to <a href="http://#{current_site.username}.neocities.org">#{current_site.username}.neocities.org</a>. In effect, it's your front page. If you want to change your front page, you need to edit (or overwrite) this file. The default file is always named <b>index.html</b>.<br><br>
-            
-            div style="margin-bottom: 30px"
-              span
-                i class="icon-globe" &nbsp;&nbsp;
-
-                a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br>
-              span
-                i class="icon-edit" &nbsp;&nbsp;
-                a href="/site_files/text_editor/#{file.filename}" Edit with text editor <br>
-              span
-                i class="icon-edit" &nbsp;&nbsp;
-                span Edit with visual editor <small>(coming soon)</small> <br>
-              span
-                i class="icon-edit" &nbsp;&nbsp;
-                span: a href="/site_files/download/#{file.filename}" Download <br>
-              span
-                i class="icon-trash" &nbsp;&nbsp;
-                a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
-          - else
-            <i class="icon-picture icon-3x"></i>&nbsp;&nbsp; <font style="font-size: 20pt">#{file.filename}</font>
-            div style="margin-top: 3px; margin-bottom: 30px"
-                | To use in an HTML file, paste this text: <code><small>&lt;img src="/#{file.filename}"&gt;</small></code>
-                <br>
-                a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br>
-                a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
-
-  .span5
-
-    .row
-      .span5
-
-        a href="http://#{current_site.username}.neocities.org" target="_blank": img src="/site_screenshots/#{current_site.username}.jpg"
-
-        h3 style="color: green": a href="http://#{current_site.username}.neocities.org" target="_blank" http://#{current_site.username}.neocities.org
-        br
-
-        .progress.progress-info.progress-striped
-          .bar style="width: #{(current_site.total_space / Site::MAX_SPACE.to_f) * 100}%"
-
-        h4 You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{(current_site.total_space.to_f / 2**20).round(2)}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
-    
-    .row style="margin-top: 20px"
-      .span5
-        div
-          a href="/site_files/new" class="btn-Action" style="margin-bottom:20px" Upload New File
-        div
-          a href="/site_files/new_page" class="btn-Action" style="margin-bottom: 20px" Create New HTML Page
-        
-        h4: a href="/site_files/#{current_site.username}.zip" Download Entire Site
-
-    .row style="margin-top: 20px"
-      .span5
-        <i class="icon-question-sign icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">Need to learn web design?</span>
-        div
+        .span5
+  
+          a href="http://#{current_site.username}.neocities.org" target="_blank": img src="/site_screenshots/#{current_site.username}.jpg"
+  
+          h3 style="color: green": a href="http://#{current_site.username}.neocities.org" target="_blank" http://#{current_site.username}.neocities.org
+          br
+  
+          .progress.progress-info.progress-striped
+            .bar style="width: #{(current_site.total_space / Site::MAX_SPACE.to_f) * 100}%"
+  
+          h4 You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{(current_site.total_space.to_f / 2**20).round(2)}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
+      
+      .row style="margin-top: 20px"
+        .span5
           div
-            i class="icon-globe" &nbsp;&nbsp;
-            a href="http://www.htmldog.com/guides/html/beginner" target="_blank" HTML Beginner Tutorial
+            a href="/site_files/new" class="btn-Action" style="margin-bottom:20px" Upload New File
           div
-            i class="icon-globe" &nbsp;&nbsp;
-            a href="http://www.w3schools.com/html/html_intro.asp" target="_blank" w3schools HTML introduction
+            a href="/site_files/new_page" class="btn-Action" style="margin-bottom: 20px" Create New HTML Page
+          
+          h4: a href="/site_files/#{current_site.username}.zip" Download Entire Site
+  
+      .row style="margin-top: 20px"
+        .span5
+          <i class="icon-question-sign icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">Need to learn web design?</span>
           div
-            i class="icon-globe" &nbsp;&nbsp;
-            a href="http://codepupil.com/" target="_blank" CodePupil.com teaches with games<br>
-          div
-            i class="icon-globe" &nbsp;&nbsp;
-            a href="http://www.codecademy.com/tracks/web" target="_blank" Online lessons at Codecademy.com<br>
-
-form method="POST" action="/site_files/delete" id="deleteFilenameForm"
-  input name="csrf_token" type="hidden" value="#{csrf_token}"
-  input type="hidden" id="deleteFilenameInput" name="filename"
-
-.modal.hide.fade id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true"
-  .modal-header
-    button.close type="button" data-dismiss="modal" aria-hidden="true" x
-    h3 id="deleteConfirmModalLabel" Confirm delete of file
-  .modal-body
-    p You are about to delete the file <span id="deleteFileName"></span>. Are you sure?
-  .modal-footer
-    button.btn data-dismiss="modal" aria-hidden="true" Cancel
-    button.btn.btn-danger onclick="fileDelete()" Delete
+            div
+              i class="icon-globe" &nbsp;&nbsp;
+              a href="http://www.htmldog.com/guides/html/beginner" target="_blank" HTML Beginner Tutorial
+            div
+              i class="icon-globe" &nbsp;&nbsp;
+              a href="http://www.w3schools.com/html/html_intro.asp" target="_blank" w3schools HTML introduction
+            div
+              i class="icon-globe" &nbsp;&nbsp;
+              a href="http://codepupil.com/" target="_blank" CodePupil.com teaches with games<br>
+            div
+              i class="icon-globe" &nbsp;&nbsp;
+              a href="http://www.codecademy.com/tracks/web" target="_blank" Online lessons at Codecademy.com<br>
+  
+  form method="POST" action="/site_files/delete" id="deleteFilenameForm"
+    input name="csrf_token" type="hidden" value="#{csrf_token}"
+    input type="hidden" id="deleteFilenameInput" name="filename"
+  
+  .modal.hide.fade id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true"
+    .modal-header
+      button.close type="button" data-dismiss="modal" aria-hidden="true" x
+      h3 id="deleteConfirmModalLabel" Confirm delete of file
+    .modal-body
+      p You are about to delete the file <span id="deleteFileName"></span>. Are you sure?
+    .modal-footer
+      button.btn data-dismiss="modal" aria-hidden="true" Cancel
+      button.btn.btn-danger onclick="fileDelete()" Delete
