@@ -5,16 +5,14 @@
   
     .txt-Center
       - if !current_site.errors.empty?
-        .row
-          .span8.offset2
-            .alert.alert-block.alert-error
-              - current_site.errors.each do |error|
-                p = error.last.first
+        .alert.alert-block.alert-error
+          - current_site.errors.each do |error|
+            p = error.last.first
     
     .row
-      .col.col-33.txt-Center
+      .col.col-33
         .content
-          h2.delta Change Password
+          h2.eps.txt-Center Change Password
           form method="POST" action="/change_password"
             input name="csrf_token" type="hidden" value="#{csrf_token}"
             
@@ -32,9 +30,9 @@
             
             input.btn-Action type="submit" value="Change Password"
       
-      .col.col-33.txt-Center
+      .col.col-33
         .content
-          h2.delta Change Site (User) Name
+          h2.eps.txt-Center Change Site (User) Name
           
           form method="POST" action="/change_name"
             input name="csrf_token" type="hidden" value="#{csrf_token}"
@@ -48,9 +46,9 @@
             
               input.btn-Action type="submit" value="Change Name"
     
-      .col.col-33.txt-Center
+      .col.col-33
         .content
-          h2.delta Mark Adult Content
+          h2.eps.txt-Center Mark Adult Content
           p If your site contains objectionable (adult) content, check this box. Your site will not be removed, but it will be listed on a special browse page. We don't have an official policy on what defines "adult" content yet, we are still working on this. In the interim, best guesses. Thanks for your patience as we try to find a way to balance out the needs of everyone.
       
           form method="POST" action="/change_nsfw"
