@@ -46,6 +46,8 @@ get '/browse' do
       site_dataset.order!(:created_at.desc)
     when 'oldest'
       site_dataset.order!(:created_at)
+    when 'random'
+      site_dataset.where! 'random() < 0.01'
     else
       params[:sort_by] = 'last_updated'
       site_dataset.order!(:updated_at.desc, :hits.desc)
