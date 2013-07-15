@@ -958,16 +958,6 @@ a {
       background-size: cover;
       min-height: 2px; } }
 
-h1.logo {
-  padding-top: 45px;
-  padding-bottom: 0; }
-
-h1.logo img {
-  margin-left: -10px; }
-  @media (max-device-width: 480px), screen and (max-width: 800px) {
-    h1.logo img {
-      margin-left: 20px; } }
-
 .header-Outro {
   background: #30424b;
   background: -moz-linear-gradient(top, #2b3c43 0%, #354751 100%);
@@ -1172,6 +1162,16 @@ h1.logo img {
     @media (max-device-width: 480px), screen and (max-width: 800px) {
       .hp .hp-Logo.in-View {
         left: -90px !important; } }
+
+.hp h1.logo {
+  padding-top: 45px;
+  padding-bottom: 0; }
+
+.hp h1.logo img {
+  margin-left: -10px; }
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    .hp h1.logo img {
+      margin-left: 20px; } }
 
 .constant-Nav {
   margin-left: -88px;
