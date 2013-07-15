@@ -53,7 +53,7 @@ get '/browse' do
       site_dataset.order!(:updated_at.desc, :hits.desc)
   end
 
-  site_dataset.filter!(is_nsfw: true) if params[:is_nsfw] == 'true'
+  site_dataset.filter! is_nsfw: (params[:is_nsfw] == 'true' ? true : false)
 
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
