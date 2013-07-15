@@ -934,6 +934,7 @@ a {
 .header-Base {
   background: #65a0ad;
   border-bottom: 6px solid #e93250;
+  min-height: 42px;
   overflow: hidden; }
 
 .header-Content {
@@ -1141,6 +1142,11 @@ h1.logo img {
   @media (max-device-width: 480px), screen and (max-width: 800px) {
     .status-Nav {
       float: none; } }
+  .status-Nav li {
+    float: left; }
+    @media (max-device-width: 480px), screen and (max-width: 800px) {
+      .status-Nav li {
+        float: none; } }
 
 .hp .header-Base {
   padding-top: 46px; }
@@ -1198,7 +1204,8 @@ h1.logo img {
   overflow: visible;
   position: fixed;
   top: 0;
-  width: 100%; }
+  width: 100%;
+  z-index: 9; }
 
 .int-Logo {
   left: 0;
@@ -1208,6 +1215,12 @@ h1.logo img {
 
 .interior .header-Nav {
   padding-left: 70px; }
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    .interior .header-Nav {
+      width: 100%; } }
+
+.interior .constant-Nav {
+  margin: 0; }
 
 .content-Base {
   background: #f6f0e6;
