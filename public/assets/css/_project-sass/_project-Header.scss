@@ -11,6 +11,7 @@
 }
 
 .header-Content{
+    padding-top: 22px;
 	@extend .content;
 	@media (max-device-width:480px), screen and (max-width:800px){
 	  padding:0
@@ -29,8 +30,23 @@
   }
 }
 
+$outroShadow:inset 0px 7px 10px 0px rgba(0, 0, 0, 0.10);
+
 .header-Outro{
   background:#30424b;
+  
+  background: -moz-linear-gradient(top, #2b3c43 0%, #354751 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2b3c43), color-stop(100%,#354751)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #2b3c43 0%,#354751 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #2b3c43 0%,#354751 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #2b3c43 0%,#354751 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #2b3c43 0%,#354751 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2b3c43', endColorstr='#354751',GradientType=0 ); /* IE6-9 */
+  
+  -moz-box-shadow:$outroShadow;
+  -webkit-box-shadow:$outroShadow;
+  box-shadow:$outroShadow;
+  
   color:#fafafa;
 }
 
@@ -44,11 +60,15 @@
   li{
     padding-left:$spacing*9;
     padding-right:$spacing*3;
+    margin-bottom: 18px;
   }
   
   h2{
-    font-size:24px;
-    margin-bottom:10px  
+    font-size:22px;
+    margin-bottom:2px;
+  }
+  p {
+    color: #B2BCC1;
   }
 }
 
@@ -77,6 +97,8 @@
   position:relative
 }
 
+$signupShadow: 1px 2px 12px 2px rgba(0, 0, 0, 0.15);
+
 .signup-Form{
   background:#354751;
   border-radius:4px 4px 0 0;
@@ -84,6 +106,10 @@
   overflow:hidden;
   position:absolute;
   top:-45px;
+  
+  -moz-box-shadow:$signupShadow;
+  -webkit-box-shadow:$signupShadow;
+  box-shadow:$signupShadow;
   
   @media (max-device-width:480px), screen and (max-width:800px){
     height:auto;
@@ -95,14 +121,16 @@
   h2{
     margin-bottom:0;
     text-shadow:0 1px 1px rgba(0,0,0,.5);
+    font-size: 1.8em;
   }
   hr{
     border-bottom:1px solid #4a6677;
     border-top:1px solid #1d282d;
-    margin:5px 0 15px;
+    margin:4px 0 22px;
   }
   fieldset{
     background:url(../img/sign-up-bg.png) repeat-x center top; 
+    padding: 20px 33px;
   }
   label{
     color:#81b8c6;
@@ -110,16 +138,41 @@
       font-size:70%
     }
   }
+  $inputAreaShadow:inset 1px 3px 10px 0px rgba(0, 0, 0, 0.20);
   .input-Area{
     background:#29383f;
     border:0px solid black;
-    @include box-shadow($bs-2);
     color:#557380; 
-    margin-bottom:$spacing*8;
+    margin-bottom:$spacing*7;
     margin-right:$spacing;
+    padding: 11px 12px 9px 12px;
     width:62%;
     
+    -moz-box-shadow:$inputAreaShadow;
+    -webkit-box-shadow:$inputAreaShadow;
+    box-shadow:$inputAreaShadow;
+    
     &:focus{color:#eee}
+  }
+  $placeholderColor: #5E7F8D;
+  ::-webkit-input-placeholder { /* WebKit browsers */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  ::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  :-ms-input-placeholder { /* Internet Explorer 10+ */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  .btn-Action{
+    padding:10px 25px;
   }
 }
 
@@ -219,6 +272,17 @@
       left:-90px!important;
     }
   }
+}
+
+.hp h1.logo {
+    padding-top: 45px;
+    padding-bottom: 0;
+}
+.hp h1.logo img {
+    margin-left: -10px;
+    @media (max-device-width:480px), screen and (max-width:800px){
+        margin-left: 20px;
+    }
 }
 
 .constant-Nav{
