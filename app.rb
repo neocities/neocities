@@ -37,7 +37,7 @@ get '/browse' do
   @current_page = params[:current_page] || 1
   @current_page = @current_page.to_i
 
-  site_dataset = Site.filter(is_banned: false).filter(site_changed: true).paginate(@current_page, 2) # 300
+  site_dataset = Site.filter(is_banned: false).filter(site_changed: true).paginate(@current_page, 300)
 
   case params[:sort_by]
     when 'hits'
