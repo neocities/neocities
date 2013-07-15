@@ -279,7 +279,7 @@ post '/site_files/upload' do
     current_site.update site_changed: true
   end
 
-  current_site.update updated_at: Time.now
+  current_site.update changed_count: 1+current_site.changed_count, updated_at: Time.now
 
   flash[:success] = "Successfully uploaded file #{sanitized_filename}."
   redirect '/dashboard'
@@ -349,7 +349,7 @@ post '/site_files/save/:filename' do |filename|
     current_site.update site_changed: true
   end
 
-  current_site.update updated_at: Time.now
+  current_site.update changed_count: 1+current_site.changed_count, updated_at: Time.now
 
   'ok'
 end
