@@ -49,19 +49,21 @@
     <% end %>
   </ul>
   
-  <% if @page_count > 1 %>
-    <div style="font-size: 30pt">
-      <% if @current_page != 1 %>
-        <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
-      <% end %>
+  <% if params[:sort_by] != 'random' %>
+    <% if @page_count > 1 %>
+      <div style="font-size: 30pt">
+        <% if @current_page != 1 %>
+          <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
+        <% end %>
 
-      <% 1.upto(@page_count) do |num| %>
-        <a href="#" onclick="getPage(<%= num %>); return false" style="<%= "text-decoration: none" if num == @current_page %>"><%= num %></a>&nbsp;
-      <% end %>
+        <% 1.upto(@page_count) do |num| %>
+          <a href="#" onclick="getPage(<%= num %>); return false" style="<%= "text-decoration: none" if num == @current_page %>"><%= num %></a>&nbsp;
+        <% end %>
       
-      <% if @current_page != @page_count %>
-        <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="icon-arrow-right" style="text-decoration: none"></i></a>
-      <% end %>
-    </div>
+        <% if @current_page != @page_count %>
+          <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="icon-arrow-right" style="text-decoration: none"></i></a>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
 </div> <!-- end .content -->
