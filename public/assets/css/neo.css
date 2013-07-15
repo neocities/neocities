@@ -1231,7 +1231,7 @@ a {
 .content-Base {
   background: #f6f0e6;
   min-height: 500px;
-  padding-bottom: 20px;
+  padding-bottom: 30px;
   padding-top: 20px; }
   .content-Base h1, .content-Base h2, .content-Base h3, .content-Base h4, .content-Base h5, .content-Base h6 {
     color: #e93250; }
@@ -1276,13 +1276,18 @@ a {
   -webkit-box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
   box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
   position: relative; }
+  .footer-Intro .footer-Content {
+    padding-top: 40px;
+    padding-bottom: 40px; }
+  .footer-Intro h2 {
+    font-size: 1.45em; }
 
 .f-Col {
   -moz-box-sizing: content-box;
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
-  min-height: 130px;
-  padding-bottom: 32px;
+  min-height: 125px;
+  padding-bottom: 28px;
   position: relative; }
   @media (max-device-width: 480px), screen and (max-width: 800px) {
     .f-Col {
@@ -1296,11 +1301,23 @@ a {
       .f-Col .action-Link {
         position: static; } }
 
+.footer-icon {
+  display: block;
+  background-repeat: no-repeat;
+  position: absolute;
+  right: 0px;
+  top: -70px; }
+
 .f-Col-1 {
   padding-right: 12px; }
+  .f-Col-1 .footer-icon {
+    background-image: url(../img/support-us.png);
+    width: 92px;
+    height: 104px;
+    right: 5px; }
 
 .f-Col-2 {
-  padding-left: 6px;
+  padding-left: 15px;
   padding-right: 6px;
   position: relative; }
   @media (max-device-width: 480px), screen and (max-width: 800px) {
@@ -1325,9 +1342,17 @@ a {
     left: -14px; }
   .f-Col-2:after {
     right: -14px; }
+  .f-Col-2 .footer-icon {
+    background-image: url(../img/about-neocities.png);
+    width: 100px;
+    height: 106px; }
 
 .f-Col-3 {
-  padding-left: 12px; }
+  padding-left: 20px; }
+  .f-Col-3 .footer-icon {
+    background-image: url(../img/latest-news.png);
+    width: 134px;
+    height: 103px; }
 
 .footer-Outro {
   background: #ccdf9b;

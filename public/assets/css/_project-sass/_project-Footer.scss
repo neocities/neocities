@@ -22,12 +22,21 @@
 	border-top:1px solid #cedbab;
 	@include box-shadow($bs-4);
 	position:relative;
+	
+	.footer-Content {	
+    	padding-top:40px;
+    	padding-bottom:40px;
+	}
+	
+	h2 {
+	    font-size: 1.45em;
+	}
 }
 
 .f-Col{
   @include box-sizing(content-box);
-  min-height:130px;
-  padding-bottom:$spacing*8;
+  min-height:125px;
+  padding-bottom:$spacing*7;
   position:relative;
   
   @media (max-device-width:480px), screen and (max-width:800px){
@@ -46,10 +55,27 @@
   }
 }
 
-.f-Col-1{padding-right:$spacing*3}
+.footer-icon {
+    display: block;
+    background-repeat: no-repeat;
+    position: absolute;
+    right: 0px;
+    top: -70px;
+}
+
+.f-Col-1{
+    padding-right:$spacing*3;
+    
+    .footer-icon {
+        background-image: url(../img/support-us.png);
+        width: 92px;
+        height: 104px;
+        right: 5px;
+    }
+}
 
 .f-Col-2{
-  padding-left:6px;
+  padding-left:15px;
   padding-right:6px;
   position:relative;
   @media (max-device-width:480px), screen and (max-width:800px){
@@ -76,9 +102,23 @@
   
   &:before{left:-14px}
   &:after{right:-14px}
+  
+  .footer-icon {
+      background-image: url(../img/about-neocities.png);
+      width: 100px;
+      height: 106px;
+  }
 }
 
-.f-Col-3{padding-left:$spacing*3}
+.f-Col-3{
+    padding-left:20px;
+
+    .footer-icon {
+        background-image: url(../img/latest-news.png);
+        width: 134px;
+        height: 103px;
+    }
+}
 
 
 // Footer Outro Area
