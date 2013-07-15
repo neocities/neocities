@@ -45,7 +45,7 @@ get '/browse' do
     when 'newest'
       site_dataset.order!(:created_at.desc)
     when 'oldest'
-      site_dataset.order!(:created_at.desc)
+      site_dataset.order!(:created_at)
     else
       params[:sort_by] = 'last_updated'
       site_dataset.order!(:updated_at.desc, :hits.desc)
