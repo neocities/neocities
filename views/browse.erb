@@ -1,34 +1,69 @@
+<script type="text/javascript">
+  function getPage(currentPage) {
+    document.location.href = '/browse?current_page='+currentPage+'&'+$('#search_criteria').serialize();
+  }
+</script>
 <div class="content">
   <ul class="row website-Gallery">
     
-    <div>
-      <h2>Web Sites on NeoCities</h2>
-      <p>If you like a site, don't forget to bookmark it!<br>Visitor counts are updated hourly.</p>
-      <div style="margin-bottom: 40px; width: 280px;"><a class="btn-Action" style="padding-top: 10px; padding-bottom: 10px" href="/new">Create your NeoCities site now</a></div>
+    <div class="row">
+      <div class="col col-50">
+        <h2>Web Sites on NeoCities</h2>
+        <p>If you like a site, don't forget to bookmark it!<br>Visitor counts are updated hourly.</p>
+        <div style="margin-bottom: 40px; width: 280px;"><a class="btn-Action" style="padding-top: 10px; padding-bottom: 10px" href="/new">Create your NeoCities site now</a></div>
+      </div>
+    
+      <div class="col col-50" style="padding-top: 50px">
+        
+        <form id="search_criteria" action="/browse" method="GET">       
+          <fieldset class="grouping">
+            <label class="text-Label" for="sort_by">Sort By:</label>
+            <div class="select-Container">
+              <select name="sort_by" class="input-Select">
+                <option value="last_updated" <%= 'selected' if params[:sort_by] == 'last_updated' %>>Last Updated</option>
+                <option value="hits" <%= 'selected' if params[:sort_by] == 'hits' %>>Most Hits</option>
+                <option value="newest" <%= 'selected' if params[:sort_by] == 'newest' %>>Newest</option>
+                <option value="oldest" <%= 'selected' if params[:sort_by] == 'oldest' %>>Oldest</option>
+                <option value="random" <%= 'selected' if params[:sort_by] == 'random' %>>Random</option>
+              </select>
+            </div>
+          <!--
+            <div>
+              <input name="is_nsfw" type="checkbox" value="true" <%= 'checked' if params[:is_nsfw].to_s == 'true' %>> Show 18+ content
+            </div>
+          -->
+            <div style="margin-top: 10px">
+              <input class="btn-Action" type="submit" value="Update">
+            </div>
+          </fieldset>
+        </form>
+      </div>
     </div>
     
     <% @sites.each do |site| %>
       <li>
         <a href="http://<%= site.username %>.neocities.org" target="_blank">
-          <img src="http://neocities.org/site_screenshots/<%= site.username %>.jpg" />
+          <img src="http://neocities.org/site_screenshots/<%= site.username %>.jpg" width="208" height="125" />
         </a>
       </li>
     <% end %>
   </ul>
   
-  <% if @page_count > 1 %>
-    <div style="font-size: 30pt">
-      <% if @current_page != 1 %>
-        <a href="/browse?current_page=<%= @current_page - 1 %>"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
-      <% end %>
+  <% if params[:sort_by] != 'random' %>
+    <% if @page_count > 1 %>
+      <div style="font-size: 30pt">
+        <% if @current_page != 1 %>
+          <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
+        <% end %>
 
-      <% 1.upto(@page_count) do |num| %>
-        <a href="/browse?current_page=<%= num %>" style="<%= "text-decoration: none" if num == @current_page %>"><%= num %></a>&nbsp;
-      <% end %>
+        <% 1.upto(@page_count) do |num| %>
+          <a href="#" onclick="getPage(<%= num %>); return false" style="<%= "text-decoration: none" if num == @current_page %>"><%= num %></a>&nbsp;
+        <% end %>
       
-      <% if @current_page != @page_count %>
-        <a href="/browse?current_page=<%= @current_page + 1 %>"><i class="icon-arrow-right" style="text-decoration: none"></i></a>
-      <% end %>
-    </div>
+        <% if @current_page != @page_count %>
+          <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="icon-arrow-right" style="text-decoration: none"></i></a>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
 </div> <!-- end .content -->

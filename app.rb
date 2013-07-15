@@ -36,9 +36,24 @@ end
 get '/browse' do
   @current_page = params[:current_page] || 1
   @current_page = @current_page.to_i
-  site_dataset = Site.order(:updated_at.desc, :hits.desc).filter(is_banned: false).filter(site_changed: true).paginate(@current_page, 300)
 
-  site_dataset.filter! is_nsfw: (!params[:is_nsfw].nil? ? true : false)
+  site_dataset = Site.filter(is_banned: false).filter(site_changed: true).paginate(@current_page, 300)
+
+  case params[:sort_by]
+    when 'hits'
+      site_dataset.order!(:hits.desc)
+    when 'newest'
+      site_dataset.order!(:created_at.desc)
+    when 'oldest'
+      site_dataset.order!(:created_at)
+    when 'random'
+      site_dataset.where! 'random() < 0.01'
+    else
+      params[:sort_by] = 'last_updated'
+      site_dataset.order!(:updated_at.desc, :hits.desc)
+  end
+
+  site_dataset.filter!(is_nsfw: true) if params[:is_nsfw] == 'true'
 
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
