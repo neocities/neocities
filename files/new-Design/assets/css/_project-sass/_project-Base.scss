@@ -8,7 +8,11 @@ body{background:#CCDF9B}
 ::selection       {background:$c-Brand-1; color:$c-Light; text-shadow:none}
 
 // Full container for the entire page.  
-.page{}
+.page{min-height:600px;
+  @media (max-device-width:480px), screen and (max-width:800px){
+    min-height:25px;
+  }  
+}
 
 // Generic tag to wrap around content within sections to apply a max width to the interior content
 // while allowing for larger sections to expand the whole page for BG purposes

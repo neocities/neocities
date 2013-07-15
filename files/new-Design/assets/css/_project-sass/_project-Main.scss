@@ -52,6 +52,7 @@
       @include box-shadow($bs-4);
       display:block;
       padding:$spacing*2;
+      width:100%;
     }
   }
 }
