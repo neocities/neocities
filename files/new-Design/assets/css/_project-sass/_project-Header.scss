@@ -28,8 +28,23 @@
   }
 }
 
+$outroShadow:inset 0px 7px 10px 0px rgba(0, 0, 0, 0.10);
+
 .header-Outro{
   background:#30424b;
+  
+  background: -moz-linear-gradient(top, #2b3c43 0%, #354751 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2b3c43), color-stop(100%,#354751)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #2b3c43 0%,#354751 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #2b3c43 0%,#354751 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #2b3c43 0%,#354751 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #2b3c43 0%,#354751 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2b3c43', endColorstr='#354751',GradientType=0 ); /* IE6-9 */
+  
+  -moz-box-shadow:$outroShadow;
+  -webkit-box-shadow:$outroShadow;
+  box-shadow:$outroShadow;
+  
   color:#fafafa;
 }
 
@@ -76,6 +91,8 @@
   position:relative
 }
 
+$signupShadow: 1px 2px 12px 2px rgba(0, 0, 0, 0.15);
+
 .signup-Form{
   background:#354751;
   border-radius:4px 4px 0 0;
@@ -83,6 +100,10 @@
   overflow:hidden;
   position:absolute;
   top:-45px;
+  
+  -moz-box-shadow:$signupShadow;
+  -webkit-box-shadow:$signupShadow;
+  box-shadow:$signupShadow;
   
   @media (max-device-width:480px), screen and (max-width:800px){
     height:auto;
