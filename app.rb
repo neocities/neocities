@@ -53,7 +53,7 @@ get '/browse' do
       site_dataset.order!(:updated_at.desc, :hits.desc)
   end
 
-  site_dataset.filter!(is_nsfw: true) if params[:is_nsfw] == 'true'
+  site_dataset.filter! is_nsfw: (params[:is_nsfw] == 'true' ? true : false)
 
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
@@ -279,7 +279,7 @@ post '/site_files/upload' do
     current_site.update site_changed: true
   end
 
-  current_site.update updated_at: Time.now
+  current_site.update changed_count: 1+current_site.changed_count, updated_at: Time.now
 
   flash[:success] = "Successfully uploaded file #{sanitized_filename}."
   redirect '/dashboard'
@@ -349,7 +349,7 @@ post '/site_files/save/:filename' do |filename|
     current_site.update site_changed: true
   end
 
-  current_site.update updated_at: Time.now
+  current_site.update changed_count: 1+current_site.changed_count, updated_at: Time.now
 
   'ok'
 end
