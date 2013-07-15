@@ -10,6 +10,7 @@
 }
 
 .header-Content{
+    padding-top: 22px;
 	@extend .content;
 	@media (max-device-width:480px), screen and (max-width:800px){
 	  padding:0
@@ -28,6 +29,16 @@
   }
 }
 
+h1.logo {
+    padding-top: 45px;
+    padding-bottom: 0;
+}
+h1.logo img {
+    margin-left: -10px;
+    @media (max-device-width:480px), screen and (max-width:800px){
+        margin-left: 20px;
+    }
+}
 $outroShadow:inset 0px 7px 10px 0px rgba(0, 0, 0, 0.10);
 
 .header-Outro{
@@ -58,11 +69,15 @@ $outroShadow:inset 0px 7px 10px 0px rgba(0, 0, 0, 0.10);
   li{
     padding-left:$spacing*9;
     padding-right:$spacing*3;
+    margin-bottom: 18px;
   }
   
   h2{
     font-size:24px;
-    margin-bottom:10px  
+    margin-bottom:2px;
+  }
+  p {
+    color: #B2BCC1;
   }
 }
 
@@ -119,10 +134,11 @@ $signupShadow: 1px 2px 12px 2px rgba(0, 0, 0, 0.15);
   hr{
     border-bottom:1px solid #4a6677;
     border-top:1px solid #1d282d;
-    margin:5px 0 15px;
+    margin:4px 0 22px;
   }
   fieldset{
     background:url(../img/sign-up-bg.png) repeat-x center top; 
+    padding: 20px 33px;
   }
   label{
     color:#81b8c6;
@@ -130,16 +146,41 @@ $signupShadow: 1px 2px 12px 2px rgba(0, 0, 0, 0.15);
       font-size:70%
     }
   }
+  $inputAreaShadow:inset 1px 3px 10px 0px rgba(0, 0, 0, 0.20);
   .input-Area{
     background:#29383f;
     border:0px solid black;
-    @include box-shadow($bs-2);
     color:#557380; 
-    margin-bottom:$spacing*8;
+    margin-bottom:$spacing*7;
     margin-right:$spacing;
+    padding: 11px 12px 9px 12px;
     width:62%;
     
+    -moz-box-shadow:$inputAreaShadow;
+    -webkit-box-shadow:$inputAreaShadow;
+    box-shadow:$inputAreaShadow;
+    
     &:focus{color:#eee}
+  }
+  $placeholderColor: #5E7F8D;
+  ::-webkit-input-placeholder { /* WebKit browsers */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  ::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  :-ms-input-placeholder { /* Internet Explorer 10+ */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  .btn-Action{
+    padding:10px 25px;
   }
 }
 
