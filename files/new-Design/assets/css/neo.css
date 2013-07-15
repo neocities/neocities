@@ -997,7 +997,7 @@ h1.logo img {
   padding-right: 12px;
   margin-bottom: 18px; }
 .intro-List h2 {
-  font-size: 24px;
+  font-size: 22px;
   margin-bottom: 2px; }
 .intro-List p {
   color: #B2BCC1; }
@@ -1041,7 +1041,8 @@ h1.logo img {
       position: static; } }
   .signup-Form h2 {
     margin-bottom: 0;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5); }
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+    font-size: 1.8em; }
   .signup-Form hr {
     border-bottom: 1px solid #4a6677;
     border-top: 1px solid #1d282d;
