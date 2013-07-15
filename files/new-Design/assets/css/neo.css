@@ -903,6 +903,12 @@ body {
   color: #eeeeee;
   text-shadow: none; }
 
+.page {
+  min-height: 600px; }
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    .page {
+      min-height: 25px; } }
+
 .content, .header-Content, .footer-Content {
   margin: 0 auto;
   max-width: 1000px;
@@ -1252,7 +1258,8 @@ a {
       -webkit-box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
       box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
       display: block;
-      padding: 8px; }
+      padding: 8px;
+      width: 100%; }
 
 .twitter-tweet.twitter-tweet-rendered {
   margin: 0 auto 30px !important; }
