@@ -288,7 +288,12 @@ end
 post '/site_files/delete' do
   require_login
   sanitized_filename = params[:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')
-  FileUtils.rm File.join(site_base_path(current_site.username), sanitized_filename)
+  begin
+    FileUtils.rm File.join(site_base_path(current_site.username), sanitized_filename)
+  rescue Errno::ENOENT
+    flash[:error] = 'File was already deleted.'
+    redirect '/dashboard'
+  end
   flash[:success] = "Deleted file #{params[:filename]}."
   redirect '/dashboard'
 end
