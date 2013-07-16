@@ -50,7 +50,7 @@
     right:$spacing*3;
     
     @media (max-device-width:480px), screen and (max-width:800px){
-      position: static
+      position: static;
     }
   }
 }
@@ -61,6 +61,17 @@
     position: absolute;
     right: 0px;
     top: -70px;
+    
+    @media (max-device-width:480px), screen and (max-width:800px){
+      position: static;
+      float: right;
+    }
+}
+
+p.tiny {
+    @media (max-device-width:480px), screen and (max-width:800px){
+        min-height: 3.5em;
+    }
 }
 
 .f-Col-1{
@@ -112,11 +123,15 @@
 
 .f-Col-3{
     padding-left:20px;
-
+    
     .footer-icon {
         background-image: url(../img/latest-news.png);
         width: 134px;
         height: 103px;
+    }
+    
+    @media (max-device-width:480px), screen and (max-width:800px){
+        padding-left: 0;
     }
 }
 
