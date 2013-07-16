@@ -320,7 +320,12 @@ end
 
 get '/site_files/text_editor/:filename' do |filename|
   require_login
-  @file_data = File.read File.join(site_base_path(current_site.username), filename)
+  begin
+    @file_data = File.read File.join(site_base_path(current_site.username), filename)
+  rescue Errno::ENOENT
+    flash[:error] = 'We could not find the requested file.'
+    redirect '/dashboard'
+  end
   slim :'site_files/text_editor'
 end
 
