@@ -94,7 +94,7 @@
   
 </nav>
 
-        <div class="logo int-Logo hp-Logo">
+<div class="logo int-Logo hp-Logo">
   <a href="/" title="back to home">
     <span class="hidden">NeoCities.org</span>
     <img src="assets/img/cat.png" alt="Neocities.org" />
@@ -131,6 +131,20 @@
     
     <div class="col col-50 signup-Area">
     
+    <% if !signed_in? %>
+    
+      <div class="signup-Form">
+        <div class="content">
+          <h2 class="gamma">Build your Website!</h2>
+        </div>
+        <p>
+          Go to your dashboard to start editing your website!
+        </p>
+        <br />
+          <a href="/dashboard" class="btn-Action float-Right">Get Started</a>
+      </div>
+      
+    <% else %>
       <form action="/new" method="get" class="signup-Form">
         <fieldset class="content">
           <h2 class="gamma">Get Started Now</h2>
@@ -140,6 +154,8 @@
           <input type="submit" value="Create My Website" class="btn-Action float-Right" />
         </fieldset>
       </form>
+      
+    <% end %>
       
     </div> <!-- end .col-50 -->
     
