@@ -9,6 +9,7 @@ use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $
 helpers Rack::Recaptcha::Helpers
 
 before do
+  content_type :html, 'charset' => 'utf-8'
   redirect '/' if request.post? && !csrf_safe?
 end
 
