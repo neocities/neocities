@@ -93,9 +93,15 @@
             </ul>
           </nav>
           
-          <div class="alert txt-Center">
-            <p style="padding:5px">Alert message goes here</p>
-          </div>
+          <% if flash.keys.length > 0 %>
+            <div class="alert txt-Center">
+              <p style="padding:5px">
+                <% flash.keys.each do |key| %>
+                  <%= flash[key] %>
+                <% end %>
+              </p>
+            </div>
+          <% end %>
           
           
 
@@ -136,17 +142,19 @@
     
     <div class="col col-50 signup-Area">
     
-    <% if !signed_in? %>
+    <% if signed_in? %>
     
       <div class="signup-Form">
         <div class="content">
           <h2 class="gamma">Build your Website!</h2>
         </div>
-        <p>
-          Go to your dashboard to start editing your website!
+        <p class="txt-Center">
+          Go to your dashboard to<br> start editing your website!
         </p>
         <br />
-          <a href="/dashboard" class="btn-Action float-Right">Get Started</a>
+          <div class="txt-Center">
+            <a href="/dashboard" class="btn-Action">Get Started</a>
+          </div>
       </div>
       
     <% else %>
