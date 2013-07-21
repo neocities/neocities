@@ -444,7 +444,7 @@ post '/send_password_reset' do
     body = <<-EOT
 Hello! This is the NeoCities cat, and I have received a password reset request for your e-mail address. Purrrr.
 
-Go to this URL to reset your password: http://neocities.org/password_reset_confirm?code=#{token}
+Go to this URL to reset your password: http://neocities.org/password_reset_confirm?token=#{token}
 
 After clicking on this link, your password for all the sites registered to this email address will be changed to this token.
 
@@ -471,15 +471,15 @@ the NeoCities Cat
 end
 
 get '/password_reset_confirm' do
-  sites = Site.filter(password_reset_token: params[:code]).all
+  sites = Site.filter(password_reset_token: params[:token]).all
 
   if sites.length < 0
     sites.each do |site|
-      site.password = params[:code]
+      site.password = params[:token]
       site.save
     end
 
-    flash[:success] = 'Your password has been changed to the token sent in your e-mail. Please login and change your password in the settings page as soon as possible.'
+    flash[:success] = 'Your password for all sites with your email address has been changed to the token sent in your e-mail. Please login and change your password as soon as possible.'
   else
     flash[:error] = 'Could not find a site with this token.'
   end
