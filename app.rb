@@ -446,7 +446,9 @@ Hello! This is the NeoCities cat, and I have received a password reset request f
 
 Go to this URL to reset your password: http://neocities.org/password_reset_confirm?code=#{token}
 
-After clicking on this link, your password for all the sites registered to this email address will be changed to this token: #{token}
+After clicking on this link, your password for all the sites registered to this email address will be changed to this token.
+
+Token: #{token}
 
 If you didn't request this reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
 
