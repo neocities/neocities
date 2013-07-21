@@ -109,9 +109,17 @@ class Site < Sequel::Model
     space = Dir.glob(File.join(file_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
     space.nil? ? 0 : space
   end
+  
+  def total_space_in_megabytes
+    (total_space.to_f / 2**20).round(2)
+  end
 
   def available_space
     remaining = MAX_SPACE - total_space
     remaining < 0 ? 0 : remaining
+  end
+  
+  def available_space_in_megabytes
+    (available_space.to_f / 2**20).round(2)
   end
 end

@@ -1,0 +1,76 @@
+css:
+  .dz-default {
+    font-size: 30pt;
+  }
+
+  .dz-success-mark {
+    display: none;
+  }
+  .dz-error-mark {
+    display: none;
+  }
+  .dz-details img {
+    margin-bottom: 10px;
+  }
+  
+  li {
+    margin-bottom: 0px;
+  }
+script src="/js/dropzone.min.js"
+javascript:
+  Dropzone.options.uploads = {
+    paramName: 'newfile',
+    maxFilesize: #{current_site.available_space_in_megabytes},
+    clickable: true,
+    init: function() {
+      this.on("success", function(file) {
+        $('#upload_status').html('File upload of '+file.name+' was successful!');
+      });
+    
+      this.on("error", function(file) {
+        $('#upload_status').html('File upload of '+file.name+' failed. Ensure that it was a valid file type.');
+      });
+    
+      this.on("uploadprogress", function(file, progress) {
+        $('#upload_progress_bar').css('width', progress+'%');
+      });
+    }
+  };
+
+.row style="margin-top: 20px"
+  .span12.text-center
+    h1 Upload New Files
+
+.row
+  .span5.text-center
+    h5 NeoCities uses a drop and drop file upload. Simply take files and drop them from your computer on the white box (or click it) and they are uploaded.
+    div style="background-color: #FFFFFF;"
+      form action="/site_files/upload" class="dropzone" id="uploads"
+        input name="csrf_token" type="hidden" value="#{csrf_token}"
+
+    div id="upload_progress"
+      .progress.progress-info.progress-striped
+        .bar id="upload_progress_bar" style="width: 0%"
+      
+    div id="upload_status" style="font-size: 16pt"
+
+    div style="margin-top: 20px"
+      a.btn-Action href="/dashboard" Finish
+
+  .span6.text-center
+
+    p Files has to be one of the following types:
+    ul id="file_criteria"
+      li HTML (.html, .htm)
+      li Image (.jpg, .png, .gif, .svg)
+      li Markdown (.md, .markdown)
+      li JavaScript (.js, .json, .geojson)
+      li CSS (.css)
+      li Text (.txt, .text, .csv, .tsv)
+      li Web Fonts (.eot, .ttf, .woff, .svg)
+
+      p If the file already exists, <u><b>it will be overwritten without warning</b></u>.
+      p It has to be <u>legal to share this content in the United States</u>.
+      p It must fit into your home page space (#{(Site::MAX_SPACE.to_f / 2**20).to_i}MB).
+      p The file uploader will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .
+

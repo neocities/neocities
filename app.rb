@@ -248,25 +248,31 @@ get '/site_files/new' do
   slim :'site_files/new'
 end
 
+get '/site_files/upload' do
+  require_login
+  slim :'site_files/upload'
+end
+
 post '/site_files/upload' do
   require_login
   @errors = []
+  http_error_code = 406
 
-  if params[:newfile] == '' || params[:newfile].nil?
-    @errors << 'You must select a file to upload.'
-    halt slim(:'site_files/new')
-  end
+#  if params[:newfile] == '' || params[:newfile].nil?
+#    @errors << 'You must select a file to upload.'
+#    halt http_error_code, slim(:'site_files/new')
+#  end
 
   if params[:newfile][:tempfile].size > Site::MAX_SPACE || (params[:newfile][:tempfile].size + current_site.total_space) > Site::MAX_SPACE
     @errors << 'File size must be smaller than available space.'
-    halt slim(:'site_files/new')
+    halt http_error_code, 'File size must be smaller than available space.' # slim(:'site_files/new')
   end
 
   mime_type = Magic.guess_file_mime_type params[:newfile][:tempfile].path
 
   unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) && Site::VALID_EXTENSIONS.include?(File.extname(params[:newfile][:filename]).sub(/^./, ''))
     @errors << 'File must me one of the following: HTML, Text, Image (JPG PNG GIF JPEG SVG), JS, CSS, Markdown.'
-    halt slim(:'site_files/new')
+    halt http_error_code, 'File type is not supported.' # slim(:'site_files/new')
   end
 
   sanitized_filename = params[:newfile][:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')

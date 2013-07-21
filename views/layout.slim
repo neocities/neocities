@@ -23,15 +23,11 @@ html
     
     .page
       .container
-      
-        
-      
         - flash.keys.each do |key|
           div class="alert alert-#{key}"
             button.close type="button" data-dismiss="alert" &times;
             == flash[key]
-        container
-          == yield
+        == yield
   
     script src="/js/bootstrap.min.js"
   

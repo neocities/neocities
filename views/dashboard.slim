@@ -64,15 +64,14 @@ javascript:
           .progress.progress-info.progress-striped
             .bar style="width: #{(current_site.total_space / Site::MAX_SPACE.to_f) * 100}%"
   
-          h4 class="base": You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{(current_site.total_space.to_f / 2**20).round(2)}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
+          h4 class="base": You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{current_site.total_space_in_megabytes}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
       
       .row style="margin-top: 20px"
         .span5
           div
-            a href="/site_files/new" class="btn-Action" style="margin-bottom:20px" Upload New File
+            a href="/site_files/upload" class="btn-Action" style="margin-bottom:20px" Upload New Files
           div
             a href="/site_files/new_page" class="btn-Action" Create New HTML Page
-          
           <hr />
           
           div
