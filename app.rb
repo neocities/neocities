@@ -446,6 +446,8 @@ Hello! This is the NeoCities cat, and I have received a password reset request f
 
 Go to this URL to reset your password: http://neocities.org/password_reset_confirm?code=#{token}
 
+After clicking on this link, your password for all the sites registered to this email address will be changed to this token: #{token}
+
 If you didn't request this reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
 
 Meow,
@@ -467,11 +469,13 @@ the NeoCities Cat
 end
 
 get '/password_reset_confirm' do
-  site = Site[password_reset_token: params[:code]]
+  site = Site.filter(password_reset_token: params[:code]).all
 
-  if site
-    site.password = params[:code]
-    site.save
+  if sites.length < 0
+    sites.each do |site|
+      site.password = params[:code]
+      site.save
+    end
 
     flash[:success] = 'Your password has been changed to the token sent in your e-mail. Please login and change your password in the settings page as soon as possible.'
   else
