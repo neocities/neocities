@@ -11,7 +11,7 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
-
+public/sites
 # YARD artifacts
 .yardoc
 _yardoc
