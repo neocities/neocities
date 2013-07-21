@@ -471,7 +471,7 @@ the NeoCities Cat
 end
 
 get '/password_reset_confirm' do
-  site = Site.filter(password_reset_token: params[:code]).all
+  sites = Site.filter(password_reset_token: params[:code]).all
 
   if sites.length < 0
     sites.each do |site|
