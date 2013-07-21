@@ -435,11 +435,13 @@ get '/password_reset' do
 end
 
 post '/send_password_reset' do
-  site = Site[email: params[:email]]
+  sites = Site.filter(email: params[:email]).all
 
-  if site
+  if sites.length > 0
     token = SecureRandom.uuid.gsub('-', '')
-    site.update password_reset_token: token
+    sites.each do |site|
+      site.update password_reset_token: token
+    end
 
     body = <<-EOT
 Hello! This is the NeoCities cat, and I have received a password reset request for your e-mail address. Purrrr.
@@ -473,7 +475,7 @@ end
 get '/password_reset_confirm' do
   sites = Site.filter(password_reset_token: params[:token]).all
 
-  if sites.length < 0
+  if sites.length > 0
     sites.each do |site|
       site.password = params[:token]
       site.save
