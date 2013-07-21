@@ -260,10 +260,10 @@ post '/site_files/upload' do
   @errors = []
   http_error_code = 406
 
-#  if params[:newfile] == '' || params[:newfile].nil?
-#    @errors << 'You must select a file to upload.'
-#    halt http_error_code, slim(:'site_files/new')
-#  end
+  if params[:newfile] == '' || params[:newfile].nil?
+    @errors << 'You must select a file to upload.'
+    halt http_error_code, 'Did not receive file upload.' # slim(:'site_files/new')
+  end
 
   if params[:newfile][:tempfile].size > Site::MAX_SPACE || (params[:newfile][:tempfile].size + current_site.total_space) > Site::MAX_SPACE
     @errors << 'File size must be smaller than available space.'
