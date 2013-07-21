@@ -76,7 +76,9 @@ end
 
 get '/blog/:article' do |article|
   # expires 500, :public, :must_revalidate
-  return File.read File.join(DIR_ROOT, 'public', 'sites', 'blog', "#{article}.html")
+  path = File.join DIR_ROOT, 'public', 'sites', 'blog', "#{article}.html"
+  pass if !File.exist?(path)
+  File.read path
 end
 
 get '/new' do
