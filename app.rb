@@ -475,11 +475,23 @@ the NeoCities Cat
 end
 
 get '/password_reset_confirm' do
-  sites = Site.filter(password_reset_token: params[:token]).all
+  if params[:token].nil? || params[:token].empty?
+    flash[:error] = 'Could not find a site with this token.'
+    redirect '/'
+  end
+ 
+  reset_site = Site[password_reset_token: params[:token]]
+
+  if reset_site.nil?
+    flash[:error] = 'Could not find a site with this token.'
+    redirect '/'
+  end
+
+  sites = Site.filter(email: reset_site.email).all
 
   if sites.length > 0
     sites.each do |site|
-      site.password = params[:token]
+      site.password = reset_site.password_reset_token
       site.save
     end
 
