@@ -35,8 +35,9 @@ get '/?' do
 end
 
 get '/browse' do
-  @current_page = params[:current_page] || 1
+  @current_page = params[:current_page]
   @current_page = @current_page.to_i
+  @current_page = 1 if @current_page == 0
 
   site_dataset = Site.filter(is_banned: false).filter(site_changed: true).paginate(@current_page, 300)
 
