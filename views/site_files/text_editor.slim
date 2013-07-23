@@ -56,7 +56,7 @@ css:
     .row
       .span12
         div id="editor" style="width: 100%; height: 600px; position: relative;"
-          #{@file_data}
+          == encoding_fix @file_data
     
     
     .row

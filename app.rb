@@ -579,3 +579,12 @@ end
 def template_site_title(username)
   "#{username.capitalize}#{username[username.length-1] == 's' ? "'" : "'s"} Site"
 end
+
+def encoding_fix(file)
+  begin
+    Rack::Utils.escape_html file
+  rescue ArgumentError => e
+    return Rack::Utils.escape_html(file.force_encoding('BINARY')) if e.message =~ /invalid byte sequence in UTF-8/
+    fail
+  end
+end
