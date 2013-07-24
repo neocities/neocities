@@ -17,8 +17,13 @@ body{background:#CCDF9B}
 // Generic tag to wrap around content within sections to apply a max width to the interior content
 // while allowing for larger sections to expand the whole page for BG purposes
 .content{
-	margin:0 auto; max-width:1000px; padding:$spacing*5;
-	& > :last-child{margin-bottom:0}	// kill any extra margin on the last element in the .content div
+	margin:0 auto;
+	max-width:1000px;
+	padding:$spacing*5;
+	
+	& > :last-child{
+	  margin-bottom:0;	// kill any extra margin on the last element in the .content div
+	}
 }
 
 // ----------------------------------------------------------------

@@ -1,0 +1,33 @@
+// ----------------------------------------------------------------
+//		Project Specific: Browse Websites Gallery
+// ----------------------------------------------------------------
+
+.website-Gallery{
+  list-style:none;
+  margin:0;
+  padding:0;
+  
+  li{
+    @extend .col-25;
+    float:left;
+    margin-bottom:$spacing*2;
+    
+    @media (max-device-width:480px), screen and (max-width:800px){width:50%}
+  }
+  
+  a{
+    padding:0 $spacing*2;
+    display:block;
+  }
+}
+
+.neo-SS{
+  background:#fff;
+  @include box-shadow($bs-4);
+  display:block;
+  height:auto!important;
+  max-height:125px;
+  max-width:208px;
+  padding:$spacing*2;
+  width:100%;
+}

@@ -3,18 +3,11 @@
     document.location.href = '/browse?current_page='+currentPage+'&'+$('#search_criteria').serialize();
   }
 </script>
-<div class="content">
-  <ul class="row website-Gallery">
+
+  <h2 class="content">Websites on NeoCities</h2>
+  <div class="row content">
     
-    <div class="row">
-      <div class="col col-50">
-        <h2>Websites on NeoCities</h2>
-        <p>If you like a site, don't forget to bookmark it!<br>Visitor counts are updated hourly.</p>
-        <div style="margin-bottom: 40px; width: 280px;"><a class="btn-Action" style="padding-top: 10px; padding-bottom: 10px" href="/new">Create your NeoCities site now</a></div>
-      </div>
-    
-      <div class="col col-50" style="padding-top: 50px">
-        
+     <div class="col col-50">
         <form id="search_criteria" action="/browse" method="GET">       
           <fieldset class="grouping">
             <label class="text-Label" for="sort_by">Sort By:</label>
@@ -38,12 +31,20 @@
           </fieldset>
         </form>
       </div>
-    </div>
-    
+      
+      <div class="col col-50">
+        
+        <p>If you like a site, don't forget to bookmark it!<br>Visitor counts are updated hourly.</p>
+        <a class="btn-Action" href="/new" title="create a NeoCities.org site today!">Create your NeoCities site now</a>
+      </div>
+      
+    </div> <!-- end .row.content -->
+
+  <ul class="row website-Gallery">
     <% @sites.each do |site| %>
       <li>
         <a href="http://<%= site.username %>.neocities.org" target="_blank">
-          <img src="http://neocities.org/site_screenshots/<%= site.username %>.jpg" width="208" height="125" />
+          <img src="http://neocities.org/site_screenshots/<%= site.username %>.jpg" class="neo-SS" />
         </a>
       </li>
     <% end %>
@@ -66,4 +67,3 @@
       </div>
     <% end %>
   <% end %>
-</div> <!-- end .content -->

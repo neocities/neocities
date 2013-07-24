@@ -45,6 +45,9 @@ $c-Highlight:	#ff0;
 $c-Underline:	#ccc; // not for links
 $c-Border:		#ccc;
 
+// Place holder for inputs
+$placeholderColor:#5E7F8D;
+
 
 // ----------------------------------------------------------------
 // Fonts Families
@@ -69,7 +72,7 @@ $alpha: $base-font-multiplier * 3.125;   // 50px
 $beta:  $base-font-multiplier * 2.5;     // 40px
 $gamma: $base-font-multiplier * 2;       // 32px
 $delta: $base-font-multiplier * 1.625;   // 26px
-$eps:	  $base-font-multiplier * 1.25;    // 20px
+$eps:	  $base-font-multiplier * 1.375;    // 22px
 $zeta:	$base-font-multiplier * 1.125;   // 18px
 
 $base:  $base-font-multiplier;		       // 16px
@@ -92,6 +95,10 @@ $bs-3:		$bs-1, $bs-1 inset;
 $bs-4:		0 8px 8px -8px rgba(0,0,0,.2);
 $bs-5:		$bs-4, 0 0 6px rgba(0,0,0,.75) inset;
 $bs-6:		0 0 6px rgba(255,255,255,.5) inset;
+
+$outroShadow:inset 0 7px 10px 0 rgba(0, 0, 0, 0.10);
+$signupShadow: 1px 2px 12px 2px rgba(0, 0, 0, 0.15);
+$inputAreaShadow:inset 1px 3px 10px 0px rgba(0, 0, 0, 0.20);
 
 
 // ----------------------------------------------------------------
