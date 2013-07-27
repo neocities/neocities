@@ -20,7 +20,11 @@
 		// to absolutely make sure there is no extra margin, 0!important is used
 	padding-left:$spacing*5;
 	position:relative;
-	width:100%; // default width is 100%.  
+	width:100%; // default width is 100%
+	@media (max-device-width:480px), screen and (max-width:800px){
+	  float:none;
+	  padding:0;
+	}
 }
 
 // Convert columns to inline-blocks so we can center them when our row does not add up to 100%

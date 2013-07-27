@@ -219,6 +219,10 @@ table {
   padding-left: 20px;
   position: relative;
   width: 100%; }
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    .col {
+      float: none;
+      padding: 0; } }
 
 .c-Row {
   font-size: 0;

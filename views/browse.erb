@@ -52,7 +52,7 @@
   
   <% if params[:sort_by] != 'random' %>
     <% if @page_count > 1 %>
-      <div >
+      <div class="txt-Center content eps">
         <% if @current_page != 1 %>
           <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
         <% end %>
