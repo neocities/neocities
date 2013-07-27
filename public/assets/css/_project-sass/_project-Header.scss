@@ -93,12 +93,14 @@
   overflow:hidden;
   position:absolute;
   top:-45px;
+  width:95%;
   
   @media (max-device-width:480px), screen and (max-width:800px){
     height:auto;
     margin:0;
     overflow:visible;
     position:static;
+    width:auto;
 }
   
   h2{

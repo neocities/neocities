@@ -4,15 +4,15 @@
   }
 </script>
 
-  <h2 class="content">Websites on NeoCities</h2>
+  
   <div class="row content">
-    
+    <h2 class="col">Websites on NeoCities</h2>
      <div class="col col-50">
         <form id="search_criteria" action="/browse" method="GET">       
           <fieldset class="grouping">
             <label class="text-Label" for="sort_by">Sort By:</label>
             <div class="select-Container">
-              <select name="sort_by" class="input-Select">
+              <select name="sort_by" id="sort_by" class="input-Select">
                 <option value="last_updated" <%= 'selected' if params[:sort_by] == 'last_updated' %>>Last Updated</option>
                 <option value="hits" <%= 'selected' if params[:sort_by] == 'hits' %>>Most Hits</option>
                 <option value="newest" <%= 'selected' if params[:sort_by] == 'newest' %>>Newest</option>
@@ -44,7 +44,7 @@
     <% @sites.each do |site| %>
       <li>
         <a href="http://<%= site.username %>.neocities.org" target="_blank">
-          <img src="http://neocities.org/site_screenshots/<%= site.username %>.jpg" class="neo-SS" />
+          <img src="http://neocities.org/site_screenshots/<%= site.username %>.jpg" class="neo-SS" alt="<%= site.username %>" />
         </a>
       </li>
     <% end %>
@@ -52,7 +52,7 @@
   
   <% if params[:sort_by] != 'random' %>
     <% if @page_count > 1 %>
-      <div style="font-size: 30pt">
+      <div >
         <% if @current_page != 1 %>
           <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
         <% end %>

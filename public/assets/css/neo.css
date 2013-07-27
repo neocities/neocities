@@ -1043,13 +1043,15 @@ a {
   height: 600%;
   overflow: hidden;
   position: absolute;
-  top: -45px; }
+  top: -45px;
+  width: 95%; }
   @media (max-device-width: 480px), screen and (max-width: 800px) {
     .signup-Form {
       height: auto;
       margin: 0;
       overflow: visible;
-      position: static; } }
+      position: static;
+      width: auto; } }
   .signup-Form h2 {
     margin-bottom: 0;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
@@ -1371,8 +1373,9 @@ a {
 
 .website-Gallery {
   list-style: none;
-  margin: 0;
-  padding: 0; }
+  margin: 0 auto;
+  padding: 0;
+  width: 90%; }
   .website-Gallery li {
     float: left;
     margin-bottom: 8px; }
@@ -1390,8 +1393,6 @@ a {
   box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
   display: block;
   height: auto !important;
-  max-height: 125px;
-  max-width: 208px;
   padding: 8px;
   width: 100%; }
 
