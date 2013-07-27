@@ -1212,7 +1212,8 @@ a {
   left: 0;
   position: absolute;
   top: 0;
-  width: 70px; }
+  width: 70px;
+  z-index: 9; }
 
 .interior .header-Nav {
   padding-left: 70px; }
@@ -1392,4 +1393,7 @@ a {
   max-height: 125px;
   max-width: 208px;
   padding: 8px;
+  width: 100%; }
+
+.hp-Gallery img {
   width: 100%; }
