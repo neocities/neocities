@@ -503,6 +503,33 @@ get '/password_reset_confirm' do
   redirect '/'
 end
 
+get '/custom_domain' do
+  slim :custom_domain
+end
+
+post '/custom_domain' do
+  require_login
+  original_domain = current_site.domain
+  current_site.domain = params[:domain]
+  if current_site.valid?
+    
+    DB.transaction do
+      current_site.save
+      
+      if !params[:domain].empty? && !params[:domain].nil?
+        File.open(File.join(DIR_ROOT, 'domains', "#{current_site.username}.conf"), 'w') do |file|
+          file.write erb(:'templates/domain', layout: false)
+        end
+      end
+      
+    end
+    flash[:success] = 'The domain has been successfully updated.'
+    redirect '/custom_domain'
+  else
+    slim :custom_domain
+  end
+end
+
 get '/contact' do
   slim :'contact'
 end

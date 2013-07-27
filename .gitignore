@@ -19,3 +19,4 @@ doc/
 tests/coverage
 config.yml
 .DS_Store
+domains

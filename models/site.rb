@@ -95,6 +95,13 @@ class Site < Sequel::Model
     if values[:password].nil? || (@password_length && @password_length < MINIMUM_PASSWORD_LENGTH)
       errors.add :password, "Password must be at least #{MINIMUM_PASSWORD_LENGTH} characters."
     end
+    
+    if !values[:domain].nil? && !values[:domain].empty?
+      if !(values[:domain] =~ /^[a-zA-Z0-9]+\.[a-zA-Z0-9]+$/i)
+        errors.add :domain, "Domain provided is not valid. Must take the form of domain.com"
+      end
+    end
+    
   end
 
   def file_path
