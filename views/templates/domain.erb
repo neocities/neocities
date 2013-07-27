@@ -1,6 +1,6 @@
 server {
   listen 80;
-  server_name <%= current_site.domain %> *.<%= current_site.domain %>
+  server_name <%= current_site.domain %> *.<%= current_site.domain %>;
   access_log /var/log/nginx/neocities-domains.log neocitiesdomain;
   root /home/web/neocities-web/public/sites/<%= current_site.username %>;
   index /index.html;
