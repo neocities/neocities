@@ -100,8 +100,12 @@ class Site < Sequel::Model
       if !(values[:domain] =~ /^[a-zA-Z0-9]+\.[a-zA-Z0-9]+$/i)
         errors.add :domain, "Domain provided is not valid. Must take the form of domain.com"
       end
+
+      site = Site[domain: values[:domain]]
+      if !site.nil? && site.id != self.id
+        errors.add :domain, "Domain provided is already being used by another site, please choose another."
+      end
     end
-    
   end
 
   def file_path
