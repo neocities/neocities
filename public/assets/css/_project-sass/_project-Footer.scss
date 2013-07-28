@@ -37,6 +37,7 @@
   
   @media (max-device-width:480px), screen and (max-width:800px){
     min-height:2px;
+    padding-left:15px!important;
     padding-right:100px!important;
   }
   
@@ -46,7 +47,7 @@
     right:$spacing*3;
     
     @media (max-device-width:480px), screen and (max-width:800px){
-      position:static
+      position:static;
     }
   }
 }

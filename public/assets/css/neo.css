@@ -1054,6 +1054,7 @@ a {
       height: auto;
       margin: 0;
       overflow: visible;
+      padding-bottom: 20px;
       position: static;
       width: auto; } }
   .signup-Form h2 {
@@ -1244,6 +1245,12 @@ a {
 .twitter-tweet.twitter-tweet-rendered {
   margin: 0 auto 30px !important; }
 
+.dash-SS {
+  border: 1px solid #ccc;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 1em;
+  margin-bottom: 20px; }
+
 .footer-Base {
   color: #5e5b56; }
   .footer-Base h1, .footer-Base h2, .footer-Base h3, .footer-Base h4 {
@@ -1270,6 +1277,7 @@ a {
   @media (max-device-width: 480px), screen and (max-width: 800px) {
     .f-Col {
       min-height: 2px;
+      padding-left: 15px !important;
       padding-right: 100px !important; } }
   .f-Col .action-Link {
     bottom: 0;
