@@ -1,50 +1,51 @@
-      <header class="header-Base">
-        <nav class="header-Nav clearfix" role="navigation">
-  <a href="#!" title="show small screen nav" class="small-Nav">
-    <img src="/assets/img/nav-Icon.png" alt="navigation icon" />
-  </a>
-  <ul class="h-Nav constant-Nav">
-    <li>
-      <a href="/" title="Back to the Start">NeoCities</a>
-    </li>
-    <li>
-      <a href="/browse" title="Browse NeoCities member websites">Websites</a>
-    </li>
-    <li>
-      <a href="/tutorials" title="Learn to code with these tutorials">Tutorials</a>
-    </li>
-    <li>
-      <a href="/about" title="About NeoCities">About</a>
-    </li>
-  </ul>
+<header class="header-Base">
+
+  <nav class="header-Nav clearfix" role="navigation">
   
-  <ul class="status-Nav">
+    <a href="#!" title="show small screen nav" class="small-Nav">
+      <img src="/assets/img/nav-Icon.png" alt="navigation icon" />
+    </a>
     
-    <% if !signed_in? %>
+    <ul class="h-Nav constant-Nav">
       <li>
-        <a href="/signin" class="sign-In" title="Sign into your account">Sign In</a>
-      </li>
-    <% else %>
-      <li>
-        <a href="/dashboard" class="sign-In">Dashboard</a>
+        <a href="/" title="Back to the Start">NeoCities</a>
       </li>
       <li>
-        <a href="/settings" class="sign-In">Settings</a>
+        <a href="/browse" title="Browse NeoCities member websites">Websites</a>
       </li>
       <li>
-        <a href="/signout" class="sign-In">Signout</a>
+        <a href="/tutorials" title="Learn to code with these tutorials">Tutorials</a>
       </li>
-    <% end %>
-
-  </ul>
+      <li>
+        <a href="/about" title="About NeoCities">About</a>
+      </li>
+    </ul>
+    
+    <ul class="status-Nav">
+      <% if !signed_in? %>
+        <li>
+          <a href="/signin" class="sign-In" title="Sign into your account">Sign In</a>
+        </li>
+      <% else %>
+        <li>
+          <a href="/dashboard" class="sign-In">Dashboard</a>
+        </li>
+        <li>
+          <a href="/settings" class="sign-In">Settings</a>
+        </li>
+        <li>
+          <a href="/signout" class="sign-In">Signout</a>
+        </li>
+      <% end %>
+      </ul>
   
-</nav>
+  </nav>
 
-        <h1 class="logo int-Logo">
+<h1 class="logo int-Logo">
   <a href="/" title="back to home">
     <span class="hidden">NeoCities.org</span>
     <img src="/assets/img/cat.png" alt="Neocities.org" />
   </a>
 </h1>
 
-      </header>
+</header>

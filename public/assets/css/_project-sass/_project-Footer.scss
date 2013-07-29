@@ -23,13 +23,9 @@
 	@include box-shadow($bs-4);
 	position:relative;
 	
-	.footer-Content {	
-    	padding-top:40px;
-    	padding-bottom:40px;
-	}
-	
-	h2 {
-	    font-size: 1.45em;
+	.footer-Content{	
+    padding-top:40px;
+    padding-bottom:40px;
 	}
 }
 
@@ -41,7 +37,8 @@
   
   @media (max-device-width:480px), screen and (max-width:800px){
     min-height:2px;
-    padding:0;
+    padding-left:15px!important;
+    padding-right:100px!important;
   }
   
   .action-Link{
@@ -50,27 +47,33 @@
     right:$spacing*3;
     
     @media (max-device-width:480px), screen and (max-width:800px){
-      position: static
+      position:static;
     }
   }
 }
 
 .footer-icon {
-    background-repeat: no-repeat;
-    display: block;
-    position: absolute;
-    right: 0px;
-    top: -70px;
+    background-repeat:no-repeat;
+    position:absolute;
+    right:0;
+    top:-70px;
+    
+    @media (max-device-width:480px), screen and (max-width:800px){
+      @include vendor(background-size, 100%);
+      height:90px!important;
+      top:0;
+      width:77px!important;
+    }
 }
 
 .f-Col-1{
     padding-right:$spacing*3;
     
-    .footer-icon {
-        background-image: url(../img/support-us.png);
-        width: 92px;
-        height: 104px;
-        right: 5px;
+    .footer-icon{
+      background-image: url(../img/support-us.png);
+      height:104px;
+      right:5px;
+      width:92px;
     }
 }
 
@@ -82,8 +85,12 @@
     border-bottom:1px solid rgba(0,0,0,.1);
     border-top:1px solid rgba(0,0,0,.1);
     margin:20px 0;
-    overflow: hidden;
+    overflow:hidden;
     padding:20px 0;
+    
+    .footer-icon{
+      top:14px
+    }
   }
 
   &:before, &:after {
@@ -96,7 +103,7 @@
       width:1px;
       
       @media (max-device-width:480px), screen and (max-width:800px){
-        display:none
+        display:none;
       }
   }
   
@@ -112,11 +119,14 @@
 
 .f-Col-3{
     padding-left:20px;
+    @media(max-device-width:480px), screen and (max-width:800px){
+      padding-left:0;
+    }
 
-    .footer-icon {
+    .footer-icon{
         background-image: url(../img/latest-news.png);
-        width: 134px;
-        height: 103px;
+        height:103px;
+        width:134px;
     }
 }
 

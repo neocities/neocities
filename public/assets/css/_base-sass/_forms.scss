@@ -18,18 +18,36 @@ legend, .legend{
 }
 
 /* Text Input Areas & Labels */
-.text-Label{font-family:$arial; cursor:pointer; display:block; margin-bottom:$spacing}
+.text-Label{
+  font-family:$arial;
+  cursor:pointer;
+  display:block;
+  margin-bottom:$spacing;
+}
+
 .dis-Label{cursor:not-allowed}
 
 .input-Area, %input-Area{
-    background:#fff; border:1px solid $c-Border; font-family:$arial; line-height:1.25; 
-    margin-bottom:$spacing*2; padding:$spacing*2 $spacing; width:50%;
-    &:focus{background:$c-Lighter; border:1px solid #50B6D5; @include box-shadow($bs-2)}
+    background:#fff;
+    border:1px solid $c-Border;
+    font-family:$arial;
+    line-height:1.25; 
+    margin-bottom:$spacing*2;
+    padding:$spacing*2 $spacing;
+    width:80%;
+    &:focus{
+      background:$c-Lighter;
+      border:1px solid #50B6D5;
+      @include box-shadow($bs-2)
+    }
 }
 
 .text-Area{
     @extend %input-Area;
-    display:block; min-height:150px; resize:vertical; width:100%
+    display:block;
+    min-height:150px;
+    resize:vertical;
+    width:100%;
 }
 
 /* Check/Radio Inputs & Labels */
@@ -97,3 +115,20 @@ legend, .legend{
     @extend %input-Area;
     font-size:$base;
 }
+
+::-webkit-input-placeholder { /* WebKit browsers */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  ::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  :-ms-input-placeholder { /* Internet Explorer 10+ */
+      color:$placeholderColor;
+      font-style: italic;
+  }

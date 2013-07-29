@@ -17,7 +17,7 @@ css:
   
     h2 Editing #{params[:filename]}
     
-    div.theme-Code
+    .theme-Code
       p style="display:inline-block; margin-right:10px" Theme: 
       select id="theme" size="1" onchange="setTheme();" onkeyup="setTheme();"
         optgroup label="Bright"
@@ -53,17 +53,17 @@ css:
           option value="ace/theme/twilight" Twilight
           option value="ace/theme/vibrant_ink" Vibrant Ink
 
-    .row
-      .span12
-        div id="editor" style="width: 100%; height: 600px; position: relative;"
-          == encoding_fix @file_data
+    div id="editor" style="width: 100%; height: 600px; position: relative; margin-bottom:25px"
+      == encoding_fix @file_data
     
     
     .row
-      .col.col-33.txt-Center
+      .col.col-33.txt-Center style="margin-bottom:10px"
         a.btn-Action href="/dashboard" <i class="icon-remove"></i>&nbsp;&nbsp;Finish Without Saving
-      .col.col-33.txt-Center
+        
+      .col.col-33.txt-Center style="margin-bottom:10px"
         a.btn-Action href="#" onclick="saveTextFile(false); return false" <i class="icon-save"></i>&nbsp;&nbsp;Save Changes
+        
       .col.col-33.txt-Center
         a.btn-Action href="#" onclick="saveTextFile(true); return false" <i class="icon-save"></i>&nbsp;&nbsp;Save and Finish
     
@@ -100,7 +100,7 @@ css:
               if(quit === true) {
                 window.location = '/dashboard';
               }
-              $('#editorUpdates span').html('<i class="icon-save icon-2x"></i>&nbsp;&nbsp;<font style="font-size: 14pt">Your file has been saved.</font>');
+              $('#editorUpdates span').html('<i class="icon-save icon-2x"></i>&nbsp;&nbsp;<span style="font-size: 14pt">Your file has been saved.</span>');
               setTimeout(function() {
                 $('#editorUpdates').fadeOut();  //.addClass('hidden');
               }, 2000);

@@ -5,12 +5,12 @@
     form method="POST" action="/signin" class="content"
         input name="csrf_token" type="hidden" value="#{csrf_token}"
 
-        fieldset
+        fieldset.col-60 style="margin:0 auto"
           input name="username" type="text" placeholder="Your username" class="input-Area" autocapitalize="off" autocorrect="off"
           br
           input name="password" type="password" class="input-Area" placeholder="Your password"
           br
-          button class="btn-Action" href="#" Sign in
+          button class="btn-Action" Sign in
           
           hr
           

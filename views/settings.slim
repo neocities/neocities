@@ -12,7 +12,7 @@
     .row
       .col.col-33
         .content
-          h2.eps.txt-Center Change Password
+          h2.zeta Change Password
           form method="POST" action="/change_password"
             input name="csrf_token" type="hidden" value="#{csrf_token}"
             
@@ -32,12 +32,12 @@
       
       .col.col-33
         .content
-          h2.eps.txt-Center Change Site (User) Name
+          h2.zeta Change Site (User) Name
           
           form method="POST" action="/change_name"
             input name="csrf_token" type="hidden" value="#{csrf_token}"
       
-            p It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
+            p.tiny It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
           
             p Current name: <span style="color: green"><strong>#{current_site.username}</strong></span>
             
@@ -48,8 +48,8 @@
     
       .col.col-33
         .content
-          h2.eps.txt-Center 18+ Content
-          p If your site contains objectionable (18+) content, check this box. Your site will not be removed, but it will be listed on a special browse page. We don't have an official policy on what defines 18+ content yet, but basically it's just pornography and lewd/sick/gross images. Thanks for your patience and understanding as we try to find a way to balance out the needs of everyone.
+          h2.zeta 18+ Content
+          p.tiny If your site contains objectionable (18+) content, check this box. Your site will not be removed, but it will be listed on a special browse page. We don't have an official policy on what defines 18+ content yet, but basically it's just pornography and lewd/sick/gross images. Thanks for your patience and understanding as we try to find a way to balance out the needs of everyone.
       
           form method="POST" action="/change_nsfw"
             input name="csrf_token" type="hidden" value="#{csrf_token}"
