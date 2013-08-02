@@ -97,7 +97,7 @@ class Site < Sequel::Model
     end
     
     if !values[:domain].nil? && !values[:domain].empty?
-      if !(values[:domain] =~ /^[a-zA-Z0-9.]+\.[a-zA-Z0-9]+$/i) || values[:domain].length > 90
+      if !(values[:domain] =~ /^[a-zA-Z0-9.-]+\.[a-zA-Z0-9]+$/i) || values[:domain].length > 90
         errors.add :domain, "Domain provided is not valid. Must take the form of domain.com"
       end
 
