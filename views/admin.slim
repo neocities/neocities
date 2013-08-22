@@ -1,12 +1,12 @@
 .content-Base
   .row.content
     .col  
-      h1 SECRET NSA BACKDOOR REPORTING ZONE
+      h1.beta SECRET NSA BACKDOOR REPORTING ZONE
   
-  .row
+  .row.content
     .col.col-50
       
-      h2 Ban User
+      h3 Ban User
       
       form action="/admin/banhammer" method="POST"
         input name="csrf_token" type="hidden" value="#{csrf_token}"
@@ -16,15 +16,15 @@
         input.btn.btn-danger type="submit" value="Ban"
     .col.col-50
       h2 Banned Terrorists
-      .scoll-Admin
+      .scroll-Admin
         - @banned_sites.each do |banned_site|
           = banned_site.username
           br
   
   
-  .row
+  .row.content
     .col.col-50
-      h2 Mark NSFW
+      h3 Mark NSFW
       
       form action="/admin/mark_nsfw" method="POST"
         input name="csrf_token" type="hidden" value="#{csrf_token}"
