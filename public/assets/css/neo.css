@@ -1402,6 +1402,8 @@ a {
     @media (max-device-width: 480px), screen and (max-width: 800px) {
       .website-Gallery.int-Gall li {
         width: 49%; } }
+    .website-Gallery.int-Gall li a {
+      padding: 8px; }
 
 .neo-SS, .neo-Screen-Shot {
   background: #fff;
@@ -1418,7 +1420,6 @@ a {
   -moz-background-size: cover !important;
   -webkit-background-size: cover !important;
   background-size: cover !important;
-  border: 1px solid #ccc;
   display: block; }
 
 .hp-Gallery img, .neo-Screen-Shot img {

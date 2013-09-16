@@ -31,6 +31,9 @@
       @media (max-device-width:480px), screen and (max-width:800px){
         width:49%
       }
+      a{
+        padding:8px;
+      }
     }
   }
 }
@@ -49,7 +52,6 @@
   -moz-background-size:cover!important;
   -webkit-background-size:cover!important;
   background-size:cover!important;
-  border:1px solid #ccc;
   display:block;
 }
 
