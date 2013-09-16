@@ -4,16 +4,16 @@
 
 .website-Gallery{
   list-style:none;
-  margin:0 auto;
-  padding:0;
-  width:90%;
+  padding:10px 0;
   
   li{
     @extend .col-25;
     float:left;
     margin-bottom:$spacing*2;
     
-    @media (max-device-width:480px), screen and (max-width:800px){width:50%}
+    @media (max-device-width:480px), screen and (max-width:800px){
+      width:50%
+    }
   }
   
   a{
@@ -22,15 +22,23 @@
   }
 }
 
-.neo-SS{
+.neo-SS, .neo-Screen-Shot{
   background:#fff;
   @include box-shadow($bs-4);
   display:block;
   height:auto!important;
   padding:$spacing*2;
+  position:relative;
   width:100%;
 }
 
-.hp-Gallery img{
+.img-Holder{
+  -moz-background-size:100% auto;
+  -webkit-background-size:100% auto;
+  background-size:100% auto;
+  display:block;
+}
+
+.hp-Gallery img, .neo-Screen-Shot img{
   width:100%
 }
