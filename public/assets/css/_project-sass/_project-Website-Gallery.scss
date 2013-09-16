@@ -24,11 +24,14 @@
   &.int-Gall{
     
     li{
+      border:1px solid #ccc;
       margin:0 .5% 12px;
       width:24%;
+      
+      @media (max-device-width:480px), screen and (max-width:800px){
+        width:49%
+      }
     }
-    
-    a{padding:0;}
   }
 }
 

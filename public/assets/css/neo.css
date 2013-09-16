@@ -1396,10 +1396,12 @@ a {
     padding: 0 8px;
     display: block; }
   .website-Gallery.int-Gall li {
+    border: 1px solid #ccc;
     margin: 0 .5% 12px;
     width: 24%; }
-  .website-Gallery.int-Gall a {
-    padding: 0; }
+    @media (max-device-width: 480px), screen and (max-width: 800px) {
+      .website-Gallery.int-Gall li {
+        width: 49%; } }
 
 .neo-SS, .neo-Screen-Shot {
   background: #fff;
