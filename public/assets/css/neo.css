@@ -1395,6 +1395,9 @@ a {
   .website-Gallery a {
     padding: 0 8px;
     display: block; }
+  .website-Gallery.int-Gall li {
+    margin: 0 .5% 12px;
+    width: 25%; }
 
 .neo-SS, .neo-Screen-Shot {
   background: #fff;
@@ -1408,9 +1411,10 @@ a {
   width: 100%; }
 
 .img-Holder {
-  -moz-background-size: 100% auto !important;
-  -webkit-background-size: 100% auto !important;
-  background-size: 100% auto !important;
+  -moz-background-size: cover !important;
+  -webkit-background-size: cover !important;
+  background-size: cover !important;
+  border: 1px solid #ccc;
   display: block; }
 
 .hp-Gallery img, .neo-Screen-Shot img {
