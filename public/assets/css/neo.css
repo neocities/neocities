@@ -1397,7 +1397,9 @@ a {
     display: block; }
   .website-Gallery.int-Gall li {
     margin: 0 .5% 12px;
-    width: 25%; }
+    width: 24%; }
+  .website-Gallery.int-Gall a {
+    padding: 0; }
 
 .neo-SS, .neo-Screen-Shot {
   background: #fff;
