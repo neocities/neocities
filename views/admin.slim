@@ -1,37 +1,40 @@
-.row
-  .span12  
-    h1 SECRET NSA BACKDOOR REPORTING ZONE
-
-.row
-  .span6
-    
-    h2 Ban User
-    
-    form action="/admin/banhammer" method="POST"
-      input name="csrf_token" type="hidden" value="#{csrf_token}"
-      p Site Name:
-      input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"
-      br
-      input.btn.btn-danger type="submit" value="Ban"
-  .span6
-    h2 Banned Terrorists
-    - @banned_sites.each do |banned_site|
-      = banned_site.username
-      br
-
-
-.row
-  .span6
-    h2 Mark NSFW
-    
-    form action="/admin/mark_nsfw" method="POST"
-      input name="csrf_token" type="hidden" value="#{csrf_token}"
-      p Site name:
-      input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"
-      br
-      input.btn.btn-danger type="submit" value="Mark NSFW"
-  .span6
-    h2 NSFW Sites
-    - @nsfw_sites.each do |nsfw_site|
-      = nsfw_site.username
-      br
+.content-Base
+  .row.content
+    .col  
+      h1.beta SECRET NSA BACKDOOR REPORTING ZONE
+  
+  .row.content
+    .col.col-50
+      
+      h3 Ban User
+      
+      form action="/admin/banhammer" method="POST"
+        input name="csrf_token" type="hidden" value="#{csrf_token}"
+        p Site Name:
+        input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"
+        br
+        input.btn.btn-danger type="submit" value="Ban"
+    .col.col-50
+      h2 Banned Terrorists
+      .scroll-Admin
+        - @banned_sites.each do |banned_site|
+          = banned_site.username
+          br
+  
+  
+  .row.content
+    .col.col-50
+      h3 Mark NSFW
+      
+      form action="/admin/mark_nsfw" method="POST"
+        input name="csrf_token" type="hidden" value="#{csrf_token}"
+        p Site name:
+        input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"
+        br
+        input.btn.btn-danger type="submit" value="Mark NSFW"
+    .col.col-50
+      h2 NSFW Sites
+      .scroll-Admin
+        - @nsfw_sites.each do |nsfw_site|
+          = nsfw_site.username
+          br

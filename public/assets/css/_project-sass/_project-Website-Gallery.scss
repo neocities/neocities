@@ -4,33 +4,58 @@
 
 .website-Gallery{
   list-style:none;
-  margin:0 auto;
-  padding:0;
-  width:90%;
+  padding:10px 0;
   
   li{
     @extend .col-25;
     float:left;
     margin-bottom:$spacing*2;
     
-    @media (max-device-width:480px), screen and (max-width:800px){width:50%}
+    @media (max-device-width:480px), screen and (max-width:800px){
+      width:50%
+    }
   }
   
   a{
     padding:0 $spacing*2;
     display:block;
   }
+  
+  &.int-Gall{
+    
+    li{
+      border:1px solid #ccc;
+      margin:0 .5% 12px;
+      width:24%;
+      
+      @media (max-device-width:480px), screen and (max-width:800px){
+        width:49%
+      }
+      a{
+        padding:8px;
+      }
+    }
+  }
 }
 
-.neo-SS{
+.neo-SS, .neo-Screen-Shot{
   background:#fff;
   @include box-shadow($bs-4);
   display:block;
   height:auto!important;
   padding:$spacing*2;
+  position:relative;
   width:100%;
 }
 
-.hp-Gallery img{
+.img-Holder{
+  -moz-background-size:cover!important;
+  -webkit-background-size:cover!important;
+  background-size:cover!important;
+  display:block;
+}
+
+.hp-Gallery img, .neo-Screen-Shot img{
   width:100%
 }
+

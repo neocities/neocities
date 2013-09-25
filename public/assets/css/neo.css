@@ -935,7 +935,7 @@ body {
 
 .content, .footer-Content {
   margin: 0 auto;
-  max-width: 1000px;
+  max-width: 1200px;
   padding: 20px; }
   .content > :last-child, .footer-Content > :last-child {
     margin-bottom: 0; }
@@ -1385,9 +1385,7 @@ a {
 
 .website-Gallery {
   list-style: none;
-  margin: 0 auto;
-  padding: 0;
-  width: 90%; }
+  padding: 10px 0; }
   .website-Gallery li {
     float: left;
     margin-bottom: 8px; }
@@ -1397,8 +1395,17 @@ a {
   .website-Gallery a {
     padding: 0 8px;
     display: block; }
+  .website-Gallery.int-Gall li {
+    border: 1px solid #ccc;
+    margin: 0 .5% 12px;
+    width: 24%; }
+    @media (max-device-width: 480px), screen and (max-width: 800px) {
+      .website-Gallery.int-Gall li {
+        width: 49%; } }
+    .website-Gallery.int-Gall li a {
+      padding: 8px; }
 
-.neo-SS {
+.neo-SS, .neo-Screen-Shot {
   background: #fff;
   -moz-box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
   -webkit-box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
@@ -1406,7 +1413,14 @@ a {
   display: block;
   height: auto !important;
   padding: 8px;
+  position: relative;
   width: 100%; }
 
-.hp-Gallery img {
+.img-Holder {
+  -moz-background-size: cover !important;
+  -webkit-background-size: cover !important;
+  background-size: cover !important;
+  display: block; }
+
+.hp-Gallery img, .neo-Screen-Shot img {
   width: 100%; }
