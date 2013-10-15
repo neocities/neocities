@@ -389,7 +389,7 @@ get '/admin' do
   slim :'admin'
 end
 
-def ban_site(sitename)
+def ban_site(username)
   site = Site[username: params[:username]]
 
   return false if site.nil?
