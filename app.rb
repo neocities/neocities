@@ -389,19 +389,11 @@ get '/admin' do
   slim :'admin'
 end
 
-post '/admin/banhammer' do
-  require_admin
+def ban_site(sitename)
   site = Site[username: params[:username]]
 
-  if site.is_banned
-    flash[:error] = 'User is already banned'
-    redirect '/admin'
-  end
-
-  if site.nil?
-    flash[:error] = 'User not found'
-    redirect '/admin'
-  end
+  return false if site.nil?
+  return false if site.is_banned
 
   DB.transaction {
     FileUtils.mv site_base_path(site.username), File.join(settings.public_folder, 'banned_sites', site.username)
@@ -412,6 +404,34 @@ post '/admin/banhammer' do
   if !['127.0.0.1', nil, ''].include? site.ip
     `sudo ufw insert 1 deny from #{site.ip}`
   end
+  
+  true
+end
+
+post '/admin/banip' do
+  require_admin
+  sites = Site.filter(ip: params[:ip]).all
+  sites.each {|site| ban_site site.username}
+  flash[:error] = "#{sites.length} sites have been banned."
+  redirect '/admin'
+end
+
+post '/admin/banhammer' do
+  require_admin
+
+  site = Site[username: params[:username]]
+
+  if site.nil?
+    flash[:error] = 'User not found'
+    redirect '/admin'
+  end
+  
+  if site.is_banned
+    flash[:error] = 'User is already banned'
+    redirect '/admin'
+  end
+  
+  ban_site params[:username]
 
   flash[:success] = 'MISSION ACCOMPLISHED'
   redirect '/admin'

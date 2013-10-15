@@ -14,6 +14,16 @@
         input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"
         br
         input.btn.btn-danger type="submit" value="Ban"
+        
+      h3 Ban By IP
+      p All sites with this IP address will be removed.
+      form action="/admin/banip" method="POST"
+        input name="csrf_token" type="hidden" value="#{csrf_token}"
+        p Site Name:
+        input type="text" name="ip" placeholder="3.1.33.7" autocapitalize="off" autocorrect="off"
+        br
+        input.btn.btn-danger type="submit" value="Ban"
+        
     .col.col-50
       h2 Banned Terrorists
       .scroll-Admin
