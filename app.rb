@@ -410,7 +410,14 @@ end
 
 post '/admin/banip' do
   require_admin
-  sites = Site.filter(ip: params[:ip]).all
+  site = Site[username: params[:username]]
+  
+  if site.nil?
+    flash[:error] = 'User not found'
+    redirect '/admin'
+  end
+  
+  sites = Site.filter(ip: site.ip).all
   sites.each {|site| ban_site site.username}
   flash[:error] = "#{sites.length} sites have been banned."
   redirect '/admin'
