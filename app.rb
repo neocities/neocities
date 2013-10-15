@@ -192,20 +192,20 @@ end
 post '/change_name' do
   require_login
   current_username = current_site.username
-  
+
   if current_site.username == params[:name]
     flash[:error] = 'You already have this name.'
     redirect '/settings'
   end
-  
+
   current_site.username = params[:name]
-  
+
   if current_site.valid?
     DB.transaction {
       current_site.save
       FileUtils.mv site_base_path(current_username), site_base_path(current_site.username)
     }
-    
+
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
     redirect '/settings'
   else
@@ -390,40 +390,39 @@ get '/admin' do
 end
 
 def ban_site(username)
-  site = Site[username: params[:username]]
-
+  site = Site[username: username]
   return false if site.nil?
-  return false if site.is_banned
+  return false if site.is_banned == true
 
   DB.transaction {
     FileUtils.mv site_base_path(site.username), File.join(settings.public_folder, 'banned_sites', site.username)
     site.is_banned = true
-    site.save validate: false
+    site.save(validate: false)
   }
 
   if !['127.0.0.1', nil, ''].include? site.ip
     `sudo ufw insert 1 deny from #{site.ip}`
   end
-  
+
   true
 end
 
 post '/admin/banip' do
   require_admin
   site = Site[username: params[:username]]
-  
+
   if site.nil?
     flash[:error] = 'User not found'
     redirect '/admin'
   end
-  
+
   if site.ip.nil? || site.ip.empty?
     flash[:error] = 'IP is blank, cannot continue'
     redirect '/admin'
   end
-  
+
   sites = Site.filter(ip: site.ip).all
-  sites.each {|site| ban_site site.username}
+  sites.each {|s| ban_site(s.username)}
   flash[:error] = "#{sites.length} sites have been banned."
   redirect '/admin'
 end
@@ -437,12 +436,12 @@ post '/admin/banhammer' do
     flash[:error] = 'User not found'
     redirect '/admin'
   end
-  
+
   if site.is_banned
     flash[:error] = 'User is already banned'
     redirect '/admin'
   end
-  
+
   ban_site params[:username]
 
   flash[:success] = 'MISSION ACCOMPLISHED'
@@ -512,7 +511,7 @@ get '/password_reset_confirm' do
     flash[:error] = 'Could not find a site with this token.'
     redirect '/'
   end
- 
+
   reset_site = Site[password_reset_token: params[:token]]
 
   if reset_site.nil?
@@ -532,7 +531,7 @@ get '/password_reset_confirm' do
   else
     flash[:error] = 'Could not find a site with this token.'
   end
-  
+
   redirect '/'
 end
 
@@ -545,16 +544,16 @@ post '/custom_domain' do
   original_domain = current_site.domain
   current_site.domain = params[:domain]
   if current_site.valid?
-    
+
     DB.transaction do
       current_site.save
-      
+
       if !params[:domain].empty? && !params[:domain].nil?
         File.open(File.join(DIR_ROOT, 'domains', "#{current_site.username}.conf"), 'w') do |file|
           file.write erb(:'templates/domain', layout: false)
         end
       end
-      
+
     end
     flash[:success] = 'The domain has been successfully updated.'
     redirect '/custom_domain'
@@ -568,17 +567,17 @@ get '/contact' do
 end
 
 post '/contact' do
-  
+
   @errors = []
-  
+
   if params[:email].empty? || params[:subject].empty? || params[:body].empty?
     @errors << 'Please fill out all fields'
   end
-  
+
   if !recaptcha_valid?
     @errors << 'Captcha was not filled out (or was filled out incorrectly)'
   end
-  
+
   if !@errors.empty?
     slim :'contact'
   else
@@ -589,7 +588,7 @@ post '/contact' do
       subject: "[NeoCities Contact]: #{params[:subject]}",
       body: params[:body]
     })
-    
+
     flash[:success] = 'Your contact has been sent.'
     redirect '/'
   end
