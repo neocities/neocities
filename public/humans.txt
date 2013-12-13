@@ -16,9 +16,10 @@ Location: Portland, OR
 
 Scott O'Hara: 
 Front-End Developer, Design, Ground Floor
-Website: http://www.scottohara.me/
+Website: http://scottohara.me/
 Twitter: @scottohara
 Location: Boston, MA
+
 
 Victoria Wang: 
 Design, Tutorial Lead
@@ -27,14 +28,6 @@ Twitter: @violasong
 Location: Chicago,IL
 
 
-/* ****************************************************************************
-*
-*   Thanks To:
-*
-**************************************************************************** */
-
-Name: name or url
-
 
 /* ****************************************************************************
 *
@@ -42,7 +35,7 @@ Name: name or url
 *
 **************************************************************************** */
 
-Last update: 2013/MM/DD
+Last update: 2013/12/13
 
 SCSS
 http://sass-lang.com/
@@ -51,7 +44,7 @@ jQuery
 http://jquery.com/
 
 Ground Floor
-https://github.com/bleachedgraphics/Ground-Floor
+https://github.com/scottaohara/Ground-Floor
 
 
 
