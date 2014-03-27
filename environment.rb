@@ -7,7 +7,7 @@ Encoding.default_external = 'UTF-8'
 require 'yaml'
 require 'json'
 require 'logger'
-require 'zip/zip'
+require 'zip'
 
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
@@ -15,6 +15,7 @@ Bundler.require :development if ENV['RACK_ENV'] == 'development'
 $config = YAML.load_file(File.join(DIR_ROOT, 'config.yml'))[ENV['RACK_ENV']]
 
 DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $config['database_pool']
+DB.extension :pagination
 
 Dir.glob('workers/*.rb').each {|w| require File.join(DIR_ROOT, "/#{w}") }
 
@@ -37,7 +38,7 @@ require File.join(DIR_ROOT, 'workers', 'screenshot_worker.rb')
 require File.join(DIR_ROOT, 'workers', 'email_worker.rb')
 
 Sequel.datetime_class = Time
-Sequel.extension :pagination
+Sequel.extension :core_extensions
 Sequel.extension :migration
 Sequel::Model.plugin :validation_helpers
 Sequel::Model.plugin :force_encoding, 'UTF-8'

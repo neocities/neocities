@@ -7,8 +7,6 @@ def status;  last_response.status end
 def headers; last_response.headers end
 def body;    last_response.body end
 
-SimpleCov.command_name 'minitest'
-
 describe 'index' do
   it 'loads' do
     get '/'

@@ -7,6 +7,8 @@ SimpleCov.start do
   add_filter "/migrations/"
 end
 
+SimpleCov.command_name 'minitest'
+
 require './environment'
 require 'webmock'
 include WebMock::API
