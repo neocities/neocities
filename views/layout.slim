@@ -24,6 +24,7 @@ html
     .page
       .container
         - flash.keys.each do |key|
+          - next unless %i{success error}.include? key
           div class="alert alert-#{key}"
             button.close type="button" data-dismiss="alert" &times;
             == flash[key]

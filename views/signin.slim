@@ -6,7 +6,7 @@
         input name="csrf_token" type="hidden" value="#{csrf_token}"
 
         fieldset.col-60 style="margin:0 auto"
-          input name="username" type="text" placeholder="Your username" class="input-Area" autocapitalize="off" autocorrect="off"
+          input name="username" type="text" placeholder="Your username" class="input-Area" autocapitalize="off" autocorrect="off" value="#{flash[:username]}"
           br
           input name="password" type="password" class="input-Area" placeholder="Your password"
           br

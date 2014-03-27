@@ -134,11 +134,13 @@ end
 
 post '/signin' do
   dashboard_if_signed_in
+
   if Site.valid_login? params[:username], params[:password]
     site = Site[username: params[:username]]
 
     if site.is_banned
       flash[:error] = 'Invalid login.'
+      flash[:username] = params[:username]
       redirect '/signin'
     end
 
@@ -146,6 +148,7 @@ post '/signin' do
     redirect '/dashboard'
   else
     flash[:error] = 'Invalid login.'
+    flash[:username] = params[:username]
     redirect '/signin'
   end
 end
