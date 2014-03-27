@@ -52,7 +52,7 @@ javascript:
         a href="http://#{current_site.username}.neocities.org" style="display:block" target="_blank": img src="/site_screenshots/#{current_site.username}.jpg" alt="screen shot"
         br
         h3 class="base" style="line-height:1": a href="http://#{current_site.username}.neocities.org" target="_blank" http://#{current_site.username}.neocities.org
-        a href="/site_files/#{current_site.username}.zip" class="btn-Action" Download Entire Site
+        p Your page has been accessed <b>#{current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse}</b> times.
       
       .progress.progress-info.progress-striped
         .bar style="width: #{(current_site.total_space / Site::MAX_SPACE.to_f) * 100}%"
@@ -60,11 +60,12 @@ javascript:
       h4.base.txt-Center
         You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{current_site.total_space_in_megabytes}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
       
-
       div.txt-Center
         a href="/site_files/upload" class="btn-Action" style="margin-bottom:10px" Upload New Files
         br
-        a href="/site_files/new_page" class="btn-Action" Create New HTML Page
+        a href="/site_files/new_page" class="btn-Action" style="margin-bottom:10px" Create New HTML Page
+        br
+        a href="/site_files/#{current_site.username}.zip" class="btn-Action" Download Entire Site
         
       hr
       
