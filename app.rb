@@ -1,3 +1,4 @@
+require 'base64'
 require './environment.rb'
 
 use Rack::Session::Cookie, key:          'neocities',
@@ -9,8 +10,38 @@ use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $
 helpers Rack::Recaptcha::Helpers
 
 before do
-  content_type :html, 'charset' => 'utf-8'
-  redirect '/' if request.post? && !csrf_safe?
+  if is_http_auth
+    login_http_auth
+  else
+    content_type :html, 'charset' => 'utf-8'
+    redirect '/' if request.post? && !csrf_safe?
+  end
+end
+
+def is_http_auth
+  return true if request.env['HTTP_AUTHORIZATION']
+  false
+end
+
+def login_http_auth
+  if auth = request.env['HTTP_AUTHORIZATION']
+    @api = true
+
+    user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
+
+    if Site.valid_login? user, pass
+      site = Site[username: user]
+      
+      if site.is_banned
+        json [result: 'error', message: 'not found'].to_json
+      end
+      
+      session[:id] = site.id
+      
+    else
+      json [result: 'error', message: 'not found'].to_json
+    end
+  end
 end
 
 not_found do
