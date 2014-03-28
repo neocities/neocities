@@ -307,7 +307,7 @@ post '/site_files/upload' do
 
   mime_type = Magic.guess_file_mime_type params[:newfile][:tempfile].path
 
-  unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) && Site::VALID_EXTENSIONS.include?(File.extname(params[:newfile][:filename]).sub(/^./, ''))
+  unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) && Site::VALID_EXTENSIONS.include?(File.extname(params[:newfile][:filename]).sub(/^./, '').downcase)
     @errors << 'File must me one of the following: HTML, Text, Image (JPG PNG GIF JPEG SVG), JS, CSS, Markdown.'
     halt http_error_code, 'File type is not supported.' # slim(:'site_files/new')
   end
