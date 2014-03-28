@@ -4,7 +4,7 @@ gem 'sinatra'
 gem 'redis'
 gem 'sequel'
 gem 'slim'
-gem 'bcrypt-ruby',        require: 'bcrypt'
+gem 'bcrypt'
 gem 'sinatra-flash',      require: 'sinatra/flash'
 gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
 gem 'puma',               require: nil
