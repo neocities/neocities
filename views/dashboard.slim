@@ -53,12 +53,15 @@ javascript:
         br
         h3 class="base" style="line-height:1": a href="http://#{current_site.username}.neocities.org" target="_blank" http://#{current_site.username}.neocities.org
         p Your page has been accessed <b>#{current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse}</b> times.
+        p: small
+          |
+            (access statistics updated hourly)
       
       .progress.progress-info.progress-striped
         .bar style="width: #{(current_site.total_space / Site::MAX_SPACE.to_f) * 100}%"
 
       h4.base.txt-Center
-        You are currently using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{current_site.total_space_in_megabytes}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
+        p Using #{((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1)}% (#{current_site.total_space_in_megabytes}MB) of your #{(Site::MAX_SPACE.to_f / 2**20).to_i}MB of free space.
       
       div.txt-Center
         a href="/site_files/upload" class="btn-Action" style="margin-bottom:10px" Upload New Files
