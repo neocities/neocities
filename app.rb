@@ -315,7 +315,7 @@ get '/site_files/:username.zip' do |username|
   require_login
   file_path = "/tmp/neocities-site-#{username}.zip"
 
-  Zip::ZipFile.open(file_path, Zip::ZipFile::CREATE) do |zipfile|
+  Zip::File.open(file_path, Zip::File::CREATE) do |zipfile|
     current_site.file_list.collect {|f| f.filename}.each do |filename|
       zipfile.add filename, site_file_path(filename)
     end
