@@ -4,6 +4,6 @@ Sequel.migration do
   }
 
   down {
-    DB.add_column :sites, :hits
+    DB.drop_column :sites, :hits
   }
 end

@@ -52,6 +52,10 @@ group :test do
   gem 'webmock'
   gem 'mocha',              require: nil
   gem 'rake',               require: nil
+  gem 'poltergeist'
+  gem 'phantomjs',          require: 'phantomjs/poltergeist'
+  gem 'capybara'
+  gem 'capybara_minitest_spec'
 
   platform :mri do
     gem 'simplecov',        require: nil

@@ -6,6 +6,5 @@ Sequel.migration do
 
   down {
     DB.drop_column :sites, :changed_count
-    DB.drop_index  :sites, :changed_count
   }
 end

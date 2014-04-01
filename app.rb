@@ -103,12 +103,12 @@ end
 
 get '/blog' do
   # expires 500, :public, :must_revalidate
-  return File.read File.join(DIR_ROOT, 'public', 'sites', 'blog', 'index.html')
+  return File.read File.join(Sites::SITE_FILES_ROOT, 'blog', 'index.html')
 end
 
 get '/blog/:article' do |article|
   # expires 500, :public, :must_revalidate
-  path = File.join DIR_ROOT, 'public', 'sites', 'blog', "#{article}.html"
+  path = File.join Sites::SITE_FILES_ROOT, 'blog', "#{article}.html"
   pass if !File.exist?(path)
   File.read path
 end
@@ -137,9 +137,16 @@ end
 
 post '/create' do
   dashboard_if_signed_in
-  @site = Site.new username: params[:username], password: params[:password], email: params[:email], new_tags: params[:tags], is_nsfw: params[:is_nsfw], ip: request.ip
+  @site = Site.new(
+    username: params[:username],
+    password: params[:password],
+    email: params[:email],
+    new_tags: params[:tags],
+    is_nsfw: params[:is_nsfw],
+    ip: request.ip
+  )
 
-  recaptcha_is_valid = recaptcha_valid?
+  recaptcha_is_valid = ENV['RACK_ENV'] == 'test' || recaptcha_valid?
 
   if @site.valid? && recaptcha_is_valid
 
@@ -148,7 +155,7 @@ post '/create' do
     DB.transaction {
       @site.save
 
-      FileUtils.mkdir base_path
+      FileUtils.mkdir_p base_path
 
       File.write File.join(base_path, 'index.html'), slim(:'templates/index', pretty: true, layout: false)
       File.write File.join(base_path, 'not_found.html'), slim(:'templates/not_found', pretty: true, layout: false)
@@ -661,7 +668,7 @@ def current_site
 end
 
 def site_base_path(subname)
-  File.join settings.public_folder, 'sites', subname
+  File.join Site::SITE_FILES_ROOT, subname
 end
 
 def site_file_path(filename)

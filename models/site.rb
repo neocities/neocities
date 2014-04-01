@@ -1,11 +1,38 @@
 class Site < Sequel::Model
   # We might need to include fonts in here..
-  VALID_MIME_TYPES = ['text/plain', 'text/html', 'text/css', 'application/javascript', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'application/vnd.ms-fontobject', 'application/x-font-ttf', 'application/octet-stream', 'text/csv', 'text/tsv', 'text/cache-manifest', 'image/x-icon', 'application/pdf', 'application/pgp-keys', 'text/xml', 'application/xml', 'audio/midi']
-  VALID_EXTENSIONS = %w{ html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff json geojson csv tsv mf ico pdf asc key pgp xml mid midi }
-  #USERNAME_SHITLIST = %w{ payment secure login signin www ww web } # I thought they were funny personally, but everybody is freaking out so..
+  VALID_MIME_TYPES = %w{
+    text/plain
+    text/html
+    text/css
+    application/javascript
+    image/png
+    image/jpeg
+    image/gif
+    image/svg+xml
+    application/vnd.ms-fontobject
+    application/x-font-ttf
+    application/octet-stream
+    text/csv
+    text/tsv
+    text/cache-manifest
+    image/x-icon
+    application/pdf
+    application/pgp-keys
+    text/xml
+    application/xml
+    audio/midi
+  }
+  VALID_EXTENSIONS = %w{ 
+    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff json
+    geojson csv tsv mf ico pdf asc key pgp xml mid midi
+  }
   MAX_SPACE = (5242880*2) # 10MB
   MINIMUM_PASSWORD_LENGTH = 5
   BAD_USERNAME_REGEX = /[^\w-]/i
+  VALID_HOSTNAME = /^[a-z0-9][a-z0-9-]+?[a-z0-9]$/i # http://tools.ietf.org/html/rfc1123
+  
+  SITE_FILES_ROOT = File.join(DIR_ROOT, 'public', (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites'))
+  
   many_to_one :server
   many_to_many :tags
 
@@ -77,13 +104,15 @@ class Site < Sequel::Model
       errors.add :over_capacity, 'We are currently at capacity, and cannot create your home page. We will fix this shortly. Please come back later and try again, our apologies.'
     end
 
-    if values[:username].nil? || values[:username].empty? || values[:username].match(BAD_USERNAME_REGEX)
-      errors.add :username, 'A valid username is required.'
+    if !values[:username].match(VALID_HOSTNAME)
+      errors.add :username, 'A valid user/site name is required.'
+    end
+    
+    if values[:username].length > 32
+      errors.add :username, 'User/site name cannot exceed 32 characters.'
     end
 
-    # Check for existing user
-    
-    
+    # Check for existing user    
     user = self.class.select(:id, :username).filter(username: values[:username]).first
     
     if user
@@ -109,7 +138,7 @@ class Site < Sequel::Model
   end
 
   def file_path
-    File.join DIR_ROOT, 'public', 'sites', username
+    File.join SITE_FILES_ROOT, username
   end
 
   def file_list

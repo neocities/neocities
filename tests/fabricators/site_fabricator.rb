@@ -1,4 +1,4 @@
 Fabricator(:site) do
-  username { Faker::Internet.email }
+  username { SecureRandom.hex }
   password { 'abcde' }
 end
