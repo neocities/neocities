@@ -89,7 +89,6 @@ describe 'signup' do
     fill_in_valid
     fill_in 'username', with: SecureRandom.hex+'1'
     click_button 'Create Home Page'
-    page.current_path.must_equal '/create'
     page.must_have_content 'cannot exceed 32 characters'
   end
 end
