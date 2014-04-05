@@ -4,6 +4,6 @@ Sequel.migration do
   }
 
   down {
-    DB.add_column :sites, :is_admin
+    DB.drop_column :sites, :is_admin
   }
 end

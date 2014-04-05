@@ -15,6 +15,8 @@ gem 'selenium-webdriver', require: nil
 gem 'sidekiq'
 gem 'ago'
 gem 'mail'
+gem 'google-api-client',  require: 'google/api_client'
+gem 'tilt'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
@@ -52,6 +54,10 @@ group :test do
   gem 'webmock'
   gem 'mocha',              require: nil
   gem 'rake',               require: nil
+  gem 'poltergeist'
+  gem 'phantomjs',          require: 'phantomjs/poltergeist'
+  gem 'capybara'
+  gem 'capybara_minitest_spec'
 
   platform :mri do
     gem 'simplecov',        require: nil

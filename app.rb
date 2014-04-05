@@ -1,4 +1,6 @@
 require 'base64'
+require 'uri'
+require 'net/http'
 require './environment.rb'
 
 use Rack::Session::Cookie, key:          'neocities',
@@ -102,15 +104,13 @@ get '/donate' do
 end
 
 get '/blog' do
-  # expires 500, :public, :must_revalidate
-  return File.read File.join(DIR_ROOT, 'public', 'sites', 'blog', 'index.html')
+  expires 500, :public, :must_revalidate
+  return Net::HTTP.get_response(URI('http://blog.neocities.org')).body
 end
 
 get '/blog/:article' do |article|
-  # expires 500, :public, :must_revalidate
-  path = File.join DIR_ROOT, 'public', 'sites', 'blog', "#{article}.html"
-  pass if !File.exist?(path)
-  File.read path
+  expires 500, :public, :must_revalidate
+  return Net::HTTP.get_response(URI("http://blog.neocities.org/#{article}.html")).body
 end
 
 get '/new' do
@@ -137,22 +137,19 @@ end
 
 post '/create' do
   dashboard_if_signed_in
-  @site = Site.new username: params[:username], password: params[:password], email: params[:email], new_tags: params[:tags], is_nsfw: params[:is_nsfw], ip: request.ip
+  @site = Site.new(
+    username: params[:username],
+    password: params[:password],
+    email: params[:email],
+    new_tags: params[:tags],
+    is_nsfw: params[:is_nsfw],
+    ip: request.ip
+  )
 
-  recaptcha_is_valid = recaptcha_valid?
+  recaptcha_is_valid = ENV['RACK_ENV'] == 'test' || recaptcha_valid?
 
   if @site.valid? && recaptcha_is_valid
-
-    base_path = site_base_path @site.username
-
-    DB.transaction {
-      @site.save
-
-      FileUtils.mkdir base_path
-
-      File.write File.join(base_path, 'index.html'), slim(:'templates/index', pretty: true, layout: false)
-      File.write File.join(base_path, 'not_found.html'), slim(:'templates/not_found', pretty: true, layout: false)
-    }
+    @site.save
 
     session[:id] = @site.id
     redirect '/dashboard'
@@ -225,19 +222,19 @@ end
 
 post '/change_name' do
   require_login
-  current_username = current_site.username
+  old_username = current_site.username
 
-  if current_site.username == params[:name]
+  if old_username == params[:name]
     flash[:error] = 'You already have this name.'
     redirect '/settings'
   end
-
+  
   current_site.username = params[:name]
 
   if current_site.valid?
     DB.transaction {
       current_site.save
-      FileUtils.mv site_base_path(current_username), site_base_path(current_site.username)
+      current_site.move_files_from old_username
     }
 
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
@@ -266,14 +263,13 @@ post '/site_files/create_page' do
   end
 
   name = "#{params[:pagefilename]}.html"
-  path = site_file_path name
 
-  if File.exist? path
+  if current_site.file_exists?(name)
     @errors << %{Web page "#{name}" already exists! Choose another name.}
     halt slim(:'site_files/new_page')
   end
 
-  File.write path, slim(:'templates/index', pretty: true, layout: false)
+  current_site.install_new_html_file name
 
   flash[:success] = %{#{name} was created! <a style="color: #FFFFFF; text-decoration: underline" href="/site_files/text_editor/#{name}">Click here to edit it</a>.}
 
@@ -297,12 +293,12 @@ post '/site_files/upload' do
 
   if params[:newfile] == '' || params[:newfile].nil?
     @errors << 'You must select a file to upload.'
-    halt http_error_code, 'Did not receive file upload.' # slim(:'site_files/new')
+    halt http_error_code, 'Did not receive file upload.'
   end
 
   if params[:newfile][:tempfile].size > Site::MAX_SPACE || (params[:newfile][:tempfile].size + current_site.total_space) > Site::MAX_SPACE
     @errors << 'File size must be smaller than available space.'
-    halt http_error_code, 'File size must be smaller than available space.' # slim(:'site_files/new')
+    halt http_error_code, 'File size must be smaller than available space.'
   end
 
   mime_type = Magic.guess_file_mime_type params[:newfile][:tempfile].path
@@ -313,10 +309,7 @@ post '/site_files/upload' do
   end
 
   sanitized_filename = params[:newfile][:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')
-
-  dest_path = File.join(site_base_path(current_site.username), sanitized_filename)
-  FileUtils.mv params[:newfile][:tempfile].path, dest_path
-  File.chmod(0640, dest_path) if self.class.production?
+  current_site.store_file sanitized_filename, params[:newfile][:tempfile]
 
   if sanitized_filename =~ /index\.html/
     ScreenshotWorker.perform_async current_site.username
@@ -332,71 +325,56 @@ end
 post '/site_files/delete' do
   require_login
   sanitized_filename = params[:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')
-  begin
-    FileUtils.rm File.join(site_base_path(current_site.username), sanitized_filename)
-  rescue Errno::ENOENT
-    flash[:error] = 'File was already deleted.'
-    redirect '/dashboard'
-  end
+
+  current_site.delete_file(sanitized_filename)
+
   flash[:success] = "Deleted file #{params[:filename]}."
   redirect '/dashboard'
 end
 
 get '/site_files/:username.zip' do |username|
   require_login
-  file_path = "/tmp/neocities-site-#{username}.zip"
-
-  Zip::File.open(file_path, Zip::File::CREATE) do |zipfile|
-    current_site.file_list.collect {|f| f.filename}.each do |filename|
-      zipfile.add filename, site_file_path(filename)
-    end
-  end
-
-  # I don't want to have to deal with cleaning up old tmpfiles
-  zipfile = File.read file_path
-  File.delete file_path
-
+  zipfile = current_site.files_zip
   content_type 'application/octet-stream'
   attachment   "#{current_site.username}.zip"
-
-  return zipfile
+  zipfile
 end
 
 get '/site_files/download/:filename' do |filename|
   require_login
-  send_file File.join(site_base_path(current_site.username), filename), filename: filename, type: 'Application/octet-stream'
+  content_type 'application/octet-stream'
+  attachment filename
+  current_site.get_file filename
 end
 
 get '/site_files/text_editor/:filename' do |filename|
   require_login
   begin
-    @file_data = File.read File.join(site_base_path(current_site.username), filename)
+    @file_data = current_site.get_file filename
   rescue Errno::ENOENT
     flash[:error] = 'We could not find the requested file.'
     redirect '/dashboard'
   end
-  slim :'site_files/text_editor'
+  slim :'site_files/text_editor', indent: false
 end
 
 post '/site_files/save/:filename' do |filename|
   require_login_ajax
 
-  tmpfile = Tempfile.new 'neocities_saving_file'
+  tempfile = Tempfile.new 'neocities_saving_file'
 
-  if (tmpfile.size + current_site.total_space) > Site::MAX_SPACE
+  if (tempfile.size + current_site.total_space) > Site::MAX_SPACE
     halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
   end
 
   input = request.body.read
-  tmpfile.set_encoding input.encoding
-  tmpfile.write input
-  tmpfile.close
+  tempfile.set_encoding input.encoding
+  tempfile.write input
+  tempfile.close
 
   sanitized_filename = filename.gsub(/[^a-zA-Z0-9_\-.]/, '')
-  dest_path = File.join site_base_path(current_site.username), sanitized_filename
 
-  FileUtils.mv tmpfile.path, dest_path
-  File.chmod(0640, dest_path) if self.class.production?
+  current_site.store_file sanitized_filename, tempfile
 
   if sanitized_filename =~ /index\.html/
     ScreenshotWorker.perform_async current_site.username
@@ -423,24 +401,6 @@ get '/admin' do
   slim :'admin'
 end
 
-def ban_site(username)
-  site = Site[username: username]
-  return false if site.nil?
-  return false if site.is_banned == true
-
-  DB.transaction {
-    FileUtils.mv site_base_path(site.username), File.join(settings.public_folder, 'banned_sites', site.username)
-    site.is_banned = true
-    site.save(validate: false)
-  }
-
-  if !['127.0.0.1', nil, ''].include? site.ip
-    `sudo ufw insert 1 deny from #{site.ip}`
-  end
-
-  true
-end
-
 post '/admin/banip' do
   require_admin
   site = Site[username: params[:username]]
@@ -455,8 +415,8 @@ post '/admin/banip' do
     redirect '/admin'
   end
 
-  sites = Site.filter(ip: site.ip).all
-  sites.each {|s| ban_site(s.username)}
+  sites = Site.filter(ip: site.ip, is_banned: false).all
+  sites.each {|s| s.ban!}
   flash[:error] = "#{sites.length} sites have been banned."
   redirect '/admin'
 end
@@ -476,7 +436,7 @@ post '/admin/banhammer' do
     redirect '/admin'
   end
 
-  ban_site params[:username]
+  site.ban!
 
   flash[:success] = 'MISSION ACCOMPLISHED'
   redirect '/admin'
@@ -577,18 +537,9 @@ post '/custom_domain' do
   require_login
   original_domain = current_site.domain
   current_site.domain = params[:domain]
+
   if current_site.valid?
-
-    DB.transaction do
-      current_site.save
-
-      if !params[:domain].empty? && !params[:domain].nil?
-        File.open(File.join(DIR_ROOT, 'domains', "#{current_site.username}.conf"), 'w') do |file|
-          file.write erb(:'templates/domain', layout: false)
-        end
-      end
-
-    end
+    current_site.save
     flash[:success] = 'The domain has been successfully updated.'
     redirect '/custom_domain'
   else
@@ -658,18 +609,6 @@ end
 
 def current_site
   @site ||= Site[id: session[:id]]
-end
-
-def site_base_path(subname)
-  File.join settings.public_folder, 'sites', subname
-end
-
-def site_file_path(filename)
-  File.join(site_base_path(current_site.username), filename)
-end
-
-def template_site_title(username)
-  "#{username.capitalize}#{username[username.length-1] == 's' ? "'" : "'s"} Site"
 end
 
 def encoding_fix(file)

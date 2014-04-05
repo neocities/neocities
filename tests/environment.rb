@@ -20,7 +20,7 @@ Bundler.require :test
 require 'minitest/autorun'
 require 'sidekiq/testing/inline'
 
-Account.bcrypt_cost = BCrypt::Engine::MIN_COST
+Site.bcrypt_cost = BCrypt::Engine::MIN_COST
 
 MiniTest::Reporters.use! MiniTest::Reporters::SpecReporter.new
 
@@ -29,8 +29,11 @@ Sequel.extension :migration
 
 Sequel::Migrator.apply DB, './migrations', 0
 Sequel::Migrator.apply DB, './migrations'
+Server.create ip: '127.0.0.1', slots_available: 999999
 
 Fabrication.configure do |config|
   config.fabricator_path = 'tests/fabricators'
   config.path_prefix = DIR_ROOT
 end
+
+I18n.enforce_available_locales = true

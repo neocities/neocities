@@ -53,9 +53,7 @@ css:
           option value="ace/theme/twilight" Twilight
           option value="ace/theme/vibrant_ink" Vibrant Ink
 
-    div id="editor" style="width: 100%; height: 600px; position: relative; margin-bottom:25px"
-      == encoding_fix @file_data
-    
+    <div id="editor" style="width: 100%; height: 600px; position: relative; margin-bottom:25px">#{{encoding_fix(@file_data)}}</div>
     
     .row
       .col.col-33.txt-Center style="margin-bottom:10px"
@@ -125,4 +123,5 @@ css:
         editor.getSession().setUseWrapMode(true);
         editor.setFontSize(14);
         editor.setShowPrintMargin(false);
+        
       });
