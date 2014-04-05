@@ -1,5 +1,5 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700,700italic,600,400italic,300italic,600italic);
-@import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700);
+@import url(//fonts.googleapis.com/css?family=Open+Sans:300,400,700,700italic,600,400italic,300italic,600italic);
+@import url(//fonts.googleapis.com/css?family=Droid+Serif:400,700);
 *, *:before, *:after {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -471,7 +471,7 @@ legend, .legend {
   font-style: italic; }
 
 .btn, .btn-Radio, .btn-Check, .btn-Small, .btn-Large, .btn-XLarge, .btn-Wide, .btn-Action, .btn-Action-2, .btn-Action-3, .btn-Neg,
-.btn-Neg:hover, .btn-Disable, .btn-Square, .btn-Round {
+.btn-Neg:hover, .btn-Disable, .btn-Disable:hover, .btn-Disable:visited, .btn-Square, .btn-Round {
   background: #343434;
   -moz-border-radius: 18px;
   -webkit-border-radius: 18px;
