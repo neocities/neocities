@@ -20,8 +20,7 @@ javascript:
           span
             <i class="icon-file-alt icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">#{file.filename}</span>
             - if file.filename == 'index.html'
-              p.tiny
-                This is your index file! It is the "default file" that loads when you go to <a href="http://#{current_site.username}.neocities.org">#{current_site.username}.neocities.org</a>. In effect, it's your front page. If you want to change your front page, you need to edit (or overwrite) this file. The default file is always named <b>index.html</b>.
+              p.tiny This is your index file! It is the "default file" that loads when you go to <a href="http://#{current_site.username}.neocities.org">#{current_site.username}.neocities.org</a>. In effect, it's your front page. If you want to change your front page, you need to edit (or overwrite) this file, which you should do right now if you just created your site. The default file is always named <b>index.html</b>, and you cannot delete it.
           
           div style="margin-bottom:30px"
             span
@@ -36,14 +35,23 @@ javascript:
             span
               i class="icon-edit" &nbsp;&nbsp;
               span: a href="/site_files/download/#{file.filename}" Download <br />
-            span
-              i class="icon-trash" &nbsp;&nbsp;
-              a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
+
+            - if file.filename != 'index.html'
+              span
+                i class="icon-trash" &nbsp;&nbsp;
+                a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
         - else
           <i class="icon-picture icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">#{file.filename}</span>
-          div style="margin-top: 3px; margin-bottom:10px"
-              | To use in an HTML file, paste this text: <code class="tiny" style="margin:0">&lt;img src="/#{file.filename}"&gt;</code>
+          div style="margin-top: 3px; margin-bottom: 30px"
+            | To use in an HTML file, paste this text: <code class="tiny" style="margin:0">&lt;img src="/#{file.filename}"&gt;</code>
+            span
+              i class="icon-globe" &nbsp;&nbsp;
               a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br />
+            span
+              i class="icon-edit" &nbsp;&nbsp;
+              span: a href="/site_files/download/#{file.filename}" Download <br />
+            span
+              i class="icon-trash" &nbsp;&nbsp;
               a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
   
     .col.col-40

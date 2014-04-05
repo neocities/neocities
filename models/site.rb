@@ -1,3 +1,5 @@
+require 'tilt'
+
 class Site < Sequel::Model
   # We might need to include fonts in here..
   VALID_MIME_TYPES = %w{
@@ -30,9 +32,13 @@ class Site < Sequel::Model
   MINIMUM_PASSWORD_LENGTH = 5
   BAD_USERNAME_REGEX = /[^\w-]/i
   VALID_HOSTNAME = /^[a-z0-9][a-z0-9-]+?[a-z0-9]$/i # http://tools.ietf.org/html/rfc1123
-  
-  SITE_FILES_ROOT = File.join(DIR_ROOT, 'public', (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites'))
-  
+
+  # FIXME smarter DIR_ROOT discovery
+  DIR_ROOT        = './'
+  TEMPLATE_ROOT   = File.join DIR_ROOT, 'views', 'templates'
+  PUBLIC_ROOT     = File.join DIR_ROOT, 'public'
+  SITE_FILES_ROOT = File.join PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites')
+
   many_to_one :server
   many_to_many :tags
 
@@ -76,6 +82,87 @@ class Site < Sequel::Model
   def before_validation
     self.server ||= Server.with_slots_available
     super
+  end
+
+  def save(validate={})
+    DB.transaction do
+      is_new = new?
+      install_custom_domain if !domain.nil? && !domain.empty?
+      result = super(validate)
+      install_new_files if is_new
+      result
+    end
+  end
+
+  def install_custom_domain
+    File.open(File.join(DIR_ROOT, 'domains', "#{username}.conf"), 'w') do |file|
+      file.write render_template('domain.erb')
+    end
+  end
+
+  def install_new_files
+    FileUtils.mkdir_p files_path
+
+    %w{index not_found}.each do |name|
+      File.write file_path("#{name}.html"), render_template("#{name}.slim")
+    end
+  end
+
+  def get_file(filename)
+    File.read file_path(filename)
+  end
+
+  def ban!
+    DB.transaction {
+      FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'banned_sites', username)
+      self.is_banned = true
+
+      if !['127.0.0.1', nil, ''].include? ip
+        `sudo ufw insert 1 deny from #{ip}`
+      end
+
+      save(validate: false)
+    }
+  end
+
+  def store_file(filename, uploaded)
+    FileUtils.mv uploaded.path, file_path(filename)
+    File.chmod(0640, file_path(filename))
+  end
+
+  def files_zip
+    file_path = "/tmp/neocities-site-#{username}.zip"
+
+    Zip::File.open(file_path, Zip::File::CREATE) do |zipfile|
+      file_list.collect {|f| f.filename}.each do |filename|
+        zipfile.add filename, file_path(filename)
+      end
+    end
+
+    # TODO Don't dump the zipfile into memory
+    zipfile = File.read file_path
+    File.delete file_path
+    zipfile
+  end
+
+  def delete_file(filename)
+    begin
+      FileUtils.rm file_path(filename)
+    rescue Errno::ENOENT
+      # File was probably already deleted
+    end
+  end
+
+  def move_files_from(oldusername)
+    FileUtils.mv files_path(oldusername), files_path
+  end
+
+  def install_new_html_file(name)
+    File.write file_path(name), render_template('index.slim')
+  end
+
+  def file_exists?(filename)
+    File.exist? file_path(filename)
   end
 
   def after_save
@@ -137,16 +224,24 @@ class Site < Sequel::Model
     end
   end
 
-  def file_path
-    File.join SITE_FILES_ROOT, username
+  def render_template(name)
+    Tilt.new(File.join(TEMPLATE_ROOT, name), pretty: true).render self
+  end
+
+  def files_path(name=nil)
+    File.join SITE_FILES_ROOT, (name || username)
+  end
+  
+  def file_path(filename)
+    File.join files_path, filename
   end
 
   def file_list
-    Dir.glob(File.join(file_path, '*')).collect {|p| File.basename(p)}.sort.collect {|sitename| SiteFile.new sitename}
+    Dir.glob(File.join(files_path, '*')).collect {|p| File.basename(p)}.sort.collect {|sitename| SiteFile.new sitename}
   end
 
   def total_space
-    space = Dir.glob(File.join(file_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
+    space = Dir.glob(File.join(files_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
     space.nil? ? 0 : space
   end
   

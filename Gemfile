@@ -15,6 +15,8 @@ gem 'selenium-webdriver', require: nil
 gem 'sidekiq'
 gem 'ago'
 gem 'mail'
+gem 'google-api-client',  require: 'google/api_client'
+gem 'tilt'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
