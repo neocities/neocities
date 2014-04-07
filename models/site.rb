@@ -125,6 +125,14 @@ class Site < Sequel::Model
     }
   end
 
+  def self.valid_file_type?(uploaded_file)
+    mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
+
+    return true if (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) && 
+                   Site::VALID_EXTENSIONS.include?(File.extname(uploaded_file[:filename]).sub(/^./, '').downcase)
+    false
+  end
+
   def store_file(filename, uploaded)
     FileUtils.mv uploaded.path, file_path(filename)
     File.chmod(0640, file_path(filename))

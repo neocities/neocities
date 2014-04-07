@@ -12,37 +12,11 @@ use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $
 helpers Rack::Recaptcha::Helpers
 
 before do
-  if is_http_auth
-    login_http_auth
+  if request.path.match(/^\/api\//i)
+    content_type :json
   else
     content_type :html, 'charset' => 'utf-8'
     redirect '/' if request.post? && !csrf_safe?
-  end
-end
-
-def is_http_auth
-  return true if request.env['HTTP_AUTHORIZATION']
-  false
-end
-
-def login_http_auth
-  if auth = request.env['HTTP_AUTHORIZATION']
-    @api = true
-
-    user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
-
-    if Site.valid_login? user, pass
-      site = Site[username: user]
-      
-      if site.is_banned
-        json [result: 'error', message: 'not found'].to_json
-      end
-      
-      session[:id] = site.id
-      
-    else
-      json [result: 'error', message: 'not found'].to_json
-    end
   end
 end
 
@@ -93,6 +67,10 @@ get '/browse' do
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
   erb :browse
+end
+
+get '/api' do
+  erb :'api'
 end
 
 get '/tutorials' do
@@ -228,7 +206,7 @@ post '/change_name' do
     flash[:error] = 'You already have this name.'
     redirect '/settings'
   end
-  
+
   current_site.username = params[:name]
 
   if current_site.valid?
@@ -301,9 +279,7 @@ post '/site_files/upload' do
     halt http_error_code, 'File size must be smaller than available space.'
   end
 
-  mime_type = Magic.guess_file_mime_type params[:newfile][:tempfile].path
-
-  unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) && Site::VALID_EXTENSIONS.include?(File.extname(params[:newfile][:filename]).sub(/^./, '').downcase)
+  unless Site.valid_file_type? params[:newfile]
     @errors << 'File must me one of the following: HTML, Text, Image (JPG PNG GIF JPEG SVG), JS, CSS, Markdown.'
     halt http_error_code, 'File type is not supported.' # slim(:'site_files/new')
   end
@@ -579,6 +555,45 @@ post '/contact' do
   end
 end
 
+post '/api/upload' do
+  require_api_credentials
+
+  files = []
+
+  params.each do |k,v|
+    next unless v[:tempfile]
+    files << {filename: k.to_s, tempfile: v[:tempfile]}
+  end
+
+  uploaded_size = files.collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
+
+  if (uploaded_size + current_site.total_space) > Site::MAX_SPACE
+    api_error 'too_large', 'files are too large to fit in your space, try uploading less (or smaller) files'
+  end
+
+  files.each do |file|
+    if !Site.valid_file_type?(file)
+      api_error 'invalid_file_type', "#{file[:filename]} is not a valid file type, files have not been uploaded"
+    end
+  end
+
+  files.each do |file|
+    current_site.store_file file[:filename], file[:tempfile]
+  end
+
+  api_success 'your file(s) have been successfully uploaded'
+end
+
+# Catch-all for missing api calls
+
+get '/api/:name' do
+  api_not_found
+end
+
+post '/api/:name' do
+  api_not_found
+end
+
 def require_admin
   redirect '/' unless signed_in? && current_site.is_admin
 end
@@ -618,4 +633,39 @@ def encoding_fix(file)
     return Rack::Utils.escape_html(file.force_encoding('BINARY')) if e.message =~ /invalid byte sequence in UTF-8/
     fail
   end
+end
+
+def require_api_credentials
+  if auth = request.env['HTTP_AUTHORIZATION']
+
+    begin
+      user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
+    rescue
+      api_error 'invalid_auth', 'could not parse your auth credentials - please check your username and password'
+    end
+
+    if Site.valid_login? user, pass
+      site = Site[username: user]
+
+      if site.nil? || site.is_banned
+        api_error 'invalid_credentials', 'invalid credentials - please check your username and password'
+      end
+
+      session[:id] = site.id
+    else
+      api_error 'invalid_credentials', 'invalid credentials - please check your username and password'
+    end
+  end
+end
+
+def api_success(message)
+  halt({result: 'success', message: message}.to_json)
+end
+
+def api_error(error_type, message)
+  halt({result: 'error', error_type: error_type, message: message}.to_json)
+end
+
+def api_not_found
+  api_error 'not_found', 'the requested api call does not exist'
 end
