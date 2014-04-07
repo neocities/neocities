@@ -196,7 +196,7 @@ class Site < Sequel::Model
       errors.add :username, 'A valid user/site name is required.'
     end
     
-    if values[:username].length > 32
+    if new? && values[:username].length > 32
       errors.add :username, 'User/site name cannot exceed 32 characters.'
     end
 
