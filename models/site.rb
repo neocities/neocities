@@ -192,7 +192,7 @@ class Site < Sequel::Model
     end
 
     # TODO regex fails for usernames <= 2 chars, tempfix for now.
-    if values[:username].length > 2 && !values[:username].match(VALID_HOSTNAME)
+    if new? && values[:username].length > 2 && !values[:username].match(VALID_HOSTNAME)
       errors.add :username, 'A valid user/site name is required.'
     end
     
