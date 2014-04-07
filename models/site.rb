@@ -191,7 +191,8 @@ class Site < Sequel::Model
       errors.add :over_capacity, 'We are currently at capacity, and cannot create your home page. We will fix this shortly. Please come back later and try again, our apologies.'
     end
 
-    if !values[:username].match(VALID_HOSTNAME)
+    # TODO regex fails for usernames <= 2 chars, tempfix for now.
+    if values[:username].length > 2 && !values[:username].match(VALID_HOSTNAME)
       errors.add :username, 'A valid user/site name is required.'
     end
     
