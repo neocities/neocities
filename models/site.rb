@@ -128,6 +128,18 @@ class Site < Sequel::Model
   def store_file(filename, uploaded)
     FileUtils.mv uploaded.path, file_path(filename)
     File.chmod(0640, file_path(filename))
+
+    if filename =~ /index\.html/
+      ScreenshotWorker.perform_async values[:username]
+      self.site_changed = true
+      save(validate: false)
+    end
+  end
+  
+  def increment_changed_count
+    self.changed_count += 1
+    self.updated_at = Time.now
+    save(validate: false)
   end
 
   def files_zip
