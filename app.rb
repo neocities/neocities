@@ -285,14 +285,9 @@ post '/site_files/upload' do
   end
 
   sanitized_filename = params[:newfile][:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')
+
   current_site.store_file sanitized_filename, params[:newfile][:tempfile]
-
-  if sanitized_filename =~ /index\.html/
-    ScreenshotWorker.perform_async current_site.username
-    current_site.update site_changed: true
-  end
-
-  current_site.update changed_count: 1+current_site.changed_count, updated_at: Time.now
+  current_site.increment_changed_count
 
   flash[:success] = "Successfully uploaded file #{sanitized_filename}."
   redirect '/dashboard'

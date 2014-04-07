@@ -136,6 +136,18 @@ class Site < Sequel::Model
   def store_file(filename, uploaded)
     FileUtils.mv uploaded.path, file_path(filename)
     File.chmod(0640, file_path(filename))
+
+    if filename =~ /index\.html/
+      ScreenshotWorker.perform_async values[:username]
+      self.site_changed = true
+      save(validate: false)
+    end
+  end
+  
+  def increment_changed_count
+    self.changed_count += 1
+    self.updated_at = Time.now
+    save(validate: false)
   end
 
   def files_zip
@@ -199,11 +211,12 @@ class Site < Sequel::Model
       errors.add :over_capacity, 'We are currently at capacity, and cannot create your home page. We will fix this shortly. Please come back later and try again, our apologies.'
     end
 
-    if !values[:username].match(VALID_HOSTNAME)
+    # TODO regex fails for usernames <= 2 chars, tempfix for now.
+    if new? && values[:username].length > 2 && !values[:username].match(VALID_HOSTNAME)
       errors.add :username, 'A valid user/site name is required.'
     end
     
-    if values[:username].length > 32
+    if new? && values[:username].length > 32
       errors.add :username, 'User/site name cannot exceed 32 characters.'
     end
 
