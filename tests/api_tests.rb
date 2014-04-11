@@ -23,7 +23,7 @@ describe 'api delete' do
     post '/api/delete', filenames: ['hi.html']
     res[:error_type].must_equal 'invalid_auth'
   end
-  
+
   it 'fails with missing filename argument' do
     create_site
     basic_authorize @user, @pass
@@ -43,6 +43,11 @@ describe 'api delete' do
     basic_authorize @user, @pass
     @site.store_file 't$st.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
     post '/api/delete', filenames: ['t$st.jpg']
+    res[:error_type].must_equal 'bad_filename'
+
+    create_site
+    basic_authorize @user, @pass
+    post '/api/delete', filenames: ['./config.yml']
     res[:error_type].must_equal 'bad_filename'
   end
 
@@ -67,7 +72,6 @@ describe 'api delete' do
 end
 
 describe 'api upload' do
-
   it 'fails with no auth' do
     post '/api/upload'
     res[:result].must_equal 'error'
@@ -115,7 +119,7 @@ describe 'api upload' do
     res[:result].must_equal 'success'
     site_file_exists?('test.jpg').must_equal true
   end
-  
+
   it 'succeeds with two files' do
     create_site
     basic_authorize @user, @pass
