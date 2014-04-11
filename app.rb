@@ -739,7 +739,7 @@ def api_success(message_or_obj)
 end
 
 def api_response(status, output)
-  halt status, JSON.pretty_generate(output)
+  halt status, JSON.pretty_generate(output)+"\n"
 end
 
 def api_error(status, error_type, message)
