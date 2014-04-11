@@ -36,11 +36,7 @@ error do
   })
 
   if @api
-    halt 500, {
-      result: 'error',
-      error_type: 'server_error',
-      message: 'there has been an unknown server error, please try again later'
-    }.to_json
+    api_error 500, 'server_error', 'there has been an unknown server error, please try again later', 500
   end
 
   slim :'error'
@@ -567,21 +563,21 @@ post '/api/upload' do
   params.each do |k,v|
     next unless v.is_a?(Hash) && v[:tempfile]
     filename = k.to_s
-    api_error('bad_filename', "#{filename} is not a valid filename, files not uploaded") unless Site.valid_filename? filename
+    api_error(400, 'bad_filename', "#{filename} is not a valid filename, files not uploaded") unless Site.valid_filename? filename
     files << {filename: filename, tempfile: v[:tempfile]}
   end
 
-  api_error 'missing_files', 'you must provide files to upload' if files.empty?
+  api_error 400, 'missing_files', 'you must provide files to upload' if files.empty?
 
   uploaded_size = files.collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
 
   if (uploaded_size + current_site.total_space) > Site::MAX_SPACE
-    api_error 'too_large', 'files are too large to fit in your space, try uploading smaller (or less) files'
+    api_error 400, 'too_large', 'files are too large to fit in your space, try uploading smaller (or less) files'
   end
 
   files.each do |file|
     if !Site.valid_file_type?(file)
-      api_error 'invalid_file_type', "#{file[:filename]} is not a valid file type, files have not been uploaded"
+      api_error 400, 'invalid_file_type', "#{file[:filename]} is not a valid file type, files have not been uploaded"
     end
   end
 
@@ -597,21 +593,21 @@ end
 post '/api/delete' do
   require_api_credentials
 
-  api_error 'missing_filenames', 'you must provide files to delete' if params[:filenames].nil? || params[:filenames].empty?
+  api_error 400, 'missing_filenames', 'you must provide files to delete' if params[:filenames].nil? || params[:filenames].empty?
 
   filenames = []
 
   params[:filenames].each do |filename|
     unless filename.is_a?(String) && Site.valid_filename?(filename)
-      api_error 'bad_filename', "#{filename} is not a valid filename, canceled deleting"
+      api_error 400, 'bad_filename', "#{filename} is not a valid filename, canceled deleting"
     end
 
     if !current_site.file_exists?(filename)
-      api_error 'missing_files', "#{filename} was not found on your site, canceled deleting"
+      api_error 400, 'missing_files', "#{filename} was not found on your site, canceled deleting"
     end
-    
+
     if filename == 'index.html'
-      api_error 'cannot_delete_index', 'you cannot delete your index.html file, canceled deleting'
+      api_error 400, 'cannot_delete_index', 'you cannot delete your index.html file, canceled deleting'
     end
 
     filenames << filename
@@ -627,7 +623,8 @@ end
 get '/api/info' do
   if params[:sitename]
     site = Site[username: params[:sitename]]
-    api_error 'site_not_found', "could not find site #{params[:sitename]}" if site.nil?
+
+    api_error 400, 'site_not_found', "could not find site #{params[:sitename]}" if site.nil? || site.is_banned
     api_success api_info_for(site)
   else
     init_api_credentials
@@ -738,17 +735,21 @@ def api_success(message_or_obj)
     output.merge! message_or_obj
   end
 
-  halt output.to_json
+  api_response(200, output)
 end
 
-def api_error(error_type, message)
-  halt({result: 'error', error_type: error_type, message: message}.to_json)
+def api_response(status, output)
+  halt status, JSON.pretty_generate(output)
+end
+
+def api_error(status, error_type, message)
+  api_response(status, result: 'error', error_type: error_type, message: message)
 end
 
 def api_error_invalid_auth
-  api_error 'invalid_auth', 'invalid credentials - please check your username and password'
+  api_error 403, 'invalid_auth', 'invalid credentials - please check your username and password'
 end
 
 def api_not_found
-  api_error 'not_found', 'the requested api call does not exist'
+  api_error 404, 'not_found', 'the requested api call does not exist'
 end

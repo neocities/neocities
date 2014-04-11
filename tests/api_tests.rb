@@ -19,7 +19,14 @@ describe 'api info' do
     get '/api/info'
     res[:error_type] = 'missing_sitename'
   end
-  
+
+  it 'fails for banned sites' do
+    create_site
+    @site.update is_banned: true
+    get '/api/info', sitename: @site.username
+    res[:error_type].must_equal 'site_not_found'
+  end
+
   it 'fails for nonexistent site' do
     get '/api/info', sitename: 'notexist'
     res[:error_type].must_equal 'site_not_found'
