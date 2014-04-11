@@ -52,10 +52,10 @@ var NeoCities = require('neocities')
 
 var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
 
-// Upload a file called local.html from your computer,
-// which will be named newfile.html on the site.
-
-api.uploadFile('newfile.html', './local.html', function(resp) {
+api.uploadFiles([{
+  name: 'newfileonsite.html'
+  path: './local.html'
+}], function(resp) {
   if(resp.result == 'error')
     throw new Error(resp.error_type+' - '+resp.message)
 
@@ -63,6 +63,10 @@ api.uploadFile('newfile.html', './local.html', function(resp) {
   console.log(resp)
 })
   </pre>
+  
+  <p>
+    
+  </p>
 
   <h3>POST /api/delete</h3>
   <p>
@@ -79,5 +83,19 @@ api.uploadFile('newfile.html', './local.html', function(resp) {
   </p>
   <code>
     curl -d "filenames[]=img1.jpg" -d "filenames[]=img2.jpg" \<br> https://YOURUSER:YOURPASS@neocities.org/api/delete
+  </code>
+  
+  <h3>GET /api/info</h3>
+  <p>
+    This call lets you retreive information about a web site. This call does not require site authorization if you provide a <strong>sitename</strong> argument. Note that the sitename is the same as a username. If you provide auth credentials, you will receive the info for the auth user's site.
+  </p>
+  <h4>Examples</h4>
+  <h6>Using cURL</h6>
+  <code>
+    $ curl https://neocities.org/api/info?sitename=youpi
+  </code>
+
+  <code>
+    $ curl https://YOURUSER:YOURPASS@neocities.org/api/info
   </code>
 </div> <!-- end .content -->

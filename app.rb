@@ -594,7 +594,7 @@ post '/api/upload' do
   api_success 'your file(s) have been successfully uploaded'
 end
 
-post '/api/:delete' do
+post '/api/delete' do
   require_api_credentials
 
   api_error 'missing_filenames', 'you must provide files to delete' if params[:filenames].nil? || params[:filenames].empty?
@@ -603,15 +603,15 @@ post '/api/:delete' do
 
   params[:filenames].each do |filename|
     unless filename.is_a?(String) && Site.valid_filename?(filename)
-      api_error 'bad_filename', "#{filename} is not a valid filename, canceled all deletes"
+      api_error 'bad_filename', "#{filename} is not a valid filename, canceled deleting"
     end
 
     if !current_site.file_exists?(filename)
-      api_error 'missing_files', "#{filename} was not found on your site, canceled all deletes"
+      api_error 'missing_files', "#{filename} was not found on your site, canceled deleting"
     end
     
     if filename == 'index.html'
-      api_error 'cannot_delete_index', 'you cannot delete your index.html file, canceled all deletes'
+      api_error 'cannot_delete_index', 'you cannot delete your index.html file, canceled deleting'
     end
 
     filenames << filename
@@ -621,7 +621,31 @@ post '/api/:delete' do
     current_site.delete_file(filename)
   end
 
-  api_success 'files have been deleted'
+  api_success 'file(s) have been deleted'
+end
+
+get '/api/info' do
+  if params[:sitename]
+    site = Site[username: params[:sitename]]
+    api_error 'site_not_found', "could not find site #{params[:sitename]}" if site.nil?
+    api_success api_info_for(site)
+  else
+    init_api_credentials
+    api_success api_info_for(current_site)
+  end
+end
+
+def api_info_for(site)
+  {
+    info: {
+      sitename: site.username,
+      hits: site.hits,
+      created_at: site.created_at.rfc2822,
+      last_updated: site.updated_at.rfc2822,
+      domain: site.domain,
+      tags: site.tags.collect {|t| t.name}
+    }
+  }
 end
 
 # Catch-all for missing api calls
@@ -676,32 +700,45 @@ def encoding_fix(file)
 end
 
 def require_api_credentials
-  if auth = request.env['HTTP_AUTHORIZATION']
-
-    begin
-      user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
-    rescue
-      api_error_invalid_auth
-    end
-
-    if Site.valid_login? user, pass
-      site = Site[username: user]
-
-      if site.nil? || site.is_banned
-        api_error_invalid_auth
-      end
-
-      session[:id] = site.id
-    else
-      api_error_invalid_auth
-    end
+  if !request.env['HTTP_AUTHORIZATION'].nil?
+    init_api_credentials
   else
     api_error_invalid_auth
   end
 end
 
-def api_success(message)
-  halt({result: 'success', message: message}.to_json)
+def init_api_credentials
+  auth = request.env['HTTP_AUTHORIZATION']
+
+  begin
+    user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
+  rescue
+    api_error_invalid_auth
+  end
+
+  if Site.valid_login? user, pass
+    site = Site[username: user]
+
+    if site.nil? || site.is_banned
+      api_error_invalid_auth
+    end
+
+    session[:id] = site.id
+  else
+    api_error_invalid_auth
+  end
+end
+
+def api_success(message_or_obj)
+  output = {result: 'success'}
+
+  if message_or_obj.is_a?(String)
+    output[:message] = message_or_obj
+  else
+    output.merge! message_or_obj
+  end
+
+  halt output.to_json
 end
 
 def api_error(error_type, message)

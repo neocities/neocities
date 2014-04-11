@@ -73,10 +73,11 @@ class Site < Sequel::Model
   end
 
   def new_tags=(tags_string)
-    tags_string.gsub! /[^a-zA-Z0-9, ]/, ''
+    tags_string.gsub! ', ', ','
     tags = tags_string.split ','
+    tags_string.gsub! /[^a-zA-Z0-9, ]/, ''
     tags.collect! {|c| (c.match(/^\w+\s\w+/) || c.match(/^\w+/)).to_s }
-    @new_tag_strings = tags
+    @new_tag_strings = tags.sort
   end
 
   def before_validation

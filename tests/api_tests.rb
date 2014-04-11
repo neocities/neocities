@@ -14,6 +14,45 @@ def create_site
   @pass = site_attr[:password]
 end
 
+describe 'api info' do
+  it 'fails for no input' do
+    get '/api/info'
+    res[:error_type] = 'missing_sitename'
+  end
+  
+  it 'fails for nonexistent site' do
+    get '/api/info', sitename: 'notexist'
+    res[:error_type].must_equal 'site_not_found'
+  end
+
+  it 'succeeds for valid sitename' do
+    create_site
+    @site.update hits: 31337, domain: 'derp.com', new_tags: 'derpie, man'
+    get '/api/info', sitename: @user
+    res[:result].must_equal 'success'
+    res[:info][:sitename].must_equal @site.username
+    res[:info][:hits].must_equal 31337
+    res[:info][:created_at].must_equal @site.created_at.rfc2822
+    res[:info][:last_updated].must_equal @site.updated_at.rfc2822
+    res[:info][:domain].must_equal 'derp.com'
+    res[:info][:tags].must_equal ['derpie', 'man']
+  end
+
+  it 'fails for bad auth' do
+    basic_authorize 'derp', 'fake'
+    get '/api/info'
+    res[:error_type].must_equal 'invalid_auth'
+  end
+
+  it 'succeeds for api auth' do
+    create_site
+    @site.update hits: 12345
+    basic_authorize @user, @pass
+    get '/api/info'
+    res[:info][:hits] == 12345
+  end
+end
+
 describe 'api delete' do
   it 'fails with no or bad auth' do
     post '/api/delete', filenames: ['hi.html']
