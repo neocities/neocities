@@ -21,8 +21,8 @@
   <p>
     <ul>
       <li>Do not spam the server with tons of API requests.</li>
-      <li>Try to limit site updates to one per minute.</li>
-      <li>Do not use the API to "game" the site (increase ranking by manipulating our algorithms).</li>
+      <li>Try to limit recurring site updates to one per minute.</li>
+      <li>Do not use the API to "game" the site (increase ranking by manipulating our algorithms, or constantly updating your index.html with the same content). Sites caught doing this will be de-listed from the browse page.</li>
       <li>Do not use the API to data mine / rip all of the sites.</li>
     </ul>
   </p>
@@ -41,7 +41,26 @@
   </p>
 
   <h4>Examples</h4>
-  <p>Using cURL to upload a single local file (<strong>local.html</strong>), which will be <strong>index.html</strong> on the server:</p>
-  <code>$ curl -F index.html=@local.html https://USER:PASS@neocities.org/api/upload</code>
+  <h6>Using cURL</h6>
+  <p>Upload a single local file (<strong>local.html</strong>), which will be named <strong>hello.html</strong> on your site:</p>
+  <code>$ curl -F hello.html=@local.html https://USER:PASS@neocities.org/api/upload</code>
 	
+  <h6>Using Node.js / Web Browser</h6>
+  <p>This example uses the <a href="https://github.com/neocities/neocities-node" target="_blank">neocities</a> module, which works for node.js and web browsers (via <a href="http://browserify.org" target="_blank">browserify</a>). You can install it by running <strong>npm install neocities --global</strong> in your terminal.</p>
+  <pre>
+var NeoCities = require('neocities')
+
+var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
+
+// Upload a file called local.html from your computer,
+// which will be named newfile.html on the site.
+
+api.uploadFile('newfile.html', './local.html', function(resp) {
+  if(resp.result == 'error')
+    throw new Error(resp.error_type+' - '+resp.message)
+
+  // Display response from API
+  console.log(resp)
+})
+  </pre>
 </div> <!-- end .content -->

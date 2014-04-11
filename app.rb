@@ -565,7 +565,7 @@ post '/api/upload' do
   files = []
 
   params.each do |k,v|
-    next unless v[:tempfile]
+    next unless v.is_a?(Hash) && v[:tempfile]
     files << {filename: k.to_s, tempfile: v[:tempfile]}
   end
 
