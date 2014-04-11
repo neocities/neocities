@@ -566,7 +566,9 @@ post '/api/upload' do
 
   params.each do |k,v|
     next unless v.is_a?(Hash) && v[:tempfile]
-    files << {filename: k.to_s, tempfile: v[:tempfile]}
+    filename = k.to_s
+    api_error('bad_filename', "#{filename} is not a valid filename, files not uploaded") unless Site.valid_filename? filename
+    files << {filename: filename, tempfile: v[:tempfile]}
   end
 
   api_error 'missing_files', 'you must provide files to upload' if files.empty?
@@ -590,6 +592,36 @@ post '/api/upload' do
   current_site.increment_changed_count
 
   api_success 'your file(s) have been successfully uploaded'
+end
+
+post '/api/:delete' do
+  require_api_credentials
+
+  api_error 'missing_filenames', 'you must provide files to delete' if params[:filenames].nil? || params[:filenames].empty?
+
+  filenames = []
+
+  params[:filenames].each do |filename|
+    unless filename.is_a?(String) && Site.valid_filename?(filename)
+      api_error 'bad_filename', "#{filename} is not a valid filename, canceled all deletes"
+    end
+
+    if !current_site.file_exists?(filename)
+      api_error 'missing_files', "#{filename} was not found on your site, canceled all deletes"
+    end
+    
+    if filename == 'index.html'
+      api_error 'cannot_delete_index', 'you cannot delete your index.html file, canceled all deletes'
+    end
+
+    filenames << filename
+  end
+
+  filenames.each do |filename|
+    current_site.delete_file(filename)
+  end
+
+  api_success 'files have been deleted'
 end
 
 # Catch-all for missing api calls

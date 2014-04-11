@@ -125,6 +125,15 @@ class Site < Sequel::Model
     }
   end
 
+  def self.valid_filename?(filename)
+    return false if sanitize_filename(filename) != filename
+    true
+  end
+
+  def self.sanitize_filename(filename)
+    filename.gsub(/[^a-zA-Z0-9_\-.]/, '')
+  end
+
   def self.valid_file_type?(uploaded_file)
     mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
 
@@ -169,8 +178,9 @@ class Site < Sequel::Model
     begin
       FileUtils.rm file_path(filename)
     rescue Errno::ENOENT
-      # File was probably already deleted
+      return false
     end
+    true
   end
 
   def move_files_from(oldusername)
