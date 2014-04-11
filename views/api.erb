@@ -61,8 +61,7 @@ api.uploadFiles([{
 
   // Display response from API
   console.log(resp)
-})
-  </pre>
+})</pre>
   
   <p>
     
@@ -87,13 +86,23 @@ api.uploadFiles([{
   
   <h3>GET /api/info</h3>
   <p>
-    This call lets you retreive information about a web site. This call does not require site authorization if you provide a <strong>sitename</strong> argument. Note that the sitename is the same as a username. If you provide auth credentials, you will receive the info for the auth user's site.
+    This call lets you retreive information about a web site. This call does not require site authorization if you provide a <strong>sitename</strong> argument. Note that the sitename is the same as a username. If you provide auth credentials, you will receive the info for the auth user's site. Dates conform to <strong>RFC2822</strong> format, and there are helpers for parsing it into a time object for most programming languages.
   </p>
   <h4>Examples</h4>
   <h6>Using cURL</h6>
-  <code>
-    $ curl https://neocities.org/api/info?sitename=youpi
-  </code>
+  <pre>
+$ curl https://neocities.org/api/info?sitename=youpi
+{
+  "result": "success",
+  "info": {
+    "sitename": "youpi",
+    "hits": 5072,
+    "created_at": "Sat, 29 Jun 2013 10:11:38 +0000",
+    "last_updated": "Tue, 23 Jul 2013 20:04:03 +0000",
+    "domain": null,
+    "tags": []
+  }
+}</pre>
 
   <code>
     $ curl https://YOURUSER:YOURPASS@neocities.org/api/info
