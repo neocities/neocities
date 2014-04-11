@@ -13,6 +13,7 @@ helpers Rack::Recaptcha::Helpers
 
 before do
   if request.path.match(/^\/api\//i)
+    @api = true
     content_type :json
   else
     content_type :html, 'charset' => 'utf-8'
@@ -33,6 +34,14 @@ error do
           (current_site ? "Site: #{current_site.username}\nEmail: #{current_site.email}\n\n" : '') +
           env['sinatra.error'].backtrace.join("\n")
   })
+
+  if @api
+    halt 500, {
+      result: 'error',
+      error_type: 'server_error',
+      message: 'there has been an unknown server error, please try again later'
+    }.to_json
+  end
 
   slim :'error'
 end
@@ -560,10 +569,12 @@ post '/api/upload' do
     files << {filename: k.to_s, tempfile: v[:tempfile]}
   end
 
+  api_error 'missing_files', 'you must provide files to upload' if files.empty?
+
   uploaded_size = files.collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
 
   if (uploaded_size + current_site.total_space) > Site::MAX_SPACE
-    api_error 'too_large', 'files are too large to fit in your space, try uploading less (or smaller) files'
+    api_error 'too_large', 'files are too large to fit in your space, try uploading smaller (or less) files'
   end
 
   files.each do |file|
@@ -575,6 +586,8 @@ post '/api/upload' do
   files.each do |file|
     current_site.store_file file[:filename], file[:tempfile]
   end
+
+  current_site.increment_changed_count
 
   api_success 'your file(s) have been successfully uploaded'
 end
@@ -636,20 +649,22 @@ def require_api_credentials
     begin
       user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
     rescue
-      api_error 'invalid_auth', 'could not parse your auth credentials - please check your username and password'
+      api_error_invalid_auth
     end
 
     if Site.valid_login? user, pass
       site = Site[username: user]
 
       if site.nil? || site.is_banned
-        api_error 'invalid_credentials', 'invalid credentials - please check your username and password'
+        api_error_invalid_auth
       end
 
       session[:id] = site.id
     else
-      api_error 'invalid_credentials', 'invalid credentials - please check your username and password'
+      api_error_invalid_auth
     end
+  else
+    api_error_invalid_auth
   end
 end
 
@@ -659,6 +674,10 @@ end
 
 def api_error(error_type, message)
   halt({result: 'error', error_type: error_type, message: message}.to_json)
+end
+
+def api_error_invalid_auth
+  api_error 'invalid_auth', 'invalid credentials - please check your username and password'
 end
 
 def api_not_found
