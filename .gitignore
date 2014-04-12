@@ -11,7 +11,6 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
-public/sites
 # YARD artifacts
 .yardoc
 _yardoc
@@ -19,5 +18,3 @@ doc/
 tests/coverage
 config.yml
 .DS_Store
-domains
-public/sites_test
