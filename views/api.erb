@@ -45,27 +45,17 @@
   <p>Upload a single local file (<strong>local.html</strong>), which will be named <strong>hello.html</strong> on your site:</p>
   <code>$ curl -F hello.html=@local.html https://USER:PASS@neocities.org/api/upload</code>
 
-  <h6>Using Node.js / Web Browser</h6>
-  <p>This example uses the <a href="https://github.com/neocities/neocities-node" target="_blank">neocities</a> module, which works for node.js and web browsers (via <a href="http://browserify.org" target="_blank">browserify</a>). You can install it by running <strong>npm install neocities --global</strong> in your terminal.</p>
+  <h6>Using Node.js</h6>
+  <p>This example uses the <a href="https://github.com/neocities/neocities-node" target="_blank">neocities</a> module. You can install it by running <strong>npm install neocities --global</strong> in your terminal.</p>
   <pre>
 var NeoCities = require('neocities')
-
 var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
 
-api.uploadFiles([{
-  name: 'newfileonsite.html'
-  path: './local.html'
-}], function(resp) {
-  if(resp.result == 'error')
-    throw new Error(resp.error_type+' - '+resp.message)
-
-  // Display response from API
+api.upload([
+  {name: 'hello.html', path: './local.html'}
+], function(resp) {
   console.log(resp)
 })</pre>
-  
-  <p>
-    
-  </p>
 
   <h3>POST /api/delete</h3>
   <p>
@@ -84,6 +74,14 @@ api.uploadFiles([{
     curl -d "filenames[]=img1.jpg" -d "filenames[]=img2.jpg" \<br> https://YOURUSER:YOURPASS@neocities.org/api/delete
   </code>
   
+  <h6>Using Node.js</h6>
+  <pre>
+var NeoCities = require('neocities')
+var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
+
+api.delete(['img1.jpg', 'img2.jpg'], function(resp) {
+  console.log(resp)
+})</pre>
   <h3>GET /api/info</h3>
   <p>
     This call lets you retreive information about a web site. This call does not require site authorization if you provide a <strong>sitename</strong> argument. Note that the sitename is the same as a username. If you provide auth credentials, you will receive the info for the auth user's site. Dates conform to <strong>RFC2822</strong> format, and there are helpers for parsing it into a time object for most programming languages.
@@ -103,8 +101,28 @@ $ curl https://neocities.org/api/info?sitename=youpi
     "tags": []
   }
 }</pre>
-
+  <p>Getting your own site's info:</p>
   <code>
     $ curl https://YOURUSER:YOURPASS@neocities.org/api/info
   </code>
+  <h6>Using Node.js</h6>
+  <p>Your site:</p>
+  <pre>
+var NeoCities = require('neocities')
+var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
+
+api.info(function(resp) {
+  console.log(resp)
+})</pre>
+
+  <p>
+    Getting data for a different site - such as the <a href="http://madamfrp.neocities.org" target="_blank">Madam FRP Manual</a>:
+  </p>
+  <pre>
+var NeoCities = require('neocities')
+var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
+
+api.info('madamfrp', function(resp) {
+  console.log(resp)
+})</pre>
 </div> <!-- end .content -->
