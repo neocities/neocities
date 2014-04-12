@@ -27,6 +27,15 @@
     </ul>
   </p>
 
+  <h2>Libraries</h2>
+  <p>
+    There are client libraries available for popular programming languages to make it easier to work with the API:
+    <ul>
+      <li><a href="https://github.com/neocities/neocities-node" target="_blank">Node.js / JavaScript</a></li>
+      <li><a href="https://github.com/neocities/neocities-ruby" target="_blank">Ruby</a></li>
+      <li><a href="https://github.com/peterhellberg/neocities" target="_blank">Go</a> - contributed by <a href="https://twitter.com/peterhellberg" target="_blank">Peter Hellberg</a></li>
+    </ul>
+  </p>
   <h2>API Documentation</h2>
   <p>
     The NeoCities API is a <a href="http://en.wikipedia.org/wiki/Representational_state_transfer" target="_blank">REST</a> API, which uses query parameters for input, and returns data in the <a href="http://en.wikipedia.org/wiki/JSON" target="_blank">JSON</a> format (except for file downloads). It uses client-side <a href="http://en.wikipedia.org/wiki/Basic_access_authentication" target="_blank">HTTP AUTH</a> to authenticate, using your user/site name and password as the credentials. It is designed to play nicely with the most common HTTP libraries available in programming languages, and can be easily used with <strong>cURL</strong> (a command-line tool for making HTTP requests you can use by opening a terminal on your computer).
@@ -125,4 +134,6 @@ var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
 api.info('madamfrp', function(resp) {
   console.log(resp)
 })</pre>
-</div> <!-- end .content -->
+  <h4>Need something the API doesn't provide?</h4>
+  <p>If the API does not supply something you need, <a href="/contact">contact us</a> and we will try to add it!
+</div>

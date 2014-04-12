@@ -506,12 +506,12 @@ get '/password_reset_confirm' do
 end
 
 get '/custom_domain' do
+  require_login
   slim :custom_domain
 end
 
 post '/custom_domain' do
   require_login
-  original_domain = current_site.domain
   current_site.domain = params[:domain]
 
   if current_site.valid?
