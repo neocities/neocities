@@ -12,7 +12,16 @@ require 'zip'
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
-$config = YAML.load_file(File.join(DIR_ROOT, 'config.yml'))[ENV['RACK_ENV']]
+if ENV['TRAVIS']
+  $config = YAML.load_file File.join(DIR_ROOT, 'config.yml.travis')
+else
+  begin
+    $config = YAML.load_file(File.join(DIR_ROOT, 'config.yml'))[ENV['RACK_ENV']]
+  rescue Errno::ENOENT
+    puts "ERROR: Please provide a config.yml file."
+    exit
+  end
+end
 
 DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $config['database_pool']
 DB.extension :pagination
