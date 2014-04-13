@@ -4,5 +4,7 @@ development:
   session_secret: SECRET GOES HERE
   recaptcha_public_key: ENTER PUBLIC KEY HERE
   recaptcha_private_key: ENTER PRIVATE KEY HERE
+  sidekiq_user: ENTER USER HERE
+  sidekiq_pass: ENTER PASS HERE
   phantomjs_url:
     - http://localhost:8910
