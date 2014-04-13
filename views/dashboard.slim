@@ -24,7 +24,7 @@ javascript:
       - current_site.file_list.each do |file|
         hr style="margin: 12px 0px"
         .row style="margin-bottom: 0px" id="files"
-          .col.col-60
+          .col
             a href="http://#{current_site.username}.neocities.org/#{file.filename}" title="View #{file.filename}" target="_blank"
               - if file.ext.match(/jpg|png|bmp|gif/)
                 i class="icon-picture icon": span style="margin-left: 5px" #{file.filename}
