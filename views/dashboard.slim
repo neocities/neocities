@@ -1,3 +1,9 @@
+css:
+  #files a {
+    color: #D00000;
+    text-decoration: none;
+  }
+
 javascript:
   function confirmFileDelete(name) {
     $('#deleteFileName').html(name);
@@ -14,46 +20,31 @@ javascript:
     .col.col-60
   
       h1 Your Website
-  
+      p These are the files on your site. <strong>index.html</strong> is the main page, it is the first page loaded when users visit your site. <strong>not_found.html</strong> is the page users see when they try to access a file on the site that's not there (it is also commonly referred to as the 404 page).
       - current_site.file_list.each do |file|
-        - if file.ext == 'html' || file.ext == 'htm' || file.ext == 'txt' || file.ext == 'js' || file.ext == 'css' || file.ext == 'md'
-          span
-            <i class="icon-file-alt icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">#{file.filename}</span>
-            - if file.filename == 'index.html'
-              p.tiny This is your index file! It is the "default file" that loads when you go to <a href="http://#{current_site.username}.neocities.org">#{current_site.username}.neocities.org</a>. In effect, it's your front page. If you want to change your front page, you need to edit (or overwrite) this file, which you should do right now if you just created your site. The default file is always named <b>index.html</b>, and you cannot delete it.
-          
-          div style="margin-bottom:30px"
-            span
-              i class="icon-globe" &nbsp;&nbsp;
-              a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br />
-            span
-              i class="icon-edit" &nbsp;&nbsp;
-              a href="/site_files/text_editor/#{file.filename}" Edit with text editor <br />
-            span
-              i class="icon-edit" &nbsp;&nbsp;
-              span Edit with visual editor <small style="margin:0; display:inline">(coming soon)</small><br/>
-            span
-              i class="icon-edit" &nbsp;&nbsp;
-              span: a href="/site_files/download/#{file.filename}" Download <br />
+        hr style="margin: 12px 0px"
+        .row style="margin-bottom: 0px" id="files"
+          .col.col-60
+            a href="http://#{current_site.username}.neocities.org/#{file.filename}" title="View #{file.filename}" target="_blank"
+              - if file.ext.match(/jpg|png|bmp|gif/)
+                i class="icon-picture icon": span style="margin-left: 5px" #{file.filename}
+              - else
+                i class="icon-file-alt icon": span style="margin-left: 10px;" #{file.filename}
+            span style="float: right"
+              - if file.ext.match(/html|htm|txt|js|css|md/)
+                a href="/site_files/text_editor/#{file.filename}" : i class="icon-edit" style="margin-right: 10px" title="Edit"
+              - else
+                span style="margin-left: 25px"
 
-            - if file.filename != 'index.html'
-              span
-                i class="icon-trash" &nbsp;&nbsp;
-                a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
-        - else
-          <i class="icon-picture icon-3x"></i>&nbsp;&nbsp; <span style="font-size: 20pt">#{file.filename}</span>
-          div style="margin-top: 3px; margin-bottom: 30px"
-            | To use in an HTML file, paste this text: <code class="tiny" style="margin:0">&lt;img src="/#{file.filename}"&gt;</code>
-            span
-              i class="icon-globe" &nbsp;&nbsp;
-              a href="http://#{current_site.username}.neocities.org/#{file.filename}" target="_blank" View <br />
-            span
-              i class="icon-edit" &nbsp;&nbsp;
-              span: a href="/site_files/download/#{file.filename}" Download <br />
-            span
-              i class="icon-trash" &nbsp;&nbsp;
-              a href="#" onclick="confirmFileDelete('#{file.filename}')" Delete
-  
+              a href="/site_files/download/#{file.filename}": i class="icon-download" style="margin-right: 10px" title="Download"
+              - if file.filename != 'index.html'
+                a href="#" onclick="confirmFileDelete('#{file.filename}')": i class="icon-trash" style="margin-right: 10px" title="Delete"
+              - else
+                span style="margin-left: 22px"
+
+
+
+
     .col.col-40
     
       div.txt-Center.dash-SS
