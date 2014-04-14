@@ -4,15 +4,15 @@
 <!--[if (gt IE 9)|!(IE)]><!--><html lang="en"><!--<![endif]-->
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  
+
   <title>Neocities.org: Create a Free website today</title>
   <meta itemprop="name"         content="NeoCities.org" />
   <meta itemprop="description"  content="Create your own free home page, and do whatever you want with it." />
   <meta name="description"      content="NeoCities is the new Geocities. Create your own free home page, and do whatever you want with it." />
   <meta name="keywords"         content="free website, html, css, learn to code, free hosting, build a website, create a web page" />
-  
+
   <link rel="canonical" href="//neocities.org" />
-  
+
   <meta property="og:title"       content="NeoCities"/>
   <meta property="og:site_name"   content="NeoCities | neocities.org"/>
   <meta property="og:type"        content="website"/>
@@ -20,37 +20,33 @@
   <meta property="og:url"         content="//www.neocities.org"/>
   <meta property="og:description" content="NeoCities is the new Geocities. Create your own free home page, and do whatever you want with it."/>
   <meta content="pBkqwF1U/KpuF2+f0ZhSf8BnpxYgeU0boCTdnB3joGc=" name="csrf-token" />
- 
+
   <!-- Styles -->
   <link href="assets/css/neo.min.css" rel="stylesheet" type="text/css" media="all"/>
    <!-- If exists, brings over style blocks from child pages -->
-  
+
   <link rel="shortcut icon" type="image/ico"  href="/favicon.ico" />
   <link rel="apple-touch-icon-precomposed"    href="#apple-icon-144.png" />
   <link rel="apple-touch-startup-image"       href="#startup.png" />
-  
-  <!-- Tile icon for Win8 (144x144 + tile color) __doesn't validate__
-  <meta name="msapplication-TileImage" content="#apple-icon-144.png" />
-  <meta name="msapplication-TileColor" content="#222222" />
-  -->
-  
+
+
   <!-- Mobile Meta -->
   <meta name="HandheldFriendly" content="True" />
   <meta name="MobileOptimized"  content="320" />
   <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1" />
-  
+
   <!-- oh vanity.  -->
   <link rel="author" type="text/plain" href="humans.txt" />
-  
-  <!--[if lt IE 9]> 
+
+  <!--[if lt IE 9]>
     <script type="text/javascript" src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 </head>
 
   <body class="hp">
-  
+
     <div class="page">
-    
+
       <header class="header-Base">
         <nav class="header-Nav clearfix" role="navigation">
             <a href="#!" title="show small screen nav" class="small-Nav">
@@ -73,9 +69,9 @@
                 <a href="/about" title="About NeoCities">About</a>
               </li>
             </ul>
-            
+
             <ul class="status-Nav">
-              
+
               <% if !signed_in? %>
                 <li>
                   <a href="/signin" class="sign-In" title="Sign into your account">Sign In</a>
@@ -91,10 +87,10 @@
                   <a href="/signout" class="sign-In">Signout</a>
                 </li>
               <% end %>
-          
+
             </ul>
           </nav>
-          
+
           <% if flash.keys.length > 0 %>
             <div class="alert txt-Center">
               <p style="padding:5px">
@@ -104,8 +100,8 @@
               </p>
             </div>
           <% end %>
-          
-          
+
+
 
 <div class="int-Logo hp-Logo">
   <a href="/" title="back to home">
@@ -124,13 +120,13 @@
 <div class="header-Outro">
 
   <div class="row header-Content content">
-  
+
     <ul class="col col-50 intro-List">
       <li class="intro-Tools">
         <span class="intro-Icon"></span>
         <h2 class="eps">Create your own free website</h2>
         <p class="tiny">
-          You get 10 MB of space to make whatever you’d like with HTML, CSS, JS, IMG, TXT, and MD files. 
+          You get 10 MB of space to make whatever you’d like with HTML, CSS, JS, IMG, TXT, and MD files.
         </p>
       </li>
       <li class="intro-Question">
@@ -141,11 +137,11 @@
         </p>
       </li>
     </ul>
-    
+
     <div class="col col-50 signup-Area">
-    
+
     <% if signed_in? %>
-    
+
       <div class="signup-Form">
         <div class="content">
           <h2 class="gamma txt-Center">Build your Website!</h2>
@@ -158,7 +154,7 @@
             <a href="/dashboard" class="btn-Action">Get Started</a>
           </div>
       </div>
-      
+
     <% else %>
       <form action="/new" method="get" class="signup-Form">
         <fieldset class="content">
@@ -169,11 +165,11 @@
           <input type="submit" value="Create My Website" class="btn-Action float-Right" />
         </fieldset>
       </form>
-      
+
     <% end %>
-      
+
     </div> <!-- end .col-50 -->
-    
+
   </div> <!-- end .row -->
 
 </div> <!-- end .header-Outro -->
@@ -181,13 +177,13 @@
 </header>
 
 <main class="content-Base">
-         
+
 <div class="content">
-  
+
   <section class="featured-Websites clearfix">
-  
+
     <h2 class="delta">Featured Websites</h2>
-    
+
     <ul class="row website-Gallery hp-Gallery">
       <li>
         <a href="http://dragonquest.neocities.org/" title="The Quest of Dragons" target="_blank">
@@ -234,37 +230,37 @@
     <div class="txt-Center" style="margin-top: 15px">
       <a href="/browse" title="Browse all Neocities websites" class="btn-Action btn-Large">Browse All Websites</a>
     </div>
-    
+
   </section>  <!-- end .featured-Websites -->
-  
+
   <hr />
-  
+
   <aside class="row">
-  
+
     <div class="col col-50">
       <div class="content">
-      
+
         <h3 class="delta">Learn to Code</h3>
-        
+
         <p>
-          Don't know how to code a website? No problem! 
+          Don't know how to code a website? No problem!
           We're working on a batch of tutorials that will show you the way.
         </p>
-        
+
         <code>
           <span class="code-Tag">&lt;h1&gt;</span>Welcome to my website!<span class="code-Tag">&lt;/h1&gt;</span><br />
           <span class="code-Tag">&lt;a</span> href="<span class="code-Value">about.html</span>">About Me<span class="code-Tag">&lt;/a&gt;</span><br />
           <span class="code-Tag">&lt;img</span> src="<span class="code-Value">me.jpg</span>" alt="<span class="code-Value">photo of me</span>" <span class="code-Tag">/&gt;</span>
         </code>
-        
+
       </div>
     </div> <!-- end .col-50 -->
-    
+
     <div class="col col-50">
       <div class="content">
-      
+
         <h3 class="delta">What People Are Saying</h3>
-        
+
         <ul class="quote-Slider kill-List">
           <li class="quote">
             <blockquote>
@@ -273,16 +269,16 @@
             <a href="http://web.appstorm.net/reviews/web-dev/neocities-the-free-place-to-code-your-own-site-from-scratch/" title="App Storm" class="action-Link">Source link</a>
           </li>
         </ul>
-        
+
       </div>
     </div> <!-- end .col-50 -->
-  
+
   </aside> <!-- end .row -->
-	
+
 </div> <!-- end .content -->
 
       </main>
-      
+
       <footer class="footer-Base">
         <section class="footer-Intro">
   <div class="footer-Content">
@@ -292,7 +288,7 @@
         <span class="footer-icon"></span>
         <h2 class="delta">Support Us</h2>
         <p class="tiny">
-          NeoCities is funded by donations. If you’d like to contribute, you can help us 
+          NeoCities is funded by donations. If you’d like to contribute, you can help us
           pay our server costs using Bitcoin or PayPal.
         </p>
         <a href="/donate" title="Donate to NeoCities" class="action-Link">Donate Today</a>
@@ -303,7 +299,7 @@
         <span class="footer-icon"></span>
         <h2 class="delta">About Us</h2>
         <p class="tiny">
-          NeoCities is here to bring back the creativity and 
+          NeoCities is here to bring back the creativity and
           free expression to the world wide web that made it great.
         </p>
         <a href="/about" title="More about NeoCities" class="action-Link">More About Us</a>
@@ -329,7 +325,7 @@
     <p class="tiny col col-60 credits">
       <a href="http://neocities.org" title="NeoCities.org">Neocities.org</a> is an <a href="https://github.com/neocities" title="Neocities on GitHub">open source</a> company.
     </p>
-    
+
     <nav class="footer-Nav col col-40">
       <ul class="tiny h-Nav">
         <!-- <li><a href="api" title="NeoCities API">API</a></li> -->
@@ -343,22 +339,22 @@
 </aside>
 
       </footer>
-    
+
     </div> <!-- end .page -->
-    
+
     <!-- scripts -->
     <script src="assets/scripts/jquery-1.10.1.min.js"></script>
-    
+
     <script src="assets/scripts/app.min.js"></script> <!-- Script block allowing child pages to inject their own scripts -->
-    
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID.
     <script type="text/javascript>
       var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
       (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
       g.src='//www.google-analytics.com/ga.js';
       s.parentNode.insertBefore(g,s)}(document,'script'));
     </script>
-    -->   
-    
+    -->
+
   </body>
 </html>
