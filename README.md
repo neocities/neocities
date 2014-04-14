@@ -52,3 +52,13 @@ Run the tests to see if they work:
 ```
   bundle exec rake test
 ```
+
+## Want to contribute?
+
+If you'd like to fix bug, or make an improvement, it's easy! Just send us a Pull Request.
+
+1. Fork it ( http://github.com/<my-github-username>/neocities/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
