@@ -55,7 +55,7 @@ Run the tests to see if they work:
 
 ## Want to contribute?
 
-If you'd like to fix bug, or make an improvement, it's easy! Just send us a Pull Request.
+If you'd like to fix a bug, or make an improvement, or add a new feature, it's easy! Just send us a Pull Request.
 
 1. Fork it ( http://github.com/<my-github-username>/neocities/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
