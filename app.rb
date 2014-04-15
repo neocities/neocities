@@ -42,6 +42,34 @@ error do
   slim :'error'
 end
 
+get '/home_mockup' do
+  erb :'home_mockup'
+end
+
+get '/edit_mockup' do
+  erb :'edit_mockup'
+end
+
+get '/profile_mockup' do
+  erb :'profile_mockup'
+end
+
+get '/tags_mockup' do
+  erb :'tags_mockup'
+end
+
+get '/browse_mockup' do
+  erb :'browse_mockup'
+end
+
+get '/tips_mockup' do
+  erb :'tips_mockup'
+end
+
+get '/stats_mockup' do
+  erb :'stats_mockup'
+end
+
 get '/?' do
   erb :index, layout: false
 end
