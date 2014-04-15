@@ -207,6 +207,11 @@ post '/change_name' do
   require_login
   old_username = current_site.username
 
+  if params[:name] == nil || params[:name] == ''
+    flash[:error] = 'Name cannot be blank.'
+    redirect '/settings'
+  end
+
   if old_username == params[:name]
     flash[:error] = 'You already have this name.'
     redirect '/settings'
