@@ -1,0 +1,110 @@
+<script type="text/javascript">
+  function confirmFileDelete(name) {
+    $('#deleteFileName').html(name);
+    $('#deleteConfirmModal').modal();
+  }
+
+  function fileDelete() {
+    $('#deleteFilenameInput').val($('#deleteFileName').html());
+    $('#deleteFilenameForm').submit();
+  }
+</script>
+
+<div class="header-Outro" style="overflow: hidden;">
+  <div class="row header-Content content" style="padding-top: 40px;">
+
+    <div class="col col-50 signup-Area" style="width: 289px;">
+      <div class="signup-Form" style="top: 0; text-align: center">
+  	  <fieldset class="content">
+        <img class="screenshot" src="/site_screenshots/#{current_site.username}.jpg">
+	    </fieldset>
+      </div>
+    </div> 
+
+	<div class="col col-40" style="margin-left: 10px">
+    <h2 class="eps">My Website</h2>
+    <p style="font-size:19px; margin-top: -5px; margin-bottom: 8px;"><a href="http://<%= current_site.username %>.neocities.org" target="_blank">http://<%= current_site.username %>.neocities.org</a></p>
+	<ul>
+<% if current_site.updated_at %>
+	<li>Last updated <%= current_site.updated_at %></li>
+<% end %>
+	<li>Using <strong><%= ((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1) %>% of your <%= (Site::MAX_SPACE.to_f / 2**20).to_i %> MB</strong> of free space</li>
+	<li><strong><%= current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %></strong> visitors</li>
+	</ul>
+	</div>
+
+  </div> <!-- end .row -->
+</div> <!-- end .header-Outro -->
+
+<main class="content-Base">
+  
+<div class="content">
+    
+<div class="welcome">
+  <a href=""><div class="close"></div></a>
+  <h4>Hello! Welcome to your new site.</h4>
+  To get started, click on the <strong>index.html</strong> file below to edit it. It's your home page! You can add more files (such as images) from your computer by dragging them into the box below. Need help building web sites? Check out these <a href="/tutorials">tutorials</a>!
+</div>
+
+<div class="files">
+  <div class="header">
+    <div class="breadcrumbs">Home</div>
+    <div class="actions">
+      <a href="/site_files/new_page" class="btn-Action new-Page"><span>New Page</span></a>
+      <a href="" class="btn-Action new-Folder"><span>New Folder</span></a>
+    </div>
+  </div>
+  <div class="list">
+    <div class="upload-Boundary">
+      
+      <% current_site.file_list.each do |file| %>
+        <a href="http://#{current_site.username}.neocities.org/<%= file.filename %>" title="View #{file.filename}" target="_blank">
+        <% if file.ext.match(/jpg|png|bmp|gif/) %>
+          <i class="icon-picture icon" span style="margin-left: 5px"><%= file.filename %></i>
+        <% else %>
+          <i class="icon-file-alt icon" span style="margin-left: 10px;"><%= file.filename %></i>
+        <% end %>
+        </a>
+
+        <% if file.ext.match(/html|htm|txt|js|css|md/) %>
+          <a href="/site_files/text_editor/<%= file.filename %>"><i class="icon-edit" style="margin-right: 10px" title="Edit"></i></a>
+        <% else %>
+      
+        <% end %>
+
+        <a href="/site_files/download/<%= file.filename %>"><i class="icon-download" style="margin-right: 10px" title="Download"></i></a>
+        <% if file.filename != 'index.html' %>
+          <a href="#" onclick="confirmFileDelete('<%= file.filename %>')"><i class="icon-trash" style="margin-right: 10px" title="Delete"></i></a>
+        <% else %>
+
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+      <form method="POST" action="/site_files/delete" id="deleteFilenameForm">
+        <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+        <input type="hidden" id="deleteFilenameInput" name="filename">
+      </form>
+
+      <div class="modal.hide.fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+          <h3 id="deleteConfirmModalLabel">Confirm deletion</h3>
+        </div>
+        <div class="modal-body">
+          <p>You are about to delete the file <span id="deleteFileName"></span>. Are you sure?</p?>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+          <button class=".btn.btn-danger" onclick="fileDelete()">Delete</button>
+        </div>
+      </div>
+
+<div class="site-actions">
+  <a href="/site_files/<%= current_site.username %>.zip">Allowed file types</a> | <a href="/site_files/<%= current_site.username %>.zip">Download entire site</a>
+</div>
+
+</div>
+</main>
