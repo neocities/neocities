@@ -48,34 +48,38 @@
 
 <div class="files">
   <div class="header">
-    <div class="breadcrumbs">Home</div>
+    <div class="breadcrumbs">My Files</div> <!-- Should be Home when Folders are implemented -->
     <div class="actions">
       <a href="/site_files/new_page" class="btn-Action new-Page"><span>New Page</span></a>
-      <a href="" class="btn-Action new-Folder"><span>New Folder</span></a>
+      <!--<a href="" class="btn-Action new-Folder"><span>New Folder</span></a>-->
     </div>
   </div>
   <div class="list">
     <div class="upload-Boundary">
       
       <% current_site.file_list.each do |file| %>
-        <div class="file">
+        <div class="file filehover">
           <% if file.ext.match(/html|htm/) %>
-            <a href="http://<%= current_site.username %>.neocities.org/<%= file.filename %>" title="View <%= file.filename %>" target="_blank"><div style="background:#fff;width:105px;height:63px;"></div></a>
+            <div class="html-thumbnail fileimagehover" style="width:105px;height:63px;">
+              <img src="https://neocities.org//site_screenshots/bigpig.jpg" style="width: 105px;height:63px">
+              <div class="overlay">
+
+              </div>
+            </div>
           <% elsif file.ext.match(/jpg|png|bmp|gif/) %>
           
           <% end %>
           
-          <a href="http://<%= current_site.username %>.neocities.org/<%= file.filename %>" title="View <%= file.filename %>" target="_blank">
-            <%= file.filename %></a>
-
-          <% if file.ext.match(/txt|js|css|md/) %>
-            <a href="/site_files/text_editor/<%= file.filename %>"><i class="icon-edit" style="margin-right: 10px" title="Edit"></i></a>
-          <% end %>
-
-          <a href="/site_files/download/<%= file.filename %>"><i class="icon-download" style="margin-right: 10px" title="Download"></i></a>
-          <% if file.filename != 'index.html' %>
-            <a href="#" onclick="confirmFileDelete('<%= file.filename %>')"><i class="icon-trash" style="margin-right: 10px" title="Delete"></i></a>
-          <% end %>
+          <a class="title"><%= file.filename %></a>
+          <div class="overlay">
+            <% if file.ext.match(/html|htm|txt|js|css|md/) %>
+              <a href="/site_files/text_editor/<%= file.filename %>"><i class="icon-edit" style="margin-right: 10px" title="Edit"> Edit</i></a>
+            <% end %>
+            <% if file.filename != 'index.html' %>
+              <a href="#" onclick="confirmFileDelete('<%= file.filename %>')"><i class="icon-trash" style="margin-right: 10px" title="Delete"> Delete</i></a>
+            <% end %>
+            <a class="link-overlay" href="http://<%= current_site.username %>.neocities.org/<%= file.filename %>" title="Visit <%= file.filename %>" target="_blank"></a>
+          </div>
         </div>
       <% end %>
     </div>
