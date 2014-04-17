@@ -50,21 +50,15 @@
 </head>
 
   <body class="interior">
-  
     <div class="page">
-    
-      <%= erb :'_header', layout: false %>
-      
-      <main class="content-Base">
-        <%= yield %>
-      </main>
-      
-      <footer class="footer-Base">
-        <%= erb :'_footer', layout: false %>
-      </footer>
-    
+  	<%= erb :'_header', layout: false %>
+
+    <%= yield %>
     </div> <!-- end .page -->
-    
+    <footer class="footer-Base">
+      <%= erb :'_footer', layout: false %>
+    </footer>
+	
     <!-- scripts -->
     <script src="assets/scripts/jquery-1.10.1.min.js"></script>
     <script src="assets/scripts/nav.min.js"></script>
