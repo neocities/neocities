@@ -40,7 +40,23 @@ class Site < Sequel::Model
   SITE_FILES_ROOT = File.join PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites')
 
   many_to_one :server
+  
   many_to_many :tags
+  
+  one_to_many :follows
+  one_to_many :followings, key: :actioning_site_id, class: :Follow
+  
+  one_to_many :tips
+  one_to_many :tippings, key: :actioning_site_id, class: :Tip
+  
+  one_to_many :blocks
+  one_to_many :blockings, key: :actioning_site_id, class: :Block
+  
+  one_to_many :stats
+  
+  one_to_many :events
+  
+  one_to_many :changes
 
   class << self
     def valid_login?(username, plaintext)
