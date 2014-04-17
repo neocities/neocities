@@ -1,0 +1,58 @@
+<script>
+  var RecaptchaOptions = {
+    theme : 'clean'
+  };
+</script>
+
+<% if !@errors.nil? && !@errors.empty? %>
+  <div class="row">
+    <div class="col col-100">
+      <div class="alert alert-block alert-error">
+        <% @errors.each do |error| %>
+          <p><%= error%></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+
+
+<div class="row content">
+  <div class="col col-80">
+    
+    <h2>Contact Us</h2>
+    <h6>Please Note Before Contacting:</h6>
+
+    <ul>
+      <li>
+        For security reasons, we cannot reset your password if you did not enter an e-mail for your site. You will have to make a new site (don't worry, it's free!). If you didn't get an e-mail from the password reset form, you didn't enter an e-mail (or it's in your spam folder). Again you will have to make a new site, we cannot help you for security reasons.
+      </li>
+      <li>
+        We do not support FTP or GIT uploading, and have no plans to. SFTP possibly, if we can find the time.
+      </li>
+    </ul>
+    
+    <form action="/contact" method="POST" class="content">
+      <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+      <fieldset class="col col-80">
+        <label>Email address</label>
+        <input type="email" name="email" placeholder="Your Email" style="width: 300px" value="<%= params[:email] %>">
+
+        <label>Subject</label>
+        <input type="text" name="subject" placeholder="Subject" style="width: 400px" value="<%= params[:subject] %>">
+
+        <label>Comments</label>
+        <textarea name="body" style="width: 600px" rows="10"><%= params[:body] %></textarea>
+
+        <label>Fill out captcha so we know you're not a robot:</label>
+        <div class="recaptcha">
+          <%== recaptcha_tag :challenge, ssl: request.ssl? %>
+        </div>
+
+        <input class="btn-Action" type="submit" value="Send">
+      </fieldset>
+    </form>
+  </div>
+</div>
+
