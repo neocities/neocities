@@ -18,7 +18,8 @@ Bundler.require :test
 
 #require 'minitest/pride'
 require 'minitest/autorun'
-require 'sidekiq/testing/inline'
+
+require 'sidekiq/testing'
 
 Site.bcrypt_cost = BCrypt::Engine::MIN_COST
 

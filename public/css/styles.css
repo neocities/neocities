@@ -34,3 +34,17 @@ line-height:inherit; height:auto!important}
   max-height:400px;
   overflow:auto;
 }
+
+textarea {
+  margin-bottom: 10px 
+}
+
+input[type=submit] {
+  margin-top: 10px;
+}
+
+.recaptcha {
+  background: #fff;
+  width: 440px;
+  overflow: auto;
+}

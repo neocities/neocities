@@ -35,6 +35,8 @@ if defined?(Pry)
   Pry.commands.alias_command 'f', 'finish'
 end
 
+Sidekiq::Logging.logger = nil unless ENV['RACK_ENV'] == 'production'
+
 Sidekiq.configure_server do |config|
   config.redis = { namespace: 'neocitiesworker' }
 end
@@ -59,10 +61,11 @@ Sequel::Migrator.apply DB, './migrations'
 Dir.glob('models/*.rb').each {|m| require File.join(DIR_ROOT, "#{m}") }
 DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
 
-# If new, throw up a random Server for development.
-
-if ENV['RACK_ENV'] == 'development' && Server.count == 0
-  Server.create ip: '127.0.0.1', slots_available: 999999
+if ENV['RACK_ENV'] == 'development'
+  # If new, throw up a random Server for development.
+  if Server.count == 0
+    Server.create ip: '127.0.0.1', slots_available: 999999
+  end
 end
 
 Mail.defaults do
@@ -77,6 +80,8 @@ Mail.defaults do
   options = {}
   delivery_method :sendmail, options
 end
+
+Sinatra::Application.set :erb, escape_html: true
 
 class Sinatra::Base
   alias_method :render_original, :render

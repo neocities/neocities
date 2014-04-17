@@ -1,8 +1,8 @@
 server {
   listen 80;
-  server_name <%= domain %> *.<%= domain %>;
+  server_name <%== domain %> *.<%== domain %>;
   access_log /var/log/nginx/neocities-domains.log neocitiesdomain;
-  root /home/web/neocities-web/public/sites/<%= username %>;
+  root /home/web/neocities-web/public/sites/<%== username %>;
   index /index.html;
 
   error_page 404 = @notfound;

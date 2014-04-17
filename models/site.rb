@@ -121,8 +121,10 @@ class Site < Sequel::Model
     FileUtils.mkdir_p files_path
 
     %w{index not_found}.each do |name|
-      File.write file_path("#{name}.html"), render_template("#{name}.slim")
+      File.write file_path("#{name}.html"), render_template("#{name}.erb")
     end
+
+    FileUtils.cp template_file_path('cat.png'), file_path('cat.png')
   end
 
   def get_file(filename)
@@ -205,7 +207,7 @@ class Site < Sequel::Model
   end
 
   def install_new_html_file(name)
-    File.write file_path(name), render_template('index.slim')
+    File.write file_path(name), render_template('index.erb')
   end
 
   def file_exists?(filename)
@@ -273,7 +275,11 @@ class Site < Sequel::Model
   end
 
   def render_template(name)
-    Tilt.new(File.join(TEMPLATE_ROOT, name), pretty: true).render self
+    Tilt.new(template_file_path(name), pretty: true).render self
+  end
+
+  def template_file_path(name)
+    File.join TEMPLATE_ROOT, name
   end
 
   def files_path(name=nil)

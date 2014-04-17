@@ -396,11 +396,11 @@ post '/site_files/save/:filename' do |filename|
 end
 
 get '/terms' do
-  slim :'terms'
+  erb :'terms'
 end
 
 get '/privacy' do
-  slim :'privacy'
+  erb :'privacy'
 end
 
 get '/admin' do
@@ -557,7 +557,7 @@ post '/custom_domain' do
 end
 
 get '/contact' do
-  slim :'contact'
+  erb :'contact'
 end
 
 post '/contact' do
@@ -718,6 +718,13 @@ end
 
 def current_site
   @site ||= Site[id: session[:id]]
+end
+
+def title
+  out = "NeoCities"
+  return out                  if request.path == '/'
+  return "#{out} - #{@title}" if @title
+  "#{out} - #{request.path.gsub('/', '').capitalize}"
 end
 
 def encoding_fix(file)

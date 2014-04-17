@@ -7,50 +7,20 @@
 *
 **************************************************************************** */
 
-Kyle Drake: 
+Kyle Drake:
 Creator, Lead Developer
 Website: http://kyledrake.net/
 Twitter: @kyledrake
 Location: Portland, OR
 
-
-Scott O'Hara: 
+Scott O'Hara:
 Front-End Developer, Design, Ground Floor
 Website: http://scottohara.me/
 Twitter: @scottohara
 Location: Boston, MA
 
-
-Victoria Wang: 
-Design, Tutorial Lead
+Victoria Wang:
+UX, Design
 Website: http://www.violasong.com/
 Twitter: @violasong
-Location: Chicago,IL
-
-
-
-/* ****************************************************************************
-*
-*   Website Info:
-*
-**************************************************************************** */
-
-Last update: 2013/12/13
-
-SCSS
-http://sass-lang.com/
-
-jQuery
-http://jquery.com/
-
-Ground Floor
-https://github.com/scottaohara/Ground-Floor
-
-
-
-
-
-
-
-
-                    
+Location: Chicago, IL

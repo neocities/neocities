@@ -1,83 +1,52 @@
 <!doctype html>
-<!--[if IE 8 ]><html lang="en" class="ieAll ie8"><![endif]-->
-<!--[if IE 9 ]><html lang="en" class="ieAll ie9"><![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" itemscope itemtype="//schema.org/Person"><!--<![endif]-->
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title><%= title %></title>
+    <meta itemprop="name"         content="Neocities.org">
+    <meta itemprop="description"  content="ECreate your own free home page, and do whatever you want with it.">
+    <meta name="description"      content="Neocities is the new Geocities. Create your own free home page, and do whatever you want with it.">
+    <meta name="keywords"         content="free website, html, css, learn to code, free hosting, build a website, create a web page" >
+    <meta property="og:title"       content="Neocities">
+    <meta property="og:site_name"   content="Neocities | neocities.org">
+    <meta property="og:type"        content="website">
+    <meta property="og:image"       content="/assets/img/cat-larger.png">
+    <meta property="og:url"         content="https://www.neocities.org">
+    <meta property="og:description" content="Neocities is the new Geocities. Create your own free home page, and do whatever you want with it.">
   
-  <title>Neocities - <%= request.path.gsub('/', '').capitalize %></title>
-  <meta itemprop="name"         content="NeoCities.org" />
-  <meta itemprop="description"  content="ECreate your own free home page, and do whatever you want with it." />
-  <meta name="description"      content="NeoCities is the new Geocities. Create your own free home page, and do whatever you want with it." />
-  <meta name="keywords"         content="free website, html, css, learn to code, free hosting, build a website, create a web page" />
-  
-  <link rel="canonical" href="https://www.neocities.org/" />
-  
-  <!-- Open Graph __ Delete if not needed.   -->
-  <meta property="og:title"       content="NeoCities"/>
-  <meta property="og:site_name"   content="NeoCities | neocities.org"/>
-  <meta property="og:type"        content="website"/>
-  <meta property="og:image"       content=""/>
-  <meta property="og:url"         content="https://www.neocities.org/"/>
-  <meta property="og:description" content="NeoCities is the new Geocities. Create your own free home page, and do whatever you want with it."/>
-  <meta content="pBkqwF1U/KpuF2+f0ZhSf8BnpxYgeU0boCTdnB3joGc=" name="csrf-token" />
+    <!--
+    <meta content="<%= csrf_token %>" name="csrf-token" />
+    -->
  
-  <!-- Styles -->
-  <link href="assets/css/neo.min.css" rel="stylesheet" type="text/css" media="all"/>
-  <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all"/>
-   <!-- If exists, brings over style blocks from child pages -->
-  
-  <link rel="shortcut icon" type="image/ico"  href="/favicon.ico" />
-  <link rel="apple-touch-icon-precomposed"    href="#apple-icon-144.png" />
-  <link rel="apple-touch-startup-image"       href="#startup.png" />
-  
-  <!-- Tile icon for Win8 (144x144 + tile color) __doesn't validate__
-  <meta name="msapplication-TileImage" content="#apple-icon-144.png" />
-  <meta name="msapplication-TileColor" content="#222222" />
-  -->
-  
-  <!-- Mobile Meta -->
-  <meta name="HandheldFriendly" content="True" />
-  <meta name="MobileOptimized"  content="320" />
-  <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1" />
-  
-  <!-- oh vanity.  -->
-  <link rel="author" type="text/plain" href="humans.txt" />
-  
-  <!--[if lt IE 9]> 
-    <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-</head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="assets/css/neo.min.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/css/styles.css" rel="stylesheet" type="text/css" media="all">
+
+    <link rel="shortcut icon" type="image/ico"  href="/favicon.ico" />
+
+    <!-- Mobile Meta -->
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized"  content="320" />
+    <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1" />
+    <link rel="author" type="text/plain" href="humans.txt" />
+
+    <!--[if lt IE 9]> 
+      <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
 
   <body class="interior">
-  
     <div class="page">
+      <%== erb :'_header', layout: false %>
+      <main class="content-Base"><%== yield %></main>
+      <footer class="footer-Base"><%== erb :'_footer', layout: false %></footer>
+    </div>
     
-      <%= erb :'_header', layout: false %>
-      
-      <main class="content-Base">
-        <%= yield %>
-      </main>
-      
-      <footer class="footer-Base">
-        <%= erb :'_footer', layout: false %>
-      </footer>
-    
-    </div> <!-- end .page -->
-    
-    <!-- scripts -->
     <script src="assets/scripts/jquery-1.10.1.min.js"></script>
     <script src="assets/scripts/nav.min.js"></script>
-     <!-- Script block allowing child pages to inject their own scripts -->
-    
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
-    <script type="text/javascript>
-      var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-      g.src='//www.google-analytics.com/ga.js';
-      s.parentNode.insertBefore(g,s)}(document,'script'));
-    </script>
-    -->   
+    <script src="/js/bootstrap.min.js"></script>
     
   </body>
 </html>
