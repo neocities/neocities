@@ -6,18 +6,16 @@
 .content-Base{
   background:#f6f0e6;
 	min-height:500px;
-	padding-bottom:30px;
-	padding-top:20px;
+	padding-bottom:50px;
+  padding-top: 10px;
 	
 	h1, h2, h3, h4, h5, h6{
   	color:#e93250
 	}
-	
-	.content{
-		
-	}
 }
-
+.content, .footer-Content {
+	padding: 20px 6%;
+}
 .single-Col{
   max-width:800px;
 }
@@ -26,4 +24,154 @@
 .twitter-tweet.twitter-tweet-rendered{margin:0 auto 30px!important}
 
 // Dashboard
-.dash-SS{border:1px solid #ccc; background:rgba(255,255,255,.7); padding:1em; margin-bottom:20px}
+.interior .header-Outro .col.col-50.signup-Area {padding-left: 0;}
+.interior .header-Outro a {color:#E93250}
+.interior .signup-Area {
+  min-height: 164px;
+}
+.interior .signup-Area img {
+  -moz-box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.10);
+  -webkit-box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.10);
+  box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.10);
+}
+.interior .header-Outro .screenshot {
+  width:235px;height:141px;
+}
+.interior .header-Outro ul {
+  margin:0;padding:0;
+}
+.interior .header-Outro ul li {
+  list-style: none;
+  font-size: 80%;
+  margin-bottom: 7px;
+}
+.interior .signup-Form fieldset {
+  padding: 20px;
+}
+.interior .header-Outro h2 {
+  margin-top: 12px;
+}
+.welcome {
+  background: #daeea5 url(../img/heartcat.png) no-repeat 20px 23px;
+  background-size: 77px 81px;
+  padding: 20px 20px 20px 108px;
+  margin-bottom: 30px;
+}
+.welcome h4 {
+  font-size: 1.2em;
+  margin-bottom: 4px;
+}
+.welcome .close {
+  float: right;
+  background: url(../img/welcome-close.png) no-repeat;
+  width: 19px;
+  height: 19px;
+}
+.files {
+  float:left;
+  background: #E4D8CB;
+  width: 100%;
+}
+.files .header {
+  background: #5E95A1;
+  color: #fff;
+  float:left;
+  width: 100%;
+  padding: 10px 20px;
+}
+.files .breadcrumbs {
+  float: left;
+  font-weight:bold;
+  margin-top: 4px;
+}
+.files .actions {
+  float: right;
+}
+.files .btn-Action {
+  margin-left: 8px;
+}
+.btn-Action span {
+  background-repeat: no-repeat;
+}
+.btn-Action.new-Page span {
+  background-image: url(../img/new-page.png);
+  background-position-y: 1px;
+  padding-left: 30px;
+}
+.btn-Action.new-Folder span {
+  background-image: url(../img/new-folder.png);
+  padding-left: 26px;
+}
+.files .list {
+  padding: 20px;
+}
+.files .list .upload-Boundary {
+  float: left;
+  border: 3px dashed #F6F0E6;
+  width: 100%;
+  margin: 20px 0;
+  padding: 20px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  background: url(../img/drag-drop.png) no-repeat center center;
+  min-height: 300px;
+}
+.file {
+  float: left;
+//  width: 115px;
+  padding: 5px;
+  margin-right: 20px;
+  margin-bottom: 30px;
+  text-align: center;
+  display:block;position:relative;
+}
+.file .title {
+  font-weight: bold;
+  font-size: 12px;
+  color: #666;
+  text-decoration: none;
+}
+.html-thumbnail {
+  -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
+  font-size: 11px;
+  margin-top: 5px;
+  margin-left: 10px;
+  display:block;position:relative;
+}
+.overlay a {
+  color: white;
+  text-decoration: none;
+}
+.overlay {
+  position:absolute;
+  top:0;
+  width:0;
+  width:100%;
+  height:100%;
+  background-color:rgba(0, 0, 0, 0.5);
+  display:none;
+}
+.file > .overlay {
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  padding-top: 15px;
+  background-color:rgba(0, 0, 0, 0.15);
+}
+.overlay i {
+  font-weight: bold;
+}
+.filehover:hover .overlay, .fileimagehover:hover .overlay {
+    display:block;
+}
+.site-actions {
+  float: left;
+  margin-top: 20px;
+  font-size: 90%;
+}
+.site-actions a {
+  color: #666;
+}

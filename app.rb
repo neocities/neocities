@@ -133,7 +133,7 @@ end
 
 get '/dashboard' do
   require_login
-  slim :'dashboard'
+  erb :'dashboard'
 end
 
 get '/signin' do

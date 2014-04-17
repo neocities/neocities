@@ -39,6 +39,7 @@ platform :jruby do
 
   group :development do
     gem 'ruby-debug', require: nil
+    gem 'sass', require: nil
   end
 end
 

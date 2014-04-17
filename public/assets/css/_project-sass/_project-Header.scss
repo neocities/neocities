@@ -164,7 +164,7 @@
 // Top nav area
 .header-Nav{
 	background:#5e95a1;
-	border-bottom:1px solid #a1cad4;
+	border-bottom:1px solid #92B4BD;
 	
 	@include vendor(transition, all 0.35s);
 	
@@ -279,7 +279,10 @@
 
 // Interior CSS
 .interior .page{
-  padding-top:46px
+	padding-top: 22px;
+}
+.interior .signup-Form {
+  top: 0;
 }
 .interior .header-Base{
   left:0;
