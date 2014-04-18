@@ -8,3 +8,17 @@ development:
   sidekiq_pass: ENTER PASS HERE
   phantomjs_url:
     - http://localhost:8910
+  stripe_publishable_key: fillout
+  stripe_api_key: fillout
+test:
+  database: 'postgres://neocities@127.0.0.1/neocities_test'
+  database_pool: 1
+  session_secret: SECRET GOES HERE
+  recaptcha_public_key: ENTER PUBLIC KEY HERE
+  recaptcha_private_key: ENTER PRIVATE KEY HERE
+  sidekiq_user: ENTER USER HERE
+  sidekiq_pass: ENTER PASS HERE
+  phantomjs_url:
+    - http://localhost:8910
+  stripe_publishable_key: fillout
+  stripe_api_key: fillout

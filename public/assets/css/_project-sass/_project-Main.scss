@@ -14,7 +14,7 @@
 	}
 }
 .content, .footer-Content {
-	padding: 20px 6%;
+	padding: 20px 3%;
 }
 .single-Col{
   max-width:800px;
@@ -22,6 +22,31 @@
 
 // About page
 .twitter-tweet.twitter-tweet-rendered{margin:0 auto 30px!important}
+
+// Interior pages
+
+.interior .header-Outro {
+  padding-top: 30px;
+}
+
+.interior .header-Outro .row.content {
+
+}
+.interior .header-Outro .subtitle {
+  font-size: 1em;
+  margin-top: -15px;
+}
+.content.misc-page {
+  background: #FAF6F1;
+  -moz-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.10);
+  -webkit-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.10);
+  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.10);
+  padding: 25px 3% 40px 3%;
+}
+.content.misc-page h3 {
+  font-size: 1.6px;
+  margin-top: 2em;
+}
 
 // Dashboard
 .interior .header-Outro .col.col-50.signup-Area {padding-left: 0;}
