@@ -41,7 +41,7 @@
 <div class="content">
     
 <div class="welcome">
-  <a href=""><div class="close"></div></a>
+  <div class="close-button"></div>
   <h4>Hello! Welcome to your new site.</h4>
   To get started, click on the <strong>index.html</strong> file below to edit it. It's your home page! You can add more files (such as images) from your computer by dragging them into the box below. Need help building web sites? Check out these <a href="/tutorials">tutorials</a>!
 </div>
@@ -52,25 +52,38 @@
     <div class="actions">
       <a href="/site_files/new_page" class="btn-Action new-Page"><span>New Page</span></a>
       <!--<a href="" class="btn-Action new-Folder"><span>New Folder</span></a>-->
+      <a href="/site_files/upload" class="btn-Action upload"><span>Upload</span></a>
     </div>
   </div>
   <div class="list">
-    <div class="upload-Boundary">
+    <div class="upload-Boundary with-instruction"> <!--should remove instruction after at least one new file have been uploaded-->
       
       <% current_site.file_list.each do |file| %>
         <div class="file filehover">
           <% if file.ext.match(/html|htm/) %>
-            <div class="html-thumbnail fileimagehover" style="width:105px;height:63px;">
-              <img src="https://neocities.org//site_screenshots/bigpig.jpg" style="width: 105px;height:63px">
-              <div class="overlay">
-
-              </div>
+            <div class="html-thumbnail html fileimagehover">
+              <img src="https://neocities.org//site_screenshots/bigpig.jpg">
+              <div class="overlay"></div>
             </div>
           <% elsif file.ext.match(/jpg|png|bmp|gif/) %>
-          
+            <div class="html-thumbnail image fileimagehover">
+              <img src="https://neocities.org/assets/img/cat-larger.png" style="">
+              <div class="overlay"></div>
+            </div>
+          <% else %>
+            <div class="html-thumbnail misc fileimagehover">
+              <div class="misc-icon"><%= file.ext %></div>
+              <div class="overlay"></div>
+            </div>
           <% end %>
           
-          <a class="title"><%= file.filename %></a>
+          <a class="title">
+            <% if file.filename.length > 15 %>
+              <%= file.filename.slice(0..15) %>&hellip;
+            <% else %>
+              <%= file.filename %>
+            <% end %>
+          </a>
           <div class="overlay">
             <% if file.ext.match(/html|htm|txt|js|css|md/) %>
               <a href="/site_files/text_editor/<%= file.filename %>"><i class="icon-edit" style="margin-right: 10px" title="Edit"> Edit</i></a>
@@ -78,7 +91,7 @@
             <% if file.filename != 'index.html' %>
               <a href="#" onclick="confirmFileDelete('<%= file.filename %>')"><i class="icon-trash" style="margin-right: 10px" title="Delete"> Delete</i></a>
             <% end %>
-            <a class="link-overlay" href="http://<%= current_site.username %>.neocities.org/<%= file.filename %>" title="Visit <%= file.filename %>" target="_blank"></a>
+            <a class="link-overlay" href="http://<%= current_site.username %>.neocities.org/<%= file.filename %>" title="View <%= file.filename %>" target="_blank"></a>
           </div>
         </div>
       <% end %>
