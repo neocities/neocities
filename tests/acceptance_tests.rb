@@ -38,7 +38,7 @@ describe 'signup' do
   it 'succeeds with valid data' do
     fill_in_valid
     click_button 'Create Home Page'
-    page.must_have_content 'Your Website'
+    page.must_have_content 'My Website'
     assert_equal(
       true,
       File.exist?(File.join(Site::SITE_FILES_ROOT, @site[:username], 'index.html'))
@@ -48,7 +48,7 @@ describe 'signup' do
   it 'fails to create for existing site' do
     fill_in_valid
     click_button 'Create Home Page'
-    page.must_have_content 'Your Website'
+    page.must_have_content 'My Website'
     Capybara.reset_sessions!
     visit_signup
     fill_in 'username', with: @site[:username]
@@ -138,6 +138,6 @@ describe 'signin' do
     fill_in 'username', with: site[:username]
     fill_in 'password', with: site[:password]
     click_button 'Sign in'
-    page.must_have_content 'Your Website'
+    page.must_have_content 'My Website'
   end
 end
