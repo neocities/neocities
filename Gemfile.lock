@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/stripe/stripe-ruby
+  revision: 48f76057f425ab5c3bb147f3d71c3d36d951159f
+  specs:
+    stripe (1.11.0)
+      json (~> 1.8.1)
+      mime-types (~> 1.25)
+      rest-client (~> 1.4)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -121,11 +130,12 @@ GEM
     redis (3.0.7)
     redis-namespace (1.4.1)
       redis (~> 3.0.4)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
     retriable (1.4.1)
     rmagick (2.13.2)
     rubyzip (1.1.2)
     safe_yaml (1.0.1)
-    sass (3.3.5)
     selenium-webdriver (2.40.0)
       childprocess (>= 0.5.0)
       multi_json (~> 1.0)
@@ -230,5 +240,6 @@ DEPENDENCIES
   sinatra-flash
   sinatra-xsendfile
   slim
+  stripe!
   tilt
   webmock

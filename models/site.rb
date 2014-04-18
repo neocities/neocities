@@ -311,4 +311,8 @@ class Site < Sequel::Model
   def available_space_in_megabytes
     (available_space.to_f / 2**20).round(2)
   end
+  
+  def title
+    values[:title] || values[:username]
+  end
 end

@@ -58,6 +58,8 @@ Sequel::Model.plugin :defaults_setter
 Sequel.default_timezone = 'UTC'
 Sequel::Migrator.apply DB, './migrations'
 
+Stripe.api_key = $config['stripe_api_key']
+
 Dir.glob('models/*.rb').each {|m| require File.join(DIR_ROOT, "#{m}") }
 DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
 

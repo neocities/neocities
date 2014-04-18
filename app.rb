@@ -74,6 +74,12 @@ get '/?' do
   erb :index, layout: false
 end
 
+get '/site/:username/tip' do |username|
+  @site = Site[username: username]
+  @title = "Tip #{@site.title}"
+  erb :'tip'
+end
+
 get '/browse' do
   @current_page = params[:current_page]
   @current_page = @current_page.to_i
@@ -128,22 +134,7 @@ get '/new' do
   dashboard_if_signed_in
   @site = Site.new
   @site.username = params[:username] unless params[:username].nil?
-  slim :'new'
-end
-
-get '/dashboard' do
-  require_login
-  erb :'dashboard'
-end
-
-get '/signin' do
-  dashboard_if_signed_in
-  slim :'signin'
-end
-
-get '/settings' do
-  require_login
-  slim :'settings'
+  erb :'new'
 end
 
 post '/create' do
@@ -160,15 +151,42 @@ post '/create' do
   recaptcha_is_valid = ENV['RACK_ENV'] == 'test' || recaptcha_valid?
 
   if @site.valid? && recaptcha_is_valid
-    @site.save
+    DB.transaction do
+      if !params[:stripe_token].nil? && params[:stripe_token] != ''
+        customer = Stripe::Customer.create(
+          card: params[:stripe_token],
+          description: @site.username,
+          email: @site.email,
+          plan: params[:selected_plan]
+        )
+        @site.stripe_customer_id = customer.id
+      end
+
+      @site.save
+    end
 
     session[:id] = @site.id
     redirect '/dashboard'
   else
     @site.errors.add :captcha, 'You must type in the two words correctly! Try again.' if !recaptcha_is_valid
 
-    slim :'/new'
+    erb :'/new'
   end
+end
+
+get '/dashboard' do
+  require_login
+  erb :'dashboard'
+end
+
+get '/signin' do
+  dashboard_if_signed_in
+  slim :'signin'
+end
+
+get '/settings' do
+  require_login
+  slim :'settings'
 end
 
 post '/signin' do

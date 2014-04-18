@@ -18,6 +18,7 @@ gem 'mail'
 gem 'google-api-client',  require: 'google/api_client'
 gem 'tilt'
 gem 'erubis'
+gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
