@@ -573,7 +573,7 @@ post '/contact' do
   end
 
   if !@errors.empty?
-    slim :'contact'
+    erb :'contact'
   else
     EmailWorker.perform_async({
       from: 'web@neocities.org',
