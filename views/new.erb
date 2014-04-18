@@ -49,7 +49,14 @@
           </p>
           <h5>Email</h5>
           <input class="input-Area" name="email" type="email" placeholder="youremail@example.com" value="<%= @site.email %>">
-          
+
+          <hr>
+
+          <input name="is_nsfw" type="hidden" value="false">
+          <p class="tiny">
+            If your page will contain objectionable (adult) content, check this box:&nbsp;&nbsp;&nbsp;<input name="is_nsfw" type="checkbox" value="true" style="margin-top:0" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>>
+          </p>
+
           <hr>
 
           <p class="tiny">You can optionally enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of ten tags, and there is a two word per tag maximum (extra words in a tag will be removed).</p>
@@ -59,11 +66,11 @@
           
           <hr>
           
-          <p class="tiny"><strong>The site you are creating will be free, forever.</strong> We will never charge you for your free web site.</p>
+          <p class="tiny"><strong>The site you are creating will be free, forever.</strong> We will never charge you for your web site.</p>
           <p class="tiny"><a href="/donate" target="_blank">Neocities has to pay the bills though</a>, and we like the idea of being able to work on the site full-time someday. So if you would like to help us reach this goal, we have created the <strong>Supporter Plan</strong>!
           
           <p class="tiny">Right now, the <strong>Supporter Plan</strong> is the same as the free plan, except that <strong>Supporter Plan members get 200MB</strong> of web space. You will also be listed as a supporter on our contributors page, and on your site profile page.</p>
-          <p class="tiny">The base plan is $12 per year ($1/mo) paid annually, which is the cost of <a href="/img/yafagrillmenu.jpg" target="_blank">a delicious Yafa Combo with a lousy tip</a>. If you ever decide to cancel, you get to keep the extra space.</p>
+          <p class="tiny">The base plan is $12 ($1/month) billed once per year, which is the cost of <a href="/img/yafagrillmenu.jpg" target="_blank">a delicious Yafa Combo with a lousy tip</a>. If you ever decide to cancel, you get to keep the extra space. Thanks for helping us run this site!</p>
           
           <div>
             <input type="radio" name="plan" value="free" <%= params[:plan].nil? || params[:plan] == 'free' ? 'checked' : '' %>>
@@ -104,6 +111,8 @@
                 <input type="text" size="4" data-stripe="exp-year" placeholder="YYYY" maxlength="4" style="width: 60px">
               </p>
             <% end %>
+            
+            <p class="tiny"><strong>We accept Bitcoin!</strong> If you would prefer to use Bitcoin, choose the <strong>Free Plan</strong>, and then upgrade in the <strong>Settings</strong> page once your account is created.</p>
           </div>
           
           <hr>
