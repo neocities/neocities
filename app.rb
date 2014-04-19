@@ -464,7 +464,7 @@ post '/site_files/save/:filename' do |filename|
   tempfile.write input
   tempfile.close
 
-  if current_site.file_site_too_large? tempfile.size
+  if current_site.file_size_too_large? tempfile.size
     halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
   end
 
