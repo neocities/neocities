@@ -35,5 +35,5 @@
         
       h4 If the file already exists, <u><b>it will be overwritten without warning</b></u>.
       h4 It has to be <u>legal to share this content in the United States</u>.
-      h4 It must fit into your home page space (#{(Site::MAX_SPACE.to_f / 2**20).to_i}MB).
+      h4 It must fit into your home page space (#{current_site.available_space_in_megabytes}MB remaining).
       h4 The file uploader will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .

@@ -73,6 +73,6 @@ javascript:
 
       p If the file already exists, <u><b>it will be overwritten without warning</b></u>.
       p It has to be <u>legal to share this content in the United States</u>.
-      p It must fit into your home page space (#{(Site::MAX_SPACE.to_f / 2**20).to_i}MB).
+      p It must fit into your home page space (#{current_site.available_space_in_megabytes}MB remaining).
       p The file uploader will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .
 

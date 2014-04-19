@@ -120,7 +120,7 @@
           <p class="tiny"><b>Last thing!</b> Enter these two words correctly (with spaces) so we know you're not a robot (don't worry robots, we still love you).</p>
           
           <div class="recaptcha">
-            <%== recaptcha_tag :challenge, ssl: true %>
+            <%== recaptcha_tag :challenge, ssl: request.ssl? %>
           </div>
           
           <hr>

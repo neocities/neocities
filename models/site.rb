@@ -28,7 +28,13 @@ class Site < Sequel::Model
     html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff json
     geojson csv tsv mf ico pdf asc key pgp xml mid midi
   }
-  MAX_SPACE = (5242880*2) # 10MB
+
+  ONE_MEGABYTE_IN_BYTES = 1048576
+  FREE_MAXIMUM_IN_MEGABYTES = 10
+  SUPPORTER_MAXIMUM_IN_MEGABYTES = 200
+  FREE_MAXIMUM_IN_BYTES = FREE_MAXIMUM_IN_MEGABYTES * ONE_MEGABYTE_IN_BYTES
+  SUPPORTER_MAXIMUM_IN_BYTES = SUPPORTER_MAXIMUM_IN_MEGABYTES * ONE_MEGABYTE_IN_BYTES
+
   MINIMUM_PASSWORD_LENGTH = 5
   BAD_USERNAME_REGEX = /[^\w-]/i
   VALID_HOSTNAME = /^[a-z0-9][a-z0-9-]+?[a-z0-9]$/i # http://tools.ietf.org/html/rfc1123
@@ -294,22 +300,54 @@ class Site < Sequel::Model
     Dir.glob(File.join(files_path, '*')).collect {|p| File.basename(p)}.sort.collect {|sitename| SiteFile.new sitename}
   end
 
-  def total_space
+  def file_size_too_large?(size_in_bytes)
+    return true if size_in_bytes + used_space_in_bytes > maximum_space_in_bytes
+    false
+  end
+
+  def used_space_in_bytes
     space = Dir.glob(File.join(files_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
     space.nil? ? 0 : space
   end
   
-  def total_space_in_megabytes
-    (total_space.to_f / 2**20).round(2)
+  def used_space_in_megabytes
+    (used_space_in_bytes.to_f / self.class::ONE_MEGABYTE_IN_BYTES).round(2)
   end
 
-  def available_space
-    remaining = MAX_SPACE - total_space
+  def available_space_in_bytes
+    remaining = maximum_space_in_bytes - used_space_in_bytes
     remaining < 0 ? 0 : remaining
   end
   
   def available_space_in_megabytes
-    (available_space.to_f / 2**20).round(2)
+    (available_space_in_bytes.to_f / self.class::ONE_MEGABYTE_IN_BYTES).round(2)
+  end
+
+  def maximum_space_in_bytes
+    supporter? ? self.class::SUPPORTER_MAXIMUM_IN_BYTES : self.class::FREE_MAXIMUM_IN_BYTES
+  end
+
+  def maximum_space_in_megabytes
+    supporter? ? self.class::SUPPORTER_MAXIMUM_IN_MEGABYTES : self.class::FREE_MAXIMUM_IN_MEGABYTES
+  end
+
+  def space_percentage_used
+    ((used_space_in_bytes.to_f / maximum_space_in_bytes) * 100).round(1)
+  end
+
+  # This returns true even if they end their support plan.
+  def supporter?
+    !values[:stripe_customer_id].nil?
+  end
+  
+  # This will return false if they have ended their support plan.
+  def ended_supporter?
+    values[:ended_plan]
+  end
+  
+  def plan_name
+    return 'Free Plan' if !supporter? || (supporter? && ended_supporter?)
+    'Supporter Plan'
   end
   
   def title

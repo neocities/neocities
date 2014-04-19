@@ -21,14 +21,14 @@
       </div>
     </div> 
 
-	<div class="col col-40" style="margin-left: 10px">
+	<div class="col col-50" style="margin-left: 10px">
     <h2 class="eps">My Website</h2>
     <p style="font-size:19px; margin-top: -5px; margin-bottom: 8px;"><a href="http://<%= current_site.username %>.neocities.org" target="_blank">http://<%= current_site.username %>.neocities.org</a></p>
 	<ul>
 <% if current_site.updated_at %>
 	<li>Last updated <%= current_site.updated_at %></li>
 <% end %>
-	<li>Using <strong><%= ((current_site.total_space.to_f / Site::MAX_SPACE) * 100).round(1) %>% of your <%= (Site::MAX_SPACE.to_f / 2**20).to_i %> MB</strong> of free space</li>
+	<li>Using <strong><%= current_site.space_percentage_used %>% of your <%= current_site.maximum_space_in_megabytes %> MB</strong> of free space. <% if !current_site.supporter? %>Need more space? <a href="/plan">Become a Supporter</a><% end %></li>
 	<li><strong><%= current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %></strong> visitors</li>
 	</ul>
 	</div>

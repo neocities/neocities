@@ -74,6 +74,75 @@ get '/?' do
   erb :index, layout: false
 end
 
+get '/plan/?' do
+  erb :'plan/index'
+end
+
+post '/plan/create' do
+  require_login
+
+  DB.transaction do
+    customer = Stripe::Customer.create(
+      card: params[:stripe_token],
+      description: current_site.username,
+      email: current_site.email,
+      plan: params[:selected_plan]
+    )
+    current_site.stripe_customer_id = customer.id
+    current_site.plan_ended = false
+    current_site.save
+  end
+
+  redirect '/plan'
+end
+
+def get_plan_name(customer_id)
+  subscriptions = Stripe::Customer.retrieve(current_site.stripe_customer_id).subscriptions.all
+  @plan_name = subscriptions.first.plan.name
+end
+
+get '/plan/manage' do
+  require_login
+  redirect '/plan' unless current_site.supporter? && !current_site.plan_ended
+  @title = 'Manage Plan'
+  @plan_name = get_plan_name current_site.stripe_customer_id
+  erb :'plan/manage'
+end
+
+get '/plan/end' do
+  require_login
+  redirect '/plan'  unless current_site.supporter? && !current_site.plan_ended
+  @title = 'End Plan'
+  @plan_name = get_plan_name current_site.stripe_customer_id
+  erb :'plan/end'
+end
+
+post '/plan/end' do
+  require_login
+  redirect '/plan'  unless current_site.supporter? && !current_site.plan_ended
+
+  recaptcha_is_valid = ENV['RACK_ENV'] == 'test' || recaptcha_valid?
+  
+  if !recaptcha_is_valid
+    @error = 'Recaptcha was filled out incorrectly, please try re-entering.'
+    @plan_name = get_plan_name current_site.stripe_customer_id
+    halt erb :'plan/end'
+  end
+  
+  customer = Stripe::Customer.retrieve current_site.stripe_customer_id
+  subscriptions = customer.subscriptions.all
+
+  DB.transaction do
+    subscriptions.each do |subscription|
+      customer.subscriptions.retrieve(subscription.id).delete
+    end
+    current_site.plan_ended = true
+    current_site.save
+  end
+
+  redirect '/plan'
+end
+
 get '/site/:username/tip' do |username|
   @site = Site[username: username]
   @title = "Tip #{@site.title}"
@@ -330,7 +399,7 @@ post '/site_files/upload' do
     halt http_error_code, 'Did not receive file upload.'
   end
 
-  if params[:newfile][:tempfile].size > Site::MAX_SPACE || (params[:newfile][:tempfile].size + current_site.total_space) > Site::MAX_SPACE
+  if current_site.file_size_too_large? params[:newfile][:tempfile].size
     @errors << 'File size must be smaller than available space.'
     halt http_error_code, 'File size must be smaller than available space.'
   end
@@ -390,14 +459,14 @@ post '/site_files/save/:filename' do |filename|
 
   tempfile = Tempfile.new 'neocities_saving_file'
 
-  if (tempfile.size + current_site.total_space) > Site::MAX_SPACE
-    halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
-  end
-
   input = request.body.read
   tempfile.set_encoding input.encoding
   tempfile.write input
   tempfile.close
+
+  if current_site.file_site_too_large? tempfile.size
+    halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
+  end
 
   sanitized_filename = filename.gsub(/[^a-zA-Z0-9_\-.]/, '')
 
@@ -622,7 +691,7 @@ post '/api/upload' do
 
   uploaded_size = files.collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
 
-  if (uploaded_size + current_site.total_space) > Site::MAX_SPACE
+  if current_site.file_size_too_large? uploaded_size
     api_error 400, 'too_large', 'files are too large to fit in your space, try uploading smaller (or less) files'
   end
 

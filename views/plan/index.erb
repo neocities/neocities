@@ -1,0 +1,145 @@
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script type="text/javascript">
+  Stripe.setPublishableKey('<%= $config['stripe_publishable_key'] %>');
+</script>
+
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <div class="col col-50">
+      <h2 class="beta">
+        <% if current_site %>
+          Your Plan
+        <% else %>
+          Supporter Plan
+        <% end %>
+      </h2>
+    </div>
+    <div class="txt-Right">
+      <img src="/assets/img/support-us.png" width="55">
+    </div>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <h3>Plan Info</h3>
+  
+  <% if current_site && current_site.supporter? && !current_site.plan_ended %>
+    <p>
+      You currently have the <strong><%= current_site.plan_name %> (<%= current_site.maximum_space_in_megabytes %>MB)</strong>.
+    </p>
+    <p>
+      Your support means a lot to us. On behalf of Penelope the cat and everyone at Neocities, thank you. If there's anything we can do to make your experience even better, please don't hesitate to <a href="/contact">contact us</a>.
+    </p>
+    
+    <a href="/plan/manage">Manage plan</a>
+  <% else %>
+    <% if current_site %>
+      <p>You currently have the <strong>Free Plan (<%= current_site.maximum_space_in_megabytes %>MB)</strong>. You should upgrade to the <strong>Neocities Supporter Plan!</strong></p>
+
+      <h3>Why upgrade?</h3>
+    <% else %>
+      <p>The Neocities Supporter Plan is a way to help sustain the site. When you join the Supporter Plan, you are directly helping our quest to bring back the creative, independent web, and to continue to improve Neocities for everyone.
+      </p>
+      <h3>Why get the Supporter Plan?</h3>
+    <% end %>
+    <ul>
+      <li>
+        <strong>You get more space!</strong> Right now supporter plans get up to <strong><%= Site::SUPPORTER_MAXIMUM_IN_MEGABYTES %>MB</strong> (more coming soon)</strong>.
+      </li>
+      <li>
+        <strong>It helps your site.</strong> Funding helps us make your site faster globally, and provide more features.
+      </li>
+      <li>
+        <strong>It helps us build.</strong> It allows us to work on Neocities full-time, without worrying about bills.
+      </li>
+      <li>
+        <strong>It helps the web.</strong> The web needs more independent, creative sites. Neocities is leading the way.
+      </li>
+      <li>
+        <strong>It's Open Source.</strong> Neocities is <a href="https://github.com/neocities" target="_blank">completely open source</a>, and we share code with the community.
+      </li>
+      <li><strong>No lock-in.</strong> Redirecting your site is easy, free site downloads, and support for custom domains.
+      <li>
+        <strong>It's safe.</strong> We use <a href="https://stripe.com" target="_blank">Stripe</a> for payments, and never store your credit card information directly.
+      </li>
+      <li>
+        <strong>It's affordable.</strong> As low as <strong>$1/month</strong> (billed once every year).
+      </li>
+      <li>
+        <strong>You can cancel anytime.</strong> And if you do, you can keep the extra space!
+      </li>
+    </ul>
+    
+    <% if !current_site %>
+      <h2 class="txt-Center">Become a Supporter</h2>
+      <p>If you would like to become a Neocities Supporter, <a href="/signin">Sign In</a> and click the <strong>Settings</strong> link. If you haven't created a site yet, <a href="/new">create your web site now</a>! We would love if you became a Supporter, but base sites on Neocities will always be free.</p>
+    <% else %>
+      <h2 class="txt-Center">Upgrade Now</h2>
+    
+      <div id="plan_container" style="margin-top:20px" class="txt-Center">
+        <form method="post" action="/plan/create" id="planform">
+          <input type="hidden" name="csrf_token" value="<%= csrf_token %>">
+          <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
+
+          <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
+
+          <p class="tiny">
+            Plan type:
+            <select name="selected_plan" style="width: 200px">
+              <option value="plan_one">$12/year ($1/month)</option>
+              <option value="plan_two" <%= params[:selected_plan].nil? ? 'selected' : '' %>>$24/year ($2/month)</option>
+              <option value="plan_three">$36/year ($3/month)</option>
+              <option value="plan_four">$48/year ($4/month)</option>
+              <option value="plan_five">$60/year ($5/month)</option>
+            </select>
+          </p>
+    
+          <p class="tiny">
+            Card Number: <input type="text" size="20" data-stripe="number">
+            CVC: <input type="text" size="4" maxlength="4" data-stripe="cvc" style="width: 60px">
+          </p>
+          <p class="tiny">
+            Expiration: 
+            <input type="text" size="2" data-stripe="exp-month" placeholder="MM" maxlength="2" style="width: 50px">
+            <input type="text" size="4" data-stripe="exp-year" placeholder="YYYY" maxlength="4" style="width: 60px">
+          </p>
+      
+          <input class="btn-Action" type="submit" value="Upgrade!">
+        </form>
+      </div>
+    <% end %>
+  <% end %>
+  
+  <h2 class="txt-Center">One-Time Donations</h2>
+  <p>
+    Prefer to not use a credit card? Neocities has many other ways to become a supporter! <a href="/donate">Click here</a> to learn about other ways to contribute. We accept <a href="/donate">PayPal, Bitcoin and Gittip</a>, and will be happy to upgrade your account for you if you contribute and <a href="/contact">contact us with your site username</a>.
+  </p>
+</div>
+
+<script>
+  window.onload = function() {
+    $('#planform').find(':submit').prop('disabled', false)
+    $('#planform').submit(function(event) {
+      if($('#stripe_token').val() != '')
+        return true
+
+      var planError = $('#plan_error')
+      planError.css('display', 'none')
+      var planform = $(this)
+      planform.find(':submit').prop('disabled', true)
+
+      Stripe.card.createToken(planform, function(status, response) {
+        if(response.error) {
+          planError.text(response.error.message)
+          planError.css('display', 'block')
+          planform.find(':submit').prop('disabled', false)
+          return false
+        } else {
+          $('#stripe_token').val(response.id)
+          planform.submit()
+        }
+      })
+      return false
+    })
+  }
+</script>
