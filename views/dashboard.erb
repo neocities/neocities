@@ -1,14 +1,28 @@
-<script type="text/javascript">
-  function confirmFileDelete(name) {
-    $('#deleteFileName').html(name);
-    $('#deleteConfirmModal').modal();
+<style>
+  .dz-default {
+    display: none;
   }
+  .dz-preview {
+    display: none;
+  }
+  .dz-processing {
+    display: none;
+  }
+  .dz-error {
+    display: none;
+  }
+  .dz-image-preview {
+    display: none;
+  }
+</style>
+<!--
+<form action="/site_files/upload" class="dropzone" id="uploads">
+  <input name="csrf_token" type="hidden" value="#{csrf_token}">
+</form>
 
-  function fileDelete() {
-    $('#deleteFilenameInput').val($('#deleteFileName').html());
-    $('#deleteFilenameForm').submit();
-  }
-</script>
+
+<div id="upload_status" style="font-size: 16pt"></div>
+-->
 
 <div class="header-Outro">
   <div class="row content wide" style="padding-top: 10px">
@@ -16,20 +30,20 @@
     <div class="col col-50 signup-Area" style="width: 289px;">
       <div class="signup-Form">
   	  <fieldset class="content">
-        <img class="screenshot" src="/site_screenshots/<%= current_site.username %>.jpg">
+        <img class="screenshot" src="<%= current_site.screenshot_url('index.html', '270x162') %>">
 	    </fieldset>
       </div>
-    </div> 
+    </div>
 
 	<div class="col col-50">
     <h2 class="eps">My Website</h2>
     <p style="font-size:19px; margin-top: -11px; margin-bottom: 8px;"><a href="http://<%= current_site.username %>.neocities.org" target="_blank">http://<%= current_site.username %>.neocities.org</a></p>
 	<ul>
 <% if current_site.updated_at %>
-	<li>Last updated <%= current_site.updated_at %></li>
+	<li>Last updated <%= current_site.updated_at.ago %></li>
 <% end %>
-	<li>Using <strong><%= current_site.space_percentage_used %>% of your <%= current_site.maximum_space_in_megabytes %> MB</strong>. <% if !current_site.supporter? %>Need more space? <a href="/plan">Become a Supporter!</a><% end %></li>
-	<li><strong><%= current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %></strong> visitors</li>
+	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.used_space_in_megabytes %>MB) of your <%= current_site.maximum_space_in_megabytes %> MB</strong>. <% if !current_site.supporter? %>Need more space? <a href="/plan">Become a Supporter!</a><% end %></li>
+	<li><strong><%= current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %></strong> hits</li>
 	</ul>
 	</div>
 
@@ -37,9 +51,9 @@
 </div> <!-- end .header-Outro -->
 
 <main class="content-Base">
-  
+
 <div class="content wide">
-    
+
 <div class="welcome">
   <div class="close-button"></div>
   <h4>Hello! Welcome to your new site.</h4>
@@ -52,53 +66,55 @@
     <div class="actions">
       <a href="/site_files/new_page" class="btn-Action new-Page"><span>New Page</span></a>
       <!--<a href="" class="btn-Action new-Folder"><span>New Folder</span></a>-->
-      <a href="/site_files/upload" class="btn-Action upload"><span>Upload</span></a>
+      <a href="#" class="btn-Action upload" onclick="clickUploadFiles(); return false"><span>Upload</span></a>
     </div>
   </div>
   <div class="list">
-    <div class="upload-Boundary with-instruction"> <!--should remove instruction after at least one new file have been uploaded-->
-      
-      <% current_site.file_list.each do |file| %>
-        <div class="file filehover">
-          <% if file.ext.match(/html|htm/) %>
-            <div class="html-thumbnail html fileimagehover">
-              <img src="https://neocities.org//site_screenshots/bigpig.jpg">
-              <div class="overlay"></div>
-            </div>
-          <% elsif file.ext.match(/jpg|png|bmp|gif/) %>
-            <div class="html-thumbnail image fileimagehover">
-              <img src="https://neocities.org/assets/img/cat-larger.png" style="">
-              <div class="overlay"></div>
-            </div>
-          <% else %>
-            <div class="html-thumbnail misc fileimagehover">
-              <div class="misc-icon"><%= file.ext %></div>
-              <div class="overlay"></div>
-            </div>
-          <% end %>
-          
-          <a class="title">
-            <% if file.filename.length > 15 %>
-              <%= file.filename.slice(0..15) %>&hellip;
+    <form action="/site_files/upload" class="dropzone" id="uploads">
+      <div class="dz-message" style="display: none"></div>
+      <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+      <div class="upload-Boundary with-instruction"> <!--should remove instruction after at least one new file have been uploaded-->
+        <% current_site.file_list.each do |file| %>
+          <div class="file filehover">
+            <% if file.ext.match(/html|htm/) %>
+              <div class="html-thumbnail html fileimagehover">
+                <img src="<%= current_site.screenshot_url(file.filename, '105x63') %>">
+                <div class="overlay"></div>
+              </div>
+            <% elsif file.ext.match(/jpg|png|bmp|gif/) %>
+              <div class="html-thumbnail image fileimagehover">
+                <img src="https://neocities.org/assets/img/cat-larger.png" style="">
+                <div class="overlay"></div>
+              </div>
             <% else %>
-              <%= file.filename %>
+              <div class="html-thumbnail misc fileimagehover">
+                <div class="misc-icon"><%= file.ext %></div>
+                <div class="overlay"></div>
+              </div>
             <% end %>
-          </a>
-          <div class="overlay">
-            <% if file.ext.match(/html|htm|txt|js|css|md/) %>
-              <a href="/site_files/text_editor/<%= file.filename %>"><i class="icon-edit" style="margin-right: 10px" title="Edit"> Edit</i></a>
-            <% end %>
-            <% if file.filename != 'index.html' %>
-              <a href="#" onclick="confirmFileDelete('<%= file.filename %>')"><i class="icon-trash" style="margin-right: 10px" title="Delete"> Delete</i></a>
-            <% end %>
-            <a class="link-overlay" href="http://<%= current_site.username %>.neocities.org/<%= file.filename %>" title="View <%= file.filename %>" target="_blank"></a>
+
+            <a class="title">
+              <% if file.filename.length > 15 %>
+                <%= file.filename.slice(0..15) %>&hellip;
+              <% else %>
+                <%= file.filename %>
+              <% end %>
+            </a>
+            <div class="overlay">
+              <% if file.ext.match(/html|htm|txt|js|css|md/) %>
+                <a href="/site_files/text_editor/<%= file.filename %>"><i class="icon-edit" style="margin-right: 10px" title="Edit"> Edit</i></a>
+              <% end %>
+              <% if file.filename != 'index.html' %>
+                <a href="#" onclick="confirmFileDelete('<%= file.filename %>')"><i class="icon-trash" style="margin-right: 10px" title="Delete"> Delete</i></a>
+              <% end %>
+              <a class="link-overlay" href="http://<%= current_site.username %>.neocities.org/<%= file.filename %>" title="View <%= file.filename %>" target="_blank"></a>
+            </div>
           </div>
-        </div>
-      <% end %>
-    </div>
+        <% end %>
+      </div>
+    </form>
   </div>
 </div>
-
       <form method="POST" action="/site_files/delete" id="deleteFilenameForm">
         <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
         <input type="hidden" id="deleteFilenameInput" name="filename">
@@ -124,3 +140,49 @@
 
 </div>
 </main>
+
+<form id="uploadFilesButtonForm" method="POST" action="/site_files/upload" enctype=multipart/form-data style="display: none">
+  <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+  <input name="from_button" type="hidden" value="true">
+  <input id="uploadFiles" type="file" name="files[]" multiple onchange="$('#uploadFilesButtonForm').submit()">
+</form>
+
+<script src="/js/dropzone.min.js"></script>
+<script type="text/javascript">
+
+  function confirmFileDelete(name) {
+    $('#deleteFileName').html(name);
+    $('#deleteConfirmModal').modal();
+  }
+
+  function fileDelete() {
+    $('#deleteFilenameInput').val($('#deleteFileName').html());
+    $('#deleteFilenameForm').submit();
+  }
+
+  function clickUploadFiles() {
+    $("input[id='uploadFiles']").click()
+  }
+
+  Dropzone.options.uploads = {
+    paramName: 'files',
+    maxFilesize: <%= current_site.available_space_in_megabytes %>,
+    clickable: false,
+    addRemoveLinks: false,
+    dictDefaultMessage: '',
+    uploadMultiple: true,
+    init: function() {
+      this.on("successmultiple", function(file) {
+        location.reload()
+      })
+
+      this.on("error", function(file, errorMessage) {
+        alert('Failed: '+errorMessage)
+      })
+
+      this.on("uploadprogress", function(file, progress) {
+        // $('#upload_progress_bar').css('width', progress+'%');
+      })
+    }
+  }
+</script>

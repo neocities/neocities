@@ -122,13 +122,13 @@ post '/plan/end' do
   redirect '/plan'  unless current_site.supporter? && !current_site.plan_ended
 
   recaptcha_is_valid = ENV['RACK_ENV'] == 'test' || recaptcha_valid?
-  
+
   if !recaptcha_is_valid
     @error = 'Recaptcha was filled out incorrectly, please try re-entering.'
     @plan_name = get_plan_name current_site.stripe_customer_id
     halt erb :'plan/end'
   end
-  
+
   customer = Stripe::Customer.retrieve current_site.stripe_customer_id
   subscriptions = customer.subscriptions.all
 
@@ -389,38 +389,55 @@ get '/site_files/upload' do
   slim :'site_files/upload'
 end
 
+def file_upload_response(error=nil)
+  http_error_code = 406
+
+  if params[:from_button]
+    if error
+      @error = error
+      halt 200, erb(:'dashboard')
+    else
+      redirect '/dashboard'
+    end
+  else
+    halt http_error_code, error if error
+    halt 200, 'File(s) successfully uploaded.'
+  end
+end
+
 post '/site_files/upload' do
   require_login
   @errors = []
   http_error_code = 406
 
-  if params[:newfile] == '' || params[:newfile].nil?
-    @errors << 'You must select a file to upload.'
-    halt http_error_code, 'Did not receive file upload.'
+  params[:files].each do |file|
+    if current_site.file_size_too_large? file[:tempfile].size
+      file_upload_response "#{file[:filename]} is too large, upload cancelled."
+    end
+
+    if !Site.valid_file_type? file
+      file_upload_response "#{file[:filename]}: file type is not allowed on Neocities, upload cancelled."
+    end
   end
 
-  if current_site.file_size_too_large? params[:newfile][:tempfile].size
-    @errors << 'File size must be smaller than available space.'
-    halt http_error_code, 'File size must be smaller than available space.'
+  uploaded_size = params[:files].collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
+
+  if current_site.file_size_too_large? uploaded_size
+    file_upload_response "File(s) do not fit in your available space, upload cancelled."
   end
 
-  unless Site.valid_file_type? params[:newfile]
-    @errors << 'File must me one of the following: HTML, Text, Image (JPG PNG GIF JPEG SVG), JS, CSS, Markdown.'
-    halt http_error_code, 'File type is not supported.' # slim(:'site_files/new')
+  params[:files].each do |file|
+    current_site.store_file Site.sanitize_filename(file[:filename]), file[:tempfile]
   end
 
-  sanitized_filename = params[:newfile][:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')
-
-  current_site.store_file sanitized_filename, params[:newfile][:tempfile]
   current_site.increment_changed_count
 
-  flash[:success] = "Successfully uploaded file #{sanitized_filename}."
-  redirect '/dashboard'
+  file_upload_response
 end
 
 post '/site_files/delete' do
   require_login
-  sanitized_filename = params[:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')
+  sanitized_filename = Site.sanitize_filename params[:filename]
 
   current_site.delete_file(sanitized_filename)
 
@@ -468,16 +485,9 @@ post '/site_files/save/:filename' do |filename|
     halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
   end
 
-  sanitized_filename = filename.gsub(/[^a-zA-Z0-9_\-.]/, '')
+  sanitized_filename = Site.sanitize_filename filename
 
   current_site.store_file sanitized_filename, tempfile
-
-  if sanitized_filename =~ /index\.html/
-    ScreenshotWorker.perform_async current_site.username
-    current_site.update site_changed: true
-  end
-
-  current_site.update changed_count: 1+current_site.changed_count, updated_at: Time.now
 
   'ok'
 end

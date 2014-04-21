@@ -49,7 +49,7 @@
     <% @sites.each do |site| %>
       <li>
         <a href="http://<%= site.username %>.neocities.org" class="neo-Screen-Shot" target="_blank" title="Website of <%= site.username %>">
-          <span class="img-Holder" style="background:url(/site_screenshots/<%= site.username %>.jpg) no-repeat;">
+          <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '270x162') %>) no-repeat;">
             <img src="/img/placeholder.png" alt="<%= site.username %>" />
           </span>
         </a>
