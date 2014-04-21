@@ -24,7 +24,7 @@ class Site < Sequel::Model
     application/xml
     audio/midi
   }
-  VALID_EXTENSIONS = %w{ 
+  VALID_EXTENSIONS = %w{
     html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff json
     geojson csv tsv mf ico pdf asc key pgp xml mid midi
   }
@@ -40,28 +40,30 @@ class Site < Sequel::Model
   VALID_HOSTNAME = /^[a-z0-9][a-z0-9-]+?[a-z0-9]$/i # http://tools.ietf.org/html/rfc1123
 
   # FIXME smarter DIR_ROOT discovery
-  DIR_ROOT        = './'
-  TEMPLATE_ROOT   = File.join DIR_ROOT, 'views', 'templates'
-  PUBLIC_ROOT     = File.join DIR_ROOT, 'public'
-  SITE_FILES_ROOT = File.join PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites')
+  DIR_ROOT             = './'
+  TEMPLATE_ROOT        = File.join DIR_ROOT, 'views', 'templates'
+  PUBLIC_ROOT          = File.join DIR_ROOT, 'public'
+  SITE_FILES_ROOT      = File.join PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites')
+  SCREENSHOTS_ROOT     = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_screenshots_test' : 'site_screenshots'))
+  SCREENSHOTS_URL_ROOT = '/site_screenshots'
 
   many_to_one :server
-  
+
   many_to_many :tags
-  
+
   one_to_many :follows
   one_to_many :followings, key: :actioning_site_id, class: :Follow
-  
+
   one_to_many :tips
   one_to_many :tippings, key: :actioning_site_id, class: :Tip
-  
+
   one_to_many :blocks
   one_to_many :blockings, key: :actioning_site_id, class: :Block
-  
+
   one_to_many :stats
-  
+
   one_to_many :events
-  
+
   one_to_many :changes
 
   class << self
@@ -128,6 +130,7 @@ class Site < Sequel::Model
 
     %w{index not_found}.each do |name|
       File.write file_path("#{name}.html"), render_template("#{name}.erb")
+      ScreenshotWorker.perform_async values[:username], "#{name}.html"
     end
 
     FileUtils.cp template_file_path('cat.png'), file_path('cat.png')
@@ -162,7 +165,7 @@ class Site < Sequel::Model
   def self.valid_file_type?(uploaded_file)
     mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
 
-    return true if (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) && 
+    return true if (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) &&
                    Site::VALID_EXTENSIONS.include?(File.extname(uploaded_file[:filename]).sub(/^./, '').downcase)
     false
   end
@@ -171,13 +174,13 @@ class Site < Sequel::Model
     FileUtils.mv uploaded.path, file_path(filename)
     File.chmod(0640, file_path(filename))
 
-    if filename =~ /index\.html/
-      ScreenshotWorker.perform_async values[:username]
-      self.site_changed = true
-      save(validate: false)
-    end
+    ScreenshotWorker.perform_async values[:username], filename
+
+    self.site_changed = true
+    self.changed_count += 1
+    save(validate: false)
   end
-  
+
   def increment_changed_count
     self.changed_count += 1
     self.updated_at = Time.now
@@ -250,14 +253,14 @@ class Site < Sequel::Model
     if new? && values[:username].length > 2 && !values[:username].match(VALID_HOSTNAME)
       errors.add :username, 'A valid user/site name is required.'
     end
-    
+
     if new? && values[:username].length > 32
       errors.add :username, 'User/site name cannot exceed 32 characters.'
     end
 
-    # Check for existing user    
+    # Check for existing user
     user = self.class.select(:id, :username).filter(username: values[:username]).first
-    
+
     if user
       if user.id != values[:id]
         errors.add :username, 'This username is already taken. Try using another one.'
@@ -267,7 +270,7 @@ class Site < Sequel::Model
     if values[:password].nil? || (@password_length && @password_length < MINIMUM_PASSWORD_LENGTH)
       errors.add :password, "Password must be at least #{MINIMUM_PASSWORD_LENGTH} characters."
     end
-    
+
     if !values[:domain].nil? && !values[:domain].empty?
       if !(values[:domain] =~ /^[a-zA-Z0-9.-]+\.[a-zA-Z0-9]+$/i) || values[:domain].length > 90
         errors.add :domain, "Domain provided is not valid. Must take the form of domain.com"
@@ -291,7 +294,7 @@ class Site < Sequel::Model
   def files_path(name=nil)
     File.join SITE_FILES_ROOT, (name || username)
   end
-  
+
   def file_path(filename)
     File.join files_path, filename
   end
@@ -309,7 +312,7 @@ class Site < Sequel::Model
     space = Dir.glob(File.join(files_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
     space.nil? ? 0 : space
   end
-  
+
   def used_space_in_megabytes
     (used_space_in_bytes.to_f / self.class::ONE_MEGABYTE_IN_BYTES).round(2)
   end
@@ -318,7 +321,7 @@ class Site < Sequel::Model
     remaining = maximum_space_in_bytes - used_space_in_bytes
     remaining < 0 ? 0 : remaining
   end
-  
+
   def available_space_in_megabytes
     (available_space_in_bytes.to_f / self.class::ONE_MEGABYTE_IN_BYTES).round(2)
   end
@@ -339,18 +342,22 @@ class Site < Sequel::Model
   def supporter?
     !values[:stripe_customer_id].nil?
   end
-  
+
   # This will return false if they have ended their support plan.
   def ended_supporter?
     values[:ended_plan]
   end
-  
+
   def plan_name
     return 'Free Plan' if !supporter? || (supporter? && ended_supporter?)
     'Supporter Plan'
   end
-  
+
   def title
     values[:title] || values[:username]
+  end
+
+  def screenshot_url(filename, resolution)
+    "#{SCREENSHOTS_URL_ROOT}/#{values[:username]}/#{filename}.#{resolution}.jpg"
   end
 end

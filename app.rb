@@ -437,7 +437,7 @@ end
 
 post '/site_files/delete' do
   require_login
-  sanitized_filename = params[:filename].gsub(/[^a-zA-Z0-9_\-.]/, '')
+  sanitized_filename = Site.sanitize_filename params[:filename]
 
   current_site.delete_file(sanitized_filename)
 
@@ -485,16 +485,9 @@ post '/site_files/save/:filename' do |filename|
     halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
   end
 
-  sanitized_filename = filename.gsub(/[^a-zA-Z0-9_\-.]/, '')
+  sanitized_filename = Site.sanitize_filename filename
 
   current_site.store_file sanitized_filename, tempfile
-
-  if sanitized_filename =~ /index\.html/
-    ScreenshotWorker.perform_async current_site.username
-    current_site.update site_changed: true
-  end
-
-  current_site.update changed_count: 1+current_site.changed_count, updated_at: Time.now
 
   'ok'
 end

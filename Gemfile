@@ -11,7 +11,6 @@ gem 'puma',               require: nil
 gem 'rubyzip',            require: 'zip'
 gem 'rack-recaptcha',     require: 'rack/recaptcha'
 gem 'rmagick',            require: nil
-gem 'selenium-webdriver', require: nil
 gem 'sidekiq'
 gem 'ago'
 gem 'mail'
@@ -19,6 +18,7 @@ gem 'google-api-client',  require: 'google/api_client'
 gem 'tilt'
 gem 'erubis'
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
+gem 'screencap'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

@@ -30,7 +30,7 @@
     <div class="col col-50 signup-Area" style="width: 289px;">
       <div class="signup-Form">
   	  <fieldset class="content">
-        <img class="screenshot" src="/site_screenshots/<%= current_site.username %>.jpg">
+        <img class="screenshot" src="<%= current_site.screenshot_url('index.html', '270x162') %>">
 	    </fieldset>
       </div>
     </div>
@@ -78,7 +78,7 @@
           <div class="file filehover">
             <% if file.ext.match(/html|htm/) %>
               <div class="html-thumbnail html fileimagehover">
-                <img src="https://neocities.org//site_screenshots/bigpig.jpg">
+                <img src="<%= current_site.screenshot_url(file.filename, '105x63') %>">
                 <div class="overlay"></div>
               </div>
             <% elsif file.ext.match(/jpg|png|bmp|gif/) %>
