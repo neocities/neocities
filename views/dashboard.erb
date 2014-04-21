@@ -60,6 +60,12 @@
   To get started, click on the <strong>index.html</strong> file below to edit it. It's your home page! You can add more files (such as images) from your computer by dragging them into the box below. Need help building web sites? Check out these <a href="/tutorials">tutorials</a>!
 </div>
 
+  <% if @error %>
+    <div class="alert alert-block alert-error">
+      <p><%= @error %></p>
+    </div>
+  <% end %>
+
 <div class="files">
   <div class="header">
     <div class="breadcrumbs">My Files</div> <!-- Should be Home when Folders are implemented -->
@@ -76,14 +82,14 @@
       <div class="upload-Boundary with-instruction"> <!--should remove instruction after at least one new file have been uploaded-->
         <% current_site.file_list.each do |file| %>
           <div class="file filehover">
-            <% if file.ext.match(/html|htm/) %>
+            <% if file.ext.match(Site::HTML_REGEX) && current_site.screenshot_exists?(file.filename, '105x63') %>
               <div class="html-thumbnail html fileimagehover">
                 <img src="<%= current_site.screenshot_url(file.filename, '105x63') %>">
                 <div class="overlay"></div>
               </div>
-            <% elsif file.ext.match(/jpg|png|bmp|gif/) %>
+            <% elsif file.ext.match(Site::IMAGE_REGEX) && current_site.thumbnail_exists?(file.filename, '105x63') %>
               <div class="html-thumbnail image fileimagehover">
-                <img src="https://neocities.org/assets/img/cat-larger.png" style="">
+                <img src="<%= current_site.thumbnail_url(file.filename, '105x63') %>" style="">
                 <div class="overlay"></div>
               </div>
             <% else %>

@@ -45,7 +45,13 @@ class Site < Sequel::Model
   PUBLIC_ROOT          = File.join DIR_ROOT, 'public'
   SITE_FILES_ROOT      = File.join PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites')
   SCREENSHOTS_ROOT     = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_screenshots_test' : 'site_screenshots'))
+  THUMBNAILS_ROOT      = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_thumbnails_test' : 'site_thumbnails'))
   SCREENSHOTS_URL_ROOT = '/site_screenshots'
+  THUMBNAILS_URL_ROOT  = '/site_thumbnails'
+  IMAGE_REGEX          = /jpg|jpeg|png|bmp|gif/
+  LOSSLESS_IMAGE_REGEX = /png|bmp|gif/
+  LOSSY_IMAGE_REGEX    = /jpg|jpeg/
+  HTML_REGEX           = /htm|html/
 
   many_to_one :server
 
@@ -174,7 +180,13 @@ class Site < Sequel::Model
     FileUtils.mv uploaded.path, file_path(filename)
     File.chmod(0640, file_path(filename))
 
-    ScreenshotWorker.perform_async values[:username], filename
+    ext = File.extname(filename).gsub('.', '')
+
+    if ext.match HTML_REGEX
+      ScreenshotWorker.perform_async values[:username], filename
+    elsif ext.match IMAGE_REGEX
+      ThumbnailWorker.perform_async values[:username], filename
+    end
 
     self.site_changed = true
     self.changed_count += 1
@@ -357,7 +369,21 @@ class Site < Sequel::Model
     values[:title] || values[:username]
   end
 
+  def screenshot_exists?(filename, resolution)
+    File.exist? File.join(SCREENSHOTS_ROOT, values[:username], "#{filename}.#{resolution}.jpg")
+  end
+
   def screenshot_url(filename, resolution)
     "#{SCREENSHOTS_URL_ROOT}/#{values[:username]}/#{filename}.#{resolution}.jpg"
+  end
+  
+  def thumbnail_exists?(filename, resolution)
+    ext = File.extname(filename).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
+    File.exist?(File.join(THUMBNAILS_ROOT, values[:username], "#{filename}.#{resolution}.#{ext}"))
+  end
+  
+  def thumbnail_url(filename, resolution)
+    ext = File.extname(filename).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
+    "#{THUMBNAILS_URL_ROOT}/#{values[:username]}/#{filename}.#{resolution}.#{ext}"
   end
 end

@@ -19,3 +19,4 @@ tests/coverage
 config.yml
 .DS_Store
 public/assets/css/.sass-cache/
+public/site_thumbnails

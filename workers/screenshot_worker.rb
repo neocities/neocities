@@ -1,4 +1,30 @@
 require 'RMagick'
+require 'timeout'
+require 'securerandom'
+require 'thread'
+require 'open3'
+
+# Don't judge - Ruby handling of timeouts is a joke..
+module Phantomjs
+  def self.run(*args, &block)
+    pid = nil
+    stdin, stdout, stderr, wait_thr = nil
+    begin
+      Timeout::timeout(50) do
+        stdin, stdout, stderr, wait_thr = Open3.popen3(path, *args)
+        pid = wait_thr.pid
+        wait_thr.join
+        return stdout.read
+      end
+    rescue Timeout::Error
+      stdin.close
+      stdout.close
+      stderr.close
+      Process.kill 'QUIT', pid
+      raise Timeout::Error
+    end
+  end
+end
 
 class ScreenshotWorker
   REQUIRED_RESOLUTIONS = ['235x141', '105x63', '270x162']
@@ -11,13 +37,38 @@ class ScreenshotWorker
     screenshot.close
     screenshot_output_path = screenshot.path+'.png'
 
-    f = Screencap::Fetcher.new("http://#{username}.neocities.org/#{filename}")
-    f.fetch(
-      output: screenshot_output_path,
-      width: 1280,
-      height: 720
-    )
-
+    begin
+      f = Screencap::Fetcher.new("http://#{username}.neocities.org/#{filename}")
+      f.fetch(
+        output: screenshot_output_path,
+        width: 1280,
+        height: 720
+      )
+    rescue Timeout::Error
+      puts "#{username}/#{filename} is timing out, discontinuing"
+      site = Site[username: username]
+      site.update is_crashing: true
+      
+      # Don't enable until we know it works well.
+=begin
+      if site.email
+        EmailWorker.perform_async({
+          from: 'web@neocities.org',
+          to: site.email,
+          subject: "[NeoCities] The web page \"#{filename}\" on your site (#{username}.neocities.org) is slow",
+          body: "Hi there! This is an automated email to inform you that we're having issues loading your site to take a "+
+                "screenshot. It is possible that this is an error specific to our screenshot program, but it is much more "+
+                "likely that your site is too slow to be used with browsers. We don't want Neocities sites crashing browsers, "+
+                "so we're taking steps to inform you and see if you can resolve the issue. "+
+                "We may have to de-list your web site from being viewable in our browse page if it is not resolved shortly. "+
+                "We will review the site manually before taking this step, so don't worry if your site is fine and we made "+
+                "a mistake."+
+                "\n\nOur best,\n- Neocities"
+        })
+      end
+=end
+      return
+    end
 
     img_list = Magick::ImageList.new
     img_list.from_blob File.read(screenshot_output_path)

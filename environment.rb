@@ -45,6 +45,7 @@ Sidekiq.configure_client do |config|
   config.redis = { namespace: 'neocitiesworker' }
 end
 
+require File.join(DIR_ROOT, 'workers', 'thumbnail_worker.rb')
 require File.join(DIR_ROOT, 'workers', 'screenshot_worker.rb')
 require File.join(DIR_ROOT, 'workers', 'email_worker.rb')
 
