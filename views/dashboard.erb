@@ -37,7 +37,7 @@
 
 	<div class="col col-50">
     <h2 class="eps">My Website</h2>
-    <p style="font-size:19px; margin-top: -11px; margin-bottom: 8px;"><a href="http://<%= current_site.username %>.neocities.org" target="_blank">http://<%= current_site.username %>.neocities.org</a></p>
+    <p class="site-url" style="margin-top: -11px;"><a href="http://<%= current_site.username %>.neocities.org" target="_blank">http://<%= current_site.username %>.neocities.org</a></p>
 	<ul>
 <% if current_site.updated_at %>
 	<li>Last updated <%= current_site.updated_at.ago %></li>
