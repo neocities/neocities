@@ -22,7 +22,7 @@ before do
 end
 
 not_found do
-  slim :'not_found'
+  erb :'not_found'
 end
 
 error do
@@ -39,7 +39,7 @@ error do
     api_error 500, 'server_error', 'there has been an unknown server error, please try again later', 500
   end
 
-  slim :'error'
+  erb :'error'
 end
 
 get '/home_mockup' do
