@@ -98,7 +98,7 @@
     <form action="/site_files/upload" class="dropzone" id="uploads">
       <div class="dz-message" style="display: none"></div>
       <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
-      <div class="upload-Boundary with-instruction"> <!--should remove instruction after at least one new file have been uploaded-->
+      <div class="upload-Boundary <%= current_site.file_list.length <= 5 ? 'with-instruction' : '' %>">
         <% current_site.file_list.each do |file| %>
           <div class="file filehover">
             <% if file.ext.match(Site::HTML_REGEX) && current_site.screenshot_exists?(file.filename, '105x63') %>
@@ -159,7 +159,7 @@
         </div>
       </div>
 
-<div class="site-actions" style="margin-bottom:10px">
+<div class="site-actions" style="margin-bottom:25px">
   <a href="/site_files/allowed_types">Allowed file types</a> |
   <a href="/site_files/<%= current_site.username %>.zip">Download entire site</a>
 </div>
