@@ -1,7 +1,6 @@
 require 'RMagick'
 
 class ThumbnailWorker
-  REQUIRED_RESOLUTIONS = ['105x63']
   THUMBNAILS_PATH = File.join DIR_ROOT, 'public', 'site_thumbnails'
   include Sidekiq::Worker
   sidekiq_options queue: :thumbnails, retry: 3, backtrace: true
@@ -14,7 +13,7 @@ class ThumbnailWorker
     user_thumbnails_path = File.join THUMBNAILS_PATH, username
     FileUtils.mkdir_p user_thumbnails_path
 
-    REQUIRED_RESOLUTIONS.each do |res|
+    Site::THUMBNAIL_RESOLUTIONS.each do |res|
       resimg = img.resize_to_fit(*res.split('x').collect {|r| r.to_i})
       format = File.extname(filename).gsub('.', '')
 

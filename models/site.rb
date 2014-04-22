@@ -52,6 +52,9 @@ class Site < Sequel::Model
   LOSSLESS_IMAGE_REGEX = /png|bmp|gif/
   LOSSY_IMAGE_REGEX    = /jpg|jpeg/
   HTML_REGEX           = /htm|html/
+  
+  SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162']
+  THUMBNAIL_RESOLUTIONS  = ['105x63']
 
   many_to_one :server
 
@@ -180,7 +183,7 @@ class Site < Sequel::Model
     FileUtils.mv uploaded.path, file_path(filename)
     File.chmod(0640, file_path(filename))
 
-    ext = File.extname(filename).gsub('.', '')
+    ext = File.extname(filename).gsub(/^./, '')
 
     if ext.match HTML_REGEX
       ScreenshotWorker.perform_async values[:username], filename
@@ -218,8 +221,13 @@ class Site < Sequel::Model
     begin
       FileUtils.rm file_path(filename)
     rescue Errno::ENOENT
-      return false
     end
+
+    ext = File.extname(filename).gsub(/^./, '')
+
+    screenshots_delete(filename) if ext.match HTML_REGEX
+    thumbnails_delete(filename) if ext.match IMAGE_REGEX
+
     true
   end
 
@@ -369,6 +377,28 @@ class Site < Sequel::Model
     values[:title] || values[:username]
   end
 
+  def screenshots_delete(filename)
+    SCREENSHOT_RESOLUTIONS.each do |res|
+      begin
+        FileUtils.rm screenshot_path(filename, res)
+      rescue Errno::ENOENT
+      end
+    end
+  end
+  
+  def thumbnails_delete(filename)
+    THUMBNAIL_RESOLUTIONS.each do |res|
+      begin
+        FileUtils.rm thumbnail_path(filename, res)
+      rescue Errno::ENOENT
+      end
+    end
+  end
+
+  def screenshot_path(filename, resolution)
+    File.join(SCREENSHOTS_ROOT, values[:username], "#{filename}.#{resolution}.jpg")
+  end
+
   def screenshot_exists?(filename, resolution)
     File.exist? File.join(SCREENSHOTS_ROOT, values[:username], "#{filename}.#{resolution}.jpg")
   end
@@ -377,9 +407,17 @@ class Site < Sequel::Model
     "#{SCREENSHOTS_URL_ROOT}/#{values[:username]}/#{filename}.#{resolution}.jpg"
   end
   
-  def thumbnail_exists?(filename, resolution)
+  def thumbnail_path(filename, resolution)
     ext = File.extname(filename).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    File.exist?(File.join(THUMBNAILS_ROOT, values[:username], "#{filename}.#{resolution}.#{ext}"))
+    File.join THUMBNAILS_ROOT, values[:username], "#{filename}.#{resolution}.#{ext}"
+  end
+  
+  def thumbnail_exists?(filename, resolution)
+    File.exist? thumbnail_path(filename, resolution)
+  end
+  
+  def thumbnail_delete(filename, resolution)
+    File.rm thumbnail_path(filename, resolution)
   end
   
   def thumbnail_url(filename, resolution)
