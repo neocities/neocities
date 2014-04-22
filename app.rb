@@ -250,7 +250,7 @@ end
 
 get '/signin' do
   dashboard_if_signed_in
-  slim :'signin'
+  erb :'signin'
 end
 
 get '/settings' do
@@ -565,7 +565,7 @@ post '/admin/mark_nsfw' do
 end
 
 get '/password_reset' do
-  slim :'password_reset'
+  erb :'password_reset'
 end
 
 post '/send_password_reset' do

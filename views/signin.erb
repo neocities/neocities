@@ -1,0 +1,39 @@
+<div class="header-Outro">
+  <div class="row content single-Col txt-Center">
+  <h1>Welcome Back!</h1>
+  <h3 class="subtitle"></h3>
+  </div>
+</div>
+
+<div class="content txt-Center single-Col misc-page">
+  <h3></h3>
+  
+  <% if flash.keys.length > 0 %>
+    <div class="alert alert-block">
+      <p>
+        <% flash.keys.each do |key| %>
+          <%= flash[key] %>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
+  
+  <form method="POST" action="/signin" class="content">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <fieldset>
+      <label for="username">Username</label>
+      <input name="username" type="text" placeholder="sitename" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= flash[:username] %>" style="width: 290px">.neocities.org
+      <label for="password">Password</label>
+      <input name="password" type="password" class="input-Area" placeholder="Your password" style="width: 400px">
+    </fieldset>
+    <input class="btn-Action" type="submit" value="Sign In">
+  </form>
+
+  <hr>
+  <p>
+    <a href="/new" title="Sign me up!">I don't have an account yet.</a>
+  </p>
+  <p>
+    <a href="/password_reset" title="What did I huh?">I forgot my password.</a>
+  </p>
+</div>

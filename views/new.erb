@@ -3,134 +3,134 @@
   Stripe.setPublishableKey('<%= $config['stripe_publishable_key'] %>');
 </script>
 
-<main class="content-Base">
-  <div class="row content">
-    <div class="col col-100">
-      <form method="POST" action="/create" id="signupform">
-        <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
-        
-        <h2 class="txt-Center">Create a New Home Page</h2>
-        
-        <div class="col col-50" style="margin:0 auto; float:none">
-          <% if !@site.errors.empty? %>
-            <div class="row content">
-              <div class="col col-100 txt-Center">
-                <div class="alert alert-block alert-error">
-                  <p>There were errors creating your home page:</p>
-                  <% @site.errors.each do |error| %>
-                    <p class="tiny"><%= error.last.first %></p>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-          <% end %>
-          
-          <hr>
-          <p class="tiny">
-            First, enter a username. This will also be used as your site name.<br><b>Do not forget this, it will be used to sign in to and manage your home page.</b> It can only contain letters, numbers, underscores and hyphens, and can only be 32 characters long.
-          </p>
-          <h5>Username</h5>
-          <p class="tiny">
-            <input class="input-Area" name="username" type="text" placeholder="yourusername" value="<%= @site.username %>" autocapitalize="off" autocorrect="off">.neocities.org
-          </p>
-          
-          <hr>
-
-          <p class="tiny">
-            Next, enter a password. This will be used to allow you to login. Minimum 5 characters. If you don't make it a good password, Dade Murphy from the movie Hackers will come in and steal your "garbage files".
-          </p>
-          <h5>Password</h5>
-          <input class="input-Area" name="password" type="password">
-
-          <hr>
-
-          <p class="tiny">
-            Now you can enter an e-mail address. Your e-mail address is private and we will not show it to anyone for any reason. You don't have to provide one, but <b>we will not be able to reset your password without it, so don't lose your username and password if you leave this blank!</b>
-          </p>
-          <h5>Email</h5>
-          <input class="input-Area" name="email" type="email" placeholder="youremail@example.com" value="<%= @site.email %>">
-
-          <hr>
-
-          <input name="is_nsfw" type="hidden" value="false">
-          <p class="tiny">
-            If your page will contain objectionable (adult) content, check this box:&nbsp;&nbsp;&nbsp;<input name="is_nsfw" type="checkbox" value="true" style="margin-top:0" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>>
-          </p>
-
-          <hr>
-
-          <p class="tiny">You can optionally enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of ten tags, and there is a two word per tag maximum (extra words in a tag will be removed).</p>
-          
-          <h5>Tags</h5>
-          <input class="input-Area" name="tags" type="text" style="width: 400px; max-width:100%" placeholder="pokemon, video games, bulbasaur" value="<%= params[:tags] %>" autocapitalize="off" autocorrect="off">
-          
-          <hr>
-          
-          <p class="tiny"><strong>The site you are creating will be free, forever.</strong> We will never charge you for your web site.</p>
-          <p class="tiny"><a href="/donate" target="_blank">Neocities has to pay the bills though</a>, and we like the idea of being able to work on the site full-time someday. So if you would like to help us reach this goal, we have created the <strong>Supporter Plan</strong>!
-          
-          <p class="tiny">Right now, the <strong>Supporter Plan</strong> is the same as the free plan, except that <strong>Supporter Plan members get 200MB</strong> of web space. You will also be listed as a supporter on our contributors page, and on your site profile page.</p>
-          <p class="tiny">The base plan is $12 ($1/month) billed once per year, which is the cost of <a href="/img/yafagrillmenu.jpg" target="_blank">a delicious Yafa Combo with a lousy tip</a>. If you ever decide to cancel, you get to keep the extra space. Thanks for helping us run this site!</p>
-          
-          <div>
-            <input type="radio" name="plan" value="free" <%= params[:plan].nil? || params[:plan] == 'free' ? 'checked' : '' %>>
-            <span><strong>Free Plan (10MB)</strong></span>
-          </div>
-          <a name="plan_error_link"></a>
-          <div>
-            <input id="supporter" type="radio" name="plan" value="supporter" <%= params[:plan] == 'supporter' ? 'checked' : '' %>>
-            <span><strong>Supporter Plan (200MB)</strong></span>
-          </div>
-          
-          <div id="plan_container" style="margin-top:20px; display: none">
-            <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
-
-            <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
-
-            <p class="tiny">
-              Plan type:
-              <select name="selected_plan" style="width: 200px">
-                <option value="plan_one">$12/year ($1/month)</option>
-                <option value="plan_two" <%= params[:selected_plan].nil? ? 'selected' : '' %>>$24/year ($2/month)</option>
-                <option value="plan_three">$36/year ($3/month)</option>
-                <option value="plan_four">$48/year ($4/month)</option>
-                <option value="plan_five">$60/year ($5/month)</option>
-              </select>
-            </p>
-            
-            <% if params[:stripe_token] %>
-              <p class="tiny">Billing information has been saved, thank you!</p>
-            <% else %>
-              <p class="tiny">
-                Card Number: <input type="text" size="20" data-stripe="number">
-                CVC: <input type="text" size="4" maxlength="4" data-stripe="cvc" style="width: 60px">
-              </p>
-              <p class="tiny">
-                Expiration: 
-                <input type="text" size="2" data-stripe="exp-month" placeholder="MM" maxlength="2" style="width: 50px">
-                <input type="text" size="4" data-stripe="exp-year" placeholder="YYYY" maxlength="4" style="width: 60px">
-              </p>
-            <% end %>
-            
-            <p class="tiny"><strong>We accept Bitcoin!</strong> If you would prefer to use Bitcoin, choose the <strong>Free Plan</strong>, and then upgrade in the <strong>Settings</strong> page once your account is created.</p>
-          </div>
-          
-          <hr>
-          
-          <p class="tiny"><b>Last thing!</b> Enter these two words correctly (with spaces) so we know you're not a robot (don't worry robots, we still love you).</p>
-          
-          <div class="recaptcha">
-            <%== recaptcha_tag :challenge, ssl: request.ssl? %>
-          </div>
-          
-          <hr>
-          
-          <h3>You're done. Just click the button below!</h3>
-          <input class="btn-Action" type="submit" value="Create Home Page">
-      </form>
-    </div>
+<div class="header-Outro">
+  <div class="row content single-Col">
+  <h1>Create a New Web Page</h1>
+  <h3 class="subtitle">Your free web page is only a few minutes away!</h3>
   </div>
-</main>
+</div>
+
+<div class="content single-Col misc-page">
+  <h3></h3>
+  <form method="POST" action="/create" id="signupform">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+
+    <% if !@site.errors.empty? %>
+      <div class="row content">
+        <div class="col col-100 txt-Center">
+          <div class="alert alert-block alert-error">
+            <p>There were errors creating your home page:</p>
+            <% @site.errors.each do |error| %>
+              <p><%= error.last.first %></p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    
+    <p>
+      First, enter a username. This will also be used as your site name.<br><b>Do not forget this, it will be used to sign in to and manage your home page.</b> It can only contain letters, numbers, underscores and hyphens, and can only be 32 characters long.
+    </p>
+    <h5>Username</h5>
+    <p>
+      <input class="input-Area" name="username" type="text" placeholder="yourusername" value="<%= @site.username %>" autocapitalize="off" autocorrect="off" style="width: 200px">.neocities.org
+    </p>
+    
+    <hr>
+
+    <p>
+      Next, enter a password. This will be used to allow you to login. Minimum 5 characters. If you don't make it a good password, Dade Murphy from the movie Hackers will come in and steal your "garbage files".
+    </p>
+    <h5>Password</h5>
+    <input class="input-Area" name="password" type="password" style="width: 200px" placeholder="your password">
+
+    <hr>
+
+    <p>
+      Now you can enter an e-mail address. Your e-mail address is private and we will not show it to anyone for any reason. You don't have to provide one, but <b>we will not be able to reset your password without it, so don't lose your username and password if you leave this blank!</b>
+    </p>
+    <h5>Email</h5>
+    <input class="input-Area" name="email" type="email" placeholder="youremail@example.com" value="<%= @site.email %>" style="width: 300px">
+
+    <hr>
+
+    <input name="is_nsfw" type="hidden" value="false">
+    <p>
+      If your page will contain objectionable (adult) content, check this box:&nbsp;&nbsp;&nbsp;<input name="is_nsfw" type="checkbox" value="true" style="margin-top:0" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>>
+    </p>
+
+    <hr>
+
+    <p>You can optionally enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of ten tags, and there is a two word per tag maximum (extra words in a tag will be removed).</p>
+    
+    <h5>Tags</h5>
+    <input class="input-Area" name="tags" type="text" style="width: 400px; max-width:100%" placeholder="pokemon, video games, bulbasaur" value="<%= params[:tags] %>" autocapitalize="off" autocorrect="off">
+    
+    <hr>
+    
+    <p><strong>The site you are creating will be free, forever.</strong> We will never charge you for your web site.</p>
+    <p><a href="/donate" target="_blank">Neocities has to pay the bills though</a>, and we like the idea of being able to work on the site full-time someday. So if you would like to help us reach this goal, we have created the <strong>Supporter Plan</strong>!
+    
+    <p>Right now, the <strong>Supporter Plan</strong> is the same as the free plan, except that <strong>Supporter Plan members get 200MB</strong> of web space. You will also be listed as a supporter on our contributors page, and on your site profile page.</p>
+    <p>The base plan is $12 ($1/month) billed once per year, which is the cost of <a href="/img/yafagrillmenu.jpg" target="_blank">a delicious Yafa Combo with a lousy tip</a>. If you ever decide to cancel, you get to keep the extra space. Thanks for helping us run this site!</p>
+    
+    <div>
+      <input type="radio" name="plan" value="free" <%= params[:plan].nil? || params[:plan] == 'free' ? 'checked' : '' %>>
+      <span><strong>Free Plan (10MB)</strong></span>
+    </div>
+    <a name="plan_error_link"></a>
+    <div>
+      <input id="supporter" type="radio" name="plan" value="supporter" <%= params[:plan] == 'supporter' ? 'checked' : '' %>>
+      <span><strong>Supporter Plan (200MB)</strong></span>
+    </div>
+    
+    <div id="plan_container" style="margin-top:20px; display: none">
+      <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
+
+      <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
+
+      <p>
+        Plan type:
+        <select name="selected_plan" style="width: 200px">
+          <option value="plan_one">$12/year ($1/month)</option>
+          <option value="plan_two" <%= params[:selected_plan].nil? ? 'selected' : '' %>>$24/year ($2/month)</option>
+          <option value="plan_three">$36/year ($3/month)</option>
+          <option value="plan_four">$48/year ($4/month)</option>
+          <option value="plan_five">$60/year ($5/month)</option>
+        </select>
+      </p>
+      
+      <% if params[:stripe_token] %>
+        <p>Billing information has been saved, thank you!</p>
+      <% else %>
+        <p>
+          Card Number: <input type="text" size="20" data-stripe="number">
+          CVC: <input type="text" size="4" maxlength="4" data-stripe="cvc" style="width: 60px">
+        </p>
+        <p>
+          Expiration: 
+          <input type="text" size="2" data-stripe="exp-month" placeholder="MM" maxlength="2" style="width: 50px">
+          <input type="text" size="4" data-stripe="exp-year" placeholder="YYYY" maxlength="4" style="width: 60px">
+        </p>
+      <% end %>
+      
+      <p><strong>We accept Bitcoin!</strong> If you would prefer to use Bitcoin, choose the <strong>Free Plan</strong>, and then upgrade in the <strong>Settings</strong> page once your account is created.</p>
+    </div>
+    
+    <hr>
+    
+    <p><b>Last thing!</b> Enter these two words correctly (with spaces) so we know you're not a robot (don't worry robots, we still love you).</p>
+    
+    <div class="recaptcha">
+      <%== recaptcha_tag :challenge, ssl: request.ssl? %>
+    </div>
+    
+    <hr>
+    
+    <h3>You're done. Just click the button below!</h3>
+    <input class="btn-Action" type="submit" value="Create Home Page">
+  </form>
+</div>
   
 <script>
   window.onload = function() {
