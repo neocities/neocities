@@ -54,17 +54,30 @@
 
 <div class="content wide">
 
+<% unless current_site.changed_count > 5 %>
 <div class="welcome">
-  <div class="close-button"></div>
+  <!-- <div class="close-button"></div> -->
   <h4>Hello! Welcome to your new site.</h4>
   To get started, click on the <strong>index.html</strong> file below to edit it. It's your home page! You can add more files (such as images) from your computer by dragging them into the box below. Need help building web sites? Check out these <a href="/tutorials">tutorials</a>!
 </div>
+<% end %>
 
   <% if @error %>
     <div class="alert alert-block alert-error">
       <p><%= @error %></p>
     </div>
   <% end %>
+  
+  <% if flash.keys.length > 0 %>
+    <div class="alert alert-block">
+      <p>
+        <% flash.keys.each do |key| %>
+          <%= flash[key] %>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
+  
 
 <div class="files">
   <div class="header">
