@@ -55,7 +55,7 @@ $placeholderColor:#5E7F8D;
 $arial:     Arial, "Helvetica Neue", Helvetica, sans-serif;
 $georgia:   Georgia, "Times New Roman", Times, serif;
 $helvetica: "Helvetica Neue", Helvetica, Arial, sans-serif;
-$brand:     'Open Sans', $helvetica; 
+$brand:     "Lucida Grande", verdana, $helvetica; 
 $headings:  'Droid Serif', $georgia;
 
 
@@ -75,7 +75,7 @@ $delta: $base-font-multiplier * 1.625;   // 26px
 $eps:	  $base-font-multiplier * 1.375;    // 22px
 $zeta:	$base-font-multiplier * 1.125;   // 18px
 
-$base:  $base-font-multiplier;		       // 16px
+$base:  $base-font-multiplier * .9;		    
 $tiny:  $base-font-multiplier * .875;		 // 14px
 $mini:  $base-font-multiplier * .75;		 // 12px
 
