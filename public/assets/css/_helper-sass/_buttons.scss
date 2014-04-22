@@ -72,7 +72,7 @@
 // Coloring
 // ----------------------------------------------------------------
 .btn-Action{@extend %btn; 
-   // background:$c-Btn-1;
+  background:$c-Btn-1;
     @include linear-gradient(top, #e93250, #b11f36);
 
     &:hover{
