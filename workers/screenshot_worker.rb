@@ -27,7 +27,6 @@ module Phantomjs
 end
 
 class ScreenshotWorker
-  REQUIRED_RESOLUTIONS = ['235x141', '105x63', '270x162']
   SCREENSHOTS_PATH = File.join DIR_ROOT, 'public', 'site_screenshots'
   include Sidekiq::Worker
   sidekiq_options queue: :screenshots, retry: 3, backtrace: true
@@ -82,7 +81,7 @@ class ScreenshotWorker
     user_screenshots_path = File.join SCREENSHOTS_PATH, username
     FileUtils.mkdir_p user_screenshots_path
 
-    REQUIRED_RESOLUTIONS.each do |res|
+    Site::SCREENSHOT_RESOLUTIONS.each do |res|
       img.scale(*res.split('x').collect {|r| r.to_i}).write(File.join(user_screenshots_path, "#{filename}.#{res}.jpg")) {
         self.quality = 90
       }
