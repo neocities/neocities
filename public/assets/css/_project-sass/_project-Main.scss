@@ -33,7 +33,7 @@
   margin-top: 20px;
 }
 .site-url {
-  font-size:19px;
+  font-size:18px;
   margin-bottom: 8px;
 }
 .site-url a {
@@ -109,6 +109,7 @@
 }
 .interior .header-Outro h2 {
   margin-top: 12px;
+  font-size: 1.8em;
 }
 .welcome {
   background: #daeea5 url(../img/heartcat.png) no-repeat 20px center;
@@ -130,6 +131,7 @@
   float:left;
   background: #E4D8CB;
   width: 100%;
+  position: relative;
 }
 .files .header {
   background: #5E95A1;
@@ -172,8 +174,8 @@
   float: left;
   border: 3px dashed #F6F0E6;
   width: 100%;
-  margin: 20px 0;
-  padding: 20px;
+  margin: 18px 0;
+  padding: 10px;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
   border-radius: 8px;
@@ -181,6 +183,55 @@
 }
 .files .list .upload-Boundary.with-instruction {
   background: url(../img/drag-drop.png) no-repeat center center;
+}
+.files .uploading-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color:rgba(0, 0, 0, 0.35);
+  z-index: 100;
+}
+.files .uploading {
+  background: #fff;
+  font-style: italic;
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  margin-top: 14%;
+  padding: 25px 40px 28px 40px;
+  -webkit-box-shadow: 1px 1px 21px 5px rgba(50, 50, 50, 0.5);
+  -moz-box-shadow:    1px 1px 21px 5px rgba(50, 50, 50, 0.5);
+  box-shadow:         1px 1px 21px 5px rgba(50, 50, 50, 0.5);
+  border-radius: 10px;
+}
+.files .uploading p {
+  margin-bottom: 2px;
+}
+.files .progress-bar {
+ background:#CCCCCC; 
+ -webkit-border-radius: 8px;
+ -moz-border-radius: 8px;
+ border-radius: 8px;
+ width: 100%;
+ position: relative;
+ margin-top: 14px;
+ height: 10px;
+}
+.files .progress-bar .progress {
+  background: #E93250;
+  height: 100%;
+   -webkit-border-top-right-radius: 0px;
+-webkit-border-bottom-right-radius: 0px;
+       -moz-border-radius-topright: 0px;
+    -moz-border-radius-bottomright: 0px;
+           border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    -webkit-border-top-left-radius: 20px;
+ -webkit-border-bottom-left-radius: 20px;
+        -moz-border-radius-topleft: 20px;
+     -moz-border-radius-bottomleft: 20px;
+            border-top-left-radius: 20px;
+         border-bottom-left-radius: 20px;
 }
 .file {
   float: left;
