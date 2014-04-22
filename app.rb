@@ -492,6 +492,10 @@ post '/site_files/save/:filename' do |filename|
   'ok'
 end
 
+get '/site_files/allowed_types' do
+  erb :'site_files/allowed_types'
+end
+
 get '/terms' do
   erb :'terms'
 end

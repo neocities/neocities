@@ -80,11 +80,10 @@
   
 
 <div class="files">
-  <div class="uploading-overlay">
+  <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
     <div class="uploading">
-        <p>Uploading <strong>heartcat.png</strong>...</p>
-        <p>Uploading <strong>tipcat.png</strong>...</p>
-      <div class="progress-bar"><div class="progress" style="width:60%;"></div></div>
+        <p>Uploading, please wait...</p>
+      <div id="progressBar" class="progress-bar" style="display: none"><div id="uploadingProgress" class="progress" style="width: 0%"></div></div>
     </div>
   </div>
   <div class="header">
@@ -160,15 +159,15 @@
         </div>
       </div>
 
-<div class="site-actions">
-  <!-- <a href="/site_files/<%= current_site.username %>.zip">Allowed file types</a> | -->
+<div class="site-actions" style="margin-bottom:10px">
+  <a href="/site_files/allowed_types">Allowed file types</a> |
   <a href="/site_files/<%= current_site.username %>.zip">Download entire site</a>
 </div>
 
 </div>
 </main>
 
-<form id="uploadFilesButtonForm" method="POST" action="/site_files/upload" enctype=multipart/form-data style="display: none">
+<form id="uploadFilesButtonForm" method="POST" action="/site_files/upload" enctype=multipart/form-data style="display: none" onsubmit="showUploadProgress()">
   <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
   <input name="from_button" type="hidden" value="true">
   <input id="uploadFiles" type="file" name="files[]" multiple onchange="$('#uploadFilesButtonForm').submit()">
@@ -190,6 +189,15 @@
   function clickUploadFiles() {
     $("input[id='uploadFiles']").click()
   }
+  
+  function showUploadProgress() {
+    $('#uploadingOverlay').css('display', 'block')
+  }
+  
+  function hideUploadProgress() {
+    $('#progressBar').css('display', 'none')
+    $('#uploadingOverlay').css('display', 'none')
+  }
 
   Dropzone.options.uploads = {
     paramName: 'files',
@@ -204,11 +212,15 @@
       })
 
       this.on("error", function(file, errorMessage) {
+        hideUploadProgress()
         alert('Failed: '+errorMessage)
       })
 
-      this.on("uploadprogress", function(file, progress) {
-        // $('#upload_progress_bar').css('width', progress+'%');
+      this.on("totaluploadprogress", function(progress, totalBytes, totalBytesSent) {
+        console.log('OH HI')
+        showUploadProgress()
+        $('#progressBar').css('display', 'block')
+        $('#uploadingProgress').css('width', progress+'%')
       })
     }
   }
