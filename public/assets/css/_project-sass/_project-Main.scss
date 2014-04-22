@@ -184,7 +184,7 @@
 }
 .file {
   float: left;
-  padding: 5px;
+  padding: 5px 0px;
   margin-right: 10px;
   margin-bottom: 10px;
   width: 125px;
@@ -196,7 +196,11 @@
   font-weight: bold;
   font-size: 12px;
   color: #666;
+  margin-top: 4px;
   text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
 }
 .html-thumbnail {
   font-size: 11px;
