@@ -13,7 +13,7 @@ h3, .gamma                {font:{size:$gamma;   weight:400}}
 h4, .delta                {font:{size:$delta;   weight:300}}
 h5, .eps                  {font:{size:$eps;     weight:300}}
 h6, .zeta                 {font:{size:$zeta;    weight:300}}
-p, li, li p, .base, li a  {font:{size:$base;    weight:300}}
+p, li, .base              {font:{size:$base;    weight:300}}
 small, .tiny              {font:{size:$tiny;    weight:300}}
 .mini                     {font:{size:$mini;    weight:300}}
 

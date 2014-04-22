@@ -24,7 +24,6 @@
 .twitter-tweet.twitter-tweet-rendered{margin:0 auto 30px!important}
 
 // Interior pages
-
 .interior .header-Outro {
   padding-top: 30px;
   overflow: hidden;
@@ -33,7 +32,14 @@
   font-size: 2.5em;
   margin-top: 20px;
 }
-
+.site-url {
+  font-size:19px;
+  margin-bottom: 8px;
+}
+.site-url a {
+  color: #e93250;
+  font-weight: bold;
+}
 .interior .header-Outro .row.content {
 
 }
@@ -275,4 +281,79 @@
 }
 .site-actions a {
   color: #666;
+}
+.page-with-columns .col-66 {
+  background-color: white;
+  padding: 30px;
+  border-right: 1px solid #ddd;
+}
+.page-with-columns .col-33 {
+  padding: 30px;
+}
+.content.misc-page.columns {
+  padding: 0; 
+}
+.page-with-columns {
+  float: left;
+  padding: 0;
+}
+.header-Outro.with-columns .col {
+  padding-left: 0;
+}
+.header-Outro.short h3 {
+  float: left;
+  margin-bottom: 0;
+}
+.site-suggestion {
+  float: left;
+  width: 156px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  height: 160px;
+}
+.site-portrait {
+  border: 5px solid white;
+  -moz-box-shadow: 1px 1px 2px 1px rgba(0,0,0,.2);
+  -webkit-box-shadow: 1px 1px 2px 1px rgba(0,0,0,.2);
+  box-shadow: 1px 1px 2px 1px rgba(0,0,0,.2);
+  float:left;
+  margin-bottom: .5em;
+}
+.site-portrait img {
+  width: 146px;
+}
+.site-portrait .caption {
+  display: block;
+  clear: both;
+  font-size: .8em;
+  margin-top: .2em;
+  margin-bottom: -.2em;
+}
+a.tag {
+  font-size: .7em;
+  text-transform: uppercase;
+  background: #FFFFCC;
+  color: #C1A009;
+  float: left;
+  padding: 1px 5px;
+  -moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.2);
+  -webkit-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.2);
+  box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.2);
+  margin-right: 3px;
+  margin-right: 10px;
+  margin-bottom: 7px;
+}
+a.tag:hover {
+  text-decoration: none;
+  background: #FFEE8A;
+}
+.following {
+  width: 100%;
+  float: left;
+}
+.following .avatar {
+  height:37px;
+  width:37px;
+  margin: 0 4px 4px 0;
+  float: left;
 }
