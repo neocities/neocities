@@ -84,6 +84,7 @@
 // Dashboard
 .interior .header-Outro .col.col-50.signup-Area {padding-left: 0;}
 .interior .header-Outro a {color:#E93250}
+.interior .header-Outro .btn-Action {color:#fff}
 .interior .signup-Area {
   min-height: 164px;
 }
@@ -561,7 +562,10 @@ a.tag:hover {
   margin-top: .5em;
 }
 .news-item .files {
-  background: white;
+  background: #eee;
+  padding: 8px 10px 2px 10px;
+  border-top: 1px solid #ddd;
+  margin-bottom: 4px;
 }
 .news-item .file {
   width: 90px;
@@ -608,4 +612,62 @@ a.tag:hover {
 }
 .news-item .avatar {
   margin-right: 10px;
+}
+//profile
+.signup-Area.large {
+  width: 418px;
+  height: 236px;
+}
+.interior .header-Outro.with-site-image {
+  padding-top: 20px;
+}
+.report {
+  margin-top: 2em;
+  float: left;
+  width: 100%;
+  font-size: .8em;
+}
+.report, .report a {
+  color: #999;
+}
+.header-Outro .actions a {
+  margin-right: 7px;
+}
+.header-Outro .stats {
+  margin-bottom: 1.2em;
+  float: left;
+  width: 100%;
+  margin-top: 2em;
+}
+.header-Outro .stats strong {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #DAEEA5;
+}
+.header-Outro .stats span {
+  font-size: .7em;
+  text-transform: uppercase;
+  clear: both;
+  display: block;
+}
+.header-Outro .stats .stat {
+  float: left;
+  width: 90px;
+  text-align: center;
+}
+.header-Outro .stats .stat.tips {
+  width: 60px;
+}
+.btn-Action.follow span {
+  background-image: url(../img/follow.png);
+  padding-left: 22px;
+}
+.btn-Action.tip span {
+  background-image: url(../img/tip.png);
+  padding-left: 26px;
+  background-position-y: 1px;
+}
+.btn-Action.share span {
+  background-image: url(../img/share.png);
+  padding-left: 26px;
 }

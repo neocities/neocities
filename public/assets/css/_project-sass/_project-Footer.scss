@@ -24,11 +24,18 @@
 	border-top:1px solid #cedbab;
 	@include box-shadow($bs-4);
 	position:relative;
-	
-	.footer-Content{	
-    padding-top:40px;
-    padding-bottom:40px;
-	}
+}
+.footer-Content{	
+  padding-top:20px;
+  padding-bottom:20px;
+  padding-left: 40px;
+  padding-right: 20px;
+  @media (max-device-width:480px), screen and (max-width:800px){
+    padding-left: 20px; 
+  }
+}
+.footer-Content .row {
+  margin-left: 0;
 }
 
 .f-Col{
