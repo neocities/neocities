@@ -329,6 +329,9 @@
 .filehover:hover .overlay, .fileimagehover:hover .overlay {
     display:block;
 }
+.html-thumbnail.misc.fileimagehover .overlay {
+  margin: 1px 0 0 2px;
+}
 .site-actions {
   float: left;
   margin-top: 20px;
@@ -404,9 +407,9 @@
 }
 .feed-filter {
   float: left;
-  margin-top: 1.5em;
+  margin-top: 1.4em;
   font-size: 0.8em;
-  margin-left: 2.2em;
+  margin-left: 1.5em;
 }
 .interior .header-Outro .feed-filter a {
   color: white;
