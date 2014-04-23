@@ -86,6 +86,9 @@ end
 
 Sinatra::Application.set :erb, escape_html: true
 
+# Session fix for Internet Fucking Explorer https://github.com/rkh/rack-protection/issues/11
+Sinatra::Application.set :protection, except: :session_hijacking
+
 class Sinatra::Base
   alias_method :render_original, :render
   def render(engine, data, options = {}, locals = {}, &block)
