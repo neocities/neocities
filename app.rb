@@ -71,6 +71,12 @@ get '/stats_mockup' do
 end
 
 get '/?' do
+  if SimpleCache.expired?(:sites_count)
+    @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 600 # 10 Minutes
+  else
+    @sites_count = SimpleCache.get :sites_count
+  end
+
   erb :index, layout: false
 end
 
