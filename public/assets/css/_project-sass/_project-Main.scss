@@ -388,21 +388,21 @@
 .interior .header-Outro.with-columns {
     padding-top: 22px;
 } 
-.header-Outro.with-columns h3 {
+.interior .header-Outro.with-columns h3 {
   float: left;
   margin-bottom: 0;
   font-size: 1.7em;
 }
-.header-Outro.with-columns .content {
+.interior .header-Outro.with-columns .content {
   padding: 0;
 }
-.header-Outro.with-columns .col {
+.interior .header-Outro.with-columns .col {
   padding: 25px 0 8px 30px;
 }
-.header-Outro.with-columns .col-32 {
+.interior .header-Outro.with-columns .col-32 {
   width: 33%;
 }
-.header-Outro.with-columns .col-66 {
+.interior .header-Outro.with-columns .col-66 {
   width: 67%;
   border-right: 1px solid #0B0F11;
 }
@@ -630,32 +630,32 @@ a.tag:hover {
 .report, .report a {
   color: #999;
 }
-.header-Outro .actions a {
+.interior .header-Outro .actions a {
   margin-right: 7px;
 }
-.header-Outro .stats {
+.interior .header-Outro .stats {
   margin-bottom: 1.2em;
   float: left;
   width: 100%;
   margin-top: 2em;
 }
-.header-Outro .stats strong {
+.interior .header-Outro .stats strong {
   font-size: 1.5em;
   font-weight: bold;
   color: #DAEEA5;
 }
-.header-Outro .stats span {
+.interior .header-Outro .stats span {
   font-size: .7em;
   text-transform: uppercase;
   clear: both;
   display: block;
 }
-.header-Outro .stats .stat {
+.interior .header-Outro .stats .stat {
   float: left;
   width: 90px;
   text-align: center;
 }
-.header-Outro .stats .stat.tips {
+.interior .header-Outro .stats .stat.tips {
   width: 60px;
 }
 .btn-Action.follow span {

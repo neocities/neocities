@@ -38,6 +38,12 @@
   @include box-shadow($outroShadow);
   color:#fafafa;
 }
+.hp .header-Outro .col-50 {
+  width: 48%;
+}
+.hp .header-Outro .signup-Area {
+  float: right;
+}
 
 .intro-List{
   @extend %kill-List;
