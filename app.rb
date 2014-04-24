@@ -42,6 +42,16 @@ error do
   erb :'error'
 end
 
+get '/newindex_mockup' do
+  if SimpleCache.expired?(:sites_count)
+    @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 600 # 10 Minutes
+  else
+    @sites_count = SimpleCache.get :sites_count
+  end
+
+  erb :newindex_mockup, layout: false
+end
+
 get '/home_mockup' do
   erb :'home_mockup'
 end
