@@ -92,7 +92,10 @@
   -moz-box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.10);
   -webkit-box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.10);
   box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.10);
-  border: 3px solid white;
+  border: 4px solid white;
+}
+.interior .signup-Area.large img {
+  border: 6px solid white;
 }
 .interior .header-Outro .screenshot {
   width:235px;height:141px;
@@ -365,10 +368,16 @@
   position: relative;
   border-right: 1px solid #ddd;
 }
-.right-menu {
+.right-col {
   background: #FAF6F1;
 }
-.right-menu .col-left {
+.content.misc-page .col-33 h3 {
+  font-size: 1.5em;
+}
+.content.misc-page .col-33 h3:nth-of-type(1) {
+  margin-top: 0;
+}
+.right-col .col-left {
   background-color: white;
   right: 33%;
 }
@@ -631,7 +640,7 @@ a.tag:hover {
   color: #999;
 }
 .interior .header-Outro .actions a {
-  margin-right: 7px;
+  margin-right: 6px;
 }
 .interior .header-Outro .stats {
   margin-bottom: 1.2em;
@@ -665,9 +674,68 @@ a.tag:hover {
 .btn-Action.tip span {
   background-image: url(../img/tip.png);
   padding-left: 26px;
-  background-position-y: 1px;
+  background-position-y: -1px;
 }
 .btn-Action.share span {
   background-image: url(../img/share.png);
   padding-left: 26px;
+}
+.col-33 .stats .stat {
+  margin-bottom: .4em;
+}
+.col-33 .stats .stat span {
+  width: 10em;
+  float: left;
+}
+.archives {
+  float: left;
+  width: 100%;
+  margin-bottom: 2em;
+}
+.archives img {
+  float: left;
+  border: 3px solid white;
+  -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3); 
+  width: 72px;
+}
+.archives img {
+  margin-right: 10px;
+}
+.more {
+  float: left;
+  clear: both;
+  margin-top: 1em;
+  font-size: .8em;
+}
+.post-comment {
+  background: #DAEEA5;
+  float: left;
+  width: 111%;
+  padding: 20px 0 10px 30px;
+  margin: -25px 0 28px -30px;
+}
+.post-comment input {
+  width: 84%;
+  float: left;
+}
+.post-comment .btn-Action {
+  margin-left: 10px;
+  margin-top: 4px;
+}
+.supporter-badge {
+  background:url(../img/supporter.png);
+  width: 99px;
+  height: 26px;
+  float: left;
+  margin-top: 7px;
+  margin-left: 10px; 
+}
+.title-with-badge {
+  float: left;
+  width: 100%;
+}
+.title-with-badge span {
+  float: left;
 }

@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="col col-50">
-      <h2 class="eps">Derp's Website</h2>
+      <h2 class="eps title-with-badge"><span>Derp's Website</span><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a></h2>
       <p class="site-url" style="margin-top: -9px;"><a href="http://<%= current_site.username %>.neocities.org" target="_blank">http://<%= current_site.username %>.neocities.org</a></p>
       <div class="stats">
         <div class="stat"><strong>23.5K</strong> <span>visitors</span></div>
@@ -25,8 +25,13 @@
 </div>
 
 <div class="container">
-<div class="content misc-page columns right-menu"><div class="col-left">
+<div class="content misc-page columns right-col"><div class="col-left">
   <div class="col col-66">
+    
+    <div class="post-comment">
+      <input class="" type="text" placeholder="Post on Derp's profile...">
+      <a href="" class="btn-Action">Post</a>
+    </div>
     
     <div class="news-item follow">
       <div class="title">
@@ -128,16 +133,19 @@
   <div class="col col-33">
     <h3>Website Stats</h3>
     <div class="stats">
-      <div class="col col-50">Last updated<br><strong><%= current_site.updated_at.ago %></strong></div>
-      <div class="col col-50">
-        <div><strong><%= current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %></strong> hits</div>
-        <div><strong>24</strong> followers</div>
-        <div><strong>3</strong> tips</div>
-      </div>
+      <div class="stat"><span>Last updated</span><strong><%= current_site.updated_at.ago %></strong></div>
+      <div class="stat"><span>Total updates</span><strong>265</strong></div>
+      <div class="stat"><span>Created</span><strong>December 4, 2013</strong></div>
     </div>
     
     <h3>Archives</h3>
-    
+    <div class="archives">
+    <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"></a>
+    <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"></a>
+    <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"></a>
+    <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"></a>
+    <a href="" class="more">See all versions</a>
+    </div>
     
     <h3>Following</h3>
     <div class="following">
