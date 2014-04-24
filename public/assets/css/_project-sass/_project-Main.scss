@@ -220,6 +220,7 @@
  position: relative;
  margin-top: 14px;
  height: 10px;
+  overflow: hidden;
 }
 .files .progress-bar .progress {
   background: #E93250;
@@ -236,6 +237,9 @@
      -moz-border-radius-bottomleft: 20px;
             border-top-left-radius: 20px;
          border-bottom-left-radius: 20px;
+ position: relative;
+ overflow: hidden;
+ display:block;
 }
 .file {
   float: left;
