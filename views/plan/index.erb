@@ -60,7 +60,7 @@
         <strong>It's safe.</strong> We use <a href="https://stripe.com" target="_blank">Stripe</a> for payments, and never store your credit card information directly.
       </li>
       <li>
-        <strong>It's affordable.</strong> As low as <strong>$1/month</strong> (billed once every year).
+        <strong>It's affordable.</strong> As low as <strong>$1/month</strong> (billed once every year). Higher tiers are optional (and appreciated!)
       </li>
       <li>
         <strong>You can cancel anytime.</strong> And if you do, you can keep the extra space!
@@ -71,7 +71,7 @@
       <h2 class="txt-Center">Become a Supporter</h2>
       <p>If you would like to become a Neocities Supporter, <a href="/signin">Sign In</a> and click the <strong>Settings</strong> link. If you haven't created a site yet, <a href="/new">create your web site now</a>! We would love if you became a Supporter, but base sites on Neocities will always be free.</p>
     <% else %>
-      <h2 class="txt-Center">Upgrade Now</h2>
+      <h2 class="txt-Center">Become a Supporter Now</h2>
     
       <div id="plan_container" style="margin-top:20px" class="txt-Center">
         <form method="post" action="/plan/create" id="planform">
@@ -81,7 +81,7 @@
           <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
 
           <p class="tiny">
-            Plan type:
+            Supporter Tier:
             <select name="selected_plan" style="width: 200px">
               <option value="plan_one">$12/year ($1/month)</option>
               <option value="plan_two" <%= params[:selected_plan].nil? ? 'selected' : '' %>>$24/year ($2/month)</option>
