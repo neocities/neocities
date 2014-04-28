@@ -743,3 +743,28 @@ a.tag:hover {
 .title-with-badge span {
   float: left;
 }
+.section.featured-Websites {
+  background:#65A0AD;
+}
+.section.featured-Websites h2 {
+  color: white;
+}
+.section {
+  padding: 50px 10%;
+  margin: 0 auto;
+}
+.section.previews {
+  background: #f6f0e6;
+}
+.section.previews h2, .section.previews p {
+  color: #31424B;
+}
+.section h2 {
+  font-size: 1.6em;
+}
+.section.last {
+  background: #666666;
+}
+.section.last h2, .section.last blockquote {
+  color: white;
+}
