@@ -109,6 +109,16 @@ post '/plan/create' do
     current_site.stripe_customer_id = customer.id
     current_site.plan_ended = false
     current_site.save
+
+    plan_name = customer.subscriptions.first['plan']['name']
+
+    EmailWorker.perform_async({
+      from: 'web@neocities.org',
+      reply_to: current_site.email,
+      to: 'contact@neocities.org',
+      subject: "[NeoCities] You've become a supporter!",
+      body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: plan_name)
+    })
   end
 
   redirect '/plan'
@@ -712,20 +722,7 @@ post '/stripe_webhook' do
   if event['type'] == 'customer.created'
     username  = event['data']['object']['description']
     email     = event['data']['object']['email']
-    plan_name = event['data']['object']['subscriptions']['object']['data'].first['plan']['name']
-
-    site = Site[username: username]
-    halt 200, 'ok' if site.nil?
-
-    EmailWorker.perform_async({
-      from: 'web@neocities.org',
-      reply_to: site.email,
-      to: 'contact@neocities.org',
-      subject: "[NeoCities] You've become a supporter!",
-      body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self)
-    })
   end
-
   'ok'
 end
 
