@@ -438,6 +438,10 @@ post '/site_files/upload' do
   @errors = []
   http_error_code = 406
 
+  if params[:files].nil?
+    file_upload_response "Uploaded files were not seen by the server, cancelled. We don't know what's causing this yet. Please contact us so we can help fix it. Thanks!"
+  end
+
   params[:files].each do |file|
     if current_site.file_size_too_large? file[:tempfile].size
       file_upload_response "#{file[:filename]} is too large, upload cancelled."
