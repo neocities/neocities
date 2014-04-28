@@ -76,12 +76,12 @@
     
     <div>
       <input type="radio" name="plan" value="free" <%= params[:plan].nil? || params[:plan] == 'free' ? 'checked' : '' %>>
-      <span><strong>Free Plan (10MB)</strong></span>
+      <span><strong>Free Plan (<%= Site::FREE_MAXIMUM_IN_MEGABYTES %>MB)</strong></span>
     </div>
     <a name="plan_error_link"></a>
     <div>
       <input id="supporter" type="radio" name="plan" value="supporter" <%= params[:plan] == 'supporter' ? 'checked' : '' %>>
-      <span><strong>Supporter Plan (200MB)</strong></span>
+      <span><strong>Supporter Plan (<%= Site::SUPPORTER_MAXIMUM_IN_MEGABYTES %>MB)</strong></span>
     </div>
     
     <div id="plan_container" style="margin-top:20px; display: none">
