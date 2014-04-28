@@ -12,9 +12,11 @@ use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $
 helpers Rack::Recaptcha::Helpers
 
 before do
-  if request.path.match(/^\/api\//i)
+  if request.path.match /^\/api\//i
     @api = true
     content_type :json
+  elsif request.path.match /^\/stripe_webhook$/
+    # Skips the CSRF check for stripe web hooks
   else
     content_type :html, 'charset' => 'utf-8'
     redirect '/' if request.post? && !csrf_safe?
@@ -703,6 +705,11 @@ post '/contact' do
     flash[:success] = 'Your contact has been sent.'
     redirect '/'
   end
+end
+
+post '/stripe_webhook' do
+  event_json = JSON.parse(request.body.read)
+  puts event_json.inspect
 end
 
 post '/api/upload' do
