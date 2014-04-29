@@ -1,3 +1,11 @@
+<% events.each do |event| %>
+  <% if event.profile_comment_id %>
+    <%== erb :'_news_profile_comment', layout: false, locals: {event: event} %>
+  <% end %>
+<% end %>
+
+
+<!--
     <div class="news-item follow">
       <div class="title">
         <div class="icon"></div>
@@ -92,3 +100,4 @@
         <div class="actions"><a href="">Like (1)</a> <a href="">Reply</a></div>
       </div>
     </div>
+-->

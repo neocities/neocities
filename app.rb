@@ -70,7 +70,22 @@ end
 get '/profile/:sitename' do |sitename|
   @title = "#{sitename}.neocities.org"
   site = Site[username: sitename]
-  erb :'profile', locals: {site: site}
+  erb :'profile', locals: {site: site, is_current_site: site == current_site}
+end
+
+post '/profile/:sitename/comment' do |sitename|
+  require_login
+
+  site = Site[username: sitename]
+
+  DB.transaction do
+    site.add_profile_comment(
+      actioning_site_id: current_site.id,
+      message: params[:message]
+    )
+  end
+
+  redirect "/profile/#{sitename}"
 end
 
 get '/tags_mockup' do

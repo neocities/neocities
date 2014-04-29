@@ -52,6 +52,7 @@ class Site < Sequel::Model
   LOSSLESS_IMAGE_REGEX = /png|bmp|gif/
   LOSSY_IMAGE_REGEX    = /jpg|jpeg/
   HTML_REGEX           = /htm|html/
+  MAX_COMMENT_SIZE     = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
 
   SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162', '37x37', '146x88', '302x182', '90x63', '82x62']
   THUMBNAIL_RESOLUTIONS  = ['105x63']
@@ -59,6 +60,9 @@ class Site < Sequel::Model
   many_to_one :server
 
   many_to_many :tags
+
+  one_to_many :profile_comments
+  one_to_many :profile_commentings, key: :actioning_site_id, class: :ProfileComment
 
   one_to_many :follows
   one_to_many :followings, key: :actioning_site_id, class: :Follow
@@ -73,7 +77,7 @@ class Site < Sequel::Model
 
   one_to_many :events
 
-  one_to_many :changes
+  one_to_many :site_changes
 
   class << self
     def valid_login?(username, plaintext)

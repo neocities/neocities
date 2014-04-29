@@ -29,18 +29,20 @@
 <div class="container">
 <div class="content misc-page columns right-col"><div class="col-left">
   <div class="col col-66">
-    
     <div class="post-comment">
-      <input class="" type="text" placeholder="Post on Derp's profile...">
-      <a href="" class="btn-Action">Post</a>
+      <form method="POST" action="/profile/<%= site.username %>/comment">
+        <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+        <input name="message" type="text" placeholder="Post a message..." maxlength="<%= Site::MAX_COMMENT_SIZE %>">
+        <button class="btn-Action">Post</button>
+      </form>
     </div>
-    
+
     <% if site.latest_events.empty? %>
       <div>
         <p>No activity yet.</p>
       </div>
     <% else %>
-      <%= erb :'_profile_news', layout: false, locals: {events: events} %>
+      <%== erb :'_news', layout: false, locals: {site: site, events: site.events} %>
     <% end %>
     
   </div>
