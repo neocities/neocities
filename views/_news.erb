@@ -1,9 +1,8 @@
 <% events.each do |event| %>
   <% if event.profile_comment_id %>
-    <%== erb :'_news_profile_comment', layout: false, locals: {event: event} %>
+    <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment} %>
   <% end %>
 <% end %>
-
 
 <!--
     <div class="news-item follow">

@@ -1,8 +1,8 @@
 <div class="news-item comment for-me">
   <div class="title">
-    <div class="icon" style="background-image:url(https://neocities.org/site_screenshots/codeventurer.jpg);"></div>
-    <a href="" class="user">Foo</a> 
-    <span class="date"><%= event.profile_comment.created_at.ago %></span>
-    <div class="comment"><%= event.profile_comment.message %></div>
+    <div class="icon" style="background-image:url(<%= profile_comment.actioning_site.screenshot_url('index.html', '82x62') %>);"></div>
+    <a href="" class="user"><%= profile_comment.actioning_site.username %></a> 
+    <span class="date"><%= profile_comment.created_at.ago %></span>
+    <div class="comment"><%= profile_comment.message %></div>
   </div>
 </div>

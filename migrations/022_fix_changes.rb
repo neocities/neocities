@@ -4,6 +4,6 @@ Sequel.migration do
   }
 
   down {
-    DB.drop_column :site_changes, :changes
+    DB.rename_table :site_changes, :changes
   }
 end

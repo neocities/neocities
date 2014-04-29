@@ -3,12 +3,12 @@
     <div class="col col-50 signup-Area large">
       <div class="signup-Form">
   	  <fieldset class="content">
-        <img class="screenshot" src="http://neocities.org/site_screenshots/codeventurer.jpg" style="width: 358px;height: 215px;">
+        <img class="screenshot" src="<%= site.screenshot_url('index.html', '348x205') %>" style="width: 358px;height: 215px;">
 	    </fieldset>
       </div>
     </div>
     <div class="col col-50">
-      <h2 class="eps title-with-badge"><span>Derp's Website</span> <% if site.supporter? && !site.ended_supporter? %><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
+      <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? && !site.ended_supporter? %><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
       <p class="site-url"><a href="http://<%= site.username %>.neocities.org" target="_blank">http://<%= site.username %>.neocities.org</a></p>
       <div class="stats">
         <div class="stat"><strong><%= site.hits_english %></strong> <span>hits</span></div>
@@ -29,13 +29,15 @@
 <div class="container">
 <div class="content misc-page columns right-col"><div class="col-left">
   <div class="col col-66">
-    <div class="post-comment">
-      <form method="POST" action="/profile/<%= site.username %>/comment">
-        <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
-        <input name="message" type="text" placeholder="Post a message..." maxlength="<%= Site::MAX_COMMENT_SIZE %>">
-        <button class="btn-Action">Post</button>
-      </form>
-    </div>
+    <% if current_site %>
+      <div class="post-comment">
+        <form method="POST" action="/profile/<%= site.username %>/comment">
+          <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+          <input name="message" type="text" placeholder="Post a message..." maxlength="<%= Site::MAX_COMMENT_SIZE %>">
+          <button class="btn-Action">Post</button>
+        </form>
+      </div>
+    <% end %>
 
     <% if site.latest_events.empty? %>
       <div>

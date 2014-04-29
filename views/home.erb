@@ -107,10 +107,10 @@
           </div>
         </div>
 
-        <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg" style="width:340px" class="large-portrait"></a>
+        <a href=""><img src="<%= site.screenshot_url('index.html', '348x205') %>" style="width:340px" class="large-portrait"></a>
 
         <div style="margin-top: 20px; margin-bottom: 20px" class="txt-Center">
-          <a href="/profile/<%= site.username %>" class="btn-Action">View Site Profile</a>
+          <a href="/site/<%= site.username %>" class="btn-Action">View Site Profile</a>
         </div>
 
         <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>

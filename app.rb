@@ -67,13 +67,13 @@ get '/profile_mockup' do
   erb :'profile_mockup', locals: {site: current_site}
 end
 
-get '/profile/:sitename' do |sitename|
+get '/site/:sitename' do |sitename|
   @title = "#{sitename}.neocities.org"
   site = Site[username: sitename]
-  erb :'profile', locals: {site: site, is_current_site: site == current_site}
+  erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
-post '/profile/:sitename/comment' do |sitename|
+post '/site/:sitename/comment' do |sitename|
   require_login
 
   site = Site[username: sitename]
@@ -85,7 +85,7 @@ post '/profile/:sitename/comment' do |sitename|
     )
   end
 
-  redirect "/profile/#{sitename}"
+  redirect "/site/#{sitename}"
 end
 
 get '/tags_mockup' do
@@ -886,6 +886,7 @@ def signed_in?
 end
 
 def current_site
+  return nil if session[:id].nil?
   @site ||= Site[id: session[:id]]
 end
 

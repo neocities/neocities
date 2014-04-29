@@ -5,7 +5,7 @@
       <p>You are not following any sites yet. Add some by <a href="/browse">browsing sites</a> or looking at your tags.
     <% else %>
       <% site.followings.each do |following| %>
-        <a href="#"><img src="<%= site.screenshot_path 'index.html', '37x37' %>" class="avatar"></a>
+        <a href="/site/<%= site.username %>"><img src="<%= site.screenshot_path 'index.html', '37x37' %>" class="avatar"></a>
       <% end %>
     <% end %>
   </div>
