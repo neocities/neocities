@@ -1,0 +1,10 @@
+<% if is_current_site %>
+  <h3>Tags</h3>
+  <% if site.tags_dataset.count == 0 %>
+    <p>You don't have any tags yet. <a href="#">Add some!</a>
+  <% else %>
+    <% site.tags.each do |tag| %>
+    <a class="tag" href="//neocities.org/tags/<%= tag.name %>"><%= tag.name %></a>
+    <% end %>
+  <% end %>
+<% end %>

@@ -52,8 +52,8 @@ class Site < Sequel::Model
   LOSSLESS_IMAGE_REGEX = /png|bmp|gif/
   LOSSY_IMAGE_REGEX    = /jpg|jpeg/
   HTML_REGEX           = /htm|html/
-  
-  SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162']
+
+  SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162', '37x37', '146x88', '302x182', '90x63', '82x62']
   THUMBNAIL_RESOLUTIONS  = ['105x63']
 
   many_to_one :server
@@ -89,6 +89,11 @@ class Site < Sequel::Model
     def bcrypt_cost=(cost)
       @bcrypt_cost = cost
     end
+  end
+
+  def tip_amount
+    return '0.00' if tips_dataset.count == 0
+    '31.337'
   end
 
   def username=(val)
@@ -373,8 +378,16 @@ class Site < Sequel::Model
     'Supporter Plan'
   end
 
+  def latest_events
+    events_dataset.order(:id.desc).limit(10).all
+  end
+
   def title
     values[:title] || values[:username]
+  end
+  
+  def hits_english
+    values[:hits].to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
   end
 
   def screenshots_delete(filename)

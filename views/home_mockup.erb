@@ -245,7 +245,7 @@
   <div class="col col-33">
     <p class="site-url"><a href="http://<%= current_site.username %>.neocities.org" target="_blank">http://<%= current_site.username %>.neocities.org</a></p>
     <div class="stats">
-      <div class="col col-50">Last updated<br><strong><%= current_site.updated_at.ago %></strong></div>
+      <div class="col col-50">Last updated<br><strong><%= current_site.updated_at ? current_site.updated_at.ago  : '' %></strong></div>
       <div class="col col-50">
         <div><strong><%= current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %></strong> hits</div>
         <div><strong>24</strong> followers</div>

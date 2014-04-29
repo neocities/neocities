@@ -9,7 +9,7 @@
     </div>
     <div class="col col-50">
       <h2 class="eps title-with-badge"><span>Derp's Website</span><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a></h2>
-      <p class="site-url" style="margin-top: -9px;"><a href="http://<%= current_site.username %>.neocities.org" target="_blank">http://<%= current_site.username %>.neocities.org</a></p>
+      <p class="site-url" style="margin-top: -9px;"><a href="http://<%= site.username %>.neocities.org" target="_blank">http://<%= site.username %>.neocities.org</a></p>
       <div class="stats">
         <div class="stat"><strong>23.5K</strong> <span>visitors</span></div>
         <div class="stat"><strong>342</strong> <span>followers</span></div>
@@ -133,11 +133,20 @@
   <div class="col col-33">
     <h3>Website Stats</h3>
     <div class="stats">
-      <div class="stat"><span>Last updated</span><strong><%= current_site.updated_at.ago %></strong></div>
-      <div class="stat"><span>Total updates</span><strong>265</strong></div>
-      <div class="stat"><span>Created</span><strong>December 4, 2013</strong></div>
+      <div class="stat">
+        <span>Last updated</span>
+        <strong>
+          <% if site.updated_at.nil? %>
+            Just Created
+          <% else %>
+            <%= site.updated_at.ago.downcase %>
+          <% end %>
+        </strong>
+      </div>
+      <div class="stat"><span>Total updates</span><strong><%= site.changed_count %></strong></div>
+      <div class="stat"><span>Created</span><strong><%= site.created_at.strftime('%B %-d, %Y') %></strong></div>
     </div>
-    
+
     <h3>Archives</h3>
     <div class="archives">
     <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"></a>

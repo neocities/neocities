@@ -31,7 +31,7 @@ error do
   EmailWorker.perform_async({
     from: 'web@neocities.org',
     to: 'errors@neocities.org',
-    subject: "[NeoCities Error] #{env['sinatra.error'].class}: #{env['sinatra.error'].message}",
+    subject: "[Neocities Error] #{env['sinatra.error'].class}: #{env['sinatra.error'].message}",
     body: "#{request.request_method} #{request.path}\n\n" +
           (current_site ? "Site: #{current_site.username}\nEmail: #{current_site.email}\n\n" : '') +
           env['sinatra.error'].backtrace.join("\n")
@@ -63,7 +63,14 @@ get '/edit_mockup' do
 end
 
 get '/profile_mockup' do
-  erb :'profile_mockup'
+  require_login
+  erb :'profile_mockup', locals: {site: current_site}
+end
+
+get '/profile/:sitename' do |sitename|
+  @title = "#{sitename}.neocities.org"
+  site = Site[username: sitename]
+  erb :'profile', locals: {site: site}
 end
 
 get '/tags_mockup' do
@@ -83,6 +90,11 @@ get '/stats_mockup' do
 end
 
 get '/?' do
+  if current_site
+    require_login
+    halt erb :'home', locals: {site: current_site}
+  end
+
   if SimpleCache.expired?(:sites_count)
     @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 600 # 10 Minutes
   else
@@ -116,7 +128,7 @@ post '/plan/create' do
       from: 'web@neocities.org',
       reply_to: current_site.email,
       to: 'contact@neocities.org',
-      subject: "[NeoCities] You've become a supporter!",
+      subject: "[Neocities] You've become a supporter!",
       body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: plan_name)
     })
   end
@@ -263,7 +275,7 @@ post '/create' do
     end
 
     session[:id] = @site.id
-    redirect '/dashboard'
+    redirect '/'
   else
     @site.errors.add :captcha, 'You must type in the two words correctly! Try again.' if !recaptcha_is_valid
 
@@ -299,7 +311,7 @@ post '/signin' do
     end
 
     session[:id] = site.id
-    redirect '/dashboard'
+    redirect '/'
   else
     flash[:error] = 'Invalid login.'
     flash[:username] = params[:username]
@@ -614,7 +626,7 @@ post '/send_password_reset' do
     end
 
     body = <<-EOT
-Hello! This is the NeoCities cat, and I have received a password reset request for your e-mail address. Purrrr.
+Hello! This is the Neocities cat, and I have received a password reset request for your e-mail address. Purrrr.
 
 Go to this URL to reset your password: http://neocities.org/password_reset_confirm?token=#{token}
 
@@ -625,7 +637,7 @@ Token: #{token}
 If you didn't request this reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
 
 Meow,
-the NeoCities Cat
+the Neocities Cat
     EOT
 
     body.strip!
@@ -633,12 +645,12 @@ the NeoCities Cat
     EmailWorker.perform_async({
       from: 'web@neocities.org',
       to: params[:email],
-      subject: '[NeoCities] Password Reset',
+      subject: '[Neocities] Password Reset',
       body: body
     })
   end
 
-  flash[:success] = 'If your email was valid (and used by a site), the NeoCities Cat will send an e-mail to your account with password reset instructions.'
+  flash[:success] = 'If your email was valid (and used by a site), the Neocities Cat will send an e-mail to your account with password reset instructions.'
   redirect '/'
 end
 
@@ -712,7 +724,7 @@ post '/contact' do
       from: 'web@neocities.org',
       reply_to: params[:email],
       to: 'contact@neocities.org',
-      subject: "[NeoCities Contact]: #{params[:subject]}",
+      subject: "[Neocities Contact]: #{params[:subject]}",
       body: params[:body]
     })
 
@@ -863,7 +875,7 @@ def current_site
 end
 
 def title
-  out = "NeoCities"
+  out = "Neocities"
   return out                  if request.path == '/'
   return "#{out} - #{@title}" if @title
   "#{out} - #{request.path.gsub('/', '').capitalize}"

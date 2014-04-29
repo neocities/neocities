@@ -1,0 +1,122 @@
+<div class="header-Outro with-columns">
+  <div class="row content">
+    <div class="col col-66">
+      <h3>Your Feed</h3>
+      <div class="feed-filter"><a href="">All Activity</a>  <a href="">Activity on your profile</a></div>
+    </div>
+    <div class="col col-32">
+      <h3>Your Website</h3>
+      <a href="/dashboard" class="btn-Action edit">Edit Site</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="content misc-page columns right-col">
+    <div class="col-left">
+      <div class="col col-66">
+        <% if current_site.followings_dataset.count == 0 %>
+          <div class="welcome">
+            <h4>Welcome to your Neocities news feed!</h4>
+            <p>You aren't following any websites yet! Once you do, updates will show up here and you can like and comment on them. Here are some website suggestions based on your tags, or <a href="/browse">check out all the sites on Neocities!</a></p>
+          </div>
+
+          <div class="site-suggestion">
+            <div class="site-portrait">
+              <a href="http://dragonquest.neocities.org">
+                <img src="http://neocities.org/site_screenshots/dragonquest.jpg">
+                <span class="caption">dragonquest</span>
+              </a>
+            </div>
+            <a class="tag" href="http://neocities.org">Games</a>
+            <a class="tag" href="http://neocities.org">Anime</a>
+            <a class="tag" href="http://neocities.org">Art</a>
+            <a class="tag" href="http://neocities.org">Cooking</a>
+          </div>
+
+          <div class="site-suggestion">
+            <div class="site-portrait">
+              <a href="http://dragonquest.neocities.org">
+                <img src="http://neocities.org/site_screenshots/dragonquest.jpg">
+                <span class="caption">dragonquest</span>
+              </a>
+            </div>
+            <a class="tag" href="http://neocities.org">Games</a>
+            <a class="tag" href="http://neocities.org">Anime</a>
+            <a class="tag" href="http://neocities.org">Art</a>
+          </div>
+
+          <div class="site-suggestion">
+            <div class="site-portrait">
+              <a href="http://dragonquest.neocities.org">
+                <img src="http://neocities.org/site_screenshots/dragonquest.jpg">
+                <span class="caption">dragonquest</span>
+              </a>
+            </div>
+            <a class="tag" href="http://neocities.org">Games</a>
+            <a class="tag" href="http://neocities.org">Anime</a>
+          </div>
+
+          <div class="site-suggestion">
+            <div class="site-portrait">
+              <a href="http://dragonquest.neocities.org">
+                <img src="http://neocities.org/site_screenshots/dragonquest.jpg">
+                <span class="caption">dragonquest</span>
+              </a>
+            </div>
+            <a class="tag" href="http://neocities.org">Games</a>
+          </div>
+
+          <div class="site-suggestion">
+            <div class="site-portrait">
+              <a href="http://dragonquest.neocities.org">
+                <img src="http://neocities.org/site_screenshots/dragonquest.jpg">
+                <span class="caption">dragonquest</span>
+              </a>
+            </div>
+            <a class="tag" href="http://neocities.org">Games</a>
+            <a class="tag" href="http://neocities.org">Anime</a>
+          </div>
+
+          <div class="site-suggestion">
+            <div class="site-portrait">
+              <a href="http://dragonquest.neocities.org">
+                <img src="http://neocities.org/site_screenshots/dragonquest.jpg">
+                <span class="caption">dragonquest</span>
+              </a>
+            </div>
+            <a class="tag" href="http://neocities.org">Games</a>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col col-33">
+        <p class="site-url"><a href="http://<%= site.username %>.neocities.org" target="_blank">http://<%= site.username %>.neocities.org</a></p>
+        <div class="stats">
+          <div class="col col-50">
+            <% if site.updated_at %>
+              Last updated<br><strong><%= site.updated_at.ago %></strong>
+            <% else %>
+              Your new site!<br><strong><a href="/dashboard">Start Building</a></strong>
+            <% end %>
+          </div>
+          <div class="col col-50">
+            <div><strong><%= site.hits_english %></strong> hits</div>
+            <div><strong><%= site.follows_dataset.count %></strong> followers</div>
+            <div><strong><%= site.tips_dataset.count %></strong> tips ($<%= site.tip_amount %>)</div>
+          </div>
+        </div>
+
+        <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg" style="width:340px" class="large-portrait"></a>
+
+        <div style="margin-top: 20px; margin-bottom: 20px" class="txt-Center">
+          <a href="/profile/<%= site.username %>" class="btn-Action">View Site Profile</a>
+        </div>
+
+        <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
+
+        <%== erb :'_tags', layout: false, locals: {site: site, is_current_site: site == current_site} %>
+      </div>
+    </div>
+  </div>
+</div>

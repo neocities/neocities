@@ -1,0 +1,12 @@
+<% if (!is_current_site && site.followings_dataset.count > 0) || is_current_site %>
+  <h3>Following</h3>
+  <div class="following">
+    <% if site.followings_dataset.count == 0 %>
+      <p>You are not following any sites yet. Add some by <a href="/browse">browsing sites</a> or looking at your tags.
+    <% else %>
+      <% site.followings.each do |following| %>
+        <a href="#"><img src="<%= site.screenshot_path 'index.html', '37x37' %>" class="avatar"></a>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
