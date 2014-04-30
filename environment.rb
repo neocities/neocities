@@ -37,12 +37,15 @@ end
 
 Sidekiq::Logging.logger = nil unless ENV['RACK_ENV'] == 'production'
 
+sidekiq_redis_config = {namespace: 'neocitiesworker'}
+sidekiq_redis_config[:url] = $config['sidekiq_url'] if $config['sidekiq_url']
+
 Sidekiq.configure_server do |config|
-  config.redis = { namespace: 'neocitiesworker' }
+  config.redis = sidekiq_redis_config
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { namespace: 'neocitiesworker' }
+  config.redis = sidekiq_redis_config
 end
 
 require File.join(DIR_ROOT, 'workers', 'thumbnail_worker.rb')
