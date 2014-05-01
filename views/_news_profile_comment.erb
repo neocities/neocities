@@ -5,4 +5,6 @@
     <span class="date"><%= profile_comment.created_at.ago %></span>
     <div class="comment"><%= profile_comment.message %></div>
   </div>
+
+  <%== erb :'_news_actions', layout: false, locals: {event: profile_comment.event} %>
 </div>

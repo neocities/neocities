@@ -1,0 +1,11 @@
+<div id="event_<%= event.id %>_actions" class="actions">
+  <% if current_site %>
+    <a href="#" id="like" onclick="new Like(<%= event.id %>, '<%= csrf_token %>').toggleLike(); return false"><%= event.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= event.likes_dataset.count > 0 ? " (#{event.likes_dataset.count})" : '' %></a>
+  <% else %>
+    <% event_like_count = event.likes_dataset.count %>
+    <% if event_like_count > 0 %>
+      <%= event_like_count %> <%= event_like_count == 1 ? 'like' : 'likes' %>
+    <% end %>
+  <% end %>
+  <a href="">Reply</a>
+</div>
