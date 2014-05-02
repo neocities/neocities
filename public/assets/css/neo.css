@@ -176,6 +176,9 @@ textarea {
   overflow: auto;
   vertical-align: top; }
 
+.tooltip-inner {
+  white-space: pre-wrap; }
+
 table {
   border-collapse: collapse;
   border-spacing: 0; }

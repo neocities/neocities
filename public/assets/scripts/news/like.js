@@ -18,5 +18,6 @@ Like.prototype.toggleLike = function() {
 
       self.link.text(linkText)
     }
+    self.link.attr('data-original-title', res.liking_site_names.join('<br>'))
   })
 }

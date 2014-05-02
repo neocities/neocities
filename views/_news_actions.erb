@@ -1,6 +1,6 @@
 <div id="event_<%= event.id %>_actions" class="actions">
   <% if current_site %>
-    <a href="#" id="like" onclick="new Like(<%= event.id %>, '<%= csrf_token %>').toggleLike(); return false"><%= event.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= event.likes_dataset.count > 0 ? " (#{event.likes_dataset.count})" : '' %></a>
+    <a href="#" id="like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= event.liking_site_names.join('<br>') %>" onclick="new Like(<%= event.id %>, '<%= csrf_token %>').toggleLike(); return false"><%= event.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= event.likes_dataset.count > 0 ? " (#{event.likes_dataset.count})" : '' %></a>
   <% else %>
     <% event_like_count = event.likes_dataset.count %>
     <% if event_like_count > 0 %>

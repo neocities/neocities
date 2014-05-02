@@ -22,3 +22,7 @@ hr{border-top:1px solid #ddd; display:block; height:1px; margin:$spacing*6 0}
 @import 'base-Media';		// Styling for base media elements
 @import 'typography';		// Styling for base typographical elements
 @import 'base-Form';		// Styling for base form elements
+
+.tooltip-inner {
+  white-space:pre-wrap;
+}
