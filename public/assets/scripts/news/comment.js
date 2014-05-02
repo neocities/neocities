@@ -9,7 +9,7 @@ Comment.prototype.create = function(form) {
   var comment = form.find('[name="comment"]').val()
   form.remove()
 
-  $.post('/event/'+this.eventId+'/comment', {csrf_token: this.csrfToken, comment: comment}, function(res) {
+  $.post('/event/'+this.eventId+'/comment', {csrf_token: this.csrfToken, message: comment}, function(res) {
     console.log(res)
   })
   

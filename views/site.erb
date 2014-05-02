@@ -31,7 +31,7 @@
   <div class="col col-66">
     <% if current_site %>
       <div class="post-comment">
-        <form method="POST" action="/profile/<%= site.username %>/comment">
+        <form method="POST" action="/site/<%= site.username %>/comment">
           <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
           <input name="message" type="text" placeholder="Post a message..." autocomplete="off" maxlength="<%= Site::MAX_COMMENT_SIZE %>">
           <button class="btn-Action">Post</button>
@@ -44,7 +44,7 @@
         <p>No activity yet.</p>
       </div>
     <% else %>
-      <%== erb :'_news', layout: false, locals: {site: site, events: site.events} %>
+      <%== erb :'_news', layout: false, locals: {site: site, events: site.events_dataset.order(:id.desc).all} %>
     <% end %>
     
   </div>

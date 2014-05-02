@@ -1,6 +1,13 @@
 <div id="comment-template" style="display: none">
-  <form onsubmit="new Comment({{ event_id }}, '<%= csrf_token %>').create(this); location.reload(); return false">
+  <form onsubmit="new Comment({{ eventId }}, '<%= csrf_token %>').create(this); location.reload(); return false">
     <input name="comment" type="text" autocomplete="off" maxlength="<%= Site::MAX_COMMENT_SIZE %>" style="width: 100%" placeholder="Comment on this...">
     <button class="btn-Action">Post</button>
+  </form>
+</div>
+
+<div id="comment-edit-template" style="display: none">
+  <form onsubmit="ProfileComment.update({{ eventId }}, '<%= csrf_token %>'); return false">
+      <textarea rows="5" style="width: 100%" maxlength="<%= Site::MAX_COMMENT_SIZE %>">{{ content }}</textarea>
+      <button class="btn-Action">Save</button> <a href="#" onclick="ProfileComment.cancelEditor({{ eventId }}); return false">Cancel</a>
   </form>
 </div>

@@ -26,4 +26,4 @@ input[type='search']::-webkit-search-decoration{-webkit-appearance:none}
 buton::-moz-focus-inner, input::-moz-focus-inner{border:0; padding:0}
 
 // Makes sure that overflow shows and text is aligned to top of area
-textarea{overflow:auto; vertical-align:top}
+textarea{overflow:auto; vertical-align:top; border: 2px solid #DCE4EC;}

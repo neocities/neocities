@@ -8,6 +8,11 @@ class Event < Sequel::Model
   one_to_many :likes
   one_to_many :comments
 
+  def created_by?(site)
+    return true if profile_comment && profile_comment.actioning_site_id == site.id
+    false
+  end
+
   def liking_site_names
     likes.collect {|like| like.actioning_site.username }
   end

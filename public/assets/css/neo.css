@@ -174,7 +174,8 @@ buton::-moz-focus-inner, input::-moz-focus-inner {
 
 textarea {
   overflow: auto;
-  vertical-align: top; }
+  vertical-align: top;
+  border: 2px solid #DCE4EC; }
 
 .tooltip-inner {
   white-space: pre-wrap; }

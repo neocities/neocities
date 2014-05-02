@@ -10,4 +10,12 @@
   <% if current_site %>
     <a id="reply" href="#" onclick="Template.renderComment(<%= event.id %>); return false">Reply</a>
   <% end %>
+  <% if event.created_by? current_site %>
+    <% if event.profile_comment_id %>
+      <a id="editLink" href="#" onclick="ProfileComment.displayEditor('<%= event.id %>'); return false">Edit</a>
+    <% end %>
+  <% end %>
+  <% if event.created_by?(current_site) || event.site_id == current_site.id %>
+    <a href="#">Delete</a>
+  <% end %>
 </div>
