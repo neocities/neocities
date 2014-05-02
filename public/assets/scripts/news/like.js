@@ -5,13 +5,8 @@ var Like = function(eventId, csrfToken) {
 }
 
 Like.prototype.toggleLike = function() {
-  console.log('herp?')
   var self = this
   $.post('/event/'+this.eventId+'/toggle_like', {csrf_token: this.csrfToken}, function(res) {
-    console.log(res)
-    
-    console.log(self.link.text('butts'))
-    
     if(res.result == 'liked')
       self.link.text('Unlike ('+res.event_like_count+')')
 

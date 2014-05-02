@@ -1,9 +1,35 @@
+<script src="/assets/scripts/news/template.js"></script>
 <script src="/assets/scripts/news/like.js"></script>
+<script src="/assets/scripts/news/comment.js"></script>
 <% events.each do |event| %>
   <% if event.profile_comment_id %>
-    <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment} %>
+    <div class="news-item comment for-me">
+      <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment} %>
   <% end %>
+  
+  <%== erb :'_news_actions', layout: false, locals: {event: event} %>
+  
+  <% if event.comments_dataset.count > 0 %>
+    <div class="content">
+      <div class="comments">
+        <% event.comments.each do |comment| %>
+          <div class="comment">
+            <img class="avatar" src="<%= comment.actioning_site.screenshot_url('index.html', '82x62') %>">
+            <a href="" class="user"><%= comment.actioning_site.username %></a>
+            <span class="date"><%= comment.created_at.ago %></span>
+            <p><%= comment.message %></p>
+          </div>
+          <div class="actions"><a href="">Like (1)</a></div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  </div>
+
 <% end %>
+
+<%== erb :'_news_templates', layout: false %>
 
 <!--
     <div class="news-item follow">

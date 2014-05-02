@@ -6,6 +6,11 @@ class Event < Sequel::Model
   one_to_one  :site_change
   many_to_one :profile_comment
   one_to_many :likes
+  one_to_many :comments
+  
+  def add_site_comment(site, message)
+    add_comment actioning_site_id: site.id, message: message
+  end
   
   def site_likes?(site)
     likes_dataset.filter(actioning_site_id: site.id).count > 0

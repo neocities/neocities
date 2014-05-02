@@ -7,5 +7,7 @@
       <%= event_like_count %> <%= event_like_count == 1 ? 'like' : 'likes' %>
     <% end %>
   <% end %>
-  <a href="">Reply</a>
+  <% if current_site %>
+    <a id="reply" href="#" onclick="Template.renderComment(<%= event.id %>); return false">Reply</a>
+  <% end %>
 </div>

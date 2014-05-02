@@ -865,6 +865,14 @@ post '/event/:event_id/toggle_like' do |event_id|
   {result: liked_response, event_like_count: event.likes_dataset.count}.to_json
 end
 
+post '/event/:event_id/comment' do |event_id|
+  require_login
+  content_type :json
+  event = Event[id: event_id]
+  event.add_site_comment current_site, params[:comment]
+  {result: 'ok'}.to_json
+end
+
 def require_admin
   redirect '/' unless signed_in? && current_site.is_admin
 end
