@@ -896,6 +896,19 @@ post '/event/:event_id/delete' do |event_id|
   return {result: 'error'}.to_json
 end
 
+post '/comment/:comment_id/delete' do |comment_id|
+  require_login
+  content_type :json
+  comment = Comment[id: comment_id]
+
+  if comment.event.site == current_site || comment.actioning_site == current_site
+    comment.delete
+    return {result: 'success'}.to_json
+  end
+
+  return {result: 'error'}.to_json
+end
+
 def require_admin
   redirect '/' unless signed_in? && current_site.is_admin
 end

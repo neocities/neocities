@@ -15,13 +15,18 @@
     <div class="content">
       <div class="comments">
         <% event.comments.each do |comment| %>
-          <div class="comment">
+          <div class="comment" id="comment_<%= comment.id %>">
             <img class="avatar" src="<%= comment.actioning_site.screenshot_url('index.html', '82x62') %>">
             <a href="" class="user"><%= comment.actioning_site.username %></a>
             <span class="date"><%= comment.created_at.ago %></span>
             <p><%= comment.message %></p>
           </div>
-          <div class="actions"><a href="">Like (1)</a></div>
+          <div class="actions">
+            <a id="like" href="#" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>)">Like (1)</a>
+            <% if event.site_id == current_site.id || comment.actioning_site_id == current_site.id %>
+              <a href="#" onclick="Comment.delete(<%= comment.id %>, '<%= csrf_token %>'); return false">Delete</a>
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>

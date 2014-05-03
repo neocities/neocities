@@ -1,16 +1,19 @@
-var Comment = function(eventId, csrfToken) {
-  this.eventId = eventId
-  this.csrfToken = csrfToken
-}
+var Comment = {
+  create: function(eventId, csrfToken, form) {
+    var form = $(form)
+    var comment = form.find('[name="comment"]').val()
+    form.remove()
 
-Comment.prototype.create = function(form) {
-  var self = this
-  var form = $(form)
-  var comment = form.find('[name="comment"]').val()
-  form.remove()
+    $.post('/event/'+eventId+'/comment', {csrf_token: csrfToken, message: comment}, function(res) {
+      console.log(res)
+      location.reload()
+    })
+  },
 
-  $.post('/event/'+this.eventId+'/comment', {csrf_token: this.csrfToken, message: comment}, function(res) {
-    console.log(res)
-  })
-  
+  delete: function(commentId, csrfToken) {
+    $.post('/comment/'+commentId+'/delete', {csrf_token: csrfToken}, function(res) {
+      console.log(res)
+      location.reload()
+    })
+  }
 }
