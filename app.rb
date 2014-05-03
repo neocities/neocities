@@ -870,7 +870,7 @@ post '/event/:event_id/comment' do |event_id|
   content_type :json
   event = Event[id: event_id]
   event.add_site_comment current_site, params[:message]
-  {result: 'ok'}.to_json
+  {result: 'success'}.to_json
 end
 
 post '/event/:event_id/update_profile_comment' do |event_id|
@@ -880,7 +880,20 @@ post '/event/:event_id/update_profile_comment' do |event_id|
   return {result: 'error'}.to_json unless current_site.id == event.profile_comment.actioning_site_id
 
   event.profile_comment.update message: params[:message]
-  return {result: 'ok'}.to_json
+  return {result: 'success'}.to_json
+end
+
+post '/event/:event_id/delete' do |event_id|
+  require_login
+  content_type :json
+  event = Event[id: event_id]
+
+  if event.site_id == current_site.id || event.owned_by?(current_site)
+    event.delete
+    return {result: 'success'}.to_json
+  end
+
+  return {result: 'error'}.to_json
 end
 
 def require_admin

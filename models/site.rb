@@ -1,7 +1,8 @@
 require 'tilt'
 
 class Site < Sequel::Model
-  # We might need to include fonts in here..
+  include Sequel::ParanoidDelete
+  
   VALID_MIME_TYPES = %w{
     text/plain
     text/html

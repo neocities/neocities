@@ -1,4 +1,6 @@
 class Event < Sequel::Model
+  include Sequel::ParanoidDelete
+
   many_to_one :site
   one_to_one  :follow
   one_to_one  :tip

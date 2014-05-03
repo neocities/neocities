@@ -12,6 +12,8 @@ require 'zip'
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
+Dir['./ext/**/*.rb'].each {|f| require f}
+
 if ENV['TRAVIS']
   $config = YAML.load_file File.join(DIR_ROOT, 'config.yml.travis')
 else
@@ -91,29 +93,3 @@ Sinatra::Application.set :erb, escape_html: true
 
 # Session fix for Internet Fucking Explorer https://github.com/rkh/rack-protection/issues/11
 Sinatra::Application.set :protection, except: :session_hijacking
-
-class Sinatra::Base
-  alias_method :render_original, :render
-  def render(engine, data, options = {}, locals = {}, &block)
-    options.merge!(pretty: self.class.development?) if engine == :slim && options[:pretty].nil?
-    render_original engine, data, options, locals, &block
-  end
-end
-
-class Numeric
-  def roundup(nearest=10)
-    self % nearest == 0 ? self : self + nearest - (self % nearest)
-  end
-
-  def rounddown(nearest=10)
-    self % nearest == 0 ? self : self - (self % nearest)
-  end
-end
-
-class Time
-  alias_method :ago_original, :ago
-
-  def ago
-   ago_original.downcase.gsub('right now, this very moment.', 'just now')
-  end
-end
