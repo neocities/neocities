@@ -205,6 +205,13 @@ get '/site/:username/tip' do |username|
   erb :'tip'
 end
 
+post '/site/:site_id/toggle_follow' do |site_id|
+  require_login
+  content_type :json
+  site = Site[id: site_id]
+  {result: (current_site.toggle_follow(site) ? 'followed' : 'unfollowed')}.to_json
+end
+
 get '/browse' do
   @current_page = params[:current_page]
   @current_page = @current_page.to_i

@@ -2,7 +2,7 @@ require 'tilt'
 
 class Site < Sequel::Model
   include Sequel::ParanoidDelete
-  
+
   VALID_MIME_TYPES = %w{
     text/plain
     text/html
@@ -65,7 +65,10 @@ class Site < Sequel::Model
   one_to_many :profile_comments
   one_to_many :profile_commentings, key: :actioning_site_id, class: :ProfileComment
 
+  # Who is following this site
   one_to_many :follows
+
+  # Who this site is following
   one_to_many :followings, key: :actioning_site_id, class: :Follow
 
   one_to_many :tips
@@ -93,6 +96,20 @@ class Site < Sequel::Model
 
     def bcrypt_cost=(cost)
       @bcrypt_cost = cost
+    end
+  end
+
+  def is_following?(site)
+    followings_dataset.select(:id).filter(site_id: site.id).first ? true : false
+  end
+
+  def toggle_follow(site)
+    if is_following? site
+      followings_dataset.filter(site_id: site.id).delete
+      false
+    else
+      add_following site_id: site.id
+      true
     end
   end
 
@@ -390,7 +407,7 @@ class Site < Sequel::Model
   def title
     values[:title] || values[:username]
   end
-  
+
   def hits_english
     values[:hits].to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
   end
@@ -403,7 +420,7 @@ class Site < Sequel::Model
       end
     end
   end
-  
+
   def thumbnails_delete(filename)
     THUMBNAIL_RESOLUTIONS.each do |res|
       begin
@@ -424,20 +441,20 @@ class Site < Sequel::Model
   def screenshot_url(filename, resolution)
     "#{SCREENSHOTS_URL_ROOT}/#{values[:username]}/#{filename}.#{resolution}.jpg"
   end
-  
+
   def thumbnail_path(filename, resolution)
     ext = File.extname(filename).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
     File.join THUMBNAILS_ROOT, values[:username], "#{filename}.#{resolution}.#{ext}"
   end
-  
+
   def thumbnail_exists?(filename, resolution)
     File.exist? thumbnail_path(filename, resolution)
   end
-  
+
   def thumbnail_delete(filename, resolution)
     File.rm thumbnail_path(filename, resolution)
   end
-  
+
   def thumbnail_url(filename, resolution)
     ext = File.extname(filename).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
     "#{THUMBNAILS_URL_ROOT}/#{values[:username]}/#{filename}.#{resolution}.#{ext}"

@@ -16,9 +16,11 @@
         <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div>
       </div>
       <div class="actions">
-        <% if site != current_site %>
-          <a href="" class="btn-Action follow"><span>Follow</span></a>
-          <a href="" class="btn-Action tip"><span>Tip</span></a>
+        <% if current_site && current_site != site %>
+        <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>')" class="btn-Action <%= current_site.is_following?(site) ? '' : 'follow' %>">
+            <span><%= current_site.is_following?(site) ? 'Unfollow' : 'Follow' %></span>
+          </a>
+          <a href="#" class="btn-Action tip"><span>Tip</span></a>
         <% end %>
         <a href="" class="btn-Action share"><span>Share</span></a>
       </div>
@@ -46,9 +48,9 @@
     <% else %>
       <%== erb :'_news', layout: false, locals: {site: site, events: site.events_dataset.order(:id.desc).all} %>
     <% end %>
-    
+
   </div>
-  
+
   <div class="col col-33">
     <h3>Website Stats</h3>
     <div class="stats">
@@ -74,7 +76,7 @@
     <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"></a>
     <a href="" class="more">See all versions</a>
     </div>
-    
+
     <% if site.followings_dataset.count < 0 %>
       <h3>Following</h3>
       <div class="following">
@@ -83,11 +85,11 @@
         <% end %>
       </div>
     <% end %>
-    
+
     <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
-    
+
     <%== erb :'_tags', layout: false, locals: {site: site, is_current_site: site == current_site} %>
-    
+
     <div class="report">
       <a href="">Report</a> | <a href="">Block</a>
     </div>
