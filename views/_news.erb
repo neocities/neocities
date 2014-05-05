@@ -8,9 +8,9 @@
     <div class="news-item comment for-me" id="event_<%= event.id %>">
       <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment} %>
   <% end %>
-  
+
   <%== erb :'_news_actions', layout: false, locals: {event: event} %>
-  
+
   <% if event.comments_dataset.count > 0 %>
     <div class="content">
       <div class="comments">
@@ -22,9 +22,20 @@
             <p><%= comment.message %></p>
           </div>
           <div class="actions">
-            <a id="like" href="#" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>)">Like (1)</a>
-            <% if event.site_id == current_site.id || comment.actioning_site_id == current_site.id %>
-              <a href="#" onclick="Comment.delete(<%= comment.id %>, '<%= csrf_token %>'); return false">Delete</a>
+
+            <% if current_site %>
+              <a href="#" class="comment_like" id="comment_<%= comment.id %>_like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= comment.liking_site_names.join('<br>') %>" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>'); return false"><%= comment.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= comment.comment_likes_dataset.count > 0 ? " (#{comment.comment_likes_dataset.count})" : '' %></a>
+            <% else %>
+              <% comment_like_count = comment.comment_likes_dataset.count %>
+              <% if comment_like_count > 0 %>
+                <%= comment_like_count %> <%= comment_like_count == 1 ? 'like' : 'likes' %>
+              <% end %>
+            <% end %>
+
+            <% if current_site %>
+              <% if event.site_id == current_site.id || comment.actioning_site_id == current_site.id %>
+                <a href="#" onclick="Comment.delete(<%= comment.id %>, '<%= csrf_token %>'); return false">Delete</a>
+              <% end %>
             <% end %>
           </div>
         <% end %>
@@ -45,14 +56,14 @@
         <a href="" class="user">Derp</a> followed <a href="" class="user">Foo's</a> website<span class="date">7h</span>
       </div>
     </div>
-    
+
     <div class="news-item tip">
       <div class="title">
         <div class="icon"></div>
         <a href="" class="user">Derp</a> tipped <a href="" class="user">Foo's</a> website: <a href="" class="comment">Wow, great work here! Please keep updating :)</a><span class="date">Apr 23</span>
       </div>
     </div>
-    
+
     <div class="news-item comment">
       <div class="title">
         <div class="icon"></div>
@@ -60,14 +71,14 @@
         <span class="date">Apr 20</span>
       </div>
     </div>
-    
+
     <div class="news-item follow">
       <div class="title">
         <div class="icon"></div>
         <a href="" class="user">Derp</a> followed <a href="" class="user">victoria's</a> website<span class="date">Apr 7</span>
       </div>
     </div>
-    
+
     <div class="news-item update">
       <div class="title">
         <div class="icon"></div>
@@ -94,11 +105,11 @@
         <div class="actions"><a href="">Like (1)</a> <a href="">Reply</a></div>
       </div>
     </div>
-    
+
     <div class="news-item comment for-me">
       <div class="title">
         <div class="icon" style="background-image:url(https://neocities.org/site_screenshots/codeventurer.jpg);"></div>
-        <a href="" class="user">Foo</a> 
+        <a href="" class="user">Foo</a>
         <span class="date">Apr 7</span>
         <div class="comment">Your site is amazing. Very helpful information. Would love to see more updates if you have time. Your site is amazing. Very helpful information. Would love to see more updates if you have time. </div>
       </div>
@@ -109,11 +120,11 @@
             <img class="avatar" src="https://neocities.org/site_screenshots/victoria.jpg">
             <a href="" class="user">victoria</a> Indeed, it's great!<span class="date">Apr 7</span>
             <div class="actions"><a href="">Like (1)</a></div>
-          </div>  
+          </div>
         </div>
       </div>
     </div>
-    
+
     <div class="news-item comment">
       <div class="title">
         <div class="icon"></div>
@@ -121,7 +132,7 @@
         <span class="date">Apr 7</span>
       </div>
     </div>
-    
+
     <div class="news-item tip for-me">
       <div class="title">
         <div class="icon" style="background-image:url(https://neocities.org/site_screenshots/victoria.jpg);"></div>
