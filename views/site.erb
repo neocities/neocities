@@ -1,3 +1,14 @@
+<div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=1418659625072715&version=v2.0";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
 <div class="header-Outro with-site-image">
   <div class="row content">
     <div class="col col-50 signup-Area large">
@@ -22,7 +33,7 @@
           </a>
           <a href="#" class="btn-Action tip"><span>Tip</span></a>
         <% end %>
-        <a href="" class="btn-Action share"><span>Share</span></a>
+        <a href="#" class="btn-Action share" onclick="$('#shareModal').modal(); return false"><span>Share</span></a>
       </div>
     </div>
   </div>
@@ -95,4 +106,32 @@
     </div>
   </div>
 </div></div>
+</div>
+
+<div class="modal hide fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+    <h3 id="shareModalLabel">Share this Site</h3>
+  </div>
+  <div class="modal-body" style="height: 300px">
+    <p>
+      <a href="https://twitter.com/share" class="twitter-share-button" data-text="<%= site.username %>.neocities.org is awesome!" data-via="neocitiesweb" data-count="none">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </p>
+
+    <p>
+      <a href="http://www.tumblr.com/share" title="Share on Tumblr" style="display:inline-block; text-indent:-9999px; overflow:hidden; width:61px; height:20px; background:url('http://platform.tumblr.com/v1/share_2.png') top left no-repeat transparent;">Share on Tumblr</a>
+    </p>
+
+    <p>
+      <a href="http://www.reddit.com/submit" onclick="window.location = 'http://www.reddit.com/submit?url=' + encodeURIComponent(window.location); return false"> <img src="http://www.reddit.com/static/spreddit7.gif" alt="submit to reddit" border="0" /> </a>
+    </p>
+
+    <p>
+      <div class="fb-share-button" data-href="//neocities.org/site/<%= site.username %>" data-width="100" data-type="button" style="height: 100px"></div>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Done</button>
+  </div>
 </div>
