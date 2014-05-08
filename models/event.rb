@@ -2,13 +2,15 @@ class Event < Sequel::Model
   include Sequel::ParanoidDelete
 
   many_to_one :site
-  one_to_one  :follow
+  many_to_one :follow
   one_to_one  :tip
   one_to_one  :tag
   one_to_one  :site_change
   many_to_one :profile_comment
   one_to_many :likes
   one_to_many :comments
+  many_to_one :site
+  many_to_one :actioning_site, key: :actioning_site_id, class: :Site
 
   def created_by?(site)
     return true if profile_comment && profile_comment.actioning_site_id == site.id

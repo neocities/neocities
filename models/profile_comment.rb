@@ -4,6 +4,6 @@ class ProfileComment < Sequel::Model
   many_to_one :actioning_site, :class => :Site
 
   def after_create
-    self.event = Event.create site_id: site.id
+    self.event = Event.create site_id: site.id, actioning_site_id: actioning_site.id
   end
 end

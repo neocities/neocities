@@ -105,10 +105,16 @@ class Site < Sequel::Model
 
   def toggle_follow(site)
     if is_following? site
-      followings_dataset.filter(site_id: site.id).delete
+      follow = followings_dataset.filter(site_id: site.id).first
+      site.events_dataset.filter(follow_id: follow.id).delete
+      follow.delete
       false
     else
-      add_following site_id: site.id
+      DB.transaction do
+        follow = add_following site_id: site.id
+        Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
+      end
+
       true
     end
   end

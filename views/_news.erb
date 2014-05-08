@@ -9,6 +9,12 @@
   <% if event.profile_comment_id %>
     <div class="news-item comment for-me" id="event_<%= event.id %>">
       <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment} %>
+  <% elsif event.follow_id %>
+    <div class="news-item follow">
+      <div class="title">
+      <div class="icon"></div>
+      <a href="/site/<%= event.actioning_site.username %>" class="user"><%= event.actioning_site.username %></a> followed <a href="/site/<%= event.site.username %>" class="user"><%= event.site.username %>'s</a> website<span class="date">7h</span>
+      </div>
   <% end %>
 
   <%== erb :'_news_actions', layout: false, locals: {event: event} %>
@@ -19,7 +25,7 @@
         <% event.comments.each do |comment| %>
           <div class="comment" id="comment_<%= comment.id %>">
             <img class="avatar" src="<%= comment.actioning_site.screenshot_url('index.html', '82x62') %>">
-            <a href="" class="user"><%= comment.actioning_site.username %></a>
+            <a href="/site/<%= comment.actioning_site.username %>" class="user"><%= comment.actioning_site.username %></a>
             <span class="date"><%= comment.created_at.ago %></span>
             <p><%= comment.message %></p>
           </div>
