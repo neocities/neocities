@@ -1,11 +1,24 @@
 <% if (!is_current_site && site.followings_dataset.count > 0) || is_current_site %>
-  <h3>Following</h3>
+  <h3><%= is_current_site ? 'You follow' : 'This site follows' %></h3>
   <div class="following">
     <% if site.followings_dataset.count == 0 %>
       <p>You are not following any sites yet. Add some by <a href="/browse">browsing sites</a> or looking at your tags.
     <% else %>
       <% site.followings.each do |following| %>
-        <a href="/site/<%= site.username %>"><img src="<%= site.screenshot_path 'index.html', '37x37' %>" class="avatar"></a>
+        <a href="/site/<%= following.site.username %>"><img src="<%= site.screenshot_path 'index.html', '37x37' %>" class="avatar"></a>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if (!is_current_site && site.follows_dataset.count > 0) || is_current_site %>
+  <h3>Followers</h3>
+  <div class="following">
+    <% if site.follows_dataset.count == 0 %>
+      No followers yet.
+    <% else %>
+      <% site.follows.each do |follow| %>
+      <a href="/site/<%= follow.actioning_site.username %>"><img src="<%= follow.actioning_site.screenshot_path 'index.html', '37x37' %>" class="avatar"></a>
       <% end %>
     <% end %>
   </div>

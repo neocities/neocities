@@ -4,7 +4,7 @@
     <p>You don't have any tags yet. <a href="#">Add some!</a>
   <% else %>
     <% site.tags.each do |tag| %>
-    <a class="tag" href="/tags/<%= tag.name %>"><%= tag.name %></a>
+      <a class="tag" href="/browse?tag=<%== Rack::Utils.escape tag.name %>"><%= tag.name %></a>
     <% end %>
   <% end %>
 <% end %>

@@ -69,16 +69,17 @@
         <span>Last updated</span>
         <strong>
           <% if site.updated_at.nil? %>
-            Just Created
+            <%= site.created_at.ago.downcase %>
           <% else %>
             <%= site.updated_at.ago.downcase %>
           <% end %>
         </strong>
       </div>
-      <div class="stat"><span>Total updates</span><strong><%= site.changed_count %></strong></div>
+      <div class="stat"><span>Number of updates</span><strong><%= site.changed_count %></strong></div>
       <div class="stat"><span>Created</span><strong><%= site.created_at.strftime('%B %-d, %Y') %></strong></div>
     </div>
 
+    <!-- 
     <h3>Archives</h3>
     <div class="archives">
     <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"></a>
@@ -87,15 +88,7 @@
     <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"></a>
     <a href="" class="more">See all versions</a>
     </div>
-
-    <% if site.followings_dataset.count < 0 %>
-      <h3>Following</h3>
-      <div class="following">
-        <% site.followings.each do |following| %>
-          <a href="#"><img src="<%= site.screenshot_path 'index.html', '37x37' %>" class="avatar"></a>
-        <% end %>
-      </div>
-    <% end %>
+    -->
 
     <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
 

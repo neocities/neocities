@@ -76,6 +76,8 @@ end
 post '/site/:sitename/comment' do |sitename|
   require_login
 
+  redirect "/site/#{sitename}" if params[:message].empty?
+
   site = Site[username: sitename]
 
   DB.transaction do
