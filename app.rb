@@ -68,8 +68,9 @@ get '/profile_mockup' do
 end
 
 get '/site/:sitename' do |sitename|
-  @title = "#{sitename}.neocities.org"
   site = Site[username: sitename]
+  not_found if(site.nil?)
+  @title = "#{sitename}.neocities.org"
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
