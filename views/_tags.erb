@@ -1,10 +1,37 @@
 <% if (!is_current_site && site.tags_dataset.count > 0) || is_current_site %>
   <h3>Tags</h3>
-  <% if site.tags_dataset.count == 0 %>
-    <p>You don't have any tags yet. <a href="#">Add some!</a>
+  <% if is_current_site && site.tags_dataset.count == 0 %>
+    <p>You don't have any tags yet. <a href="#addTag" data-toggle="modal">Add some!</a>
   <% else %>
     <% site.tags.each do |tag| %>
       <a class="tag" href="/browse?tag=<%== Rack::Utils.escape tag.name %>"><%= tag.name %></a>
     <% end %>
+
+    <% if is_current_site %>
+      <div class="clear">
+        <a href="#addTag" data-toggle="modal">Add Tags</a>
+      </div>
+    <% end %>
   <% end %>
-<% end %>
+<% end %> 
+
+<div class="modal hide fade" id="addTag" tabindex="-1" role="dialog" aria-labelledby="addTagLabel" aria-hidden="true">
+  <form method="POST" action="/tags/add">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <h3 id="addTagLabel">Add Tags</h3>
+    </div>
+    <div class="modal-body">
+      <p>
+        Tags must only be a single word, and can only contain letters and numbers. Separate multiple tags with commas (example: pokemon, gardening, bicycles).
+      </p>
+      <p>Tags:</p>
+      <input type="text" name="tags">
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn btn-Action">Add Tag(s)</button>
+    </div>
+  </form>
+</div>

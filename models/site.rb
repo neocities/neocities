@@ -279,10 +279,16 @@ class Site < Sequel::Model
   def after_save
     if @new_tag_strings
       @new_tag_strings.each do |new_tag_string|
-        add_tag Tag[name: new_tag_string] || Tag.create(name: new_tag_string)
+        add_tag_name new_tag_string
       end
     end
     super
+  end
+
+  def add_tag_name(name)
+    if tags_dataset.filter(name: name).first.nil?
+      add_tag Tag[name: name] || Tag.create(name: name)
+    end
   end
 
   def after_create

@@ -9,10 +9,8 @@
   <% end %>
   <% if current_site %>
     <a id="reply" href="#" onclick="Template.renderComment(<%= event.id %>); return false">Reply</a>
-    <% if event.created_by? current_site %>
-      <% if event.profile_comment_id %>
+    <% if event.profile_comment_id && event.created_by?(current_site) %>
         <a id="editLink" href="#" onclick="ProfileComment.displayEditor('<%= event.id %>'); return false">Edit</a>
-      <% end %>
     <% end %>
     <% if event.created_by?(current_site) || event.site_id == current_site.id %>
       <a href="#" onclick="Event.delete(<%= event.id %>, '<%= csrf_token %>'); return false">Delete</a>

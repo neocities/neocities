@@ -214,6 +214,13 @@ post '/site/:site_id/toggle_follow' do |site_id|
   {result: (current_site.toggle_follow(site) ? 'followed' : 'unfollowed')}.to_json
 end
 
+post '/tags/add' do
+  require_login
+  current_site.new_tags = params[:tags]
+  current_site.save validate: false
+  redirect request.referer
+end
+
 get '/browse' do
   @current_page = params[:current_page]
   @current_page = @current_page.to_i
@@ -899,7 +906,7 @@ post '/event/:event_id/delete' do |event_id|
   content_type :json
   event = Event[id: event_id]
 
-  if event.site_id == current_site.id || event.owned_by?(current_site)
+  if event.site_id == current_site.id || event.created_by?(current_site)
     event.delete
     return {result: 'success'}.to_json
   end

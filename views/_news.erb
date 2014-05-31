@@ -13,7 +13,7 @@
     <div class="news-item follow">
       <div class="title">
       <div class="icon"></div>
-      <a href="/site/<%= event.actioning_site.username %>" class="user"><%= event.actioning_site.username %></a> followed <a href="/site/<%= event.site.username %>" class="user"><%= event.site.username %>'s</a> website<span class="date">7h</span>
+      <a href="/site/<%= event.actioning_site.username %>" class="user"><%= event.actioning_site.username %></a> followed <a href="/site/<%= event.site.username %>" class="user"><%= event.site.username %>'s</a> website<span class="date"><%= event.created_at.ago %></span>
       </div>
   <% end %>
 

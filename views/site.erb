@@ -33,7 +33,7 @@
           </a>
           <a href="#" class="btn-Action tip"><span>Tip</span></a>
         <% end %>
-        <a href="#" class="btn-Action share" onclick="$('#shareModal').modal(); return false"><span>Share</span></a>
+        <!-- <a href="#" class="btn-Action share" onclick="$('#shareModal').modal(); return false"><span>Share</span></a> -->
       </div>
     </div>
   </div>
@@ -79,6 +79,28 @@
       <div class="stat"><span>Created</span><strong><%= site.created_at.strftime('%B %-d, %Y') %></strong></div>
     </div>
 
+    <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
+
+    <h3><i class="fa fa-share-alt"></i> Share</h3>
+    <div>
+      <p>
+        <a href="https://twitter.com/share" class="twitter-share-button" data-text="<%= site.username %>.neocities.org is awesome!" data-via="neocitiesweb" data-url="http://<%= site.username %>.neocities.org" data-count="none">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+      </p>
+
+      <p>
+        <span id="tumblr_button_abc123"></span>
+      </p>
+
+      <p>
+        <a href="http://www.reddit.com/submit" onclick="window.location = 'http://www.reddit.com/submit?url=' + encodeURIComponent('http://<%= site.username %>.neocities.org'); return false"> <img src="http://www.reddit.com/static/spreddit7.gif" alt="submit to reddit" border="0" /> </a>
+      </p>
+
+      <p>
+        <div class="fb-share-button" data-href="http://<%= site.username %>.neocities.org" data-width="100" data-type="button" style="height: 100px"></div>
+      </p>
+    </div>
+
     <!-- 
     <h3>Archives</h3>
     <div class="archives">
@@ -90,8 +112,6 @@
     </div>
     -->
 
-    <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
-
     <%== erb :'_tags', layout: false, locals: {site: site, is_current_site: site == current_site} %>
 
     <div class="report">
@@ -101,12 +121,28 @@
 </div></div>
 </div>
 
+<script type="text/javascript">
+    var tumblr_link_url = "http://<%= site.username %>.neocities.org"
+    var tumblr_link_name = "<%= site.username %>.neocities.org"
+    var tumblr_link_description = "<%= site.username %>.neocities.org"
+</script>
+
+<script type="text/javascript">
+    var tumblr_button = document.createElement("a");
+    tumblr_button.setAttribute("href", "http://www.tumblr.com/share/link?url=" + encodeURIComponent(tumblr_link_url) + "&name=" + encodeURIComponent(tumblr_link_name) + "&description=" + encodeURIComponent(tumblr_link_description));
+    tumblr_button.setAttribute("title", "Share on Tumblr");
+    tumblr_button.setAttribute("style", "display:inline-block; text-indent:-9999px; overflow:hidden; width:61px; height:20px; background:url('http://platform.tumblr.com/v1/share_2.png') top left no-repeat transparent;");
+    tumblr_button.innerHTML = "Share on Tumblr";
+    document.getElementById("tumblr_button_abc123").appendChild(tumblr_button);
+</script>
+
+<!--
 <div class="modal hide fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
     <h3 id="shareModalLabel">Share this Site</h3>
   </div>
-  <div class="modal-body" style="height: 300px">
+  <div class="modal-body">
     <p>
       <a href="https://twitter.com/share" class="twitter-share-button" data-text="<%= site.username %>.neocities.org is awesome!" data-via="neocitiesweb" data-count="none">Tweet</a>
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -128,3 +164,4 @@
     <button class="btn" data-dismiss="modal" aria-hidden="true">Done</button>
   </div>
 </div>
+-->

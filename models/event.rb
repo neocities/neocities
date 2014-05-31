@@ -13,7 +13,7 @@ class Event < Sequel::Model
   many_to_one :actioning_site, key: :actioning_site_id, class: :Site
 
   def created_by?(site)
-    return true if profile_comment && profile_comment.actioning_site_id == site.id
+    return true if actioning_site_id == site.id
     false
   end
 
