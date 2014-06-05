@@ -16,11 +16,14 @@
         <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div>
       </div>
       <div class="actions">
-        <% if current_site && current_site != site %>
+        <% if current_site == site %>
+          <a href="/dashboard" class="btn-Action edit"><span><i class="fa fa-pencil"></i> Edit Site</span></a>
+        <% end %>
+        <% if current_site != site %>
         <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>')" class="btn-Action <%= current_site.is_following?(site) ? '' : 'follow' %>">
             <span><%= current_site.is_following?(site) ? 'Unfollow' : 'Follow' %></span>
           </a>
-          <a href="#" class="btn-Action tip"><span>Tip</span></a>
+          <!-- <a href="#" class="btn-Action tip"><span>Tip</span></a> -->
         <% end %>
         <a href="#" id="shareButton" class="btn-Action share" data-container="body" data-toggle="popover" data-placement="bottom" data-content='
           <a href="http://facebook.com/sharer.php?u=<%= Rack::Utils.build_query(u: "http://#{site.username}.neocities.org") %>" target="_blank">Facebook</a>
@@ -30,6 +33,12 @@
           <a href="http://www.reddit.com/submit?<%= Rack::Utils.build_query(title: "#{site.username}.neocities.org", url: "http://#{site.username}.neocities.org" )%>" target="_blank">Reddit</a>
           <br>
           <a href="http://www.tumblr.com/share?<%= Rack::Utils.build_query(v: 3, u: "http://#{site.username}.neocities.org", t: "#{site.username}.neocities.org") %>" target="_blank">Tumblr</a>
+          <br>
+          <a href="http://www.stumbleupon.com/submit?<%= Rack::Utils.build_query(url: "http://#{site.username}.neocities.org", title: "#{site.username}.neocities.org") %>" target="_blank">StumbleUpon</a>
+          <br>
+          <a href="http://del.icio.us/post?<%= Rack::Utils.build_query(url: "http://#{site.username}.neocities.org", title: "#{site.username}.neocities.org") %>" target="_blank">Del.ici.ous</a>
+          <br>
+          <a href="https://plus.google.com/share?<%= Rack::Utils.build_query(url: "http://#{site.username}.neocities.org") %>" target="_blank">Google+</a>
         '>
           <span>Share</span></a>
       </div>
@@ -52,7 +61,12 @@
 
     <% if site.latest_events.empty? %>
       <div>
-        <p>No activity yet.</p>
+        <p>No recent activity.</p>
+        <% if site == current_site %>
+          <p>
+            You should <a href="/dashboard">update your site</a>!
+          </p>
+        <% end %>
       </div>
     <% else %>
       <%== erb :'_news', layout: false, locals: {site: site, events: site.events_dataset.order(:id.desc).all} %>
