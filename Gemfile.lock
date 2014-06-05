@@ -134,6 +134,7 @@ GEM
     rmagick (2.13.2)
     rubyzip (1.1.2)
     safe_yaml (1.0.1)
+    sass (3.3.8)
     screencap (0.1.1)
       phantomjs
     sequel (4.8.0)
@@ -225,7 +226,7 @@ DEPENDENCIES
   rubyzip
   sass
   screencap
-  sequel
+  sequel (= 4.8.0)
   sequel_pg
   shotgun
   sidekiq

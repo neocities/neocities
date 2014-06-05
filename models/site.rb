@@ -213,6 +213,12 @@ class Site < Sequel::Model
   end
 
   def store_file(filename, uploaded)
+    # If the uploaded file matches an existing file, no actual change has happened.
+    if File.exist?(file_path(filename)) && 
+       Digest::SHA2.file(file_path(filename)).digest == Digest::SHA2.file(uploaded.path).digest
+      return false
+    end
+
     FileUtils.mv uploaded.path, file_path(filename)
     File.chmod(0640, file_path(filename))
 
@@ -226,15 +232,18 @@ class Site < Sequel::Model
 
     SiteChange.record self, filename
 
-    self.site_changed = true
-    self.changed_count += 1
-    save(validate: false)
+    if self.site_changed != true
+      self.site_changed = true
+      save_changes(validate: false)
+    end
+
+    true
   end
 
   def increment_changed_count
     self.changed_count += 1
     self.updated_at = Time.now
-    save(validate: false)
+    save_changes(validate: false)
   end
 
   def files_zip

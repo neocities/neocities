@@ -512,11 +512,12 @@ post '/site_files/upload' do
     file_upload_response "File(s) do not fit in your available space, upload cancelled."
   end
 
+  results = []
   params[:files].each do |file|
-    current_site.store_file Site.sanitize_filename(file[:filename]), file[:tempfile]
+    results << current_site.store_file(Site.sanitize_filename(file[:filename]), file[:tempfile])
   end
 
-  current_site.increment_changed_count
+  current_site.increment_changed_count if results.include?(true)
 
   file_upload_response
 end
@@ -810,11 +811,12 @@ post '/api/upload' do
     end
   end
 
+  results = []
   files.each do |file|
-    current_site.store_file file[:filename], file[:tempfile]
+    results << current_site.store_file(file[:filename], file[:tempfile])
   end
 
-  current_site.increment_changed_count
+  current_site.increment_changed_count if results.include?(true)
 
   api_success 'your file(s) have been successfully uploaded'
 end
