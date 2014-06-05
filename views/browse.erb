@@ -6,14 +6,18 @@
 
   <div class="header-Outro">
     <div class="row content">
-    <h1>Websites on Neocities</h1>
+    <% if params[:tag] %>
+      <h1>Sites tagged <%= params[:tag] %>
+    <% else %>
+      <h1>Sites on Neocities</h1>
+    <% end %>
     <h3 class="subtitle"></h3>
     </div>
   </div>
-  
+
   <div class="row content">
      <div class="col col-50">
-        <form id="search_criteria" action="/browse" method="GET">       
+        <form id="search_criteria" action="/browse" method="GET">
           <fieldset class="grouping">
             <label class="text-Label" for="sort_by">Sort By:</label>
             <div class="select-Container">
@@ -36,27 +40,35 @@
           </fieldset>
         </form>
       </div>
-      
+
       <div class="col col-50">
-        
-        <p>If you like a site, don't forget to bookmark it!<br>Visitor counts are updated hourly.</p>
-        <a class="btn-Action" href="/new" title="create a Neocities.org site today!">Create your Neocities site now</a>
+        <p>If you like a site, don't forget to follow it!<br>Visitor counts are updated hourly.</p>
+        <% unless signed_in? %>
+          <a class="btn-Action" href="/new" title="create a Neocities.org site today!">Create your Neocities site now</a>
+        <% end %>
       </div>
-      
+
     </div> <!-- end .row.content -->
 <br />
-  <ul class="row website-Gallery content int-Gall">
-    <% @sites.each do |site| %>
-      <li>
-        <a href="http://<%= site.username %>.neocities.org" class="neo-Screen-Shot" target="_blank" title="Website of <%= site.username %>">
-          <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '270x162') %>) no-repeat;">
-            <img src="/img/placeholder.png" alt="<%= site.username %>" />
-          </span>
-        </a>
-      </li>
-    <% end %>
-  </ul>
-  
+  <% if @sites.length == 0 %>
+    <div class="row content single-Col">
+      <h2>No active sites found.<br>Try another search!</h2>
+    </div>
+  <% else %>
+    <ul class="row website-Gallery content int-Gall">
+      <% @sites.each do |site| %>
+        <li>
+          <a href="http://<%= site.username %>.neocities.org" class="neo-Screen-Shot" target="_blank" title="Website of <%= site.username %>">
+            <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '270x162') %>) no-repeat;">
+              <img src="/img/placeholder.png" alt="<%= site.username %>" />
+            </span>
+          </a>
+          <span style="float: left"><a href="/site/<%= site.username %>"><%= site.title %></a></span><span style="float: right"><a href="/site/<%= site.username %>"><%= site.hits %> hit<%= site.hits == 1 ? '' : 's' %></a></span>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
   <% if params[:sort_by] != 'random' %>
     <% if @page_count > 1 %>
       <div class="txt-Center content eps">
@@ -67,7 +79,7 @@
         <% 1.upto(@page_count) do |num| %>
           <a href="#" onclick="getPage(<%= num %>); return false" style="<%=  num == @current_page ? 'text-decoration: none' : '' %>"><%= num %></a>&nbsp;
         <% end %>
-      
+
         <% if @current_page != @page_count %>
           <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="icon-arrow-right" style="text-decoration: none"></i></a>
         <% end %>

@@ -213,7 +213,6 @@ class Site < Sequel::Model
   end
 
   def store_file(filename, uploaded)
-    # If the uploaded file matches an existing file, no actual change has happened.
     if File.exist?(file_path(filename)) && 
        Digest::SHA2.file(file_path(filename)).digest == Digest::SHA2.file(uploaded.path).digest
       return false

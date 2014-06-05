@@ -3,13 +3,13 @@
     <div class="col col-50 signup-Area large">
       <div class="signup-Form">
   	  <fieldset class="content">
-        <img class="screenshot" src="<%= site.screenshot_url('index.html', '348x205') %>" style="width: 358px;height: 215px;">
+        <a href="http://<%= site.username %>.neocities.org"><img class="screenshot" src="<%= site.screenshot_url('index.html', '348x205') %>" style="width: 358px;height: 215px;"></a>
 	    </fieldset>
       </div>
     </div>
     <div class="col col-50">
       <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? && !site.ended_supporter? %><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
-      <p class="site-url"><a href="http://<%= site.username %>.neocities.org" target="_blank">http://<%= site.username %>.neocities.org</a></p>
+      <p class="site-url"><a href="http://<%= site.username %>.neocities.org">http://<%= site.username %>.neocities.org</a></p>
       <div class="stats">
         <div class="stat"><strong><%= site.hits_english %></strong> <span>hits</span></div>
         <div class="stat"><strong><%= site.follows_dataset.count %></strong> <span>followers</span></div>
