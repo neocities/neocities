@@ -13,15 +13,16 @@
       <div class="stats">
         <div class="stat"><strong><%= site.hits_english %></strong> <span>hits</span></div>
         <div class="stat"><strong><%= site.follows_dataset.count %></strong> <span>followers</span></div>
-        <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div>
+        <!-- <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div> -->
       </div>
       <div class="actions">
         <% if current_site == site %>
           <a href="/dashboard" class="btn-Action edit"><span><i class="fa fa-pencil"></i> Edit Site</span></a>
         <% end %>
         <% if current_site != site %>
-        <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>')" class="btn-Action <%= current_site.is_following?(site) ? '' : 'follow' %>">
-            <span><%= current_site.is_following?(site) ? 'Unfollow' : 'Follow' %></span>
+        <% is_following = current_site.is_following?(site) %>
+        <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>')" class="btn-Action <%= is_following ? '' : 'follow' %>">
+            <span><%= is_following ? 'Unfollow' : 'Follow' %></span>
           </a>
           <!-- <a href="#" class="btn-Action tip"><span>Tip</span></a> -->
         <% end %>
@@ -59,7 +60,8 @@
       </div>
     <% end %>
 
-    <% if site.latest_events.empty? %>
+    <% latest_events = site.latest_events %>
+    <% if latest_events.empty? %>
       <div>
         <p>No recent activity.</p>
         <% if site == current_site %>
@@ -69,7 +71,7 @@
         <% end %>
       </div>
     <% else %>
-      <%== erb :'_news', layout: false, locals: {site: site, events: site.events_dataset.order(:id.desc).all} %>
+      <%== erb :'_news', layout: false, locals: {site: site, events: latest_events} %>
     <% end %>
 
   </div>
@@ -93,7 +95,7 @@
 
     <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
 
-    <!-- 
+    <!--
     <h3>Archives</h3>
     <div class="archives">
     <a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"></a>
@@ -111,30 +113,4 @@
     </div>
   </div>
 </div></div>
-</div>
-
-<div class="modal hide fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
-    <h3 id="shareModalLabel">Share this Site</h3>
-  </div>
-  <div class="modal-body">
-    <p>
-      <a href="https://twitter.com/share" class="twitter-share-button" data-text="<%= site.username %>.neocities.org is awesome!" data-via="neocitiesweb" data-count="none">Tweet</a>
-      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-    </p>
-
-    <p>
-      <a href="http://www.tumblr.com/share" title="Share on Tumblr" style="display:inline-block; text-indent:-9999px; overflow:hidden; width:61px; height:20px; background:url('http://platform.tumblr.com/v1/share_2.png') top left no-repeat transparent;">Share on Tumblr</a>
-    </p>
-
-    <p>
-      <a href="http://www.reddit.com/submit" onclick="window.location = 'http://www.reddit.com/submit?url=' + encodeURIComponent(window.location); return false"> <img src="http://www.reddit.com/static/spreddit7.gif" alt="submit to reddit" border="0" /> </a>
-    </p>
-    <p>
-    </p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Done</button>
-  </div>
 </div>

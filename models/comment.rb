@@ -5,7 +5,7 @@ class Comment < Sequel::Model
   one_to_many :comment_likes
 
   def liking_site_names
-    comment_likes.collect {|comment_like| comment_like.actioning_site.username }
+    comment_likes_dataset.select(:id, :actioning_site_id).all.collect {|comment_like| comment_like.actioning_site_dataset.select(:username).first.username }
   end
 
   def site_likes?(site)

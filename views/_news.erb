@@ -13,13 +13,16 @@
     <div class="news-item follow">
       <div class="title">
       <div class="icon"></div>
-      <a href="/site/<%= event.actioning_site.username %>" class="user"><%= event.actioning_site.username %></a> followed <a href="/site/<%= event.site.username %>" class="user"><%= event.site.username %>'s</a> website<span class="date"><%= event.created_at.ago %></span>
+      <% actioning_site_username = event.actioning_site_dataset.select(:username).first.username %>
+      <% event_site_username = event.site_dataset.select(:username).first.username %>
+      <a href="/site/<%= actioning_site_username %>" class="user"><%= actioning_site_username %></a> followed <a href="/site/<%= event_site_username %>" class="user"><%= event_site_username %>'s</a> website<span class="date"><%= event.created_at.ago %></span>
       </div>
   <% elsif event.site_change_id %>
     <div class="news-item update">
       <div class="title">
         <div class="icon"></div>
-        <a href="http://<%= site.username %>.neocities.org" class="user"><%= site.username %>.neocities.org</a> has been updated <span class="date"><%= event.created_at.ago %></span>
+        <% event_site_username = event.site_dataset.select(:username).first.username %>
+        <a href="http://<%= event_site_username %>.neocities.org" class="user"><%= event_site_username %>.neocities.org</a> has been updated <span class="date"><%= event.created_at.ago %></span>
       </div>
       <div class="content">
         <div class="files">
@@ -41,23 +44,6 @@
               </div>
             </div>
           <% end %>
-          <!--
-          <div class="file">
-            <div class="html-thumbnail misc"><a href=""><span class="misc-icon">css</span><span class="title">styles.css</span></a></div>
-          </div>
-          <div class="file">
-            <div class="html-thumbnail html"><a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"><span class="title">styles.css</span></a></div>
-          </div>
-          <div class="file">
-            <div class="html-thumbnail misc"><a href=""><span class="misc-icon">js</span><span class="title">styles.css</span></a></div>
-          </div>
-          <div class="file">
-            <div class="html-thumbnail image"><a href=""><img src="/site_thumbnails/victoria/constructioncat2.png.105x63.png"><span class="title">cat.jpg</span></a></div>
-          </div>
-          <div class="file">
-            <div class="html-thumbnail misc"><a href=""><span class="misc-icon">js</span><span class="title">styles.css</span></a></div>
-          </div>
-          -->
         </div>
       </div>
   <% end %>
@@ -68,20 +54,20 @@
     <div class="content">
       <div class="comments">
         <% event.comments.each do |comment| %>
+          <% comment_actioning_site = comment.actioning_site_dataset.select(:username).first %>
           <div class="comment" id="comment_<%= comment.id %>">
-            <img class="avatar" src="<%= comment.actioning_site.screenshot_url('index.html', '82x62') %>">
-            <a href="/site/<%= comment.actioning_site.username %>" class="user"><%= comment.actioning_site.username %></a>
+            <img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '82x62') %>">
+            <a href="/site/<%= comment_actioning_site.username %>" class="user"><%= comment_actioning_site.username %></a>
             <span class="date"><%= comment.created_at.ago %></span>
             <p><%= comment.message %></p>
           </div>
           <div class="actions">
-
+            <% comment_likes_count = comment.comment_likes_dataset.count %>
             <% if current_site %>
-              <a href="#" class="comment_like" id="comment_<%= comment.id %>_like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= comment.liking_site_names.join('<br>') %>" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>'); return false"><%= comment.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= comment.comment_likes_dataset.count > 0 ? " (#{comment.comment_likes_dataset.count})" : '' %></a>
+              <a href="#" class="comment_like" id="comment_<%= comment.id %>_like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= comment.liking_site_names.join('<br>') %>" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>'); return false"><%= comment.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= comment_likes_count > 0 ? " (#{comment_likes_count})" : '' %></a>
             <% else %>
-              <% comment_like_count = comment.comment_likes_dataset.count %>
-              <% if comment_like_count > 0 %>
-                <%= comment_like_count %> <%= comment_like_count == 1 ? 'like' : 'likes' %>
+              <% if comment_likes_count > 0 %>
+                <%= comment_likes_count %> <%= comment_likes_count == 1 ? 'like' : 'likes' %>
               <% end %>
             <% end %>
 
@@ -101,100 +87,3 @@
 <% end %>
 
 <%== erb :'_news_templates', layout: false %>
-
-<!--
-    <div class="news-item follow">
-      <div class="title">
-        <div class="icon"></div>
-        <a href="" class="user">Derp</a> followed <a href="" class="user">Foo's</a> website<span class="date">7h</span>
-      </div>
-    </div>
-
-    <div class="news-item tip">
-      <div class="title">
-        <div class="icon"></div>
-        <a href="" class="user">Derp</a> tipped <a href="" class="user">Foo's</a> website: <a href="" class="comment">Wow, great work here! Please keep updating :)</a><span class="date">Apr 23</span>
-      </div>
-    </div>
-
-    <div class="news-item comment">
-      <div class="title">
-        <div class="icon"></div>
-        <a href="" class="user">Derp</a> commented on <a href="" class="user">victoria's</a> website: <a href="" class="comment">I had a question - how did you make it so that the...</a>
-        <span class="date">Apr 20</span>
-      </div>
-    </div>
-
-    <div class="news-item follow">
-      <div class="title">
-        <div class="icon"></div>
-        <a href="" class="user">Derp</a> followed <a href="" class="user">victoria's</a> website<span class="date">Apr 7</span>
-      </div>
-    </div>
-
-    <div class="news-item update">
-      <div class="title">
-        <div class="icon"></div>
-        <a href="" class="user">Derp</a> made an update <span class="date">Apr 7</span>
-      </div>
-      <div class="content">
-        <div class="files">
-          <div class="file">
-            <div class="html-thumbnail misc"><a href=""><span class="misc-icon">css</span><span class="title">styles.css</span></a></div>
-          </div>
-          <div class="file">
-            <div class="html-thumbnail html"><a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"><span class="title">styles.css</span></a></div>
-          </div>
-          <div class="file">
-            <div class="html-thumbnail misc"><a href=""><span class="misc-icon">js</span><span class="title">styles.css</span></a></div>
-          </div>
-          <div class="file">
-            <div class="html-thumbnail image"><a href=""><img src="/site_thumbnails/victoria/constructioncat2.png.105x63.png"><span class="title">cat.jpg</span></a></div>
-          </div>
-          <div class="file">
-            <div class="html-thumbnail misc"><a href=""><span class="misc-icon">js</span><span class="title">styles.css</span></a></div>
-          </div>
-        </div>
-        <div class="actions"><a href="">Like (1)</a> <a href="">Reply</a></div>
-      </div>
-    </div>
-
-    <div class="news-item comment for-me">
-      <div class="title">
-        <div class="icon" style="background-image:url(https://neocities.org/site_screenshots/codeventurer.jpg);"></div>
-        <a href="" class="user">Foo</a>
-        <span class="date">Apr 7</span>
-        <div class="comment">Your site is amazing. Very helpful information. Would love to see more updates if you have time. Your site is amazing. Very helpful information. Would love to see more updates if you have time. </div>
-      </div>
-      <div class="content">
-        <div class="actions"><a href="">Like (1)</a> <a href="">Reply</a></div>
-        <div class="comments">
-          <div class="comment">
-            <img class="avatar" src="https://neocities.org/site_screenshots/victoria.jpg">
-            <a href="" class="user">victoria</a> Indeed, it's great!<span class="date">Apr 7</span>
-            <div class="actions"><a href="">Like (1)</a></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="news-item comment">
-      <div class="title">
-        <div class="icon"></div>
-        <a href="" class="user">Derp</a> commented on <a href="" class="user">Foo's</a> website: <a href="" class="comment">I had a question - how did you make it so that the...</a>
-        <span class="date">Apr 7</span>
-      </div>
-    </div>
-
-    <div class="news-item tip for-me">
-      <div class="title">
-        <div class="icon" style="background-image:url(https://neocities.org/site_screenshots/victoria.jpg);"></div>
-        <a href="" class="user">victoria</a> tipped .01 BTC
-        <span class="date">Apr 7</span>
-        <div class="comment">Hey, this looks great!</div>
-      </div>
-      <div class="content">
-        <div class="actions"><a href="">Like (1)</a> <a href="">Reply</a></div>
-      </div>
-    </div>
--->
