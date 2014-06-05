@@ -40,12 +40,12 @@ platform :jruby do
 
   group :development do
     gem 'ruby-debug', require: nil
-    gem 'sass', require: nil
   end
 end
 
 group :development do
   gem 'shotgun', require: nil
+  gem 'sass', require: nil
 end
 
 group :test do

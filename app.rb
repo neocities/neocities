@@ -11,6 +11,14 @@ use Rack::Session::Cookie, key:          'neocities',
 use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $config['recaptcha_private_key']
 helpers Rack::Recaptcha::Helpers
 
+helpers do
+  def site_change_file_display_class(filename)
+    return 'html' if filename.match(Site::HTML_REGEX)
+    return 'image' if filename.match(Site::IMAGE_REGEX)
+    'misc'
+  end
+end
+
 before do
   if request.path.match /^\/api\//i
     @api = true

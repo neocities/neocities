@@ -67,17 +67,16 @@
       <p><%= @error %></p>
     </div>
   <% end %>
-  
+
   <% if flash.keys.length > 0 %>
     <div class="alert alert-block">
       <p>
         <% flash.keys.each do |key| %>
-          <%= flash[key] %>
+          <%== flash[key] %>
         <% end %>
       </p>
     </div>
   <% end %>
-  
 
 <div class="files">
   <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
@@ -189,11 +188,11 @@
   function clickUploadFiles() {
     $("input[id='uploadFiles']").click()
   }
-  
+
   function showUploadProgress() {
     $('#uploadingOverlay').css('display', 'block')
   }
-  
+
   function hideUploadProgress() {
     $('#progressBar').css('display', 'none')
     $('#uploadingOverlay').css('display', 'none')

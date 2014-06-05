@@ -1763,8 +1763,8 @@ a.tag:hover {
   color: #000; }
 
 .news-item .comment {
-  color: #999;
-  font-style: italic;
+  color: #000;
+  font-style: normal;
   font-size: .8em; }
 
 .news-item.for-me .comment {

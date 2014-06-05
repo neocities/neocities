@@ -56,7 +56,7 @@ class Site < Sequel::Model
   MAX_COMMENT_SIZE     = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
 
   SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162', '37x37', '146x88', '302x182', '90x63', '82x62', '348x205']
-  THUMBNAIL_RESOLUTIONS  = ['105x63']
+  THUMBNAIL_RESOLUTIONS  = ['105x63', '90x63']
 
   many_to_one :server
 
@@ -223,6 +223,8 @@ class Site < Sequel::Model
     elsif ext.match IMAGE_REGEX
       ThumbnailWorker.perform_async values[:username], filename
     end
+
+    SiteChange.record self, filename
 
     self.site_changed = true
     self.changed_count += 1

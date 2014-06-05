@@ -15,6 +15,51 @@
       <div class="icon"></div>
       <a href="/site/<%= event.actioning_site.username %>" class="user"><%= event.actioning_site.username %></a> followed <a href="/site/<%= event.site.username %>" class="user"><%= event.site.username %>'s</a> website<span class="date"><%= event.created_at.ago %></span>
       </div>
+  <% elsif event.site_change_id %>
+    <div class="news-item update">
+      <div class="title">
+        <div class="icon"></div>
+        <a href="http://<%= site.username %>.neocities.org" class="user"><%= site.username %>.neocities.org</a> has been updated <span class="date"><%= event.created_at.ago %></span>
+      </div>
+      <div class="content">
+        <div class="files">
+          <% event.site_change.site_change_filenames.each do |f| %>
+            <div class="file">
+              <div class="html-thumbnail <%= site_change_file_display_class f %>">
+                <a href="http://<%= site.username %>.neocities.org/<%= f %>">
+                  <% if site_change_file_display_class(f) == 'html' %>
+                    <img src="<%= site.screenshot_url(f, '90x63') %>">
+                  <% elsif site_change_file_display_class(f) == 'image' %>
+                    <img src="<%= site.thumbnail_url(f, '90x63') %>">
+                  <% elsif site_change_file_display_class(f) == 'misc' %>
+                    <span class="misc-icon">
+                      <%= File.extname(f).sub('.', '') %>
+                    </span>
+                  <% end %>
+                  <span class="title"><%= f %></span>
+                </a>
+              </div>
+            </div>
+          <% end %>
+          <!--
+          <div class="file">
+            <div class="html-thumbnail misc"><a href=""><span class="misc-icon">css</span><span class="title">styles.css</span></a></div>
+          </div>
+          <div class="file">
+            <div class="html-thumbnail html"><a href=""><img src="http://neocities.org/site_screenshots/codeventurer.jpg"><span class="title">styles.css</span></a></div>
+          </div>
+          <div class="file">
+            <div class="html-thumbnail misc"><a href=""><span class="misc-icon">js</span><span class="title">styles.css</span></a></div>
+          </div>
+          <div class="file">
+            <div class="html-thumbnail image"><a href=""><img src="/site_thumbnails/victoria/constructioncat2.png.105x63.png"><span class="title">cat.jpg</span></a></div>
+          </div>
+          <div class="file">
+            <div class="html-thumbnail misc"><a href=""><span class="misc-icon">js</span><span class="title">styles.css</span></a></div>
+          </div>
+          -->
+        </div>
+      </div>
   <% end %>
 
   <%== erb :'_news_actions', layout: false, locals: {event: event} %>
