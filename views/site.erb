@@ -28,6 +28,8 @@
           <a href="https://twitter.com/intent/tweet?<%= Rack::Utils.build_query(text: "This site is awesome: http://#{site.username}.neocities.org") %>">Twitter</a>
           <br>
           <a href="http://www.reddit.com/submit?<%= Rack::Utils.build_query(title: "#{site.username}.neocities.org", url: "http://#{site.username}.neocities.org" )%>" target="_blank">Reddit</a>
+          <br>
+          <a href="http://www.tumblr.com/share?<%= Rack::Utils.build_query(v: 3, u: "http://#{site.username}.neocities.org", t: "#{site.username}.neocities.org") %>" target="_blank">Tumblr</a>
         '>
           <span>Share</span></a>
       </div>

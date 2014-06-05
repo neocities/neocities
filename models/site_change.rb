@@ -6,7 +6,7 @@ class SiteChange < Sequel::Model
   one_to_many :site_change_files
 
   def site_change_filenames(limit=4)
-    site_change_files[0..limit-1].collect {|f| f.filename}
+    site_change_files[0..limit-1].collect {|f| f.filename}.sort_by {|f| f.match('html') ? 0 : 1}
   end
 
   def self.record(site, filename)
