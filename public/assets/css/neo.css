@@ -329,7 +329,7 @@ legend, .legend {
 
 .input-Area, .text-Area, .select-Container, .input-Number {
   background: #fff;
-  border: 1px solid #cccccc;
+  border: 2px solid #cccccc;
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   line-height: 1.25;
   margin-bottom: 8px;
@@ -337,7 +337,7 @@ legend, .legend {
   width: 80%; }
   .input-Area:focus, .text-Area:focus, .select-Container:focus, .input-Number:focus {
     background: #f8f8f8;
-    border: 1px solid #50B6D5;
+    border: 2px solid #50B6D5;
     -moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25) inset;
     -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.25) inset;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.25) inset; }
