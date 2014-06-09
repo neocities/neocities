@@ -84,12 +84,49 @@ describe 'signup' do
     click_button 'Create Home Page'
     page.must_have_content 'A valid user/site name is required'
   end
-  
+
   it 'fails with username greater than 32 characters' do
     fill_in_valid
     fill_in 'username', with: SecureRandom.hex+'1'
     click_button 'Create Home Page'
     page.must_have_content 'cannot exceed 32 characters'
+  end
+
+  it 'fails with invalid tag chars' do
+    fill_in_valid
+    fill_in 'tags', with: '$POLICE OFFICER$$$$$, derp'
+    click_button 'Create Home Page'
+    page.must_have_content /Tag.+can only contain/
+  end
+
+  it 'fails for tag with too many spaces' do
+    fill_in_valid
+    fill_in 'tags', with: 'police    officer, hi'
+    click_button 'Create Home Page'
+    page.must_have_content /Tag.+cannot have more than one space/
+  end
+
+  it 'succeeds with no tags' do
+    fill_in_valid
+    fill_in 'tags', with: ''
+    click_button 'Create Home Page'
+    page.must_have_content 'Your Feed'
+  end
+
+  it 'succeeds with a single tag' do
+    fill_in_valid
+    fill_in 'tags', with: 'derpie'
+    click_button 'Create Home Page'
+    page.must_have_content 'Your Feed'
+    Site.last.tags.first.name.must_equal 'derpie'
+  end
+
+  it 'succeeds with valid tags' do
+    fill_in_valid
+    fill_in 'tags', with: 'derpie, shoujo manga'
+    click_button 'Create Home Page'
+    page.must_have_content 'Your Feed'
+    Site.last.tags.collect {|t| t.name}.must_equal ['derpie', 'shoujo manga']
   end
 end
 
@@ -105,7 +142,7 @@ describe 'signin' do
   before do
     Capybara.reset_sessions!
   end
-  
+
   it 'fails for invalid login' do
     visit '/'
     click_link 'Sign In'
@@ -114,7 +151,7 @@ describe 'signin' do
     click_button 'Sign In'
     page.must_have_content 'Invalid login'
   end
-  
+
   it 'fails for missing login' do
     visit '/'
     click_link 'Sign In'
@@ -124,7 +161,7 @@ describe 'signin' do
     click_button 'Sign In'
     page.must_have_content 'Invalid login'
   end
-  
+
   it 'logs in with proper credentials' do
     visit '/'
     click_button 'Create My Website'

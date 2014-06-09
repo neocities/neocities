@@ -34,7 +34,7 @@ describe 'api info' do
 
   it 'succeeds for valid sitename' do
     create_site
-    @site.update hits: 31337, domain: 'derp.com', new_tags: 'derpie, man'
+    @site.update hits: 31337, domain: 'derp.com', new_tags_string: 'derpie, man'
     get '/api/info', sitename: @user
     res[:result].must_equal 'success'
     res[:info][:sitename].must_equal @site.username

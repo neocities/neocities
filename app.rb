@@ -99,10 +99,6 @@ post '/site/:sitename/comment' do |sitename|
   redirect "/site/#{sitename}"
 end
 
-get '/tags_mockup' do
-  erb :'tags_mockup'
-end
-
 get '/browse_mockup' do
   erb :'browse_mockup'
 end
@@ -225,7 +221,7 @@ end
 
 post '/tags/add' do
   require_login
-  current_site.new_tags = params[:tags]
+  current_site.new_tags_string = params[:tags]
   current_site.save validate: false
   redirect request.referer
 end
@@ -299,7 +295,7 @@ post '/create' do
     username: params[:username],
     password: params[:password],
     email: params[:email],
-    new_tags: params[:tags],
+    new_tags_string: params[:tags],
     is_nsfw: params[:is_nsfw],
     ip: request.ip
   )

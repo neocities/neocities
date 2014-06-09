@@ -27,7 +27,7 @@
         </div>
       </div>
     <% end %>
-    
+
     <p>
       First, enter a username. This will also be used as your site name.<br><b>Do not forget this, it will be used to sign in to and manage your home page.</b> It can only contain letters, numbers, underscores and hyphens, and can only be 32 characters long.
     </p>
@@ -35,7 +35,7 @@
     <p>
       <input class="input-Area" name="username" type="text" placeholder="yourusername" value="<%= @site.username %>" autocapitalize="off" autocorrect="off" style="width: 200px">.neocities.org
     </p>
-    
+
     <hr>
 
     <p>
@@ -61,19 +61,19 @@
 
     <hr>
 
-    <p>You can optionally enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of ten tags, and there is a two word per tag maximum (extra words in a tag will be removed).</p>
-    
+    <p>You can optionally enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of five tags, and tags can only contain letters (A-Z) and numbers (0-9). There is a two word per tag maximum.</p>
+
     <h5>Tags</h5>
     <input class="input-Area" name="tags" type="text" style="width: 400px; max-width:100%" placeholder="pokemon, video games, bulbasaur" value="<%= params[:tags] %>" autocapitalize="off" autocorrect="off">
-    
+
     <hr>
-    
+
     <p><strong>The site you are creating will be free, forever.</strong> We will never charge you for your web site.</p>
     <p><a href="/donate" target="_blank">Neocities has to pay the bills though</a>, and we like the idea of being able to work on the site full-time someday. So if you would like to help us reach this goal, we have created the <strong>Supporter Plan</strong>!
-    
+
     <p>Right now, the <strong>Supporter Plan</strong> is the same as the free plan, except that <strong>Supporter Plan members get 200MB</strong> of web space. You will also be listed as a supporter on our contributors page, and on your site profile page.</p>
     <p>The base plan is $12 ($1/month) billed once per year, which is the cost of <a href="/img/yafagrillmenu.jpg" target="_blank">a delicious Yafa Combo with a lousy tip</a>. If you ever decide to cancel, you get to keep the extra space. Thanks for helping us run this site!</p>
-    
+
     <div>
       <input type="radio" name="plan" value="free" <%= params[:plan].nil? || params[:plan] == 'free' ? 'checked' : '' %>>
       <span><strong>Free Plan (<%= Site::FREE_MAXIMUM_IN_MEGABYTES %>MB)</strong></span>
@@ -83,7 +83,7 @@
       <input id="supporter" type="radio" name="plan" value="supporter" <%= params[:plan] == 'supporter' ? 'checked' : '' %>>
       <span><strong>Supporter Plan (<%= Site::SUPPORTER_MAXIMUM_IN_MEGABYTES %>MB)</strong></span>
     </div>
-    
+
     <div id="plan_container" style="margin-top:20px; display: none">
       <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
 
@@ -99,7 +99,7 @@
           <option value="plan_five">$60/year ($5/month)</option>
         </select>
       </p>
-      
+
       <% if params[:stripe_token] %>
         <p>Billing information has been saved, thank you!</p>
       <% else %>
@@ -108,30 +108,30 @@
           CVC: <input type="text" size="4" maxlength="4" data-stripe="cvc" style="width: 60px">
         </p>
         <p>
-          Expiration: 
+          Expiration:
           <input type="text" size="2" data-stripe="exp-month" placeholder="MM" maxlength="2" style="width: 50px">
           <input type="text" size="4" data-stripe="exp-year" placeholder="YYYY" maxlength="4" style="width: 60px">
         </p>
       <% end %>
-      
+
       <p><strong>We accept Bitcoin!</strong> If you would prefer to use Bitcoin, choose the <strong>Free Plan</strong>, and then upgrade in the <strong>Settings</strong> page once your account is created.</p>
     </div>
-    
+
     <hr>
-    
+
     <p><b>Last thing!</b> Enter these two words correctly (with spaces) so we know you're not a robot (don't worry robots, we still love you).</p>
-    
+
     <div class="recaptcha">
       <%== recaptcha_tag :challenge, ssl: request.ssl? %>
     </div>
-    
+
     <hr>
-    
+
     <h3>You're done. Just click the button below!</h3>
     <input class="btn-Action" type="submit" value="Create Home Page">
   </form>
 </div>
-  
+
 <script>
   window.onload = function() {
     $('#signupform').find(':submit').prop('disabled', false)
@@ -139,7 +139,7 @@
       if($('#signupform input:radio[name="plan"]:checked').val() == 'free') {
         return true
       }
-      
+
       if($('#stripe_token').val() != '')
         return true
 
@@ -163,11 +163,11 @@
       })
       return false
     })
-    
+
     $('#signupform input:radio[name="plan"]').change(function(){
       showPlanIfSelected()
     })
-    
+
     function showPlanIfSelected() {
       var planContainer = $('#plan_container')
       if($('#signupform input:radio[name="plan"]:checked').val() == 'supporter')

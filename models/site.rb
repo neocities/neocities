@@ -138,12 +138,8 @@ class Site < Sequel::Model
     values[:password] = BCrypt::Password.create plaintext, cost: (self.class.bcrypt_cost || BCrypt::Engine::DEFAULT_COST)
   end
 
-  def new_tags=(tags_string)
-    tags_string.gsub! ', ', ','
-    tags = tags_string.split ','
-    tags_string.gsub! /[^a-zA-Z0-9, ]/, ''
-    tags.collect! {|c| (c.match(/^\w+\s\w+/) || c.match(/^\w+/)).to_s }
-    @new_tag_strings = tags.sort
+  def new_tags_string=(tags_string)
+    @new_tags_string = tags_string
   end
 
   def before_validation
@@ -213,7 +209,7 @@ class Site < Sequel::Model
   end
 
   def store_file(filename, uploaded)
-    if File.exist?(file_path(filename)) && 
+    if File.exist?(file_path(filename)) &&
        Digest::SHA2.file(file_path(filename)).digest == Digest::SHA2.file(uploaded.path).digest
       return false
     end
@@ -287,18 +283,18 @@ class Site < Sequel::Model
   end
 
   def after_save
-    if @new_tag_strings
-      @new_tag_strings.each do |new_tag_string|
+    if @new_filtered_tags
+      @new_filtered_tags.each do |new_tag_string|
         add_tag_name new_tag_string
       end
+      @new_filtered_tags = []
+      @new_tags_string = nil
     end
     super
   end
 
   def add_tag_name(name)
-    if tags_dataset.filter(name: name).first.nil?
-      add_tag Tag[name: name] || Tag.create(name: name)
-    end
+    add_tag Tag[name: name] || Tag.create(name: name)
   end
 
   def after_create
@@ -348,6 +344,37 @@ class Site < Sequel::Model
       site = Site[domain: values[:domain]]
       if !site.nil? && site.id != self.id
         errors.add :domain, "Domain provided is already being used by another site, please choose another."
+      end
+    end
+
+    if @new_tags_string
+      new_tags = @new_tags_string.split ','
+      new_tags.uniq!
+      new_tags.compact!
+      @new_filtered_tags = []
+
+      if new_tags.length > 5
+        error.add :tags, 'Cannot have more than 5 tags.'
+      end
+
+      new_tags.each do |tag|
+        tag.strip!
+        if tag.match(/[^a-zA-Z0-9 ]/)
+          errors.add :tags, "Tag \"#{tag}\" can only contain letters (A-Z) and numbers (0-9)."
+          break
+        end
+
+        if tag.match(/  /)
+          errors.add :tags, "Tag \"#{tag}\" cannot have more than one space between words."
+          break
+        end
+
+        if tag.split(' ').length > 2
+          errors.add :tags, "Tag \"#{tag}\" cannot be more than two words."
+          break
+        end
+
+        @new_filtered_tags << tag
       end
     end
   end
