@@ -353,8 +353,8 @@ class Site < Sequel::Model
       new_tags.compact!
       @new_filtered_tags = []
 
-      if new_tags.length > 5
-        error.add :tags, 'Cannot have more than 5 tags.'
+      if ((new? ? 0 : tags_dataset.count) + new_tags.length > 5)
+        errors.add :tags, 'Cannot have more than 5 tags for your site.'
       end
 
       new_tags.each do |tag|

@@ -113,6 +113,13 @@ describe 'signup' do
     page.must_have_content /Tag.+cannot be more than two words/
   end
 
+  it 'fails for too many tags' do
+    fill_in_valid
+    fill_in 'tags', with: 'one, two, three, four, five, six'
+    click_button 'Create Home Page'
+    page.must_have_content /Cannot have more than \d tags for your site/
+  end
+
   it 'succeeds with no tags' do
     fill_in_valid
     fill_in 'tags', with: ''
