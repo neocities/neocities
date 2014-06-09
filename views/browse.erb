@@ -19,6 +19,9 @@
      <div class="col col-50">
         <form id="search_criteria" action="/browse" method="GET">
           <fieldset class="grouping">
+            <% if params[:tag] %>
+              <input name="tag" type="hidden" value="<%= params[:tag] %>">
+            <% end %>
             <label class="text-Label" for="sort_by">Sort By:</label>
             <div class="select-Container">
               <select name="sort_by" id="sort_by" class="input-Select">
