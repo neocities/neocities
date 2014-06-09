@@ -106,6 +106,13 @@ describe 'signup' do
     page.must_have_content /Tag.+cannot have more than one space/
   end
 
+  it 'fails for tag with too many words' do
+    fill_in_valid
+    fill_in 'tags', with: 'police officer club'
+    click_button 'Create Home Page'
+    page.must_have_content /Tag.+cannot be more than two words/
+  end
+
   it 'succeeds with no tags' do
     fill_in_valid
     fill_in 'tags', with: ''
