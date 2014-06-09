@@ -19,13 +19,15 @@
         <% if current_site == site %>
           <a href="/dashboard" class="btn-Action edit"><span><i class="fa fa-pencil"></i> Edit Site</span></a>
         <% end %>
-        <% if current_site != site %>
-        <% is_following = current_site.is_following?(site) %>
-        <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>')" class="btn-Action <%= is_following ? '' : 'follow' %>">
+
+        <% if current_site && current_site != site %>
+          <% is_following = current_site.is_following?(site) %>
+          <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>')" class="btn-Action <%= is_following ? '' : 'follow' %>">
             <span><%= is_following ? 'Unfollow' : 'Follow' %></span>
           </a>
           <!-- <a href="#" class="btn-Action tip"><span>Tip</span></a> -->
         <% end %>
+
         <a href="#" id="shareButton" class="btn-Action share" data-container="body" data-toggle="popover" data-placement="bottom" data-content='
           <a href="http://facebook.com/sharer.php?u=<%= Rack::Utils.build_query(u: "http://#{site.username}.neocities.org") %>" target="_blank">Facebook</a>
           <br>
