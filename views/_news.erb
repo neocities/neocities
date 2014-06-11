@@ -22,30 +22,33 @@
       <div class="title">
         <div class="icon"></div>
         <% event_site_username = event.site_dataset.select(:username).first.username %>
-        <a href="http://<%= event_site_username %>.neocities.org" class="user"><%= event_site_username %>.neocities.org</a> has been updated <span class="date"><%= event.created_at.ago %></span>
+        <a href="http://<%= event_site_username %>.neocities.org" class="user"><%= event_site_username %>.neocities.org</a> has been updated. <span class="date"><%= event.created_at.ago %></span>
       </div>
-      <div class="content">
-        <div class="files">
-          <% event.site_change.site_change_filenames.each do |f| %>
-            <div class="file">
-              <div class="html-thumbnail <%= site_change_file_display_class f %>">
-                <a href="http://<%= site.username %>.neocities.org/<%= f %>">
-                  <% if site_change_file_display_class(f) == 'html' %>
-                    <img src="<%= site.screenshot_url(f, '90x63') %>">
-                  <% elsif site_change_file_display_class(f) == 'image' %>
-                    <img src="<%= site.thumbnail_url(f, '90x63') %>">
-                  <% elsif site_change_file_display_class(f) == 'misc' %>
-                    <span class="misc-icon">
-                      <%= File.extname(f).sub('.', '') %>
-                    </span>
-                  <% end %>
-                  <span class="title"><%= f %></span>
-                </a>
+      <% site_change_filenames = event.site_change.site_change_filenames %>
+      <% unless site_change_filenames.empty? %>
+        <div class="content">
+          <div class="files">
+            <% event.site_change.site_change_filenames.each do |f| %>
+              <div class="file">
+                <div class="html-thumbnail <%= site_change_file_display_class f %>">
+                  <a href="http://<%= site.username %>.neocities.org/<%= f %>">
+                    <% if site_change_file_display_class(f) == 'html' %>
+                      <img src="<%= site.screenshot_url(f, '90x63') %>">
+                    <% elsif site_change_file_display_class(f) == 'image' %>
+                      <img src="<%= site.thumbnail_url(f, '90x63') %>">
+                    <% elsif site_change_file_display_class(f) == 'misc' %>
+                      <span class="misc-icon">
+                        <%= File.extname(f).sub('.', '') %>
+                      </span>
+                    <% end %>
+                    <span class="title"><%= f %></span>
+                  </a>
+                </div>
               </div>
-            </div>
-          <% end %>
+            <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
   <% end %>
 
   <%== erb :'_news_actions', layout: false, locals: {event: event} %>

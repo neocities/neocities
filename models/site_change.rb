@@ -20,7 +20,7 @@ class SiteChange < Sequel::Model
     site_change_file = site_change.site_change_files_dataset.filter(filename: filename).first
 
     if !site_change_file
-      site_change.add_site_change_file filename: filename
+      site_change.add_site_change_file site_id: site.id, filename: filename
     end
   end
 end

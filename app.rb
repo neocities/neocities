@@ -222,7 +222,17 @@ end
 post '/tags/add' do
   require_login
   current_site.new_tags_string = params[:tags]
-  current_site.save validate: false
+  current_site.save
+  redirect request.referer
+end
+
+post '/tags/remove' do
+  require_login
+
+  DB.transaction {
+    params[:tags].each {|tag| current_site.remove_tag Tag[name: tag]}
+  }
+
   redirect request.referer
 end
 

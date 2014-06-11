@@ -9,7 +9,9 @@
 
     <% if is_current_site %>
       <div class="clear">
-        <a href="#addTag" data-toggle="modal">Add Tags</a>
+        <a href="#addTag" data-toggle="modal">Add</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="#removeTag" data-toggle="modal">Remove</a>
       </div>
     <% end %>
   <% end %>
@@ -24,7 +26,7 @@
     </div>
     <div class="modal-body">
       <p>
-        Tags must only be a single word, and can only contain letters and numbers. Separate multiple tags with commas (example: pokemon, gardening, bicycles).
+        Tags must only be a single word, and can only contain letters and numbers, and you can only have up to five tags. Separate multiple tags with commas (example: pokemon, gardening, bicycles).
       </p>
       <p>Tags:</p>
       <input type="text" name="tags">
@@ -32,6 +34,29 @@
     <div class="modal-footer">
       <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
       <button type="submit" class="btn btn-Action">Add Tag(s)</button>
+    </div>
+  </form>
+</div>
+
+<div class="modal hide fade" id="removeTag" tabindex="-1" role="dialog" aria-labelledby="removeTagLabel" aria-hidden="true">
+  <form method="POST" action="/tags/remove">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <h3 id="removeTagLabel">Remove Tags</h3>
+    </div>
+    <div class="modal-body">
+      <p>
+        Select the tags you would like to remove:
+      </p>
+      <% site.tags.each do |tag| %>
+        <input name="tags[]" type="checkbox" value="<%= tag.name %>"> <%= tag.name %>
+        <br>
+      <% end %>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn btn-Action">Remove Tag(s)</button>
     </div>
   </form>
 </div>

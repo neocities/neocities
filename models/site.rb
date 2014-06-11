@@ -267,6 +267,8 @@ class Site < Sequel::Model
     screenshots_delete(filename) if ext.match HTML_REGEX
     thumbnails_delete(filename) if ext.match IMAGE_REGEX
 
+    SiteChangeFile.filter(site_id: self.id, filename: filename).delete
+
     true
   end
 
