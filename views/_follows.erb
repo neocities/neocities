@@ -12,10 +12,11 @@
   </div>
 <% end %>
 
-<% if (!is_current_site && !site_followings.empty?) || is_current_site %>
+<% site_follows = site.follows %>
+<% if (!is_current_site && !site_follows.empty?) || is_current_site %>
   <h3>Followers</h3>
   <div class="following">
-    <% if site_followings.empty? %>
+    <% if site_follows.empty? %>
       No followers yet.
     <% else %>
       <% site.follows_dataset.select(:actioning_site_id).all.each do |follow| %>
