@@ -75,6 +75,12 @@ get '/profile_mockup' do
   erb :'profile_mockup', locals: {site: current_site}
 end
 
+get '/site/:sitename.rss' do |sitename|
+  site = Site[username: sitename]
+  content_type :xml
+  site.to_rss.to_xml
+end
+
 get '/site/:sitename' do |sitename|
   site = Site[username: sitename]
   not_found if(site.nil?)

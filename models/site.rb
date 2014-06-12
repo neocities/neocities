@@ -1,4 +1,5 @@
 require 'tilt'
+require 'rss'
 
 class Site < Sequel::Model
   include Sequel::ParanoidDelete
@@ -456,7 +457,7 @@ class Site < Sequel::Model
   end
 
   def title
-    values[:title] || values[:username]
+    values[:title] || "#{values[:username]}.neocities.org"
   end
 
   def hits_english
@@ -509,5 +510,24 @@ class Site < Sequel::Model
   def thumbnail_url(filename, resolution)
     ext = File.extname(filename).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
     "#{THUMBNAILS_URL_ROOT}/#{values[:username]}/#{filename}.#{resolution}.#{ext}"
+  end
+
+  def to_rss
+    RSS::Maker.make("atom") do |maker|
+      maker.channel.title   = title
+      maker.channel.updated = updated_at
+      maker.channel.author  = username
+      maker.channel.id      = "#{username}.neocities.org"
+
+      latest_events.each do |event|
+        if event.site_change_id
+          maker.items.new_item do |item|
+            item.link = "http://#{username}.neocities.org"
+            item.title = "#{username}.neocities.org has been updated"
+            item.updated = event.site_change.created_at
+          end
+        end
+      end
+    end
   end
 end

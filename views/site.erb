@@ -29,6 +29,9 @@
         <% end %>
 
         <a href="#" id="shareButton" class="btn-Action share" data-container="body" data-toggle="popover" data-placement="bottom" data-content='
+
+          <a href="/site/<%= site.username %>.rss"><span>RSS/Atom Feed</span></a>
+          <br>
           <a href="http://facebook.com/sharer.php?u=<%= Rack::Utils.build_query(u: "http://#{site.username}.neocities.org") %>" target="_blank">Facebook</a>
           <br>
           <a href="https://twitter.com/intent/tweet?<%= Rack::Utils.build_query(text: "This site is awesome: http://#{site.username}.neocities.org") %>">Twitter</a>
