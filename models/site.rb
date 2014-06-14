@@ -78,6 +78,9 @@ class Site < Sequel::Model
   one_to_many :blocks
   one_to_many :blockings, key: :actioning_site_id, class: :Block
 
+  one_to_many :reports
+  one_to_many :reportings, key: :reporting_site_id, class: :Report
+
   one_to_many :stats
 
   one_to_many :events

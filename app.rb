@@ -963,6 +963,31 @@ post '/comment/:comment_id/delete' do |comment_id|
   return {result: 'error'}.to_json
 end
 
+post '/site/:username/report' do |username|
+  site = Site[username: username]
+
+  redirect request.referer if site.nil?
+
+  report = Report.new site_id: site.id, type: params[:type], comments: params[:comments]
+
+  if current_site
+    report.reporting_site_id = current_site.id
+  else
+    report.ip = request.ip
+  end
+
+  report.save
+
+  EmailWorker.perform_async({
+    from: 'web@neocities.org',
+    to: 'report@neocities.org',
+    subject: "[Neocities Report] #{site.username} has been reported for #{report.type}",
+    body: "Reported by #{report.reporting_site_id ? report.reporting_site.username : report.ip}: #{report.comments}"
+  })
+
+  redirect request.referer
+end
+
 def require_admin
   redirect '/' unless signed_in? && current_site.is_admin
 end
