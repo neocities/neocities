@@ -75,25 +75,30 @@ get '/profile_mockup' do
   erb :'profile_mockup', locals: {site: current_site}
 end
 
-get '/site/:sitename.rss' do |sitename|
-  site = Site[username: sitename]
+get '/site/:username.rss' do |username|
+  site = Site[username: username]
   content_type :xml
   site.to_rss.to_xml
 end
 
-get '/site/:sitename' do |sitename|
-  site = Site[username: sitename]
-  not_found if(site.nil?)
-  @title = "#{sitename}.neocities.org"
+get '/site/:username' do |username|
+  site = Site[username: username]
+  not_found if site.nil?
+  if current_site && (site.is_blocking?(current_site) || current_site.is_blocking?(site))
+    not_found
+  end
+  @title = site.title
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
-post '/site/:sitename/comment' do |sitename|
+post '/site/:username/comment' do |username|
   require_login
 
-  redirect "/site/#{sitename}" if params[:message].empty?
+  site = Site[username: username]
 
-  site = Site[username: sitename]
+  if params[:message].empty? || (site.is_blocking?(current_site) || current_site.is_blocking?(site))
+    redirect "/site/#{username}"
+  end
 
   DB.transaction do
     site.add_profile_comment(
@@ -102,7 +107,7 @@ post '/site/:sitename/comment' do |sitename|
     )
   end
 
-  redirect "/site/#{sitename}"
+  redirect "/site/#{username}"
 end
 
 get '/browse_mockup' do
@@ -248,6 +253,18 @@ get '/browse' do
   @current_page = 1 if @current_page == 0
 
   site_dataset = Site.filter(is_banned: false, is_crashing: false).filter(site_changed: true).paginate(@current_page, 300)
+
+  if current_site
+    if !current_site.blocking_site_ids.empty?
+      site_dataset.where!(Sequel.~(Sequel.qualify(:sites, :id) => current_site.blocking_site_ids))
+    end
+
+    if current_site.blocks_dataset.count
+      site_dataset.where!(
+        Sequel.~(Sequel.qualify(:sites, :id) => current_site.blocks_dataset.select(:actioning_site_id).all.collect {|s| s.actioning_site_id})
+      )
+    end
+  end
 
   case params[:sort_by]
     when 'hits'
@@ -915,6 +932,9 @@ post '/event/:event_id/comment' do |event_id|
   require_login
   content_type :json
   event = Event[id: event_id]
+
+  return {result: 'error'}.to_json if event.site.is_blocking?(current_site)
+
   event.add_site_comment current_site, params[:message]
   {result: 'success'}.to_json
 end
@@ -971,6 +991,7 @@ post '/site/:username/report' do |username|
   report = Report.new site_id: site.id, type: params[:type], comments: params[:comments]
 
   if current_site
+    redirect request.referer if current_site.id == site.id
     report.reporting_site_id = current_site.id
   else
     report.ip = request.ip
@@ -986,6 +1007,20 @@ post '/site/:username/report' do |username|
   })
 
   redirect request.referer
+end
+
+post '/site/:username/block' do |username|
+  require_login
+  site = Site[username: username]
+  redirect request.referer if current_site.id == site.id
+
+  current_site.block! site
+
+  if request.referer.match /\/site\/#{username}/i
+    redirect '/'
+  else
+    redirect request.referer
+  end
 end
 
 def require_admin

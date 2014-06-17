@@ -113,6 +113,13 @@ describe 'signup' do
     page.must_have_content /Tag.+cannot be more than two words/
   end
 
+  it "fails for tag longer than #{Tag::NAME_LENGTH_MAX} characters" do
+    fill_in_valid
+    fill_in 'tags', with: 'helloiamareallylongtagfornoreason lolthisisridiculous'
+    click_button 'Create Home Page'
+    page.must_have_content /cannot be longer than #{Tag::NAME_LENGTH_MAX}/
+  end
+
   it 'fails for too many tags' do
     fill_in_valid
     fill_in 'tags', with: 'one, two, three, four, five, six'

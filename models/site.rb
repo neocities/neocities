@@ -58,6 +58,7 @@ class Site < Sequel::Model
 
   SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162', '37x37', '146x88', '302x182', '90x63', '82x62', '348x205']
   THUMBNAIL_RESOLUTIONS  = ['105x63', '90x63']
+  TAG_LENGTH_MAX = 25
 
   many_to_one :server
 
@@ -193,6 +194,37 @@ class Site < Sequel::Model
 
       save(validate: false)
     }
+  end
+
+  def follows_dataset
+    super.where(Sequel.~(site_id: blocking_site_ids))
+    .where(Sequel.~(actioning_site_id: blocking_site_ids))
+  end
+
+  def followings_dataset
+    super.where(Sequel.~(site_id: blocking_site_ids))
+    .where(Sequel.~(actioning_site_id: blocking_site_ids))
+  end
+
+  def events_dataset
+    super.where(Sequel.~(site_id: blocking_site_ids))
+    .where(Sequel.~(actioning_site_id: blocking_site_ids))
+  end
+
+  def blocking_site_ids
+    @blocking_site_ids ||= blockings_dataset.select(:site_id).all.collect {|s| s.site_id}
+  end
+
+  def block!(site)
+    block = blockings_dataset.filter(site_id: site.id).first
+    DB.transaction do
+      add_blocking site: site
+    end
+  end
+
+  def is_blocking?(site)
+    @blockings ||= blockings
+    !@blockings.select {|b| b.site_id == site.id}.empty?
   end
 
   def self.valid_filename?(filename)
@@ -370,12 +402,17 @@ class Site < Sequel::Model
           break
         end
 
+        if tag.length > Tag::NAME_LENGTH_MAX
+          errors.add :tags, "Tag \"#{tag}\" cannot be longer than #{Tag::NAME_LENGTH_MAX} characters."
+          break
+        end
+
         if tag.match(/  /)
           errors.add :tags, "Tag \"#{tag}\" cannot have more than one space between words."
           break
         end
 
-        if tag.split(' ').length > 2
+        if tag.split(' ').length > Tag::NAME_WORDS_MAX
           errors.add :tags, "Tag \"#{tag}\" cannot be more than two words."
           break
         end

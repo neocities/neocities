@@ -1,4 +1,6 @@
 class Tag < Sequel::Model
+	NAME_LENGTH_MAX = 25
+	NAME_WORDS_MAX = 2
   many_to_many :sites
 
   def before_create
