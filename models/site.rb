@@ -58,7 +58,6 @@ class Site < Sequel::Model
 
   SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162', '37x37', '146x88', '302x182', '90x63', '82x62', '348x205']
   THUMBNAIL_RESOLUTIONS  = ['105x63', '90x63']
-  TAG_LENGTH_MAX = 25
 
   many_to_one :server
 
