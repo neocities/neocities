@@ -233,7 +233,13 @@ end
 post '/tags/add' do
   require_login
   current_site.new_tags_string = params[:tags]
-  current_site.save
+
+  if current_site.valid?
+    current_site.save
+  else
+    flash[:errors] = current_site.errors[:tags].first
+  end
+
   redirect request.referer
 end
 

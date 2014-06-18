@@ -1,4 +1,15 @@
 <div class="header-Outro with-site-image">
+  <% if flash.keys.length > 0 %>
+    <div class="row content">
+      <div class="alert txt-Center">
+        <p style="padding:5px">
+          <% flash.keys.each do |key| %>
+            <%= flash[key] %>
+          <% end %>
+        </p>
+      </div>
+    </div>
+  <% end %>
   <div class="row content">
     <div class="col col-50 signup-Area large">
       <div class="signup-Form">

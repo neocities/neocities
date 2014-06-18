@@ -386,7 +386,6 @@ class Site < Sequel::Model
 
     if @new_tags_string
       new_tags = @new_tags_string.split ','
-      new_tags.uniq!
       new_tags.compact!
       @new_filtered_tags = []
 
@@ -416,7 +415,10 @@ class Site < Sequel::Model
           break
         end
 
+        next if tags.collect {|t| t.name}.include? tag
+
         @new_filtered_tags << tag
+        @new_filtered_tags.uniq!
       end
     end
   end

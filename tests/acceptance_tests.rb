@@ -127,6 +127,16 @@ describe 'signup' do
     page.must_have_content /Cannot have more than \d tags for your site/
   end
 
+  it 'does not duplicate tags' do
+    fill_in_valid
+    fill_in 'tags', with: 'one, one'
+    click_button 'Create Home Page'
+
+    site = Site.last
+    site.tags.length.must_equal 1
+    site.tags.first.name.must_equal 'one'
+  end
+
   it 'succeeds with no tags' do
     fill_in_valid
     fill_in 'tags', with: ''
