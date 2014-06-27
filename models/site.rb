@@ -195,6 +195,7 @@ class Site < Sequel::Model
     }
   end
 
+=begin
   def follows_dataset
     super.where(Sequel.~(site_id: blocking_site_ids))
     .where(Sequel.~(actioning_site_id: blocking_site_ids))
@@ -209,6 +210,7 @@ class Site < Sequel::Model
     super.where(Sequel.~(site_id: blocking_site_ids))
     .where(Sequel.~(actioning_site_id: blocking_site_ids))
   end
+=end
 
   def blocking_site_ids
     @blocking_site_ids ||= blockings_dataset.select(:site_id).all.collect {|s| s.site_id}
@@ -493,8 +495,13 @@ class Site < Sequel::Model
     'Supporter Plan'
   end
 
-  def latest_events
-    events_dataset.order(:id.desc).limit(10).all
+  def latest_events(limit=10, offset=0)
+    events_dataset.order(:created_at.desc).limit(limit, offset).all
+  end
+
+  def news_feed(limit=10, offset=0)
+    following_ids = self.followings_dataset.select(:site_id).all.collect {|f| f.site_id}
+    Event.filter(site_id: following_ids+[self.id]).order(:created_at.desc).limit(limit, offset).all
   end
 
   def title
@@ -521,6 +528,10 @@ class Site < Sequel::Model
       rescue Errno::ENOENT
       end
     end
+  end
+
+  def suggestions(limit=8, offset=0)
+    Site.where(tags: tags).limit(limit, offset).order(:updated_at.desc).all
   end
 
   def screenshot_path(filename, resolution)

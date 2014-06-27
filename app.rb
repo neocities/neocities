@@ -87,7 +87,9 @@ get '/site/:username' do |username|
   if current_site && (site.is_blocking?(current_site) || current_site.is_blocking?(site))
     not_found
   end
+
   @title = site.title
+  @latest_events = site.latest_events
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
@@ -125,6 +127,7 @@ end
 get '/?' do
   if current_site
     require_login
+    @suggestions = current_site.suggestions
     halt erb :'home', locals: {site: current_site}
   end
 

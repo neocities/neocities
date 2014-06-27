@@ -76,18 +76,17 @@
       </div>
     <% end %>
 
-    <% latest_events = site.latest_events %>
-    <% if latest_events.empty? %>
+    <% if @latest_events.empty? %>
       <div>
         <p>No recent activity.</p>
-        <% if site == current_site %>
+        <% if @site == current_site %>
           <p>
             You should <a href="/dashboard">update your site</a>!
           </p>
         <% end %>
       </div>
     <% else %>
-      <%== erb :'_news', layout: false, locals: {site: site, events: latest_events} %>
+      <%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %>
     <% end %>
 
   </div>

@@ -15,79 +15,36 @@
   <div class="content misc-page columns right-col">
     <div class="col-left">
       <div class="col col-66">
-        <% if current_site.followings_dataset.count == 0 %>
+        <% if current_site.followings_dataset.count > 0 %>
+          <%== erb :'_news', layout: false, locals: {site: current_site, events: current_site.news_feed} %>
+        <% else %>
           <div class="welcome">
             <h4>Welcome to your Neocities news feed!</h4>
-            <p>You aren't following any websites yet! Once you do, updates will show up here and you can like and comment on them. Here are some website suggestions based on your tags, or <a href="/browse">check out all the sites on Neocities!</a></p>
+            <p>
+              You aren't following any websites yet! Once you do, updates will show up here and you can like and comment on them.
+
+              <% if @suggestions.length > 0 %>
+                Here are some website suggestions based on your tags, or <a href="/browse">check out all the sites on Neocities!</a>
+              <% else %>
+                Want to find some sites to follow? <a href="/browse">Check out all the sites on Neocities!</a>
+              <% end %>
+            </p>
           </div>
 
-    <div class="site-suggestion">
-      <div class="site-portrait">
-        <a href="http://dragonquest.neocities.org">
-          <img src="https://neocities.org/site_screenshots/nintendosv/index.html.270x162.jpg">
-          <span class="caption">dragonquest</span>
-        </a>
-      </div>
-      <a class="tag" href="http://neocities.org">Games</a>
-      <a class="tag" href="http://neocities.org">Anime</a>
-      <a class="tag" href="http://neocities.org">Art</a>
-      <a class="tag" href="http://neocities.org">Cooking</a>
-    </div>
-
-    <div class="site-suggestion">
-      <div class="site-portrait">
-        <a href="http://dragonquest.neocities.org">
-          <img src="https://neocities.org/site_screenshots/nintendosv/index.html.270x162.jpg">
-          <span class="caption">dragonquest</span>
-        </a>
-      </div>
-      <a class="tag" href="http://neocities.org">Games</a>
-      <a class="tag" href="http://neocities.org">Anime</a>
-      <a class="tag" href="http://neocities.org">Art</a>
-    </div>
-
-    <div class="site-suggestion">
-      <div class="site-portrait">
-        <a href="http://dragonquest.neocities.org">
-          <img src="https://neocities.org/site_screenshots/nintendosv/index.html.270x162.jpg">
-          <span class="caption">dragonquest</span>
-        </a>
-      </div>
-      <a class="tag" href="http://neocities.org">Games</a>
-      <a class="tag" href="http://neocities.org">Anime</a>
-    </div>
-
-    <div class="site-suggestion">
-      <div class="site-portrait">
-        <a href="http://dragonquest.neocities.org">
-          <img src="https://neocities.org/site_screenshots/nintendosv/index.html.270x162.jpg">
-          <span class="caption">dragonquest</span>
-        </a>
-      </div>
-      <a class="tag" href="http://neocities.org">Games</a>
-    </div>
-
-    <div class="site-suggestion">
-      <div class="site-portrait">
-        <a href="http://dragonquest.neocities.org">
-          <img src="https://neocities.org/site_screenshots/nintendosv/index.html.270x162.jpg">
-          <span class="caption">dragonquest</span>
-        </a>
-      </div>
-      <a class="tag" href="http://neocities.org">Games</a>
-      <a class="tag" href="http://neocities.org">Anime</a>
-    </div>
-
-    <div class="site-suggestion">
-      <div class="site-portrait">
-        <a href="http://dragonquest.neocities.org">
-          <img src="https://neocities.org/site_screenshots/nintendosv/index.html.270x162.jpg">
-          <span class="caption">dragonquest</span>
-        </a>
-      </div>
-      <a class="tag" href="http://neocities.org">Games</a>
-    </div>
-
+          <% @suggestions.each do |suggested_site| %>
+            <div class="site-suggestion">
+              <div class="site-portrait">
+                <a href="http://<%= suggested_site.username %>.neocities.org">
+                  <img src="<%= suggested_site.screenshot_url('index.html', '270x162') %>">
+                </a>
+                  <span class="caption">
+                    <a href="/site/<%= suggested_site.username %>"><%= suggested_site.title %></a></span>
+              </div>
+              <% suggested_site.tags.each do |tag| %>
+                <a class="tag" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a>
+              <% end %>
+            </div>
+          <% end %>
         <% end %>
       </div>
 

@@ -15,7 +15,7 @@
       <div class="icon"></div>
       <% actioning_site_username = event.actioning_site_dataset.select(:username).first.username %>
       <% event_site_username = event.site_dataset.select(:username).first.username %>
-      <a href="/site/<%= actioning_site_username %>" class="user"><%= actioning_site_username %></a> followed <a href="/site/<%= event_site_username %>" class="user"><%= event_site_username %>'s</a> website<span class="date"><%= event.created_at.ago %></span>
+      <a href="/site/<%= actioning_site_username %>" class="user"><%= actioning_site_username %></a> is following <a href="/site/<%= event_site_username %>" class="user"><%= event_site_username %></a>.<span class="date"><%= event.created_at.ago %></span>
       </div>
   <% elsif event.site_change_id %>
     <div class="news-item update">
