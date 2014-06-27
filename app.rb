@@ -127,7 +127,17 @@ end
 get '/?' do
   if current_site
     require_login
-    @suggestions = current_site.suggestions
+
+    if current_site.followings_dataset.count == 0
+      @suggestions = current_site.suggestions
+    end
+
+    if params[:activity] == 'mine'
+      @events = current_site.latest_events
+    else
+      @events = current_site.news_feed
+    end
+
     halt erb :'home', locals: {site: current_site}
   end
 
