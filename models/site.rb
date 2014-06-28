@@ -59,6 +59,8 @@ class Site < Sequel::Model
   SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162', '37x37', '146x88', '302x182', '90x63', '82x62', '348x205']
   THUMBNAIL_RESOLUTIONS  = ['105x63', '90x63']
 
+  BANNED_TIME = 2592000 # 30 days in seconds
+
   many_to_one :server
 
   many_to_many :tags
@@ -101,6 +103,13 @@ class Site < Sequel::Model
     def bcrypt_cost=(cost)
       @bcrypt_cost = cost
     end
+  end
+
+  def self.banned_ip?(ip)
+    !Site.where(is_banned: true).
+    where(ip: ip).
+    where(['updated_at > ?', Time.now-BANNED_TIME]).
+    first.nil?
   end
 
   def is_following?(site)
@@ -186,11 +195,7 @@ class Site < Sequel::Model
     DB.transaction {
       FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'banned_sites', username)
       self.is_banned = true
-
-      if !['127.0.0.1', nil, ''].include? ip
-        `sudo ufw insert 1 deny from #{ip}`
-      end
-
+      self.updated_at = Time.now
       save(validate: false)
     }
   end

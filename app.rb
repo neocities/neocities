@@ -336,12 +336,14 @@ end
 
 get '/new' do
   dashboard_if_signed_in
+  require_unbanned_ip
   @site = Site.new
   @site.username = params[:username] unless params[:username].nil?
   erb :'new'
 end
 
 post '/create' do
+  require_unbanned_ip
   dashboard_if_signed_in
   @site = Site.new(
     username: params[:username],
@@ -1051,6 +1053,7 @@ def dashboard_if_signed_in
 end
 
 def require_login_ajax
+  halt 'You are banned.' if Site.banned_ip?(request.ip)
   halt 'You are not logged in!' unless signed_in?
 end
 
@@ -1063,6 +1066,7 @@ def csrf_token
 end
 
 def require_login
+  require_unbanned_ip
   redirect '/' unless signed_in?
 end
 
@@ -1073,6 +1077,15 @@ end
 def current_site
   return nil if session[:id].nil?
   @site ||= Site[id: session[:id]]
+end
+
+def require_unbanned_ip
+  if Site.banned_ip?(request.ip)
+    session[:id] = nil
+    flash[:error] = 'Your IP address has been banned due to misconduct. '+
+    'If you believe this to be in error, <a href="/contact">contact the site admin</a>.'
+    redirect '/'
+  end
 end
 
 def title
