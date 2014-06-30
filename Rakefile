@@ -16,22 +16,35 @@ task :default => :test
 desc "parse logs"
 task :parse_logs => [:environment] do
   hits = {}
-  logfile = File.open '/var/log/nginx/neocities-sites.log.1', 'r'
-  while hit = logfile.gets
-    hit = hit.split ' '
+  visits = {}
+  visit_ips = {}
 
-    # It says hits, but really we're tracking visits to index"
-    if hit[3] == '/'
-      hits[hit[1]] ||= 0
-      hits[hit[1]] += 1
+  logfile = File.open '/var/log/nginx/neocities-sites.log.1', 'r'
+
+  while hit = logfile.gets
+    time, username, size, path, ip = hit.split ' '
+
+    hits[username] ||= 0
+    hits[username] += 1
+
+    visit_ips[username] = [] if !visit_ips[username]
+
+    unless visit_ips[username].include?(ip)
+      visits[username] ||= 0
+      visits[username] += 1
+      visit_ips[username] << ip
     end
   end
+
   logfile.close
 
   hits.each do |username,hitcount|
     DB['update sites set hits=hits+? where username=?', hitcount, username].first
   end
 
+  visits.each do |username,visitcount|
+    DB['update sites set views=views+? where username=?', visitcount, username].first
+  end
 end
 
 desc 'Update screenshots'
