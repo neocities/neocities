@@ -66,7 +66,21 @@
               <img src="/img/placeholder.png" alt="<%= site.username %>" />
             </span>
           </a>
-          <span style="float: left"><a href="/site/<%= site.username %>"><%= site.title %></a></span><span style="float: right"><a href="/site/<%= site.username %>"><%= site.hits %> hit<%= site.hits == 1 ? '' : 's' %></a></span>
+          <div>
+            <span>
+              <center><a href="http://<%= site.username %>.neocities.org"><%= site.title %></a>
+            </span>
+          </div>
+          <div>
+            <span style="float: left">
+              <a href="/site/<%= site.username %>">Profile</a>
+            </span>
+            <span style="float: right">
+              <a href="/site/<%= site.username %>">
+                <%= site.hits %> hit<%= site.hits == 1 ? '' : 's' %>
+              </a>
+            </span>
+          </div>
         </li>
       <% end %>
     </ul>
