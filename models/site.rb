@@ -1,5 +1,6 @@
 require 'tilt'
 require 'rss'
+require 'nokogiri'
 
 class Site < Sequel::Model
   include Sequel::ParanoidDelete
@@ -60,6 +61,8 @@ class Site < Sequel::Model
   THUMBNAIL_RESOLUTIONS  = ['105x63', '90x63']
 
   BANNED_TIME = 2592000 # 30 days in seconds
+
+  TITLE_MAX = 100
 
   many_to_one :server
 
@@ -254,6 +257,15 @@ class Site < Sequel::Model
     if File.exist?(file_path(filename)) &&
        Digest::SHA2.file(file_path(filename)).digest == Digest::SHA2.file(uploaded.path).digest
       return false
+    end
+
+    if filename == 'index.html'
+      new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
+
+      if new_title.length < TITLE_MAX
+        self.title = new_title
+        save_changes(validate: false)
+      end
     end
 
     FileUtils.mv uploaded.path, file_path(filename)
@@ -509,8 +521,16 @@ class Site < Sequel::Model
     Event.filter(site_id: following_ids+[self.id]).order(:created_at.desc).limit(limit, offset).all
   end
 
+  def host
+    domain ? domain : "#{username}.neocities.org"
+  end
+
   def title
-    values[:title] || "#{values[:username]}.neocities.org"
+    if values[:title].nil? || values[:title].empty?
+      domain ? domain : "#{username}.neocities.org"
+    else
+      values[:title]
+    end
   end
 
   def hits_english

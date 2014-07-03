@@ -14,13 +14,13 @@
     <div class="col col-50 signup-Area large">
       <div class="signup-Form">
   	  <fieldset class="content">
-        <a href="http://<%= site.username %>.neocities.org"><img class="screenshot" src="<%= site.screenshot_url('index.html', '348x205') %>" style="width: 358px;height: 215px;"></a>
+        <a href="//<%= site.host %>"><img class="screenshot" src="<%= site.screenshot_url('index.html', '348x205') %>" style="width: 358px;height: 215px;"></a>
 	    </fieldset>
       </div>
     </div>
     <div class="col col-50">
       <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? && !site.ended_supporter? %><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
-      <p class="site-url"><a href="http://<%= site.username %>.neocities.org">http://<%= site.username %>.neocities.org</a></p>
+      <p class="site-url"><a href="//<%= site.host %>"><%= site.host %></a></p>
       <div class="stats">
         <div class="stat"><strong><%= site.hits_english %></strong> <span>hits</span></div>
         <div class="stat"><strong><%= site.follows_dataset.count %></strong> <span>followers</span></div>
@@ -43,19 +43,19 @@
 
           <a href="/site/<%= site.username %>.rss"><span>RSS/Atom Feed</span></a>
           <br>
-          <a href="http://facebook.com/sharer.php?u=<%= Rack::Utils.build_query(u: "http://#{site.username}.neocities.org") %>" target="_blank">Facebook</a>
+          <a href="http://facebook.com/sharer.php?u=<%= Rack::Utils.build_query(u: "http://#{site.host}") %>" target="_blank">Facebook</a>
           <br>
-          <a href="https://twitter.com/intent/tweet?<%= Rack::Utils.build_query(text: "This site is awesome: http://#{site.username}.neocities.org") %>">Twitter</a>
+          <a href="https://twitter.com/intent/tweet?<%= Rack::Utils.build_query(text: "#{site.title}: http://#{site.host}") %>">Twitter</a>
           <br>
-          <a href="http://www.reddit.com/submit?<%= Rack::Utils.build_query(title: "#{site.username}.neocities.org", url: "http://#{site.username}.neocities.org" )%>" target="_blank">Reddit</a>
+          <a href="http://www.reddit.com/submit?<%= Rack::Utils.build_query(title: "#{site.title}", url: "http://#{site.host}" )%>" target="_blank">Reddit</a>
           <br>
-          <a href="http://www.tumblr.com/share?<%= Rack::Utils.build_query(v: 3, u: "http://#{site.username}.neocities.org", t: "#{site.username}.neocities.org") %>" target="_blank">Tumblr</a>
+          <a href="http://www.tumblr.com/share?<%= Rack::Utils.build_query(v: 3, u: "http://#{site.host}", t: "#{site.title}") %>" target="_blank">Tumblr</a>
           <br>
-          <a href="http://www.stumbleupon.com/submit?<%= Rack::Utils.build_query(url: "http://#{site.username}.neocities.org", title: "#{site.username}.neocities.org") %>" target="_blank">StumbleUpon</a>
+          <a href="http://www.stumbleupon.com/submit?<%= Rack::Utils.build_query(url: "http://#{site.host}", title: "#{site.title}") %>" target="_blank">StumbleUpon</a>
           <br>
-          <a href="http://del.icio.us/post?<%= Rack::Utils.build_query(url: "http://#{site.username}.neocities.org", title: "#{site.username}.neocities.org") %>" target="_blank">Del.ici.ous</a>
+          <a href="http://del.icio.us/post?<%= Rack::Utils.build_query(url: "http://#{site.host}", title: "#{site.title}") %>" target="_blank">Del.ici.ous</a>
           <br>
-          <a href="https://plus.google.com/share?<%= Rack::Utils.build_query(url: "http://#{site.username}.neocities.org") %>" target="_blank">Google+</a>
+          <a href="https://plus.google.com/share?<%= Rack::Utils.build_query(url: "http://#{site.host}") %>" target="_blank">Google+</a>
         '>
           <span>Share</span></a>
       </div>
@@ -115,7 +115,7 @@
     <% if site != current_site %>
       <div class="report">
         <a href="#report" data-toggle="modal">Report</a> | 
-        <% if current_site.is_blocking?(site) %>
+        <% if current_site && current_site.is_blocking?(site) %>
           <a href="#">Unblock</a>
         <% else %>
           <a href="#block" data-toggle="modal">Block</a>

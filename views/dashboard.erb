@@ -36,13 +36,15 @@
     </div>
 
 	<div class="col col-50">
-    <h2 class="eps">My Website</h2>
-    <p class="site-url" style="margin-top: -9px;"><a href="http://<%= current_site.username %>.neocities.org" target="_blank">http://<%= current_site.username %>.neocities.org</a></p>
+    <h2 class="eps"><%= current_site.title %></h2>
+    <p class="site-url" style="margin-top: -9px;"><a href="//<%= current_site.host %>" target="_blank"><%= current_site.host %></a></p>
 	<ul>
 <% if current_site.updated_at %>
 	<li>Last updated <%= current_site.updated_at.ago.downcase %></li>
 <% end %>
-	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.used_space_in_megabytes %>MB) of your <%= current_site.maximum_space_in_megabytes %> MB</strong>. <% if !current_site.supporter? %>Need more space? <a href="/plan">Become a Supporter!</a><% end %></li>
+	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.used_space_in_megabytes %>MB) of your <%= current_site.maximum_space_in_megabytes %> MB</strong>. 
+  <br>
+  <% if !current_site.supporter? %>Need more space? <a href="/plan">Become a Supporter!</a><% end %></li>
 	<li><strong><%= current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %></strong> hits</li>
 	</ul>
 	</div>

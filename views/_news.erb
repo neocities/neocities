@@ -13,29 +13,32 @@
     <div class="news-item follow">
       <div class="title">
       <div class="icon"></div>
-      <% actioning_site_username = event.actioning_site_dataset.select(:username).first.username %>
-      <% event_site_username = event.site_dataset.select(:username).first.username %>
-      <a href="/site/<%= actioning_site_username %>" class="user"><%= actioning_site_username %></a> is following <a href="/site/<%= event_site_username %>" class="user"><%= event_site_username %></a>.<span class="date"><%= event.created_at.ago %></span>
-      </div>
+      <% actioning_site = event.actioning_site_dataset.select(:username, :title, :domain).first %>
+      <% event_site = event.site_dataset.select(:username, :title, :domain).first %>
+      <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><%= actioning_site.title.shorten(40) %></a> 
+      is following
+      <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(40) %></a>
+      <span class="date"><%= event.created_at.ago %></span>
+    </div>
   <% elsif event.site_change_id %>
     <div class="news-item update">
       <div class="title">
         <div class="icon"></div>
-        <% event_site_username = event.site_dataset.select(:username).first.username %>
-        <a href="http://<%= event_site_username %>.neocities.org" class="user"><%= event_site_username %>.neocities.org</a> has been updated. <span class="date"><%= event.created_at.ago %></span>
+        <% event_site = event.site_dataset.select(:username, :title, :domain).first %>
+        <a href="//<%= event_site.host %>" class="user"><%= event_site.title %></a> has been updated. <span class="date"><%= event.created_at.ago %></span>
       </div>
       <% site_change_filenames = event.site_change.site_change_filenames %>
       <% unless site_change_filenames.empty? %>
         <div class="content">
           <div class="files">
-            <% event.site_change.site_change_filenames.each do |f| %>
+            <% site_change_filenames.each do |f| %>
               <div class="file">
                 <div class="html-thumbnail <%= site_change_file_display_class f %>">
-                  <a href="http://<%= site.username %>.neocities.org/<%= f %>">
+                  <a href="//<%= event_site.host %>/<%= f %>">
                     <% if site_change_file_display_class(f) == 'html' %>
-                      <img src="<%= site.screenshot_url(f, '90x63') %>">
+                      <img src="<%= event_site.screenshot_url(f, '90x63') %>">
                     <% elsif site_change_file_display_class(f) == 'image' %>
-                      <img src="<%= site.thumbnail_url(f, '90x63') %>">
+                      <img src="<%= event_site.thumbnail_url(f, '90x63') %>">
                     <% elsif site_change_file_display_class(f) == 'misc' %>
                       <span class="misc-icon">
                         <%= File.extname(f).sub('.', '') %>
@@ -70,7 +73,7 @@
               <a href="#" class="comment_like" id="comment_<%= comment.id %>_like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= comment.liking_site_names.join('<br>') %>" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>'); return false"><%= comment.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= comment_likes_count > 0 ? " (#{comment_likes_count})" : '' %></a>
             <% else %>
               <% if comment_likes_count > 0 %>
-                <%= comment_likes_count %> <%= comment_likes_count == 1 ? 'like' : 'likes' %>
+                <%= comment_likes_count %>&nbsp;<%= comment_likes_count == 1 ? 'like' : 'likes' %>
               <% end %>
             <% end %>
 

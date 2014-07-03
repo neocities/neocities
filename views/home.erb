@@ -34,7 +34,7 @@
           <% @suggestions.each do |suggested_site| %>
             <div class="site-suggestion">
               <div class="site-portrait">
-                <a href="http://<%= suggested_site.username %>.neocities.org">
+                <a href="//<%= suggested_site.host %>">
                   <img src="<%= suggested_site.screenshot_url('index.html', '270x162') %>">
                 </a>
                   <span class="caption">
@@ -49,7 +49,7 @@
       </div>
 
       <div class="col col-33">
-        <p class="site-url"><a href="//<%= current_site.username %>.neocities.org" target="_blank"><%= site.username %>.neocities.org</a></p>
+        <p class="site-url"><a href="//<%= current_site.host %>" target="_blank"><%= site.title %></a></p>
         <div class="stats">
           <div class="col col-50">
             <% if site.updated_at %>
