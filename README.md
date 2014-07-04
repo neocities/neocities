@@ -33,19 +33,7 @@ createdb neocities_test
 createdb neocities_dev
 ```
 
-Copy config.yml.template to config.yml and edit to something like this:
-```
-  development:
-    database: 'postgres://neocities@127.0.0.1/neocities_dev'
-    database_pool: 1
-    session_secret: SECRET1234
-    recaptcha_public_key: ENTER RECAPTCHA PUBLIC KEY HERE
-    recaptcha_private_key: ENTER RECAPTCHA PRIVATE KEY HERE
-    sidekiq_user: sidekiq
-    sidekiq_pass: sidekiq
-    phantomjs_url:
-      - http://localhost:8910
-```
+Copy config.yml.template to config.yml.
 
 Run the tests to see if they work:
 

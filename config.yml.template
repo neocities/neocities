@@ -6,8 +6,6 @@ development:
   recaptcha_private_key: ENTER PRIVATE KEY HERE
   sidekiq_user: ENTER USER HERE
   sidekiq_pass: ENTER PASS HERE
-  phantomjs_url:
-    - http://localhost:8910
   stripe_publishable_key: fillout
   stripe_api_key: fillout
 test:
@@ -18,7 +16,5 @@ test:
   recaptcha_private_key: ENTER PRIVATE KEY HERE
   sidekiq_user: ENTER USER HERE
   sidekiq_pass: ENTER PASS HERE
-  phantomjs_url:
-    - http://localhost:8910
   stripe_publishable_key: fillout
   stripe_api_key: fillout
