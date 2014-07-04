@@ -60,17 +60,17 @@
     <div class="content">
       <div class="comments">
         <% event.comments.each do |comment| %>
-          <% comment_actioning_site = comment.actioning_site_dataset.select(:username).first %>
+          <% comment_actioning_site = comment.actioning_site_dataset.select(:title, :domain, :username).first %>
           <div class="comment" id="comment_<%= comment.id %>">
             <img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '82x62') %>">
-            <a href="/site/<%= comment_actioning_site.username %>" class="user"><%= comment_actioning_site.username %></a>
+            <a href="/site/<%= comment_actioning_site.username %>" class="user"><%= comment_actioning_site.title %></a>
             <span class="date"><%= comment.created_at.ago %></span>
             <p><%= comment.message %></p>
           </div>
           <div class="actions">
             <% comment_likes_count = comment.comment_likes_dataset.count %>
             <% if current_site %>
-              <a href="#" class="comment_like" id="comment_<%= comment.id %>_like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= comment.liking_site_names.join('<br>') %>" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>'); return false"><%= comment.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= comment_likes_count > 0 ? " (#{comment_likes_count})" : '' %></a>
+              <a href="#" class="comment_like" id="comment_<%= comment.id %>_like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= comment.liking_site_titles.join('<br>') %>" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>'); return false"><%= comment.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= comment_likes_count > 0 ? " (#{comment_likes_count})" : '' %></a>
             <% else %>
               <% if comment_likes_count > 0 %>
                 <%= comment_likes_count %>&nbsp;<%= comment_likes_count == 1 ? 'like' : 'likes' %>

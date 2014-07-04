@@ -17,8 +17,10 @@ class Event < Sequel::Model
     false
   end
 
-  def liking_site_names
-    likes_dataset.select(:actioning_site_id).all.collect {|like| like.actioning_site_dataset.select(:username).first.username }
+  def liking_site_titles
+    likes_dataset.select(:actioning_site_id).all.collect do |like|
+      like.actioning_site_dataset.select(:domain,:title,:username).first.title
+    end
   end
 
   def add_site_comment(site, message)

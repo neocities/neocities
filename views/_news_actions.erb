@@ -1,7 +1,7 @@
 <div id="event_<%= event.id %>_actions" class="actions">
   <% event_likes_count = event.likes_dataset.count %>
   <% if current_site %>
-    <a href="#" id="like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= event.liking_site_names.join('<br>') %>" onclick="new Like(<%= event.id %>, '<%= csrf_token %>').toggleLike(); return false"><%= event.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= event_likes_count > 0 ? " (#{event_likes_count})" : '' %></a>
+    <a href="#" id="like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= event.liking_site_titles.join('<br>') %>" onclick="new Like(<%= event.id %>, '<%= csrf_token %>').toggleLike(); return false"><%= event.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= event_likes_count > 0 ? " (#{event_likes_count})" : '' %></a>
   <% else %>
     <% if event_likes_count > 0 %>
       <%= event_likes_count %>&nbsp;<%= event_likes_count == 1 ? 'like' : 'likes' %>
