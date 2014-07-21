@@ -11,7 +11,7 @@
   <% if flash.keys.length > 0 %>
     <div class="alert alert-block">
       <p>
-        <% flash.keys.each do |key| %>
+        <% flash.keys.select {|s| s == :error}.each do |key| %>
           <%= flash[key] %>
         <% end %>
       </p>
