@@ -115,7 +115,7 @@ describe 'signup' do
 
   it "fails for tag longer than #{Tag::NAME_LENGTH_MAX} characters" do
     fill_in_valid
-    fill_in 'tags', with: 'helloiamareallylongtagfornoreason lolthisisridiculous'
+    fill_in 'tags', with: SecureRandom.hex(Tag::NAME_LENGTH_MAX)
     click_button 'Create Home Page'
     page.must_have_content /cannot be longer than #{Tag::NAME_LENGTH_MAX}/
   end
