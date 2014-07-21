@@ -2006,6 +2006,9 @@ a.tag:hover {
 .section.last h2, .section.last blockquote {
   color: white; }
 
+.selected {
+  font-weight: bold; }
+
 .footer-Base {
   color: #5e5b56;
   float: left;

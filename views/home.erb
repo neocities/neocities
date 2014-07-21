@@ -2,7 +2,13 @@
   <div class="row content">
     <div class="col col-66">
       <h3>Your Feed</h3>
-      <div class="feed-filter"><a href="/">All Activity</a>  <a href="/?activity=mine">Activity on your profile</a></div>
+      <div class="feed-filter">
+        <a href="/" <% if params[:activity] != 'mine' %>class="selected"<% end %>>All Activity</a>
+        &nbsp;&nbsp;
+        <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>
+            Activity on your profile
+        </a>
+        </div>
     </div>
     <div class="col col-32">
       <h3>Your Website</h3>

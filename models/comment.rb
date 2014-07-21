@@ -10,6 +10,12 @@ class Comment < Sequel::Model
     end
   end
 
+  def liking_site_usernames
+    comment_likes_dataset.select(:id, :actioning_site_id).all.collect do |comment_like|
+      comment_like.actioning_site_dataset.select(:username).first.username
+    end
+  end
+
   def site_likes?(site)
     comment_likes_dataset.filter(actioning_site_id: site.id).count > 0
   end
