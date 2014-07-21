@@ -103,14 +103,14 @@ describe 'signup' do
     fill_in_valid
     fill_in 'tags', with: 'police    officer, hi'
     click_button 'Create Home Page'
-    page.must_have_content /Tag.+cannot have more than one space/
+    page.must_have_content /Tag.+cannot have spaces/
   end
 
   it 'fails for tag with too many words' do
     fill_in_valid
-    fill_in 'tags', with: 'police officer club'
+    fill_in 'tags', with: 'police officer'
     click_button 'Create Home Page'
-    page.must_have_content /Tag.+cannot be more than two words/
+    page.must_have_content /Tag.+cannot be more than #{Tag::NAME_WORDS_MAX} word/
   end
 
   it "fails for tag longer than #{Tag::NAME_LENGTH_MAX} characters" do
@@ -154,10 +154,10 @@ describe 'signup' do
 
   it 'succeeds with valid tags' do
     fill_in_valid
-    fill_in 'tags', with: 'derpie, shoujo manga'
+    fill_in 'tags', with: 'derpie, shoujo'
     click_button 'Create Home Page'
     page.must_have_content 'Your Feed'
-    Site.last.tags.collect {|t| t.name}.must_equal ['derpie', 'shoujo manga']
+    Site.last.tags.collect {|t| t.name}.must_equal ['derpie', 'shoujo']
   end
 end
 

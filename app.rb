@@ -374,7 +374,7 @@ post '/create' do
     session[:id] = @site.id
     redirect '/'
   else
-    @site.errors.add :captcha, 'You must type in the two words correctly! Try again.' if !recaptcha_is_valid
+    @site.errors.add :captcha, 'You must type in the captcha correctly! Try again.' if !recaptcha_is_valid
 
     erb :'/new'
   end

@@ -425,12 +425,12 @@ class Site < Sequel::Model
         end
 
         if tag.match(/  /)
-          errors.add :tags, "Tag \"#{tag}\" cannot have more than one space between words."
+          errors.add :tags, "Tag \"#{tag}\" cannot have spaces."
           break
         end
 
         if tag.split(' ').length > Tag::NAME_WORDS_MAX
-          errors.add :tags, "Tag \"#{tag}\" cannot be more than two words."
+          errors.add :tags, "Tag \"#{tag}\" cannot be more than #{Tag::NAME_WORDS_MAX} word."
           break
         end
 
