@@ -25,7 +25,7 @@
       <div class="title">
         <div class="icon"></div>
         <% event_site = event.site_dataset.select(:username, :title, :domain).first %>
-        <a href="//<%= event_site.host %>" class="user"><%= event_site.title %></a> has been updated. <span class="date"><%= event.created_at.ago %></span>
+        <a href="/site/<%= event_site.username %>" class="user"><%= event_site.title %></a> has been updated. <span class="date"><%= event.created_at.ago %></span>
       </div>
       <% site_change_filenames = event.site_change.site_change_filenames %>
       <% unless site_change_filenames.empty? %>
