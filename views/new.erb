@@ -61,10 +61,12 @@
 
     <hr>
 
-    <p>You can optionally enter some tags! Tags will allow others to find your site based on your interests, or your site's theme. <b>Separate multiple tags with commas</b>. Don't think too hard about this, you can change them later. You can have a maximum of five tags, tags can only contain letters (A-Z) and numbers (0-9), no spaces.</p>
+    <p>You can optionally enter a tag! A tag allows others to find your site by looking for sites with that tag (examples: <a href="/browse?tag=pokemon">pokemon</a>, <a href="/browse?tag=chess">chess</a>). Keep your tag simple and generic. Don't use tags like "johnspersonalsite", it's too unique and won't have related sites. A tag can only contain letters (A-Z) and numbers (0-9), no spaces.
+    </p>
+    <p>Don't think too hard about this! You don't have to add a tag if your site doesn't have a specific topic, and you can always add one later.</p>
 
-    <h5>Tags</h5>
-    <input class="input-Area" name="tags" type="text" style="width: 400px; max-width:100%" placeholder="pokemon, video games, bulbasaur" value="<%= params[:tags] %>" autocapitalize="off" autocorrect="off">
+    <h5>Add a Tag</h5>
+    <input class="input-Area" name="tags" type="text" style="width: 400px; max-width:100%" placeholder="pokemon" value="<%= params[:tags] %>" autocapitalize="off" autocorrect="off">
 
     <hr>
 
