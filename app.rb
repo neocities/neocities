@@ -173,8 +173,8 @@ post '/plan/create' do
 
     EmailWorker.perform_async({
       from: 'web@neocities.org',
-      reply_to: current_site.email,
-      to: 'contact@neocities.org',
+      reply_to: 'contact@neocities.org',
+      to: current_site.email,
       subject: "[Neocities] You've become a supporter!",
       body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: plan_name)
     })
