@@ -3,12 +3,14 @@
     <div class="col col-66">
       <h3>Your Feed</h3>
       <div class="feed-filter">
+        <% if current_site.followings_dataset.count > 0 %>
         <a href="/" <% if params[:activity] != 'mine' %>class="selected"<% end %>>All Activity</a>
         &nbsp;&nbsp;
         <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>
             Activity on your profile
         </a>
-        </div>
+        <% end %>
+      </div>
     </div>
     <div class="col col-32">
       <h3>Your Website</h3>
@@ -71,7 +73,7 @@
           </div>
         </div>
 
-        <a href=""><img src="<%= site.screenshot_url('index.html', '348x205') %>" style="width:340px" class="large-portrait"></a>
+        <a href="//<%= site.host %>"><img src="<%= site.screenshot_url('index.html', '348x205') %>" style="width:340px" class="large-portrait"></a>
 
         <div style="margin-top: 20px; margin-bottom: 20px" class="txt-Center">
           <a href="/site/<%= site.username %>" class="btn-Action">View Site Profile</a>
