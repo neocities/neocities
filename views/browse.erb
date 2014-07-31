@@ -95,7 +95,11 @@
       <% end %>
 
       <% 1.upto(@page_count) do |num| %>
-        <a href="#" onclick="getPage(<%= num %>); return false" style="<%=  num == @current_page ? 'text-decoration: none' : '' %>"><%= num %></a>&nbsp;
+        <% if num == @current_page %>
+          <%= num %>&nbsp;
+        <% else %>
+          <a href="#" onclick="getPage(<%= num %>); return false"><%= num %></a>&nbsp;
+        <% end %>
       <% end %>
 
       <% if @current_page != @page_count %>

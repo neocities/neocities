@@ -132,11 +132,17 @@ get '/?' do
       @suggestions = current_site.suggestions
     end
 
+    @current_page = params[:current_page].to_i
+    @current_page = 1 if @current_page == 0
+
     if params[:activity] == 'mine'
-      @events = current_site.latest_events
+      events_dataset = current_site.latest_events(@current_page, 10)
     else
-      @events = current_site.news_feed
+      events_dataset = current_site.news_feed(@current_page, 10)
     end
+
+    @page_count = events_dataset.page_count || 1
+    @events = events_dataset.all
 
     halt erb :'home', locals: {site: current_site}
   end

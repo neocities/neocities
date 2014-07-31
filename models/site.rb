@@ -512,13 +512,13 @@ class Site < Sequel::Model
     'Supporter Plan'
   end
 
-  def latest_events(limit=10, offset=0)
-    events_dataset.order(:created_at.desc).limit(limit, offset).all
+  def latest_events(current_page=1, limit=10)
+    events_dataset.order(:created_at.desc).paginate(current_page, limit)
   end
 
-  def news_feed(limit=10, offset=0)
+  def news_feed(current_page=1, limit=10)
     following_ids = self.followings_dataset.select(:site_id).all.collect {|f| f.site_id}
-    Event.filter(site_id: following_ids+[self.id]).order(:created_at.desc).limit(limit, offset).all
+    Event.filter(site_id: following_ids+[self.id]).order(:created_at.desc).paginate(current_page, limit)
   end
 
   def host
