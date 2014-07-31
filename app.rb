@@ -266,6 +266,10 @@ post '/tags/remove' do
   redirect request.referer
 end
 
+get '/tags/suggestions/:name.json' do |name|
+  Tag.suggestions(name).collect {|t| t.name}.to_json
+end
+
 get '/browse' do
   @current_page = params[:current_page]
   @current_page = @current_page.to_i

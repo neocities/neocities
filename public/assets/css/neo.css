@@ -2009,6 +2009,14 @@ a.tag:hover {
 .selected {
   font-weight: bold; }
 
+.modal-body {
+  max-height: 800px;
+  overflow-y: visible; }
+
+.tt-dropdown-menu {
+  padding: 0px 10px 0px 10px;
+  background: #FFFFFF; }
+
 .footer-Base {
   color: #5e5b56;
   float: left;

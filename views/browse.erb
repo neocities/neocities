@@ -4,102 +4,123 @@
   }
 </script>
 
-  <div class="header-Outro">
-    <div class="row content">
-    <% if params[:tag] %>
-      <h1>Sites tagged <%= params[:tag] %>
-    <% else %>
-      <h1>Sites on Neocities</h1>
-    <% end %>
-    <h3 class="subtitle"></h3>
-    </div>
+<div class="header-Outro">
+  <div class="row content">
+  <% if params[:tag] %>
+    <h1>Sites tagged <%= params[:tag] %>
+  <% else %>
+    <h1>Sites on Neocities</h1>
+  <% end %>
+  <h3 class="subtitle"></h3>
+  </div>
+</div>
+
+<div class="row content">
+  <div class="col col-50">
+    <form id="search_criteria" action="/browse" method="GET">
+      <fieldset class="grouping">
+        <% if params[:tag] %>
+          <input name="tag" type="hidden" value="<%= params[:tag] %>">
+        <% end %>
+        <label class="text-Label" for="sort_by">Sort By:</label>
+        <div class="select-Container">
+          <select name="sort_by" id="sort_by" class="input-Select">
+            <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
+            <option value="views" <%= params[:sort_by] == 'views' ? 'selected' : '' %>>Most Views</option>
+            <option value="hits" <%= params[:sort_by] == 'hits' ? 'selected' : '' %>>Most Hits</option>
+            <option value="newest" <%= params[:sort_by] == 'newest' ? 'selected' : '' %>>Newest</option>
+            <option value="oldest" <%= params[:sort_by] == 'oldest' ? 'selected' : '' %>>Oldest</option>
+            <option value="random" <%= params[:sort_by] == 'random' ? 'selected' : '' %>>Random</option>
+          </select>
+        </div>
+      <!--
+        <div>
+          <input name="is_nsfw" type="checkbox" value="true" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>> Show 18+ content
+        </div>
+      -->
+        <div style="margin-top: 10px">
+          <input class="btn-Action" type="submit" value="Update">
+        </div>
+      </fieldset>
+    </form>
   </div>
 
-  <div class="row content">
-     <div class="col col-50">
-        <form id="search_criteria" action="/browse" method="GET">
-          <fieldset class="grouping">
-            <% if params[:tag] %>
-              <input name="tag" type="hidden" value="<%= params[:tag] %>">
-            <% end %>
-            <label class="text-Label" for="sort_by">Sort By:</label>
-            <div class="select-Container">
-              <select name="sort_by" id="sort_by" class="input-Select">
-                <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
-                <option value="hits" <%= params[:sort_by] == 'hits' ? 'selected' : '' %>>Most Hits</option>
-                <option value="newest" <%= params[:sort_by] == 'newest' ? 'selected' : '' %>>Newest</option>
-                <option value="oldest" <%= params[:sort_by] == 'oldest' ? 'selected' : '' %>>Oldest</option>
-                <option value="random" <%= params[:sort_by] == 'random' ? 'selected' : '' %>>Random</option>
-              </select>
-            </div>
-          <!--
-            <div>
-              <input name="is_nsfw" type="checkbox" value="true" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>> Show 18+ content
-            </div>
-          -->
-            <div style="margin-top: 10px">
-              <input class="btn-Action" type="submit" value="Update">
-            </div>
-          </fieldset>
-        </form>
-      </div>
-
-      <div class="col col-50">
-        <p>If you like a site, don't forget to follow it!<br>Visitor counts are updated hourly.</p>
-        <% unless signed_in? %>
-          <a class="btn-Action" href="/new" title="create a Neocities.org site today!">Create your Neocities site now</a>
-        <% end %>
-      </div>
-
-    </div> <!-- end .row.content -->
-<br />
-  <% if @sites.length == 0 %>
-    <div class="row content single-Col">
-      <h2>No active sites found.<br>Try another search!</h2>
-    </div>
-  <% else %>
-    <ul class="row website-Gallery content int-Gall">
-      <% @sites.each do |site| %>
-        <li>
-          <a href="//<%= site.host %>" class="neo-Screen-Shot" target="_blank" title="<%= site.title %>">
-            <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '270x162') %>) no-repeat;">
-              <img src="/img/placeholder.png" alt="<%= site.title %>" />
-            </span>
-          </a>
-          <div>
-            <span>
-              <center><a href="//<%= site.host %>" title="<%= site.title %>"><%= site.title.shorten(35) %></a>
-            </span>
-          </div>
-          <div>
-            <span style="float: left">
-              <a href="/site/<%= site.username %>">Profile</a>
-            </span>
-            <span style="float: right">
-              <a href="/site/<%= site.username %>">
-                <%= site.hits %> hit<%= site.hits == 1 ? '' : 's' %>
-              </a>
-            </span>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  <% end %>
-
-  <% if params[:sort_by] != 'random' %>
-    <% if @page_count > 1 %>
-      <div class="txt-Center content eps">
-        <% if @current_page != 1 %>
-          <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
-        <% end %>
-
-        <% 1.upto(@page_count) do |num| %>
-          <a href="#" onclick="getPage(<%= num %>); return false" style="<%=  num == @current_page ? 'text-decoration: none' : '' %>"><%= num %></a>&nbsp;
-        <% end %>
-
-        <% if @current_page != @page_count %>
-          <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="icon-arrow-right" style="text-decoration: none"></i></a>
-        <% end %>
-      </div>
+  <div class="col col-50">
+    <p>If you like a site, don't forget to follow it!<br>Visitor counts are updated hourly.</p>
+    <% unless signed_in? %>
+      <a class="btn-Action" href="/new" title="create a Neocities.org site today!">Create your Neocities site now</a>
     <% end %>
+  </div>
+</div> <!-- end .row.content -->
+
+<br />
+<% if @sites.length == 0 %>
+  <div class="row content single-Col">
+    <h2>No active sites found.<br>Try another search!</h2>
+  </div>
+<% else %>
+  <ul class="row website-Gallery content int-Gall">
+    <% @sites.each do |site| %>
+      <li>
+        <a href="//<%= site.host %>" class="neo-Screen-Shot" target="_blank" title="<%= site.title %>">
+          <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '270x162') %>) no-repeat;">
+            <img src="/img/placeholder.png" alt="<%= site.title %>" />
+          </span>
+        </a>
+        <div>
+          <span>
+            <center><a href="//<%= site.host %>" title="<%= site.title %>"><%= site.title.shorten(35) %></a>
+          </span>
+        </div>
+        <div>
+          <span style="float: left">
+            <a href="/site/<%= site.username %>">Profile</a>
+          </span>
+          <span style="float: right">
+            <a href="/site/<%= site.username %>">
+              <%= site.hits %> hit<%= site.hits == 1 ? '' : 's' %>
+            </a>
+          </span>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if params[:sort_by] != 'random' %>
+  <% if @page_count > 1 %>
+    <div class="txt-Center content eps">
+      <% if @current_page != 1 %>
+        <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
+      <% end %>
+
+      <% 1.upto(@page_count) do |num| %>
+        <a href="#" onclick="getPage(<%= num %>); return false" style="<%=  num == @current_page ? 'text-decoration: none' : '' %>"><%= num %></a>&nbsp;
+      <% end %>
+
+      <% if @current_page != @page_count %>
+        <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="icon-arrow-right" style="text-decoration: none"></i></a>
+      <% end %>
+    </div>
   <% end %>
+<% end %>
+
+<div class="row content">
+  <div class="col col-100">
+    <h3>
+    <% Tag.popular_names.each do |tag| %>
+      <a href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
+    <% end %>
+    </h3>
+  </div>
+</div>
+
+<div class="row content">
+  <div class="col col-20">
+    <h4>Search by tag:</h4>
+    <form method="GET" action="browse">
+      <input class="input-Area typeahead" name="tag" placeholder="pokemon">
+      <input type="submit" class="btn-Action" value="Search" style="width: 100px">
+    </form>
+  </div>
+</div>

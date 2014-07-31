@@ -54,11 +54,31 @@
     <script src="/assets/scripts/underscore-min.js"></script>
     <script src="/assets/scripts/nav.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/typeahead.bundle.js"></script>
 
     <script>
       $("a#like").tooltip({html: true})
       $("a.comment_like").tooltip({html: true})
       $('#shareButton').popover({html: true})
+
+      $('.typeahead').typeahead({
+        minLength: 3,
+        highlight: true
+      }, {
+        name: 'tags',
+        source: function(query, callback) {
+          $.get('/tags/suggestions/'+query+'.json', function(data) {
+            console.log(data)
+
+            var suggestions = JSON.parse(data)
+            var suggestionObjects = []
+            for(var i=0; i<suggestions.length; i++)
+              suggestionObjects.push({value: suggestions[i]})
+
+            callback(suggestionObjects)
+          })
+        }
+      })
     </script>
   </body>
 </html>

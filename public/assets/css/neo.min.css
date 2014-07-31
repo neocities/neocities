@@ -841,6 +841,10 @@ a.tag:hover { text-decoration: none; background: #FFEE8A; }
 
 .selected { font-weight: bold; }
 
+.modal-body { max-height: 800px; overflow-y: visible; }
+
+.tt-dropdown-menu { padding: 0px 10px 0px 10px; background: #FFFFFF; }
+
 .footer-Base { color: #5e5b56; float: left; width: 100%; }
 .footer-Base h1, .footer-Base h2, .footer-Base h3, .footer-Base h4 { color: #8b9a7a; }
 
