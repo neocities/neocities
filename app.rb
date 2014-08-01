@@ -307,6 +307,8 @@ get '/browse' do
   case params[:sort_by]
     when 'hits'
       site_dataset.order!(:hits.desc)
+    when 'views'
+      site_dataset.order!(:views.desc)
     when 'newest'
       site_dataset.order!(:created_at.desc)
     when 'oldest'
