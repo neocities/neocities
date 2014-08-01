@@ -89,7 +89,16 @@ get '/site/:username' do |username|
   end
 
   @title = site.title
-  @latest_events = site.latest_events
+
+  @current_page = params[:current_page]
+  @current_page = @current_page.to_i
+  @current_page = 1 if @current_page == 0
+
+  latest_events_dataset = site.latest_events(@current_page, 10)
+
+  @page_count = latest_events_dataset.page_count || 1
+  @latest_events = latest_events_dataset.all
+
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
