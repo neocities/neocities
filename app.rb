@@ -17,6 +17,10 @@ helpers do
     return 'image' if filename.match(Site::IMAGE_REGEX)
     'misc'
   end
+
+  def csrf_token_input_html
+    %{<input name="csrf_token" type="hidden" value="#{csrf_token}">}
+  end
 end
 
 before do
@@ -423,7 +427,7 @@ end
 
 get '/settings' do
   require_login
-  slim :'settings'
+  erb :'settings'
 end
 
 post '/signin' do
@@ -467,7 +471,7 @@ post '/change_password' do
 
   if !Site.valid_login?(current_site.username, params[:current_password])
     current_site.errors.add :password, 'Your provided password does not match the current one.'
-    halt slim(:'settings')
+    halt erb(:'settings')
   end
 
   current_site.password = params[:new_password]
@@ -482,7 +486,7 @@ post '/change_password' do
     flash[:success] = 'Successfully changed password.'
     redirect '/settings'
   else
-    halt slim(:'settings')
+    halt erb(:'settings')
   end
 end
 
@@ -511,13 +515,14 @@ post '/change_name' do
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
     redirect '/settings'
   else
-    halt slim(:'settings')
+    halt erb(:'settings')
   end
 end
 
 post '/change_nsfw' do
   require_login
   current_site.update is_nsfw: params[:is_nsfw]
+  flash[:success] = current_site.is_nsfw ? 'Marked 18+' : 'Unmarked 18+'
   redirect '/settings'
 end
 
@@ -814,7 +819,7 @@ end
 
 get '/custom_domain' do
   require_login
-  slim :custom_domain
+  erb :custom_domain
 end
 
 post '/custom_domain' do
@@ -826,7 +831,7 @@ post '/custom_domain' do
     flash[:success] = 'The domain has been successfully updated.'
     redirect '/custom_domain'
   else
-    slim :custom_domain
+    erb :custom_domain
   end
 end
 

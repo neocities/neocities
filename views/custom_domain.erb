@@ -1,0 +1,55 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+  <h1>Custom Domain</h1>
+  <h3 class="subtitle">Add your own domain name to your Neocities site!</h3>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <h3></h3>
+  <article>
+
+    <% if !current_site.errors.empty? %>
+      <div class="alert alert-block alert-error">
+        <% current_site.errors.each do |error| %>
+          <p><%= error.last.first %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if flash[:success] %>
+      <div class="alert alert-block alert-success" style="margin-top: 20px">
+        <%== flash[:success] %>
+      </div>
+    <% end %>
+
+    <p>
+      Adding a custom domain allows you to have a domain name attached to your web site. So if you had a domain like <strong>catsknitting.com</strong>, you could have it point to your Neocities site!
+    </p>
+
+    <p>
+      You will have to purchase a domain name from a registrar like <a href="https://www.namecheap.com/?aff=53678" target="_blank">Namecheap</a>, and then add an A record to point your domain (catsknitting.com) to the following IP address:
+    </p>
+
+    <p><code>198.27.81.179</code></p>
+
+    <p>
+      If you want to add a <strong>www</strong> subdomain, or use a wildcard that will answer to everything (<strong>*</strong>), you will have to make a CNAME pointing to <strong>catsknitting.com</strong> for <strong>www</strong> and/or <strong>*</strong>.
+    </p>
+
+    <p>
+      After that, you can add the domain to the box below (just the <strong>catsknitting.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes:
+    </p>
+
+    <form method="POST" action="/custom_domain">
+      <%== csrf_token_input_html %>
+      <input name="domain" type="text" placeholder="catsknitting.com" value="<%= current_site.domain %>">
+      <br>
+      <input class="btn-Action" type="submit" value="Update Domain">
+    </form>
+
+    <p>
+      <strong>NOTE: This is for advanced users, we cannot provide technical support for this feature.</strong> If you cannot make this work, please contact your domain registrar.
+    </p>
+  </article>
+</div>

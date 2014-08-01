@@ -1,0 +1,105 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>Settings</h1>
+  	<h3 class="subtitle">Manage your account</h3>
+  </div>
+</div>
+
+<div class="content single-Col misc-page txt-Center">
+  <article>
+    <section>
+			<div class="txt-Center">
+				<% if !current_site.errors.empty? %>
+					<div class="alert alert-block alert-error" style="margin-top: 20px">
+						<% current_site.errors.each do |error| %>
+							<p><%== error.last.first %></p>
+						<% end %>
+					</div>
+				<% end %>
+				<% if flash[:success] %>
+					<div class="alert alert-block alert-success" style="margin-top: 20px">
+						<%== flash[:success] %>
+					</div>
+				<% end %>
+			</div>
+
+			<h2>Neocities Plan</h2>
+      <% if current_site.supporter? && !current_site.plan_ended %>
+     		<p class="tiny">You currently have the <strong>Supporter Plan (<%= current_site.maximum_space_in_megabytes %>MB)</strong>. Thank you! We love you.
+     		</p>
+      	<a class="btn-Action" href="/plan">Manage Plan</a>
+    	<% else %>
+      	<p class="tiny">
+      		You currently have the <strong>Free Plan (<%= current_site.maximum_space_in_megabytes %>MB)</strong>.<br>Want to get more space and help Neocities? Become a supporter!
+      	</p>
+      	<a class="btn-Action" href="/plan">Supporter Info</a>
+      <% end %>
+
+      <h2>Custom Domain</h2>
+      <p>
+      	You can configure a custom domain for your Neocities site! <strong><a href="/custom_domain">Click Here</a></strong> for more information.
+      </p>
+
+     	<h2>Change Password</h2>
+     	<form method="POST" action="/change_password">
+     		<%== csrf_token_input_html %>
+
+     		<p>Current Password:</p>
+     		<input class="input-Area" name="current_password" type="password">
+
+     		<p>New Password:</p>
+     		<input class="input-Area" name="new_password" type="password">
+
+     		<p>Confirm New Password:</p>
+     		<input class="input-Area" name="new_password_confirm" type="password">
+
+     		<input class="btn-Action" type="submit" value="Change Password">
+     	</form>
+
+
+
+     	<h2>Change Site (User) Name</h2>
+     	<form method="POST" action="/change_name">
+     		<%== csrf_token_input_html %>
+     		<p class="tiny">
+     			It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
+     		</p>
+
+     		<p>
+     			Current Name:
+     			<span style="color: green"><strong><%= current_site.username %></strong></span>
+     		</p>
+
+     		<p>
+     			New name:
+     			<input name="name" class="input-Area" type="text" placeholder="newname" style="width: 200px">
+     		</p>
+
+     		<input class="btn-Action" type="submit" value="Change Name">
+     	</form>
+
+
+     	<h2>18+ Content</h2>
+
+     	<p class="tiny">
+     		If your site contains objectionable (18+) content, check this box. Your site will not be removed, but it will be listed on a special browse page. We don't have an official policy on what defines 18+ content yet, but basically it's just pornography and lewd/sick/gross images. Thanks for your patience and understanding as we try to find a way to balance out the needs of everyone.
+     	</p>
+
+
+     	<form method="POST" action="/change_nsfw">
+     		<%== csrf_token_input_html %>
+     		<input name="is_nsfw" type="hidden" value="false">
+     		<p>
+     			<strong>
+     				My page has 18+ content:&nbsp;&nbsp;&nbsp;
+     				<input name="is_nsfw" type="checkbox" value="true" style="margin-top: 0px"
+     					<% if current_site.is_nsfw %>checked<% end %>
+     				>
+     			</strong>
+     		</p>
+
+     		<input class="btn-Action" type="submit" value="Update">
+     	</form>
+    </section>
+  </article>
+</div>
