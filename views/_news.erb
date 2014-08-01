@@ -23,14 +23,19 @@
       <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><%= actioning_site.title.shorten(40) %></a> 
       is following
       <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(40) %></a>
-      <span class="date"><%= event.created_at.ago %></span>
+      <span class="date">
+        <a href="?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
+      </span>
     </div>
   <% elsif event.site_change_id %>
     <div class="news-item update">
       <div class="title">
         <div class="icon"></div>
         <% event_site = event.site_dataset.select(:username, :title, :domain).first %>
-        <a href="/site/<%= event_site.username %>" class="user"><%= event_site.title %></a> has been updated. <span class="date"><%= event.created_at.ago %></span>
+        <a href="/site/<%= event_site.username %>" class="user"><%= event_site.title %></a> has been updated.
+        <span class="date">
+          <a href="?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
+        </span>
       </div>
       <% site_change_filenames = event.site_change.site_change_filenames %>
       <% unless site_change_filenames.empty? %>
@@ -69,7 +74,9 @@
           <div class="comment" id="comment_<%= comment.id %>">
             <img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '82x62') %>">
             <a href="/site/<%= comment_actioning_site.username %>" class="user"><%= comment_actioning_site.title %></a>
-            <span class="date"><%= comment.created_at.ago %></span>
+            <span class="date">
+              <a href="?event_id=<%= event.id %>"><%= comment.created_at.ago %></a>
+            </span>
             <p><%= comment.message %></p>
           </div>
           <div class="actions">

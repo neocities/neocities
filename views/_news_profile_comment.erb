@@ -1,6 +1,8 @@
 <div class="title">
   <div class="icon" style="background-image:url(<%= profile_comment.actioning_site.screenshot_url('index.html', '82x62') %>);"></div>
   <a href="/site/<%= profile_comment.actioning_site.username %>" class="user"><%= profile_comment.actioning_site.title %></a> 
-  <span class="date"><%= profile_comment.created_at.ago %></span>
+  <span class="date">
+    <a href="?event_id=<%= profile_comment.event.id %>"><%= profile_comment.created_at.ago %></a>
+  </span>
   <div class="comment"><%= profile_comment.message %></div>
 </div>

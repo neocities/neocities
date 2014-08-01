@@ -94,10 +94,16 @@ get '/site/:username' do |username|
   @current_page = @current_page.to_i
   @current_page = 1 if @current_page == 0
 
-  latest_events_dataset = site.latest_events(@current_page, 10)
+  if params[:event_id]
+    event = Event.select(:id).where(id: params[:event_id]).first
+    not_found if event.nil?
+    events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
+  else
+    events_dataset = site.latest_events(@current_page, 10)
+  end
 
-  @page_count = latest_events_dataset.page_count || 1
-  @latest_events = latest_events_dataset.all
+  @page_count = events_dataset.page_count || 1
+  @latest_events = events_dataset.all
 
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
@@ -146,6 +152,10 @@ get '/?' do
 
     if params[:activity] == 'mine'
       events_dataset = current_site.latest_events(@current_page, 10)
+    elsif params[:event_id]
+      event = Event.select(:id).where(id: params[:event_id]).first
+      not_found if event.nil?
+      events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
     else
       events_dataset = current_site.news_feed(@current_page, 10)
     end
