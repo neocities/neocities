@@ -1,0 +1,32 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>New Page</h1>
+    <h3 class="subtitle">Create a new HTML page</h3>
+  </div>
+</div>
+
+<div class="content single-Col misc-page txt-Center">
+  <article>
+    <h3></h3>
+    <section>
+      <% if @errors %>
+        <div class="alert alert-error alert-block">
+          <% @errors.each do |error| %>
+            <%= error %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+    <section>
+      <form method="POST" action="/site_files/create_page" enctype="multipart/form-data">
+        <%== csrf_token_input_html %>
+        <h2>What's the name of your page?</h2>
+        <p><input type="text" name="pagefilename" autocapitalize="off" autocorrect="off">.html</p>
+        <p><input class="btn-Action" type="submit" value="Create Page"></p>
+
+        <p>Note: We will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .</p>
+        <p>Page must not already exist.</p>
+        <p>If you want to make this the index page (and an index page doesn't exist), name it <strong>index.html</strong>.</p>
+    </section>
+  </article>
+</div>

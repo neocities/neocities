@@ -463,7 +463,7 @@ end
 
 get '/site_files/new_page' do
   require_login
-  slim :'site_files/new_page'
+  erb :'site_files/new_page'
 end
 
 post '/change_password' do
@@ -535,14 +535,14 @@ post '/site_files/create_page' do
 
   if params[:pagefilename].nil? || params[:pagefilename].empty?
     @errors << 'You must provide a file name.'
-    halt slim(:'site_files/new_page')
+    halt erb(:'site_files/new_page')
   end
 
   name = "#{params[:pagefilename]}.html"
 
   if current_site.file_exists?(name)
     @errors << %{Web page "#{name}" already exists! Choose another name.}
-    halt slim(:'site_files/new_page')
+    halt erb(:'site_files/new_page')
   end
 
   current_site.install_new_html_file name
@@ -554,12 +554,7 @@ end
 
 get '/site_files/new' do
   require_login
-  slim :'site_files/new'
-end
-
-get '/site_files/upload' do
-  require_login
-  slim :'site_files/upload'
+  erb :'site_files/new'
 end
 
 def file_upload_response(error=nil)
