@@ -407,10 +407,45 @@ post '/create' do
           plan: params[:selected_plan]
         )
         @site.stripe_customer_id = customer.id
+
+        plan_name = customer.subscriptions.first['plan']['name']
+
+        EmailWorker.perform_async({
+          from: 'web@neocities.org',
+          reply_to: 'contact@neocities.org',
+          to: @site.email,
+          subject: "[Neocities] You've become a supporter!",
+          body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: plan_name)
+        })
+
       end
 
       @site.save
     end
+
+    EmailWorker.perform_async({
+      from: 'web@neocities.org',
+      reply_to: 'contact@neocities.org',
+      to: @site.email,
+      subject: "[Neocities] Welcome to Neocities!",
+      body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
+    })
+
+    EmailWorker.perform_async({
+      from: 'web@neocities.org',
+      reply_to: 'contact@neocities.org',
+      to: @site.email,
+      subject: "[Neocities] Welcome to Neocities!",
+      body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
+    })
+
+    EmailWorker.perform_async({
+      from: 'web@neocities.org',
+      reply_to: 'contact@neocities.org',
+      to: @site.email,
+      subject: "[Neocities] Confirm your email address",
+      body: Tilt.new('./views/templates/email_confirm.erb', pretty: true).render(self)
+    })
 
     session[:id] = @site.id
     redirect '/'
@@ -1039,6 +1074,18 @@ post '/comment/:comment_id/delete' do |comment_id|
   end
 
   return {result: 'error'}.to_json
+end
+
+get '/site/:username/confirm_email/:token' do
+  site = Site[username: params[:username]]
+  if site.email_confirmation_token == params[:token]
+    site.email_confirmed = true
+    site.save
+
+    erb :'site_email_confirmed'
+  else
+    erb :'site_email_not_confirmed'
+  end
 end
 
 post '/site/:username/report' do |username|

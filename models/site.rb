@@ -358,6 +358,10 @@ class Site < Sequel::Model
     super
   end
 
+  def before_create
+    self.email_confirmation_token = SecureRandom.hex 3
+  end
+
 #  def after_destroy
 #    FileUtils.rm_rf file_path
 #    super
@@ -377,6 +381,17 @@ class Site < Sequel::Model
 
     if new? && values[:username].length > 32
       errors.add :username, 'User/site name cannot exceed 32 characters.'
+    end
+
+
+    # Check that email has been provided
+    if new? && values[:email].empty?
+      errors.add :email, 'An email address is required.'
+    end
+
+    # Check for existing email
+    if new? && self.class.select(:id).filter(email: values[:email]).first
+      errors.add :email, 'This email address already exists on Neocities, please use your existing account.'
     end
 
     # Check for existing user
@@ -522,7 +537,7 @@ class Site < Sequel::Model
   end
 
   def host
-    domain ? domain : "#{username}.neocities.org"
+    !domain.empty? ? domain : "#{username}.neocities.org"
   end
 
   def title

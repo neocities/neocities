@@ -23,6 +23,7 @@ describe 'signup' do
     @site = Fabricate.attributes_for(:site)
     fill_in 'username', with: @site[:username]
     fill_in 'password', with: @site[:password]
+    fill_in 'email',    with: @site[:email]
   end
 
   def visit_signup
@@ -137,6 +138,20 @@ describe 'signup' do
     site.tags.first.name.must_equal 'one'
   end
 
+  it 'fails with existing email' do
+    email = Fabricate.attributes_for(:site)[:email]
+    fill_in_valid
+    fill_in 'email', with: email
+    click_button 'Create Home Page'
+    page.must_have_content 'Your Feed'
+    Capybara.reset_sessions!
+    visit_signup
+    fill_in_valid
+    fill_in 'email', with: email
+    click_button 'Create Home Page'
+    page.must_have_content /email.+exists/
+  end
+
   it 'succeeds with no tags' do
     fill_in_valid
     fill_in 'tags', with: ''
@@ -165,9 +180,14 @@ describe 'signin' do
   include Capybara::DSL
 
   def fill_in_valid
-    site = Fabricate.attributes_for :site
-    fill_in 'username', with: site[:username]
-    fill_in 'password', with: site[:password]
+    @site = Fabricate.attributes_for :site
+    fill_in 'username', with: @site[:username]
+    fill_in 'password', with: @site[:password]
+  end
+
+  def fill_in_valid_signup
+    fill_in_valid
+    fill_in 'email', with: @site[:email]
   end
 
   before do
@@ -196,15 +216,13 @@ describe 'signin' do
   it 'logs in with proper credentials' do
     visit '/'
     click_button 'Create My Website'
-    site = Fabricate.attributes_for(:site)
-    fill_in 'username', with: site[:username]
-    fill_in 'password', with: site[:password]
+    fill_in_valid_signup
     click_button 'Create Home Page'
     Capybara.reset_sessions!
     visit '/'
     click_link 'Sign In'
-    fill_in 'username', with: site[:username]
-    fill_in 'password', with: site[:password]
+    fill_in 'username', with: @site[:username]
+    fill_in 'password', with: @site[:password]
     click_button 'Sign In'
     page.must_have_content 'Your Feed'
   end
