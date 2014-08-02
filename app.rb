@@ -112,6 +112,12 @@ get '/site/:username' do |username|
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
+post '/site/:username/set_editor_theme' do
+  require_login
+  current_site.update editor_theme: params[:editor_theme]
+  'ok'
+end
+
 post '/site/:username/comment' do |username|
   require_login
 
@@ -641,7 +647,7 @@ get '/site_files/text_editor/:filename' do |filename|
     flash[:error] = 'We could not find the requested file.'
     redirect '/dashboard'
   end
-  slim :'site_files/text_editor', indent: false
+  erb :'site_files/text_editor'
 end
 
 post '/site_files/save/:filename' do |filename|
