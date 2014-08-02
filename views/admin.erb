@@ -1,0 +1,54 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>Administration</h1>
+    <h3 class="subtitle">Freedom Ain't Free</h3>
+  </div>
+</div>
+
+<div class="content misc-page txt-Center">
+
+  <% if flash.keys.length > 0 %>
+    <div class="alert alert-error alert-block">
+      <% flash.keys.each do |key| %>
+        <%== flash[key] %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col col-50">
+      <h2>Ban User</h2>
+      <form action="/admin/banhammer" method="POST">
+        <%== csrf_token_input_html %>
+        <p>Site Name:</p>
+        <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
+        <p><input class="btn btn-danger" type="submit" value="Ban"></p>
+      </form>
+    </div>
+
+    <div class="col col-50">
+      <h2>Ban By IP</h2>
+      <form action="/admin/banip" method="POST">
+        <%== csrf_token_input_html %>
+        <p>All sites with this IP address will be removed.</p>
+        <p>Site Name:</p>
+        <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
+        <p><input class="btn btn-danger" type="submit" value="Ban"></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col col-50">
+      <h2>Ban By IP</h2>
+      <form action="/admin/mark_nsfw" method="POST">
+        <%== csrf_token_input_html %>
+        <p>Site Name:</p>
+        <p>
+          <input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off">
+        </p>
+        <p><input class="btn btn-danger" type="submit" value="Mark NSFW"></p>
+      </form>
+    </div>
+  </div>
+</div>

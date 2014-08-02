@@ -681,7 +681,7 @@ get '/admin' do
   require_admin
   @banned_sites = Site.select(:username).filter(is_banned: true).order(:username).all
   @nsfw_sites = Site.select(:username).filter(is_nsfw: true).order(:username).all
-  slim :'admin'
+  erb :'admin'
 end
 
 post '/admin/banip' do
