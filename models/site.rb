@@ -360,6 +360,7 @@ class Site < Sequel::Model
 
   def before_create
     self.email_confirmation_token = SecureRandom.hex 3
+    super
   end
 
 #  def after_destroy
