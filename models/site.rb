@@ -245,6 +245,10 @@ class Site < Sequel::Model
     filename.gsub(/[^a-zA-Z0-9_\-.]/, '')
   end
 
+  def self.valid_username?(username)
+    !username.empty? && username.match(/^[a-zA-Z0-9_\-]+$/i)
+  end
+
   def self.valid_file_type?(uploaded_file)
     mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
 
@@ -375,6 +379,10 @@ class Site < Sequel::Model
       errors.add :over_capacity, 'We are currently at capacity, and cannot create your home page. We will fix this shortly. Please come back later and try again, our apologies.'
     end
 
+    if !self.class.valid_username?(values[:username])
+      errors.add :username, 'A valid user/site name is required.'
+    end
+
     # TODO regex fails for usernames <= 2 chars, tempfix for now.
     if new? && values[:username].length > 2 && !values[:username].match(VALID_HOSTNAME)
       errors.add :username, 'A valid user/site name is required.'
@@ -383,7 +391,6 @@ class Site < Sequel::Model
     if new? && values[:username].length > 32
       errors.add :username, 'User/site name cannot exceed 32 characters.'
     end
-
 
     # Check that email has been provided
     if new? && values[:email].empty?
