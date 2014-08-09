@@ -195,6 +195,10 @@ class Site < Sequel::Model
   end
 
   def ban!
+    if username.nil? || username.empty?
+      raise 'username is missing'
+    end
+
     DB.transaction {
       FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'banned_sites', username)
       self.is_banned = true
