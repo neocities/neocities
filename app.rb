@@ -545,6 +545,9 @@ post '/change_name' do
     redirect '/settings'
   end
 
+  old_host = current_site.host
+  old_file_paths = current_site.file_list.collect {|f| f.filename}
+
   current_site.username = params[:name]
 
   if current_site.valid?
@@ -552,6 +555,10 @@ post '/change_name' do
       current_site.save
       current_site.move_files_from old_username
     }
+
+    old_file_paths.each do |file_path|
+      PurgeCacheWorker.async_queue "#{old_host}/#{file_path}"
+    end
 
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
     redirect '/settings'

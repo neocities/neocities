@@ -184,6 +184,7 @@ class Site < Sequel::Model
 
     %w{index not_found}.each do |name|
       File.write file_path("#{name}.html"), render_template("#{name}.erb")
+      PurgeCacheWorker.perform_async "#{host}/#{name}.html"
       ScreenshotWorker.perform_async values[:username], "#{name}.html"
     end
 
@@ -205,6 +206,10 @@ class Site < Sequel::Model
       self.updated_at = Time.now
       save(validate: false)
     }
+
+    site_files.file_list.collect {|f| f.filename}.each do |f|
+      PurgeCacheWorker.async_queue "#{host}/#{f}"
+    end
   end
 
 =begin
@@ -279,6 +284,8 @@ class Site < Sequel::Model
     FileUtils.mv uploaded.path, file_path(filename)
     File.chmod(0640, file_path(filename))
 
+    PurgeCacheWorker.perform_async "#{host}/#{filename}"
+
     ext = File.extname(filename).gsub(/^./, '')
 
     if ext.match HTML_REGEX
@@ -324,6 +331,8 @@ class Site < Sequel::Model
     rescue Errno::ENOENT
     end
 
+    PurgeCacheWorker.perform_async "#{host}/#{filename}"
+
     ext = File.extname(filename).gsub(/^./, '')
 
     screenshots_delete(filename) if ext.match HTML_REGEX
@@ -340,6 +349,7 @@ class Site < Sequel::Model
 
   def install_new_html_file(name)
     File.write file_path(name), render_template('index.erb')
+    PurgeCacheWorker.perform_async "#{host}/#{name}"
   end
 
   def file_exists?(filename)

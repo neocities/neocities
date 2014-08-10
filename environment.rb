@@ -50,6 +50,14 @@ Sidekiq.configure_client do |config|
   config.redis = sidekiq_redis_config
 end
 
+if $config['pubsub_url']
+  $pubsub = Redis.new url: $config['pubsub_url'] 
+end
+
+if $config['pubsub_url'].nil? && ENV['RACK_ENV'] == 'production'
+  raise 'pubsub_url is missing from config'
+end
+
 require File.join(DIR_ROOT, 'workers', 'thumbnail_worker.rb')
 require File.join(DIR_ROOT, 'workers', 'screenshot_worker.rb')
 require File.join(DIR_ROOT, 'workers', 'email_worker.rb')
