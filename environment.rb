@@ -98,6 +98,3 @@ Mail.defaults do
 end
 
 Sinatra::Application.set :erb, escape_html: true
-
-# Session fix for Internet Fucking Explorer https://github.com/rkh/rack-protection/issues/11
-Sinatra::Application.set :protection, except: :session_hijacking
