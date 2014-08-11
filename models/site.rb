@@ -117,10 +117,14 @@ class Site < Sequel::Model
   end
 
   def self.banned_ip?(ip)
-    !Site.where(is_banned: true).
-    where(ip: ip).
-    where(['updated_at > ?', Time.now-BANNED_TIME]).
-    first.nil?
+    return true if Site.where(is_banned: true).
+      where(ip: ip).
+      where(['updated_at > ?', Time.now-BANNED_TIME]).
+      first
+
+    return true if BlockedIp[ip]
+
+    false
   end
 
   def is_following?(site)
