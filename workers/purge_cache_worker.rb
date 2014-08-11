@@ -4,7 +4,7 @@ class PurgeCacheWorker
 
   def perform(url)
     begin
-      $pubsub.publish 'purge', url
+      $pubsub.publish 'purgecache', url
     rescue Redis::BaseConnectionError => error
       puts "Pubsub error: #{error}, retrying in 1s"
       sleep 1
