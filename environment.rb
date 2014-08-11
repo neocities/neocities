@@ -75,7 +75,7 @@ Sequel::Migrator.apply DB, './migrations'
 Stripe.api_key = $config['stripe_api_key']
 
 Dir.glob('models/*.rb').each {|m| require File.join(DIR_ROOT, "#{m}") }
-DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
+#DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
 
 if ENV['RACK_ENV'] == 'development'
   # If new, throw up a random Server for development.
