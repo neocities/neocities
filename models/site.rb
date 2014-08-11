@@ -63,7 +63,9 @@ class Site < Sequel::Model
   CLAMAV_THREAT_MATCHES = [
     /^VBS/,
     /^PUA\.Win32/,
-    /^JS\.Popupper/
+    /^JS\.Popupper/,
+    /Heuristic\.HTML\.Dropper/,
+    /PHP\.Hide/
   ]
 
   BANNED_TIME = 2592000 # 30 days in seconds
