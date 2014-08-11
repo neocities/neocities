@@ -636,7 +636,7 @@ post '/site_files/upload' do
     end
 
     if !Site.valid_file_type? file
-      file_upload_response "#{file[:filename]}: file type is not allowed on Neocities, upload cancelled."
+      file_upload_response "#{file[:filename]}: file type (or content in file) is not allowed on Neocities, upload cancelled."
     end
   end
 
@@ -941,7 +941,7 @@ post '/api/upload' do
 
   files.each do |file|
     if !Site.valid_file_type?(file)
-      api_error 400, 'invalid_file_type', "#{file[:filename]} is not a valid file type, files have not been uploaded"
+      api_error 400, 'invalid_file_type', "#{file[:filename]} is not a valid file type (or contains not allowed content), files have not been uploaded"
     end
   end
 

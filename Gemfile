@@ -18,6 +18,7 @@ gem 'tilt'
 gem 'erubis'
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 gem 'screencap'
+gem 'cocaine'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

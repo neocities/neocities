@@ -60,6 +60,12 @@ class Site < Sequel::Model
   SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162', '37x37', '146x88', '302x182', '90x63', '82x62', '348x205']
   THUMBNAIL_RESOLUTIONS  = ['105x63', '90x63']
 
+  CLAMAV_THREAT_MATCHES = [
+    /^VBS/,
+    /^PUA.Win32/,
+    /^JS.Popupper/
+  ]
+
   BANNED_TIME = 2592000 # 30 days in seconds
 
   TITLE_MAX = 100
@@ -261,9 +267,26 @@ class Site < Sequel::Model
   def self.valid_file_type?(uploaded_file)
     mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
 
-    return true if (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) &&
-                   Site::VALID_EXTENSIONS.include?(File.extname(uploaded_file[:filename]).sub(/^./, '').downcase)
-    false
+    return false unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) &&
+                        Site::VALID_EXTENSIONS.include?(File.extname(uploaded_file[:filename]).sub(/^./, '').downcase)
+
+    File.chmod 0640, uploaded_file[:tempfile].path
+    line = Cocaine::CommandLine.new(
+      "clamdscan", "-i --remove=no --no-summary --stdout :path",
+      expected_outcodes: [0, 1]
+    )
+
+    output = line.run path: uploaded_file[:tempfile].path
+
+    return true if output == ''
+
+    threat = output.strip.match(/^.+: (.+) FOUND$/).captures.first
+
+    CLAMAV_THREAT_MATCHES.each do |threat_match|
+      return false if threat.match threat_match
+    end
+
+    true
   end
 
   def store_file(filename, uploaded)

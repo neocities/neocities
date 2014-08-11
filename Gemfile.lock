@@ -10,6 +10,12 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    activesupport (4.1.4)
+      i18n (~> 0.6, >= 0.6.9)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.1)
+      tzinfo (~> 1.1)
     addressable (2.3.6)
     ago (0.1.5)
     ansi (1.4.3)
@@ -30,7 +36,11 @@ GEM
       minitest (>= 2)
     celluloid (0.15.2)
       timers (~> 1.1.0)
+    climate_control (0.0.3)
+      activesupport (>= 3.0)
     cliver (0.3.2)
+    cocaine (0.5.4)
+      climate_control (>= 0.0.3, < 1.0)
     coderay (1.1.0)
     columnize (0.3.6)
     connection_pool (2.0.0)
@@ -168,11 +178,14 @@ GEM
     sinatra-xsendfile (0.4.2)
       sinatra (>= 0.9.1)
     slop (3.5.0)
+    thread_safe (0.3.4)
     tilt (1.4.1)
     timers (1.1.0)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
     unicorn (4.8.2)
       kgio (~> 2.6)
       rack
@@ -193,6 +206,7 @@ DEPENDENCIES
   bcrypt
   capybara
   capybara_minitest_spec
+  cocaine
   erubis
   fabrication
   faker
