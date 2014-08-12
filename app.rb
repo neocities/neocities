@@ -439,13 +439,7 @@ post '/create' do
       body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
     })
 
-    EmailWorker.perform_async({
-      from: 'web@neocities.org',
-      reply_to: 'contact@neocities.org',
-      to: @site.email,
-      subject: "[Neocities] Confirm your email address",
-      body: Tilt.new('./views/templates/email_confirm.erb', pretty: true).render(self)
-    })
+    send_confirmation_email @site
 
     session[:id] = @site.id
     redirect '/'
@@ -529,6 +523,23 @@ post '/change_password' do
   else
     halt erb(:'settings')
   end
+end
+
+post '/change_email' do
+  require_login
+  current_site.email = params[:email]
+  current_site.email_confirmation_token = SecureRandom.hex 3
+  current_site.email_confirmed = false
+
+  if current_site.valid?
+    current_site.save_changes
+    send_confirmation_email
+    flash[:success] = 'Successfully changed email. We have sent a confirmation email, please use it to confirm your email address.'
+    redirect '/settings'
+  end
+
+  current_site.reload
+  erb :settings
 end
 
 post '/change_name' do
@@ -1251,4 +1262,14 @@ end
 
 def api_not_found
   api_error 404, 'not_found', 'the requested api call does not exist'
+end
+
+def send_confirmation_email(site=current_site)
+  EmailWorker.perform_async({
+    from: 'web@neocities.org',
+    reply_to: 'contact@neocities.org',
+    to: site.email,
+    subject: "[Neocities] Confirm your email address",
+    body: Tilt.new('./views/templates/email_confirm.erb', pretty: true).render(self, site: site)
+  })
 end

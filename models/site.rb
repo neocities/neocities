@@ -68,6 +68,8 @@ class Site < Sequel::Model
     /PHP\.Hide/
   ]
 
+  EMAIL_SANITY_REGEX = /.+@.+\..+/i
+
   BANNED_TIME = 2592000 # 30 days in seconds
 
   TITLE_MAX = 100
@@ -440,18 +442,25 @@ class Site < Sequel::Model
       errors.add :username, 'A valid user/site name is required.'
     end
 
-    if new? && values[:username].length > 32
+    if values[:username].length > 32
       errors.add :username, 'User/site name cannot exceed 32 characters.'
     end
 
     # Check that email has been provided
-    if new? && values[:email].empty?
+    if values[:email].empty?
       errors.add :email, 'An email address is required.'
     end
 
     # Check for existing email
-    if new? && self.class.select(:id).filter(email: values[:email]).first
-      errors.add :email, 'This email address already exists on Neocities, please use your existing account.'
+    email_check = self.class.select(:id).filter(email: values[:email]).first
+    if email_check && email_check.id == self.id
+      errors.add :email, 'You are already using this email address for this account.'
+    elsif email_check && email_check.id != self.id
+      errors.add :email, 'This email address already exists on Neocities, please use your existing account instead of creating a new one.'
+    end
+
+    unless values[:email] =~ EMAIL_SANITY_REGEX
+      errors.add :email, 'A valid email address is required.'
     end
 
     # Check for existing user
