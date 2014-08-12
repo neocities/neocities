@@ -196,7 +196,7 @@ class Site < Sequel::Model
 
     %w{index not_found}.each do |name|
       File.write file_path("#{name}.html"), render_template("#{name}.erb")
-      PurgeCacheWorker.perform_async "#{host}/#{name}.html"
+      purge_cache "#{name}.html"
       ScreenshotWorker.perform_async values[:username], "#{name}.html"
     end
 
@@ -220,7 +220,7 @@ class Site < Sequel::Model
     }
 
     site_files.file_list.collect {|f| f.filename}.each do |f|
-      PurgeCacheWorker.async_queue "#{host}/#{f}"
+      purge_cache f
     end
   end
 
@@ -298,6 +298,12 @@ class Site < Sequel::Model
     true
   end
 
+  def purge_cache(filename)
+    payload = {site: username, path: filename}
+    payload[:domain] = domain if !domain.empty?
+    PurgeCacheWorker.perform_async payload
+  end
+
   def store_file(filename, uploaded)
     if File.exist?(file_path(filename)) &&
        Digest::SHA2.file(file_path(filename)).digest == Digest::SHA2.file(uploaded.path).digest
@@ -316,7 +322,7 @@ class Site < Sequel::Model
     FileUtils.mv uploaded.path, file_path(filename)
     File.chmod(0640, file_path(filename))
 
-    PurgeCacheWorker.perform_async "#{host}/#{filename}"
+    purge_cache filename
 
     ext = File.extname(filename).gsub(/^./, '')
 
@@ -363,7 +369,7 @@ class Site < Sequel::Model
     rescue Errno::ENOENT
     end
 
-    PurgeCacheWorker.perform_async "#{host}/#{filename}"
+    purge_cache filename
 
     ext = File.extname(filename).gsub(/^./, '')
 
@@ -381,7 +387,7 @@ class Site < Sequel::Model
 
   def install_new_html_file(name)
     File.write file_path(name), render_template('index.erb')
-    PurgeCacheWorker.perform_async "#{host}/#{name}"
+    purge_cache name
   end
 
   def file_exists?(filename)
@@ -462,6 +468,11 @@ class Site < Sequel::Model
     end
 
     if !values[:domain].nil? && !values[:domain].empty?
+
+      if values[:domain] =~ /neocities\.org/ || values[:domain] =~ /neocitiesops\.net/
+        errors.add :domain, "Domain is already being used.. by Neocities."
+      end
+
       if !(values[:domain] =~ /^[a-zA-Z0-9.-]+\.[a-zA-Z0-9]+$/i) || values[:domain].length > 90
         errors.add :domain, "Domain provided is not valid. Must take the form of domain.com"
       end

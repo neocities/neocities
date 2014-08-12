@@ -2,11 +2,14 @@ class PurgeCacheWorker
   include Sidekiq::Worker
   sidekiq_options queue: :purgecache, retry: 10, backtrace: true
 
-  def perform(url)
+  def perform(payload)
+    attempt = 0
     begin
-      $pubsub.publish 'purgecache', url
+      attempt += 1
+      $pubsub.publish 'purgecache', payload.to_json
     rescue Redis::BaseConnectionError => error
-      puts "Pubsub error: #{error}, retrying in 1s"
+      raise if attempt > 3
+      puts "pubsub error: #{error}, retrying in 1s"
       sleep 1
       retry
     end

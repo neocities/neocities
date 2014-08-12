@@ -557,7 +557,7 @@ post '/change_name' do
     }
 
     old_file_paths.each do |file_path|
-      PurgeCacheWorker.async_queue "#{old_host}/#{file_path}"
+      current_site.purge_cache file_path
     end
 
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
