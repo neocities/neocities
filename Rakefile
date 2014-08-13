@@ -15,35 +15,39 @@ task :default => :test
 
 desc "parse logs"
 task :parse_logs => [:environment] do
-  hits = {}
-  visits = {}
-  visit_ips = {}
+  Dir["/home/web/proxy/logs/*.log"].each do |log_path|
+    hits = {}
+    visits = {}
+    visit_ips = {}
 
-  logfile = File.open '/var/log/nginx/neocities-sites.log.1', 'r'
+    logfile = File.open log_path, 'r'
 
-  while hit = logfile.gets
-    time, username, size, path, ip = hit.split ' '
+    while hit = logfile.gets
+      time, username, size, path, ip = hit.split ' '
 
-    hits[username] ||= 0
-    hits[username] += 1
+      hits[username] ||= 0
+      hits[username] += 1
 
-    visit_ips[username] = [] if !visit_ips[username]
+      visit_ips[username] = [] if !visit_ips[username]
 
-    unless visit_ips[username].include?(ip)
-      visits[username] ||= 0
-      visits[username] += 1
-      visit_ips[username] << ip
+      unless visit_ips[username].include?(ip)
+        visits[username] ||= 0
+        visits[username] += 1
+        visit_ips[username] << ip
+      end
     end
-  end
 
-  logfile.close
+    logfile.close
 
-  hits.each do |username,hitcount|
-    DB['update sites set hits=hits+? where username=?', hitcount, username].first
-  end
+    hits.each do |username,hitcount|
+      DB['update sites set hits=hits+? where username=?', hitcount, username].first
+    end
 
-  visits.each do |username,visitcount|
-    DB['update sites set views=views+? where username=?', visitcount, username].first
+    visits.each do |username,visitcount|
+      DB['update sites set views=views+? where username=?', visitcount, username].first
+    end
+
+    FileUtils.rm log_path
   end
 end
 
@@ -78,4 +82,9 @@ task :update_blocked_ips => [:environment] do
       DB[:blocked_ips].multi_insert insert_hashes
     end
   end
+end
+
+desc 'Compile domain map for nginx'
+task :compile_domain_map => [:environment] do
+  File.open('./files/map.txt', 'w'){|f| Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.collect {|s| f.write "#{s.domain} #{s.username};\n"  }}
 end
