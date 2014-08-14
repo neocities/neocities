@@ -1154,11 +1154,9 @@ end
 post '/site/delete' do
   require_login
   if current_site.username != params[:username]
-    errors.add :username, 'Could not delete site, site name did not match.'
+    current_site.errors.add :username, 'Could not delete site, site name did not match.'
     halt erb(:settings)
   end
-
-
 end
 
 def require_admin

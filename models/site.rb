@@ -209,16 +209,45 @@ class Site < Sequel::Model
     File.read file_path(filename)
   end
 
+  def before_destroy
+    raise 'not finished'
+    DB.transaction {
+      remove_all_tags
+      profile_comments.destroy
+      profile_commentings.destroy
+      follows.destroy
+      followings.destroy
+      #tips.destroy
+      #tippings.destroy
+      #blocks.destroy
+      #blockings.destroy
+      #reports.destroy
+      #reportings.destroy
+      #stats.destroy
+      #events.destroy
+      #site_changes.destroy
+      # TODO FIND THE REST, ASSOCIATE THEM PROPERLY!!!
+    }
+  end
+
+  def delete_site!
+    raise 'not finished'
+    DB.transaction {
+      destroy
+      FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'deleted_sites', username)
+    }
+  end
+
   def ban!
     if username.nil? || username.empty?
       raise 'username is missing'
     end
 
     DB.transaction {
-      FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'banned_sites', username)
       self.is_banned = true
       self.updated_at = Time.now
       save(validate: false)
+      FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'banned_sites', username)
     }
 
     site_files.file_list.collect {|f| f.filename}.each do |f|
