@@ -453,9 +453,7 @@ class Site < Sequel::Model
 
     # Check for existing email
     email_check = self.class.select(:id).filter(email: values[:email]).first
-    if email_check && email_check.id == self.id
-      errors.add :email, 'You are already using this email address for this account.'
-    elsif email_check && email_check.id != self.id
+    if email_check && email_check.id != self.id
       errors.add :email, 'This email address already exists on Neocities, please use your existing account instead of creating a new one.'
     end
 
@@ -602,7 +600,7 @@ class Site < Sequel::Model
   end
 
   def latest_events(current_page=1, limit=10)
-    events_dataset.order(:created_at.desc).paginate(current_page, limit)
+    events_dataset.exclude(site_id: self.id).order(:created_at.desc).paginate(current_page, limit)
   end
 
   def news_feed(current_page=1, limit=10)

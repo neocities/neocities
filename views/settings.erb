@@ -69,8 +69,6 @@
         </div>
       </form>
 
-
-
      	<h2>Change Site (User) Name</h2>
      	<form method="POST" action="/change_name">
      		<%== csrf_token_input_html %>
@@ -98,7 +96,6 @@
      		If your site contains objectionable (18+) content, check this box. Your site will not be removed, but it will be listed on a special browse page. We don't have an official policy on what defines 18+ content yet, but basically it's just pornography and lewd/sick/gross images. Thanks for your patience and understanding as we try to find a way to balance out the needs of everyone.
      	</p>
 
-
      	<form method="POST" action="/change_nsfw">
      		<%== csrf_token_input_html %>
      		<input name="is_nsfw" type="hidden" value="false">
@@ -113,6 +110,36 @@
 
      		<input class="btn-Action" type="submit" value="Update">
      	</form>
+
+      <h2>Delete Site</h2>
+        <p class="tiny">
+          If you want to delete your account, you can do that here. We're sorry to see you go, but we understand if Neocities isn't right for you. If there's any specific reason you're leaving, it would be great if you <a href="/contact">let us know</a> so we can try to make your experience better in the future.
+        </p>
+
+        <div>
+          <a href="#deleteSite" data-toggle="modal" class="btn">Delete Site</a>
+        </div>
     </section>
   </article>
+</div>
+
+<div class="modal hide fade" id="deleteSite" tabindex="-1" role="dialog" aria-labelledby="deleteSiteLabel" aria-hidden="true">
+  <form method="POST" action="/site/delete">
+    <%== csrf_token_input_html %>
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <h3 id="deleteSiteLabel">Permanently Delete Site</h3>
+    </div>
+    <div class="modal-body">
+      <strong style="color: red">WARNING: This will permanently delete your web site and Neocities account. There is no undo!</strong>
+
+      <p>Delete Site Name: <strong><%= current_site.username %></strong></p>
+      <p>Confirm your site name by typing it here:</p>
+      <input class="input-Area" name="username" type="text">
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn btn-Action">Permanently Delete Site</button>
+    </div>
+  </form>
 </div>
