@@ -27,6 +27,9 @@
     <ul class="status-Nav">
       <% if !signed_in? %>
         <li>
+          <a href="/new" class="create-New" title="Create a new website">New Site</a>
+        </li>
+        <li>
           <a href="/signin" class="sign-In" title="Sign into your account">Sign In</a>
         </li>
       <% else %>
