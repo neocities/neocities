@@ -782,3 +782,28 @@ a.tag:hover {
   padding: 0px 10px 0px 10px;
   background: #FFFFFF;
 }
+.browse-page .select-Container {
+  overflow: none!important;
+  padding: 2px 4px;
+  width: 40%;
+}
+.browse-page .input-Area {
+  width: 100%;
+  padding: 5px 5px;
+}
+.header-Outro .btn-Action {
+  margin: 0 0 0 10px;
+}
+.browse-page .text-Label {
+  float: left;
+  margin-right: 5px;
+  font-weight: bold;
+  line-height:31px;
+}
+.browse-page h1 {
+  margin-top: 0;
+}
+.interior .header-Outro.with-columns .col.filter {
+  padding-top: 0px;
+  padding-bottom: 4px;
+}

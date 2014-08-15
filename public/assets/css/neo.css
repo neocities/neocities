@@ -405,15 +405,14 @@ legend, .legend {
 /* Drop Down Selection Inputs */
 .select-Container {
   background: url(../img/drop-Arrow.png) no-repeat 99% center white;
-  display: inline-block;
-  overflow: hidden; }
+  display: inline-block; }
 
 .input-Select {
   background: none;
   border: 0;
   font-size: 0.9em;
   padding-right: 16px;
-  width: 120%;
+  width: 100%;
   -webkit-appearance: textarea; }
 
 .file-Input-Area {
@@ -2017,6 +2016,31 @@ a.tag:hover {
   padding: 0px 10px 0px 10px;
   background: #FFFFFF; }
 
+.browse-page .select-Container {
+  overflow: none !important;
+  padding: 2px 4px;
+  width: 40%; }
+
+.browse-page .input-Area {
+  width: 100%;
+  padding: 5px 5px; }
+
+.header-Outro .btn-Action {
+  margin: 0 0 0 10px; }
+
+.browse-page .text-Label, .browse-page .option-Container {
+  float: left;
+  margin-right: 5px;
+  font-weight: bold;
+  line-height: 31px; }
+
+.browse-page h1 {
+  margin-top: 0; }
+
+.interior .header-Outro.with-columns .col.filter {
+  padding-top: 0px;
+  padding-bottom: 4px; }
+
 .footer-Base {
   color: #5e5b56;
   float: left;
@@ -2162,34 +2186,37 @@ a.tag:hover {
 
 .website-Gallery {
   list-style: none;
-  padding: 10px 0; }
+  padding: 30px 20px; }
   .website-Gallery li {
     float: left;
     margin-bottom: 8px; }
     @media (max-device-width: 480px), screen and (max-width: 800px) {
       .website-Gallery li {
         width: 50%; } }
-  .website-Gallery a {
-    padding: 0 8px;
+  .website-Gallery li a {
     display: block; }
+  .website-Gallery .site-info a {
+    color: #666;
+    font-size: 80%; }
+  .website-Gallery .title {
+    margin-top: 8px;
+    margin-bottom: 2px; }
   .website-Gallery.int-Gall li {
-    border: 1px solid #ccc;
     margin: 0 .5% 12px;
-    width: 24%; }
+    width: 24%;
+    background-color: white;
+    border: 9px solid white;
+    -moz-box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2); }
     @media (max-device-width: 480px), screen and (max-width: 800px) {
       .website-Gallery.int-Gall li {
         width: 49%; } }
-    .website-Gallery.int-Gall li a {
-      padding: 8px; }
 
 .neo-SS, .neo-Screen-Shot {
-  background: #fff;
-  -moz-box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
-  -webkit-box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.2);
+  border: 1px solid #eee;
   display: block;
   height: auto !important;
-  padding: 8px;
   position: relative;
   width: 100%; }
 
