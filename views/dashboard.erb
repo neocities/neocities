@@ -88,10 +88,10 @@
     </div>
   </div>
   <div class="header">
-    <div class="breadcrumbs">My Files</div> <!-- Should be Home when Folders are implemented -->
+    <div class="breadcrumbs">Home</div>
     <div class="actions">
       <a href="/site_files/new_page" class="btn-Action new-Page"><span>New Page</span></a>
-      <!--<a href="" class="btn-Action new-Folder"><span>New Folder</span></a>-->
+      <a href="" class="btn-Action new-Folder"><span>New Folder</span></a>
       <a href="#" class="btn-Action upload" onclick="clickUploadFiles(); return false"><span>Upload</span></a>
     </div>
   </div>
@@ -112,6 +112,12 @@
                 <img src="<%= current_site.thumbnail_url(file.filename, '105x63') %>" style="">
                 <div class="overlay"></div>
               </div>
+            <!-- if folder
+              <div class="html-thumbnail folder fileimagehover">
+                <div class="folder-icon"></div>
+                <div class="overlay"></div>
+              </div> 
+            -->
             <% else %>
               <div class="html-thumbnail misc fileimagehover">
                 <div class="misc-icon"><%= file.ext %></div>
