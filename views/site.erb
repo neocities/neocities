@@ -33,7 +33,7 @@
 
         <% if current_site && current_site != site %>
           <% is_following = current_site.is_following?(site) %>
-          <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>')" class="btn-Action <%= is_following ? '' : 'follow' %>">
+          <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>'); return false" class="btn-Action <%= is_following ? '' : 'follow' %>">
             <span><%= is_following ? 'Unfollow' : 'Follow' %></span>
           </a>
           <!-- <a href="#" class="btn-Action tip"><span>Tip</span></a> -->
@@ -83,6 +83,7 @@
           <p>
             You should <a href="/dashboard">update your site</a>!
           </p>
+          <%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %>
         <% end %>
       </div>
     <% else %>

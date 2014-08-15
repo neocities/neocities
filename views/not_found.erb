@@ -17,7 +17,9 @@
     </p>
     
     <% if request.referer %>
-      <a class="btn-Action" href="#{request.referer}">Go Back</a>
+      <div class="txt-Center">
+        <a class="btn-Action" href="<%= request.referer %>">Go Back</a>
+      </div>
     <% end %>
   </article>
 </div>

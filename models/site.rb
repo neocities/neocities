@@ -209,16 +209,45 @@ class Site < Sequel::Model
     File.read file_path(filename)
   end
 
+  def before_destroy
+    raise 'not finished'
+    DB.transaction {
+      remove_all_tags
+      profile_comments.destroy
+      profile_commentings.destroy
+      follows.destroy
+      followings.destroy
+      #tips.destroy
+      #tippings.destroy
+      #blocks.destroy
+      #blockings.destroy
+      #reports.destroy
+      #reportings.destroy
+      #stats.destroy
+      #events.destroy
+      #site_changes.destroy
+      # TODO FIND THE REST, ASSOCIATE THEM PROPERLY!!!
+    }
+  end
+
+  def delete_site!
+    raise 'not finished'
+    DB.transaction {
+      destroy
+      FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'deleted_sites', username)
+    }
+  end
+
   def ban!
     if username.nil? || username.empty?
       raise 'username is missing'
     end
 
     DB.transaction {
-      FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'banned_sites', username)
       self.is_banned = true
       self.updated_at = Time.now
       save(validate: false)
+      FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'banned_sites', username)
     }
 
     site_files.file_list.collect {|f| f.filename}.each do |f|
@@ -453,9 +482,7 @@ class Site < Sequel::Model
 
     # Check for existing email
     email_check = self.class.select(:id).filter(email: values[:email]).first
-    if email_check && email_check.id == self.id
-      errors.add :email, 'You are already using this email address for this account.'
-    elsif email_check && email_check.id != self.id
+    if email_check && email_check.id != self.id
       errors.add :email, 'This email address already exists on Neocities, please use your existing account instead of creating a new one.'
     end
 
@@ -602,7 +629,7 @@ class Site < Sequel::Model
   end
 
   def latest_events(current_page=1, limit=10)
-    events_dataset.order(:created_at.desc).paginate(current_page, limit)
+    events_dataset.exclude(site_id: self.id).order(:created_at.desc).paginate(current_page, limit)
   end
 
   def news_feed(current_page=1, limit=10)

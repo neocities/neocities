@@ -85,7 +85,7 @@ get '/site/:username.rss' do |username|
   site.to_rss.to_xml
 end
 
-get '/site/:username' do |username|
+get '/site/:username/?' do |username|
   site = Site[username: username]
   not_found if site.nil?
   if current_site && (site.is_blocking?(current_site) || current_site.is_blocking?(site))
@@ -530,6 +530,11 @@ post '/change_email' do
   current_site.email = params[:email]
   current_site.email_confirmation_token = SecureRandom.hex 3
   current_site.email_confirmed = false
+
+  if params[:email] == current_site.email
+    current_site.errors.add :email, 'You are already using this email address for this account.'
+    halt erb(:settings)
+  end
 
   if current_site.valid?
     current_site.save_changes
@@ -1143,6 +1148,14 @@ post '/site/:username/block' do |username|
     redirect '/'
   else
     redirect request.referer
+  end
+end
+
+post '/site/delete' do
+  require_login
+  if current_site.username != params[:username]
+    current_site.errors.add :username, 'Could not delete site, site name did not match.'
+    halt erb(:settings)
   end
 end
 
