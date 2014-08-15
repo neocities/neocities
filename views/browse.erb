@@ -4,58 +4,59 @@
   }
 </script>
 
-<div class="header-Outro">
+<div class="header-Outro with-columns browse-page">
   <div class="row content">
-  <% if params[:tag] %>
-    <h1>Sites tagged <%= params[:tag] %>
-  <% else %>
-    <h1>Sites on Neocities</h1>
-  <% end %>
-  <h3 class="subtitle"></h3>
+    <div class="col col-100">
+      <% if params[:tag] %>
+        <h1>Sites tagged <%= params[:tag] %></h1>
+      <% else %>
+        <h1>Sites on Neocities</h1>
+      <% end %>
+    </div>
+  
+    <div class="col col-50 filter">
+      <form id="search_criteria" action="/browse" method="GET">
+        <fieldset class="grouping">
+          <% if params[:tag] %>
+            <input name="tag" type="hidden" value="<%= params[:tag] %>">
+          <% end %>
+          <label class="text-Label" for="sort_by">Sort By:</label>
+          <div class="select-Container">
+            <select name="sort_by" id="sort_by" class="input-Select">
+              <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
+              <option value="views" <%= params[:sort_by] == 'views' ? 'selected' : '' %>>Most Views</option>
+              <option value="hits" <%= params[:sort_by] == 'hits' ? 'selected' : '' %>>Most Hits</option>
+              <option value="newest" <%= params[:sort_by] == 'newest' ? 'selected' : '' %>>Newest</option>
+              <option value="oldest" <%= params[:sort_by] == 'oldest' ? 'selected' : '' %>>Oldest</option>
+              <option value="random" <%= params[:sort_by] == 'random' ? 'selected' : '' %>>Random</option>
+            </select>
+          </div>
+        <!--
+          <div>
+            <input name="is_nsfw" type="checkbox" value="true" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>> Show 18+ content
+          </div>
+        -->
+            <input class="btn-Action" type="submit" value="Update">
+        </fieldset>
+      </form>
+    </div>
+    <div class="col col-50 filter">
+      <form method="GET" action="browse">
+        <fieldset class="grouping">
+        <label class="text-Label" for="tag">Search by tag:</label>
+        <input class="input-Area typeahead" name="tag" placeholder="pokemon">
+        <input type="submit" class="btn-Action" value="Search">
+        </fieldset>
+      </form>
+    </div>
+
   </div>
 </div>
 
-<div class="row content">
-  <div class="col col-50">
-    <form id="search_criteria" action="/browse" method="GET">
-      <fieldset class="grouping">
-        <% if params[:tag] %>
-          <input name="tag" type="hidden" value="<%= params[:tag] %>">
-        <% end %>
-        <label class="text-Label" for="sort_by">Sort By:</label>
-        <div class="select-Container">
-          <select name="sort_by" id="sort_by" class="input-Select">
-            <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
-            <option value="views" <%= params[:sort_by] == 'views' ? 'selected' : '' %>>Most Views</option>
-            <option value="hits" <%= params[:sort_by] == 'hits' ? 'selected' : '' %>>Most Hits</option>
-            <option value="newest" <%= params[:sort_by] == 'newest' ? 'selected' : '' %>>Newest</option>
-            <option value="oldest" <%= params[:sort_by] == 'oldest' ? 'selected' : '' %>>Oldest</option>
-            <option value="random" <%= params[:sort_by] == 'random' ? 'selected' : '' %>>Random</option>
-          </select>
-        </div>
-      <!--
-        <div>
-          <input name="is_nsfw" type="checkbox" value="true" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>> Show 18+ content
-        </div>
-      -->
-        <div style="margin-top: 10px">
-          <input class="btn-Action" type="submit" value="Update">
-        </div>
-      </fieldset>
-    </form>
-  </div>
+<div class="browse-page">
 
-  <div class="col col-50">
-    <p>If you like a site, don't forget to follow it!<br>Visitor counts are updated hourly.</p>
-    <% unless signed_in? %>
-      <a class="btn-Action" href="/new" title="create a Neocities.org site today!">Create your Neocities site now</a>
-    <% end %>
-  </div>
-</div> <!-- end .row.content -->
-
-<br />
 <% if @sites.length == 0 %>
-  <div class="row content single-Col">
+  <div class="row website-Gallery content int-Gall">
     <h2>No active sites found.<br>Try another search!</h2>
   </div>
 <% else %>
@@ -67,20 +68,18 @@
             <img src="/img/placeholder.png" alt="<%= site.title %>" />
           </span>
         </a>
-        <div>
-          <span>
-            <center><a href="//<%= site.host %>" title="<%= site.title %>"><%= site.title.shorten(35) %></a>
-          </span>
+        <div class="title">
+          <a href="//<%= site.host %>" title="<%= site.title %>"><%= site.title.shorten(35) %></a>
         </div>
-        <div>
-          <span style="float: left">
-            <a href="/site/<%= site.username %>">Profile</a>
-          </span>
-          <span style="float: right">
+        <div class="site-info">
+          <div style="float: left">
+            <a href="/site/<%= site.username %>" title="Profile"><i class="icon-user"></i> <%= site.username %></a>
+          </div>
+          <div style="float: right">
             <a href="/site/<%= site.username %>">
               <%= site.hits %> hit<%= site.hits == 1 ? '' : 's' %>
             </a>
-          </span>
+          </div>
         </div>
       </li>
     <% end %>
@@ -109,22 +108,11 @@
   <% end %>
 <% end %>
 
-<div class="row content">
-  <div class="col col-100">
-    <h3>
+<div class="row website-Gallery content int-Gall">
+    <h4>Tags</h4>
+    <p>
     <% Tag.popular_names.each do |tag| %>
       <a href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
     <% end %>
-    </h3>
-  </div>
-</div>
-
-<div class="row content">
-  <div class="col col-20">
-    <h4>Search by tag:</h4>
-    <form method="GET" action="browse">
-      <input class="input-Area typeahead" name="tag" placeholder="pokemon">
-      <input type="submit" class="btn-Action" value="Search" style="width: 100px">
-    </form>
-  </div>
+    </p>
 </div>
