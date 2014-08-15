@@ -51,7 +51,9 @@ Sidekiq.configure_client do |config|
 end
 
 if $config['pubsub_url']
-  $pubsub = Redis.new url: $config['pubsub_url'] 
+  $pubsub_pool = ConnectionPool.new(size: 10, timeout: 5) {
+    Redis.new url: $config['pubsub_url']
+  }
 end
 
 if $config['pubsub_url'].nil? && ENV['RACK_ENV'] == 'production'
