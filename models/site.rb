@@ -243,6 +243,8 @@ class Site < Sequel::Model
       raise 'username is missing'
     end
 
+    return if is_banned == true
+
     DB.transaction {
       self.is_banned = true
       self.updated_at = Time.now
