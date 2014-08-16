@@ -224,7 +224,6 @@
       })
 
       this.on("totaluploadprogress", function(progress, totalBytes, totalBytesSent) {
-        console.log('OH HI')
         showUploadProgress()
         $('#progressBar').css('display', 'block')
         $('#uploadingProgress').css('width', progress+'%')
