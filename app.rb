@@ -721,10 +721,11 @@ get '/site_files/download/:filename' do |filename|
   current_site.get_file filename
 end
 
-get '/site_files/text_editor/:filename' do |filename|
+get %r{\/site_files\/text_editor\/(.+)} do
   require_login
+  @filename = params[:captures].first
   begin
-    @file_data = current_site.get_file filename
+    @file_data = current_site.get_file @filename
   rescue Errno::ENOENT
     flash[:error] = 'We could not find the requested file.'
     redirect '/dashboard'
@@ -732,8 +733,9 @@ get '/site_files/text_editor/:filename' do |filename|
   erb :'site_files/text_editor'
 end
 
-post '/site_files/save/:filename' do |filename|
+post %r{\/site_files\/save\/(.+)} do
   require_login_ajax
+  filename = params[:captures].first
 
   tempfile = Tempfile.new 'neocities_saving_file'
 
@@ -1001,7 +1003,7 @@ post '/api/delete' do
 
   paths = []
   params[:filenames].each do |path|
-    unless path.is_a?(String) && Site.valid_path?(path)
+    unless path.is_a?(String)
       api_error 400, 'bad_filename', "#{path} is not a valid filename, canceled deleting"
     end
 

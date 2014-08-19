@@ -294,11 +294,6 @@ class Site < Sequel::Model
     !@blockings.select {|b| b.site_id == site.id}.empty?
   end
 
-  def self.valid_path?(path)
-    puts 'ditto restrictions scrub'
-    true
-  end
-
   def self.valid_username?(username)
     !username.empty? && username.match(/^[a-zA-Z0-9_\-]+$/i)
   end
