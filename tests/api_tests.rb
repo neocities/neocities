@@ -84,17 +84,17 @@ describe 'api delete' do
     res[:error_type].must_equal 'cannot_delete_index'
   end
 
-  it 'fails with bad filename' do
+  it 'succeeds with weird filenames' do
     create_site
     basic_authorize @user, @pass
     @site.store_file 't$st.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
     post '/api/delete', filenames: ['t$st.jpg']
-    res[:error_type].must_equal 'bad_filename'
+    res[:result].must_equal 'success'
 
     create_site
     basic_authorize @user, @pass
     post '/api/delete', filenames: ['./config.yml']
-    res[:error_type].must_equal 'bad_filename'
+    res[:error_type].must_equal 'missing_files'
   end
 
   it 'fails with missing files' do
@@ -137,13 +137,59 @@ describe 'api upload' do
     res[:error_type].must_equal 'missing_files'
   end
 
-  it 'fails for invalid filenames' do
+  it 'resists directory traversal attack' do
     create_site
     basic_authorize @user, @pass
     post '/api/upload', {
       '../lol.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
     }
-    res[:error_type].must_equal 'bad_filename'
+    res[:result].must_equal 'success'
+    File.exist?(File.join(Site::SITE_FILES_ROOT, @site.username, 'lol.jpg')).must_equal true
+  end
+
+  it 'scrubs root path slash' do
+    create_site
+    basic_authorize @user, @pass
+    post '/api/upload', {
+      '/lol.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    }
+    res[:result].must_equal 'success'
+    File.exist?(File.join(Site::SITE_FILES_ROOT, @site.username, 'lol.jpg')).must_equal true
+  end
+
+  it 'fails for missing file name' do
+    create_site
+    basic_authorize @user, @pass
+    post '/api/upload', {
+      '/' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    }
+    res[:error_type].must_equal 'invalid_file_type'
+
+    create_site
+    basic_authorize @user, @pass
+    post '/api/upload', {
+      '' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    }
+    res[:error_type].must_equal 'missing_files'
+  end
+
+  it 'fails for file with no extension' do
+    create_site
+    basic_authorize @user, @pass
+    post '/api/upload', {
+      'derpie' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    }
+    res[:error_type].must_equal 'invalid_file_type'
+  end
+
+  it 'creates path for file uploads' do
+    create_site
+    basic_authorize @user, @pass
+    post '/api/upload', {
+      'derpie/derpingtons/lol.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    }
+    res[:result].must_equal 'success'
+    File.exist?(@site.files_path('derpie/derpingtons/lol.jpg')).must_equal true
   end
 
   it 'fails for invalid files' do
@@ -180,7 +226,7 @@ describe 'api upload' do
 end
 
 def site_file_exists?(file)
-  File.exist?(@site.file_path('test.jpg'))
+  File.exist?(@site.files_path('test.jpg'))
 end
 
 def res

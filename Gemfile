@@ -7,7 +7,6 @@ gem 'bcrypt'
 gem 'sinatra-flash',      require: 'sinatra/flash'
 gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
 gem 'puma',               require: nil
-gem 'rubyzip',            require: 'zip'
 gem 'rack-recaptcha',     require: 'rack/recaptcha'
 gem 'rmagick',            require: nil
 gem 'sidekiq'
@@ -19,6 +18,8 @@ gem 'erubis'
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 gem 'screencap'
 gem 'cocaine'
+gem 'zipruby'
+gem 'always_verify_ssl_certificates'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
@@ -54,13 +55,12 @@ group :test do
   gem 'minitest'
   gem 'minitest-reporters', require: 'minitest/reporters'
   gem 'rack-test',          require: 'rack/test'
-  gem 'webmock'
   gem 'mocha',              require: nil
   gem 'rake',               require: nil
   gem 'poltergeist'
   gem 'phantomjs',          require: 'phantomjs/poltergeist'
-  gem 'capybara'
   gem 'capybara_minitest_spec'
+  gem 'rack_session_access', require: nil
 
   platform :mri do
     gem 'simplecov',        require: nil
