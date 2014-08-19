@@ -6,7 +6,9 @@ class PurgeCacheWorker
     attempt = 0
     begin
       attempt += 1
-      $pubsub.publish 'purgecache', payload.to_json
+      $pubsub_pool.with do |redis|
+        redis.publish 'purgecache', payload.to_json
+      end
     rescue Redis::BaseConnectionError => error
       raise if attempt > 3
       puts "pubsub error: #{error}, retrying in 1s"

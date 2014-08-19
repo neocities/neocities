@@ -243,6 +243,8 @@ class Site < Sequel::Model
       raise 'username is missing'
     end
 
+    return if is_banned == true
+
     DB.transaction {
       self.is_banned = true
       self.updated_at = Time.now
@@ -629,12 +631,15 @@ class Site < Sequel::Model
   end
 
   def latest_events(current_page=1, limit=10)
-    events_dataset.exclude(site_id: self.id).order(:created_at.desc).paginate(current_page, limit)
+    events_dataset.order(:created_at.desc).paginate(current_page, limit)
   end
 
   def news_feed(current_page=1, limit=10)
     following_ids = self.followings_dataset.select(:site_id).all.collect {|f| f.site_id}
-    Event.filter(site_id: following_ids+[self.id]).order(:created_at.desc).paginate(current_page, limit)
+    Event.filter(site_id: following_ids+[self.id]).
+    order(:created_at.desc).
+    exclude(actioning_site_id: self.id).
+    paginate(current_page, limit)
   end
 
   def host
