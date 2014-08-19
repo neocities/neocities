@@ -81,10 +81,11 @@
   </div>
   <div class="header">
     <div class="breadcrumbs">
-      <% if params[:dir].nil? %>
+      <% if params[:dir].nil? || params[:dir].empty? || params[:dir] == '/' %>
         Home
       <% else %>
-        <a href="?">Home</a>
+        <% puts params[:dir].inspect %>
+        <a href="/dashboard">Home</a>
       <% end %>
 
       <% if @dir %>
