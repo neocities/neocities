@@ -12,6 +12,7 @@ describe 'site_files' do
     it 'succeeds with valid file' do
       site = Fabricate :site
       PurgeCacheWorker.jobs.clear
+      ThumbnailWorker.jobs.clear
       post '/site_files/upload', {
         'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg'),
         'csrf_token' => 'abcd'
@@ -22,10 +23,18 @@ describe 'site_files' do
       queue_args = PurgeCacheWorker.jobs.first['args'].first
       queue_args['site'].must_equal site.username
       queue_args['path'].must_equal '/test.jpg'
+
+      ThumbnailWorker.jobs.length.must_equal 1
+      ThumbnailWorker.drain
+
+      Site::THUMBNAIL_RESOLUTIONS.each do |resolution|
+        File.exists?(site.thumbnail_path('test.jpg', resolution)).must_equal true
+      end
     end
 
     it 'works with directory path' do
       site = Fabricate :site
+      ThumbnailWorker.jobs.clear
       PurgeCacheWorker.jobs.clear
       post '/site_files/upload', {
         'dir' => 'derpie/derptest',
@@ -35,8 +44,19 @@ describe 'site_files' do
       last_response.body.must_match /successfully uploaded/i
       File.exists?(site.files_path('derpie/derptest/test.jpg')).must_equal true
 
+      PurgeCacheWorker.jobs.length.must_equal 1
       queue_args = PurgeCacheWorker.jobs.first['args'].first
       queue_args['path'].must_equal '/derpie/derptest/test.jpg'
+
+      ThumbnailWorker.jobs.length.must_equal 1
+      ThumbnailWorker.drain
+
+      Site::THUMBNAIL_RESOLUTIONS.each do |resolution|
+        File.exists?(site.thumbnail_path('derpie/derptest/test.jpg', resolution)).must_equal true
+        site.thumbnail_url('derpie/derptest/test.jpg', resolution).must_equal(
+          File.join "#{Site::THUMBNAILS_URL_ROOT}", site.username, "/derpie/derptest/test.jpg.#{resolution}.jpg"
+        )
+      end
     end
   end
 end

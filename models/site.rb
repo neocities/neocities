@@ -51,8 +51,8 @@ class Site < Sequel::Model
   SITE_FILES_ROOT      = File.join PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites')
   SCREENSHOTS_ROOT     = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_screenshots_test' : 'site_screenshots'))
   THUMBNAILS_ROOT      = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_thumbnails_test' : 'site_thumbnails'))
-  SCREENSHOTS_URL_ROOT = '/site_screenshots'
-  THUMBNAILS_URL_ROOT  = '/site_thumbnails'
+  SCREENSHOTS_URL_ROOT = ENV['RACK_ENV'] == 'test' ? '/site_screenshots_test' : '/site_screenshots'
+  THUMBNAILS_URL_ROOT  = ENV['RACK_ENV'] == 'test' ? '/site_thumbnails_test' : '/site_thumbnails'
   IMAGE_REGEX          = /jpg|jpeg|png|bmp|gif/
   LOSSLESS_IMAGE_REGEX = /png|bmp|gif/
   LOSSY_IMAGE_REGEX    = /jpg|jpeg/
@@ -334,7 +334,9 @@ class Site < Sequel::Model
   end
 
   def store_file(path, uploaded)
-    path = files_path(path)
+    relative_path = scrubbed_path path
+    path = files_path path
+
     if File.exist?(path) &&
        Digest::SHA2.file(path).digest == Digest::SHA2.file(uploaded.path).digest
       return false
@@ -366,7 +368,7 @@ class Site < Sequel::Model
     if ext.match HTML_REGEX
       ScreenshotWorker.perform_async values[:username], path
     elsif ext.match IMAGE_REGEX
-      ThumbnailWorker.perform_async values[:username], path
+      ThumbnailWorker.perform_async values[:username], relative_path
     end
 
     SiteChange.record self, path
@@ -613,7 +615,7 @@ class Site < Sequel::Model
       clean << part if part != '..'
     end
 
-    clean
+    clean.join '/'
   end
 
   def files_path(path='')

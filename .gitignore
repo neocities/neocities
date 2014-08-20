@@ -22,5 +22,7 @@ public/assets/css/.sass-cache/
 public/site_thumbnails
 public/sites
 public/site_screenshots
+public/site_screenshots_test
+public/site_thumbnails_test
 *.swp
 files/map.txt
