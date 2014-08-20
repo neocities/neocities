@@ -202,7 +202,7 @@ class Site < Sequel::Model
 
     %w{index not_found}.each do |name|
       File.write files_path("#{name}.html"), render_template("#{name}.erb")
-      purge_cache "#{name}.html"
+      purge_cache "/#{name}.html"
       ScreenshotWorker.perform_async values[:username], "#{name}.html"
     end
 
@@ -327,7 +327,8 @@ class Site < Sequel::Model
   end
 
   def purge_cache(path)
-    payload = {site: username, path: path}
+    relative_path = path.gsub(base_files_path, '')
+    payload = {site: username, path: relative_path}
     payload[:domain] = domain if !domain.empty?
     PurgeCacheWorker.perform_async payload
   end
