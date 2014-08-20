@@ -80,7 +80,9 @@ class ScreenshotWorker
     img = img_list.reverse.flatten_images
 
     user_screenshots_path = File.join SCREENSHOTS_PATH, username
-    FileUtils.mkdir_p user_screenshots_path
+    screenshot_path = File.join user_screenshots_path, File.dirname(path)
+
+    FileUtils.mkdir_p screenshot_path unless Dir.exists?(screenshot_path)
 
     Site::SCREENSHOT_RESOLUTIONS.each do |res|
       img.scale(*res.split('x').collect {|r| r.to_i}).write(File.join(user_screenshots_path, "#{path}.#{res}.jpg")) {

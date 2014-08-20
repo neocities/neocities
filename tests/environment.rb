@@ -17,6 +17,9 @@ Bundler.require :test
 
 #require 'minitest/pride'
 require 'minitest/autorun'
+require 'webmock'
+include WebMock::API
+require 'webmock/minitest'
 require 'sidekiq/testing'
 
 Sinatra::Application.configure do |app|

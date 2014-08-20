@@ -61,6 +61,7 @@ group :test do
   gem 'phantomjs',          require: 'phantomjs/poltergeist'
   gem 'capybara_minitest_spec'
   gem 'rack_session_access', require: nil
+  gem 'webmock',             require: nil
 
   platform :mri do
     gem 'simplecov',        require: nil

@@ -366,7 +366,7 @@ class Site < Sequel::Model
     ext = File.extname(path).gsub(/^./, '')
 
     if ext.match HTML_REGEX
-      ScreenshotWorker.perform_async values[:username], path
+      ScreenshotWorker.perform_async values[:username], relative_path
     elsif ext.match IMAGE_REGEX
       ThumbnailWorker.perform_async values[:username], relative_path
     end

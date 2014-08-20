@@ -9,6 +9,24 @@ end
 
 describe 'site_files' do
   describe 'upload' do
+
+    it 'succeeds with index.html file' do
+      site = Fabricate :site
+      PurgeCacheWorker.jobs.clear
+      ScreenshotWorker.jobs.clear
+
+      post '/site_files/upload', {
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html'),
+        'csrf_token' => 'abcd'
+      }, {'rack.session' => { 'id' => site.id, '_csrf_token' => 'abcd' }}
+      last_response.body.must_match /successfully uploaded/i
+      File.exists?(site.files_path('index.html')).must_equal true
+
+      args = ScreenshotWorker.jobs.first['args']
+      args.first.must_equal site.username
+      args.last.must_equal 'index.html'
+    end
+
     it 'succeeds with valid file' do
       site = Fabricate :site
       PurgeCacheWorker.jobs.clear

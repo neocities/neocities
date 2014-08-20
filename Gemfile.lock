@@ -45,6 +45,8 @@ GEM
     coderay (1.1.0)
     columnize (0.3.6)
     connection_pool (2.0.0)
+    crack (0.4.2)
+      safe_yaml (~> 1.0.0)
     debugger (1.6.6)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
@@ -144,6 +146,7 @@ GEM
       mime-types (>= 1.16)
     retriable (1.4.1)
     rmagick (2.13.2)
+    safe_yaml (1.0.1)
     sass (3.3.8)
     screencap (0.1.1)
       phantomjs
@@ -191,6 +194,9 @@ GEM
       rack
       raindrops (~> 0.7)
     uuidtools (2.1.4)
+    webmock (1.17.4)
+      addressable (>= 2.2.7)
+      crack (>= 0.3.2)
     websocket-driver (0.3.4)
     xpath (2.0.0)
       nokogiri (~> 1.3)
@@ -244,4 +250,5 @@ DEPENDENCIES
   sinatra-xsendfile
   stripe!
   tilt
+  webmock
   zipruby
