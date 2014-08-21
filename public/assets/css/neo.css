@@ -1550,8 +1550,7 @@ a {
   width: 95px;
   height: 65px;
   display: block;
-  padding-top: 35px;
-  font-size: 14px; }
+  padding-top: 35px; }
 
 .overlay a {
   color: white;
@@ -2022,23 +2021,31 @@ a.tag:hover {
 
 .tt-dropdown-menu {
   padding: 0px 10px 0px 10px;
-  background: #FFFFFF; }
+  background: #FFFFFF;
+  cursor: pointer; }
 
-.browse-page .select-Container {
-  overflow: none !important;
+.interior .header-Outro.browse-page {
+  overflow: visible; }
+
+.interior .header-Outro.browse-page .select-Container {
+  overflow: none;
   padding: 2px 4px;
   width: 40%; }
 
 .browse-page .input-Area {
   width: 100%;
-  padding: 5px 5px; }
+  padding: 4px 5px; }
+
+.header-Outro .twitter-typeahead {
+  top: -2px;
+  color: #000; }
 
 .header-Outro .btn-Action {
   margin: 0 0 0 10px; }
 
 .browse-page .text-Label, .browse-page .option-Container {
   float: left;
-  margin-right: 5px;
+  margin-right: 8px;
   font-weight: bold;
   line-height: 31px; }
 
