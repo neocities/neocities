@@ -371,7 +371,7 @@ class Site < Sequel::Model
       ThumbnailWorker.perform_async values[:username], relative_path
     end
 
-    SiteChange.record self, path
+    SiteChange.record self, relative_path
 
     if self.site_changed != true
       self.site_changed = true

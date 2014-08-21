@@ -20,6 +20,7 @@ gem 'screencap'
 gem 'cocaine'
 gem 'zipruby'
 gem 'always_verify_ssl_certificates'
+gem 'sass', require: nil
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
@@ -46,7 +47,6 @@ end
 
 group :development do
   gem 'shotgun', require: nil
-  gem 'sass', require: nil
 end
 
 group :test do

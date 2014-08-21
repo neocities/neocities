@@ -18,7 +18,7 @@ doc/
 tests/coverage
 config.yml
 .DS_Store
-public/assets/css/.sass-cache/
+public/css/neo.css
 public/site_thumbnails
 public/sites
 public/site_screenshots
@@ -26,3 +26,5 @@ public/site_screenshots_test
 public/site_thumbnails_test
 *.swp
 files/map.txt
+.sass-cache
+.sass-cache/*
