@@ -7,7 +7,6 @@ Encoding.default_external = 'UTF-8'
 require 'yaml'
 require 'json'
 require 'logger'
-require 'zip'
 
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
@@ -27,8 +26,6 @@ end
 
 DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $config['database_pool']
 DB.extension :pagination
-
-Dir.glob('workers/*.rb').each {|w| require File.join(DIR_ROOT, "/#{w}") }
 
 if defined?(Pry)
   Pry.commands.alias_command 'c', 'continue'
@@ -60,9 +57,9 @@ if $config['pubsub_url'].nil? && ENV['RACK_ENV'] == 'production'
   raise 'pubsub_url is missing from config'
 end
 
-require File.join(DIR_ROOT, 'workers', 'thumbnail_worker.rb')
-require File.join(DIR_ROOT, 'workers', 'screenshot_worker.rb')
-require File.join(DIR_ROOT, 'workers', 'email_worker.rb')
+#require File.join(DIR_ROOT, 'workers', 'thumbnail_worker.rb')
+#require File.join(DIR_ROOT, 'workers', 'screenshot_worker.rb')
+#require File.join(DIR_ROOT, 'workers', 'email_worker.rb')
 
 Sequel.datetime_class = Time
 Sequel.extension :core_extensions
@@ -77,6 +74,9 @@ Sequel::Migrator.apply DB, './migrations'
 Stripe.api_key = $config['stripe_api_key']
 
 Dir.glob('models/*.rb').each {|m| require File.join(DIR_ROOT, "#{m}") }
+Dir.glob('workers/*.rb').each {|w| require File.join(DIR_ROOT, "/#{w}") }
+
+
 #DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
 
 if ENV['RACK_ENV'] == 'development'
@@ -100,3 +100,16 @@ Mail.defaults do
 end
 
 Sinatra::Application.set :erb, escape_html: true
+
+require 'sass/plugin/rack'
+Sinatra::Application.use Sass::Plugin::Rack
+
+Sass::Plugin.options[:template_location] = './public/assets/css'
+Sass::Plugin.options[:css_location] = './public/assets/css'
+Sass::Plugin.options[:style] = :nested
+
+if ENV['RACK_ENV'] == 'production'
+  Sass::Plugin.options[:style] = :compressed
+  Sass::Plugin.options[:never_update] = true
+  Sass::Plugin.options[:full_exception] = false
+end

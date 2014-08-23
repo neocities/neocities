@@ -1,6 +1,7 @@
 require 'tilt'
 require 'rss'
 require 'nokogiri'
+require 'pathname'
 
 class Site < Sequel::Model
   include Sequel::ParanoidDelete
@@ -23,6 +24,7 @@ class Site < Sequel::Model
     image/x-icon
     application/pdf
     application/pgp-keys
+    application/pgp
     text/xml
     application/xml
     audio/midi
@@ -49,8 +51,8 @@ class Site < Sequel::Model
   SITE_FILES_ROOT      = File.join PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites')
   SCREENSHOTS_ROOT     = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_screenshots_test' : 'site_screenshots'))
   THUMBNAILS_ROOT      = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_thumbnails_test' : 'site_thumbnails'))
-  SCREENSHOTS_URL_ROOT = '/site_screenshots'
-  THUMBNAILS_URL_ROOT  = '/site_thumbnails'
+  SCREENSHOTS_URL_ROOT = ENV['RACK_ENV'] == 'test' ? '/site_screenshots_test' : '/site_screenshots'
+  THUMBNAILS_URL_ROOT  = ENV['RACK_ENV'] == 'test' ? '/site_thumbnails_test' : '/site_thumbnails'
   IMAGE_REGEX          = /jpg|jpeg|png|bmp|gif/
   LOSSLESS_IMAGE_REGEX = /png|bmp|gif/
   LOSSY_IMAGE_REGEX    = /jpg|jpeg/
@@ -69,6 +71,8 @@ class Site < Sequel::Model
   ]
 
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
+
+  EDITABLE_FILE_EXT = /html|htm|txt|js|css|md/i
 
   BANNED_TIME = 2592000 # 30 days in seconds
 
@@ -197,16 +201,16 @@ class Site < Sequel::Model
     FileUtils.mkdir_p files_path
 
     %w{index not_found}.each do |name|
-      File.write file_path("#{name}.html"), render_template("#{name}.erb")
-      purge_cache "#{name}.html"
+      File.write files_path("#{name}.html"), render_template("#{name}.erb")
+      purge_cache "/#{name}.html"
       ScreenshotWorker.perform_async values[:username], "#{name}.html"
     end
 
-    FileUtils.cp template_file_path('cat.png'), file_path('cat.png')
+    FileUtils.cp template_file_path('cat.png'), files_path('cat.png')
   end
 
-  def get_file(filename)
-    File.read file_path(filename)
+  def get_file(path)
+    File.read files_path(path)
   end
 
   def before_destroy
@@ -252,8 +256,8 @@ class Site < Sequel::Model
       FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'banned_sites', username)
     }
 
-    site_files.file_list.collect {|f| f.filename}.each do |f|
-      purge_cache f
+    file_list.each do |path|
+      purge_cache path
     end
   end
 
@@ -290,15 +294,6 @@ class Site < Sequel::Model
     !@blockings.select {|b| b.site_id == site.id}.empty?
   end
 
-  def self.valid_filename?(filename)
-    return false if sanitize_filename(filename) != filename
-    true
-  end
-
-  def self.sanitize_filename(filename)
-    filename.gsub(/[^a-zA-Z0-9_\-.]/, '')
-  end
-
   def self.valid_username?(username)
     !username.empty? && username.match(/^[a-zA-Z0-9_\-]+$/i)
   end
@@ -331,19 +326,24 @@ class Site < Sequel::Model
     true
   end
 
-  def purge_cache(filename)
-    payload = {site: username, path: filename}
+  def purge_cache(path)
+    relative_path = path.gsub(base_files_path, '')
+    payload = {site: username, path: relative_path}
     payload[:domain] = domain if !domain.empty?
     PurgeCacheWorker.perform_async payload
   end
 
-  def store_file(filename, uploaded)
-    if File.exist?(file_path(filename)) &&
-       Digest::SHA2.file(file_path(filename)).digest == Digest::SHA2.file(uploaded.path).digest
+  def store_file(path, uploaded)
+    relative_path = scrubbed_path path
+    path = files_path path
+
+    if File.exist?(path) &&
+       Digest::SHA2.file(path).digest == Digest::SHA2.file(uploaded.path).digest
       return false
     end
 
-    if filename == 'index.html'
+    pathname = Pathname(path)
+    if pathname.basename.to_s == 'index.html'
       new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
 
       if new_title.length < TITLE_MAX
@@ -352,26 +352,46 @@ class Site < Sequel::Model
       end
     end
 
-    FileUtils.mv uploaded.path, file_path(filename)
-    File.chmod(0640, file_path(filename))
+    dirname = pathname.dirname.to_s
 
-    purge_cache filename
-
-    ext = File.extname(filename).gsub(/^./, '')
-
-    if ext.match HTML_REGEX
-      ScreenshotWorker.perform_async values[:username], filename
-    elsif ext.match IMAGE_REGEX
-      ThumbnailWorker.perform_async values[:username], filename
+    if !File.exists? dirname
+      FileUtils.mkdir_p dirname
     end
 
-    SiteChange.record self, filename
+    FileUtils.mv uploaded.path, path
+    File.chmod 0640, path
+
+    purge_cache path
+
+    ext = File.extname(path).gsub(/^./, '')
+
+    if ext.match HTML_REGEX
+      ScreenshotWorker.perform_async values[:username], relative_path
+    elsif ext.match IMAGE_REGEX
+      ThumbnailWorker.perform_async values[:username], relative_path
+    end
+
+    SiteChange.record self, relative_path
 
     if self.site_changed != true
       self.site_changed = true
       save_changes(validate: false)
     end
 
+    true
+  end
+
+  def is_directory?(path)
+    File.directory? files_path(path)
+  end
+
+  def create_directory(path)
+    relative_path = files_path path
+    if Dir.exists?(relative_path) || File.exist?(relative_path)
+      return 'Directory (or file) already exists.'
+    end
+
+    FileUtils.mkdir_p relative_path
     true
   end
 
@@ -382,49 +402,61 @@ class Site < Sequel::Model
   end
 
   def files_zip
-    file_path = "/tmp/neocities-site-#{username}.zip"
+    zip_name = "neocities-#{username}"
 
-    Zip::File.open(file_path, Zip::File::CREATE) do |zipfile|
-      file_list.collect {|f| f.filename}.each do |filename|
-        zipfile.add filename, file_path(filename)
+    tmpfile = Tempfile.new 'neocities-site-zip'
+    tmpfile.close
+
+    Zip::Archive.open(tmpfile.path, Zip::CREATE) do |ar|
+      ar.add_dir(zip_name)
+
+      Dir.glob("#{base_files_path}/**/*").each do |path|
+        relative_path = path.gsub(base_files_path+'/', '')
+
+        if File.directory?(path)
+          ar.add_dir(zip_name+'/'+relative_path)
+        else
+          ar.add_file(zip_name+'/'+relative_path, path) # add_file(<entry name>, <source path>)
+        end
       end
     end
 
-    # TODO Don't dump the zipfile into memory
-    zipfile = File.read file_path
-    File.delete file_path
-    zipfile
+    tmpfile.path
   end
 
-  def delete_file(filename)
+  def delete_file(path)
     begin
-      FileUtils.rm file_path(filename)
+      FileUtils.rm files_path(path)
+    rescue Errno::EISDIR
+      FileUtils.remove_dir files_path(path), true
     rescue Errno::ENOENT
     end
 
-    purge_cache filename
+    purge_cache path
 
-    ext = File.extname(filename).gsub(/^./, '')
+    ext = File.extname(path).gsub(/^./, '')
 
-    screenshots_delete(filename) if ext.match HTML_REGEX
-    thumbnails_delete(filename) if ext.match IMAGE_REGEX
+    screenshots_delete(path) if ext.match HTML_REGEX
+    thumbnails_delete(path) if ext.match IMAGE_REGEX
 
-    SiteChangeFile.filter(site_id: self.id, filename: filename).delete
+    path = path[1..path.length] if path[0] == '/'
+
+    SiteChangeFile.filter(site_id: self.id, filename: path).delete
 
     true
   end
 
   def move_files_from(oldusername)
-    FileUtils.mv files_path(oldusername), files_path
+    FileUtils.mv base_files_path(oldusername), base_files_path
   end
 
-  def install_new_html_file(name)
-    File.write file_path(name), render_template('index.erb')
-    purge_cache name
+  def install_new_html_file(path)
+    File.write files_path(path), render_template('index.erb')
+    purge_cache path
   end
 
-  def file_exists?(filename)
-    File.exist? file_path(filename)
+  def file_exists?(path)
+    File.exist? files_path(path)
   end
 
   def after_save
@@ -453,7 +485,7 @@ class Site < Sequel::Model
   end
 
 #  def after_destroy
-#    FileUtils.rm_rf file_path
+#    FileUtils.rm_rf files_path
 #    super
 #  end
 
@@ -568,16 +600,48 @@ class Site < Sequel::Model
     File.join TEMPLATE_ROOT, name
   end
 
-  def files_path(name=nil)
-    File.join SITE_FILES_ROOT, (name || username)
+  def base_files_path(name=username)
+    raise 'username missing' if name.nil? || name.empty?
+    File.join SITE_FILES_ROOT, name
   end
 
-  def file_path(filename)
-    File.join files_path, filename
+  # https://practicingruby.com/articles/implementing-an-http-file-server?u=dc2ab0f9bb
+  def scrubbed_path(path='')
+    path ||= ''
+    clean = []
+
+    parts = path.split '/'
+
+    parts.each do |part|
+      next if part.empty? || part == '.'
+      clean << part if part != '..'
+    end
+
+    clean.join '/'
   end
 
-  def file_list
-    Dir.glob(File.join(files_path, '*')).collect {|p| File.basename(p)}.sort.collect {|sitename| SiteFile.new sitename}
+  def files_path(path='')
+    File.join base_files_path, scrubbed_path(path)
+  end
+
+  def file_list(path='')
+    list = Dir.glob(File.join(files_path(path), '*')).collect do |file_path|
+      file = {
+        path: file_path.gsub(base_files_path, ''),
+        name: File.basename(file_path),
+        ext: File.extname(file_path).gsub('.', ''),
+        is_directory: File.directory?(file_path),
+        is_root_index: file_path == "#{base_files_path}/index.html"
+      }
+
+      file[:is_html] = !(file[:ext].match HTML_REGEX).nil?
+      file[:is_image] = !(file[:ext].match IMAGE_REGEX).nil?
+      file[:is_editable] = !(file[:ext].match EDITABLE_FILE_EXT).nil?
+      file
+    end
+
+    list.select {|f| f[:is_directory]}.sort_by {|f| f[:name]} +
+    list.select {|f| f[:is_directory] == false}.sort_by{|f| f[:name]}
   end
 
   def file_size_too_large?(size_in_bytes)
@@ -658,19 +722,19 @@ class Site < Sequel::Model
     values[:hits].to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
   end
 
-  def screenshots_delete(filename)
+  def screenshots_delete(path)
     SCREENSHOT_RESOLUTIONS.each do |res|
       begin
-        FileUtils.rm screenshot_path(filename, res)
+        FileUtils.rm screenshot_path(path, res)
       rescue Errno::ENOENT
       end
     end
   end
 
-  def thumbnails_delete(filename)
+  def thumbnails_delete(path)
     THUMBNAIL_RESOLUTIONS.each do |res|
       begin
-        FileUtils.rm thumbnail_path(filename, res)
+        FileUtils.rm thumbnail_path(path, res)
       rescue Errno::ENOENT
       end
     end
@@ -680,34 +744,34 @@ class Site < Sequel::Model
     Site.where(tags: tags).limit(limit, offset).order(:updated_at.desc).all
   end
 
-  def screenshot_path(filename, resolution)
-    File.join(SCREENSHOTS_ROOT, values[:username], "#{filename}.#{resolution}.jpg")
+  def screenshot_path(path, resolution)
+    File.join(SCREENSHOTS_ROOT, values[:username], "#{path}.#{resolution}.jpg")
   end
 
-  def screenshot_exists?(filename, resolution)
-    File.exist? File.join(SCREENSHOTS_ROOT, values[:username], "#{filename}.#{resolution}.jpg")
+  def screenshot_exists?(path, resolution)
+    File.exist? File.join(SCREENSHOTS_ROOT, values[:username], "#{path}.#{resolution}.jpg")
   end
 
-  def screenshot_url(filename, resolution)
-    "#{SCREENSHOTS_URL_ROOT}/#{values[:username]}/#{filename}.#{resolution}.jpg"
+  def screenshot_url(path, resolution)
+    "#{SCREENSHOTS_URL_ROOT}/#{values[:username]}/#{path}.#{resolution}.jpg"
   end
 
-  def thumbnail_path(filename, resolution)
-    ext = File.extname(filename).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    File.join THUMBNAILS_ROOT, values[:username], "#{filename}.#{resolution}.#{ext}"
+  def thumbnail_path(path, resolution)
+    ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
+    File.join THUMBNAILS_ROOT, values[:username], "#{path}.#{resolution}.#{ext}"
   end
 
-  def thumbnail_exists?(filename, resolution)
-    File.exist? thumbnail_path(filename, resolution)
+  def thumbnail_exists?(path, resolution)
+    File.exist? thumbnail_path(path, resolution)
   end
 
-  def thumbnail_delete(filename, resolution)
-    File.rm thumbnail_path(filename, resolution)
+  def thumbnail_delete(path, resolution)
+    File.rm thumbnail_path(path, resolution)
   end
 
-  def thumbnail_url(filename, resolution)
-    ext = File.extname(filename).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    "#{THUMBNAILS_URL_ROOT}/#{values[:username]}/#{filename}.#{resolution}.#{ext}"
+  def thumbnail_url(path, resolution)
+    ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
+    "#{THUMBNAILS_URL_ROOT}/#{values[:username]}/#{path}.#{resolution}.#{ext}"
   end
 
   def to_rss

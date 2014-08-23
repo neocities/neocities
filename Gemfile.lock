@@ -18,6 +18,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.6)
     ago (0.1.5)
+    always_verify_ssl_certificates (0.3.0)
     ansi (1.4.3)
     autoparse (0.3.3)
       addressable (>= 2.3.1)
@@ -25,7 +26,7 @@ GEM
       multi_json (>= 1.0.0)
     bcrypt (3.1.7)
     builder (3.2.2)
-    capybara (2.2.1)
+    capybara (2.4.1)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
       rack (>= 1.0.0)
@@ -42,16 +43,20 @@ GEM
     cocaine (0.5.4)
       climate_control (>= 0.0.3, < 1.0)
     coderay (1.1.0)
-    columnize (0.3.6)
+    columnize (0.8.9)
     connection_pool (2.0.0)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
+    dav4rack (0.3.0)
+      nokogiri (>= 1.4.2)
+      rack (>= 1.1.0)
+      uuidtools (~> 2.1.1)
     debugger (1.6.6)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
       debugger-ruby_core_source (~> 1.3.2)
     debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.3.2)
+    debugger-ruby_core_source (1.3.5)
     docile (1.1.3)
     erubis (2.7.0)
     extlib (0.9.16)
@@ -89,7 +94,7 @@ GEM
     metaclass (0.0.4)
     method_source (0.8.2)
     mime-types (1.25.1)
-    mini_portile (0.5.3)
+    mini_portile (0.6.0)
     minitest (5.3.1)
     minitest-reporters (1.0.2)
       ansi
@@ -98,13 +103,13 @@ GEM
       powerbar
     mocha (1.0.0)
       metaclass (~> 0.0.1)
-    multi_json (1.9.2)
+    multi_json (1.10.1)
     multipart-post (2.0.0)
-    nokogiri (1.6.1)
-      mini_portile (~> 0.5.0)
+    nokogiri (1.6.3.1)
+      mini_portile (= 0.6.0)
     pg (0.17.1)
     phantomjs (1.9.7.0)
-    poltergeist (1.5.0)
+    poltergeist (1.5.1)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
@@ -129,6 +134,9 @@ GEM
       json
     rack-test (0.6.2)
       rack (>= 1.0)
+    rack_session_access (0.1.1)
+      builder (>= 2.0.0)
+      rack (>= 1.0.0)
     rainbows (4.6.1)
       kgio (~> 2.5)
       rack (~> 1.1)
@@ -142,7 +150,6 @@ GEM
       mime-types (>= 1.16)
     retriable (1.4.1)
     rmagick (2.13.2)
-    rubyzip (1.1.2)
     safe_yaml (1.0.1)
     sass (3.3.8)
     screencap (0.1.1)
@@ -194,19 +201,21 @@ GEM
     webmock (1.17.4)
       addressable (>= 2.2.7)
       crack (>= 0.3.2)
-    websocket-driver (0.3.2)
+    websocket-driver (0.3.4)
     xpath (2.0.0)
       nokogiri (~> 1.3)
+    zipruby (0.3.6)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   ago
+  always_verify_ssl_certificates
   bcrypt
-  capybara
   capybara_minitest_spec
   cocaine
+  dav4rack
   erubis
   fabrication
   faker
@@ -228,12 +237,12 @@ DEPENDENCIES
   puma
   rack-recaptcha
   rack-test
+  rack_session_access
   rainbows
   rake
   redis
   rmagick
   ruby-debug
-  rubyzip
   sass
   screencap
   sequel (= 4.8.0)
@@ -247,3 +256,4 @@ DEPENDENCIES
   stripe!
   tilt
   webmock
+  zipruby

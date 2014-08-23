@@ -452,6 +452,17 @@ end
 
 get '/dashboard' do
   require_login
+
+  if params[:dir] && params[:dir][0] != '/'
+    params[:dir] = '/'+params[:dir]
+  end
+
+  if !File.directory?(current_site.files_path(params[:dir]))
+    redirect '/dashboard'
+  end
+
+  @dir = params[:dir]
+  @file_list = current_site.file_list @dir
   erb :'dashboard'
 end
 
@@ -562,7 +573,7 @@ post '/change_name' do
   end
 
   old_host = current_site.host
-  old_file_paths = current_site.file_list.collect {|f| f.filename}
+  old_file_paths = current_site.file_list.collect {|f| f[:path]}
 
   current_site.username = params[:name]
 
@@ -629,12 +640,27 @@ def file_upload_response(error=nil)
       @error = error
       halt 200, erb(:'dashboard')
     else
-      redirect '/dashboard'
+      query_string = params[:dir] ? "?"+Rack::Utils.build_query(dir: params[:dir]) : ''
+      redirect "/dashboard#{query_string}"
     end
   else
     halt http_error_code, error if error
     halt 200, 'File(s) successfully uploaded.'
   end
+end
+
+post '/site/create_directory' do
+  require_login
+
+  path = "#{params[:dir] || ''}/#{params[:name]}"
+
+  result = current_site.create_directory path
+
+  if result != true
+    flash[:error] = e.message
+  end
+
+  redirect "/dashboard?dir=#{Rack::Utils.escape params[:dir]}"
 end
 
 post '/site_files/upload' do
@@ -647,12 +673,12 @@ post '/site_files/upload' do
   end
 
   params[:files].each do |file|
+    file[:filename] = "#{params[:dir]}/#{file[:filename]}" if params[:dir]
     if current_site.file_size_too_large? file[:tempfile].size
-      file_upload_response "#{file[:filename]} is too large, upload cancelled."
+      file_upload_response "#{params[:dir]}/#{file[:filename]} is too large, upload cancelled."
     end
-
     if !Site.valid_file_type? file
-      file_upload_response "#{file[:filename]}: file type (or content in file) is not allowed on Neocities, upload cancelled."
+      file_upload_response "#{params[:dir]}/#{file[:filename]}: file type (or content in file) is not allowed on Neocities, upload cancelled."
     end
   end
 
@@ -664,9 +690,8 @@ post '/site_files/upload' do
 
   results = []
   params[:files].each do |file|
-    results << current_site.store_file(Site.sanitize_filename(file[:filename]), file[:tempfile])
+    results << current_site.store_file(file[:filename], file[:tempfile])
   end
-
   current_site.increment_changed_count if results.include?(true)
 
   file_upload_response
@@ -674,20 +699,18 @@ end
 
 post '/site_files/delete' do
   require_login
-  sanitized_filename = Site.sanitize_filename params[:filename]
+  current_site.delete_file params[:filename]
 
-  current_site.delete_file(sanitized_filename)
-
-  flash[:success] = "Deleted file #{params[:filename]}."
+  flash[:success] = "Deleted #{params[:filename]}."
   redirect '/dashboard'
 end
 
 get '/site_files/:username.zip' do |username|
   require_login
-  zipfile = current_site.files_zip
+  zipfile_path = current_site.files_zip
   content_type 'application/octet-stream'
-  attachment   "#{current_site.username}.zip"
-  zipfile
+  attachment   "neocities-#{current_site.username}.zip"
+  send_file zipfile_path
 end
 
 get '/site_files/download/:filename' do |filename|
@@ -697,10 +720,11 @@ get '/site_files/download/:filename' do |filename|
   current_site.get_file filename
 end
 
-get '/site_files/text_editor/:filename' do |filename|
+get %r{\/site_files\/text_editor\/(.+)} do
   require_login
+  @filename = params[:captures].first
   begin
-    @file_data = current_site.get_file filename
+    @file_data = current_site.get_file @filename
   rescue Errno::ENOENT
     flash[:error] = 'We could not find the requested file.'
     redirect '/dashboard'
@@ -708,8 +732,9 @@ get '/site_files/text_editor/:filename' do |filename|
   erb :'site_files/text_editor'
 end
 
-post '/site_files/save/:filename' do |filename|
+post %r{\/site_files\/save\/(.+)} do
   require_login_ajax
+  filename = params[:captures].first
 
   tempfile = Tempfile.new 'neocities_saving_file'
 
@@ -722,9 +747,7 @@ post '/site_files/save/:filename' do |filename|
     halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
   end
 
-  sanitized_filename = Site.sanitize_filename filename
-
-  current_site.store_file sanitized_filename, tempfile
+  current_site.store_file filename, tempfile
 
   'ok'
 end
@@ -937,14 +960,11 @@ end
 
 post '/api/upload' do
   require_api_credentials
-
   files = []
-
   params.each do |k,v|
     next unless v.is_a?(Hash) && v[:tempfile]
-    filename = k.to_s
-    api_error(400, 'bad_filename', "#{filename} is not a valid filename, files not uploaded") unless Site.valid_filename? filename
-    files << {filename: filename, tempfile: v[:tempfile]}
+    path = k.to_s
+    files << {filename: k || v[:filename], tempfile: v[:tempfile]}
   end
 
   api_error 400, 'missing_files', 'you must provide files to upload' if files.empty?
@@ -958,6 +978,10 @@ post '/api/upload' do
   files.each do |file|
     if !Site.valid_file_type?(file)
       api_error 400, 'invalid_file_type', "#{file[:filename]} is not a valid file type (or contains not allowed content), files have not been uploaded"
+    end
+
+    if File.directory? file[:filename]
+      api_error 400, 'directory_exists', 'this name is being used by a directory, cannot continue'
     end
   end
 
@@ -976,26 +1000,25 @@ post '/api/delete' do
 
   api_error 400, 'missing_filenames', 'you must provide files to delete' if params[:filenames].nil? || params[:filenames].empty?
 
-  filenames = []
-
-  params[:filenames].each do |filename|
-    unless filename.is_a?(String) && Site.valid_filename?(filename)
-      api_error 400, 'bad_filename', "#{filename} is not a valid filename, canceled deleting"
+  paths = []
+  params[:filenames].each do |path|
+    unless path.is_a?(String)
+      api_error 400, 'bad_filename', "#{path} is not a valid filename, canceled deleting"
     end
 
-    if !current_site.file_exists?(filename)
-      api_error 400, 'missing_files', "#{filename} was not found on your site, canceled deleting"
+    if !current_site.file_exists?(path)
+      api_error 400, 'missing_files', "#{path} was not found on your site, canceled deleting"
     end
 
-    if filename == 'index.html'
+    if path == 'index.html'
       api_error 400, 'cannot_delete_index', 'you cannot delete your index.html file, canceled deleting'
     end
 
-    filenames << filename
+    paths << path
   end
 
-  filenames.each do |filename|
-    current_site.delete_file(filename)
+  paths.each do |path|
+    current_site.delete_file(path)
   end
 
   api_success 'file(s) have been deleted'

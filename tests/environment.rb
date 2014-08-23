@@ -9,17 +9,25 @@ end
 
 SimpleCov.command_name 'minitest'
 
+require 'rack_session_access'
 require './environment'
-require 'webmock'
-include WebMock::API
 require './app'
 
 Bundler.require :test
 
 #require 'minitest/pride'
 require 'minitest/autorun'
-
+require 'webmock'
+include WebMock::API
+require 'webmock/minitest'
 require 'sidekiq/testing'
+
+Sinatra::Application.configure do |app|
+  app.use RackSessionAccess::Middleware
+end
+
+require 'capybara/poltergeist'
+require 'rack_session_access/capybara'
 
 Site.bcrypt_cost = BCrypt::Engine::MIN_COST
 

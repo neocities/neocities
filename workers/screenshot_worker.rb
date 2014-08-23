@@ -27,24 +27,25 @@ module Phantomjs
 end
 
 class ScreenshotWorker
-  SCREENSHOTS_PATH = File.join DIR_ROOT, 'public', 'site_screenshots'
+  SCREENSHOTS_PATH = Site::SCREENSHOTS_ROOT
   include Sidekiq::Worker
   sidekiq_options queue: :screenshots, retry: 3, backtrace: true
 
-  def perform(username, filename)
+  def perform(username, path)
+    path = "/#{path}" unless path[0] == '/'
     screenshot = Tempfile.new 'neocities_screenshot'
     screenshot.close
     screenshot_output_path = screenshot.path+'.png'
 
     begin
-      f = Screencap::Fetcher.new("http://#{username}.neocities.org/#{filename}")
+      f = Screencap::Fetcher.new("http://#{username}.neocities.org#{path}")
       f.fetch(
         output: screenshot_output_path,
         width: 1280,
         height: 720
       )
     rescue Timeout::Error
-      puts "#{username}/#{filename} is timing out, discontinuing"
+      puts "#{username}/#{path} is timing out, discontinuing"
       site = Site[username: username]
       site.update is_crashing: true
       
@@ -54,7 +55,7 @@ class ScreenshotWorker
         EmailWorker.perform_async({
           from: 'web@neocities.org',
           to: site.email,
-          subject: "[NeoCities] The web page \"#{filename}\" on your site (#{username}.neocities.org) is slow",
+          subject: "[NeoCities] The web page \"#{path}\" on your site (#{username}.neocities.org) is slow",
           body: "Hi there! This is an automated email to inform you that we're having issues loading your site to take a "+
                 "screenshot. It is possible that this is an error specific to our screenshot program, but it is much more "+
                 "likely that your site is too slow to be used with browsers. We don't want Neocities sites crashing browsers, "+
@@ -79,10 +80,12 @@ class ScreenshotWorker
     img = img_list.reverse.flatten_images
 
     user_screenshots_path = File.join SCREENSHOTS_PATH, username
-    FileUtils.mkdir_p user_screenshots_path
+    screenshot_path = File.join user_screenshots_path, File.dirname(path)
+
+    FileUtils.mkdir_p screenshot_path unless Dir.exists?(screenshot_path)
 
     Site::SCREENSHOT_RESOLUTIONS.each do |res|
-      img.scale(*res.split('x').collect {|r| r.to_i}).write(File.join(user_screenshots_path, "#{filename}.#{res}.jpg")) {
+      img.scale(*res.split('x').collect {|r| r.to_i}).write(File.join(user_screenshots_path, "#{path}.#{res}.jpg")) {
         self.quality = 90
       }
     end

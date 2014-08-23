@@ -15,7 +15,7 @@
 
 <div class="header-Outro">
   <div class="row content">
-    <h1>Editing <%= params[:filename] %></h1>
+    <h1>Editing <%= @filename %></h1>
   </div>
 </div>
 
@@ -120,11 +120,14 @@
 
   function saveTextFile(quit) {
     $.ajax({
-      url: '/site_files/save/<%= params[:filename] %>?csrf_token=<%= csrf_token %>',
+      url: '/site_files/save/<%= @filename %>?csrf_token=<%= csrf_token %>',
       data: editor.getValue(),
       processData: false,
       contentType: false,
       type: 'POST',
+      error: function(jqXHR, textStatus, errorThrown) {
+        alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
+      },
       success: function(response){
         if(response == 'ok') {
           if(quit === true) {

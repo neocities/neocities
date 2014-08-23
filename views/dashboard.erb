@@ -15,14 +15,6 @@
     display: none;
   }
 </style>
-<!--
-<form action="/site_files/upload" class="dropzone" id="uploads">
-  <input name="csrf_token" type="hidden" value="#{csrf_token}">
-</form>
-
-
-<div id="upload_status" style="font-size: 16pt"></div>
--->
 
 <div class="header-Outro with-site-image">
   <div class="row content wide">
@@ -88,10 +80,28 @@
     </div>
   </div>
   <div class="header">
-    <div class="breadcrumbs">Home</div>
+    <div class="breadcrumbs">
+      <% if params[:dir].nil? || params[:dir].empty? || params[:dir] == '/' %>
+        Home
+      <% else %>
+        <% puts params[:dir].inspect %>
+        <a href="/dashboard">Home</a>
+      <% end %>
+
+      <% if @dir %>
+        <% dir_array = @dir.split '/' %>
+        <% dir_array.each_with_index do |dir,i| %>
+          <% if i+1 < dir_array.length %>
+            <a href="/dashboard?dir=<%= Rack::Utils.escape dir %>"><%= dir %></a> / 
+          <% else %>
+            <%= dir %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
     <div class="actions">
       <a href="/site_files/new_page" class="btn-Action new-Page"><span>New Page</span></a>
-      <a href="" class="btn-Action new-Folder"><span>New Folder</span></a>
+      <a href="#createDir" class="btn-Action new-Folder" data-toggle="modal"><span>New Folder</span></a>
       <a href="#" class="btn-Action upload" onclick="clickUploadFiles(); return false"><span>Upload</span></a>
     </div>
   </div>
@@ -99,47 +109,49 @@
     <form action="/site_files/upload" class="dropzone" id="uploads">
       <div class="dz-message" style="display: none"></div>
       <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
-      <div class="upload-Boundary <%= current_site.file_list.length <= 5 ? 'with-instruction' : '' %>">
-        <% current_site.file_list.each do |file| %>
+      <div class="upload-Boundary <%= @file_list.length <= 5 ? 'with-instruction' : '' %>">
+        <% @file_list.each do |file| %>
           <div class="file filehover">
-            <% if file.ext.match(Site::HTML_REGEX) && current_site.screenshot_exists?(file.filename, '105x63') %>
+            <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '105x63') %>
               <div class="html-thumbnail html fileimagehover">
-                <img src="<%= current_site.screenshot_url(file.filename, '105x63') %>">
+                <img src="<%= current_site.screenshot_url(file[:path], '105x63') %>">
                 <div class="overlay"></div>
               </div>
-            <% elsif file.ext.match(Site::IMAGE_REGEX) && current_site.thumbnail_exists?(file.filename, '105x63') %>
+            <% elsif file[:is_image] && current_site.thumbnail_exists?(file[:path], '105x63') %>
               <div class="html-thumbnail image fileimagehover">
-                <img src="<%= current_site.thumbnail_url(file.filename, '105x63') %>" style="">
+                <img src="<%= current_site.thumbnail_url(file[:path], '105x63') %>" style="">
                 <div class="overlay"></div>
               </div>
-            <!-- if folder
+            <% elsif file[:is_directory] %>
               <div class="html-thumbnail folder fileimagehover">
                 <div class="folder-icon"></div>
                 <div class="overlay"></div>
               </div> 
-            -->
             <% else %>
               <div class="html-thumbnail misc fileimagehover">
-                <div class="misc-icon"><%= file.ext %></div>
+                <div class="misc-icon"><%= file[:ext] %></div>
                 <div class="overlay"></div>
               </div>
             <% end %>
 
             <a class="title">
-              <% if file.filename.length > 14 %>
-                <%= file.filename.slice(0..14) %>&hellip;
+              <% if file[:name].length > 15 %>
+                <%= file[:name].slice(0..14) %>&hellip;
               <% else %>
-                <%= file.filename %>
+                <%= file[:name] %>
               <% end %>
             </a>
             <div class="overlay">
-              <% if file.ext.match(/html|htm|txt|js|css|md/) %>
-                <a href="/site_files/text_editor/<%= file.filename %>"><i class="icon-edit" title="Edit"> Edit</i></a>
+              <% if file[:is_editable] %>
+                <a href="/site_files/text_editor<%= file[:path] %>"><i class="icon-edit" title="Edit"> Edit</i></a>
               <% end %>
-              <% if file.filename != 'index.html' %>
-                <a href="#" onclick="confirmFileDelete('<%= file.filename %>')"><i class="icon-trash" title="Delete"> Delete</i></a>
+              <% if file[:is_directory] %>
+                <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="icon-edit" title="Manage"> Manage</i></a>
               <% end %>
-              <a class="link-overlay" href="http://<%= current_site.username %>.neocities.org/<%= file.filename %>" title="View <%= file.filename %>" target="_blank"></a>
+              <% if !file[:is_root_index] %>
+                <a href="#" onclick="confirmFileDelete('<%= file[:path] %>')"><i class="icon-trash" title="Delete"> Delete</i></a>
+              <% end %>
+              <a class="link-overlay" href="http://<%= current_site.username %>.neocities.org<%= file[:path] %>" title="View <%= file[:path] %>" target="_blank"></a>
             </div>
           </div>
         <% end %>
@@ -158,7 +170,7 @@
           <h3 id="deleteConfirmModalLabel">Confirm deletion</h3>
         </div>
         <div class="modal-body">
-          <p>You are about to delete the file <span id="deleteFileName"></span>. Are you sure?</p>
+          <p>You are about to delete "<span id="deleteFileName"></span>". Are you sure?</p>
         </div>
         <div class="modal-footer">
           <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -174,9 +186,10 @@
 </div>
 </main>
 
-<form id="uploadFilesButtonForm" method="POST" action="/site_files/upload" enctype=multipart/form-data style="display: none" onsubmit="showUploadProgress()">
+<form id="uploadFilesButtonForm" method="POST" action="/site_files/upload" enctype="multipart/form-data" style="display: none" onsubmit="showUploadProgress()">
   <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
   <input name="from_button" type="hidden" value="true">
+  <input name="dir" type="hidden" value="<%= @dir %>">
   <input id="uploadFiles" type="file" name="files[]" multiple onchange="$('#uploadFilesButtonForm').submit()">
 </form>
 
@@ -224,7 +237,6 @@
       })
 
       this.on("totaluploadprogress", function(progress, totalBytes, totalBytesSent) {
-        console.log('OH HI')
         showUploadProgress()
         $('#progressBar').css('display', 'block')
         $('#uploadingProgress').css('width', progress+'%')
@@ -232,3 +244,24 @@
     }
   }
 </script>
+
+<div class="modal hide fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
+  <form method="POST" action="/site/create_directory">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <input type="hidden" value="<%= @dir %>" name="dir">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <h3 id="createDirLabel">Create Folder</h3>
+    </div>
+    <div class="modal-body">
+      <p>
+        Folder name:
+      </p>
+      <input name="name" type="text" placeholder="images">
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-Action">Create</button>
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
+  </form>
+</div>
