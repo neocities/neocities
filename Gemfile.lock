@@ -43,16 +43,20 @@ GEM
     cocaine (0.5.4)
       climate_control (>= 0.0.3, < 1.0)
     coderay (1.1.0)
-    columnize (0.3.6)
+    columnize (0.8.9)
     connection_pool (2.0.0)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
+    dav4rack (0.3.0)
+      nokogiri (>= 1.4.2)
+      rack (>= 1.1.0)
+      uuidtools (~> 2.1.1)
     debugger (1.6.6)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
       debugger-ruby_core_source (~> 1.3.2)
     debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.3.2)
+    debugger-ruby_core_source (1.3.5)
     docile (1.1.3)
     erubis (2.7.0)
     extlib (0.9.16)
@@ -211,6 +215,7 @@ DEPENDENCIES
   bcrypt
   capybara_minitest_spec
   cocaine
+  dav4rack
   erubis
   fabrication
   faker

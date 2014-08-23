@@ -21,6 +21,7 @@ gem 'cocaine'
 gem 'zipruby'
 gem 'always_verify_ssl_certificates'
 gem 'sass', require: nil
+gem 'dav4rack'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

@@ -439,6 +439,8 @@ class Site < Sequel::Model
     screenshots_delete(path) if ext.match HTML_REGEX
     thumbnails_delete(path) if ext.match IMAGE_REGEX
 
+    path = path[1..path.length] if path[0] == '/'
+
     SiteChangeFile.filter(site_id: self.id, filename: path).delete
 
     true

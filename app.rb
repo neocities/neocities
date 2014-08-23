@@ -692,7 +692,6 @@ post '/site_files/upload' do
   params[:files].each do |file|
     results << current_site.store_file(file[:filename], file[:tempfile])
   end
-
   current_site.increment_changed_count if results.include?(true)
 
   file_upload_response
