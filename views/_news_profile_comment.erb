@@ -1,6 +1,11 @@
+<% actioning_site = profile_comment.actioning_site_dataset.select(:username, :title, :domain).first %>
+
 <div class="title">
-  <div class="icon" style="background-image:url(<%= profile_comment.actioning_site.screenshot_url('index.html', '82x62') %>);"></div>
-  <a href="/site/<%= profile_comment.actioning_site.username %>" class="user"><%= profile_comment.actioning_site.title %></a> 
+  <div class="icon" style="background-image:url(<%= actioning_site.screenshot_url('index.html', '82x62') %>);"></div>
+  <a href="/site/<%= actioning_site.username %>" class="user"><%= actioning_site.title %></a>
+    <% if request.path == '/' %>
+      posted on your site profile:
+    <% end %>
   <span class="date">
     <a href="?event_id=<%= profile_comment.event.id %>"><%= profile_comment.created_at.ago %></a>
   </span>
