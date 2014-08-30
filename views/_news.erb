@@ -3,12 +3,12 @@
     document.location.href = '?current_page='+currentPage+'&activity=<%= Rack::Utils.escape(params[:activity]) %>'
   }
 </script>
-<script src="/assets/scripts/news/template.js"></script>
-<script src="/assets/scripts/news/like.js"></script>
-<script src="/assets/scripts/news/comment.js"></script>
-<script src="/assets/scripts/news/profile_comment.js"></script>
-<script src="/assets/scripts/news/event.js"></script>
-<script src="/assets/scripts/news/site.js"></script>
+<script src="/js/news/template.js"></script>
+<script src="/js/news/like.js"></script>
+<script src="/js/news/comment.js"></script>
+<script src="/js/news/profile_comment.js"></script>
+<script src="/js/news/event.js"></script>
+<script src="/js/news/site.js"></script>
 
 <% events.each do |event| %>
   <% if event.profile_comment_id %>

@@ -104,8 +104,8 @@ Sinatra::Application.set :erb, escape_html: true
 require 'sass/plugin/rack'
 Sinatra::Application.use Sass::Plugin::Rack
 
-Sass::Plugin.options[:template_location] = './public/assets/css'
-Sass::Plugin.options[:css_location] = './public/assets/css'
+Sass::Plugin.options[:template_location] = 'sass'
+Sass::Plugin.options[:css_location] = './public/css'
 Sass::Plugin.options[:style] = :nested
 
 if ENV['RACK_ENV'] == 'production'

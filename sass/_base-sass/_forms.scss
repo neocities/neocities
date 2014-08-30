@@ -1,0 +1,134 @@
+// ----------------------------------------------------------------
+//		Styling for form elements
+// ----------------------------------------------------------------
+
+.form-Container{}
+.grouping{padding:$spacing 0}
+
+// Legend Styling
+.fs-Legend{
+	border:1px solid $c-Border;
+	margin-bottom:$spacing*2; 
+	padding:$spacing*2 $spacing*3;
+}
+legend, .legend{
+	font-size:$eps;
+	margin-left:-$spacing;
+	padding:0 $spacing;
+}
+
+/* Text Input Areas & Labels */
+.text-Label{
+  font-family:$arial;
+  cursor:pointer;
+  display:block;
+  margin-bottom:$spacing;
+}
+
+.dis-Label{cursor:not-allowed}
+
+.input-Area, %input-Area{
+    background:#fff;
+    border:2px solid $c-Border;
+    font-family:$arial;
+    line-height:1.25; 
+    margin-bottom:$spacing*2;
+    padding:$spacing*2 $spacing;
+    width:80%;
+    &:focus{
+      background:$c-Lighter;
+      border:2px solid #50B6D5;
+      @include box-shadow($bs-2)
+    }
+}
+
+.text-Area{
+    @extend %input-Area;
+    display:block;
+    min-height:150px;
+    resize:vertical;
+    width:100%;
+}
+
+/* Check/Radio Inputs & Labels */
+.option-Container{
+    @extend .text-Label;
+    // background:url() no-repeat left center;       
+    // ------     instead of reusing btns for inputs, can put img sprites here instead
+    position:relative;
+    &:hover{
+	    .btn-Radio, 
+		.btn-Check{border-color:#333}
+    } 
+}
+.option-Label{cursor:pointer; display:block; padding-left:$spacing*7; position:relative; z-index:2}
+
+.input-Hide{@include invisible;}
+
+.btn-Radio, .btn-Check{
+    @extend %btn;
+    background:$c-Btn-RC; border:1px solid #ccc; font:{size:14px; weight:bold}; height:19px; left:0; padding:2px; position:absolute; top:0; width:19px;
+    &:hover{background:$c-Btn-1}
+}
+.btn-Radio{@include border-radius($radius*5)}
+
+.input-Radio.selected-Radio .btn-Radio{@extend .btn-Radio:hover; border-color:#333}
+.input-Check.selected-Check .btn-Check{@extend .btn-Check:hover; border-color:#333}
+
+.ifChecked{visibility:hidden}
+.selected-Check .ifChecked{visibility:visible}
+
+/* Drop Down Selection Inputs */
+.select-Container{
+    @extend %input-Area;
+    background:url(/img/drop-Arrow.png) no-repeat 99% center #fff; display:inline-block;
+}
+.input-Select{background:none; border:0; font-size:$base; padding-right:$spacing*4; width:100%; -webkit-appearance:textarea}
+
+// File Input Styling
+.file-Input-Area{
+	position:relative;
+	label{cursor:default}
+}
+.input-File{
+	cursor:pointer;
+	left:0;
+	height:100%;
+	opacity:0;
+	position:absolute;
+	top:0;
+	width:100%;
+	z-index:9;
+}
+.input-File-Text{
+	cursor:pointer;
+	display:inline-block; 
+}
+
+/* Inputs not supported in all browsers */
+.input-Color{ // reusing a lot of input-Area here, but not @extending it because the rules of input-Area 'break' how this should look in chrome/opera
+    border:1px solid $c-Border; font-family:$arial; margin-bottom:$spacing*2; padding:0 $spacing; height:45px; width:50%;
+    &:focus{background:$c-Lighter; border:1px solid #50B6D5; @include box-shadow($bs-2)}
+}
+
+.input-Number{
+    @extend %input-Area;
+    font-size:$base;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  ::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color:$placeholderColor;
+      font-style: italic;
+  }
+  :-ms-input-placeholder { /* Internet Explorer 10+ */
+      color:$placeholderColor;
+      font-style: italic;
+  }

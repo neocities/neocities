@@ -10,7 +10,7 @@
     <meta property="og:title"       content="Neocities">
     <meta property="og:site_name"   content="Neocities | neocities.org">
     <meta property="og:type"        content="website">
-    <meta property="og:image"       content="/assets/img/cat-larger.png">
+    <meta property="og:image"       content="/img/cat-larger.png">
     <meta property="og:url"         content="https://www.neocities.org">
     <meta property="og:description" content="Neocities is the new Geocities. Create your own free home page, and do whatever you want with it.">
 
@@ -18,11 +18,7 @@
     <meta content="<%= csrf_token %>" name="csrf-token" />
     -->
 
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="/assets/css/neo.css" rel="stylesheet" type="text/css" media="all"/>
-    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all"/>
-    <link href="/css/styles.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/neo.css" rel="stylesheet" type="text/css" media="all"/>
 
     <link rel="shortcut icon" type="image/ico"  href="/favicon.ico" />
 
@@ -30,17 +26,16 @@
     <meta name="HandheldFriendly" content="True" />
     <meta name="MobileOptimized"  content="320" />
     <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1" />
-    <link rel="author" type="text/plain" href="humans.txt" />
 
     <!--[if lt IE 9]>
-      <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <script type="text/javascript" src="/js/html5.min.js"></script>
     <![endif]-->
 
     <script>
       var RecaptchaOptions = {theme: 'clean'}
     </script>
 
-    <script src="/assets/scripts/jquery-1.11.0.min.js"></script>
+    <script src="/js/jquery-1.11.0.min.js"></script>
   </head>
 
   <body class="interior">
@@ -52,8 +47,8 @@
       <%== erb :'_footer', layout: false %>
     </footer>
 
-    <script src="/assets/scripts/underscore-min.js"></script>
-    <script src="/assets/scripts/nav.min.js"></script>
+    <script src="/js/underscore-min.js"></script>
+    <script src="/js/nav.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/typeahead.bundle.js"></script>
 
