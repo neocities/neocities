@@ -514,10 +514,13 @@ a.tag:hover {
 .news-item {
   width: 100%;
   float: left;
+  margin: 1.5em 0;
 }
+/*
 .news-item.update, .news-item.tags, .news-item.comment.for-me, .news-item.tip.for-me {
-  margin: 1.8em 0;
+  margin: 1.0em 0;
 }
+*/
 .news-item:nth-of-type(1) {
   margin-top: 0;
 }
@@ -566,6 +569,7 @@ a.tag:hover {
 .news-item.tip .icon {
   background: #FFCC00;
 }
+
 .news-item.follow .icon {
   background: #3399CC;
 }
@@ -618,7 +622,6 @@ a.tag:hover {
   padding: 0 0 0 32px;
 }
 .news-item .comments {
-  margin-bottom: 1.5em;
   margin-top: .7em;
 }
 .news-item .comments .comment {
