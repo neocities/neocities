@@ -44,6 +44,7 @@ Sidekiq.configure_server do |config|
 end
 
 Sidekiq.configure_client do |config|
+  config.logger = nil
   config.redis = sidekiq_redis_config
 end
 

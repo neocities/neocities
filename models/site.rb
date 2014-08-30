@@ -70,7 +70,7 @@ class Site < Sequel::Model
     /PHP\.Hide/
   ]
 
-  SPAM_MATCH_REGEX = /#{$config['spam_smart_filter'].join('|')}/i
+  SPAM_MATCH_REGEX = ENV['RACK_ENV'] == 'test' ? /pillz/ : /#{$config['spam_smart_filter'].join('|')}/i
 
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
 
@@ -344,22 +344,26 @@ class Site < Sequel::Model
       return false
     end
 
-    open(uploaded.path) { |f| matches = f.grep SPAM_MATCH_REGEX }
+    if File.extname(relative_path).match /\.#{EDITABLE_FILE_EXT}/
+      open(uploaded.path) {|f|
+        matches = f.grep SPAM_MATCH_REGEX
 
-    if !matches.empty?
-      EmailWorker.perform_async({
-        from: 'web@neocities.org',
-        reply_to: email,
-        to: 'spam@neocities.org',
-        subject: "[Neocities SPAM]: #{username}",
-        body: %{
-          #{username}
-          <br>
-          https://#{self.host}#{relative_path}
-          <br>
-          <a href="https://#{self.host}/#{relative_path}">link</a>
-        }
-      })
+        if !matches.empty?
+          EmailWorker.perform_async({
+            from: 'web@neocities.org',
+            reply_to: email,
+            to: 'spam@neocities.org',
+            subject: "[Neocities SPAM]: #{username}",
+            body: %{
+              #{username}
+              <br>
+              https://#{self.host}#{relative_path}
+              <br>
+              <a href="https://#{self.host}/#{relative_path}">link</a>
+            }
+          })
+        end
+      }
     end
 
     pathname = Pathname(path)
