@@ -8,7 +8,13 @@
     <% end %>
   <% end %>
   <% if current_site %>
-    <a id="reply" href="#" onclick="Template.renderComment(<%= event.id %>); return false">Reply</a>
+    <a id="reply" href="#" onclick="Template.renderComment(<%= event.id %>); return false">
+      <% if event.profile_comment_id %>
+        Reply
+      <% else %>
+        Comment
+      <% end %>
+    </a>
     <% if event.profile_comment_id && event.created_by?(current_site) %>
         <a id="editLink" href="#" onclick="ProfileComment.displayEditor('<%= event.id %>'); return false">Edit</a>
     <% end %>
