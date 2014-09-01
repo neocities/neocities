@@ -7,7 +7,7 @@
       <%= event_likes_count %>&nbsp;<%= event_likes_count == 1 ? 'like' : 'likes' %>
     <% end %>
   <% end %>
-  <% if current_site %>
+  <% if current_site && event.site.profile_comments_enabled %>
     <a id="reply" href="#" onclick="Template.renderComment(<%= event.id %>); return false">
       <% if event.profile_comment_id %>
         Reply

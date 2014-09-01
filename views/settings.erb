@@ -35,6 +35,21 @@
       	<a class="btn-Action" href="/plan">Supporter Info</a>
       <% end %>
 
+      <h2>Site Profile</h2>
+      <div>
+        <form method="POST" action="/settings/profile">
+          <%== csrf_token_input_html %>
+          <p>
+            <input name="site[profile_comments_enabled]" type="hidden" value="true">
+            <input name="site[profile_comments_enabled]" type="checkbox" value="false"
+              <% if current_site.profile_comments_enabled == false %>checked<% end %>
+            > Turn off profile comments
+          </p>
+
+          <input class="btn-Action" type="submit" value="Update Site Profile Settings">
+        </form>
+      </div>
+
       <h2>Custom Domain</h2>
       <p>
       	You can configure a custom domain for your Neocities site! <strong><a href="/custom_domain">Click Here</a></strong> for more information.

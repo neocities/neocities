@@ -66,7 +66,7 @@
 <div class="container">
 <div class="content misc-page columns right-col"><div class="col-left">
   <div class="col col-66">
-    <% if current_site %>
+    <% if current_site && site.profile_comments_enabled %>
       <div class="post-comment">
         <form method="POST" action="/site/<%= site.username %>/comment">
           <input name="csrf_token" type="hidden" value="<%= csrf_token %>">

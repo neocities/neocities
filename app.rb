@@ -122,6 +122,7 @@ post '/site/:username/comment' do |username|
   require_login
 
   site = Site[username: username]
+  redirect request.referrer if site.profile_comments_enabled == false
 
   if params[:message].empty? || (site.is_blocking?(current_site) || current_site.is_blocking?(site))
     redirect "/site/#{username}"
@@ -474,6 +475,15 @@ end
 get '/settings' do
   require_login
   erb :'settings'
+end
+
+post '/settings/profile' do
+  require_login
+  current_site.update(
+    profile_comments_enabled: params[:site][:profile_comments_enabled]
+  )
+  flash[:success] = 'Profile settings changed.'
+  redirect '/settings'
 end
 
 post '/signin' do
@@ -1076,7 +1086,10 @@ post '/event/:event_id/comment' do |event_id|
   content_type :json
   event = Event[id: event_id]
 
-  return {result: 'error'}.to_json if event.site.is_blocking?(current_site)
+  site = event.site
+
+  return {result: 'error'}.to_json if site.is_blocking?(current_site)
+  return {result: 'error'}.to_json if site.profile_comments_enabled == false
 
   event.add_site_comment current_site, params[:message]
   {result: 'success'}.to_json
