@@ -111,11 +111,12 @@
   <% end %>
 <% end %>
 
-<div class="row website-Gallery content int-Gall">
+<div class="tags">
     <h4>Tags</h4>
     <p>
     <% Tag.popular_names.each do |tag| %>
       <a href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
     <% end %>
     </p>
+</div>
 </div>
