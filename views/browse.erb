@@ -56,8 +56,9 @@
 <div class="browse-page">
 
 <% if @sites.length == 0 %>
-  <div class="row website-Gallery content int-Gall">
-    <h2>No active sites found.<br>Try another search!</h2>
+  <div class="row website-Gallery content int-Gall" style="padding-left: 30px;">
+    <h2>No active sites found.</h2>
+    <p>Try another search, or <a href="/browse">browse all sites</a>!</p>
   </div>
 <% else %>
   <ul class="row website-Gallery content int-Gall">
