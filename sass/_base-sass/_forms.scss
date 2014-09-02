@@ -81,9 +81,9 @@ legend, .legend{
 /* Drop Down Selection Inputs */
 .select-Container{
     @extend %input-Area;
-    background:url(/img/drop-Arrow.png) no-repeat 99% center #fff; display:inline-block;
+    background:url(/img/drop-Arrow.png) no-repeat 99% center #fff; display:inline-block; overflow:hidden; float:left;
 }
-.input-Select{background:none; border:0; font-size:$base; padding-right:$spacing*4; width:100%; -webkit-appearance:textarea}
+.input-Select{background:none; border:0; font-size:$base; padding-right:$spacing*4; width:120%; -webkit-appearance:textarea}
 
 // File Input Styling
 .file-Input-Area{
