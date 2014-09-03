@@ -486,6 +486,60 @@ post '/settings/profile' do
   redirect '/settings'
 end
 
+post '/settings/ssl' do
+  require_login
+
+  unless params[:key] && params[:cert] && params[:cert_intermediate]
+    flash[:error] = 'SSL key, certificate, and intermediate certificate are required to continue.'
+    redirect '/custom_domain'
+  end
+
+  begin
+    key = OpenSSL::PKey::RSA.new params[:key][:tempfile].read, ''
+  rescue => e
+    flash[:error] = 'Could not process SSL key, file may be incorrect, damaged, or passworded (you need to remove the password).'
+    redirect '/custom_domain'
+  end
+
+  if !key.private?
+    flash[:error] = 'SSL Key file does not have private key data.'
+    redirect '/custom_domain'
+  end
+
+  begin
+    cert = OpenSSL::X509::Certificate.new params[:cert][:tempfile].read
+  rescue => e
+    flash[:error] = 'Could not process SSL certificate, file may be incorrect or damaged.'
+    redirect '/custom_domain'
+  end
+
+  if cert.not_after < Time.now
+    flash[:error] = 'SSL Certificate is expired, please create a new one.'
+    redirect '/custom_domain'
+  end
+
+  cert_cn = cert.subject.to_a.select {|a| a.first == 'CN'}.flatten[1]
+  if !cert_cn.match(current_site.domain)
+    flash[:error] = "The certificate CN (common name) #{cert_cn} does not match your domain: #{current_site.domain}"
+    redirect '/custom_domain'
+  end
+
+  begin
+    cert_intermediate = OpenSSL::X509::Certificate.new params[:cert_intermediate][:tempfile].read
+  rescue => e
+    flash[:error] = 'Could not process intermediate SSL certificate, file may be incorrect or damaged.'
+    redirect '/custom_domain'
+  end
+
+  current_site.ssl_key = key.to_pem
+  current_site.ssl_cert = cert.to_pem
+  current_site.ssl_cert_intermediate = cert_intermediate.to_pem
+  current_site.save
+
+  flash[:success] = 'Updated SSL key/certificate.'
+  redirect '/custom_domain'
+end
+
 post '/signin' do
   dashboard_if_signed_in
 
