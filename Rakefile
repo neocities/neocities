@@ -88,3 +88,27 @@ desc 'Compile domain map for nginx'
 task :compile_domain_map => [:environment] do
   File.open('./files/map.txt', 'w'){|f| Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.collect {|s| f.write "#{s.domain} #{s.username};\n"  }}
 end
+
+desc 'Produce SSL config package for proxy'
+task :buildssl => [:environment] do
+  sites = Site.select(:id, :username, :domain, :ssl_key, :ssl_cert, :ssl_cert_intermediate).
+    exclude(domain: nil).
+    exclude(ssl_key: nil).
+    exclude(ssl_cert: nil).
+    exclude(ssl_cert_intermediate: nil).
+    all
+
+  payload = []
+
+  Zip::Archive.open('./files/sslsites.zip', Zip::CREATE) do |ar|
+    ar.add_dir 'ssl'
+
+    sites.each do |site|
+      ar.add_buffer "ssl/#{site.username}.key", site.ssl_key
+      ar.add_buffer "ssl/#{site.username}.crt", "#{site.ssl_cert_intermediate}\n\n#{site.ssl_cert}"
+      payload << {username: site.username, domain: site.domain}
+    end
+
+    ar.add_buffer 'sslsites.json', payload.to_json
+  end
+end

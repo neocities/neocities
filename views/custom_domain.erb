@@ -46,7 +46,7 @@
   <article>
     <h2>Add SSL Certificate</h2>
     <p>
-      This allows you to add an SSL private key and certificate for your domain, enabling encryption for your site (https). It can take up to 5-30 minutes for the changes to go live, so please be patient.
+      This allows you to add an SSL key and certificate for your domain, enabling encryption for your site (https). It can take up to 5-30 minutes for the changes to go live, so please be patient.
     </p>
 
     <% if current_site.domain.nil? || current_site.domain.empty? %>
@@ -63,7 +63,7 @@
         </p>
 
         <p>
-          Private key (yourdomain.com.key):
+          SSL Key (yourdomain.com.key):
           <input name="key" type="file">
         </p>
 
