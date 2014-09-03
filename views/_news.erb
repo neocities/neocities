@@ -114,9 +114,9 @@
 
 <div class="content">
   <% if @page_count > 1 %>
-    <div class="txt-Center content eps">
+    <div class="txt-Center content eps pagination">
       <% if @current_page != 1 %>
-        <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="icon-arrow-left" style="text-decoration: none"></i></a>&nbsp;
+        <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="fa fa-arrow-left arrow"></i></a>&nbsp;
       <% end %>
 
       <% 1.upto(@page_count) do |num| %>
@@ -129,7 +129,7 @@
       <% end %>
 
       <% if @current_page != @page_count %>
-        <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="icon-arrow-right" style="text-decoration: none"></i></a>
+        <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="fa fa-arrow-right arrow"></i></a>
       <% end %>
     </div>
   <% end %>
