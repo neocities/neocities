@@ -9,17 +9,11 @@
   <h3></h3>
   <article>
 
-    <% if !current_site.errors.empty? %>
-      <div class="alert alert-block alert-error">
-        <% current_site.errors.each do |error| %>
-          <p><%= error.last.first %></p>
-        <% end %>
-      </div>
-    <% end %>
-
-    <% if flash[:success] %>
-      <div class="alert alert-block alert-success" style="margin-top: 20px">
-        <%== flash[:success] %>
+    <% if flash.keys.length > 0 %>
+      <div class="alert alert-block alert-success">
+          <% flash.keys.each do |key| %>
+            <%== flash[key] %>
+          <% end %>
       </div>
     <% end %>
 
@@ -47,9 +41,45 @@
       <br>
       <input class="btn-Action" type="submit" value="Update Domain">
     </form>
+  </article>
 
+  <article>
+    <h2>Add SSL Certificate</h2>
     <p>
-      <strong>NOTE: This is for advanced users, we cannot provide technical support for this feature.</strong> If you cannot make this work, please contact your domain registrar.
+      This allows you to add an SSL private key and certificate for your domain, enabling encryption for your site (https). It can take up to 5-30 minutes for the changes to go live, so please be patient.
     </p>
+
+    <% if current_site.domain.nil? || current_site.domain.empty? %>
+      <p><strong>Cannot upload SSL certificate until domain is added.</strong></p>
+    <% else %>
+
+      <form method="POST" action="/settings/ssl" enctype="multipart/form-data">
+        <%== csrf_token_input_html %>
+
+        <p>
+          <strong>
+            Status: <%= current_site.ssl_installed? ? 'Installed' : 'Inactive' %>
+          </strong>
+        </p>
+
+        <p>
+          Private key (yourdomain.com.key):
+          <input name="key" type="file">
+        </p>
+
+        <p>
+          Primary Certificate (yourdomain.com.crt):
+          <input name="cert" type="file">
+        </p>
+
+        <p>
+          Intermediate Certificate (ca.crt/yourca.crt):
+          <input name="cert_intermediate" type="file">
+        </p>
+
+        <input class="btn-Action" type="submit" value="Upload SSL Key and Certificate">
+
+      </form>
+    <% end %>
   </article>
 </div>

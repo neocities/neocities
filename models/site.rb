@@ -798,6 +798,10 @@ class Site < Sequel::Model
     "#{THUMBNAILS_URL_ROOT}/#{values[:username]}/#{path}.#{resolution}.#{ext}"
   end
 
+  def ssl_installed?
+    ssl_key && ssl_cert && ssl_cert_intermediate
+  end
+
   def to_rss
     RSS::Maker.make("atom") do |maker|
       maker.channel.title   = title
@@ -808,8 +812,8 @@ class Site < Sequel::Model
       latest_events.each do |event|
         if event.site_change_id
           maker.items.new_item do |item|
-            item.link = "http://#{username}.neocities.org"
-            item.title = "#{username}.neocities.org has been updated"
+            item.link = "https://#{host}"
+            item.title = "#{title} has been updated"
             item.updated = event.site_change.created_at
           end
         end
