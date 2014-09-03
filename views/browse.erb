@@ -57,7 +57,7 @@
 
 <% if @sites.length == 0 %>
   <div class="row website-Gallery content int-Gall" style="padding-left: 30px;">
-    <h2>No active sites found.</h2>
+    <h3>No active sites found.</h3>
     <p>Try another search, or <a href="/browse">browse all sites</a>!</p>
   </div>
 <% else %>
@@ -112,8 +112,8 @@
   <% end %>
 <% end %>
 
-<div class="tags">
-    <h4>Tags</h4>
+<div class="row website-Gallery content int-Gall tags">
+    <h3>Tags</h3>
     <p>
     <% Tag.popular_names.each do |tag| %>
       <a href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
