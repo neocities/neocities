@@ -489,8 +489,8 @@ end
 post '/settings/ssl' do
   require_login
 
-  unless params[:key] && params[:cert] && params[:cert_intermediate]
-    flash[:error] = 'SSL key, certificate, and intermediate certificate are required to continue.'
+  unless params[:key] && params[:cert]
+    flash[:error] = 'SSL key and certificate are required.'
     redirect '/custom_domain'
   end
 
@@ -506,34 +506,83 @@ post '/settings/ssl' do
     redirect '/custom_domain'
   end
 
-  begin
-    cert = OpenSSL::X509::Certificate.new params[:cert][:tempfile].read
-  rescue => e
-    flash[:error] = 'Could not process SSL certificate, file may be incorrect or damaged.'
+  certs_string = params[:cert][:tempfile].read
+
+  cert_array = certs_string.lines.slice_before(/-----BEGIN CERTIFICATE-----/).to_a.collect {|a| a.join}
+
+  if cert_array.empty?
+    flash[:error] = 'Cert file does not contain any certificates.'
     redirect '/custom_domain'
   end
 
-  if cert.not_after < Time.now
-    flash[:error] = 'SSL Certificate is expired, please create a new one.'
+  cert_valid_for_domain = false
+
+  cert_array.each do |cert_string|
+    begin
+      cert = OpenSSL::X509::Certificate.new cert_string
+    rescue => e
+      flash[:error] = 'Could not process SSL certificate, file may be incorrect or damaged.'
+      redirect '/custom_domain'
+    end
+
+    if cert.not_after < Time.now
+      flash[:error] = 'SSL Certificate has expired, please create a new one.'
+      redirect '/custom_domain'
+    end
+
+    cert_cn = cert.subject.to_a.select {|a| a.first == 'CN'}.flatten[1]
+    cert_valid_for_domain = true if cert_cn && cert_cn.match(current_site.domain)
+  end
+
+  unless cert_valid_for_domain
+    flash[:error] = "Your certificate CN (common name) does not match your domain: #{current_site.domain}"
     redirect '/custom_domain'
   end
 
-  cert_cn = cert.subject.to_a.select {|a| a.first == 'CN'}.flatten[1]
-  if !cert_cn.match(current_site.domain)
-    flash[:error] = "The certificate CN (common name) #{cert_cn} does not match your domain: #{current_site.domain}"
-    redirect '/custom_domain'
-  end
+  # Everything else was worse.
 
-  begin
-    cert_intermediate = OpenSSL::X509::Certificate.new params[:cert_intermediate][:tempfile].read
-  rescue => e
-    flash[:error] = 'Could not process intermediate SSL certificate, file may be incorrect or damaged.'
-    redirect '/custom_domain'
+  crtfile = Tempfile.new 'crtfile'
+  crtfile.write cert_array.join
+  crtfile.close
+
+  keyfile = Tempfile.new 'keyfile'
+  keyfile.write key.to_pem
+  keyfile.close
+
+  if ENV['TRAVIS'] != 'true'
+    nginx_testfile = Tempfile.new 'nginx_testfile'
+    nginx_testfile.write %{
+      pid /tmp/throwaway.pid;
+      events {}
+      http {
+        access_log off;
+        error_log /dev/null error;
+        server {
+          listen 60000 ssl;
+          server_name #{current_site.domain} *.#{current_site.domain};
+          ssl_certificate #{crtfile.path};
+          ssl_certificate_key #{keyfile.path};
+        }
+      }
+    }
+    nginx_testfile.close
+
+    line = Cocaine::CommandLine.new(
+      "nginx", "-t -c :path",
+      expected_outcodes: [0],
+      swallow_stderr: true
+    )
+
+    begin
+      output = line.run path: nginx_testfile.path
+    rescue Cocaine::ExitStatusError => e
+      flash[:error] = "There is something wrong with your certificate, please check with your issuing CA."
+      redirect '/custom_domain'
+    end
   end
 
   current_site.ssl_key = key.to_pem
-  current_site.ssl_cert = cert.to_pem
-  current_site.ssl_cert_intermediate = cert_intermediate.to_pem
+  current_site.ssl_cert = cert_array.join
   current_site.save
 
   flash[:success] = 'Updated SSL key/certificate.'

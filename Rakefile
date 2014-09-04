@@ -91,21 +91,21 @@ end
 
 desc 'Produce SSL config package for proxy'
 task :buildssl => [:environment] do
-  sites = Site.select(:id, :username, :domain, :ssl_key, :ssl_cert, :ssl_cert_intermediate).
+  sites = Site.select(:id, :username, :domain, :ssl_key, :ssl_cert).
     exclude(domain: nil).
     exclude(ssl_key: nil).
     exclude(ssl_cert: nil).
-    exclude(ssl_cert_intermediate: nil).
     all
 
   payload = []
 
+  FileUtils.rm './files/sslsites.zip'
   Zip::Archive.open('./files/sslsites.zip', Zip::CREATE) do |ar|
     ar.add_dir 'ssl'
 
     sites.each do |site|
       ar.add_buffer "ssl/#{site.username}.key", site.ssl_key
-      ar.add_buffer "ssl/#{site.username}.crt", "#{site.ssl_cert_intermediate}\n\n#{site.ssl_cert}"
+      ar.add_buffer "ssl/#{site.username}.crt", site.ssl_cert
       payload << {username: site.username, domain: site.domain}
     end
 

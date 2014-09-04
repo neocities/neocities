@@ -46,7 +46,7 @@
   <article>
     <h2>Add SSL Certificate</h2>
     <p>
-      This allows you to add an SSL key and certificate for your domain, enabling encryption for your site (https). It can take up to 5-30 minutes for the changes to go live, so please be patient.
+      This allows you to add an SSL key and certificate for your domain, enabling encryption for your site (https). It can take up to 5-30 minutes for the changes to go live, so please be patient. All files must be in PEM format. If your certificate is not bundled with the root and intermediate certificates, ask your certificate provider for help on how to do that.
     </p>
 
     <% if current_site.domain.nil? || current_site.domain.empty? %>
@@ -68,13 +68,8 @@
         </p>
 
         <p>
-          Primary Certificate (yourdomain.com.crt):
+          Bundled Certificates (yourdomain.com-bundle.crt):
           <input name="cert" type="file">
-        </p>
-
-        <p>
-          Intermediate Certificate (ca.crt/yourca.crt):
-          <input name="cert_intermediate" type="file">
         </p>
 
         <input class="btn-Action" type="submit" value="Upload SSL Key and Certificate">

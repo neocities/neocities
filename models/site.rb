@@ -799,7 +799,7 @@ class Site < Sequel::Model
   end
 
   def ssl_installed?
-    ssl_key && ssl_cert && ssl_cert_intermediate
+    ssl_key && ssl_cert
   end
 
   def to_rss
