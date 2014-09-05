@@ -99,7 +99,11 @@ task :buildssl => [:environment] do
 
   payload = []
 
-  FileUtils.rm './files/sslsites.zip'
+  begin
+    FileUtils.rm './files/sslsites.zip'
+  rescue Errno::ENOENT
+  end
+
   Zip::Archive.open('./files/sslsites.zip', Zip::CREATE) do |ar|
     ar.add_dir 'ssl'
 
