@@ -67,13 +67,32 @@
 <div class="content misc-page columns right-col"><div class="col-left">
   <div class="col col-66">
     <% if current_site && site.profile_comments_enabled %>
-      <div class="post-comment">
-        <form method="POST" action="/site/<%= site.username %>/comment">
-          <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
-          <input name="message" type="text" placeholder="Post a message..." autocomplete="off" maxlength="<%= Site::MAX_COMMENT_SIZE %>">
-          <button class="btn-Action">Post</button>
-        </form>
-      </div>
+
+        <div class="post-comment">
+          <form method="POST" action="/site/<%= site.username %>/comment">
+            <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+            <input name="message" 
+                   type="text" 
+                   placeholder="Post a message..."
+                   autocomplete="off"
+                   maxlength="<%= Site::MAX_COMMENT_SIZE %>"
+                   <% unless current_site.commenting_allowed? %>disabled<% end %>
+            >
+            <button class="btn-Action"
+                    <% unless current_site.commenting_allowed? %>disabled<% end %>
+            >Post</button>
+          </form>
+        </div>
+
+        <% unless current_site.commenting_allowed? %>
+          <div class="post-comment">
+            <p>
+              <small>
+                Note: To prevent spam, you cannot comment until you have updated your site <strong><%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %></strong> times (on <%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %> separate days),<br> and your account is one week old. While waiting, now is a great time to <a href="/dashboard">start building your awesome site!</a>
+              </small>
+            </p>
+          </div>
+        <% end %>
     <% end %>
 
     <% if @latest_events.empty? %>

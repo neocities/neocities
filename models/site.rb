@@ -71,14 +71,12 @@ class Site < Sequel::Model
   ]
 
   SPAM_MATCH_REGEX = ENV['RACK_ENV'] == 'test' ? /pillz/ : /#{$config['spam_smart_filter'].join('|')}/i
-
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
-
   EDITABLE_FILE_EXT = /html|htm|txt|js|css|md/i
-
   BANNED_TIME = 2592000 # 30 days in seconds
-
   TITLE_MAX = 100
+
+  COMMENTING_ALLOWED_UPDATED_COUNT = 2
 
   many_to_one :server
 
@@ -279,6 +277,19 @@ class Site < Sequel::Model
     .where(Sequel.~(actioning_site_id: blocking_site_ids))
   end
 =end
+
+  def commenting_allowed?
+    return true if commenting_allowed
+
+    if events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT &&
+       created_at < Time.now - 604800
+      set commenting_allowed: true
+      save_changes validate: false
+      return true
+    end
+
+    false
+  end
 
   def blocking_site_ids
     @blocking_site_ids ||= blockings_dataset.select(:site_id).all.collect {|s| s.site_id}

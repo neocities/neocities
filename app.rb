@@ -122,9 +122,12 @@ post '/site/:username/comment' do |username|
   require_login
 
   site = Site[username: username]
-  redirect request.referrer if site.profile_comments_enabled == false
 
-  if params[:message].empty? || (site.is_blocking?(current_site) || current_site.is_blocking?(site))
+  if(site.profile_comments_enabled == false ||
+     params[:message].empty? ||
+     site.is_blocking?(current_site) ||
+     current_site.is_blocking?(site) ||
+     current_site.commenting_allowed? == false)
     redirect "/site/#{username}"
   end
 
@@ -1191,8 +1194,11 @@ post '/event/:event_id/comment' do |event_id|
 
   site = event.site
 
-  return {result: 'error'}.to_json if site.is_blocking?(current_site)
-  return {result: 'error'}.to_json if site.profile_comments_enabled == false
+  if site.is_blocking?(current_site) ||
+     site.profile_comments_enabled == false ||
+     current_site.commenting_allowed? == false
+    return {result: 'error'}.to_json
+  end
 
   event.add_site_comment current_site, params[:message]
   {result: 'success'}.to_json

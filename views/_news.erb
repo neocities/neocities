@@ -22,7 +22,7 @@
       <% event_site = event.site_dataset.select(:id, :username, :title, :domain).first %>
       <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><%= actioning_site.title.shorten(40) %></a> 
       is following
-      <% if event_site.id == current_site.id %>
+      <% if current_site && event_site.id == current_site.id %>
         your site!
       <% else %>
         <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(40) %></a>
@@ -36,7 +36,7 @@
       <div class="title">
         <div class="icon"></div>
         <% event_site = event.site_dataset.select(:id, :username, :title, :domain).first %>
-        <% if event_site.id == current_site.id %>
+        <% if current_site && event_site.id == current_site.id %>
           Your site was updated.
         <% else %>
           <a href="/site/<%= event_site.username %>" class="user"><%= event_site.title %></a> has been updated.
