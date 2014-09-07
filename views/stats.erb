@@ -1,0 +1,91 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+  <h1>Neocities Site Statistics</h1>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <h3></h3>
+  <article>
+    <h2>General Stats</h2>
+
+    <table class="table">
+      <tr>
+        <td>Total Sites</td>
+        <td><%= @stats[:total_sites] %></td>
+      </tr>
+      <tr>
+        <td>Total Unbanned Sites</td>
+        <td><%= @stats[:total_unbanned_sites] %></td>
+      </tr>
+      <tr>
+        <td>Total Banned Sites</td>
+        <td><%= @stats[:total_banned_sites] %></td>
+      </tr>
+      <tr>
+        <td>Total NSFW Sites</td>
+        <td><%= @stats[:total_nsfw_sites] %></td>
+      </tr>
+      <tr>
+        <td>Total Unbanned NSFW Sites</td>
+        <td><%= @stats[:total_unbanned_nsfw_sites] %></td>
+      </tr>
+      <tr>
+        <td>Total Banned NSFW Sites</td>
+        <td><%= @stats[:total_banned_nsfw_sites] %></td>
+      </tr>
+    </table>
+
+    <h2>Monthly Statistics</h2>
+    <table class="table">
+      <tr>
+        <th>Year</th>
+        <th>Month</th>
+        <th>Sites Created</th>
+        <th>Change</th>
+        <th>Total</th>
+        <th>Supporters</th>
+      </tr>
+      <% @stats[:monthly_stats].each_with_index do |stat,i| %>
+        <tr>
+          <td><%= stat[:date].year %></td>
+          <td>
+            <%= stat[:date].strftime('%B') %>
+            <% if Time.now.month == stat[:date].month && Time.now.year == stat[:date].year %>
+              <small>current</small>
+            <% end %></td>
+          <td><%= stat[:sites_created] %></td>
+          <td>
+            <% if i != 0 && i != @stats[:monthly_stats].length-1 %>
+              <%= (((stat[:sites_created].to_f - @stats[:monthly_stats][i-1][:sites_created]) / @stats[:monthly_stats][i-1][:sites_created]) * 100).round(2) %>%
+            <% end %>
+          </td>
+          <td>
+            <%= stat[:total_from_start] %></td>
+          </td>
+          <td><%= stat[:supporters] %></td>
+        </tr>
+      <% end %>
+    </table>
+
+    <h2>Subscriptions</h2>
+    <h3>Current Recurring Revenue: <strong><%= format("$%.2f", @stats[:total_recurring_revenue]) %></strong>
+    <br>Active Subscriptions: <strong><%= @stats[:subscriptions].select {|s| s[:status] == 'active' }.length %></strong></h3>
+    <table class="table">
+      <tr>
+        <th>Status</th>
+        <th>Amount</th>
+        <th>Date Subscribed</th>
+      </tr>
+      <% @stats[:subscriptions].each do |sub| %>
+        <tr>
+          <td><%= sub[:status] %></td>
+          <td><%= sub[:amount].nil? ? '$0.00' : format("$%.2f", sub[:amount]) %></td>
+          <td><%= sub[:created_at].strftime('%Y %B') %></td>
+        </tr>
+      <% end %>
+    </table>
+    <p>
+    </p>
+  </article>
+</div>

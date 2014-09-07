@@ -1,3 +1,4 @@
+source 'https://code.stripe.com'
 source 'https://rubygems.org'
 
 gem 'sinatra'
@@ -15,11 +16,10 @@ gem 'mail'
 gem 'google-api-client',  require: 'google/api_client'
 gem 'tilt'
 gem 'erubis'
-gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
+gem 'stripe'
 gem 'screencap'
 gem 'cocaine'
 gem 'zipruby'
-gem 'always_verify_ssl_certificates'
 gem 'sass', require: nil
 gem 'dav4rack'
 

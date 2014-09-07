@@ -1,13 +1,5 @@
-GIT
-  remote: https://github.com/stripe/stripe-ruby
-  revision: 48f76057f425ab5c3bb147f3d71c3d36d951159f
-  specs:
-    stripe (1.11.0)
-      json (~> 1.8.1)
-      mime-types (~> 1.25)
-      rest-client (~> 1.4)
-
 GEM
+  remote: https://code.stripe.com/
   remote: https://rubygems.org/
   specs:
     activesupport (4.1.4)
@@ -18,7 +10,6 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.6)
     ago (0.1.5)
-    always_verify_ssl_certificates (0.3.0)
     ansi (1.4.3)
     autoparse (0.3.3)
       addressable (>= 2.3.1)
@@ -105,6 +96,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.10.1)
     multipart-post (2.0.0)
+    netrc (0.7.7)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
     pg (0.17.1)
@@ -146,8 +138,9 @@ GEM
     redis (3.0.7)
     redis-namespace (1.4.1)
       redis (~> 3.0.4)
-    rest-client (1.6.7)
-      mime-types (>= 1.16)
+    rest-client (1.7.2)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     retriable (1.4.1)
     rmagick (2.13.2)
     safe_yaml (1.0.1)
@@ -185,6 +178,10 @@ GEM
     sinatra-xsendfile (0.4.2)
       sinatra (>= 0.9.1)
     slop (3.5.0)
+    stripe (1.15.0)
+      json (~> 1.8.1)
+      mime-types (>= 1.25, < 3.0)
+      rest-client (~> 1.4)
     thread_safe (0.3.4)
     tilt (1.4.1)
     timers (1.1.0)
@@ -211,7 +208,6 @@ PLATFORMS
 
 DEPENDENCIES
   ago
-  always_verify_ssl_certificates
   bcrypt
   capybara_minitest_spec
   cocaine
@@ -253,7 +249,7 @@ DEPENDENCIES
   sinatra
   sinatra-flash
   sinatra-xsendfile
-  stripe!
+  stripe
   tilt
   webmock
   zipruby
