@@ -616,9 +616,9 @@ post '/settings/ssl' do
     nginx_testfile.write %{
       pid /tmp/throwaway.pid;
       events {}
+      error_log /dev/null error;
       http {
         access_log off;
-        error_log /dev/null error;
         server {
           listen 60000 ssl;
           server_name #{current_site.domain} *.#{current_site.domain};
