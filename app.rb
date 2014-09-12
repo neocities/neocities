@@ -348,7 +348,7 @@ post '/tags/add' do
   if current_site.valid?
     current_site.save
   else
-    flash[:errors] = current_site.errors[:tags].first
+    flash[:errors] = current_site.errors.first
   end
 
   redirect request.referer
@@ -713,14 +713,15 @@ end
 
 post '/change_email' do
   require_login
-  current_site.email = params[:email]
-  current_site.email_confirmation_token = SecureRandom.hex 3
-  current_site.email_confirmed = false
-
+  
   if params[:email] == current_site.email
     current_site.errors.add :email, 'You are already using this email address for this account.'
     halt erb(:settings)
   end
+
+  current_site.email = params[:email]
+  current_site.email_confirmation_token = SecureRandom.hex 3
+  current_site.email_confirmed = false
 
   if current_site.valid?
     current_site.save_changes
@@ -919,7 +920,7 @@ post %r{\/site_files\/save\/(.+)} do
   tempfile.close
 
   if current_site.file_size_too_large? tempfile.size
-    halt 'File is too large to fit in your space, it has NOT been saved. Please make a local copy and then try to reduce the size.'
+    halt 'File is too large to fit in your space, it has NOT been saved. You will need to reduce the size or upgrade to a new plan.'
   end
 
   current_site.store_file filename, tempfile

@@ -116,3 +116,11 @@ task :buildssl => [:environment] do
     ar.add_buffer 'sslsites.json', payload.to_json
   end
 end
+
+desc 'Set existing stripe customers to internal supporter plan'
+task :primenewstriperunonlyonce => [:environment] do
+  Site.exclude(stripe_customer_id: nil).all.each do |site|
+    site.plan_type = 'supporter'
+    site.save_changes validate: false
+  end
+end

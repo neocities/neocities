@@ -78,6 +78,46 @@ class Site < Sequel::Model
 
   COMMENTING_ALLOWED_UPDATED_COUNT = 2
 
+  PLAN_FEATURES = {
+    fatcat: {
+      name: 'Fat Cat',
+      space: Filesize.from('100GB').to_i,
+      bandwidth: Filesize.from('2TB').to_i,
+      custom_domains: true,
+      custom_ssl_certificates: true,
+      global_cdn: true,
+      ddos_mitigation: true,
+      unlimited_site_creation: true,
+      site_mounting: true,
+      no_file_restrictions: true
+    }
+  }
+
+  PLAN_FEATURES[:catbus] = PLAN_FEATURES[:fatcat].merge(
+    name: 'Cat Bus',
+    space: Filesize.from('10GB').to_i,
+    bandwidth: Filesize.from('500GB').to_i
+  )
+
+  PLAN_FEATURES[:supporter] = PLAN_FEATURES[:catbus].merge(
+    name: 'Supporter',
+    space: Filesize.from('1GB').to_i,
+    bandwidth: Filesize.from('100GB').to_i,
+    unlimited_site_creation: false,
+    custom_ssl_certificates: false,
+    no_file_restrictions: false
+  )
+
+  PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
+    name: 'Free',
+    space: Filesize.from('30MB').to_i,
+    bandwidth: Filesize.from('10GB').to_i,
+    custom_domains: false,
+    global_cdn: false,
+    ddos_mitigation: false,
+    site_mounting: false
+  )
+
   many_to_one :server
 
   many_to_many :tags
@@ -383,8 +423,11 @@ class Site < Sequel::Model
 
       if new_title.length < TITLE_MAX
         self.title = new_title
-        save_changes(validate: false)
       end
+
+      self.site_changed = true
+
+      save_changes(validate: false)
     end
 
     dirname = pathname.dirname.to_s
@@ -407,11 +450,6 @@ class Site < Sequel::Model
     end
 
     SiteChange.record self, relative_path
-
-    if self.site_changed != true
-      self.site_changed = true
-      save_changes(validate: false)
-    end
 
     true
   end
@@ -519,6 +557,11 @@ class Site < Sequel::Model
     super
   end
 
+  def email=(email)
+    @original_email = values[:email] unless new?
+    super
+  end
+
 #  def after_destroy
 #    FileUtils.rm_rf files_path
 #    super
@@ -549,10 +592,15 @@ class Site < Sequel::Model
       errors.add :email, 'An email address is required.'
     end
 
-    # Check for existing email
-    email_check = self.class.select(:id).filter(email: values[:email]).first
-    if email_check && email_check.id != self.id
-      errors.add :email, 'This email address already exists on Neocities, please use your existing account instead of creating a new one.'
+    # Check for existing email if new or changing email.
+    if new? || @original_email
+      email_check = self.class.select(:id).filter(email: values[:email])
+      email_check.exclude!(id: self.id) unless new?
+      email_check = email_check.first
+
+      if email_check && email_check.id != self.id
+        errors.add :email, 'This email address already exists on Neocities, please use your existing account instead of creating a new one.'
+      end
     end
 
     unless values[:email] =~ EMAIL_SANITY_REGEX
@@ -676,7 +724,7 @@ class Site < Sequel::Model
     end
 
     list.select {|f| f[:is_directory]}.sort_by {|f| f[:name]} +
-    list.select {|f| f[:is_directory] == false}.sort_by{|f| f[:name]}
+    list.select {|f| f[:is_directory] == false}.sort_by{|f| f[:name].downcase}
   end
 
   def file_size_too_large?(size_in_bytes)
@@ -719,14 +767,18 @@ class Site < Sequel::Model
     !values[:stripe_customer_id].nil?
   end
 
-  # This will return false if they have ended their support plan.
+  # This will return false if they have ended their plan.
   def ended_supporter?
-    values[:ended_plan]
+    values[:plan_ended]
   end
 
   def plan_name
-    return 'Free Plan' if !supporter? || (supporter? && ended_supporter?)
-    'Supporter Plan'
+    PLAN_FEATURES[plan_type.to_sym][:name]
+  end
+
+  def plan_type
+    return 'free' if values[:plan_type].nil?
+    values[:plan_type]
   end
 
   def latest_events(current_page=1, limit=10)

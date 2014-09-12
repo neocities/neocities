@@ -13,7 +13,7 @@ class Tag < Sequel::Model
   end
 
   def self.suggestions(name, limit=3)
-    Tag.filter(name: /^#{name}/).
+    Tag.filter(name: /^#{name}/i).
     order(:name).
     limit(limit).
     all

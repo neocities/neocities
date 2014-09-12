@@ -9,9 +9,9 @@ end
 
 describe 'site_files' do
   describe 'upload' do
-
     it 'succeeds with index.html file' do
       site = Fabricate :site
+      site.site_changed.must_equal false
       PurgeCacheWorker.jobs.clear
       ScreenshotWorker.jobs.clear
 
@@ -25,6 +25,7 @@ describe 'site_files' do
       args = ScreenshotWorker.jobs.first['args']
       args.first.must_equal site.username
       args.last.must_equal 'index.html'
+      site.reload.site_changed.must_equal true
     end
 
     it 'succeeds with valid file' do
@@ -48,6 +49,8 @@ describe 'site_files' do
       Site::THUMBNAIL_RESOLUTIONS.each do |resolution|
         File.exists?(site.thumbnail_path('test.jpg', resolution)).must_equal true
       end
+
+      site.site_changed.must_equal false
     end
 
     it 'works with directory path' do

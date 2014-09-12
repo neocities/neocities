@@ -57,6 +57,7 @@ GEM
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.3)
+    filesize (0.0.3)
     google-api-client (0.7.1)
       addressable (>= 2.3.2)
       autoparse (>= 0.3.3)
@@ -215,6 +216,7 @@ DEPENDENCIES
   erubis
   fabrication
   faker
+  filesize
   google-api-client
   hiredis
   jdbc-postgres
