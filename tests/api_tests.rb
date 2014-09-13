@@ -3,10 +3,6 @@ require 'rack/test'
 
 include Rack::Test::Methods
 
-def app
-  Sinatra::Application
-end
-
 def create_site
   site_attr = Fabricate.attributes_for :site
   @site = Site.create site_attr
