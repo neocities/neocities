@@ -1,11 +1,4 @@
 require_relative './environment.rb'
-require 'rack/test'
-
-include Rack::Test::Methods
-
-def app
-  Sinatra::Application
-end
 
 describe 'site_files' do
   describe 'upload' do
