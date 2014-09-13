@@ -79,7 +79,7 @@ def generate_ssl_certs(opts={})
   combined_cert_tmpfile.close
   res[:combined_cert_path] = combined_cert_tmpfile.path
 
-  bad_combined_cert_tmpfile = Tempfile.new 'combined_cert'
+  bad_combined_cert_tmpfile = Tempfile.new 'bad_combined_cert'
   bad_combined_cert_tmpfile.write "#{File.read(res[:cert_intermediate_path])}\n#{File.read(res[:cert_path])}"
   bad_combined_cert_tmpfile.close
   res[:bad_combined_cert_path] = bad_combined_cert_tmpfile.path

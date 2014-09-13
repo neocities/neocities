@@ -9,7 +9,7 @@ class Tag < Sequel::Model
   end
 
   def self.create_unless_exists(name)
-    dataset.filter(name: name).first || create(name: name)
+    dataset.filter(name: name.downcase).first || create(name: name)
   end
 
   def self.suggestions(name, limit=3)

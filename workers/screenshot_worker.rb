@@ -16,6 +16,7 @@ module Phantomjs
         wait_thr.join
         return stdout.read
       end
+    # :nocov:
     rescue Timeout::Error
       stdin.close
       stdout.close
@@ -23,6 +24,7 @@ module Phantomjs
       Process.kill 'QUIT', pid
       raise Timeout::Error
     end
+    # :nocov:
   end
 end
 
@@ -45,6 +47,7 @@ class ScreenshotWorker
         height: 720
       )
     rescue Timeout::Error
+      # :nocov:
       puts "#{username}/#{path} is timing out, discontinuing"
       site = Site[username: username]
       site.update is_crashing: true
@@ -68,6 +71,7 @@ class ScreenshotWorker
       end
 =end
       return
+      # :nocov:
     end
 
     img_list = Magick::ImageList.new

@@ -4,11 +4,12 @@ class EmailWorker
 
   def perform(args={})
     Mail.deliver do
-       from     args['from']
-       reply_to args['reply_to']
-       to       args['to']
-       subject  args['subject']
-       body     args['body']
+      # TODO this is not doing UTF-8 properly.
+      from     args['from']
+      reply_to args['reply_to']
+      to       args['to']
+      subject  args['subject']
+      body     args['body']
     end
   end
 end

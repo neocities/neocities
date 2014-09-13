@@ -118,8 +118,6 @@ class Site < Sequel::Model
     site_mounting: false
   )
 
-  many_to_one :server
-
   many_to_many :tags
 
   one_to_many :profile_comments
@@ -214,11 +212,6 @@ class Site < Sequel::Model
 
   def new_tags_string=(tags_string)
     @new_tags_string = tags_string
-  end
-
-  def before_validation
-    self.server ||= Server.with_slots_available
-    super
   end
 
   def save(validate={})
@@ -547,11 +540,6 @@ class Site < Sequel::Model
     add_tag Tag[name: name] || Tag.create(name: name)
   end
 
-  def after_create
-    DB['update servers set slots_available=slots_available-1 where id=?', self.server.id].first
-    super
-  end
-
   def before_create
     self.email_confirmation_token = SecureRandom.hex 3
     super
@@ -569,10 +557,6 @@ class Site < Sequel::Model
 
   def validate
     super
-
-    if server.nil?
-      errors.add :over_capacity, 'We are currently at capacity, and cannot create your home page. We will fix this shortly. Please come back later and try again, our apologies.'
-    end
 
     if !self.class.valid_username?(values[:username])
       errors.add :username, 'A valid user/site name is required.'

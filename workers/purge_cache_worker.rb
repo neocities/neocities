@@ -2,7 +2,9 @@ class PurgeCacheWorker
   include Sidekiq::Worker
   sidekiq_options queue: :purgecache, retry: 10, backtrace: true
 
+
   def perform(payload)
+    # :nocov:
     attempt = 0
     begin
       attempt += 1
@@ -15,5 +17,6 @@ class PurgeCacheWorker
       sleep 1
       retry
     end
+    # :nocov:
   end
 end
