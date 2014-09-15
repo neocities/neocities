@@ -22,6 +22,7 @@
       <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? && !site.ended_supporter? %><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
       <p class="site-url"><a href="//<%= site.host %>"><%= site.host %></a></p>
       <div class="stats">
+        <div class="stat"><strong><%= site.views_english %></strong> <span>views</span></div>
         <div class="stat"><strong><%= site.hits_english %></strong> <span>hits</span></div>
         <div class="stat"><strong><%= site.follows_dataset.count %></strong> <span>followers</span></div>
         <!-- <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div> -->

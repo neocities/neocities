@@ -81,7 +81,11 @@
           </div>
           <div style="float: right">
             <a href="/site/<%= site.username %>">
-              <%= site.hits %> hit<%= site.hits == 1 ? '' : 's' %>
+              <% if params[:sort_by] == 'hits' %>
+                <%= site.hits %> hit<%= site.hits == 1 ? '' : 's' %>
+              <% else %>
+                <%= site.views %> view<%= site.views == 1 ? '' : 's' %>
+              <% end %>
             </a>
           </div>
         </div>

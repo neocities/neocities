@@ -93,6 +93,9 @@ class Site < Sequel::Model
     }
   }
 
+  SUGGESTIONS_LIMIT = 32
+  SUGGESTIONS_VIEWS_MIN = 500
+
   PLAN_FEATURES[:catbus] = PLAN_FEATURES[:fatcat].merge(
     name: 'Cat Bus',
     space: Filesize.from('10GB').to_i,
@@ -793,6 +796,10 @@ class Site < Sequel::Model
     values[:hits].to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
   end
 
+  def views_english
+    values[:views].to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
+  end
+
   def screenshots_delete(path)
     SCREENSHOT_RESOLUTIONS.each do |res|
       begin
@@ -811,8 +818,13 @@ class Site < Sequel::Model
     end
   end
 
-  def suggestions(limit=8, offset=0)
-    Site.where(tags: tags).limit(limit, offset).order(:updated_at.desc).all
+  def suggestions(limit=SUGGESTIONS_LIMIT, offset=0)
+    suggestions_dataset = Site.exclude(id: id).order(:views.desc, :updated_at.desc)
+    suggestions = suggestions_dataset.where(tags: tags).limit(limit, offset).all
+
+    return suggestions if suggestions.length == 32
+
+    suggestions += suggestions_dataset.where("views >= #{SUGGESTIONS_VIEWS_MIN}").limit(limit-suggestions.length).order(Sequel.lit('RANDOM()')).all
   end
 
   def screenshot_path(path, resolution)

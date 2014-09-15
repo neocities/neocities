@@ -31,11 +31,7 @@
             <p>
               You aren't following any websites yet! Once you do, updates will show up here and you can like and comment on them.
 
-              <% if @suggestions.length > 0 %>
-                Here are some website suggestions based on your tags, or <a href="/browse">check out all the sites on Neocities!</a>
-              <% else %>
-                Want to find some sites to follow? <a href="/browse">Check out all the sites on Neocities!</a>
-              <% end %>
+              Here are some website suggestions for you. Want to find some sites to follow? <a href="/browse">Check out all the sites on Neocities!</a>
             </p>
           </div>
 
@@ -45,8 +41,9 @@
                 <a href="//<%= suggested_site.host %>">
                   <img src="<%= suggested_site.screenshot_url('index.html', '270x162') %>">
                 </a>
-                  <span class="caption">
-                    <a href="/site/<%= suggested_site.username %>"><%= suggested_site.title %></a></span>
+                <span class="caption">
+                  <a href="/site/<%= suggested_site.username %>"><%= suggested_site.title %></a>
+                </span>
               </div>
               <% suggested_site.tags.each do |tag| %>
                 <a class="tag" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a>
@@ -67,6 +64,7 @@
             <% end %>
           </div>
           <div class="col col-50">
+            <div><strong><%= site.views_english %></strong> unique views</div>
             <div><strong><%= site.hits_english %></strong> hits</div>
             <div><strong><%= site.follows_dataset.count %></strong> followers</div>
             <div><strong><%= site.tips_dataset.count %></strong> tips ($<%= site.tip_amount %>)</div>

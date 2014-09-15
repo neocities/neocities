@@ -216,9 +216,7 @@ get '/?' do
   if current_site
     require_login
 
-    if current_site.followings_dataset.count == 0
-      @suggestions = current_site.suggestions
-    end
+    @suggestions = current_site.suggestions
 
     @current_page = params[:current_page].to_i
     @current_page = 1 if @current_page == 0
@@ -398,9 +396,17 @@ get '/browse/?' do
       site_dataset.order!(:created_at)
     when 'random'
       site_dataset.where! 'random() < 0.01'
-    else
+    when 'last_updated'
       params[:sort_by] = 'last_updated'
-      site_dataset.order!(:updated_at.desc, :hits.desc)
+      site_dataset.order!(:updated_at.desc, :views.desc)
+    else
+      if params[:tag]
+        params[:sort_by] = 'views'
+        site_dataset.order!(:views.desc)
+      else
+        params[:sort_by] = 'last_updated'
+        site_dataset.order!(:updated_at.desc, :views.desc)
+      end
   end
 
   site_dataset.filter! is_nsfw: (params[:is_nsfw] == 'true' ? true : false)
@@ -1221,6 +1227,7 @@ def api_info_for(site)
   {
     info: {
       sitename: site.username,
+      views: site.views,
       hits: site.hits,
       created_at: site.created_at.rfc2822,
       last_updated: site.updated_at.rfc2822,
