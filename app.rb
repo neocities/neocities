@@ -50,7 +50,7 @@ error do
   })
 
   if @api
-    api_error 500, 'server_error', 'there has been an unknown server error, please try again later', 500
+    api_error 500, 'server_error', 'there has been an unknown server error, please try again later'
   end
 
   erb :'error'
@@ -373,7 +373,7 @@ get '/browse/?' do
   @current_page = @current_page.to_i
   @current_page = 1 if @current_page == 0
 
-  site_dataset = Site.filter(is_banned: false, is_crashing: false).filter(site_changed: true).paginate(@current_page, 300)
+  site_dataset = Site.filter(is_banned: false, is_crashing: false).filter(site_changed: true)
 
   if current_site
     if !current_site.blocking_site_ids.empty?
@@ -410,6 +410,7 @@ get '/browse/?' do
     site_dataset.where! ['tags.name = ?', params[:tag]]
   end
 
+  site_dataset = site_dataset.paginate @current_page, 300
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
   erb :browse
