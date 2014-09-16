@@ -64,25 +64,17 @@ def generate_ssl_certs(opts={})
   our_cert_tmpfile.close
   res[:cert_path] = our_cert_tmpfile.path
 
-  our_cert_keypair_tmpfile = Tempfile.new 'our_cert_keypair'
-  our_cert_keypair_tmpfile.write our_cert_keypair.to_pem
-  our_cert_keypair_tmpfile.close
-  res[:key_path] = our_cert_keypair_tmpfile.path
+  res[:key_path] = '/tmp/nc_test_our_cert_keypair'
+  File.write res[:key_path], our_cert_keypair.to_pem
 
-  ca_cert_tmpfile = Tempfile.new 'ca_cert'
-  ca_cert_tmpfile.write res[:ca_cert].to_pem
-  ca_cert_tmpfile.close
-  res[:cert_intermediate_path] = ca_cert_tmpfile.path
+  res[:cert_intermediate_path] = '/tmp/nc_test_ca_cert'
+  File.write res[:cert_intermediate_path], res[:ca_cert].to_pem
 
-  combined_cert_tmpfile = Tempfile.new 'combined_cert'
-  combined_cert_tmpfile.write "#{File.read(res[:cert_path])}\n#{File.read(res[:cert_intermediate_path])}"
-  combined_cert_tmpfile.close
-  res[:combined_cert_path] = combined_cert_tmpfile.path
+  res[:combined_cert_path] = '/tmp/nc_test_combined_cert'
+  File.write res[:combined_cert_path], "#{File.read(res[:cert_path])}\n#{File.read(res[:cert_intermediate_path])}"
 
-  bad_combined_cert_tmpfile = Tempfile.new 'bad_combined_cert'
-  bad_combined_cert_tmpfile.write "#{File.read(res[:cert_intermediate_path])}\n#{File.read(res[:cert_path])}"
-  bad_combined_cert_tmpfile.close
-  res[:bad_combined_cert_path] = bad_combined_cert_tmpfile.path
+  res[:bad_combined_cert_path] = '/tmp/nc_test_bad_combined_cert'
+  File.write res[:bad_combined_cert_path], "#{File.read(res[:cert_intermediate_path])}\n#{File.read(res[:cert_path])}"
 
   res
 end
