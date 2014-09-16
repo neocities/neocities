@@ -26,7 +26,6 @@ describe Tag do
     end
 
     it 'does not duplicate' do
-      name = SecureRandom.hex(4).upcase
       2.times { Tag.create_unless_exists 'DERP' }
       Tag.where(name: 'DERP').count.must_equal 0
       Tag.where(name: 'derp').count.must_equal 1
