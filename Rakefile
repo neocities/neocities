@@ -124,3 +124,48 @@ task :primenewstriperunonlyonce => [:environment] do
     site.save_changes validate: false
   end
 end
+
+desc 'Clean tags'
+task :cleantags => [:environment] do
+
+  Site.select(:id).all.each do |site|
+    site.tags.each do |tag|
+      if tag.name == ''
+        site.remove_tag tag
+      end
+    end
+
+    site.reload
+
+    if site.tags.length > 5
+      site.tags.slice(5, site.tags.length).each {|tag| site.remove_tag tag}
+    end
+
+  end
+
+  Tag.where(name: '').delete
+
+  Tag.all.each do |tag|
+    if tag.name.length > Tag::NAME_LENGTH_MAX
+      tag.sites.each { |site| tag.remove_site site }
+      tag.delete
+    end
+
+    tag.update name: tag.name.downcase.strip
+  end
+
+  Tag.all.each do |tag|
+    begin
+      tag.reload
+    rescue Sequel::Error => e
+      next if e.message =~ /Record not found/
+    end
+
+    matching_tags = Tag.exclude(id: tag.id).where(name: tag.name).all
+
+    matching_tags.each do |matching_tag|
+      DB[:sites_tags].where(tag_id: matching_tag.id).update(tag_id: tag.id)
+      matching_tag.delete
+    end
+  end
+end

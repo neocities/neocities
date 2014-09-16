@@ -6,10 +6,13 @@ class Tag < Sequel::Model
   def before_create
     super
     values[:name].downcase!
+    values[:name].strip!
   end
 
   def self.create_unless_exists(name)
-    dataset.filter(name: name.downcase).first || create(name: name)
+    name = name.downcase.strip
+    return nil if name == '' || name.nil?
+    dataset.filter(name: name).first || create(name: name)
   end
 
   def self.suggestions(name, limit=3)
