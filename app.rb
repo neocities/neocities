@@ -261,9 +261,8 @@ post '/plan/create' do
       email: current_site.email,
       plan: params[:selected_plan]
     )
-    current_site.stripe_customer_id = customer.id
-    current_site.plan_ended = false
-    current_site.save
+
+    current_site.update stripe_customer_id: customer.id, plan_ended: false
 
     plan_name = customer.subscriptions.first['plan']['name']
 
@@ -319,8 +318,7 @@ post '/plan/end' do
     subscriptions.each do |subscription|
       customer.subscriptions.retrieve(subscription.id).delete
     end
-    current_site.plan_ended = true
-    current_site.save
+    current_site.update plan_ended: true
   end
 
   redirect '/plan'
@@ -344,7 +342,7 @@ post '/tags/add' do
   current_site.new_tags_string = params[:tags]
 
   if current_site.valid?
-    current_site.save
+    current_site.save_changes
   else
     flash[:errors] = current_site.errors.first
   end
@@ -650,9 +648,7 @@ post '/settings/ssl' do
     end
   end
 
-  current_site.ssl_key = key.to_pem
-  current_site.ssl_cert = cert_array.join
-  current_site.save
+  current_site.update ssl_key: key.to_pem, ssl_cert: cert_array.join
 
   flash[:success] = 'Updated SSL key/certificate.'
   redirect '/custom_domain'
@@ -710,7 +706,7 @@ post '/change_password' do
   end
 
   if current_site.errors.empty?
-    current_site.save
+    current_site.save_changes
     flash[:success] = 'Successfully changed password.'
     redirect '/settings'
   else
@@ -762,7 +758,7 @@ post '/change_name' do
 
   if current_site.valid?
     DB.transaction {
-      current_site.save
+      current_site.save_changes
       current_site.move_files_from old_username
     }
 
@@ -1009,7 +1005,7 @@ post '/admin/mark_nsfw' do
   end
 
   site.is_nsfw = true
-  site.save validate: false
+  site.save_changes validate: false
 
   flash[:success] = 'MISSION ACCOMPLISHED'
   redirect '/admin'
@@ -1075,7 +1071,7 @@ get '/password_reset_confirm' do
   if sites.length > 0
     sites.each do |site|
       site.password = reset_site.password_reset_token
-      site.save
+      site.save_changes
     end
 
     flash[:success] = 'Your password for all sites with your email address has been changed to the token sent in your e-mail. Please login and change your password as soon as possible.'
@@ -1096,7 +1092,7 @@ post '/custom_domain' do
   current_site.domain = params[:domain]
 
   if current_site.valid?
-    current_site.save
+    current_site.save_changes
     flash[:success] = 'The domain has been successfully updated.'
     redirect '/custom_domain'
   else
@@ -1320,7 +1316,7 @@ get '/site/:username/confirm_email/:token' do
   site = Site[username: params[:username]]
   if site.email_confirmation_token == params[:token]
     site.email_confirmed = true
-    site.save
+    site.save_changes
 
     erb :'site_email_confirmed'
   else
