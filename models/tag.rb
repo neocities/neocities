@@ -5,21 +5,21 @@ class Tag < Sequel::Model
 
   def before_create
     super
-    values[:name].downcase!
-    values[:name].strip!
+    values[:name] = self.class.clean_name values[:name]
+  end
+
+  def self.clean_name(name)
+    name.downcase.strip
   end
 
   def self.create_unless_exists(name)
-    name = name.downcase.strip
+    name = clean_name name
     return nil if name == '' || name.nil?
     dataset.filter(name: name).first || create(name: name)
   end
 
-  def self.suggestions(name, limit=3)
-    Tag.filter(name: /^#{name}/i).
-    order(:name).
-    limit(limit).
-    all
+  def self.autocomplete(name, limit=3)
+    DB["select tags.name,count(*) as c from sites_tags inner join tags on tags.id=sites_tags.tag_id where tags.name != '' and tags.name LIKE ? group by tags.name having count(*) > 1 order by c desc LIMIT ?", name+'%', limit].all
   end
 
   def self.popular_names(limit=10)

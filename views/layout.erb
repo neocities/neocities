@@ -63,7 +63,7 @@
       }, {
         name: 'tags',
         source: function(query, callback) {
-          $.get('/tags/suggestions/'+query+'.json', function(data) {
+          $.get('/tags/autocomplete/'+query+'.json', function(data) {
             console.log(data)
 
             var suggestions = JSON.parse(data)

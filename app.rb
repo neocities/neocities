@@ -360,8 +360,8 @@ post '/tags/remove' do
   redirect request.referer
 end
 
-get '/tags/suggestions/:name.json' do |name|
-  Tag.suggestions(name).collect {|t| t.name}.to_json
+get '/tags/autocomplete/:name.json' do |name|
+  Tag.autocomplete(name).collect {|t| t[:name]}.to_json
 end
 
 get '/browse/?' do
