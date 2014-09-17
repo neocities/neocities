@@ -70,7 +70,7 @@
           </span>
         </a>
         <div class="title">
-          <a href="//<%= site.host %>" title="<%= site.title %>"><%= site.title.shorten(35) %></a>
+          <a href="//<%= site.host %>" title="<%= site.title %>"><%= site.title.shorten(30) %></a>
         </div>
         <div class="site-info">
           <div style="float: left">
@@ -117,9 +117,9 @@
 <% end %>
 
 <div class="row website-Gallery content int-Gall tags">
-    <h3>Tags</h3>
+    <h3>Popular Tags</h3>
     <p>
-    <% Tag.popular_names.each do |tag| %>
+    <% Tag.popular_names(100).each do |tag| %>
       <a href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
     <% end %>
     </p>

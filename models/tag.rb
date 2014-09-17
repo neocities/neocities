@@ -19,7 +19,7 @@ class Tag < Sequel::Model
   end
 
   def self.autocomplete(name, limit=3)
-    DB["select tags.name,count(*) as c from sites_tags inner join tags on tags.id=sites_tags.tag_id where tags.name != '' and tags.name LIKE ? group by tags.name having count(*) > 1 order by c desc LIMIT ?", name+'%', limit].all
+    DB["select tags.name,count(*) as c from sites_tags inner join tags on tags.id=sites_tags.tag_id inner join sites on sites.id=sites_tags.site_id where is_deleted='f' and is_banned='f' and is_crashing='f' and site_changed='t' and tags.name != '' and tags.name LIKE ? group by tags.name having count(*) > 1 order by c desc LIMIT ?", name+'%', limit].all
   end
 
   def self.popular_names(limit=10)
