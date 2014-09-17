@@ -33,7 +33,7 @@ platform :mri do
 
   group :development, :test do
     gem 'pry'
-    gem 'pry-debugger'
+    gem 'pry-byebug'
   end
 end
 
