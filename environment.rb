@@ -55,6 +55,21 @@ Sidekiq.configure_client do |config|
 end
 
 # :nocov:
+if ENV['RACK_ENV'] == 'development'
+  # Run async jobs immediately in development.
+  module Sidekiq
+    module Worker
+      module ClassMethods
+        def perform_async(*args)
+          self.new.perform *args
+        end
+      end
+    end
+  end
+end
+# :nocov:
+
+# :nocov:
 if $config['pubsub_url']
   $pubsub_pool = ConnectionPool.new(size: 10, timeout: 5) {
     Redis.new url: $config['pubsub_url']

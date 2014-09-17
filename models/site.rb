@@ -415,10 +415,13 @@ class Site < Sequel::Model
 
     pathname = Pathname(path)
     if pathname.basename.to_s == 'index.html'
-      new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
-
-      if new_title.length < TITLE_MAX
-        self.title = new_title
+      begin
+        new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
+      rescue NoMethodError => e
+      else
+        if new_title.length < TITLE_MAX
+          self.title = new_title
+        end
       end
 
       self.site_changed = true
@@ -786,7 +789,7 @@ class Site < Sequel::Model
 
   def title
     if values[:title].nil? || values[:title].empty?
-      domain ? domain : "#{username}.neocities.org"
+      !domain.nil? && !domain.empty? ? domain : "#{username}.neocities.org"
     else
       values[:title]
     end
