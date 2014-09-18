@@ -210,7 +210,7 @@ class Site < Sequel::Model
   def password=(plaintext)
     @password_length = plaintext.nil? ? 0 : plaintext.length
     @password_plaintext = plaintext
-    values[:password] = BCrypt::Password.create plaintext, cost: (self.class.bcrypt_cost || BCrypt::Engine::DEFAULT_COST)
+    super BCrypt::Password.create plaintext, cost: (self.class.bcrypt_cost || BCrypt::Engine::DEFAULT_COST)
   end
 
   def new_tags_string=(tags_string)

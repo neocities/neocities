@@ -87,7 +87,6 @@ describe 'site/settings' do
       @domain = SecureRandom.uuid.gsub('-', '')+'.com'
       @site = Fabricate :site, domain: @domain
       page.set_rack_session id: @site.id
-      
     end
 
     it 'fails without domain set' do
@@ -214,6 +213,29 @@ describe 'site/settings' do
       page.must_have_content /valid.+name.+required/i
       Site[username: @site[:username]].wont_equal nil
       Site[username: ''].must_equal nil
+    end
+  end
+
+  describe 'change password' do
+    include Capybara::DSL
+
+    before do
+      @site = Fabricate :site, password: 'derpie'
+      page.set_rack_session id: @site.id
+    end
+
+    it 'should change correctly' do
+      visit '/settings'
+
+      fill_in 'current_password', with: 'derpie'
+      fill_in 'new_password', with: 'derpie2'
+      fill_in 'new_password_confirm', with: 'derpie2'
+      click_button 'Change Password'
+
+      page.must_have_content /successfully changed password/i
+      @site.reload
+      @site.valid_password?('derpie').must_equal false
+      @site.valid_password?('derpie2').must_equal true
     end
   end
 end
