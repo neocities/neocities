@@ -9,6 +9,9 @@
   min-height:42px;
   overflow:hidden;
 }
+.hp .header-Base {
+  border-bottom: 0;
+}
 
 .header-Content{
 	@media(max-device-width:480px), screen and (max-width:800px){
@@ -19,7 +22,8 @@
 .blurb{background:#fff}
 
 .header-Intro{
-  background:url(/img/neocity.jpg) 95% bottom no-repeat;
+  background:url(/img/neocity.png) 95% bottom no-repeat;
+  background-size: 734px;
   min-height:214px;
   
   @media (max-device-width:480px), screen and (max-width:800px){
@@ -38,11 +42,25 @@
   @include box-shadow($outroShadow);
   color:#fafafa;
 }
-.hp .header-Outro .col-50 {
-  width: 48%;
-}
-.hp .header-Outro .signup-Area {
-  float: right;
+.hp {
+  .header-Outro {
+    .col-50.signup-Area {
+      width: 48%;
+    }
+    .signup-Area {
+      float: right;
+    }
+    .intro-text {
+      color: #B8D375;
+      font-size: .9em;
+      margin-bottom: 1.8em;
+    }
+    h2.section-header {
+      font-size: 2.2em;
+      margin-top: .5em;
+      margin-bottom: 0.1em;
+    }
+  }
 }
 
 .intro-List{
@@ -62,7 +80,7 @@
     margin-bottom:2px;
   }
   
-  p{
+  p {
     color:#B2BCC1;
   }
 }
@@ -105,7 +123,7 @@
   height:600%;
   overflow:hidden;
   position:absolute;
-  top:-45px;
+  top: -40px;
   width:95%;
   
   @media (max-device-width:480px), screen and (max-width:800px){
@@ -115,7 +133,7 @@
     padding-bottom:20px;
     position:static;
     width:auto;
-}
+  }
   
   h2{
     margin-bottom:0;
@@ -141,19 +159,30 @@
     }
   }
   
+  label#domain-name {
+    display: inline;
+    vertical-align: 51%;
+    color: #C2CFD4;
+  }
+  
   .input-Area{
     background:#29383f;
     border:0 solid black;
     @include box-shadow($inputAreaShadow);
-    color:#557380; 
+    color:#C2CFD4;
     margin-bottom:$spacing*7;
     margin-right:$spacing;
-    padding: 11px 12px 9px 12px;
-    width:62%;
+    padding: 10px 10px 7px 10px;
+    width:100%;
     
-    &:focus{color:#eee}
+//    &:focus{color:#eee}
   }
-  
+  .input-Area#create-Input {
+    width:62%;
+  }
+  .col.col-50 {
+    margin-left: 0;
+  }
   .btn-Action{
     padding:10px 25px;
   }

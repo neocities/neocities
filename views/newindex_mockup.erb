@@ -31,8 +31,7 @@
   <meta name="MobileOptimized"  content="320" />
   <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1" />
 
-  <!-- oh vanity.  -->
-  <link rel="author" type="text/plain" href="humans.txt" />
+  <link href="/css/neo.css" rel="stylesheet" type="text/css" media="all"/>
 
   <!--[if lt IE 9]>
     <script type="text/javascript" src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -119,22 +118,27 @@
 <div class="header-Outro">
 
   <div class="row header-Content content">
-
-    <ul class="col col-50 intro-List">
+    <div class="col col-50">
+    <h2 class="section-header">Introducing the New Neocities</h2>
+    <p class="intro-text">Now’s a great time to join our community of over <%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites! 
+      <br />
+      You get <%= Site::FREE_MAXIMUM_IN_MEGABYTES %> MB of free web space to make whatever you’d like. </p>
+    <ul class="intro-List">
       <li class="intro-Tools">
         <span class="intro-Icon"></span>
-        <h2 class="delta">Create your own free website</h2>
-        <p class="tiny">
-          You get <%= Site::FREE_MAXIMUM_IN_MEGABYTES %> MB of free web space to make whatever you’d like!
+        <h2 class="delta">Free web hosting goes social</h2>
+        <p class="base">
+          Follow your favorite Neocities sites to keep up with all the latest updates! You can also now discover new websites related to your interests, comment on them, and share them.
         </p>
       </li>
       <li class="intro-Social">
         <span class="intro-Icon"></span>
         <h2 class="delta">Making the web fun again</h2>
-        <p class="tiny">
-          We're community of over <%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites that are bringing back creative expression on the web. Anyone can make a site, only your imagination is required. Join us!
+        <p class="base">
+          We’ve been working to make it easier to build your website and explore other sites. Neocities now has folders, tag browsing (our take on webrings), WebDAV uploading, RSS subscriptions, and more!
       </li>
     </ul>
+    </div>
 
     <div class="col col-50 signup-Area">
 
@@ -156,11 +160,26 @@
     <% else %>
       <form action="/new" method="get" class="signup-Form">
         <fieldset class="content">
-          <h2 class="gamma">Get Started Now</h2>
+          <h2 class="gamma">Sign up for free</h2>
           <hr />
-          <input type="text" class="input-Area" id="create-Input" name="username" placeholder="website name" />
-          <label for="create-Input">.neocities.org</label>
-          <input type="submit" value="Create My Website" class="btn-Action float-Right" />
+          <label for="create-Input">Username</label>
+          <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" />
+          <label for="create-Input" id="domain-name">.neocities.org</label>
+          
+          <label for="tags-input">Tags (your interests, site topics)</label>
+          <input type="text" class="input-Area" id="tags-input" name="tags" placeholder="art, videogames, food, music, programming, gardening, cats" />
+          
+          <div class="col col-50" style="padding-left:0;">
+          <label for="password-input">Password</label>
+          <input type="text" class="input-Area" id="password-input" name="password" placeholder="password" />
+          </div>
+          
+          <div class="col col-50">
+          <label for="email-input">Email</label>
+          <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" />
+          </div>
+          
+          <input type="submit" value="Create My Site" class="btn-Action float-Right" />
         </fieldset>
       </form>
 
@@ -174,29 +193,9 @@
 
 </header>
 
-<main class="content-Base" style="background: #666">
+<main class="content-Base">
   
-<div class="section previews">
-<div class="preview">
-  <h2>Follow websites to watch their updates</h2>
-  <p>Fate. It protects fools, little children, and ships named "Enterprise." I'll be sure to note that in my log. That might've been one of the shortest assignments in the history of Starfleet. Damage report!</p>
-</div>
-  
-<div class="preview right">
-  <h2>Comment on and tip websites you like</h2>
-  <p>Fate. It protects fools, little children, and ships named "Enterprise." I'll be sure to note that in my log. That might've been one of the shortest assignments in the history of Starfleet. Damage report!</p>
-</div>
-
-<div class="preview">
-  <h2>Discover new sites related to your interests</h2>
-  <p>Fate. It protects fools, little children, and ships named "Enterprise." I'll be sure to note that in my log. That might've been one of the shortest assignments in the history of Starfleet. Damage report!</p>
-</div>
-</div>
-
-  <section class="section featured-Websites clearfix">
-
-    <h2 class="delta">Featured Websites</h2>
-
+<div class="section featured-Websites">
     <ul class="row website-Gallery hp-Gallery">
       <li>
         <a href="http://dragonquest.neocities.org/" title="The Quest of Dragons" target="_blank">
@@ -228,23 +227,27 @@
           <img src="//neocities.org/site_screenshots/drawinglair.jpg" class="neo-SS" alt="Thumbnail of Tomasz Zawadzki" />
         </a>
       </li>
-      <li>
-        <a href="http://eleanor.neocities.org/" title="Eleanor Holroyd's Website" target="_blank">
-          <img src="//neocities.org/site_screenshots/eleanor.jpg" class="neo-SS" alt="Thumbnail of Eleanor Holroyd's Website" />
-        </a>
-      </li>
-      <li>
-        <a href="http://cute-animation.neocities.org/" title="Cute Animation" target="_blank">
-          <img src="//neocities.org/site_screenshots/cute-animation.jpg" class="neo-SS" alt="Thumbnail of Cute Animation" />
-        </a>
-      </li>
     </ul>
+</div>
 
-    <div class="txt-Center" style="margin-top: 15px">
-      <a href="/browse" title="Browse all Neocities websites" class="btn-Action btn-Large">Browse All Websites</a>
-    </div>
+  <section class="section features">
 
-  </section>  <!-- end .featured-Websites -->
+    <h2 class="delta">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dapibus semper magna id euismod. Vivamus rutrum ultricies.</h2>
+
+<h3>You own your own site</h3>
+<p>We support custom domains (yoursite.com) for free. This means you always control the content on your site, and you can move it to/from Neocities whenever you want. And of course, all sites still get a subdomain (sitename.neocities.org) for free.</p>
+
+<h3>Developer tools</h3>
+<p>We now have powerful APIs for developers building applications, and support for remote file uploading via command line tools. Using WebDAV, you can now mount your site to your computer, just like Dropbox.</p>
+
+<h3>More space, more performance</h3>
+<p>Neocities now uses a distributed, globally-cached file system in tier-1 datacenters to serve your sites. It's a system that took us a year to build - and it's ready to serve your site with blazing speed, whether it's your personal home page, or your professional site. Go ahead, put your site on Neocities. We can handle it.</p>
+
+<h3>Encrypted everything</h3>
+<p>Neocities now secures serving all your content with Snowden-grade cryptography, <em>by default</em>, preventing snoops, whether they are hackers or rogue government agencies, from seeing what you browse. And we're working on letting you use your own SSL (HTTPS) certificates for custom domains.
+
+Until January, Neocities will donate 5% of all Supporter plan proceeds to the Courage Foundation, an international organization that supports those who risk life or liberty to disclose privacy abuses online.</p>
+  </section>
   
   <section class="section last">
 

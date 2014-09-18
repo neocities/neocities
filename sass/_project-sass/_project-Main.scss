@@ -7,7 +7,6 @@
   background:#f6f0e6;
 	min-height:500px;
 	padding-bottom:50px;
-  padding-top: 10px;
 	
 	h1, h2, h3, h4, h5, h6{
   	color:#e93250
@@ -444,7 +443,7 @@
 }
 .site-suggestion {
   float: left;
-  width: 156px;
+  width: 165px;
   margin-right: 20px;
   margin-bottom: 20px;
   height: 160px;
@@ -473,7 +472,8 @@
   margin-bottom: .5em;
 }
 .site-portrait img {
-  width: 146px;
+  width: 155px;
+  height:93px;
 }
 .site-portrait .caption {
   display: block;
@@ -754,21 +754,19 @@ a.tag:hover {
 .title-with-badge span {
   float: left;
 }
-.section.featured-Websites {
-  background:#65A0AD;
-}
-.section.featured-Websites h2 {
-  color: white;
-}
 .section {
   padding: 50px 10%;
   margin: 0 auto;
 }
-.section.previews {
-  background: #f6f0e6;
+.section.featured-Websites {
+  background:#971D31;
+  padding: 10px 2% 1px 2%;
 }
-.section.previews h2, .section.previews p {
-  color: #31424B;
+.section.features {
+  background: #4F7E89;
+}
+.section.features h2, .section.features h3, .section.features p {
+  color: #fff;
 }
 .section h2 {
   font-size: 1.6em;

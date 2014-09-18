@@ -117,18 +117,18 @@ legend, .legend{
 }
 
 ::-webkit-input-placeholder { /* WebKit browsers */
-      color:$placeholderColor;
+      color:$placeholderColor!important; //overriding bootstrap css
       font-style: italic;
   }
   :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-      color:$placeholderColor;
+      color:$placeholderColor!important; //overriding bootstrap css
       font-style: italic;
   }
   ::-moz-placeholder { /* Mozilla Firefox 19+ */
-      color:$placeholderColor;
+      color:$placeholderColor!important; //overriding bootstrap css
       font-style: italic;
   }
   :-ms-input-placeholder { /* Internet Explorer 10+ */
-      color:$placeholderColor;
+      color:$placeholderColor!important; //overriding bootstrap css
       font-style: italic;
   }
