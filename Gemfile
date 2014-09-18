@@ -23,6 +23,7 @@ gem 'zipruby'
 gem 'sass', require: nil
 gem 'dav4rack'
 gem 'filesize'
+gem 'thread'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

@@ -51,13 +51,6 @@ task :parse_logs => [:environment] do
   end
 end
 
-desc 'Update screenshots'
-task :update_screenshots => [:environment] do
-  Site.select(:username).filter(is_banned: false).filter(~{updated_at: nil}).order(:updated_at.desc).all.collect {|s|
-    ScreenshotWorker.perform_async s.username
-  }
-end
-
 desc 'Update banned IPs list'
 task :update_blocked_ips => [:environment] do
 
@@ -170,9 +163,23 @@ task :cleantags => [:environment] do
   end
 end
 
+  require 'thread/pool'
+
 desc 'update screenshots'
-task :updatescreenshots => [:environment] do
-  Site.select(:username).where(site_changed: true, is_banned: false, is_crashing: false).all.each do |site|
-    ScreenshotWorker.new.perform site.username, 'index.html'
+task :update_screenshots => [:environment] do
+  pool = Thread.pool 10
+  Site.select(:username).where(site_changed: true, is_banned: false, is_crashing: false).filter(~{updated_at: nil}).order(:updated_at.desc).all.each do |site|
+    pool.process { ScreenshotWorker.new.perform site.username, 'index.html' }
   end
+
+  sleep
 end
+
+=begin
+desc 'Update screenshots'
+task :update_screenshots => [:environment] do
+  Site.select(:username).filter(is_banned: false).filter(~{updated_at: nil}).order(:updated_at.desc).all.collect {|s|
+    ScreenshotWorker.perform_async s.username
+  }
+end
+=end
