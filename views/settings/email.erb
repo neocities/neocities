@@ -1,0 +1,12 @@
+<h2>Change Email</h2>
+<form method="POST" action="/change_email">
+  <%== csrf_token_input_html %>
+
+  <p>Current Email: <strong><%= current_site.email %></strong></p>
+  <p>New Email:</p>
+  <input class="input-Area" name="email" type="text">
+
+  <div>
+    <input class="btn-Action" type="submit" value="Change Email">
+  </div>
+</form>

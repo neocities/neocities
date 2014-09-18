@@ -1,0 +1,19 @@
+<h2>Change Site (User) Name</h2>
+<form method="POST" action="/change_name">
+  <%== csrf_token_input_html %>
+  <p class="tiny">
+    It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
+  </p>
+
+  <p>
+    Current Name:
+    <span style="color: green"><strong><%= current_site.username %></strong></span>
+  </p>
+
+  <p>
+    New name:
+    <input name="name" class="input-Area" type="text" placeholder="newname" style="width: 200px">
+  </p>
+
+  <input class="btn-Action" type="submit" value="Change Name">
+</form>

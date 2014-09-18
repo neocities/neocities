@@ -61,7 +61,9 @@ if ENV['RACK_ENV'] == 'development'
     module Worker
       module ClassMethods
         def perform_async(*args)
-          self.new.perform *args
+          Thread.new {
+            self.new.perform *args
+          }
         end
       end
     end
