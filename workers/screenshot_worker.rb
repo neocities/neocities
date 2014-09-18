@@ -44,7 +44,7 @@ class ScreenshotWorker
       f.fetch(
         output: screenshot_output_path,
         width: 1280,
-        height: 720
+        height: 960
       )
     rescue Timeout::Error
       # :nocov:
@@ -89,7 +89,15 @@ class ScreenshotWorker
     FileUtils.mkdir_p screenshot_path unless Dir.exists?(screenshot_path)
 
     Site::SCREENSHOT_RESOLUTIONS.each do |res|
-      img.scale(*res.split('x').collect {|r| r.to_i}).write(File.join(user_screenshots_path, "#{path}.#{res}.jpg")) {
+      width, height = res.split('x').collect {|r| r.to_i}
+
+      if width == height
+        new_img = img.crop_resized width, height, Magick::NorthGravity
+      else
+        new_img = img.scale width, height
+      end
+
+      new_img.write(File.join(user_screenshots_path, "#{path}.#{res}.jpg")) {
         self.quality = 90
       }
     end

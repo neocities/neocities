@@ -18,15 +18,23 @@
     <div class="news-item follow">
       <div class="title">
       <div class="icon"></div>
-      <% actioning_site = event.actioning_site_dataset.select(:username, :title, :domain).first %>
+      <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain).first %>
       <% event_site = event.site_dataset.select(:id, :username, :title, :domain).first %>
-      <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><%= actioning_site.title.shorten(40) %></a> 
-      is following
+
+      <% if current_site && current_site.id == actioning_site.id %>
+        You
+      <% else %>
+        <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><%= actioning_site.username %></a>
+      <% end %>
+
+      started following
+
       <% if current_site && event_site.id == current_site.id %>
         your site!
       <% else %>
-        <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(40) %></a>
+        <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.username %></a>
       <% end %>
+
       <span class="date">
         <a href="?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
       </span>
@@ -39,7 +47,7 @@
         <% if current_site && event_site.id == current_site.id %>
           Your site was updated.
         <% else %>
-          <a href="/site/<%= event_site.username %>" class="user"><%= event_site.title %></a> has been updated.
+          <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(45) %></a> has been updated.
         <% end %>
         <span class="date">
           <a href="?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
@@ -54,9 +62,9 @@
                 <div class="html-thumbnail <%= site_change_file_display_class f %>">
                   <a href="//<%= event_site.host %>/<%= f %>">
                     <% if site_change_file_display_class(f) == 'html' %>
-                      <img src="<%= event_site.screenshot_url(f, '90x63') %>">
+                      <img src="<%= event_site.screenshot_url(f, '210x158') %>">
                     <% elsif site_change_file_display_class(f) == 'image' %>
-                      <img src="<%= event_site.thumbnail_url(f, '90x63') %>">
+                      <img src="<%= event_site.thumbnail_url(f, '210x158') %>">
                     <% elsif site_change_file_display_class(f) == 'misc' %>
                       <span class="misc-icon">
                         <%= File.extname(f).sub('.', '') %>

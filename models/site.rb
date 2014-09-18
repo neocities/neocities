@@ -59,8 +59,8 @@ class Site < Sequel::Model
   HTML_REGEX           = /htm|html/
   MAX_COMMENT_SIZE     = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
 
-  SCREENSHOT_RESOLUTIONS = ['235x141', '105x63', '270x162', '37x37', '146x88', '302x182', '90x63', '82x62', '348x205']
-  THUMBNAIL_RESOLUTIONS  = ['105x63', '90x63']
+  SCREENSHOT_RESOLUTIONS = ['540x405', '210x158', '100x100', '50x50']
+  THUMBNAIL_RESOLUTIONS  = ['210x158']
 
   CLAMAV_THREAT_MATCHES = [
     /^VBS/,
@@ -779,7 +779,6 @@ class Site < Sequel::Model
     following_ids = self.followings_dataset.select(:site_id).all.collect {|f| f.site_id}
     Event.filter(site_id: following_ids+[self.id]).
     order(:created_at.desc).
-    exclude(actioning_site_id: self.id).
     paginate(current_page, limit)
   end
 

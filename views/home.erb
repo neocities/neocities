@@ -39,7 +39,7 @@
             <div class="site-suggestion">
               <div class="site-portrait">
                 <a href="//<%= suggested_site.host %>">
-                  <img src="<%= suggested_site.screenshot_url('index.html', '270x162') %>">
+                  <img src="<%= suggested_site.screenshot_url('index.html', '540x405') %>">
                 </a>
                 <span class="caption">
                   <a href="/site/<%= suggested_site.username %>"><%= suggested_site.title %></a>
@@ -71,7 +71,7 @@
           </div>
         </div>
 
-        <a href="//<%= site.host %>"><img src="<%= site.screenshot_url('index.html', '348x205') %>" style="width:340px" class="large-portrait"></a>
+        <a href="//<%= site.host %>"><img src="<%= site.screenshot_url('index.html', '540x405') %>" class="large-portrait"></a>
 
         <div style="margin-top: 20px; margin-bottom: 20px" class="txt-Center">
           <a href="/site/<%= site.username %>" class="btn-Action">View Site Profile</a>

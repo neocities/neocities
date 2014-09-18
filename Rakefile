@@ -169,3 +169,10 @@ task :cleantags => [:environment] do
     end
   end
 end
+
+desc 'update screenshots'
+task :updatescreenshots => [:environment] do
+  Site.select(:username).where(site_changed: true, is_banned: false, is_crashing: false).all.each do |site|
+    ScreenshotWorker.new.perform site.username, 'index.html'
+  end
+end

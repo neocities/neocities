@@ -22,7 +22,7 @@
     <div class="col col-50 signup-Area" style="width: 289px;">
       <div class="signup-Form">
   	  <fieldset class="content">
-        <img class="screenshot" src="<%= current_site.screenshot_url('index.html', '270x162') %>">
+        <img class="screenshot" src="<%= current_site.screenshot_url('index.html', '540x405') %>">
 	    </fieldset>
       </div>
     </div>
@@ -112,14 +112,14 @@
       <div class="upload-Boundary <%= @file_list.length <= 5 ? 'with-instruction' : '' %>">
         <% @file_list.each do |file| %>
           <div class="file filehover">
-            <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '105x63') %>
+            <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '210x158') %>
               <div class="html-thumbnail html fileimagehover">
-                <img src="<%= current_site.screenshot_url(file[:path], '105x63') %>">
+                <img src="<%= current_site.screenshot_url(file[:path], '210x158') %>">
                 <div class="overlay"></div>
               </div>
-            <% elsif file[:is_image] && current_site.thumbnail_exists?(file[:path], '105x63') %>
+            <% elsif file[:is_image] && current_site.thumbnail_exists?(file[:path], '210x158') %>
               <div class="html-thumbnail image fileimagehover">
-                <img src="<%= current_site.thumbnail_url(file[:path], '105x63') %>" style="">
+                <img src="<%= current_site.thumbnail_url(file[:path], '210x158') %>">
                 <div class="overlay"></div>
               </div>
             <% elsif file[:is_directory] %>
