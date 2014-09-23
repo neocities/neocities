@@ -757,10 +757,28 @@ a.tag:hover {
 .section {
   padding: 50px 10%;
   margin: 0 auto;
+  float: left;
 }
 .section.featured-Websites {
   background:#971D31;
-  padding: 10px 2% 1px 2%;
+  padding: 30px 0;
+  width: 100%;
+  position:relative;
+}
+.section.featured-Websites .nav {
+  float:left;
+  width:4.25%;
+  height:45px;
+  background-size: 22px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  margin-top: 3%;
+}
+.section.featured-Websites .nav.prev {
+  background-image:url(/img/hpgallery-prev.png);
+}
+.section.featured-Websites .nav.next {
+  background-image:url(/img/hpgallery-next.png);
 }
 .section.features {
   background: #4F7E89;
@@ -769,13 +787,19 @@ a.tag:hover {
   color: #fff;
 }
 .section h2 {
-  font-size: 1.6em;
+  font-size: 1.7em;
+  text-align:center;
+}
+.section h3 {
+  font-size: 1.4em;
+  margin-top: 1.5em;
+  margin-bottom: .2em;
 }
 .section.last {
-  background: #666666;
+  background: #fff;
 }
 .section.last h2, .section.last blockquote {
-  color: white;
+  color: black;
 }
 .selected {
   font-weight: bold;

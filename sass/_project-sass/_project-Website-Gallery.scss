@@ -30,16 +30,15 @@
   
   &.int-Gall{
     
-    li{
-
+    li {
       margin:0 .5% 12px;
       width:24%;
       
       background-color: white;
       border: 9px solid white;
-      -moz-box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
-      -webkit-box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
-      box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
+      -moz-box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
+      -webkit-box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
+      box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
       
       @media (max-device-width:480px), screen and (max-width:800px){
         width:49%
@@ -48,8 +47,8 @@
   }
 }
 
-.neo-SS, .neo-Screen-Shot{
-  border: 1px solid #eee;
+.neo-SS, .z{
+  border: 4px solid #eee;
   display:block;
   height:auto!important;
   position:relative;
@@ -62,14 +61,19 @@
   background-size:cover!important;
   display:block;
 }
-
 .hp-Gallery img, .neo-Screen-Shot img{
   width:100%
 }
-.hp-Gallery li {
-  width: 14%;
-  margin-right: 2%;
-}
-.hp-Gallery {
-  padding: 24px 24px;
+.hp-Gallery { 
+  padding: 0px;
+  margin-bottom: 0;
+  
+  li {
+    width: 14%;
+    margin-right: 1.5%;
+    margin-bottom: 0;
+  }
+  li:last-child {
+    margin-right: 0;
+  }
 }

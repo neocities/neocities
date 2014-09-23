@@ -13,12 +13,15 @@
   border-bottom: 0;
 }
 
+.row.header-Content.content {
+  padding-bottom:27px;
+}
+
 .header-Content{
 	@media(max-device-width:480px), screen and (max-width:800px){
 	  padding:0;
 	}
 }
-
 .blurb{background:#fff}
 
 .header-Intro{
