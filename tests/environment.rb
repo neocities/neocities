@@ -22,6 +22,8 @@ include WebMock::API
 require 'webmock/minitest'
 require 'sidekiq/testing'
 
+WebMock.disable_net_connect! allow_localhost: true
+
 Sinatra::Application.configure do |app|
   app.use RackSessionAccess::Middleware
 end

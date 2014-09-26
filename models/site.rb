@@ -333,9 +333,7 @@ class Site < Sequel::Model
 
   def block!(site)
     block = blockings_dataset.filter(site_id: site.id).first
-    DB.transaction do
-      add_blocking site: site
-    end
+    add_blocking site: site
   end
 
   def is_blocking?(site)

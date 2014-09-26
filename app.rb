@@ -56,6 +56,7 @@ error do
   erb :'error'
 end
 
+# :nocov:
 get '/newindex_mockup' do
   if SimpleCache.expired?(:sites_count)
     @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 600 # 10 Minutes
@@ -79,6 +80,15 @@ get '/profile_mockup' do
   erb :'profile_mockup', locals: {site: current_site}
 end
 
+get '/browse_mockup' do
+  erb :'browse_mockup'
+end
+
+get '/tips_mockup' do
+  erb :'tips_mockup'
+end
+# :nocov:
+
 get '/site/:username.rss' do |username|
   site = Site[username: username]
   content_type :xml
@@ -87,10 +97,7 @@ end
 
 get '/site/:username/?' do |username|
   site = Site[username: username]
-  not_found if site.nil?
-  if current_site && (site.is_blocking?(current_site) || current_site.is_blocking?(site))
-    not_found
-  end
+  not_found if site.nil? || site.is_banned
 
   @title = site.title
 
@@ -131,22 +138,12 @@ post '/site/:username/comment' do |username|
     redirect "/site/#{username}"
   end
 
-  DB.transaction do
-    site.add_profile_comment(
-      actioning_site_id: current_site.id,
-      message: params[:message]
-    )
-  end
+  site.add_profile_comment(
+    actioning_site_id: current_site.id,
+    message: params[:message]
+  )
 
   redirect "/site/#{username}"
-end
-
-get '/browse_mockup' do
-  erb :'browse_mockup'
-end
-
-get '/tips_mockup' do
-  erb :'tips_mockup'
 end
 
 get '/stats/?' do
