@@ -123,14 +123,14 @@
     <p class="intro-text">Now’s a great time to join our community of over <%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites! 
       You get <%= Site::FREE_MAXIMUM_IN_MEGABYTES %> MB of free web space to make whatever you’d like. </p>
     <ul class="intro-List">
-      <li class="intro-Tools">
+      <li class="intro-Social">
         <span class="intro-Icon"></span>
         <h2 class="delta">Free web hosting goes social</h2>
         <p class="base">
           Follow your favorite Neocities sites to keep up with all the latest updates! You can also now discover new websites related to your interests, comment on them, and share them.
         </p>
       </li>
-      <li class="intro-Social">
+      <li class="intro-Tools">
         <span class="intro-Icon"></span>
         <h2 class="delta">Making the web fun again</h2>
         <p class="base">
@@ -234,61 +234,266 @@
   <section class="section features">
 
     <h2 class="delta">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dapibus semper magna id euismod. Vivamus rutrum ultricies.</h2>
-
+<div class="row">
     <div class="col col-33">
-    <h3>You own your own site</h3>
+    <h3><i class="fa fa-home"></i>You own your own site</h3>
     <p>We support custom domains (yoursite.com) for free. This means you always control the content on your site, and you can move it to/from Neocities whenever you want. And of course, all sites still get a subdomain (sitename.neocities.org) for free.</p>
 
-    <h3>Developer tools</h3>
+    <h3><i class="fa fa-wrench"></i> Developer tools</h3>
     <p>We now have powerful APIs for developers building applications, and support for remote file uploading via command line tools. Using WebDAV, you can now mount your site to your computer, just like Dropbox.</p>
     </div>
     
     <div class="col col-33">
-    <h3>More space, more performance</h3>
+    <h3><i class="fa fa-tachometer"></i>More space, more performance</h3>
     <p>Neocities now uses a distributed, globally-cached file system in tier-1 datacenters to serve your sites. It's a system that took us a year to build - and it's ready to serve your site with blazing speed, whether it's your personal home page, or your professional site. Go ahead, put your site on Neocities. We can handle it.</p>
     </div>
     
     <div class="col col-33">
-    <h3>Encrypted everything</h3>
+    <h3><i class="fa fa-lock"></i> Encrypted everything</h3>
     <p>Neocities now secures serving all your content with Snowden-grade cryptography, <em>by default</em>, preventing snoops, whether they are hackers or rogue government agencies, from seeing what you browse. And we're working on letting you use your own SSL (HTTPS) certificates for custom domains.
 
     Until January, Neocities will donate 5% of all Supporter plan proceeds to the Courage Foundation, an international organization that supports those who risk life or liberty to disclose privacy abuses online.</p>
-    </div>
+    </div></div>
   </section>
   
   <section class="section last">
-
-    <aside class="row">
-
-      <div class="col col-50">
-        <div class="content">
-
-          <h2>Get Started Today!</h2>
-
-          <p>signup</p>
+    <h2>All Neocities plans include a neocities.org subdomain, WebDAV uploading, one-click backups, and all our social features. We'll never show ads on your site.</h2>
+    
+    <div class="plan-overview">
+      <div class="row header">
+        <div class="col col-50">
+          Personal
         </div>
-      </div> <!-- end .col-50 -->
-
-      <div class="col col-50">
-        <div class="content">
-
-          <ul class="quote-Slider kill-List">
-            <li class="quote">
-              <blockquote>
-                Designed as a 21st century reincarnation of GeoCities, Neocities lets you make your own site for free. And it just might spark a renaissance of creativity online.
-              </blockquote>
-              <a href="http://web.appstorm.net/reviews/web-dev/neocities-the-free-place-to-code-your-own-site-from-scratch/" title="App Storm" class="action-Link">Source link</a>
-            </li>
+        <div class="col col-50">
+          Professional
+        </div>
+      </div>
+      
+      <div class="row body">
+        <div class="col col-25">
+          <h3>Free</h3>
+          <div class="price">$0</div>
+          <div class="interval">per month</div>
+          <a href="/" class="btn-Action">Choose</a>
+          <ul>
+            <li><strong>30 MB</strong> storage</li>
+            <li><strong>10 GB</strong> bandwidth</li>
           </ul>
-
         </div>
-      </div> <!-- end .col-50 -->
-
-    </aside> <!-- end .row -->
-
-    </section>
-
-      </main>
+        
+        <div class="col col-25">
+          <h3>Supporter</h3>
+          <div class="price">$5</div>
+          <div class="interval">per month</div>
+          <a href="/" class="btn-Action">Choose</a>
+          <ul>
+            <li><strong>1 GB</strong> storage</li>
+            <li><strong>100 GB</strong> bandwidth</li>
+          </ul>
+          <ul>
+            <li>Custom Domains</li>
+            <li>Global CDN Cache</li>
+            <li>DDoS mitigation</li>
+          </ul>
+        </div>
+        
+        <div class="col col-25">
+          <h3>Cat Bus</h3>
+          <div class="price">$20</div>
+          <div class="interval">per month</div>
+          <a href="/" class="btn-Action">Choose</a>
+          <ul>
+            <li><strong>10 GB</strong> storage</li>
+            <li><strong>500 GB</strong> bandwidth</li>
+          </ul>
+          <ul>
+            <li>Custom Domains</li>
+            <li>Global CDN Cache</li>
+            <li>DDoS mitigation</li>
+            <li>Custom SSL Certificates</li>
+            <li>No upload type restrictions</li>
+            <li>Coming Soon: Unlimited Sites</li>
+          </ul>
+        </div>
+        
+        <div class="col col-25">
+          <h3>Fat Cat</h3>
+          <div class="price">$50</div>
+          <div class="interval">per month</div>
+          <a href="/" class="btn-Action">Choose</a>
+          <ul>
+            <li><strong>100 GB</strong> storage</li>
+            <li><strong>2 TB</strong> bandwidth</li>
+          </ul>
+          <ul>
+            <li>Custom Domains</li>
+            <li>Global CDN Cache</li>
+            <li>DDoS mitigation</li>
+            <li>Custom SSL Certificates</li>
+            <li>No upload type restrictions</li>
+            <li>Coming Soon: Unlimited Sites</li>
+          </ul>
+        </div>
+        
+      </div>
+      
+    </div>
+    
+    <h2><a href="">Compare Plans <i class="fa fa-chevron-down"></i></a></h2>
+    
+    <table class="plan-chart">
+      <tr>
+        <th class="feature-column"></th>
+        <th>
+          <h4>Free</h4>
+          <p>$0</p>
+          <a href="/" class="btn-Action">Choose</a>
+        </th>
+        <th>
+          <h4>Supporter</h4>
+          <p>$5</p>
+          <a href="/" class="btn-Action">Choose</a>
+        </th>
+        <th>
+          <h4>Cat Bus</h4>
+          <p>$20</p>
+          <a href="/" class="btn-Action">Choose</a>
+        </th>
+        <th>
+          <h4>Fat Cat</h4>
+          <p>$50</p>
+          <a href="/" class="btn-Action">Choose</a>
+        </th>
+      </tr>
+      <tr>
+        <td class="feature-column">Storage</td>
+        <td>30 MB</td>
+        <td>1 GB</td>
+        <td>10 GB</td>
+        <td>100 GB</td>
+      </tr>
+      <tr>
+        <td class="feature-column">Bandwidth</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">No advertising, ever</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">WebDAV Uploading</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">Neocities.org Subdomain</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">One-Click Backups</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">Site Tags</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">RSS Feed</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">Follow Your Favorite Sites</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">Site Profile</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">Neocities Site Editor</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">Custom Domains</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">High Performance Global CDN Cache</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">DDoS Mitigation</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">Unlimited Site Creation (Coming Soon)</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">Site Tipping (Coming Soon)</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">Custom SSL Certificates</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="feature-column">No File Upload Type Restrictions</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+  </section>
+</main>
 
 <footer class="footer-Base">
   <section class="footer-Intro">
