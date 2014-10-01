@@ -755,13 +755,14 @@ a.tag:hover {
   float: left;
 }
 .section {
-  padding: 50px 8%;
+  padding: 55px 8%;
   margin: 0 auto;
   float: left;
 }
 .section h2 {
   font-size: 1.7em;
   text-align:center;
+  line-height: 150%;
 }
 .section h3 {
   font-size: 1.4em;
@@ -785,7 +786,6 @@ a.tag:hover {
   background-size: 22px;
   background-repeat: no-repeat;
   background-position: center center;
-  
   margin: auto 0px;
   position: absolute;
   top: 0; bottom: 0;
@@ -799,9 +799,10 @@ a.tag:hover {
 }
 .section.features {
   background: #4F7E89;
+  text-align: center;
 }
 .section.features .col {
-  padding-left: 35px;
+  padding-left: 40px;
 }
 .section.features .col:first-child {
   padding-left: 0;
@@ -810,20 +811,156 @@ a.tag:hover {
   color: #fff;
 }
 .section.features .fa {
-  margin-right: 9px;
+  margin-right: 10px;
 }
 .section.features .fa-wrench {
   vertical-align: 2px;
-  margin-right: 4px;
+  margin-right: 9px;
 }
 .section.features .fa-tachometer {
   margin-right: 11px;
 }
-.section.last {
+.section.features p, .section.features h3 {
+  text-align: left;
+}
+.section .press {
+  display: inline-block;
+  clear: both;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+.section .logo {
+  float:left;
+  background-repeat: no-repeat;
+  margin-right: 30px;
+}
+.section .logo.wired {
+  width: 211px;
+  height: 44px;  
+  background-image: url(/img/wired-logo.png);
+  background-size: 211px;
+  margin-top: 6px;
+  margin-right: 40px;
+}
+.section .logo.vice {
+  width: 160px;
+  height: 50px;  
+  background-image: url(/img/vice-logo.png);
+  background-size: 160px;
+}
+.section .logo.ars {
+  width: 187px;  
+  height: 62px;
+  background-image: url(/img/ars-logo.png);
+  background-size: 187px;
+  margin-top: -4px;
+}
+.section .press .more {
+  color: #A0BAC0;
+  float:right;
+  margin-top: 6px;
+  margin-right: 30px;
+}
+.section.plans {
   background: #fff;
 }
-.section.last h2, .section.last blockquote {
+.section.plans h2 {
+  color:#4F7E89;
+}
+.plan-overview {
+  margin-top: 2.5em;
+  margin-bottom: 2em;
+}
+.plan-overview .header {
+  display:table;
+  width: 100%;
+}
+.plan-overview .header .col {
+  font-size:.8em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  display:table-cell;
+}
+.plan-overview .header .personal {
+  background: #D6D6D6;
+}
+.plan-overview .header .professional {
+  background: #DAEEA5;
+}
+.plan-overview .body {
+  text-align: center;
+  clear:both;
+  display:table;
+  width: 100%;
+}
+.plan-overview .body h3, .plan-chart h4 {
   color: black;
+  font-weight:bold;
+  font-size:1.2em;
+  font-family: "Lucida Grande", verdana, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin-bottom: -2px;
+}
+.plan-overview .price {
+  font-size: 2em;
+}
+.plan-overview .interval {
+  font-size: .8em;
+  margin-top: -.6em;
+}
+.plan-overview .btn-Action {
+  margin: .9em 0 1.4em 0;
+}
+.plan-overview .col {
+  padding-bottom:1.5em;
+  padding-left: 0;
+  display: table-cell;
+  background: #F8F8F8;
+  float:none;
+}
+.plan-overview .body .col:nth-of-type(2), .plan-overview .body .col:nth-of-type(4) {
+  background: #F5F5F5;
+}
+.plan-overview ul {
+  list-style: none;
+  padding: 0;
+}
+.plan-overview li {
+  margin: 0;
+}
+.plan-chart {
+  margin: 2em 0 4em 0;
+  width: 100%;
+}
+.plan-chart th {
+  background: #D6D6D6;
+  padding: 15px 0;
+}
+.plan-chart th.professional {
+  background: #DAEEA5;
+}
+.plan-chart th p {
+  margin: .3em 0 .6em 0;
+}
+.plan-chart td {
+  border: 1px solid #ECECEC;
+  background:#F5F5F5;
+  padding: 7px 0;
+  text-align: center;
+}
+.plan-chart .feature-column {
+  width: 21em;
+  text-align:right;
+  font-size: .9em;
+  font-weight: bold;
+  border: 0;
+  background: 0;
+  padding-right: 15px;
+}
+.plan-chart td:nth-child(even) {
+  background: #F8F8F8;
+}
+.plan-chart .fa-check {
+  color: #6CCC24;
 }
 .selected {
   font-weight: bold;
