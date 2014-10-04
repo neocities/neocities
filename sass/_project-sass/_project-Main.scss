@@ -803,10 +803,16 @@ a.tag:hover {
 }
 .section.features .col {
   padding-left: 40px;
+  
+  :first-child {
+    padding-left: 0;
+  }
+  
+  @media (max-device-width:480px), screen and (max-width:800px){
+    padding-left: 20px;
+  }
 }
-.section.features .col:first-child {
-  padding-left: 0;
-}
+
 .section.features h2, .section.features h3, .section.features p {
   color: #fff;
 }
@@ -828,11 +834,19 @@ a.tag:hover {
   clear: both;
   margin-top: 30px;
   margin-bottom: 20px;
+  
+  @media (max-device-width:480px), screen and (max-width:800px){
+    margin-top: 0;
+  }
 }
 .section .logo {
   float:left;
   background-repeat: no-repeat;
   margin-right: 30px;
+  
+  @media (max-device-width:480px), screen and (max-width:800px){
+    margin-top: 20px !important;
+  }
 }
 .section .logo.wired {
   width: 211px;
