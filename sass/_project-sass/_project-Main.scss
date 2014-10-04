@@ -893,12 +893,13 @@ a.tag:hover {
   display:table;
   width: 100%;
 }
-.plan-overview .body h3, .plan-chart h4 {
+.plan-overview h3, .plan-chart h3 {
   color: black;
   font-weight:bold;
   font-size:1.2em;
   font-family: "Lucida Grande", verdana, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin-bottom: -2px;
+  margin-bottom: -3px;
+  margin-top: 0;
 }
 .plan-overview .price {
   font-size: 2em;
@@ -926,6 +927,28 @@ a.tag:hover {
 }
 .plan-overview li {
   margin: 0;
+}
+.plan-overview .plan-image {
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 81px;
+  margin: 30px 0 5px 0;
+}
+.plan-overview .free .plan-image {
+  background-image: url(/img/plaincat.png);
+  background-size: 77px;
+}
+.plan-overview .supporter .plan-image {
+  background-image: url(/img/heartcat.png);
+  background-size: 77px;
+}
+.plan-overview .catbus .plan-image {
+  background-image: url(/img/catbus.png);
+  background-size: 95px;
+}
+.plan-overview .fatcat .plan-image {
+  background-image: url(/img/fatcat.png);
+  background-size: 70px;
 }
 .plan-chart {
   margin: 2em 0 4em 0;
