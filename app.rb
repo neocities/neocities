@@ -708,7 +708,7 @@ post '/change_password' do
   require_login
 
   if !Site.valid_login?(current_site.username, params[:current_password])
-    current_site.errors.add :password, 'Your provided password does not match the current one.'
+    flash[:error] = 'Your provided password does not match the current one.'
     redirect '/settings#password'
   end
 
