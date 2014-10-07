@@ -162,7 +162,7 @@ class Site < Sequel::Model
     if parent?
       return children
     else
-      sites = (parent + children)
+      sites = ([parent] + children)
       sites.delete self
       sites
     end
@@ -202,6 +202,14 @@ class Site < Sequel::Model
     return true if BlockedIp[ip]
 
     false
+  end
+
+  def owner
+    parent? ? self : parent
+  end
+
+  def owned_by?(site)
+    account_sites.include? site
   end
 
   def is_following?(site)

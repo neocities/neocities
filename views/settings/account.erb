@@ -1,61 +1,45 @@
 <div class="header-Outro">
   <div class="row content single-Col">
-    <h1>Settings</h1>
-  	<h3 class="subtitle">Manage your account</h3>
+    <h1>Account Settings</h1>
+    <h3 class="subtitle">Manage the account for your sites</h3>
   </div>
 </div>
 
 <div class="content single-Col misc-page txt-Center">
   <article>
     <section>
-			<div class="txt-Center">
-				<% if flash[:success] %>
-					<div class="alert alert-block alert-success" style="margin-top: 20px">
-						<%== flash[:success] %>
-					</div>
-				<% end %>
+      <div class="txt-Center">
+        <% if flash[:success] %>
+          <div class="alert alert-block alert-success" style="margin-top: 20px">
+            <%== flash[:success] %>
+          </div>
+        <% end %>
 
         <% if flash[:error] %>
           <div class="alert alert-block alert-error" style="margin-top: 20px">
             <%== flash[:error] %>
           </div>
         <% end %>
-			</div>
+      </div>
       <div class="tabbable" style="margin-top: 20px"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs">
           <li class="active"><a href="#plan" data-toggle="tab">Plan</a></li>
           <li><a href="#sites" data-toggle="tab">Sites</a></li>
-          <li><a href="#profile" data-toggle="tab">Profile</a></li>
-          <li><a href="#customdomain" data-toggle="tab">Custom Domain</a></li>
           <li><a href="#password" data-toggle="tab">Password</a></li>
           <li><a href="#email" data-toggle="tab">Email</a></li>
-          <li><a href="#username" data-toggle="tab">Username</a></li>
-          <li><a href="#nsfw" data-toggle="tab">18+</a></li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="plan">
-            <%== erb :'settings/plan' %>
+            <%== erb :'settings/account/plan' %>
           </div>
           <div class="tab-pane" id="sites">
-            <%== erb :'settings/sites' %>
-          </div>
-          <div class="tab-pane" id="profile">
-            <%== erb :'settings/profile' %>
-          </div>
-          <div class="tab-pane" id="customdomain">
-            <%== erb :'settings/custom_domain' %>
+            <%== erb :'settings/account/sites' %>
           </div>
           <div class="tab-pane" id="password">
-            <%== erb :'settings/password' %>
+            <%== erb :'settings/account/password' %>
           </div>
           <div class="tab-pane" id="email">
-            <%== erb :'settings/email' %>
-          </div>
-          <div class="tab-pane" id="username">
-            <%== erb :'settings/username' %>
-          </div>
-          <div class="tab-pane" id="nsfw">
-            <%== erb :'settings/nsfw' %>
+            <%== erb :'settings/account/email' %>
           </div>
         </div>
       </div>

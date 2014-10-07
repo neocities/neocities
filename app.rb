@@ -125,11 +125,11 @@ post '/site/:username/set_editor_theme' do
   'ok'
 end
 
-post '/site/create_child' do
+post '/settings/create_child' do
   require_login
   site = Site.new
 
-  site.parent_site_id = current_site.id
+  site.parent_site_id = parent_site.id
   site.username = params[:username]
 
   if site.valid?
@@ -553,38 +553,57 @@ get '/signin' do
   erb :'signin'
 end
 
-get '/settings' do
+get '/settings/?' do
   require_login
-  erb :'settings'
+  @site = parent_site
+  erb :'settings/account'
 end
 
-post '/settings/profile' do
+def require_ownership_for_settings
+  @site = Site[username: params[:username]]
+
+  unless @site.owned_by? parent_site
+    flash[:error] = 'Cannot edit this site, you do not have permission.'
+    redirect request.referrer
+  end
+end
+
+get '/settings/:username/?' do
   require_login
-  current_site.update(
+  require_ownership_for_settings
+  erb :'settings/site'
+end
+
+post '/settings/:username/profile' do
+  require_login
+  require_ownership_for_settings
+
+  @site.update(
     profile_comments_enabled: params[:site][:profile_comments_enabled]
   )
   flash[:success] = 'Profile settings changed.'
-  redirect '/settings#profile'
+  redirect "/settings/#{@site.username}#profile"
 end
 
-post '/settings/ssl' do
+post '/settings/:username/ssl' do
   require_login
+  require_ownership_for_settings
 
   unless params[:key] && params[:cert]
     flash[:error] = 'SSL key and certificate are required.'
-    redirect '/custom_domain'
+    redirect "/settings/#{@site.username}#custom_domain"
   end
 
   begin
     key = OpenSSL::PKey::RSA.new params[:key][:tempfile].read, ''
   rescue => e
     flash[:error] = 'Could not process SSL key, file may be incorrect, damaged, or passworded (you need to remove the password).'
-    redirect '/custom_domain'
+    redirect "/settings/#{@site.username}#custom_domain"
   end
 
   if !key.private?
     flash[:error] = 'SSL Key file does not have private key data.'
-    redirect '/custom_domain'
+    redirect "/settings/#{@site.username}#custom_domain"
   end
 
   certs_string = params[:cert][:tempfile].read
@@ -593,7 +612,7 @@ post '/settings/ssl' do
 
   if cert_array.empty?
     flash[:error] = 'Cert file does not contain any certificates.'
-    redirect '/custom_domain'
+    redirect "/settings/#{@site.username}#custom_domain"
   end
 
   cert_valid_for_domain = false
@@ -603,21 +622,21 @@ post '/settings/ssl' do
       cert = OpenSSL::X509::Certificate.new cert_string
     rescue => e
       flash[:error] = 'Could not process SSL certificate, file may be incorrect or damaged.'
-      redirect '/custom_domain'
+      redirect "/settings/#{@site.username}#custom_domain"
     end
 
     if cert.not_after < Time.now
       flash[:error] = 'SSL Certificate has expired, please create a new one.'
-      redirect '/custom_domain'
+      redirect "/settings/#{@site.username}#custom_domain"
     end
 
     cert_cn = cert.subject.to_a.select {|a| a.first == 'CN'}.flatten[1]
-    cert_valid_for_domain = true if cert_cn && cert_cn.match(current_site.domain)
+    cert_valid_for_domain = true if cert_cn && cert_cn.match(@site.domain)
   end
 
   unless cert_valid_for_domain
-    flash[:error] = "Your certificate CN (common name) does not match your domain: #{current_site.domain}"
-    redirect '/custom_domain'
+    flash[:error] = "Your certificate CN (common name) does not match your domain: #{@site.domain}"
+    redirect "/settings/#{@site.username}#custom_domain"
   end
 
   # Everything else was worse.
@@ -640,7 +659,7 @@ post '/settings/ssl' do
         access_log off;
         server {
           listen 60000 ssl;
-          server_name #{current_site.domain} *.#{current_site.domain};
+          server_name #{@site.domain} *.#{@site.domain};
           ssl_certificate #{crtfile.path};
           ssl_certificate_key #{keyfile.path};
         }
@@ -658,14 +677,197 @@ post '/settings/ssl' do
       output = line.run path: nginx_testfile.path
     rescue Cocaine::ExitStatusError => e
       flash[:error] = "There is something wrong with your certificate, please check with your issuing CA."
-      redirect '/custom_domain'
+      redirect "/settings/#{@site.username}#custom_domain"
     end
   end
 
-  current_site.update ssl_key: key.to_pem, ssl_cert: cert_array.join
+  @site.update ssl_key: key.to_pem, ssl_cert: cert_array.join
 
   flash[:success] = 'Updated SSL key/certificate.'
-  redirect '/custom_domain'
+  redirect "/settings/#{@site.username}#custom_domain"
+end
+
+post '/settings/:username/change_name' do
+  require_login
+  require_ownership_for_settings
+
+  old_username = @site.username
+
+  if params[:name] == nil || params[:name] == ''
+    flash[:error] = 'Name cannot be blank.'
+    redirect "/settings/#{@site.username}#username"
+  end
+
+  if old_username == params[:name]
+    flash[:error] = 'You already have this name.'
+    redirect "/settings/#{@site.username}#username"
+  end
+
+  old_host = @site.host
+  old_file_paths = @site.file_list.collect {|f| f[:path]}
+
+  @site.username = params[:name]
+
+  if @site.valid?
+    DB.transaction {
+      @site.save_changes
+      @site.move_files_from old_username
+    }
+
+    old_file_paths.each do |file_path|
+      @site.purge_cache file_path
+    end
+
+    flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
+    redirect "/settings/#{@site.username}#username"
+  else
+    flash[:error] = @site.errors.first.last.first
+    redirect "/settings/#{old_username}#username"
+  end
+end
+
+post '/settings/:username/change_nsfw' do
+  require_login
+  require_ownership_for_settings
+
+  @site.update is_nsfw: params[:is_nsfw]
+  flash[:success] = @site.is_nsfw ? 'Marked 18+' : 'Unmarked 18+'
+  redirect "/settings/#{@site.username}#nsfw"
+end
+
+post '/settings/:username/custom_domain' do
+  require_login
+  require_ownership_for_settings
+
+  @site.domain = params[:domain]
+
+  if @site.valid?
+    @site.save_changes
+    flash[:success] = 'The domain has been successfully updated.'
+    redirect "/settings/#{@site.username}#custom_domain"
+  else
+    flash[:error] = @site.errors.first.last.first
+    redirect "/settings/#{@site.username}#custom_domain"
+  end
+end
+
+post '/settings/change_password' do
+  require_login
+
+  if !Site.valid_login?(parent_site.username, params[:current_password])
+    flash[:error] = 'Your provided password does not match the current one.'
+    redirect "/settings#password"
+  end
+
+  parent_site.password = params[:new_password]
+  parent_site.valid?
+
+  if params[:new_password] != params[:new_password_confirm]
+    parent_site.errors.add :password, 'New passwords do not match.'
+  end
+
+  if parent_site.errors.empty?
+    parent_site.save_changes
+    flash[:success] = 'Successfully changed password.'
+    redirect "/settings#password"
+  else
+    flash[:error] = current_site.errors.first.last.first
+    redirect '/settings#password'
+  end
+end
+
+post '/settings/change_email' do
+  require_login
+  
+  if params[:email] == current_site.email
+    flash[:error] = 'You are already using this email address for this account.'
+    redirect '/settings#email'
+  end
+
+  parent_site.email = params[:email]
+  parent_site.email_confirmation_token = SecureRandom.hex 3
+  parent_site.email_confirmed = false
+
+  if parent_site.valid?
+    parent_site.save_changes
+    send_confirmation_email
+    flash[:success] = 'Successfully changed email. We have sent a confirmation email, please use it to confirm your email address.'
+    redirect '/settings#email'
+  end
+
+  flash[:error] = parent_site.errors.first.last.first
+  redirect '/settings#email'
+end
+
+get '/password_reset' do
+  erb :'password_reset'
+end
+
+post '/send_password_reset' do
+  sites = Site.filter(email: params[:email]).all
+
+  if sites.length > 0
+    token = SecureRandom.uuid.gsub('-', '')
+    sites.each do |site|
+      site.update password_reset_token: token
+    end
+
+    body = <<-EOT
+Hello! This is the Neocities cat, and I have received a password reset request for your e-mail address. Purrrr.
+
+Go to this URL to reset your password: http://neocities.org/password_reset_confirm?token=#{token}
+
+After clicking on this link, your password for all the sites registered to this email address will be changed to this token.
+
+Token: #{token}
+
+If you didn't request this reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
+
+Meow,
+the Neocities Cat
+    EOT
+
+    body.strip!
+
+    EmailWorker.perform_async({
+      from: 'web@neocities.org',
+      to: params[:email],
+      subject: '[Neocities] Password Reset',
+      body: body
+    })
+  end
+
+  flash[:success] = 'If your email was valid (and used by a site), the Neocities Cat will send an e-mail to your account with password reset instructions.'
+  redirect '/'
+end
+
+get '/password_reset_confirm' do
+  if params[:token].nil? || params[:token].empty?
+    flash[:error] = 'Could not find a site with this token.'
+    redirect '/'
+  end
+
+  reset_site = Site[password_reset_token: params[:token]]
+
+  if reset_site.nil?
+    flash[:error] = 'Could not find a site with this token.'
+    redirect '/'
+  end
+
+  sites = Site.filter(email: reset_site.email).all
+
+  if sites.length > 0
+    sites.each do |site|
+      site.password = reset_site.password_reset_token
+      site.save_changes
+    end
+
+    flash[:success] = 'Your password for all sites with your email address has been changed to the token sent in your e-mail. Please login and change your password as soon as possible.'
+  else
+    flash[:error] = 'Could not find a site with this token.'
+  end
+
+  redirect '/'
 end
 
 post '/signin' do
@@ -702,98 +904,6 @@ end
 get '/site_files/new_page' do
   require_login
   erb :'site_files/new_page'
-end
-
-post '/change_password' do
-  require_login
-
-  if !Site.valid_login?(current_site.username, params[:current_password])
-    flash[:error] = 'Your provided password does not match the current one.'
-    redirect '/settings#password'
-  end
-
-  current_site.password = params[:new_password]
-  current_site.valid?
-
-  if params[:new_password] != params[:new_password_confirm]
-    current_site.errors.add :password, 'New passwords do not match.'
-  end
-
-  if current_site.errors.empty?
-    current_site.save_changes
-    flash[:success] = 'Successfully changed password.'
-    redirect '/settings#password'
-  else
-    flash[:error] = current_site.errors.first.last.first
-    redirect '/settings#password'
-  end
-end
-
-post '/change_email' do
-  require_login
-  
-  if params[:email] == current_site.email
-    flash[:error] = 'You are already using this email address for this account.'
-    redirect '/settings#email'
-  end
-
-  current_site.email = params[:email]
-  current_site.email_confirmation_token = SecureRandom.hex 3
-  current_site.email_confirmed = false
-
-  if current_site.valid?
-    current_site.save_changes
-    send_confirmation_email
-    flash[:success] = 'Successfully changed email. We have sent a confirmation email, please use it to confirm your email address.'
-    redirect '/settings#email'
-  end
-
-  flash[:error] = current_site.errors.first.last.first
-  redirect '/settings#email'
-end
-
-post '/change_name' do
-  require_login
-  old_username = current_site.username
-
-  if params[:name] == nil || params[:name] == ''
-    flash[:error] = 'Name cannot be blank.'
-    redirect '/settings#username'
-  end
-
-  if old_username == params[:name]
-    flash[:error] = 'You already have this name.'
-    redirect '/settings#username'
-  end
-
-  old_host = current_site.host
-  old_file_paths = current_site.file_list.collect {|f| f[:path]}
-
-  current_site.username = params[:name]
-
-  if current_site.valid?
-    DB.transaction {
-      current_site.save_changes
-      current_site.move_files_from old_username
-    }
-
-    old_file_paths.each do |file_path|
-      current_site.purge_cache file_path
-    end
-
-    flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
-    redirect '/settings#username'
-  else
-    flash[:error] = current_site.errors.first.last.first
-    redirect '/settings#username'
-  end
-end
-
-post '/change_nsfw' do
-  require_login
-  current_site.update is_nsfw: params[:is_nsfw]
-  flash[:success] = current_site.is_nsfw ? 'Marked 18+' : 'Unmarked 18+'
-  redirect '/settings#nsfw'
 end
 
 post '/site_files/create_page' do
@@ -1025,95 +1135,6 @@ post '/admin/mark_nsfw' do
 
   flash[:success] = 'MISSION ACCOMPLISHED'
   redirect '/admin'
-end
-
-get '/password_reset' do
-  erb :'password_reset'
-end
-
-post '/send_password_reset' do
-  sites = Site.filter(email: params[:email]).all
-
-  if sites.length > 0
-    token = SecureRandom.uuid.gsub('-', '')
-    sites.each do |site|
-      site.update password_reset_token: token
-    end
-
-    body = <<-EOT
-Hello! This is the Neocities cat, and I have received a password reset request for your e-mail address. Purrrr.
-
-Go to this URL to reset your password: http://neocities.org/password_reset_confirm?token=#{token}
-
-After clicking on this link, your password for all the sites registered to this email address will be changed to this token.
-
-Token: #{token}
-
-If you didn't request this reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
-
-Meow,
-the Neocities Cat
-    EOT
-
-    body.strip!
-
-    EmailWorker.perform_async({
-      from: 'web@neocities.org',
-      to: params[:email],
-      subject: '[Neocities] Password Reset',
-      body: body
-    })
-  end
-
-  flash[:success] = 'If your email was valid (and used by a site), the Neocities Cat will send an e-mail to your account with password reset instructions.'
-  redirect '/'
-end
-
-get '/password_reset_confirm' do
-  if params[:token].nil? || params[:token].empty?
-    flash[:error] = 'Could not find a site with this token.'
-    redirect '/'
-  end
-
-  reset_site = Site[password_reset_token: params[:token]]
-
-  if reset_site.nil?
-    flash[:error] = 'Could not find a site with this token.'
-    redirect '/'
-  end
-
-  sites = Site.filter(email: reset_site.email).all
-
-  if sites.length > 0
-    sites.each do |site|
-      site.password = reset_site.password_reset_token
-      site.save_changes
-    end
-
-    flash[:success] = 'Your password for all sites with your email address has been changed to the token sent in your e-mail. Please login and change your password as soon as possible.'
-  else
-    flash[:error] = 'Could not find a site with this token.'
-  end
-
-  redirect '/'
-end
-
-get '/custom_domain' do
-  require_login
-  erb :custom_domain
-end
-
-post '/custom_domain' do
-  require_login
-  current_site.domain = params[:domain]
-
-  if current_site.valid?
-    current_site.save_changes
-    flash[:success] = 'The domain has been successfully updated.'
-    redirect '/custom_domain'
-  else
-    erb :custom_domain
-  end
 end
 
 get '/contact' do
@@ -1380,14 +1401,6 @@ post '/site/:username/block' do |username|
   end
 end
 
-post '/site/delete' do
-  require_login
-  if current_site.username != params[:username]
-    current_site.errors.add :username, 'Could not delete site, site name did not match.'
-    halt erb(:settings)
-  end
-end
-
 def require_admin
   redirect '/' unless signed_in? && current_site.is_admin
 end
@@ -1420,7 +1433,11 @@ end
 
 def current_site
   return nil if session[:id].nil?
-  @site ||= Site[id: session[:id]]
+  @_site ||= Site[id: session[:id]]
+end
+
+def parent_site
+  current_site.parent? ? current_site : current_site.parent
 end
 
 def require_unbanned_ip

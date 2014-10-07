@@ -4,21 +4,16 @@
   <h6>No other sites are currently linked to this account.</h6>
 <% else %>
   <table class="table">
-    <tr>
-      <td>
-        <a href="//<%= current_site.host %>"><strong><%= current_site.title %></strong></a> (primary)
-      </td>
-      <td>
-        Manage this site
-      </td>
-    </tr>
-    <% current_site.children.each do |site| %>
+    <% current_site.owner.account_sites.each do |site| %>
       <tr>
         <td>
           <a href="//<%= site.host %>" target="_blank"><%= site.title %></a>
+          <% if site.parent? %>
+            <strong>(parent account)</strong>
+          <% end %>
         </td>
         <td>
-          <a href="#">Manage this site</a>
+          <a href="/settings/<%= site.username %>">Settings</a>
         </td>
       </tr>
     <% end %>
@@ -29,7 +24,7 @@
 
 <p>You can now create new sites that are linked to this account! Sites will share the free space you have available. You have <strong><%= Site::CHILD_SITES_MAX - current_site.children_dataset.count %></strong> new sites remaining.</p>
 
-<form action="/site/create_child" method="POST">
+<form action="/settings/create_child" method="POST">
   <%== csrf_token_input_html %>
   
   <p>Site Name:</p>
