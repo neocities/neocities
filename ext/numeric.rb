@@ -10,6 +10,8 @@ class Numeric
   end
 
   def to_space_pretty
-    "#{(self.to_f / ONE_MEGABYTE).round(2).to_s} MB"
+    space = (self.to_f / ONE_MEGABYTE).round(2)
+    space = space.to_i if space.denominator == 1
+    "#{space} MB"
   end
 end
