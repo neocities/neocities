@@ -548,11 +548,6 @@ get '/dashboard' do
   erb :'dashboard'
 end
 
-get '/signin' do
-  dashboard_if_signed_in
-  erb :'signin'
-end
-
 get '/settings/?' do
   require_login
   @site = parent_site
@@ -779,7 +774,7 @@ end
 post '/settings/change_email' do
   require_login
   
-  if params[:email] == current_site.email
+  if params[:email] == parent_site.email
     flash[:error] = 'You are already using this email address for this account.'
     redirect '/settings#email'
   end
@@ -870,6 +865,11 @@ get '/password_reset_confirm' do
   redirect '/'
 end
 
+get '/signin/?' do
+  dashboard_if_signed_in
+  erb :'signin'
+end
+
 post '/signin' do
   dashboard_if_signed_in
 
@@ -895,6 +895,21 @@ get '/signout' do
   require_login
   session[:id] = nil
   redirect '/'
+end
+
+get '/signin/:username' do
+  require_login
+  @site = Site[username: params[:username]]
+
+  not_found if @site.nil?
+
+  if @site.owned_by? current_site
+    session[:id] = @site.id
+    redirect request.referrer
+  end
+
+  flash[:error] = 'You do not have permission to switch to this site.'
+  redirect request.referrer
 end
 
 get '/about' do

@@ -148,24 +148,33 @@ class Site < Sequel::Model
   many_to_one :parent, :key => :parent_site_id, :class => self
   one_to_many :children, :key => :parent_site_id, :class => self
 
-  def account_sites
-    if parent?
-      sites = [self] + children
-    else
-      sites = [parent] + parent.children
-    end
+  def account_sites_dataset
+    Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id}))
+  end
 
-    sites.compact
+  def account_sites
+    account_sites_dataset.all
+  end
+
+  def other_sites_dataset
+    account_sites_dataset.exclude(id: self.id)
   end
 
   def other_sites
-    if parent?
-      return children
-    else
-      sites = ([parent] + children)
-      sites.delete self
-      sites
-    end
+    account_sites_dataset.exclude(id: self.id).all
+  end
+
+  def account_sites_events_dataset
+    ids = account_sites_dataset.select(:id).all.collect {|s| s.id}
+    Event.where(id: ids)
+  end
+
+  def owner
+    parent? ? self : parent
+  end
+
+  def owned_by?(site)
+    !account_sites_dataset.select(:id).where(id: site.id).first.nil?
   end
 
   class << self
@@ -204,14 +213,6 @@ class Site < Sequel::Model
     false
   end
 
-  def owner
-    parent? ? self : parent
-  end
-
-  def owned_by?(site)
-    account_sites.include? site
-  end
-
   def is_following?(site)
     followings_dataset.select(:id).filter(site_id: site.id).first ? true : false
   end
@@ -242,7 +243,14 @@ class Site < Sequel::Model
   end
 
   def valid_password?(plaintext)
-    BCrypt::Password.new(values[:password]) == plaintext
+    valid = BCrypt::Password.new(owner.values[:password]) == plaintext
+
+    if !valid?
+      return false if values[:password].nil?
+      valid = BCrypt::Password.new(values[:password]) == plaintext
+    end
+
+    valid
   end
 
   def password=(plaintext)
@@ -353,18 +361,18 @@ class Site < Sequel::Model
 =end
 
   def commenting_allowed?
-    return true if commenting_allowed
+    return true if owner.commenting_allowed
 
-    if supporter?
+    if owner.supporter?
       set commenting_allowed: true
       save_changes validate: false
       return true
     end
 
-    if events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT &&
+    if account_sites_events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT &&
        created_at < Time.now - 604800
-      set commenting_allowed: true
-      save_changes validate: false
+      owner.set commenting_allowed: true
+      owner.save_changes validate: false
       return true
     end
 

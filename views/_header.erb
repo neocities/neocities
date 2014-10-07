@@ -39,16 +39,18 @@
             <%= current_site.username %> <b class="caret"></b>
           </a>
           <ul class="dropdown-menu pull-left">
-            <li class="dropdown-submenu pull-left">
-              <a tabindex="-1" href="#">Change Site</a>
-              <ul class="dropdown-menu">
-                <% current_site.other_sites.each do |site| %>
-                  <li>
-                    <a href="#"><%= site.username %></a><br>
-                  </li>
-                <% end %>
-              </ul>
-            </li>
+            <% if current_site.other_sites_dataset.count > 0 %>
+              <li class="dropdown-submenu pull-left">
+                <a tabindex="-1" href="#">Switch Site</a>
+                <ul class="dropdown-menu">
+                  <% current_site.other_sites_dataset.select(:username).all.each do |site| %>
+                    <li>
+                      <a href="/signin/<%= site.username %>"><%= site.username %></a><br>
+                    </li>
+                  <% end %>
+                </ul>
+              </li>
+            <% end %>
             <li>
               <a href="/dashboard" class="sign-In">Edit Site</a>
             </li>
