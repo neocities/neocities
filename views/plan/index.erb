@@ -19,7 +19,7 @@
   
   <% if current_site && current_site.supporter? && !current_site.plan_ended %>
     <p>
-      You currently have the <strong><%= current_site.plan_name %> (<%= current_site.maximum_space_in_megabytes %>MB)</strong>.
+      You currently have the <strong><%= current_site.plan_name %> (<%= current_site.maximum_space.to_space_pretty %>)</strong>.
     </p>
     <p>
       Your support means a lot to us. On behalf of Penelope the cat and everyone at Neocities, thank you. If there's anything we can do to make your experience even better, please don't hesitate to <a href="/contact">contact us</a>.
@@ -28,7 +28,7 @@
     <a href="/plan/manage">Manage plan</a>
   <% else %>
     <% if current_site %>
-      <p>You currently have the <strong>Free Plan (<%= current_site.maximum_space_in_megabytes %>MB)</strong>. Need more space? Become a <strong>Neocities Supporter!</strong></p>
+      <p>You currently have the <strong>Free Plan (<%= current_site.maximum_space.to_space_pretty %>)</strong>. Need more space? Become a <strong>Neocities Supporter!</strong></p>
 
       <h3>Why upgrade?</h3>
     <% else %>
@@ -38,7 +38,7 @@
     <% end %>
     <ul>
       <li>
-        <strong>You get more space!</strong> Right now supporter plans get up to <strong><%= Site::SUPPORTER_MAXIMUM_IN_MEGABYTES %>MB</strong> (more coming soon)</strong>.
+        <strong>You get more space!</strong> Right now supporter plans get up to <strong><%= Site::SUPPORTER_MAXIMUM.to_space_pretty %></strong>.
       </li>
       <li>
         <strong>It helps your site.</strong> Funding helps us make your site faster globally, and provide more features.

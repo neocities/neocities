@@ -121,7 +121,7 @@
     <div class="col col-50">
     <h2 class="section-header">Introducing the New Neocities</h2>
     <p class="intro-text">Now’s a great time to join our community of over <%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites! 
-      You get <%= Site::FREE_MAXIMUM_IN_MEGABYTES %> MB of free web space to make whatever you’d like. </p>
+      You get <%= Site::FREE_MAXIMUM.to_space_pretty %> of free web space to make whatever you’d like. </p>
     <ul class="intro-List">
       <li class="intro-Tools">
         <span class="intro-Icon"></span>

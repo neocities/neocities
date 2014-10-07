@@ -9,48 +9,22 @@
   <article>
     <section>
 			<div class="txt-Center">
-				<% if !current_site.errors.empty? %>
-					<div class="alert alert-block alert-error" style="margin-top: 20px">
-						<% current_site.errors.each do |error| %>
-							<p><%== error.last.first %></p>
-						<% end %>
-					</div>
-				<% end %>
 				<% if flash[:success] %>
 					<div class="alert alert-block alert-success" style="margin-top: 20px">
 						<%== flash[:success] %>
 					</div>
 				<% end %>
-			</div>
-<!--
-      <ul class="nav nav-tabs">
-        <li class="active">
-          <a href="#">Plan</a>
-        </li>
-        <li>
-          <a href="#">Profile</a>
-        </li>
-        <li>
-          <a href="">Custom Domain</a>
-        </li>
-        <li>
-          <a href="">Password</a>
-        </li>
-        <li>
-          <a href="">Email</a>
-        </li>
-        <li>
-          <a href="">Username</a>
-        </li>
-        <li>
-          <a href="">18+</a>
-        </li>
-      </ul>
--->
 
+        <% if flash[:error] %>
+          <div class="alert alert-block alert-error" style="margin-top: 20px">
+            <%== flash[:error] %>
+          </div>
+        <% end %>
+			</div>
       <div class="tabbable" style="margin-top: 20px"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs">
           <li class="active"><a href="#plan" data-toggle="tab">Plan</a></li>
+          <li><a href="#sites" data-toggle="tab">Sites</a></li>
           <li><a href="#profile" data-toggle="tab">Profile</a></li>
           <li><a href="#customdomain" data-toggle="tab">Custom Domain</a></li>
           <li><a href="#password" data-toggle="tab">Password</a></li>
@@ -61,6 +35,9 @@
         <div class="tab-content">
           <div class="tab-pane active" id="plan">
             <%== erb :'settings/plan' %>
+          </div>
+          <div class="tab-pane" id="sites">
+            <%== erb :'settings/sites' %>
           </div>
           <div class="tab-pane" id="profile">
             <%== erb :'settings/profile' %>
@@ -117,3 +94,12 @@
     </div>
   </form>
 </div>
+
+<script>
+$(document).ready(function() {
+    if (location.hash !== '') $('a[href="' + location.hash + '"]').tab('show');
+    return $('a[data-toggle="tab"]').on('shown', function(e) {
+      return location.hash = $(e.target).attr('href').substr(1);
+    });
+});
+</script>

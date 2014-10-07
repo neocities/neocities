@@ -125,6 +125,23 @@ post '/site/:username/set_editor_theme' do
   'ok'
 end
 
+post '/site/create_child' do
+  require_login
+  site = Site.new
+
+  site.parent_site_id = current_site.id
+  site.username = params[:username]
+
+  if site.valid?
+    site.save
+    flash[:success] = 'Your new site has been created!'
+    redirect '/settings#sites'
+  else
+    flash[:error] = site.errors.first.last.first
+    redirect '/settings#sites'
+  end
+end
+
 post '/site/:username/comment' do |username|
   require_login
 
@@ -547,7 +564,7 @@ post '/settings/profile' do
     profile_comments_enabled: params[:site][:profile_comments_enabled]
   )
   flash[:success] = 'Profile settings changed.'
-  redirect '/settings'
+  redirect '/settings#profile'
 end
 
 post '/settings/ssl' do
@@ -655,7 +672,7 @@ post '/signin' do
   dashboard_if_signed_in
 
   if Site.valid_login? params[:username], params[:password]
-    site = Site[username: params[:username]]
+    site = Site.get_with_identifier params[:username]
 
     if site.is_banned
       flash[:error] = 'Invalid login.'
@@ -692,7 +709,7 @@ post '/change_password' do
 
   if !Site.valid_login?(current_site.username, params[:current_password])
     current_site.errors.add :password, 'Your provided password does not match the current one.'
-    halt erb(:'settings')
+    redirect '/settings#password'
   end
 
   current_site.password = params[:new_password]
@@ -705,9 +722,10 @@ post '/change_password' do
   if current_site.errors.empty?
     current_site.save_changes
     flash[:success] = 'Successfully changed password.'
-    redirect '/settings'
+    redirect '/settings#password'
   else
-    halt erb(:'settings')
+    flash[:error] = current_site.errors.first.last.first
+    redirect '/settings#password'
   end
 end
 
@@ -715,8 +733,8 @@ post '/change_email' do
   require_login
   
   if params[:email] == current_site.email
-    current_site.errors.add :email, 'You are already using this email address for this account.'
-    halt erb(:settings)
+    flash[:error] = 'You are already using this email address for this account.'
+    redirect '/settings#email'
   end
 
   current_site.email = params[:email]
@@ -727,11 +745,11 @@ post '/change_email' do
     current_site.save_changes
     send_confirmation_email
     flash[:success] = 'Successfully changed email. We have sent a confirmation email, please use it to confirm your email address.'
-    redirect '/settings'
+    redirect '/settings#email'
   end
 
-  current_site.reload
-  erb :settings
+  flash[:error] = current_site.errors.first.last.first
+  redirect '/settings#email'
 end
 
 post '/change_name' do
@@ -740,12 +758,12 @@ post '/change_name' do
 
   if params[:name] == nil || params[:name] == ''
     flash[:error] = 'Name cannot be blank.'
-    redirect '/settings'
+    redirect '/settings#username'
   end
 
   if old_username == params[:name]
     flash[:error] = 'You already have this name.'
-    redirect '/settings'
+    redirect '/settings#username'
   end
 
   old_host = current_site.host
@@ -764,9 +782,10 @@ post '/change_name' do
     end
 
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
-    redirect '/settings'
+    redirect '/settings#username'
   else
-    halt erb(:'settings')
+    flash[:error] = current_site.errors.first.last.first
+    redirect '/settings#username'
   end
 end
 
@@ -774,7 +793,7 @@ post '/change_nsfw' do
   require_login
   current_site.update is_nsfw: params[:is_nsfw]
   flash[:success] = current_site.is_nsfw ? 'Marked 18+' : 'Unmarked 18+'
-  redirect '/settings'
+  redirect '/settings#nsfw'
 end
 
 post '/site_files/create_page' do

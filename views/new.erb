@@ -73,17 +73,17 @@
     <p><strong>The site you are creating will be free, forever.</strong> We will never charge you for your web site.</p>
     <p><a href="/donate" target="_blank">Neocities has to pay the bills though</a>, and we like the idea of being able to work on the site full-time someday. So if you would like to help us reach this goal, we have created the <strong>Supporter Plan</strong>!
 
-    <p>Right now, the <strong>Supporter Plan</strong> is the same as the free plan, except that <strong>Supporter Plan members get 200MB</strong> of web space. You will also be listed as a supporter on our contributors page, and on your site profile page.</p>
+    <p>Right now, the <strong>Supporter Plan</strong> is the same as the free plan, except that <strong>Supporter Plan members get <%= Site::SUPPORTER_MAXIMUM.to_space_pretty %></strong> of web space. You will also be listed as a supporter on our contributors page, and on your site profile page.</p>
     <p>The base plan is $12 ($1/month) billed once per year, which is the cost of <a href="/img/yafagrillmenu.jpg" target="_blank">a delicious Yafa Combo with a lousy tip</a>. If you ever decide to cancel, you get to keep the extra space. Thanks for helping us run this site!</p>
 
     <div>
       <input type="radio" name="plan" value="free" <%= params[:plan].nil? || params[:plan] == 'free' ? 'checked' : '' %>>
-      <span><strong>Free Plan (<%= Site::FREE_MAXIMUM_IN_MEGABYTES %>MB)</strong></span>
+      <span><strong>Free Plan (<%= Site::FREE_MAXIMUM.to_space_pretty %>)</strong></span>
     </div>
     <a name="plan_error_link"></a>
     <div>
       <input id="supporter" type="radio" name="plan" value="supporter" <%= params[:plan] == 'supporter' ? 'checked' : '' %>>
-      <span><strong>Supporter Plan (<%= Site::SUPPORTER_MAXIMUM_IN_MEGABYTES %>MB)</strong></span>
+      <span><strong>Supporter Plan (<%= Site::SUPPORTER_MAXIMUM.to_space_pretty %>)</strong></span>
     </div>
 
     <div id="plan_container" style="margin-top:20px; display: none">

@@ -33,15 +33,35 @@
           <a href="/signin" class="sign-In" title="Sign into your account">Sign In</a>
         </li>
       <% else %>
-        <li>
-          <a href="/dashboard" class="sign-In">Edit Site</a>
+
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <%= current_site.username %> <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu pull-left">
+            <li class="dropdown-submenu pull-left">
+              <a tabindex="-1" href="#">Change Site</a>
+              <ul class="dropdown-menu">
+                <% current_site.other_sites.each do |site| %>
+                  <li>
+                    <a href="#"><%= site.username %></a><br>
+                  </li>
+                <% end %>
+              </ul>
+            </li>
+            <li>
+              <a href="/dashboard" class="sign-In">Edit Site</a>
+            </li>
+            <li>
+              <a href="/settings" class="sign-In">Settings</a>
+            </li>
+            <li>
+              <a href="/signout" class="sign-In">Signout</a>
+            </li>
+          </ul>
         </li>
-        <li>
-          <a href="/settings" class="sign-In">Settings</a>
-        </li>
-        <li>
-          <a href="/signout" class="sign-In">Signout</a>
-        </li>
+
+
       <% end %>
       </ul>
   

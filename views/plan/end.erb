@@ -12,7 +12,7 @@
 <div class="content single-Col misc-page">
   <h3>Ending the Supporter Plan</h3>
   <p>
-    You currently have the <strong><%= current_site.plan_name %> (<%= current_site.maximum_space_in_megabytes %>MB)</strong> - <%= @plan_name %>.
+    You currently have the <strong><%= current_site.plan_name %> (<%= current_site.maximum_space.to_space_pretty %>)</strong> - <%= @plan_name %>.
   </p>
   <p>
     If you need to end the plan, you can do that here. We'll be sorry to see you go. If there's a reason you're ending that we can help with, please <a href="/contact">contact us</a> and we'll see if we can help you with your issue. Regardless, we'll let you keep your site and the extra space. We hope you'll decide to become a supporter again in the future!
