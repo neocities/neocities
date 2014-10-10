@@ -499,7 +499,7 @@ a.tag:hover {
 .news-item {
   width: 100%;
   float: left;
-  margin: 1.5em 0;
+  margin: 1em 0;
 }
 /*
 .news-item.update, .news-item.tags, .news-item.comment.for-me, .news-item.tip.for-me {
@@ -566,9 +566,11 @@ a.tag:hover {
 }
 .news-item .date {
   float: right;
-  color: #aaa;
   font-size: 11px;
   margin-top: .5em;
+}
+.news-item .date a {
+  color: #aaa;
 }
 .news-item .files {
   background: #eee;

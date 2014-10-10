@@ -40,7 +40,7 @@
           <!-- <a href="#" class="btn-Action tip"><span>Tip</span></a> -->
         <% end %>
 
-        <a href="#" id="shareButton" class="btn-Action share" data-container="body" data-toggle="popover" data-placement="bottom" data-content='
+        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='
 
           <a href="/site/<%= site.username %>.rss"><span>RSS/Atom Feed</span></a>
           <br>
@@ -58,7 +58,7 @@
           <br>
           <a href="https://plus.google.com/share?<%= Rack::Utils.build_query(url: "http://#{site.host}") %>" target="_blank">Google+</a>
         '>
-          <span>Share</span></a>
+         <i class="fa fa-share-alt"></i> <span>Share</span></a>
       </div>
     </div>
   </div>
