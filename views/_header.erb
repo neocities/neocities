@@ -33,18 +33,21 @@
           <a href="/signin" class="sign-In" title="Sign into your account">Sign In</a>
         </li>
       <% else %>
-        <li>
-          <a href="/dashboard" class="sign-In">Edit Site</a>
-        </li>
-        <li>
-          <a href="/settings" class="sign-In">Settings</a>
-        </li>
-        <li>
-          <a href="/signout" class="sign-In">Signout</a>
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= current_site.username %> <span class="info"><span class="notification-value">3</span><i class="fa fa-caret-down"></i></span></a>
+          <ul class="dropdown-menu">
+              <li><a href="/site/<%= current_site.username %>">Profile</a></li>
+              <li><a href="/?activity=mine">Activity <span class="notification-value">3</span></a></li>
+              <li class="divider"></li>
+              <li><a href="/dashboard">Edit Site</a></li>
+              <li><a href="//<%= current_site.host %>" target="_blank">View Site</a></li>
+              <li class="divider"></li>
+              <li><a href="/settings">Settings</a></li>
+              <li><a href="/signout">Sign Out</a></li>
+          </ul>
         </li>
       <% end %>
       </ul>
-  
   </nav>
 
 <h1 class="logo int-Logo">

@@ -242,6 +242,51 @@
 		&:hover{background:#528995; text-decoration:underline}
 		&.selected, &:active{background:#528995; text-decoration:underline}
 	}
+  
+  .notification-value {
+    background: $c-Brand-1;
+    padding: 2px 5px;
+    @include border-radius(4px);
+  }
+  
+  .dropdown {
+    height: 2.6em; //not sure why I need this :/
+    
+    a {
+      width:100%;
+    }
+    .info {
+      float:right;
+      margin-left: 10px;
+      
+      .fa-caret-down {
+        margin-left:10px;
+      }
+    }
+  }
+  .dropdown-menu {
+    top: 100%;
+    right: -1px;
+    left: auto;
+    background-color:#4C818C;
+    @include border-radius(0px 0px 6px 6px);
+    
+    li {
+      width:100%;
+      
+      a:hover {
+        background:#3C6670;
+      }
+    }
+    .divider {
+      border-bottom: 1px solid #5e95a1;
+      margin: 5px 0px;
+    }
+    .notification-value {
+      float:right;
+      padding: 0px 5px;
+    }
+  }
 }
 .constant-Nav{
   float:left;
