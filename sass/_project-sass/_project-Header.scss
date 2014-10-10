@@ -57,6 +57,14 @@
       color: #B8D375;
       font-size: .9em;
       margin-bottom: 1.8em;
+      
+      a {
+        color: #B8D375;
+        text-decoration: underline;
+      }
+      a:hover {
+        text-decoration: none;
+      }
     }
     h2.section-header {
       font-size: 2.2em;
