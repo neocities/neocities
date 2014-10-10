@@ -154,22 +154,6 @@
 .files .btn-Action {
   margin-left: 8px;
 }
-.btn-Action span {
-  background-repeat: no-repeat;
-}
-.btn-Action.new-Page span {
-  background-image: url(/img/new-page.png);
-  background-position-y: 1px;
-  padding-left: 29px;
-}
-.btn-Action.new-Folder span {
-  background-image: url(/img/new-folder.png);
-  padding-left: 26px;
-}
-.btn-Action.upload span {
-  background-image: url(/img/upload.png);
-  padding-left: 24px;
-}
 .files .list {
   padding: 20px;
 }

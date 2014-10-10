@@ -78,6 +78,10 @@
     &:hover{
       @include linear-gradient(top, #d51c3a, #841526);
     }
+    
+    .fa {
+      margin-right:5px;
+    }
 }
    
 .btn-Action-2{@extend %btn; background:$c-Btn-2;
