@@ -83,17 +83,13 @@
                     <% unless current_site.commenting_allowed? %>disabled<% end %>
             >Post</button>
           </form>
+          
+          <% unless current_site.commenting_allowed? %>
+              <p class="comment-policy">
+                  To prevent spam, you cannot comment until you have updated your site <strong><%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %> times</strong> (on <%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %> separate days), and your account is one week old. While waiting, now is a great time to <a href="/dashboard">start building your awesome site!</a>
+              </p>
+          <% end %>
         </div>
-
-        <% unless current_site.commenting_allowed? %>
-          <div class="post-comment">
-            <p>
-              <small>
-                Note: To prevent spam, you cannot comment until you have updated your site <strong><%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %></strong> times (on <%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %> separate days),<br> and your account is one week old. While waiting, now is a great time to <a href="/dashboard">start building your awesome site!</a>
-              </small>
-            </p>
-          </div>
-        <% end %>
     <% end %>
 
     <% if @latest_events.empty? %>
