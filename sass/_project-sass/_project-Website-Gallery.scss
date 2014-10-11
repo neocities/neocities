@@ -10,6 +10,7 @@
     @extend .col-25;
     float:left;
     margin-bottom:$spacing*2;
+    @include box-shadow(1px 1px 2px 0px rgba(0, 0, 0, 0.15));
     
     @media (max-device-width:480px), screen and (max-width:800px){
       width:50%
@@ -36,9 +37,6 @@
       
       background-color: white;
       border: 9px solid white;
-      -moz-box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
-      -webkit-box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
-      box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
       
       @media (max-device-width:480px), screen and (max-width:800px){
         width:49%
