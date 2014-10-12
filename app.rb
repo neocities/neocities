@@ -557,6 +557,8 @@ end
 def require_ownership_for_settings
   @site = Site[username: params[:username]]
 
+  not_found if @site.nil?
+
   unless @site.owned_by? parent_site
     flash[:error] = 'Cannot edit this site, you do not have permission.'
     redirect request.referrer

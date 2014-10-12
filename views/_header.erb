@@ -45,7 +45,7 @@
                 <ul class="dropdown-menu">
                   <% current_site.other_sites_dataset.select(:username).all.each do |site| %>
                     <li>
-                      <a href="/signin/<%= site.username %>"><%= site.username %></a><br>
+                      <a href="/signin/<%= site.username %>"><%= site.username %></a>
                     </li>
                   <% end %>
                 </ul>
@@ -62,7 +62,6 @@
             </li>
           </ul>
         </li>
-
 
       <% end %>
       </ul>

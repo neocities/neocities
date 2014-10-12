@@ -80,6 +80,29 @@ def generate_ssl_certs(opts={})
 end
 
 describe 'site/settings' do
+  describe 'permissions' do
+    include Capybara::DSL
+
+    before do
+      @parent_site = Fabricate :site
+      @child_site = Fabricate :site, parent_site_id: @parent_site.id
+      @other_site = Fabricate :site
+    end
+
+    it 'fails without permissions' do
+      page.set_rack_session id: @other_site.id
+
+      visit "/settings/#{@parent_site.username}"
+      page.current_path.must_equal '/' # This could be better
+    end
+
+    it 'allows child site editing from parent' do
+      page.set_rack_session id: @parent_site.id
+      visit "/settings/#{@child_site.username}"
+      page.current_path.must_equal "/settings/#{@child_site.username}"
+    end
+  end
+
   describe 'ssl' do
     include Capybara::DSL
 

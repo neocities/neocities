@@ -92,7 +92,7 @@ class Site < Sequel::Model
 
   SUGGESTIONS_LIMIT = 32
   SUGGESTIONS_VIEWS_MIN = 500
-  CHILD_SITES_MAX = 1000
+  CHILD_SITES_MAX = 100
 
   PLAN_FEATURES[:catbus] = PLAN_FEATURES[:fatcat].merge(
     name: 'Cat Bus',
@@ -149,7 +149,7 @@ class Site < Sequel::Model
   one_to_many :children, :key => :parent_site_id, :class => self
 
   def account_sites_dataset
-    Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id}))
+    Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id})).order(:parent_site_id.desc, :username)
   end
 
   def account_sites
@@ -199,6 +199,8 @@ class Site < Sequel::Model
       else
         site = self[username: username_or_email]
       end
+      return nil if site.nil? || site.is_banned || site.owner.is_banned
+      site
     end
   end
 
@@ -341,6 +343,12 @@ class Site < Sequel::Model
     file_list.each do |path|
       purge_cache path
     end
+  end
+
+  def ban_all_sites_on_account!
+    DB.transaction {
+      account_sites.all {|site| site.ban! }
+    }
   end
 
 =begin
@@ -679,8 +687,8 @@ class Site < Sequel::Model
         errors.add :domain, "Domain provided is already being used by another site, please choose another."
       end
 
-      if new? && !parent? && CHILD_SITE_MAX == children_dataset.count
-        errors.add :child_site_id, "Cannot add child site, exceeds #{CHILD_SITE_MAX} limit."
+      if new? && !parent? && account_sites_dataset.count >= CHILD_SITES_MAX
+        errors.add :child_site_id, "Cannot add child site, exceeds #{CHILD_SITES_MAX} limit."
       end
     end
 
@@ -806,12 +814,12 @@ class Site < Sequel::Model
 
   # This returns true even if they end their support plan.
   def supporter?
-    !values[:stripe_customer_id].nil?
+    !owner.values[:stripe_customer_id].nil?
   end
 
   # This will return false if they have ended their plan.
   def ended_supporter?
-    values[:plan_ended]
+    owner.values[:plan_ended]
   end
 
   def plan_name
