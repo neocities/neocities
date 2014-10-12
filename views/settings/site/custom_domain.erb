@@ -1,0 +1,60 @@
+<h2>Custom Domain</h2>
+<h3 class="subtitle">Add your own domain name to your Neocities site!</h3>
+
+<p>
+  Adding a custom domain allows you to have a domain name attached to your web site. So if you had a domain like <strong>catsknitting.com</strong>, you could have it point to your Neocities site!
+</p>
+
+<p>
+  You will have to purchase a domain name from a registrar like <a href="https://www.namecheap.com/?aff=53678" target="_blank">Namecheap</a>, and then add an A record to point your domain (catsknitting.com) to the following IP address:
+</p>
+
+<p><code>198.27.81.179</code></p>
+
+<p>
+  If you want to add a <strong>www</strong> subdomain, or use a wildcard that will answer to everything (<strong>*</strong>), you will have to make a CNAME pointing to <strong>catsknitting.com</strong> for <strong>www</strong> and/or <strong>*</strong>.
+</p>
+
+<p>
+  After that, you can add the domain to the box below (just the <strong>catsknitting.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes:
+</p>
+
+<form method="POST" action="/settings/<%= @site.username %>/custom_domain">
+  <%== csrf_token_input_html %>
+  <input name="domain" type="text" placeholder="catsknitting.com" value="<%= @site.domain %>">
+  <br>
+  <input class="btn-Action" type="submit" value="Update Domain">
+</form>
+
+<h2>Add SSL Certificate</h2>
+<p>
+  This allows you to add an SSL key and certificate for your domain, enabling encryption for your site (https). It can take up to 5-30 minutes for the changes to go live, so please be patient. All files must be in PEM format. If your certificate is not bundled with the root and intermediate certificates, ask your certificate provider for help on how to do that.
+</p>
+
+<% if @site.domain.nil? || @site.domain.empty? %>
+  <p><strong>Cannot upload SSL certificate until domain is added.</strong></p>
+<% else %>
+
+  <form method="POST" action="/settings/<%= @site.username %>/ssl" enctype="multipart/form-data">
+    <%== csrf_token_input_html %>
+
+    <p>
+      <strong>
+        Status: <%= @site.ssl_installed? ? 'Installed' : 'Inactive' %>
+      </strong>
+    </p>
+
+    <p>
+      SSL Key (yourdomain.com.key):
+      <input name="key" type="file">
+    </p>
+
+    <p>
+      Bundled Certificates (yourdomain.com-bundle.crt):
+      <input name="cert" type="file">
+    </p>
+
+    <input class="btn-Action" type="submit" value="Upload SSL Key and Certificate">
+
+  </form>
+<% end %>

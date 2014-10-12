@@ -1,0 +1,89 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>Site Settings for <%= @site.username %></h1>
+  	<h3 class="subtitle"><strong><a href="/settings">Click here</a> to go back to the account menu.</a></strong></h3>
+  </div>
+</div>
+
+<div class="content single-Col misc-page txt-Center">
+  <article>
+    <section>
+			<div class="txt-Center">
+				<% if flash[:success] %>
+					<div class="alert alert-block alert-success" style="margin-top: 20px">
+						<%== flash[:success] %>
+					</div>
+				<% end %>
+
+        <% if flash[:error] %>
+          <div class="alert alert-block alert-error" style="margin-top: 20px">
+            <%== flash[:error] %>
+          </div>
+        <% end %>
+			</div>
+      <div class="tabbable" style="margin-top: 20px"> <!-- Only required for left/right tabs -->
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
+          <li><a href="#custom_domain" data-toggle="tab">Custom Domain</a></li>
+          <li><a href="#username" data-toggle="tab">Username</a></li>
+          <li><a href="#nsfw" data-toggle="tab">18+</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="profile">
+            <%== erb :'settings/site/profile' %>
+          </div>
+          <div class="tab-pane" id="custom_domain">
+            <%== erb :'settings/site/custom_domain' %>
+          </div>
+          <div class="tab-pane" id="username">
+            <%== erb :'settings/site/username' %>
+          </div>
+          <div class="tab-pane" id="nsfw">
+            <%== erb :'settings/site/nsfw' %>
+          </div>
+        </div>
+      </div>
+
+<!--
+      <h2>Delete Site</h2>
+        <p class="tiny">
+          If you want to delete your account, you can do that here. We're sorry to see you go, but we understand if Neocities isn't right for you. If there's any specific reason you're leaving, it would be great if you <a href="/contact">let us know</a> so we can try to make your experience better in the future.
+        </p>
+
+        <div>
+          <a href="#deleteSite" data-toggle="modal" class="btn">Delete Site</a>
+        </div>
+-->
+    </section>
+  </article>
+</div>
+
+<div class="modal hide fade" id="deleteSite" tabindex="-1" role="dialog" aria-labelledby="deleteSiteLabel" aria-hidden="true">
+  <form method="POST" action="/site/delete">
+    <%== csrf_token_input_html %>
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <h3 id="deleteSiteLabel">Permanently Delete Site</h3>
+    </div>
+    <div class="modal-body">
+      <strong style="color: red">WARNING: This will permanently delete your web site and Neocities account. There is no undo!</strong>
+
+      <p>Delete Site Name: <strong><%= current_site.username %></strong></p>
+      <p>Confirm your site name by typing it here:</p>
+      <input class="input-Area" name="username" type="text">
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn btn-Action">Permanently Delete Site</button>
+    </div>
+  </form>
+</div>
+
+<script>
+$(document).ready(function() {
+    if (location.hash !== '') $('a[href="' + location.hash + '"]').tab('show');
+    return $('a[data-toggle="tab"]').on('shown', function(e) {
+      return location.hash = $(e.target).attr('href').substr(1);
+    });
+});
+</script>

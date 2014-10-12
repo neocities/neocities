@@ -1,11 +1,11 @@
 <h2>Site Profile</h2>
 <div>
-  <form method="POST" action="/settings/profile">
+  <form method="POST" action="/settings/<%= @site.username %>/profile">
     <%== csrf_token_input_html %>
     <p>
       <input name="site[profile_comments_enabled]" type="hidden" value="true">
       <input name="site[profile_comments_enabled]" type="checkbox" value="false"
-        <% if current_site.profile_comments_enabled == false %>checked<% end %>
+        <% if @site.profile_comments_enabled == false %>checked<% end %>
       > Turn off profile comments
     </p>
 

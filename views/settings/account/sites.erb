@@ -1,0 +1,32 @@
+<h2>Your Sites</h2>
+
+<table class="table">
+  <% current_site.account_sites_dataset.each do |site| %>
+    <tr>
+      <td>
+        <a href="//<%= site.host %>" target="_blank"><%= site.username %></a>
+        <% if site.parent? %>
+          <strong>(parent account)</strong>
+        <% end %>
+      </td>
+      <td>
+        <a href="/settings/<%= site.username %>">Settings</a>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+<h3>Create New Site</h3>
+
+<p>You can now create new sites that are linked to this account! Sites will share the free space you have available. You have <strong><%= Site::CHILD_SITES_MAX - current_site.account_sites_dataset.count %></strong> new sites remaining.</p>
+
+<form action="/settings/create_child" method="POST">
+  <%== csrf_token_input_html %>
+  
+  <p>Site Name:</p>
+  <input name="username" type="text">
+
+  <div>
+    <input class="btn-Action" type="submit" value="Create New Site">
+  </div>
+</form>
