@@ -45,7 +45,7 @@
             <li><a href="/settings">Settings</a></li>
 
             <% if current_site.other_sites_dataset.count > 0 %>
-              <li class="dropdown-submenu pull-left">
+              <li class="dropdown-submenu pull-right">
                 <a tabindex="-1" href="#" onclick="return false">Switch Site</a>
                 <ul class="dropdown-menu">
                   <% current_site.other_sites_dataset.select(:username).all.each do |site| %>
