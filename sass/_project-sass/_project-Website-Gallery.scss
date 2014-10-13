@@ -10,6 +10,7 @@
     @extend .col-25;
     float:left;
     margin-bottom:$spacing*2;
+    color: #666;
     @include box-shadow(1px 1px 2px 0px rgba(0, 0, 0, 0.15));
     
     @media (max-device-width:480px), screen and (max-width:800px){
@@ -17,9 +18,9 @@
     }
   }
   
-  li a {
-    display:block;
-  }
+//  li a {
+//    display:block;
+//  }
   .site-info a {
     color: #666;
     font-size: 80%;
@@ -27,6 +28,14 @@
   .title {
     margin-top: 8px;
     margin-bottom: 2px;
+  }
+  .site-tags {
+    width: 100%;
+    clear: both;
+    height: 1.4em;
+  }
+  .site-tags .fa-tag {
+    vertical-align: -2px;
   }
   
   &.int-Gall{
@@ -37,7 +46,11 @@
       
       background-color: white;
       border: 9px solid white;
-      
+      overflow: hidden;
+
+      @media (max-width:1000px){
+        width:32%
+      }      
       @media (max-device-width:480px), screen and (max-width:800px){
         width:49%
       }
