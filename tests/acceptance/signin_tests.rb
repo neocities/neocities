@@ -18,7 +18,7 @@ describe 'signin' do
     Capybara.reset_sessions!
   end
 
-  it 'fails for invalid login' do
+  it 'fails for invalid signin' do
     visit '/'
     click_link 'Sign In'
     page.must_have_content 'Welcome Back'
@@ -27,7 +27,7 @@ describe 'signin' do
     page.must_have_content 'Invalid login'
   end
 
-  it 'fails for missing login' do
+  it 'fails for missing signin' do
     visit '/'
     click_link 'Sign In'
     auth = {username: SecureRandom.hex, password: Faker::Internet.password}
@@ -37,7 +37,7 @@ describe 'signin' do
     page.must_have_content 'Invalid login'
   end
 
-  it 'logs in with proper credentials' do
+  it 'signs in with proper credentials' do
     visit '/'
     click_button 'Create My Website'
     fill_in_valid_signup
@@ -46,6 +46,20 @@ describe 'signin' do
     visit '/'
     click_link 'Sign In'
     fill_in 'username', with: @site[:username]
+    fill_in 'password', with: @site[:password]
+    click_button 'Sign In'
+    page.must_have_content 'Your Feed'
+  end
+
+  it 'signs in with email' do
+    visit '/'
+    click_button 'Create My Website'
+    fill_in_valid_signup
+    click_button 'Create Home Page'
+    Capybara.reset_sessions!
+    visit '/'
+    click_link 'Sign In'
+    fill_in 'username', with: @site[:email]
     fill_in 'password', with: @site[:password]
     click_button 'Sign In'
     page.must_have_content 'Your Feed'

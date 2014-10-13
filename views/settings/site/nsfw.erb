@@ -4,14 +4,14 @@
   If your site contains objectionable (18+) content, check this box. Your site will not be removed, but it will be listed on a special browse page. We don't have an official policy on what defines 18+ content yet, but basically it's just pornography and lewd/sick/gross images. Thanks for your patience and understanding as we try to find a way to balance out the needs of everyone.
 </p>
 
-<form method="POST" action="/change_nsfw">
+<form method="POST" action="/settings/<%= @site.username %>/change_nsfw">
   <%== csrf_token_input_html %>
   <input name="is_nsfw" type="hidden" value="false">
   <p>
     <strong>
       My page has 18+ content:&nbsp;&nbsp;&nbsp;
       <input name="is_nsfw" type="checkbox" value="true" style="margin-top: 0px"
-        <% if current_site.is_nsfw %>checked<% end %>
+        <% if @site.is_nsfw %>checked<% end %>
       >
     </strong>
   </p>

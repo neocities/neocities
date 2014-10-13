@@ -1,5 +1,5 @@
 <h2>Change Site (User) Name</h2>
-<form method="POST" action="/change_name">
+<form method="POST" action="/settings/<%= @site.username %>/change_name">
   <%== csrf_token_input_html %>
   <p class="tiny">
     It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
@@ -7,7 +7,7 @@
 
   <p>
     Current Name:
-    <span style="color: green"><strong><%= current_site.username %></strong></span>
+    <span style="color: green"><strong><%= @site.username %></strong></span>
   </p>
 
   <p>

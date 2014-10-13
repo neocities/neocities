@@ -12,7 +12,7 @@
 <div class="content single-Col misc-page">
   <h3>Change your Supporter Plan</h3>
   <p>
-    You currently have the <strong><%= current_site.plan_name %> (<%= current_site.maximum_space_in_megabytes %>MB)</strong> - <%= @plan_name %>.
+    You currently have the <strong><%= parent_site.plan_name %> (<%= parent_site.maximum_space.to_space_pretty %>)</strong> - <%= @plan_name %>.
   </p>
 
   <a href="/plan/end">End plan</a>

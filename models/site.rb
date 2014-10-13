@@ -34,11 +34,8 @@ class Site < Sequel::Model
     geojson csv tsv mf ico pdf asc key pgp xml mid midi
   }
 
-  ONE_MEGABYTE_IN_BYTES = 1048576
-  FREE_MAXIMUM_IN_MEGABYTES = 20
-  SUPPORTER_MAXIMUM_IN_MEGABYTES = 1024
-  FREE_MAXIMUM_IN_BYTES = FREE_MAXIMUM_IN_MEGABYTES * ONE_MEGABYTE_IN_BYTES
-  SUPPORTER_MAXIMUM_IN_BYTES = SUPPORTER_MAXIMUM_IN_MEGABYTES * ONE_MEGABYTE_IN_BYTES
+  FREE_MAXIMUM = 20 * Numeric::ONE_MEGABYTE
+  SUPPORTER_MAXIMUM = 1000 * Numeric::ONE_MEGABYTE
 
   MINIMUM_PASSWORD_LENGTH = 5
   BAD_USERNAME_REGEX = /[^\w-]/i
@@ -95,6 +92,7 @@ class Site < Sequel::Model
 
   SUGGESTIONS_LIMIT = 32
   SUGGESTIONS_VIEWS_MIN = 500
+  CHILD_SITES_MAX = 100
 
   PLAN_FEATURES[:catbus] = PLAN_FEATURES[:fatcat].merge(
     name: 'Cat Bus',
@@ -147,9 +145,42 @@ class Site < Sequel::Model
 
   one_to_many :site_changes
 
+  many_to_one :parent, :key => :parent_site_id, :class => self
+  one_to_many :children, :key => :parent_site_id, :class => self
+
+  def account_sites_dataset
+    Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id})).order(:parent_site_id.desc, :username)
+  end
+
+  def account_sites
+    account_sites_dataset.all
+  end
+
+  def other_sites_dataset
+    account_sites_dataset.exclude(id: self.id)
+  end
+
+  def other_sites
+    account_sites_dataset.exclude(id: self.id).all
+  end
+
+  def account_sites_events_dataset
+    ids = account_sites_dataset.select(:id).all.collect {|s| s.id}
+    Event.where(id: ids)
+  end
+
+  def owner
+    parent? ? self : parent
+  end
+
+  def owned_by?(site)
+    !account_sites_dataset.select(:id).where(id: site.id).first.nil?
+  end
+
   class << self
-    def valid_login?(username, plaintext)
-      site = self[username: username]
+    def valid_login?(username_or_email, plaintext)
+      site = get_with_identifier username_or_email
+
       return false if site.nil?
       site.valid_password? plaintext
     end
@@ -160,6 +191,16 @@ class Site < Sequel::Model
 
     def bcrypt_cost=(cost)
       @bcrypt_cost = cost
+    end
+
+    def get_with_identifier(username_or_email)
+      if username_or_email =~ /@/
+        site = self.where(email: username_or_email).where(parent_site_id: nil).first
+      else
+        site = self[username: username_or_email]
+      end
+      return nil if site.nil? || site.is_banned || site.owner.is_banned
+      site
     end
   end
 
@@ -204,7 +245,14 @@ class Site < Sequel::Model
   end
 
   def valid_password?(plaintext)
-    BCrypt::Password.new(values[:password]) == plaintext
+    valid = BCrypt::Password.new(owner.values[:password]) == plaintext
+
+    if !valid?
+      return false if values[:password].nil?
+      valid = BCrypt::Password.new(values[:password]) == plaintext
+    end
+
+    valid
   end
 
   def password=(plaintext)
@@ -297,6 +345,12 @@ class Site < Sequel::Model
     end
   end
 
+  def ban_all_sites_on_account!
+    DB.transaction {
+      account_sites.all {|site| site.ban! }
+    }
+  end
+
 =begin
   def follows_dataset
     super.where(Sequel.~(site_id: blocking_site_ids))
@@ -315,12 +369,18 @@ class Site < Sequel::Model
 =end
 
   def commenting_allowed?
-    return true if commenting_allowed
+    return true if owner.commenting_allowed
 
-    if events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT &&
-       created_at < Time.now - 604800
+    if owner.supporter?
       set commenting_allowed: true
       save_changes validate: false
+      return true
+    end
+
+    if account_sites_events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT &&
+       created_at < Time.now - 604800
+      owner.set commenting_allowed: true
+      owner.save_changes validate: false
       return true
     end
 
@@ -554,6 +614,10 @@ class Site < Sequel::Model
     super
   end
 
+  def parent?
+    parent_site_id.nil?
+  end
+
 #  def after_destroy
 #    FileUtils.rm_rf files_path
 #    super
@@ -576,7 +640,7 @@ class Site < Sequel::Model
     end
 
     # Check that email has been provided
-    if values[:email].empty?
+    if parent? && values[:email].empty?
       errors.add :email, 'An email address is required.'
     end
 
@@ -586,12 +650,12 @@ class Site < Sequel::Model
       email_check.exclude!(id: self.id) unless new?
       email_check = email_check.first
 
-      if email_check && email_check.id != self.id
+      if parent? && email_check && email_check.id != self.id
         errors.add :email, 'This email address already exists on Neocities, please use your existing account instead of creating a new one.'
       end
     end
 
-    unless values[:email] =~ EMAIL_SANITY_REGEX
+    if parent? && (values[:email] =~ EMAIL_SANITY_REGEX).nil?
       errors.add :email, 'A valid email address is required.'
     end
 
@@ -604,7 +668,7 @@ class Site < Sequel::Model
       end
     end
 
-    if values[:password].nil? || (@password_length && @password_length < MINIMUM_PASSWORD_LENGTH)
+    if parent? && (values[:password].nil? || (@password_length && @password_length < MINIMUM_PASSWORD_LENGTH))
       errors.add :password, "Password must be at least #{MINIMUM_PASSWORD_LENGTH} characters."
     end
 
@@ -621,6 +685,10 @@ class Site < Sequel::Model
       site = Site[domain: values[:domain]]
       if !site.nil? && site.id != self.id
         errors.add :domain, "Domain provided is already being used by another site, please choose another."
+      end
+
+      if new? && !parent? && account_sites_dataset.count >= CHILD_SITES_MAX
+        errors.add :child_site_id, "Cannot add child site, exceeds #{CHILD_SITES_MAX} limit."
       end
     end
 
@@ -715,49 +783,43 @@ class Site < Sequel::Model
     list.select {|f| f[:is_directory] == false}.sort_by{|f| f[:name].downcase}
   end
 
-  def file_size_too_large?(size_in_bytes)
-    return true if size_in_bytes + used_space_in_bytes > maximum_space_in_bytes
+  def file_size_too_large?(size)
+    return true if size + used_space > maximum_space
     false
   end
 
-  def used_space_in_bytes
+  def used_space
     space = Dir.glob(File.join(files_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
     space.nil? ? 0 : space
   end
 
-  def used_space_in_megabytes
-    (used_space_in_bytes.to_f / self.class::ONE_MEGABYTE_IN_BYTES).round(2)
+  def total_used_space
+    total = 0
+    account_sites.each {|s| total += s.used_space}
+    total
   end
 
-  def available_space_in_bytes
-    remaining = maximum_space_in_bytes - used_space_in_bytes
+  def remaining_space
+    remaining = maximum_space - total_used_space
     remaining < 0 ? 0 : remaining
   end
 
-  def available_space_in_megabytes
-    (available_space_in_bytes.to_f / self.class::ONE_MEGABYTE_IN_BYTES).round(2)
-  end
-
-  def maximum_space_in_bytes
-    supporter? ? self.class::SUPPORTER_MAXIMUM_IN_BYTES : self.class::FREE_MAXIMUM_IN_BYTES
-  end
-
-  def maximum_space_in_megabytes
-    supporter? ? self.class::SUPPORTER_MAXIMUM_IN_MEGABYTES : self.class::FREE_MAXIMUM_IN_MEGABYTES
+  def maximum_space
+    (parent? ? self : parent).supporter? ? SUPPORTER_MAXIMUM : FREE_MAXIMUM
   end
 
   def space_percentage_used
-    ((used_space_in_bytes.to_f / maximum_space_in_bytes) * 100).round(1)
+    ((total_used_space.to_f / maximum_space) * 100).round(1)
   end
 
   # This returns true even if they end their support plan.
   def supporter?
-    !values[:stripe_customer_id].nil?
+    !owner.values[:stripe_customer_id].nil?
   end
 
   # This will return false if they have ended their plan.
   def ended_supporter?
-    values[:plan_ended]
+    owner.values[:plan_ended]
   end
 
   def plan_name

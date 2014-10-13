@@ -36,25 +36,39 @@
         <li class="dropdown">
           <a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= current_site.username %> <span class="info"><span class="notification-value">3</span><i class="fa fa-caret-down"></i></span></a>
           <ul class="dropdown-menu">
-              <li><a href="/site/<%= current_site.username %>">Profile</a></li>
-              <li><a href="/?activity=mine">Activity <span class="notification-value">3</span></a></li>
-              <li class="divider"></li>
-              <li><a href="/dashboard">Edit Site</a></li>
-              <li><a href="//<%= current_site.host %>" target="_blank">View Site</a></li>
-              <li class="divider"></li>
-              <li><a href="/settings">Settings</a></li>
-              <li><a href="/signout">Sign Out</a></li>
+            <li><a href="/site/<%= current_site.username %>">Profile</a></li>
+            <li><a href="/?activity=mine">Activity <span class="notification-value">3</span></a></li>
+            <li class="divider"></li>
+            <li><a href="/dashboard">Edit Site</a></li>
+            <li><a href="//<%= current_site.host %>" target="_blank">View Site</a></li>
+            <li class="divider"></li>
+            <li><a href="/settings">Settings</a></li>
+
+            <% if current_site.other_sites_dataset.count > 0 %>
+              <li class="dropdown-submenu pull-right">
+                <a tabindex="-1" href="#" onclick="return false">Switch Site</a>
+                <ul class="dropdown-menu">
+                  <% current_site.other_sites_dataset.select(:username).all.each do |site| %>
+                    <li>
+                      <a href="/signin/<%= site.username %>"><%= site.username %></a>
+                    </li>
+                  <% end %>
+                </ul>
+              </li>
+            <% end %>
+
+            <li><a href="/signout">Sign Out</a></li>
           </ul>
         </li>
+
       <% end %>
       </ul>
   </nav>
 
-<h1 class="logo int-Logo">
-  <a href="/" title="back to home">
-    <span class="hidden">Neocities.org</span>
-    <img src="/img/cat.png" alt="Neocities.org" />
-  </a>
-</h1>
-
+  <h1 class="logo int-Logo">
+    <a href="/" title="back to home">
+      <span class="hidden">Neocities.org</span>
+      <img src="/img/cat.png" alt="Neocities.org" />
+    </a>
+  </h1>
 </header>
