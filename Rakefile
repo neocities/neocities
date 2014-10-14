@@ -122,26 +122,21 @@ desc 'Clean tags'
 task :cleantags => [:environment] do
 
   Site.select(:id).all.each do |site|
-    site.tags.each do |tag|
-      if tag.name == ''
-        site.remove_tag tag
-      end
-    end
-
-    site.reload
-
     if site.tags.length > 5
       site.tags.slice(5, site.tags.length).each {|tag| site.remove_tag tag}
     end
-
   end
 
-  Tag.where(name: '').delete
+  empty_tag = Tag.where(name: '').first
+
+  if empty_tag
+    DB[:sites_tags].where(tag_id: empty_tag.id).delete
+  end
 
   Tag.all.each do |tag|
-    if tag.name.length > Tag::NAME_LENGTH_MAX
-      tag.sites.each { |site| site.remove_tag tag }
-      tag.delete
+    if tag.name.length > Tag::NAME_LENGTH_MAX || tag.name.match(/ /)
+      DB[:sites_tags].where(tag_id: tag.id).delete
+      DB[:tags].where(id: tag.id).delete
     else
       tag.update name: tag.name.downcase.strip
     end
