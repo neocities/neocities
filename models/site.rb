@@ -700,7 +700,7 @@ class Site < Sequel::Model
       end
 
       if new? && !parent? && account_sites_dataset.count >= CHILD_SITES_MAX
-        errors.add :child_site_id, "Cannot add child site, exceeds #{CHILD_SITES_MAX} limit."
+        errors.add :child_site_id, "For spam prevention reasons, we've capped site creation to #{CHILD_SITES_MAX} sites. Please contact Neocities support to raise your site limit."
       end
     end
 
