@@ -93,11 +93,14 @@
   box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.10);
   border: 4px solid white;
 }
-.interior .signup-Area.large img {
-  border: 6px solid white;
-}
 .interior .header-Outro .screenshot {
-  width:235px;height:141px;
+  width: 357px;
+  height: 212px;
+  display: block;
+  border: 6px solid white;
+  -moz-background-size:cover;
+  -webkit-background-size:cover;
+  background-size:cover;
 }
 .interior .header-Outro ul {
   margin:0;padding:0;
