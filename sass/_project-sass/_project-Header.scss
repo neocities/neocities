@@ -274,6 +274,9 @@
     li {
       width:100%;
       
+      a {
+        float:left;
+      }
       a:hover, a:focus {
         background:#3C6670;
       }
