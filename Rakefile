@@ -140,11 +140,11 @@ task :cleantags => [:environment] do
 
   Tag.all.each do |tag|
     if tag.name.length > Tag::NAME_LENGTH_MAX
-      tag.sites.each { |site| tag.remove_site site }
+      tag.sites.each { |site| site.remove_tag tag }
       tag.delete
+    else
+      tag.update name: tag.name.downcase.strip
     end
-
-    tag.update name: tag.name.downcase.strip
   end
 
   Tag.all.each do |tag|
@@ -161,9 +161,11 @@ task :cleantags => [:environment] do
       matching_tag.delete
     end
   end
+
+  Tag.where(name: 'porn').first.update is_nsfw: true
 end
 
-  require 'thread/pool'
+require 'thread/pool'
 
 desc 'update screenshots'
 task :update_screenshots => [:environment] do

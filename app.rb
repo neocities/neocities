@@ -429,11 +429,12 @@ get '/browse/?' do
       end
   end
 
-  site_dataset.filter! is_nsfw: (params[:is_nsfw] == 'true' ? true : false)
+  site_dataset.where! ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
 
   if params[:tag]
     site_dataset = site_dataset.association_join(:tags)
     site_dataset.where! ['tags.name = ?', params[:tag]]
+    site_dataset.where! ['tags.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
   end
 
   site_dataset = site_dataset.paginate @current_page, 300
