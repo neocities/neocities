@@ -265,11 +265,12 @@
     }
   }
   .dropdown-menu {
-    top: 100%;
     right: -1px;
     left: auto;
     background-color:#4C818C;
+    min-width: 13em;
     @include border-radius(0px 0px 6px 6px);
+    @include box-shadow(0 2px 7px rgba(0,0,0,0.2));
     
     li {
       width:100%;
@@ -302,6 +303,10 @@
       top: 0;
       margin-top: -1px;
       margin-right: 3px;
+      
+      li {
+        overflow: hidden;
+      }
     }
     
     >a:after {
