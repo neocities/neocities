@@ -274,7 +274,7 @@
     li {
       width:100%;
       
-      a:hover {
+      a:hover, a:focus {
         background:#3C6670;
       }
     }
@@ -285,6 +285,24 @@
     .notification-value {
       float:right;
       padding: 0px 5px;
+    }
+  }
+  .dropdown-submenu {
+    float: left;
+    
+    &:hover > a, &:focus > a {
+      background:#3C6670;
+    }
+    
+    .dropdown-menu {
+      margin-left: -1px;
+      top: 0;
+      margin-top: -1px;
+      margin-right: 3px;
+    }
+    
+    >a:after {
+      border-left-color: #fff;
     }
   }
 }
