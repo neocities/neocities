@@ -248,6 +248,8 @@ get '/?' do
     @page_count = events_dataset.page_count || 1
     @events = events_dataset.all
 
+    current_site.events_dataset.update notification_seen: true
+
     halt erb :'home', locals: {site: current_site}
   end
 
@@ -362,7 +364,7 @@ post '/tags/add' do
   current_site.new_tags_string = params[:tags]
 
   if current_site.valid?
-    current_site.save_changes
+    current_site.save_tags
   else
     flash[:errors] = current_site.errors.first
   end
