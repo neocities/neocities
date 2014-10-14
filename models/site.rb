@@ -244,6 +244,14 @@ class Site < Sequel::Model
     super val.downcase
   end
 
+  def unseen_notifications_dataset
+    events_dataset.where notification_seen: false
+  end
+
+  def unseen_notifications_count
+    @unseen_notifications_count ||= unseen_notifications_dataset.count
+  end
+
   def valid_password?(plaintext)
     valid = BCrypt::Password.new(owner.values[:password]) == plaintext
 
@@ -590,6 +598,11 @@ class Site < Sequel::Model
   end
 
   def after_save
+    save_tags
+    super
+  end
+
+  def save_tags
     if @new_filtered_tags
       @new_filtered_tags.each do |new_tag_string|
         add_tag_name new_tag_string
@@ -597,7 +610,6 @@ class Site < Sequel::Model
       @new_filtered_tags = []
       @new_tags_string = nil
     end
-    super
   end
 
   def add_tag_name(name)

@@ -3,7 +3,7 @@
     <div class="col col-66">
       <h3>Your Feed</h3>
       <div class="feed-filter">
-        <% if current_site.followings_dataset.count > 0 %>
+        <% if !@events.empty? %>
         <a href="/" <% if params[:activity] != 'mine' %>class="selected"<% end %>>All Activity</a>
         &nbsp;&nbsp;
         <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>
@@ -23,7 +23,7 @@
   <div class="content misc-page columns right-col">
     <div class="col-left">
       <div class="col col-66">
-        <% if current_site.followings_dataset.count > 0 %>
+        <% if !@events.empty? %>
           <%== erb :'_news', layout: false, locals: {site: current_site, events: @events} %>
         <% else %>
           <div class="welcome">

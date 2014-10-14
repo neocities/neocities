@@ -34,10 +34,24 @@
         </li>
       <% else %>
         <li class="dropdown">
-          <a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= current_site.username %> <span class="info"><span class="notification-value">3</span><i class="fa fa-caret-down"></i></span></a>
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            <%= current_site.username %> 
+            <span class="info">
+              <% if current_site.unseen_notifications_count > 0 %>
+                <span class="notification-value"><%= current_site.unseen_notifications_count %></span>
+              <% end %>
+              <i class="fa fa-caret-down"></i>
+            </span>
+          </a>
           <ul class="dropdown-menu">
             <li><a href="/site/<%= current_site.username %>">Profile</a></li>
-            <li><a href="/?activity=mine">Activity <span class="notification-value">3</span></a></li>
+            <li>
+              <a href="/?activity=mine">Activity 
+                <% if current_site.unseen_notifications_count > 0 %>
+                  <span class="notification-value"><%= current_site.unseen_notifications_count %></span>
+                <% end %>
+              </a>
+            </li>
             <li class="divider"></li>
             <li><a href="/dashboard">Edit Site</a></li>
             <li><a href="//<%= current_site.host %>" target="_blank">View Site</a></li>
