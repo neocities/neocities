@@ -18,7 +18,7 @@
 
 <h3>Create New Site</h3>
 
-<p>You can now create new sites that are linked to this account! Sites will share the free space you have available. You have <strong><%= Site::CHILD_SITES_MAX - current_site.account_sites_dataset.count %></strong> new sites remaining.</p>
+<p>You can now create new sites that are linked to this account! All of your sites will share the free space you have available.</p>
 
 <form action="/settings/create_child" method="POST">
   <%== csrf_token_input_html %>
