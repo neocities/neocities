@@ -73,18 +73,17 @@
           <a href="//<%= site.host %>" title="<%= site.title %>"><%= site.title.shorten(30) %></a>
         </div>
         <div class="site-info">
-          <div style="float: left">
+          <div class="username">
             <a href="/site/<%= site.username %>" title="Profile">
-              <i class="fa fa-user"></i>
-              <%= site.username %>
+              <i class="fa fa-user"></i><%= site.username %>
             </a>
           </div>
-          <div style="float: right">
+          <div class="site-stats">
             <a href="/site/<%= site.username %>">
               <% if params[:sort_by] == 'hits' %>
-                <%= site.hits %> hit<%= site.hits == 1 ? '' : 's' %>
+                <%= site.hits %>&nbsp;hit<%= site.hits == 1 ? '' : 's' %>
               <% else %>
-                <%= site.views %> view<%= site.views == 1 ? '' : 's' %>
+                <%= site.views %>&nbsp;view<%= site.views == 1 ? '' : 's' %>
               <% end %>
             </a>
           </div>
