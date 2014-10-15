@@ -432,7 +432,7 @@ get '/browse/?' do
   site_dataset.where! ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
 
   if params[:tag]
-    site_dataset = site_dataset.association_join(:tags)
+    site_dataset = site_dataset.association_join(:tags).select_all(:sites)
     site_dataset.where! ['tags.name = ?', params[:tag]]
     site_dataset.where! ['tags.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
   end
