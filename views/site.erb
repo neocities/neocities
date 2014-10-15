@@ -34,9 +34,13 @@
 
         <% if current_site && current_site != site %>
           <% is_following = current_site.is_following?(site) %>
-          <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>'); return false" class="btn-Action <%= is_following ? '' : 'follow' %>">
-            <span><%= is_following ? 'Unfollow' : 'Follow' %></span>
+  
+          <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>'); return false" class="btn-Action <%= is_following ? 'is-following' : '' %>">
+              <span class="unfollow"><i class="fa fa-times"></i>Unfollow</span>
+              <span class="following"><i class="fa fa-check"></i>Following</span>
+              <span class="follow"><i class="fa fa-plus"></i>Follow</span>
           </a>
+            
           <!-- <a href="#" class="btn-Action tip"><span>Tip</span></a> -->
         <% end %>
 
