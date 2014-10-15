@@ -693,7 +693,7 @@ a.tag:hover {
     display: none;
   }
 }
-#followLink.is-following:hover {
+#followLink.is-following.unfollow {
   .follow {
     display: none;
   }
