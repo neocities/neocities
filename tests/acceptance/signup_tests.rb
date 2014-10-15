@@ -12,7 +12,7 @@ describe 'signup' do
 
   def visit_signup
     visit '/'
-    click_button 'Create My Website'
+    click_button 'Create My Site'
   end
 
   before do

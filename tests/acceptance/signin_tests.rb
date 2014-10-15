@@ -39,7 +39,7 @@ describe 'signin' do
 
   it 'signs in with proper credentials' do
     visit '/'
-    click_button 'Create My Website'
+    click_button 'Create My Site'
     fill_in_valid_signup
     click_button 'Create Home Page'
     Capybara.reset_sessions!
@@ -53,7 +53,7 @@ describe 'signin' do
 
   it 'signs in with email' do
     visit '/'
-    click_button 'Create My Website'
+    click_button 'Create My Site'
     fill_in_valid_signup
     click_button 'Create Home Page'
     Capybara.reset_sessions!
