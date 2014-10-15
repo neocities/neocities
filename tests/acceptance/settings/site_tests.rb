@@ -203,7 +203,7 @@ describe 'site/settings' do
 
     def visit_signup
       visit '/'
-      click_button 'Create My Website'
+      click_button 'Create My Site'
     end
 
     def fill_in_valid
@@ -220,7 +220,7 @@ describe 'site/settings' do
 
     it 'does not allow bad usernames' do
       visit '/'
-      click_button 'Create My Website'
+      click_button 'Create My Site'
       fill_in_valid
       click_button 'Create Home Page'
       visit "/settings/#{@site[:username]}#username"
