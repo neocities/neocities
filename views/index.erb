@@ -117,22 +117,28 @@
 <div class="header-Outro">
 
   <div class="row header-Content content">
-
-    <ul class="col col-50 intro-List">
-      <li class="intro-Tools">
-        <span class="intro-Icon"></span>
-        <h2 class="delta">Create your own free website</h2>
-        <p class="tiny">
-          You get <%= Site::FREE_MAXIMUM.to_space_pretty %> of free web space to make whatever you’d like!
-        </p>
-      </li>
+    <div class="col col-50">
+    <h2 class="section-header">Introducing the New Neocities</h2>
+    <p class="intro-text">Now’s a great time to join our community of over 
+      <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites</a>! 
+      You get <%= Site::FREE_MAXIMUM.to_space_pretty %> of free web space to make whatever you’d like.
+    </p>
+    <ul class="intro-List">
       <li class="intro-Social">
         <span class="intro-Icon"></span>
+        <h2 class="delta">Free web hosting goes social</h2>
+        <p class="base">
+          Follow your favorite Neocities sites to keep up with all the latest updates! You can also now discover new websites related to your interests, comment on them, and share them.
+        </p>
+      </li>
+      <li class="intro-Tools">
+        <span class="intro-Icon"></span>
         <h2 class="delta">Making the web fun again</h2>
-        <p class="tiny">
-          We're a community of over <%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites that are bringing back creative expression on the web. Anyone can make a site, only your imagination is required. Join us!
+        <p class="base">
+          We’ve been working to make it easier to build your website and explore other sites. Neocities now has folders, tag browsing (our take on webrings), WebDAV uploading, RSS subscriptions, and more!
       </li>
     </ul>
+    </div>
 
     <div class="col col-50 signup-Area">
 
@@ -154,11 +160,26 @@
     <% else %>
       <form action="/new" method="get" class="signup-Form">
         <fieldset class="content">
-          <h2 class="gamma">Get Started Now</h2>
+          <h2 class="gamma">Sign up for free</h2>
           <hr />
-          <input type="text" class="input-Area" id="create-Input" name="username" placeholder="website name" />
-          <label for="create-Input">.neocities.org</label>
-          <input type="submit" value="Create My Website" class="btn-Action float-Right" />
+          <label for="create-Input">Username</label>
+          <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" />
+          <label for="create-Input" id="domain-name">.neocities.org</label>
+          
+          <label for="tags-input">Tags (your interests, site topics)</label>
+          <input type="text" class="input-Area" id="tags-input" name="tags" placeholder="art, videogames, food, music, programming, gardening, cats" />
+          
+          <div class="col col-50" style="padding-left:0;">
+          <label for="password-input">Password</label>
+          <input type="text" class="input-Area" id="password-input" name="password" placeholder="password" />
+          </div>
+          
+          <div class="col col-50">
+          <label for="email-input">Email</label>
+          <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" />
+          </div>
+          
+          <input type="submit" value="Create My Site" class="btn-Action float-Right" />
         </fieldset>
       </form>
 
@@ -173,107 +194,79 @@
 </header>
 
 <main class="content-Base">
+  
+<div class="section featured-Websites">
+  <div class="nav prev"></div>
+  <ul class="website-Gallery hp-Gallery">
+    <li>
+      <a href="http://dragonquest.neocities.org/" title="The Quest of Dragons" target="_blank">
+        <img src="//neocities.org/site_screenshots/dragonquest/index.html.270x162.jpg" class="neo-SS" alt="Thumbnail of The Quest of Dragons" />
+      </a>
+    </li>
+    <li>
+      <a href="http://codeventurer.neocities.org/" title="codeventurer" target="_blank">
+        <img src="http://neocities.org/site_screenshots/codeventurer/index.html.270x162.jpg" class="neo-SS" alt="Thumbnail of codeventurer" />
+      </a>
+    </li>
+    <li>
+      <a href="http://clouds.neocities.org/" title="Cloud Quotes" target="_blank">
+        <img src="//neocities.org/site_screenshots/clouds/index.html.270x162.jpg" class="neo-SS" alt="Thumbnail of Cloud Quotes" />
+      </a>
+    </li>
+    <li>
+      <a href="http://manatee.neocities.org/" title="Title of Website" target="_blank">
+        <img src="//neocities.org/site_screenshots/manatee/index.html.270x162.jpg" class="neo-SS" alt="Thumbnail of TITLE OF WEBSITE" />
+      </a>
+    </li>
+    <li>
+      <a href="http://suppilulemur.neocities.org/" title="Sokoban" target="_blank">
+        <img src="//neocities.org/site_screenshots/suppilulemur/index.html.270x162.jpg" class="neo-SS" alt="Thumbnail of Sokoban" />
+      </a>
+    </li>
+    <li>
+      <a href="http://drawinglair.neocities.org/" title="Tomasz Zawadzki" target="_blank">
+        <img src="//neocities.org/site_screenshots/drawinglair/index.html.270x162.jpg" class="neo-SS" alt="Thumbnail of Tomasz Zawadzki" />
+      </a>
+    </li>
+  </ul>
+  <div class="nav next"></div>
+</div>
 
-<div class="content">
+  <section class="section features">
 
-  <section class="featured-Websites clearfix">
+    <h2 class="delta">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dapibus semper magna id euismod. Vivamus rutrum ultricies.</h2>
+    <div class="row">
+      <div class="col col-33">
+      <h3><i class="fa fa-home"></i>You own your own site</h3>
+      <p>We support custom domains (yoursite.com) for free. This means you always control the content on your site, and you can move it to/from Neocities whenever you want. And of course, all sites still get a subdomain (sitename.neocities.org) for free.</p>
 
-    <h2 class="delta">Featured Websites</h2>
+      <h3><i class="fa fa-wrench"></i>Developer tools</h3>
+      <p>We now have powerful APIs for developers building applications, and support for remote file uploading via command line tools. Using WebDAV, you can now mount your site to your computer, just like Dropbox.</p>
+      </div>
+    
+      <div class="col col-33">
+      <h3><i class="fa fa-tachometer"></i>More space, more performance</h3>
+      <p>Neocities now uses a distributed, globally-cached file system in tier-1 datacenters to serve your sites. It's a system that took us a year to build - and it's ready to serve your site with blazing speed, whether it's your personal home page, or your professional site. Go ahead, put your site on Neocities. We can handle it.</p>
+      </div>
+    
+      <div class="col col-33">
+      <h3><i class="fa fa-lock"></i>Encrypted everything</h3>
+      <p>Neocities now secures serving all your content with Snowden-grade cryptography, <em>by default</em>, preventing snoops, whether they are hackers or rogue government agencies, from seeing what you browse. And we're working on letting you use your own SSL (HTTPS) certificates for custom domains.
 
-    <ul class="row website-Gallery hp-Gallery">
-      <li>
-        <a href="http://dragonquest.neocities.org/" title="The Quest of Dragons" target="_blank">
-          <img src="//neocities.org/site_screenshots/dragonquest/index.html.540x405.jpg" class="neo-SS" alt="Thumbnail of The Quest of Dragons" />
-        </a>
-      </li>
-      <li>
-        <a href="http://codeventurer.neocities.org/" title="codeventurer" target="_blank">
-          <img src="//neocities.org/site_screenshots/codeventurer/index.html.540x405.jpg" class="neo-SS" alt="Thumbnail of codeventurer" />
-        </a>
-      </li>
-      <li>
-        <a href="http://clouds.neocities.org/" title="Cloud Quotes" target="_blank">
-          <img src="//neocities.org/site_screenshots/clouds/index.html.540x405.jpg" class="neo-SS" alt="Thumbnail of Cloud Quotes" />
-        </a>
-      </li>
-      <li>
-        <a href="http://manatee.neocities.org/" title="Title of Website" target="_blank">
-          <img src="//neocities.org/site_screenshots/manatee/index.html.540x405.jpg" class="neo-SS" alt="Thumbnail of TITLE OF WEBSITE" />
-        </a>
-      </li>
-      <li>
-        <a href="http://suppilulemur.neocities.org/" title="Sokoban" target="_blank">
-          <img src="//neocities.org/site_screenshots/suppilulemur/index.html.540x405.jpg" class="neo-SS" alt="Thumbnail of Sokoban" />
-        </a>
-      </li>
-      <li>
-        <a href="http://drawinglair.neocities.org/" title="Tomasz Zawadzki" target="_blank">
-          <img src="//neocities.org/site_screenshots/drawinglair/index.html.540x405.jpg" class="neo-SS" alt="Thumbnail of Tomasz Zawadzki" />
-        </a>
-      </li>
-      <li>
-        <a href="http://rik.neocities.org/" title="Rock Im Kaff" target="_blank">
-          <img src="//neocities.org/site_screenshots/rik/index.html.540x405.jpg" class="neo-SS" alt="Thumbnail of Eleanor Holroyd's Website" />
-        </a>
-      </li>
-      <li>
-        <a href="http://cute-animation.neocities.org/" title="Cute Animation" target="_blank">
-          <img src="//neocities.org/site_screenshots/cute-animation/index.html.540x405.jpg" class="neo-SS" alt="Thumbnail of Cute Animation" />
-        </a>
-      </li>
-    </ul>
-
-    <div class="txt-Center" style="margin-top: 15px">
-      <a href="/browse" title="Browse all Neocities websites" class="btn-Action btn-Large">Browse All Websites</a>
+      Until January, Neocities will donate 5% of all Supporter plan proceeds to the Courage Foundation, an international organization that supports those who risk life or liberty to disclose privacy abuses online.</p>
+      </div>
     </div>
-
-  </section>  <!-- end .featured-Websites -->
-
-  <hr />
-
-  <aside class="row">
-
-    <div class="col col-50">
-      <div class="content">
-
-        <h3 class="delta">Learn to Code</h3>
-
-        <p>
-          Don't know how to code a website? No problem!
-          We're working on a batch of tutorials that will show you the way.
-        </p>
-
-        <code>
-          <span class="code-Tag">&lt;h1&gt;</span>Welcome to my website!<span class="code-Tag">&lt;/h1&gt;</span><br />
-          <span class="code-Tag">&lt;a</span> href="<span class="code-Value">about.html</span>">About Me<span class="code-Tag">&lt;/a&gt;</span><br />
-          <span class="code-Tag">&lt;img</span> src="<span class="code-Value">me.jpg</span>" alt="<span class="code-Value">photo of me</span>" <span class="code-Tag">/&gt;</span>
-        </code>
-
-      </div>
-    </div> <!-- end .col-50 -->
-
-    <div class="col col-50">
-      <div class="content">
-
-        <h3 class="delta">What People Are Saying</h3>
-
-        <ul class="quote-Slider kill-List">
-          <li class="quote">
-            <blockquote>
-              Designed as a 21st century reincarnation of GeoCities, Neocities lets you make your own site for free. And it just might spark a renaissance of creativity online.
-            </blockquote>
-            <a href="http://web.appstorm.net/reviews/web-dev/neocities-the-free-place-to-code-your-own-site-from-scratch/" title="App Storm" class="action-Link">Source link</a>
-          </li>
-        </ul>
-
-      </div>
-    </div> <!-- end .col-50 -->
-
-  </aside> <!-- end .row -->
-
-</div> <!-- end .content -->
-
-      </main>
+    
+    <div class="press">
+      <a href="http://www.wired.com/2013/07/neocities/" class="logo wired"></a>
+      <a href="http://motherboard.vice.com/blog/neocities-is-recreating-the-garish-web-10-creativity-of-geocities" class="logo vice"></a>
+      <a href="http://arstechnica.com/tech-policy/2014/05/web-host-gives-fcc-a-28-8kbps-slow-lane-in-net-neutrality-protest/" class="logo ars"></a>
+      <a href="/press" class="more">See all press »</a>
+    </div>
+  </section>
+  
+  <%== erb :'plan/_pricing' %>
+</main>
 
 <footer class="footer-Base">
   <section class="footer-Intro">
@@ -284,9 +277,10 @@
         <span class="footer-icon"></span>
         <h2 class="delta">Support Us</h2>
         <p class="tiny">
-          Neocities is funded by our supporters and donations, <strong>not advertisers</strong>. Help us make the web fun again.
+          Neocities is funded by donations. If you’d like to contribute, you can help us
+          pay our server costs using Bitcoin or PayPal.
         </p>
-        <a href="/plan" title="Donate to Neocities" class="action-Link">Become a Supporter</a>
+        <a href="/donate" title="Donate to Neocities" class="action-Link">Donate Today</a>
       </div>
     </div>
     <div class="col col-33">
