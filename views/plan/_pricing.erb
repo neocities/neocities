@@ -20,7 +20,7 @@
         <div class="interval">per month</div>
         <a href="/" class="btn-Action">Choose</a>
         <ul>
-          <li><strong>30 MB</strong> storage</li>
+          <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %></strong> storage</li>
           <li><strong>10 GB</strong> bandwidth</li>
         </ul>
       </div>
@@ -32,7 +32,7 @@
         <div class="interval">per month</div>
         <a href="/" class="btn-Action">Choose</a>
         <ul>
-          <li><strong>1 GB</strong> storage</li>
+          <li><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_space_pretty %></strong> storage</li>
           <li><strong>100 GB</strong> bandwidth</li>
         </ul>
         <ul>
@@ -50,7 +50,7 @@
         <div class="interval">per month</div>
         <a href="/" class="btn-Action">Choose</a>
         <ul>
-          <li><strong>10 GB</strong> storage</li>
+          <li><strong><%= Site::PLAN_FEATURES[:catbus][:space].to_space_pretty %></strong> storage</li>
           <li><strong>500 GB</strong> bandwidth</li>
         </ul>
         <ul>
@@ -70,7 +70,7 @@
         <div class="interval">per month</div>
         <a href="/" class="btn-Action">Choose</a>
         <ul>
-          <li><strong>100 GB</strong> storage</li>
+          <li><strong><%= Site::PLAN_FEATURES[:fatcat][:space].to_space_pretty %></strong> storage</li>
           <li><strong>2 TB</strong> bandwidth</li>
         </ul>
         <ul>
@@ -88,7 +88,7 @@
   </div>
   
   <!-- <h2><a href="">Compare Plans <i class="fa fa-caret-down"></i></a></h2> -->
-  <h2>Compare Plans</h2>
+  <h2>Compare Plans:</h2>
   
   <table class="plan-chart">
     <tr>
@@ -118,19 +118,19 @@
       <td class="feature-column">
         <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">Storage</span>
       </td>
-      <td>30 MB</td>
-      <td>1 GB</td>
-      <td>10 GB</td>
-      <td>100 GB</td>
+      <td><%= Site::PLAN_FEATURES[:free][:space].to_bytes_pretty %></td>
+      <td><%= Site::PLAN_FEATURES[:supporter][:space].to_bytes_pretty %></td>
+      <td><%= Site::PLAN_FEATURES[:catbus][:space].to_bytes_pretty %></td>
+      <td><%= Site::PLAN_FEATURES[:fatcat][:space].to_bytes_pretty %></td>
     </tr>
     <tr>
       <td class="feature-column">
         <span data-original-title="How much content you can serve in one month. Don't worry - these are soft limits, and we won't take your site down automatically. We'll contact you and see if we can figure something out. We're reasonable.">Bandwidth</span>
       </td>
-      <td>10 GB</td>
-      <td>100 GB</td>
-      <td>500 GB</td>
-      <td>2 TB</td>
+      <td><%= Site::PLAN_FEATURES[:free][:bandwidth].to_bytes_pretty %></td>
+      <td><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></td>
+      <td><%= Site::PLAN_FEATURES[:catbus][:bandwidth].to_bytes_pretty %></td>
+      <td><%= Site::PLAN_FEATURES[:fatcat][:bandwidth].to_bytes_pretty %></td>
     </tr>
     <tr>
       <td class="feature-column">
@@ -233,7 +233,7 @@
     </tr>
     <tr>
       <td class="feature-column">
-        <span data-original-title="Our worldwide network of servers cache your web site regionally, making your site load fast, no matter where your users are. Surfs up!">High Performance Global CDN Cache</span>
+        <span data-original-title="Our worldwide network of CDN servers cache your web site regionally, making your site load fast - no matter where your users are. Surfs up, Japan!">High Performance</span>
       </td>
       <td></td>
       <td><i class="fa fa-check"></i></td>
