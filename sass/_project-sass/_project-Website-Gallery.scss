@@ -54,6 +54,7 @@
   .title {
     margin-top: 8px;
     margin-bottom: 2px;
+    white-space: nowrap;
   }
   
   &.int-Gall{
@@ -71,6 +72,19 @@
       }      
       @media (max-device-width:480px), screen and (max-width:800px){
         width:49%
+      }
+    }
+    &.suggestions {
+      padding: .25em 0 0 0;
+      
+      li {
+        margin: 0 1.33% 12px 0;
+        width: 32%;
+        @include box-shadow(1px 1px 2px 1px rgba(0, 0, 0, 0.1));
+
+        @media (max-width:1000px){
+          width:48%
+        } 
       }
     }
   }

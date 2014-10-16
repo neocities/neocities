@@ -29,27 +29,47 @@
           <div class="welcome">
             <h4>Welcome to your Neocities news feed!</h4>
             <p>
-              You aren't following any websites yet! Once you do, updates will show up here and you can like and comment on them.
+              You aren’t following any websites yet! Once you do, updates will show up here and you can like and comment on them.
 
               Here are some website suggestions for you. Want to find some sites to follow? <a href="/browse">Check out all the sites on Neocities!</a>
             </p>
           </div>
 
+          <ul class="row website-Gallery content int-Gall suggestions">
           <% @suggestions.each do |suggested_site| %>
-            <div class="site-suggestion">
-              <div class="site-portrait">
-                <a href="//<%= suggested_site.host %>">
-                  <img src="<%= suggested_site.screenshot_url('index.html', '540x405') %>">
-                </a>
-                <span class="caption">
-                  <a href="/site/<%= suggested_site.username %>"><%= suggested_site.title %></a>
+            <li>
+              <a href="//<%= suggested_site.host %>" class="neo-Screen-Shot" target="_blank" title="<%= suggested_site.title %>">
+                <span class="img-Holder" style="background:url(<%= suggested_site.screenshot_url('index.html', '540x405') %>) no-repeat;">
+                  <img src="/img/placeholder.png" alt="<%= suggested_site.title %>" />
                 </span>
+              </a>
+              <div class="title">
+                <a href="//<%= suggested_site.host %>" title="<%= suggested_site.title %>"><%= suggested_site.title.shorten(30) %></a>
               </div>
-              <% suggested_site.tags.each do |tag| %>
-                <a class="tag" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a>
-              <% end %>
-            </div>
+              <div class="site-info">
+                <div class="username">
+                  <a href="/site/<%= suggested_site.username %>" title="Profile">
+                    <i class="fa fa-user"></i><%= site.username %>
+                  </a>
+                </div>
+                <div class="site-stats">
+                  <a href="/site/<%= suggested_site.username %>">
+                      <%= suggested_site.views %>&nbsp;view<%= suggested_site.views == 1 ? '' : 's' %>
+                  </a>
+                </div>
+                <div class="site-tags">
+                  <% if suggested_site.tags.count > 0 %>
+                    <i class="fa fa-tag"></i> 
+                    <% suggested_site.tags.each_with_index do |tag, index| %>
+                      <a class="" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a><% if index != suggested_site.tags.length - 1 %>,<% end %> 
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </li>
           <% end %>
+        </ul>
+        <p class="view-all-sites"><a href="/browse">View all sites <i class="fa fa-angle-double-right"></i></a></p>
         <% end %>
       </div>
 
