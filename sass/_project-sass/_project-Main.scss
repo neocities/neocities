@@ -448,6 +448,11 @@
 .large-portrait {
   border: 10px solid white;
   @include box-shadow(1px 1px 2px 1px rgba(0, 0, 0, 0.15));
+  width: 322px;
+  height: 241px;
+  background-size: cover;
+  float: left;
+  margin-bottom: 20px;
 }
 .site-portrait {
   border: 5px solid white;

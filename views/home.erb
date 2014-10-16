@@ -90,9 +90,9 @@
           </div>
         </div>
 
-        <a href="//<%= site.host %>"><img src="<%= site.screenshot_url('index.html', '540x405') %>" class="large-portrait"></a>
+        <a href="//<%= site.host %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
 
-        <div style="margin-top: 20px; margin-bottom: 20px" class="txt-Center">
+        <div style="margin-top: 20px; margin-bottom: 2em" class="txt-Center">
           <a href="/site/<%= site.username %>" class="btn-Action">View Site Profile</a>
         </div>
 
