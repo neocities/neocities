@@ -78,8 +78,9 @@ class Site < Sequel::Model
   PLAN_FEATURES = {
     fatcat: {
       name: 'Fat Cat',
-      space: Filesize.from('100GB').to_i,
-      bandwidth: Filesize.from('2TB').to_i,
+      space: Filesize.from('50GB').to_i,
+      bandwidth: Filesize.from('3TB').to_i,
+      price: 10,
       custom_domains: true,
       custom_ssl_certificates: true,
       global_cdn: true,
@@ -97,13 +98,15 @@ class Site < Sequel::Model
   PLAN_FEATURES[:catbus] = PLAN_FEATURES[:fatcat].merge(
     name: 'Cat Bus',
     space: Filesize.from('10GB').to_i,
-    bandwidth: Filesize.from('500GB').to_i
+    bandwidth: Filesize.from('1TB').to_i,
+    price: 5
   )
 
   PLAN_FEATURES[:supporter] = PLAN_FEATURES[:catbus].merge(
     name: 'Supporter',
     space: Filesize.from('1GB').to_i,
-    bandwidth: Filesize.from('100GB').to_i,
+    bandwidth: Filesize.from('0.5TB').to_i,
+    price: 2,
     unlimited_site_creation: false,
     custom_ssl_certificates: false,
     no_file_restrictions: false
@@ -111,8 +114,9 @@ class Site < Sequel::Model
 
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
     name: 'Free',
-    space: Filesize.from('30MB').to_i,
-    bandwidth: Filesize.from('10GB').to_i,
+    space: Filesize.from('20MB').to_i,
+    bandwidth: Filesize.from('100GB').to_i,
+    price: 0,
     custom_domains: false,
     global_cdn: false,
     ddos_mitigation: false,

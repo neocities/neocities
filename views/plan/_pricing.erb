@@ -1,13 +1,13 @@
 <section class="section plans">
-  <h2>All Neocities plans include a neocities.org subdomain, WebDAV uploading, one-click backups, and all our social features. We’ll never show ads on your site.</h2>
+  <h2>Need more power? We've got you covered.<br>Upgrading gives you more space, bandwidth, features, <strong>and helps us keep the free sites free, forever.</strong></h2>
   
   <div class="plan-overview">
     <div class="header">
-      <div class="col col-50 personal">
+      <div class="col col-25 personal">
         Personal
       </div>
-      <div class="col col-50 professional">
-        Professional
+      <div class="col col-75 professional">
+        Supporters
       </div>
     </div>
     
@@ -15,30 +15,32 @@
       <div class="col col-25 free">
         <div class="plan-image free" data-original-title="Pick me!">
         </div>
-        <h3>Free</h3>
-        <div class="price">$0</div>
+        <h3>Free!</h3>
+        <div class="price">$<%= Site::PLAN_FEATURES[:free][:price] %></div>
         <div class="interval">per month</div>
         <a href="/" class="btn-Action">Choose</a>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %></strong> storage</li>
-          <li><strong>10 GB</strong> bandwidth</li>
+          <li><strong><%= Site::PLAN_FEATURES[:free][:bandwidth].to_space_pretty %></strong> bandwidth</li>
+        </ul>
+        <ul>
+          <li>Custom Domains</li>
         </ul>
       </div>
       
       <div class="col col-25 supporter">
         <div class="plan-image" data-original-title="No no, pick me!"></div>
         <h3>Supporter</h3>
-        <div class="price">$5</div>
-        <div class="interval">per month</div>
+        <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
+        <div class="interval">per month, billed annually</div>
         <a href="/" class="btn-Action">Choose</a>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_space_pretty %></strong> storage</li>
-          <li><strong>100 GB</strong> bandwidth</li>
+          <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_space_pretty %></strong> bandwidth</li>
         </ul>
         <ul>
           <li>Custom Domains</li>
-          <li>Global CDN Cache</li>
-          <li>DDoS mitigation</li>
+          <li>High Performance</li>
         </ul>
       </div>
       
@@ -46,40 +48,40 @@
 
         <div class="plan-image" data-original-title="VROOOOOOM!"></div>
         <h3>Cat Bus</h3>
-        <div class="price">$20</div>
+        <div class="price">$<%= Site::PLAN_FEATURES[:catbus][:price] %></div>
         <div class="interval">per month</div>
         <a href="/" class="btn-Action">Choose</a>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:catbus][:space].to_space_pretty %></strong> storage</li>
-          <li><strong>500 GB</strong> bandwidth</li>
+          <li><strong><%= Site::PLAN_FEATURES[:catbus][:bandwidth].to_space_pretty %></strong> bandwidth</li>
         </ul>
         <ul>
           <li>Custom Domains</li>
           <li>Global CDN Cache</li>
           <li>DDoS mitigation</li>
           <li>Custom SSL Certificates</li>
-          <li>No Upload Type Restrictions</li>
-          <li>Unlimited Site Creation</li>
+          <li>No upload type restrictions</li>
+          <li>Unlimited Sites</li>
         </ul>
       </div>
       
       <div class="col col-25 fatcat">
         <div class="plan-image" data-original-title="Jolly good."></div>
         <h3>Fat Cat</h3>
-        <div class="price">$50</div>
+        <div class="price">$<%= Site::PLAN_FEATURES[:fatcat][:price] %></div>
         <div class="interval">per month</div>
         <a href="/" class="btn-Action">Choose</a>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:fatcat][:space].to_space_pretty %></strong> storage</li>
-          <li><strong>2 TB</strong> bandwidth</li>
+          <li><strong><%= Site::PLAN_FEATURES[:fatcat][:bandwidth].to_space_pretty %></strong> bandwidth</li>
         </ul>
         <ul>
           <li>Custom Domains</li>
           <li>Global CDN Cache</li>
           <li>DDoS mitigation</li>
           <li>Custom SSL Certificates</li>
-          <li>No Upload Type Restrictions</li>
-          <li>Unlimited Site Creation</li>
+          <li>No upload type restrictions</li>
+          <li>Unlimited Sites</li>
         </ul>
       </div>
       
@@ -88,29 +90,29 @@
   </div>
   
   <!-- <h2><a href="">Compare Plans <i class="fa fa-caret-down"></i></a></h2> -->
-  <h2>Compare Plans</h2>
+  <h2>Compare Plans:</h2>
   
   <table class="plan-chart">
     <tr>
       <th class="feature-column"></th>
       <th>
         <h3>Free</h3>
-        <p>$0/mo</p>
+        <p>$<%= Site::PLAN_FEATURES[:free][:price] %>/mo</p>
         <a href="/" class="btn-Action">Choose</a>
       </th>
       <th>
         <h3>Supporter</h3>
-        <p>$5/mo</p>
+        <p>$<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo</p>
         <a href="/" class="btn-Action">Choose</a>
       </th>
       <th class="professional">
-        <h3>Cat&nbsp;Bus</h3>
-        <p>$20/mo</p>
+        <h3>Cat Bus</h3>
+        <p>$<%= Site::PLAN_FEATURES[:catbus][:price] %>/mo</p>
         <a href="/" class="btn-Action">Choose</a>
       </th>
       <th class="professional">
-        <h3>Fat&nbsp;Cat</h3>
-        <p>$50/mo</p>
+        <h3>Fat Cat</h3>
+        <p>$<%= Site::PLAN_FEATURES[:fatcat][:price] %>/mo</p>
         <a href="/" class="btn-Action">Choose</a>
       </th>
     </tr>
@@ -125,7 +127,7 @@
     </tr>
     <tr>
       <td class="feature-column">
-        <span data-original-title="How much content you can serve in one month. Don’t worry - these are soft limits, and we won’t take your site down automatically. We’ll contact you and see if we can figure something out. We’re reasonable.">Bandwidth</span>
+        <span data-original-title="* How much content you can serve in one month. Don't worry - these are very soft limits, temporary surges are fine, we won't take your site down automatically, and we're very flexible.">Bandwidth</span>
       </td>
       <td><%= Site::PLAN_FEATURES[:free][:bandwidth].to_bytes_pretty %></td>
       <td><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></td>
@@ -134,7 +136,34 @@
     </tr>
     <tr>
       <td class="feature-column">
-        <span data-original-title="We will never put ads on your site, or give your data to marketers. In fact, we’re prohibited from doing it in our own Terms of Service.">No advertising, ever</span>
+        <span data-original-title="We will never put ads on your site, or give your data to marketers. In fact, we're prohibited from doing it in our own Terms of Service.">No advertising, ever</span>
+      </td>
+      <td><i class="fa fa-check"></i></td>
+      <td><i class="fa fa-check"></i></td>
+      <td><i class="fa fa-check"></i></td>
+      <td><i class="fa fa-check"></i></td>
+    </tr>
+    <tr>
+      <td class="feature-column">
+        <span data-original-title="Our worldwide network of CDN servers cache your web site regionally, making your site load fast - no matter where your users are. 頑張る, 日本!">Global CDN Site Cache</span>
+      </td>
+      <td><i class="fa fa-check"></i></td>
+      <td><i class="fa fa-check"></i></td>
+      <td><i class="fa fa-check"></i></td>
+      <td><i class="fa fa-check"></i></td>
+    </tr>
+    <tr>
+      <td class="feature-column">
+        <span data-original-title="Each site comes with a free Neocities address (yoursitename.neocities.org).">Free Site Subdomain</span>
+      </td>
+      <td><i class="fa fa-check"></i></td>
+      <td><i class="fa fa-check"></i></td>
+      <td><i class="fa fa-check"></i></td>
+      <td><i class="fa fa-check"></i></td>
+    </tr>
+    <tr>
+      <td class="feature-column">
+        <span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domains</span>
       </td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
@@ -152,15 +181,6 @@
     </tr>
     <tr>
       <td class="feature-column">
-        <span data-original-title="Each site comes with a free Neocities address (yoursitename.neocities.org).">Neocities.org Subdomain</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
         <span data-original-title="Downloading your neocities site is as easy as clicking a button.">One-Click Backups</span>
       </td>
       <td><i class="fa fa-check"></i></td>
@@ -170,7 +190,7 @@
     </tr>
     <tr>
       <td class="feature-column">
-        <span data-original-title="Site tags make it easy to find sites you’re interested in, and join communities of sites. It’s like a web ring, but even better.">Site Tags</span>
+        <span data-original-title="Site tags make it easy to find sites you're interested in, and join communities of sites. It's like a web ring, but even better.">Site Tags</span>
       </td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
@@ -179,7 +199,7 @@
     </tr>
     <tr>
       <td class="feature-column">
-        <span data-original-title="Each site has its own RSS feed that make it easy to let people know when your site changes.">RSS Feed</span>
+        <span data-original-title="Each site has it's own RSS feed that make it easy to let people know when your site changes.">RSS Feed</span>
       </td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
@@ -197,7 +217,7 @@
     </tr>
     <tr>
       <td class="feature-column">
-        <span data-original-title="Each site now has its own profile page, allowing users to see when your site updates, follow your site, and leave feedback.">Site Profile</span>
+        <span data-original-title="Each site now has it's own profile page, allowing users to see when your site updates, follow your site, and leave feedback.">Site Profile</span>
       </td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
@@ -206,7 +226,7 @@
     </tr>
     <tr>
       <td class="feature-column">
-        <span data-original-title="Our HTML5 site editor makes it easy to make quick changes to your site, even if you’re on the run.">Neocities Site Editor</span>
+        <span data-original-title="Our HTML5 site editor makes it easy to make quick changes to your site, even if you're on the run.">Neocities Site Editor</span>
       </td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
@@ -224,28 +244,10 @@
     -->
     <tr>
       <td class="feature-column">
-        <span data-original-title="Add your domain name to your site!">Custom Domains</span>
+        <span data-original-title="Make as many sites as you want, with one account.">Unlimited Site Creation</span>
       </td>
       <td></td>
       <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Our worldwide network of CDN servers cache your web site regionally, making your site load fast - no matter where your users are. Surfs up, Japan!">High Performance</span>
-      </td>
-      <td></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Make as many sites as you want, with one login.">Unlimited Site Creation</span>
-      </td>
-      <td></td>
-      <td></td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
@@ -264,7 +266,7 @@
       </td>
       <td></td>
       <td></td>
-      <td></td>
+      <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
   </table>
