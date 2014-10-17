@@ -1000,6 +1000,7 @@ a.tag:hover {
 .plan-chart th {
   background: #D6D6D6;
   padding: 15px 0;
+  font-weight: normal;
 }
 .plan-chart th.professional {
   background: #DAEEA5;
@@ -1021,6 +1022,11 @@ a.tag:hover {
   border: 0;
   background: 0;
   padding-right: 15px;
+  
+  span {
+    border-bottom: 1px dotted #bbb;
+    cursor: help;
+  }
 }
 .plan-chart td:nth-child(even) {
   background: #F8F8F8;
