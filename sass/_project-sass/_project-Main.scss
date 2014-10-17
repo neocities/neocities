@@ -842,8 +842,14 @@ a.tag:hover {
   }
 }
 
-.section.features h2, .section.features h3, .section.features p {
+.section.features h2, .section.features h3, .section.features p, .section.features a {
   color: #fff;
+}
+.section.features a {
+  text-decoration: underline;
+  &:hover {
+    text-decoration: none;
+  }
 }
 .section.features .fa {
   margin-right: 10px;
@@ -906,6 +912,7 @@ a.tag:hover {
 }
 .section.plans {
   background: #fff;
+  width: 100%;
 }
 .section.plans h2 {
   color:#4F7E89;
@@ -997,6 +1004,14 @@ a.tag:hover {
   margin: 2em 0 4em 0;
   width: 100%;
 }
+.plan-overview, .plan-chart {
+	@media(max-width:800px) {
+    font-size: 90%;
+  }
+	@media(max-device-width:480px), screen and (max-width:550px) {
+    font-size: 80%;
+  }
+}
 .plan-chart th {
   background: #D6D6D6;
   padding: 15px 0;
@@ -1027,12 +1042,21 @@ a.tag:hover {
     border-bottom: 1px dotted #bbb;
     cursor: help;
   }
+  
+  @media(max-device-width:480px), screen and (max-width:800px) {
+    width: 26%;
+  }
 }
 .plan-chart td:nth-child(even) {
   background: #F8F8F8;
 }
 .plan-chart .fa-check {
   color: #6CCC24;
+}
+.plan-overview .btn-Action, .plan-chart .btn-Action {
+  @media(max-device-width:480px), screen and (max-width:900px) {
+    padding: 7px 10px;
+  }
 }
 .selected {
   font-weight: bold;
