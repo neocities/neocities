@@ -100,8 +100,6 @@
             </div>
           <% end %>
 
-
-
 <div class="int-Logo hp-Logo">
   <a href="/" title="back to home">
     <span class="hidden">Neocities.org</span>
@@ -113,11 +111,11 @@
   <h1 class="logo header-Content content">
     <span class="hidden">Neocities.org</span>
     <img src="/img/neocities-Logo.png" alt="Neocities.org" />
+    <a id="new"></a>
   </h1>
 </section>
 
 <div class="header-Outro">
-
   <div class="row header-Content content">
     <div class="col col-50">
     <h2 class="section-header">Make your own web site, and discover new ones.</h2>
@@ -142,49 +140,48 @@
     </div>
 
     <div class="col col-50 signup-Area">
+      <% if signed_in? %>
 
-    <% if signed_in? %>
-
-      <div class="signup-Form">
-        <div class="content">
-          <h2 class="gamma txt-Center">Build your Website!</h2>
+        <div class="signup-Form">
+          <div class="content">
+            <h2 class="gamma txt-Center">Build your Website!</h2>
+          </div>
+          <p class="txt-Center">
+            Go to your dashboard to<br> start editing your website!
+          </p>
+          <br />
+            <div class="txt-Center">
+              <a href="/dashboard" class="btn-Action">Get Started</a>
+            </div>
         </div>
-        <p class="txt-Center">
-          Go to your dashboard to<br> start editing your website!
-        </p>
-        <br />
-          <div class="txt-Center">
-            <a href="/dashboard" class="btn-Action">Get Started</a>
-          </div>
-      </div>
 
-    <% else %>
-      <form action="/new" method="get" class="signup-Form">
-        <fieldset class="content">
-          <h2 class="gamma">Sign up for free</h2>
-          <hr />
-          <label for="create-Input">Username</label>
-          <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" />
-          <label for="create-Input" id="domain-name">.neocities.org</label>
-          
-          <label for="tags-input">Tags (your interests, site topics)</label>
-          <input type="text" class="input-Area" id="tags-input" name="tags" placeholder="art, videogames, food, music, programming, gardening, cats" />
-          
-          <div class="col col-50" style="padding-left:0;">
-          <label for="password-input">Password</label>
-          <input type="text" class="input-Area" id="password-input" name="password" placeholder="password" />
-          </div>
-          
-          <div class="col col-50">
-          <label for="email-input">Email</label>
-          <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" />
-          </div>
-          
-          <input type="submit" value="Create My Site" class="btn-Action float-Right" />
-        </fieldset>
-      </form>
+      <% else %>
+        <form action="/new" method="get" class="signup-Form">
+          <fieldset class="content">
+            <h2 class="gamma">Sign up for free</h2>
+            <hr />
+            <label for="create-Input">Username</label>
+            <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" />
+            <label for="create-Input" id="domain-name">.neocities.org</label>
 
-    <% end %>
+            <label for="tags-input">Tags (your interests, site topics)</label>
+            <input type="text" class="input-Area" id="tags-input" name="tags" placeholder="art, videogames, food, music, programming, gardening, cats" />
+
+            <div class="col col-50" style="padding-left:0;">
+            <label for="password-input">Password</label>
+            <input type="text" class="input-Area" id="password-input" name="password" placeholder="password" />
+            </div>
+
+            <div class="col col-50">
+            <label for="email-input">Email</label>
+            <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" />
+            </div>
+
+            <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+          </fieldset>
+        </form>
+
+      <% end %>
 
     </div> <!-- end .col-50 -->
 
