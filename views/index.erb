@@ -117,7 +117,7 @@
 
 <div class="header-Outro">
   <div class="row header-Content content">
-    <div class="col col-50">
+    <div class="col intro">
     <h2 class="section-header">Make your own web site, and discover new ones.</h2>
     <p class="intro-text">
      Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites</a> that are bringing back creative expression on the web. Anyone can make a site, only your imagination is required. We provide the space, you provide the web site ideas. Join us!
@@ -139,7 +139,7 @@
     </ul>
     </div>
 
-    <div class="col col-50 signup-Area">
+    <div class="col signup-Area">
       <% if signed_in? %>
 
         <div class="signup-Form">

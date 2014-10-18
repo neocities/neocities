@@ -47,8 +47,11 @@
 }
 .hp {
   .header-Outro {
-    .col-50.signup-Area {
-      width: 48%;
+    .col.intro {
+      width: 53%;
+    }
+    .col.signup-Area {
+      width: 45%;
     }
     .signup-Area {
       float: right;
@@ -56,7 +59,7 @@
     .intro-text {
       color: #B8D375;
       font-size: .9em;
-      margin-bottom: 1.8em;
+      margin-bottom: 1.6em;
       
       a {
         color: #B8D375;
@@ -68,8 +71,8 @@
     }
     h2.section-header {
       font-size: 2.2em;
-      margin-top: .5em;
-      margin-bottom: 0.1em;
+      margin-top: .4em;
+      margin-bottom: 0.2em;
     }
   }
 }
@@ -88,11 +91,13 @@
   }
   
   h2{
-    margin-bottom:2px;
+    margin-bottom: 0px;
+    font-size: 1.525em;
   }
   
   p {
     color:#B2BCC1;
+    line-height: 170%;
   }
 }
 
@@ -127,11 +132,11 @@
   position:relative
 }
 
-.signup-Form{
+.header-Outro .signup-Form{
   background:#354751;
   border-radius:4px 4px 0 0;
   @include box-shadow($signupShadow);
-  height:600%;
+  height:700%;
   overflow:hidden;
   position:absolute;
   top: -40px;
@@ -160,7 +165,7 @@
   
   fieldset{
     background:url(/img/sign-up-bg.png) repeat-x center top; 
-    padding: 20px 33px;
+    padding: 22px 33px;
   }
   
   label{
@@ -181,7 +186,7 @@
     border:0 solid black;
     @include box-shadow($inputAreaShadow);
     color:#C2CFD4;
-    margin-bottom:$spacing*7;
+    margin-bottom:30px;
     margin-right:$spacing;
     padding: 10px 10px 7px 10px;
     width:100%;
@@ -196,6 +201,8 @@
   }
   .btn-Action{
     padding:10px 25px;
+    margin-top: 6px;
+    font-size: 1em;
   }
 }
 
