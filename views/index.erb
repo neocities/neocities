@@ -120,12 +120,12 @@
     <div class="col col-50">
     <h2 class="section-header">Make your own web site, and discover new ones.</h2>
     <p class="intro-text">
-     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites</a> that are bringing back creative expression on the web. Anyone can make a site, only your imagination is required. We provide the space, you provide the creativity. Join us!
+     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites</a> that are bringing back creative expression on the web. Anyone can make a site, only your imagination is required. We provide the space, you provide the web site ideas. Join us!
     </p>
     <ul class="intro-List">
       <li class="intro-Social">
         <span class="intro-Icon"></span>
-        <h2 class="delta">Share your web site creation with the world</h2>
+        <h2 class="delta">Share your web creation with the world</h2>
         <p class="base">
           Follow your favorite Neocities sites to keep up with all the latest updates. Discover new websites related to your interests, comment on them, and share them. Unlimited creativity - and zero ads.
         </p>
@@ -192,7 +192,7 @@
 </header>
 
 <main class="content-Base">
-  
+
 <div class="section featured-Websites">
   <div class="nav prev"></div>
   <ul class="website-Gallery hp-Gallery">
@@ -232,22 +232,20 @@
 
   <section class="section features">
 
-    <h2 class="delta">Forget throwaway social network apps. Let's make the internet fun again. It's time to bring back web surfing!</h2>
+    <h2 class="delta">Forget boring social networks. Let's make the internet fun again. It's time to bring back web surfing!</h2>
     <div class="row">
       <div class="col col-33">
         <h3><i class="fa fa-home"></i>You own your site</h3>
         <p>Sites hosted by Neocities are owned by you, not us. And we support custom domains (yoursite.com) for free. This means you always control the content on your site, and you can move it to/from Neocities whenever you want. And of course, all sites still get a subdomain (sitename.neocities.org) for free.</p>
       </div>
       <div class="col col-33">
-        <h3><i class="fa fa-tachometer"></i>More space, more performance</h3>
-        <p>Neocities now uses distributed, globally-cached web servers in datacenters all over the world to serve your site. It's a advanced system that took us a year to build - and it's ready to serve your site with blazing speed, whether it's your personal home page, or your professional site. Go ahead, put your site on Neocities. We can handle it.</p>
+        <h3><i class="fa fa-tachometer"></i>More space, speed, and security</h3>
+        <p>Neocities now uses distributed, globally-cached web servers in datacenters all over the world to serve your site. Whether it's your personal home page, or a busy professional site for your business, your site loads fast. We also provide Snowden-grade SSL cryptography, preventing snoops from seeing what you browse.</p>
       </div>
 
       <div class="col col-33">
-        <h3><i class="fa fa-lock"></i>SSL encryption support</h3>
-        <p>Neocities now serves all your content with Snowden-grade SSL cryptography, <em>by default</em>, preventing snoops from seeing what you browse.
-
-        Until January, Neocities will donate 5% of all Supporter plan proceeds to the Courage Foundation, an international organization that supports those who risk life or liberty to disclose privacy abuses online.</p>
+        <h3><i class="fa fa-lock"></i>Something awesome goes here</h3>
+        <p>wooooo.</p>
       </div>
     </div>
 
@@ -258,21 +256,30 @@
       </div>
 
       <div class="col col-33">
-        <h3><i class="fa fa-university"></i>Open Source, Open Company, Open Ethics</h3>
-        <p>Neocities is a member of the <a href="https://opencompany.org" target="_blank">Open Company Initative</a>, working to help improve trust in tech startups. We <a href="https://github.com/neocities" target="_blank">publish</a> the code that powers the site, and keep open records for everyone to inspect. And if someone sends a bad takedown request, we fight it. We want to win your trust - not lock you in.</p>
+        <h3><i class="fa fa-university"></i>Open Company</h3>
+        <p>Neocities is a member of the <a href="https://opencompany.org" target="_blank">Open Company Initative</a>, working to help improve trustability in tech startups. We <a href="https://github.com/neocities" target="_blank">publish</a> the code that powers the site for inspection, and keep open records for everyone to inspect. And if someone sends a bad takedown request, we fight it. We want to win your trust - not lock you in.</p>
       </div>
 
       <div class="col col-33">
-        <h3><i class="fa fa-eye-slash"></i>No marketing or advertising, ever</h3>
-        <p>Neocities does not sell your personal data, or put ads on your site. In fact, we're prohibited from doing that in our own Terms of Service. We want to make a living the old fashioned way - by helping you be awesome.</p>
+        <h3><i class="fa fa-eye-slash"></i>Zero advertising</h3>
+        <p>Neocities does not sell your personal data, or put ads on your site. In fact, we're prohibited from doing that in our own Terms of Service. We want to build a startup the old fashioned way - by helping people be awesome.</p>
       </div>
     </div>
     
-    <div class="press">
-      <a href="http://www.wired.com/2013/07/neocities/" class="logo wired"></a>
-      <a href="http://motherboard.vice.com/blog/neocities-is-recreating-the-garish-web-10-creativity-of-geocities" class="logo vice"></a>
-      <a href="http://arstechnica.com/tech-policy/2014/05/web-host-gives-fcc-a-28-8kbps-slow-lane-in-net-neutrality-protest/" class="logo ars"></a>
-      <a href="/press" class="more">See all press »</a>
+    <div class="col col-100">
+      <div class="row press">
+        <a href="http://www.wired.com/2013/07/neocities/" class="logo wired"></a>
+        <a href="http://motherboard.vice.com/blog/neocities-is-recreating-the-garish-web-10-creativity-of-geocities" class="logo vice"></a>
+        <a href="http://arstechnica.com/tech-policy/2014/05/web-host-gives-fcc-a-28-8kbps-slow-lane-in-net-neutrality-protest/" class="logo ars"></a>
+        <!--<a href="/press" class="more">See all press »</a>-->
+      </div>
+      <div class="row">
+        <div class="col col-75">
+          <h3><i>
+            "Designed as a 21st century reincarnation of GeoCities, Neocities lets you make your own site for free. <strong>And it just might spark a renaissance of creativity online.</strong>"</i> - Matthew Guay, <a href="http://web.appstorm.net/reviews/web-dev/neocities-the-free-place-to-code-your-own-site-from-scratch" target="_blank">AppStorm</a>
+          </h3>
+        </div>
+      </div>
     </div>
   </section>
   
