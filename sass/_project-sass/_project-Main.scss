@@ -13,7 +13,11 @@
 	}
 }
 .content, .footer-Content {
-	padding: 20px 2.5%;
+	padding: 20px 3%;
+  
+  @media screen and (min-width:1300px){
+    padding: 20px 0;
+  }
 }
 .single-Col{
   max-width:800px;
@@ -790,8 +794,10 @@ a.tag:hover {
 }
 .section h2 {
   font-size: 1.7em;
-  text-align:center;
+  text-align: center;
   line-height: 150%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 .section h3 {
   font-size: 1.4em;

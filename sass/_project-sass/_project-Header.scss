@@ -47,6 +47,9 @@
 }
 .hp {
   .header-Outro {
+    .row>.col {
+      padding-left: 0;
+    }
     .col.intro {
       width: 53%;
     }
@@ -59,7 +62,7 @@
     .intro-text {
       color: #B8D375;
       font-size: .9em;
-      margin-bottom: 1.6em;
+      margin-bottom: 1.8em;
       
       a {
         color: #B8D375;
@@ -140,7 +143,6 @@
   overflow:hidden;
   position:absolute;
   top: -40px;
-  width:95%;
   
   @media (max-device-width:480px), screen and (max-width:800px){
     height:auto;
