@@ -13,7 +13,7 @@
 	}
 }
 .content, .footer-Content {
-	padding: 20px 3%;
+	padding: 20px 2.5%;
 }
 .single-Col{
   max-width:800px;
@@ -913,6 +913,10 @@ a.tag:hover {
 .section.plans {
   background: #fff;
   width: 100%;
+  
+  @media(max-device-width:480px), screen and (max-width:550px) {
+    padding: 55px 3%;
+  }
 }
 .section.plans h2 {
   color:#4F7E89;
