@@ -874,7 +874,7 @@ a.tag:hover {
   display: inline-block;
   clear: both;
   margin-top: 30px;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   
   @media (max-device-width:480px), screen and (max-width:800px){
     margin-top: 0;
@@ -915,6 +915,17 @@ a.tag:hover {
   float:right;
   margin-top: 6px;
   margin-right: 30px;
+}
+.section .quote {
+  width: 75%;
+  margin: 0 auto;
+  
+  h3 {
+    text-align: center;
+    font-style: italic;
+    font-size: 1.3em;
+    line-height: 187%;
+  }
 }
 .section.plans {
   background: #fff;
