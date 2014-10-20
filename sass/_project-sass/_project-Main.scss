@@ -793,11 +793,12 @@ a.tag:hover {
   float: left;
 }
 .section h2 {
-  font-size: 1.7em;
+  font-size: 2em;
   text-align: center;
   line-height: 150%;
   max-width: 800px;
   margin: 0 auto;
+  margin-bottom: .5em;
 }
 .section h3 {
   font-size: 1.4em;
@@ -895,7 +896,14 @@ a.tag:hover {
   background-image: url(/img/wired-logo.png);
   background-size: 211px;
   margin-top: 6px;
-  margin-right: 40px;
+  margin-right: 38px;
+}
+.section .logo.fastco {
+  width: 262px;
+  height: 39px;  
+  background-image: url(/img/fastcompany-logo.png);
+  background-size: 262px;
+    margin-top: 7px;
 }
 .section .logo.vice {
   width: 160px;
@@ -917,14 +925,19 @@ a.tag:hover {
   margin-right: 30px;
 }
 .section .quote {
-  width: 75%;
-  margin: 0 auto;
+  width: 70%;
+  margin: 0 auto .5em auto;
   
   h3 {
     text-align: center;
     font-style: italic;
-    font-size: 1.3em;
-    line-height: 187%;
+    font-size: 1.4em;
+    line-height: 159%;
+    font-family: $times;
+    color: #afcbd1;
+  }
+  a {
+    color: #afcbd1;
   }
 }
 .section.plans {
