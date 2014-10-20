@@ -646,13 +646,15 @@ class Site < Sequel::Model
       errors.add :username, 'A valid user/site name is required.'
     end
 
-    # TODO regex fails for usernames <= 2 chars, tempfix for now.
-    if new? && values[:username].length > 2 && !values[:username].match(VALID_HOSTNAME)
-      errors.add :username, 'A valid user/site name is required.'
-    end
+    if new? && !values[:username].nil? && !values[:username].empty?
+      # TODO regex fails for usernames <= 2 chars, tempfix for now.
+      if new? && values[:username].nil? || (values[:username].length > 2 && !values[:username].match(VALID_HOSTNAME))
+        errors.add :username, 'A valid user/site name is required.'
+      end
 
-    if values[:username].length > 32
-      errors.add :username, 'User/site name cannot exceed 32 characters.'
+      if values[:username].length > 32
+        errors.add :username, 'User/site name cannot exceed 32 characters.'
+      end
     end
 
     # Check that email has been provided

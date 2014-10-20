@@ -464,6 +464,25 @@ get '/new' do
   erb :'new'
 end
 
+post '/create_validate' do
+  content_type :json
+
+  if !params[:field].match /username|password|email|new_tags_string/
+    return {error: 'not a valid field'}.to_json
+  end
+
+  site = Site.new(params[:field] => params[:value])
+  site.valid?
+
+  field_sym = params[:field].to_sym
+
+  if site.errors[field_sym]
+    return {error: site.errors[field_sym].first}.to_json
+  end
+
+  {result: 'ok'}.to_json
+end
+
 post '/create' do
   require_unbanned_ip
   dashboard_if_signed_in
