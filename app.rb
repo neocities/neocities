@@ -433,6 +433,13 @@ get '/browse/?' do
   erb :browse
 end
 
+get '/surf/:username' do |username|
+  @site = Site.select(:id, :username, :title, :domain, :views).where(username: username).first
+  @title = @site.title
+  not_found if @site.nil?
+  erb :'surf', layout: false
+end
+
 get '/api' do
   @title = 'Developers API'
   erb :'api'

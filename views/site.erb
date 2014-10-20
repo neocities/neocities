@@ -14,13 +14,13 @@
     <div class="col col-50 signup-Area large">
       <div class="signup-Form">
   	  <fieldset class="content">
-        <a href="//<%= site.host %>" class="screenshot" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
+        <a href="/surf/<%= site.username %>" class="screenshot" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
 	    </fieldset>
       </div>
     </div>
     <div class="col col-50">
       <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? && !site.ended_supporter? %><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
-      <p class="site-url"><a href="//<%= site.host %>"><%= site.host %></a></p>
+      <p class="site-url"><a href="/surf/<%= site.username %>"><%= site.host %></a></p>
       <div class="stats">
         <div class="stat"><strong><%= site.views_english %></strong> <span>views</span></div>
         <div class="stat"><strong><%= site.hits_english %></strong> <span>hits</span></div>
@@ -44,24 +44,7 @@
           <!-- <a href="#" class="btn-Action tip"><span>Tip</span></a> -->
         <% end %>
 
-        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='
-
-          <a href="/site/<%= site.username %>.rss"><span>RSS/Atom Feed</span></a>
-          <br>
-          <a href="http://facebook.com/sharer.php?u=<%= Rack::Utils.build_query(u: "http://#{site.host}") %>" target="_blank">Facebook</a>
-          <br>
-          <a href="https://twitter.com/intent/tweet?<%= Rack::Utils.build_query(text: "#{site.title}: http://#{site.host}") %>">Twitter</a>
-          <br>
-          <a href="http://www.reddit.com/submit?<%= Rack::Utils.build_query(title: "#{site.title}", url: "http://#{site.host}" )%>" target="_blank">Reddit</a>
-          <br>
-          <a href="http://www.tumblr.com/share?<%= Rack::Utils.build_query(v: 3, u: "http://#{site.host}", t: "#{site.title}") %>" target="_blank">Tumblr</a>
-          <br>
-          <a href="http://www.stumbleupon.com/submit?<%= Rack::Utils.build_query(url: "http://#{site.host}", title: "#{site.title}") %>" target="_blank">StumbleUpon</a>
-          <br>
-          <a href="http://del.icio.us/post?<%= Rack::Utils.build_query(url: "http://#{site.host}", title: "#{site.title}") %>" target="_blank">Del.ici.ous</a>
-          <br>
-          <a href="https://plus.google.com/share?<%= Rack::Utils.build_query(url: "http://#{site.host}") %>" target="_blank">Google+</a>
-        '>
+        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: site} %>'>
          <i class="fa fa-share-alt"></i> <span>Share</span></a>
       </div>
     </div>
