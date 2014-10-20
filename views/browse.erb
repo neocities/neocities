@@ -64,13 +64,13 @@
   <ul class="row website-Gallery content int-Gall">
     <% @sites.each do |site| %>
       <li>
-        <a href="//<%= site.host %>" class="neo-Screen-Shot" target="_blank" title="<%= site.title %>">
+        <a href="/surf/<%= site.username %>" class="neo-Screen-Shot" target="_blank" title="<%= site.title %>">
           <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
             <img src="/img/placeholder.png" alt="<%= site.title %>" />
           </span>
         </a>
         <div class="title">
-          <a href="//<%= site.host %>" title="<%= site.title %>"><%= site.title.shorten(30) %></a>
+          <a href="/surf/<%= site.username %>" title="<%= site.title %>"><%= site.title.shorten(30) %></a>
         </div>
         <div class="site-info">
           <div class="username">
