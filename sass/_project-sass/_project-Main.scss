@@ -791,6 +791,8 @@ a.tag:hover {
   padding: 55px 8%;
   margin: 0 auto;
   float: left;
+  background: white;
+  width: 100%;
 }
 .section h2 {
   font-size: 2em;
@@ -810,9 +812,8 @@ a.tag:hover {
   font-size: .85em;
 }
 .section.featured-Websites {
-  background:#971D31;
+  background: #971D31;
   padding: 30px 0;
-  width: 100%;
   position: relative;
 }
 .section.featured-Websites .nav {
@@ -941,9 +942,6 @@ a.tag:hover {
   }
 }
 .section.plans {
-  background: #fff;
-  width: 100%;
-  
   @media(max-device-width:480px), screen and (max-width:550px) {
     padding: 55px 3%;
   }
@@ -1035,7 +1033,7 @@ a.tag:hover {
   background-size: 70px;
 }
 .plan-chart {
-  margin: 2em 0 4em 0;
+  margin: 2em 0 0 0;
   width: 100%;
 }
 .plan-overview, .plan-chart {
@@ -1090,6 +1088,21 @@ a.tag:hover {
 .plan-overview .btn-Action, .plan-chart .btn-Action {
   @media(max-device-width:480px), screen and (max-width:900px) {
     padding: 7px 10px;
+  }
+}
+.section.bottom-signup {
+  padding-top: 1em;
+  padding-bottom: 6.5em;
+  
+  a {
+    text-decoration: underline;
+    font-weight:bold;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  h2 {
+    max-width: none;
   }
 }
 .selected {
