@@ -4,10 +4,10 @@
   <div class="plan-overview">
     <div class="header">
       <div class="col col-25 personal">
-        Personal
+        Free
       </div>
       <div class="col col-75 professional">
-        Supporters
+        Supporter
       </div>
     </div>
     
@@ -15,7 +15,7 @@
       <div class="col col-25 free">
         <div class="plan-image free" data-original-title="Pick me!">
         </div>
-        <h3>Free!</h3>
+        <h3>Free</h3>
         <div class="price">$<%= Site::PLAN_FEATURES[:free][:price] %></div>
         <div class="interval">per month</div>
         <a href="/" class="btn-Action">Choose</a>
@@ -85,7 +85,7 @@
   </div>
   
   <!-- <h2><a href="">Compare Plans <i class="fa fa-caret-down"></i></a></h2> -->
-  <h2>Compare Plans</h2>
+  <h2 style="margin-top: 2em">Compare Plans</h2>
   <table class="plan-chart">
     <tr>
       <th class="feature-column"></th>
@@ -94,7 +94,7 @@
         <p>$<%= Site::PLAN_FEATURES[:free][:price] %>/mo</p>
         <a href="/" class="btn-Action">Choose</a>
       </th>
-      <th>
+      <th class="professional">
         <h3>Supporter</h3>
         <p>$<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo</p>
         <a href="/" class="btn-Action">Choose</a>
