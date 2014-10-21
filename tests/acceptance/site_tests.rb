@@ -30,7 +30,7 @@ describe 'site page' do
 
     visit "/browse?tag=#{tag}"
 
-    page.find('.website-Gallery .title a')['href'].must_match /#{blocked_site.host}/
+    page.find('.website-Gallery .title a')['href'].must_match /\/surf\/#{blocked_site.username}/
 
     visit "/site/#{blocked_site.username}"
 
