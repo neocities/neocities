@@ -376,7 +376,7 @@ get '/tags/autocomplete/:name.json' do |name|
   Tag.autocomplete(name).collect {|t| t[:name]}.to_json
 end
 
-get '/browse/?' do
+def browse_sites_dataset
   @current_page = params[:current_page]
   @current_page = @current_page.to_i
   @current_page = 1 if @current_page == 0
@@ -397,13 +397,13 @@ get '/browse/?' do
 
   case params[:sort_by]
     when 'hits'
-      site_dataset.order!(:hits.desc)
+      site_dataset.order!(:hits.desc, :updated_at.desc)
     when 'views'
-      site_dataset.order!(:views.desc)
+      site_dataset.order!(:views.desc, :updated_at.desc)
     when 'newest'
-      site_dataset.order!(:created_at.desc)
+      site_dataset.order!(:created_at.desc, :views.desc)
     when 'oldest'
-      site_dataset.order!(:created_at)
+      site_dataset.order!(:created_at, :views.desc)
     when 'random'
       site_dataset.where! 'random() < 0.01'
     when 'last_updated'
@@ -412,7 +412,7 @@ get '/browse/?' do
     else
       if params[:tag]
         params[:sort_by] = 'views'
-        site_dataset.order!(:views.desc)
+        site_dataset.order!(:views.desc, :updated_at.desc)
       else
         params[:sort_by] = 'last_updated'
         site_dataset.order!(:updated_at.desc, :views.desc)
@@ -427,10 +427,24 @@ get '/browse/?' do
     site_dataset.where! ['tags.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
   end
 
+  site_dataset
+end
+
+get '/browse/?' do
+  site_dataset = browse_sites_dataset
   site_dataset = site_dataset.paginate @current_page, 300
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
   erb :browse
+end
+
+get '/surf/?' do
+  site_dataset = browse_sites_dataset
+  site_dataset = site_dataset.paginate @current_page, 1
+  @page_count = site_dataset.page_count || 1
+  @site = site_dataset.first
+  redirect "/browse?#{Rack::Utils.build_query params}" if @site.nil?
+  erb :'surf', layout: false
 end
 
 get '/surf/:username' do |username|

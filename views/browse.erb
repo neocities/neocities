@@ -2,6 +2,10 @@
   function getPage(currentPage) {
     document.location.href = '/browse?current_page='+currentPage+'&'+$('#search_criteria').serialize();
   }
+
+  function surf(currentPage) {
+    document.location.href = '/surf?current_page='+currentPage+'&'+$('#search_criteria').serialize();
+  }
 </script>
 
 <div class="header-Outro with-columns browse-page">
@@ -14,12 +18,9 @@
       <% end %>
     </div>
   
-    <div class="col col-50 filter">
-      <form id="search_criteria" action="/browse" method="GET">
+    <form id="search_criteria" action="/browse" method="GET">
+      <div class="col col-50 filter">
         <fieldset class="grouping">
-          <% if params[:tag] %>
-            <input name="tag" type="hidden" value="<%= params[:tag] %>">
-          <% end %>
           <label class="text-Label" for="sort_by">Sort By:</label>
           <div class="select-Container">
             <select name="sort_by" id="sort_by" class="input-Select">
@@ -38,19 +39,17 @@
         -->
             <input class="btn-Action" type="submit" value="Update">
         </fieldset>
-      </form>
-    </div>
-    <div class="col col-50 filter">
-      <form method="GET" action="browse">
+      </div>
+      <div class="col col-50 filter">
+        <form method="GET" action="browse">
         <fieldset class="grouping">
         <label class="text-Label" for="tag">Search by tag:</label>
-        <input class="input-Area typeahead" name="tag" type="text" placeholder="pokemon" value="" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
+        <input class="input-Area typeahead" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
         <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Search">
         </fieldset>
-      </form>
+      </div>
     </div>
-
-  </div>
+    </form>
 </div>
 
 <div class="browse-page">
@@ -62,9 +61,9 @@
   </div>
 <% else %>
   <ul class="row website-Gallery content int-Gall">
-    <% @sites.each do |site| %>
+    <% @sites.each_with_index do |site,i| %>
       <li>
-        <a href="/surf/<%= site.username %>" class="neo-Screen-Shot" target="_blank" title="<%= site.title %>">
+        <a href="" class="neo-Screen-Shot" target="_blank" title="<%= site.title %>" onclick="surf(<%= i+1 %>); return false">  
           <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
             <img src="/img/placeholder.png" alt="<%= site.title %>" />
           </span>

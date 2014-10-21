@@ -89,13 +89,41 @@
     </style>
   </head>
   <body>
+  <script type="text/javascript">
+    function getPage(currentPage) {
+      document.location.href = '/surf?current_page='+currentPage+'&'+$('#search_criteria').serialize()
+    }
+
+    function backToBrowse() {
+      document.location.href = '/browse?'+$('#search_criteria').serialize()
+    }
+  </script>
   <a href="/" id="logo"></a>
   <div id="top-bar">
     <ul class="browse-actions">
-      <li><a href="/">Neocities</a></li>
-      <li><input type="text" placeholder="Browse by tag..." /></li>
-      <li><a href=""><i class="fa fa-caret-left"></i> Prev</a></li>
-      <li><a href="">Next <i class="fa fa-caret-right"></i></a></li>
+      <li>
+        <a href="/browse" onclick="backToBrowse(<%= @current_page %>); return false">Neocities</a>
+      </li>
+      <% if @current_page %>
+        <li>
+          <form id="search_criteria" onsubmit="getPage(1); return false">
+            <input type="hidden" name="sort_by" value="<%= params[:sort_by] %>">
+            <input class="typeahead" name="tag" type="text" placeholder="Browse by tag..." value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto" />
+          </form>
+        </li>
+        <li>
+          <% if @current_page > 1 %>
+            <a href="" onclick="getPage(<%= @current_page - 1 %>); return false">
+              <i class="fa fa-caret-left"></i> Prev
+            </a>
+          <% end %>
+        </li>
+        <li>
+          <% if @current_page != @page_count %>
+            <a href="" onclick="getPage(<%= @current_page + 1 %>); return false">Next <i class="fa fa-caret-right"></i></a>
+          <% end %>
+        </li>
+      <% end %>
     </ul>
     <ul class="site-actions">
       <li><a href="/site/<%= @site.username %>"><i class="fa fa-user"></i> <strong><%= @site.username %></strong></a></li>
@@ -113,9 +141,27 @@
 
   <script src="/js/jquery-1.11.0.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/typeahead.bundle.js"></script>
   <script>
     $(function() {
       $('#shareButton').popover({html: true})
+    })
+
+    $('.typeahead').typeahead({
+      minLength: 2,
+      highlight: true
+    }, {
+      name: 'tags',
+      source: function(query, callback) {
+        $.get('/tags/autocomplete/'+query+'.json', function(data) {
+          var suggestions = JSON.parse(data)
+          var suggestionObjects = []
+          for(var i=0; i<suggestions.length; i++)
+            suggestionObjects.push({value: suggestions[i]})
+
+          callback(suggestionObjects)
+        })
+      }
     })
   </script>
   </body>
