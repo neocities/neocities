@@ -91,7 +91,7 @@ class Site < Sequel::Model
     }
   }
 
-  SUGGESTIONS_LIMIT = 32
+  SUGGESTIONS_LIMIT = 30
   SUGGESTIONS_VIEWS_MIN = 500
   CHILD_SITES_MAX = 100
 
@@ -902,7 +902,7 @@ class Site < Sequel::Model
     suggestions_dataset = Site.exclude(id: id).order(:views.desc, :updated_at.desc)
     suggestions = suggestions_dataset.where(tags: tags).limit(limit, offset).all
 
-    return suggestions if suggestions.length == 32
+    return suggestions if suggestions.length == limit
 
     suggestions += suggestions_dataset.where("views >= #{SUGGESTIONS_VIEWS_MIN}").limit(limit-suggestions.length).order(Sequel.lit('RANDOM()')).all
   end
