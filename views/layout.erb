@@ -60,8 +60,6 @@
         name: 'tags',
         source: function(query, callback) {
           $.get('/tags/autocomplete/'+query+'.json', function(data) {
-            console.log(data)
-
             var suggestions = JSON.parse(data)
             var suggestionObjects = []
             for(var i=0; i<suggestions.length; i++)

@@ -3,7 +3,7 @@
     <div class="col col-66">
       <h3>Your Feed</h3>
       <div class="feed-filter">
-        <% if !@events.empty? %>
+        <% if !@events.empty? || params[:activity] == 'mine' %>
         <a href="/" <% if params[:activity] != 'mine' %>class="selected"<% end %>>All Activity</a>
         &nbsp;&nbsp;
         <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>
@@ -25,6 +25,12 @@
       <div class="col col-66">
         <% if !@events.empty? %>
           <%== erb :'_news', layout: false, locals: {site: current_site, events: @events} %>
+        <% elsif params[:activity] == 'mine' %>
+          <div class="welcome">
+            <h4>No updates on your site yet!</h4>
+            <p>
+              You should <a href="/dashboard">start editing your site</a>!
+          </div>
         <% else %>
           <div class="welcome">
             <h4>Welcome to your Neocities news feed!</h4>

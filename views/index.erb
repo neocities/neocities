@@ -154,25 +154,26 @@
             </div>
         </div>
       <% else %>
-        <form action="/new" method="get" class="signup-Form">
+        <form id="createSiteForm" action="/new" method="POST" class="signup-Form" onsubmit="createSite(); return false">
+          <input type="hidden" name="csrf_token" value="<%= csrf_token %>">
           <fieldset class="content">
             <h2 class="gamma">Sign up for free</h2>
             <hr />
             <label for="create-Input">Username</label>
-            <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" />
+            <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
             <label for="create-Input" id="domain-name">.neocities.org</label>
 
             <label for="tags-input">Tags (your interests, site topics)</label>
-            <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" />
+            <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
 
             <div class="col col-50" style="padding-left:0;">
             <label for="password-input">Password</label>
-            <input type="text" class="input-Area" id="password-input" name="password" placeholder="password" data-placement="left" data-trigger="manual" />
+            <input type="password" class="input-Area" id="password-input" name="password" placeholder="password" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
             </div>
 
             <div class="col col-50">
             <label for="email-input">Email</label>
-            <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" data-placement="left" data-trigger="manual" />
+            <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
             </div>
 
             <input type="submit" value="Create My Site" class="btn-Action float-Right" />
@@ -336,7 +337,14 @@
     <script src="/js/app.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script>
-      $('input[type=text]').change(function(obj) {
+      function createSite() {
+        $.post('/create', $('#createSiteForm').serialize(), function(res) {
+          if(res.result == 'ok')
+            location.reload()
+        })
+      }
+
+      $('input[type=text]').on('change focusout', function(obj) {
         $.post('/create_validate', {field: obj.target.name, value: obj.target.value, csrf_token: '<%= csrf_token %>'}, function(res) {
           if(res.result == 'ok') {
             return $(obj.target).tooltip('hide')

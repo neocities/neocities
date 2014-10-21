@@ -376,7 +376,7 @@ get '/tags/autocomplete/:name.json' do |name|
   Tag.autocomplete(name).collect {|t| t[:name]}.to_json
 end
 
-get '/browse/?' do
+def browse_sites_dataset
   @current_page = params[:current_page]
   @current_page = @current_page.to_i
   @current_page = 1 if @current_page == 0
@@ -397,13 +397,13 @@ get '/browse/?' do
 
   case params[:sort_by]
     when 'hits'
-      site_dataset.order!(:hits.desc)
+      site_dataset.order!(:hits.desc, :updated_at.desc)
     when 'views'
-      site_dataset.order!(:views.desc)
+      site_dataset.order!(:views.desc, :updated_at.desc)
     when 'newest'
-      site_dataset.order!(:created_at.desc)
+      site_dataset.order!(:created_at.desc, :views.desc)
     when 'oldest'
-      site_dataset.order!(:created_at)
+      site_dataset.order!(:created_at, :views.desc)
     when 'random'
       site_dataset.where! 'random() < 0.01'
     when 'last_updated'
@@ -412,7 +412,7 @@ get '/browse/?' do
     else
       if params[:tag]
         params[:sort_by] = 'views'
-        site_dataset.order!(:views.desc)
+        site_dataset.order!(:views.desc, :updated_at.desc)
       else
         params[:sort_by] = 'last_updated'
         site_dataset.order!(:updated_at.desc, :views.desc)
@@ -427,10 +427,26 @@ get '/browse/?' do
     site_dataset.where! ['tags.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
   end
 
+  site_dataset
+end
+
+get '/browse/?' do
+  params.delete 'tag' if params[:tag].nil? || params[:tag].empty?
+  site_dataset = browse_sites_dataset
   site_dataset = site_dataset.paginate @current_page, 300
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
   erb :browse
+end
+
+get '/surf/?' do
+  params.delete 'tag' if params[:tag].nil? || params[:tag].empty?
+  site_dataset = browse_sites_dataset
+  site_dataset = site_dataset.paginate @current_page, 1
+  @page_count = site_dataset.page_count || 1
+  @site = site_dataset.first
+  redirect "/browse?#{Rack::Utils.build_query params}" if @site.nil?
+  erb :'surf', layout: false
 end
 
 get '/surf/:username' do |username|
@@ -491,70 +507,36 @@ post '/create_validate' do
 end
 
 post '/create' do
+  content_type :json
   require_unbanned_ip
   dashboard_if_signed_in
+
   @site = Site.new(
     username: params[:username],
     password: params[:password],
     email: params[:email],
     new_tags_string: params[:tags],
-    is_nsfw: params[:is_nsfw],
     ip: request.ip
   )
 
-  recaptcha_is_valid = ENV['RACK_ENV'] == 'test' || recaptcha_valid?
-
-  if @site.valid? && recaptcha_is_valid
-    DB.transaction do
-      if !params[:stripe_token].nil? && params[:stripe_token] != ''
-        customer = Stripe::Customer.create(
-          card: params[:stripe_token],
-          description: @site.username,
-          email: @site.email,
-          plan: params[:selected_plan]
-        )
-        @site.stripe_customer_id = customer.id
-
-        plan_name = customer.subscriptions.first['plan']['name']
-
-        EmailWorker.perform_async({
-          from: 'web@neocities.org',
-          reply_to: 'contact@neocities.org',
-          to: @site.email,
-          subject: "[Neocities] You've become a supporter!",
-          body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: plan_name)
-        })
-
-      end
-
-      @site.save
-    end
-
-    EmailWorker.perform_async({
-      from: 'web@neocities.org',
-      reply_to: 'contact@neocities.org',
-      to: @site.email,
-      subject: "[Neocities] Welcome to Neocities!",
-      body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
-    })
-
-    EmailWorker.perform_async({
-      from: 'web@neocities.org',
-      reply_to: 'contact@neocities.org',
-      to: @site.email,
-      subject: "[Neocities] Welcome to Neocities!",
-      body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
-    })
-
-    send_confirmation_email @site
-
-    session[:id] = @site.id
-    redirect '/'
-  else
-    @site.errors.add :captcha, 'You must type in the captcha correctly! Try again.' if !recaptcha_is_valid
-
-    erb :'/new'
+  if !@site.valid?
+    return {result: 'error'}.to_json
   end
+
+  @site.save
+
+  EmailWorker.perform_async({
+    from: 'web@neocities.org',
+    reply_to: 'contact@neocities.org',
+    to: @site.email,
+    subject: "[Neocities] Welcome to Neocities!",
+    body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
+  })
+
+  send_confirmation_email @site
+
+  session[:id] = @site.id
+  {result: 'ok'}.to_json
 end
 
 get '/dashboard' do
