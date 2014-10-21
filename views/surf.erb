@@ -127,7 +127,19 @@
     </ul>
     <ul class="site-actions">
       <li><a href="/site/<%= @site.username %>"><i class="fa fa-user"></i> <strong><%= @site.username %></strong></a></li>
-      <li><a href=""><i class="fa fa-plus"></i> Follow</a></li>
+
+      <% if current_site && current_site != @site %>
+        <li>
+          <a id="followLink" href="" onclick="toggleFollow(<%= @site.id %>); return false">
+            <% if current_site.is_following? @site %>
+              <i class="fa fa-times"></i> Unfollow
+            <% else %>
+              <i class="fa fa-plus"></i> Follow
+            <% end %>
+          </a>
+        </li>
+      <% end %>
+
       <li>
         <a href="" id="shareButton" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: @site} %>' onclick="return false">
           <i class="fa fa-share-alt"></i> Share
@@ -163,6 +175,16 @@
         })
       }
     })
+
+    function toggleFollow(id) {
+      $.post('/site/'+id+'/toggle_follow', {csrf_token: '<%= csrf_token %>'}, function(res) {
+        if(res.result == 'followed')
+          $('#followLink').html('<i class="fa fa-times"></i> Unfollow')
+
+        if(res.result == 'unfollowed')
+          $('#followLink').html('<i class="fa fa-plus"></i> Follow')
+      })
+    }
   </script>
   </body>
 </html>
