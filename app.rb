@@ -507,70 +507,36 @@ post '/create_validate' do
 end
 
 post '/create' do
+  content_type :json
   require_unbanned_ip
   dashboard_if_signed_in
+
   @site = Site.new(
     username: params[:username],
     password: params[:password],
     email: params[:email],
     new_tags_string: params[:tags],
-    is_nsfw: params[:is_nsfw],
     ip: request.ip
   )
 
-  recaptcha_is_valid = ENV['RACK_ENV'] == 'test' || recaptcha_valid?
-
-  if @site.valid? && recaptcha_is_valid
-    DB.transaction do
-      if !params[:stripe_token].nil? && params[:stripe_token] != ''
-        customer = Stripe::Customer.create(
-          card: params[:stripe_token],
-          description: @site.username,
-          email: @site.email,
-          plan: params[:selected_plan]
-        )
-        @site.stripe_customer_id = customer.id
-
-        plan_name = customer.subscriptions.first['plan']['name']
-
-        EmailWorker.perform_async({
-          from: 'web@neocities.org',
-          reply_to: 'contact@neocities.org',
-          to: @site.email,
-          subject: "[Neocities] You've become a supporter!",
-          body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: plan_name)
-        })
-
-      end
-
-      @site.save
-    end
-
-    EmailWorker.perform_async({
-      from: 'web@neocities.org',
-      reply_to: 'contact@neocities.org',
-      to: @site.email,
-      subject: "[Neocities] Welcome to Neocities!",
-      body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
-    })
-
-    EmailWorker.perform_async({
-      from: 'web@neocities.org',
-      reply_to: 'contact@neocities.org',
-      to: @site.email,
-      subject: "[Neocities] Welcome to Neocities!",
-      body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
-    })
-
-    send_confirmation_email @site
-
-    session[:id] = @site.id
-    redirect '/'
-  else
-    @site.errors.add :captcha, 'You must type in the captcha correctly! Try again.' if !recaptcha_is_valid
-
-    erb :'/new'
+  if !@site.valid?
+    return {result: 'error'}.to_json
   end
+
+  @site.save
+
+  EmailWorker.perform_async({
+    from: 'web@neocities.org',
+    reply_to: 'contact@neocities.org',
+    to: @site.email,
+    subject: "[Neocities] Welcome to Neocities!",
+    body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
+  })
+
+  send_confirmation_email @site
+
+  session[:id] = @site.id
+  {result: 'ok'}.to_json
 end
 
 get '/dashboard' do
