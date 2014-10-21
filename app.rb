@@ -431,6 +431,7 @@ def browse_sites_dataset
 end
 
 get '/browse/?' do
+  params.delete 'tag' if params[:tag].nil? || params[:tag].empty?
   site_dataset = browse_sites_dataset
   site_dataset = site_dataset.paginate @current_page, 300
   @page_count = site_dataset.page_count || 1
@@ -439,6 +440,7 @@ get '/browse/?' do
 end
 
 get '/surf/?' do
+  params.delete 'tag' if params[:tag].nil? || params[:tag].empty?
   site_dataset = browse_sites_dataset
   site_dataset = site_dataset.paginate @current_page, 1
   @page_count = site_dataset.page_count || 1
