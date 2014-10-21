@@ -1176,7 +1176,19 @@ a.tag:hover {
   padding-top: 0px;
   padding-bottom: 4px;
 }
-
 .dropdown-submenu .dropdown-menu {
   width: 1px;
+}
+.fa-heart {
+  font-size: 0.7em;
+  color: #e93250;
+  vertical-align: .45em;
+  margin-left: -.15em;
+}
+.fa-user {
+  margin-right: 0.25em;
+  display: inline;
+  font-size: 10px;
+  vertical-align: .1em;
+  margin-left: .1em;
 }
