@@ -105,6 +105,12 @@
   -moz-background-size:cover;
   -webkit-background-size:cover;
   background-size:cover;
+  background-position: center top;
+}
+.interior .header-Outro .screenshot.dashboard {
+  width: 249px;
+  background-size: 249px;
+  height: 143px;
 }
 .interior .header-Outro ul {
   margin:0;padding:0;
