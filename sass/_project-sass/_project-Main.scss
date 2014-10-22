@@ -513,18 +513,10 @@ a.tag:hover {
 .news-item {
   width: 100%;
   float: left;
-  margin: 1em 0;
+  margin: 1.25em 0 1.25em 0;
 }
-/*
-.news-item.update, .news-item.tags, .news-item.comment.for-me, .news-item.tip.for-me {
-  margin: 1.0em 0;
-}
-*/
 .news-item:nth-of-type(1) {
-  margin-top: 0;
-}
-.news-item.first {
-  margin-top: 0;
+  margin-top: 0!important;
 }
 .news-item .user {
   font-weight: bold;
@@ -540,7 +532,8 @@ a.tag:hover {
   font-style: normal;
   margin-top: .2em;
   font-size: .9em;
-  margin-bottom: -.4em;
+  margin-bottom: -.1em;
+  margin-left: 2.35em;
 }
 .news-item .icon {
   width: 20px;
@@ -567,6 +560,9 @@ a.tag:hover {
 }
 .news-item.tip .icon {
   background: #FFCC00;
+}
+.news-item.follow {
+  margin: .3em 0 .3em 0;
 }
 .news-item.follow .icon {
   background: #3399CC;

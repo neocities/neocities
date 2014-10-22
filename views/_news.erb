@@ -80,7 +80,9 @@
       <% end %>
   <% end %>
 
-  <%== erb :'_news_actions', layout: false, locals: {event: event} %>
+  <% if !event.follow_id %>
+    <%== erb :'_news_actions', layout: false, locals: {event: event} %>
+  <% end %>
 
   <% if event.comments_dataset.count > 0 %>
     <div class="content">
