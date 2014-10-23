@@ -95,6 +95,9 @@ class Site < Sequel::Model
   SUGGESTIONS_VIEWS_MIN = 500
   CHILD_SITES_MAX = 100
 
+  IP_CREATE_LIMIT = 50
+  TOTAL_IP_CREATE_LIMIT = 300
+
   PLAN_FEATURES[:catbus] = PLAN_FEATURES[:fatcat].merge(
     name: 'Cat Bus',
     space: Filesize.from('10GB').to_i,
@@ -205,6 +208,11 @@ class Site < Sequel::Model
       end
       return nil if site.nil? || site.is_banned || site.owner.is_banned
       site
+    end
+
+    def ip_create_limit?(ip)
+      Site.where('created_at > ?', Date.today.to_time).where(ip: ip).count > IP_CREATE_LIMIT ||
+      Site.where(ip: ip).count > TOTAL_IP_CREATE_LIMIT
     end
   end
 

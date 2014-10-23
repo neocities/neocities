@@ -550,7 +550,7 @@ post '/create' do
     }.to_json
   end
 
-  if !black_box_answered || !@site.valid?
+  if !black_box_answered || !@site.valid? || Site.ip_create_limit?(request.ip)
     flash[:error] = 'There was an unknown error, please try again.'
     return {result: 'error'}.to_json
   end
