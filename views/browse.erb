@@ -63,7 +63,7 @@
   <ul class="row website-Gallery content int-Gall">
     <% @sites.each_with_index do |site,i| %>
       <li>
-        <a href="" class="neo-Screen-Shot" target="_blank" title="<%= site.title %>" onclick="surf(<%= i+1 %>); return false">  
+        <a href="" class="neo-Screen-Shot" target="_blank" title="<%= site.title %>" onclick="surf(<%= i+1 %>); return false">
           <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
             <img src="/img/placeholder.png" alt="<%= site.title %>" />
           </span>

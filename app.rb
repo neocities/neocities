@@ -249,7 +249,17 @@ get '/?' do
     @sites_count = SimpleCache.get :sites_count
   end
 
+  @blackbox_question = BlackBox.generate
+  @question_first_number, @question_last_number = generate_question
+
   erb :index, layout: false
+end
+
+def generate_question
+  question_first_number = rand 5
+  question_last_number = rand 5
+  session[:question_answer] = (question_first_number + question_last_number).to_s
+  [question_first_number, question_last_number]
 end
 
 get '/plan/?' do
@@ -487,6 +497,15 @@ get '/new' do
   erb :'new'
 end
 
+post '/create_validate_all' do
+  content_type :json
+  fields = params.select {|p| p.match /username|password|email|new_tags_string/}
+
+  site = Site.new fields
+  return [].to_json if site.valid?
+  site.errors.collect {|e| [e.first, e.last.first]}.to_json
+end
+
 post '/create_validate' do
   content_type :json
 
@@ -519,7 +538,20 @@ post '/create' do
     ip: request.ip
   )
 
-  if !@site.valid?
+  black_box_answered = BlackBox.valid? params[:blackbox_answer], request.ip
+  question_answered_correctly = params[:question_answer] == session[:question_answer]
+
+  if !question_answered_correctly
+    question_first_number, question_last_number = generate_question
+    return {
+      result: 'bad_answer',
+      question_first_number: question_first_number,
+      question_last_number: question_last_number
+    }.to_json
+  end
+
+  if !black_box_answered || !@site.valid?
+    flash[:error] = 'There was an unknown error, please try again.'
     return {result: 'error'}.to_json
   end
 
