@@ -95,6 +95,9 @@ class Site < Sequel::Model
   SUGGESTIONS_VIEWS_MIN = 500
   CHILD_SITES_MAX = 100
 
+  IP_CREATE_LIMIT = 50
+  TOTAL_IP_CREATE_LIMIT = 300
+
   PLAN_FEATURES[:catbus] = PLAN_FEATURES[:fatcat].merge(
     name: 'Cat Bus',
     space: Filesize.from('10GB').to_i,
@@ -205,6 +208,11 @@ class Site < Sequel::Model
       end
       return nil if site.nil? || site.is_banned || site.owner.is_banned
       site
+    end
+
+    def ip_create_limit?(ip)
+      Site.where('created_at > ?', Date.today.to_time).where(ip: ip).count > IP_CREATE_LIMIT ||
+      Site.where(ip: ip).count > TOTAL_IP_CREATE_LIMIT
     end
   end
 
@@ -643,7 +651,7 @@ class Site < Sequel::Model
     super
 
     if !self.class.valid_username?(values[:username])
-      errors.add :username, 'A valid user/site name is required.'
+      errors.add :username, 'Usernames can only contain letters, numbers, underscores and hyphens.'
     end
 
     if new? && !values[:username].nil? && !values[:username].empty?
@@ -850,12 +858,17 @@ class Site < Sequel::Model
   end
 
   def latest_events(current_page=1, limit=10)
-    events_dataset.order(:created_at.desc).paginate(current_page, limit)
+    site_id = self.id
+    Event.where{Sequel.|({site_id: site_id}, {actioning_site_id: site_id})}.
+    order(:created_at.desc).
+    paginate(current_page, limit)
   end
 
   def news_feed(current_page=1, limit=10)
     following_ids = self.followings_dataset.select(:site_id).all.collect {|f| f.site_id}
-    Event.filter(site_id: following_ids+[self.id]).
+    search_ids = following_ids+[self.id]
+
+    Event.where{Sequel.|({site_id: search_ids}, {actioning_site_id: search_ids})}.
     order(:created_at.desc).
     paginate(current_page, limit)
   end

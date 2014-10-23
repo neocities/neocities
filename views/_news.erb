@@ -30,7 +30,7 @@
       started following
 
       <% if current_site && event_site.id == current_site.id %>
-        your site!
+        your site.
       <% else %>
         <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? && !event_site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a>
       <% end %>
@@ -60,7 +60,7 @@
             <% site_change_filenames.each do |f| %>
               <div class="file">
                 <div class="html-thumbnail <%= site_change_file_display_class f %>">
-                  <a href="//<%= event_site.host %>/<%= f %>">
+                  <a href="//<%= event_site.host %><%= f == 'index.html' ? '' : "/#{f}" %>">
                     <% if site_change_file_display_class(f) == 'html' %>
                       <img src="<%= event_site.screenshot_url(f, '210x158') %>">
                     <% elsif site_change_file_display_class(f) == 'image' %>

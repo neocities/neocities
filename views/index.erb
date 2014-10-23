@@ -85,8 +85,7 @@
                 <li>
                   <a href="/signout" class="sign-In">Signout</a>
                 </li>
-              <% end %>
-
+              <% end %>`
             </ul>
           </nav>
 
@@ -154,29 +153,37 @@
             </div>
         </div>
       <% else %>
-        <form id="createSiteForm" action="/new" method="POST" class="signup-Form" onsubmit="createSite(); return false">
+        <form id="createSiteForm" class="signup-Form" onsubmit="return false">
           <input type="hidden" name="csrf_token" value="<%= csrf_token %>">
+          <input type="hidden" name="blackbox_answer" value="">
           <fieldset class="content">
             <h2 class="gamma">Sign up for free</h2>
             <hr />
-            <label for="create-Input">Username</label>
-            <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
-            <label for="create-Input" id="domain-name">.neocities.org</label>
+            <div class="siteCreateInputs">
+              <label for="create-Input">Username</label>
+              <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <label for="create-Input" id="domain-name">.neocities.org</label>
 
-            <label for="tags-input">Tags (your interests, site topics)</label>
-            <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <label for="tags-input">Tags (your interests, site topics)</label>
+              <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
 
-            <div class="col col-50" style="padding-left:0;">
-            <label for="password-input">Password</label>
-            <input type="password" class="input-Area" id="password-input" name="password" placeholder="password" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <div class="col col-50" style="padding-left:0;">
+              <label for="password-input">Password</label>
+              <input type="password" class="input-Area" id="password-input" name="password" placeholder="password" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              </div>
+
+              <div class="col col-50">
+              <label for="email-input">Email</label>
+              <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              </div>
+
+              <div class="col col-25">
+              <label for="question_answer-input"><%= @question_first_number %> + <%= @question_last_number %> =</label>
+              <input type="text" class="input-Area" name="question_answer" placeholder="" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" maxlength="2" style="width: 50px" />
+              </div>
+
+              <input type="submit" value="Create My Site" class="btn-Action float-Right" />
             </div>
-
-            <div class="col col-50">
-            <label for="email-input">Email</label>
-            <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
-            </div>
-
-            <input type="submit" value="Create My Site" class="btn-Action float-Right" />
           </fieldset>
         </form>
 
@@ -337,14 +344,38 @@
     <script src="/js/app.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script>
-      function createSite() {
-        $.post('/create', $('#createSiteForm').serialize(), function(res) {
-          if(res.result == 'ok')
-            location.reload()
-        })
-      }
 
-      $('input[type=text]').on('change focusout', function(obj) {
+      $('#createSiteForm').on('submit', function(obj) {
+        $("input[name=blackbox_answer]").val("<%= @blackbox_question %>")
+        $.post('/create_validate_all', $(obj.target).serialize(), function(errors) {
+          console.log(errors)
+          if(errors.length == 0) {
+            $.post('/create', $('#createSiteForm').serialize(), function(res) {
+              if(res.result == 'ok')
+                location.reload()
+              else if(res.result == 'bad_answer') {
+                $('label[for=question_answer-input]').text(res.question_first_number+' + '+res.question_last_number+' = ')
+                var input = $('input[name=question_answer]')
+                input.attr('data-original-title', 'Please answer the question correctly.')
+                input.tooltip('show')
+              } else {
+                location.reload()
+              }
+            })
+          }
+
+          for(var i=0; i<errors.length;i++) {
+            var ele = $('input[name='+errors[i][0]+']')
+            ele.attr('data-original-title', errors[i][1])
+            ele.tooltip('show')
+          }
+        })
+      })
+
+      $('input[type=text],input[type=password]').on('change focusout', function(obj) {
+        if(obj.target.name == 'question_answer')
+          return
+
         $.post('/create_validate', {field: obj.target.name, value: obj.target.value, csrf_token: '<%= csrf_token %>'}, function(res) {
           if(res.result == 'ok') {
             return $(obj.target).tooltip('hide')

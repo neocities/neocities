@@ -4,19 +4,17 @@
 <div class="title">
   <div class="icon" style="background-image:url(<%= actioning_site.screenshot_url('index.html', '100x100') %>);"></div>
 
-  <% if current_site && current_site.id == actioning_site.id && request.path == '/' %>
+  <% if current_site && current_site.id == actioning_site.id %>
     You
   <% else %>
     <i class="fa fa-user"><% if actioning_site.supporter? && !actioning_site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><a href="/site/<%= actioning_site.username %>" class="user"><%= actioning_site.username %></a>
   <% end %>
 
-  <% if request.path == '/' %>
     <% if current_site && current_site.id == profile_comment.site_id %>
       left a comment on <a href="/site/<%= current_site.username %>">your profile</a>:
     <% else %>
       left a comment on <i class="fa fa-user"><% if profile_comment.site.supporter? && !profile_comment.site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><a href="/site/<%= profile_comment.site.username %>" class="user"><%= profile_comment.site.username %></a><%= site.username[site.username.length-1] == 's' ? "’" : "'s" %> profile:
     <% end %>
-  <% end %>
   <span class="date">
     <a href="?event_id=<%= profile_comment.event.id %>"><%= profile_comment.created_at.ago %></a>
   </span>

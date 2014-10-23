@@ -127,3 +127,11 @@ if ENV['RACK_ENV'] != 'development'
   Sass::Plugin.options[:never_update] = true
   Sass::Plugin.options[:full_exception] = false
 end
+
+unless ENV['RACK_ENV'] == 'test'
+  if File.exist?('./black_box.rb')
+    require './black_box.rb'
+  else
+    puts "WARNING: Black box was not loaded!"
+  end
+end
