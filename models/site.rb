@@ -858,12 +858,17 @@ class Site < Sequel::Model
   end
 
   def latest_events(current_page=1, limit=10)
-    events_dataset.order(:created_at.desc).paginate(current_page, limit)
+    site_id = self.id
+    Event.where{Sequel.|({site_id: site_id}, {actioning_site_id: site_id})}.
+    order(:created_at.desc).
+    paginate(current_page, limit)
   end
 
   def news_feed(current_page=1, limit=10)
     following_ids = self.followings_dataset.select(:site_id).all.collect {|f| f.site_id}
-    Event.filter(site_id: following_ids+[self.id]).
+    search_ids = following_ids+[self.id]
+
+    Event.where{Sequel.|({site_id: search_ids}, {actioning_site_id: search_ids})}.
     order(:created_at.desc).
     paginate(current_page, limit)
   end
