@@ -18,13 +18,13 @@
     <div class="news-item follow">
       <div class="title">
       <div class="icon"></div>
-      <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain).first %>
-      <% event_site = event.site_dataset.select(:id, :username, :title, :domain).first %>
+      <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id).first %>
+      <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id).first %>
 
       <% if current_site && current_site.id == actioning_site.id %>
         You
       <% else %>
-        <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><%= actioning_site.username %></a>
+        <i class="fa fa-user"><% if actioning_site.supporter? && !actioning_site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><%= actioning_site.username %></a>
       <% end %>
 
       started following
@@ -32,7 +32,7 @@
       <% if current_site && event_site.id == current_site.id %>
         your site!
       <% else %>
-        <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.username %></a>
+        <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? && !event_site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a>
       <% end %>
 
       <span class="date">
@@ -80,16 +80,18 @@
       <% end %>
   <% end %>
 
-  <%== erb :'_news_actions', layout: false, locals: {event: event} %>
+  <% if !event.follow_id %>
+    <%== erb :'_news_actions', layout: false, locals: {event: event} %>
+  <% end %>
 
   <% if event.comments_dataset.count > 0 %>
     <div class="content">
       <div class="comments">
         <% event.comments.each do |comment| %>
-          <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username).first %>
+          <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id).first %>
           <div class="comment" id="comment_<%= comment.id %>">
-            <img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '82x62') %>">
-            <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><%= comment_actioning_site.username %></a>
+            <img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>">
+            <i class="fa fa-user"><% if comment_actioning_site.supporter? && !comment_actioning_site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><%= comment_actioning_site.username %></a>
             <span class="date">
               <a href="?event_id=<%= event.id %>"><%= comment.created_at.ago %></a>
             </span>

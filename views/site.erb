@@ -90,7 +90,7 @@
       </div>
       <%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %>
     <% else %>
-      <%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %>
+      <div><%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %></div>
     <% end %>
 
   </div>
