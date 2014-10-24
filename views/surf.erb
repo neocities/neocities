@@ -122,6 +122,16 @@
     #top-bar .invisible a {
       color: #3B3B3B;
     }
+    #top-bar .fa-heart {
+      font-size: 0.7em;
+      color: #e93250;
+      vertical-align: .45em;
+      margin-left: -.15em;
+    }
+    #top-bar .fa-user {
+      display: inline;
+      font-size: 11px;
+    }
     </style>
   </head>
   <body>
@@ -162,7 +172,7 @@
       <% end %>
     </ul>
     <ul class="site-actions">
-      <li><a href="/site/<%= @site.username %>"><i class="fa fa-user"></i> <strong><%= @site.username %></strong></a></li>
+      <li><a href="/site/<%= @site.username %>"><i class="fa fa-user"><% if @site.supporter? && !@site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i> <strong><%= @site.username %></strong></a></li>
 
       <% if current_site && current_site != @site %>
         <li>
