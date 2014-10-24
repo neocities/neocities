@@ -64,7 +64,7 @@
                     <% if site_change_file_display_class(f) == 'html' %>
                       <img src="<%= event_site.screenshot_url(f, '210x158') %>">
                     <% elsif site_change_file_display_class(f) == 'image' %>
-                      <img src="<%= event_site.thumbnail_url(f, '210x158') %>">
+                      <span class="image-container"><img src="<%= event_site.thumbnail_url(f, '210x158') %>"></span>
                     <% elsif site_change_file_display_class(f) == 'misc' %>
                       <span class="misc-icon">
                         <%= File.extname(f).sub('.', '') %>
