@@ -30,4 +30,4 @@ files/map.txt
 .sass-cache/*
 files/sslsites.zip
 .tm_properties
-black_box.rb
+./black_box.rb

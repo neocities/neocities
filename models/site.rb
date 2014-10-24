@@ -75,22 +75,6 @@ class Site < Sequel::Model
 
   COMMENTING_ALLOWED_UPDATED_COUNT = 2
 
-  PLAN_FEATURES = {
-    fatcat: {
-      name: 'Fat Cat',
-      space: Filesize.from('50GB').to_i,
-      bandwidth: Filesize.from('3TB').to_i,
-      price: 10,
-      custom_domains: true,
-      custom_ssl_certificates: true,
-      global_cdn: true,
-      ddos_mitigation: true,
-      unlimited_site_creation: true,
-      site_mounting: true,
-      no_file_restrictions: true
-    }
-  }
-
   SUGGESTIONS_LIMIT = 30
   SUGGESTIONS_VIEWS_MIN = 500
   CHILD_SITES_MAX = 100
@@ -98,11 +82,23 @@ class Site < Sequel::Model
   IP_CREATE_LIMIT = 50
   TOTAL_IP_CREATE_LIMIT = 300
 
+  PLAN_FEATURES = {
+    fatcat: {
+      name: 'Fat Cat',
+      space: Filesize.from('20GB').to_i,
+      bandwidth: Filesize.from('3TB').to_i,
+      price: 10,
+      unlimited_site_creation: true,
+      custom_ssl_certificates: true,
+      no_file_restrictions: true
+    }
+  }
+
   PLAN_FEATURES[:catbus] = PLAN_FEATURES[:fatcat].merge(
     name: 'Cat Bus',
-    space: Filesize.from('10GB').to_i,
+    space: Filesize.from('5GB').to_i,
     bandwidth: Filesize.from('1TB').to_i,
-    price: 5
+    price: 5,
   )
 
   PLAN_FEATURES[:supporter] = PLAN_FEATURES[:catbus].merge(
@@ -110,20 +106,16 @@ class Site < Sequel::Model
     space: Filesize.from('1GB').to_i,
     bandwidth: Filesize.from('0.5TB').to_i,
     price: 2,
-    unlimited_site_creation: false,
     custom_ssl_certificates: false,
     no_file_restrictions: false
   )
 
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
     name: 'Free',
-    space: Filesize.from('20MB').to_i,
+    space: Filesize.from('30MB').to_i,
     bandwidth: Filesize.from('100GB').to_i,
     price: 0,
-    custom_domains: false,
-    global_cdn: false,
-    ddos_mitigation: false,
-    site_mounting: false
+    unlimited_site_creation: false
   )
 
   many_to_many :tags
