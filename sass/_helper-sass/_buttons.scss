@@ -5,7 +5,7 @@
     background:$c-Dark; 
     @include border-radius($radius*6);
     @include box-shadow($bs-1);
-    color:$c-Lighter;
+    color:$c-Lighter!important;
     cursor:pointer;
     display:inline-block;
     font:{family:$arial; size:$base}
