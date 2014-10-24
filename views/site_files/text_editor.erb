@@ -16,6 +16,9 @@
 <div class="header-Outro">
   <div class="row content">
     <h1>Editing <%= @filename %></h1>
+    <% if @filename.match /index.html$/ %>
+      <h3 class="subtitle">Note: index.html is the first web page that gets loaded when users visit your site. Make sure there are <a href="http://www.w3schools.com/html/html_links.asp" target="_blank">HTML links</a> to your other pages from this page.</h3>
+    <% end %>
   </div>
 </div>
 
