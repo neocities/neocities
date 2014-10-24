@@ -68,6 +68,8 @@
             callback(suggestionObjects)
           })
         }
+      }).on('typeahead:selected', function(e) {
+        e.target.form.submit()
       })
     </script>
   </body>
