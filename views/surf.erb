@@ -122,6 +122,11 @@
     #top-bar .invisible a {
       color: #3B3B3B;
     }
+
+    .hidden {
+      display:none!important;
+      visibility:hidden
+    }
     </style>
   </head>
   <body>
@@ -144,7 +149,8 @@
         <li>
           <form id="search_criteria" onsubmit="getPage(1); return false">
             <input type="hidden" name="sort_by" value="<%= params[:sort_by] %>">
-            <input class="typeahead" name="tag" type="text" placeholder="Browse by tag..." value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto" />
+            <input class="typeahead" name="tag" type="text" placeholder="Browse by tag..." value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" />
+            <input class="hidden" type="submit" tabindex="-1"/>
           </form>
         </li>
         <li>
@@ -210,6 +216,8 @@
           callback(suggestionObjects)
         })
       }
+    }).on('typeahead:selected', function(e) {
+      e.target.form.submit()
     })
 
     function toggleFollow(id) {
