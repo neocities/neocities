@@ -637,7 +637,14 @@ a.tag:hover {
   margin-right: 6px;
 }
 .news-item .content {
-  padding: 0 0 0 32px;
+  padding: 0;
+  margin-left: 32px;
+}
+.news-item.comment .actions, .news-item.comment .content {
+  margin-left: 20px;
+}
+.news-item.comment .comments .actions {
+  margin-left: 47px;
 }
 .news-item .comments {
   margin-top: .7em;
@@ -679,6 +686,9 @@ a.tag:hover {
 }
 .interior .header-Outro .actions a {
   margin-right: 6px;
+}
+.interior .header-Outro .actions a:first-of-type {
+  margin-left: 0;
 }
 .interior .header-Outro .stats {
   margin-bottom: 1.2em;
