@@ -12,6 +12,7 @@
 
 <% events.each do |event| %>
   <% if event.profile_comment_id %>
+    <div class="news-item comment for-me" id="event_<%= event.id %>">
       <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment, event: event} %>
   <% elsif event.follow_id %>
     <div class="news-item follow">
