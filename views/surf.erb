@@ -10,7 +10,7 @@
     <link href="/css/font-awesome.css" rel="stylesheet">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <style>
-    * {
+    *, form {
       margin: 0;
       padding: 0;
     }
@@ -34,6 +34,7 @@
     #website-frame {
       width: 100%;
       height: 100%;
+      height: calc(100% - 2.2em);
     }
     #top-bar {
       background: #3B3B3B;
@@ -44,10 +45,12 @@
     }
     #top-bar ul {
       list-style: none;
+      margin: 0;
     }
     #top-bar li {
       float: left;
       margin-left: 20px;  
+      line-height: normal;
     }
     #top-bar a {
       color: #cecece;
@@ -59,21 +62,53 @@
     #top-bar input {
       border: 0;
       background: #555;
-      color:white;
-      width: 120px;
+      color: white;
+      width: 13em;
       padding: 1px 5px;
-      
+      font-size: inherit;
+      margin: 0;
+      height: 1.1em;
+      line-height: normal;
+      border-radius: 3px;
     }
-    ::-webkit-input-placeholder { font-style: italic; }
-    :-moz-placeholder { font-style: italic; }
-    ::-moz-placeholder { font-style: italic; }
-    :-ms-input-placeholder { font-style: italic; }
+    ::-webkit-input-placeholder { font-style: italic; color: #aaa!important; }
+    :-moz-placeholder { font-style: italic; color: #ccc; }
+    ::-moz-placeholder { font-style: italic; color: #ccc; }
+    :-ms-input-placeholder { font-style: italic; color: #ccc; }
+    #top-bar .twitter-typeahead {
+      color: #000;
+    }
+    #top-bar .tt-dropdown-menu {
+      background: #FFFFFF;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      top: 106%!important;
+      width: 98.5%!important;
+    }
+    #top-bar .tt-suggestion {
+      margin:0;
+      padding: 0px 8px 0px 8px;
+      height: 2em;
+      line-height: 2em;
+    }
+    #top-bar .tt-cursor {
+      background: #DAF3EF;
+    }
     #top-bar .browse-actions {
       margin-left: 20px;
     }
     #top-bar .site-actions {
       float: right;
       margin-right: 9px;
+    }
+    .popover {
+      background-color: #555;
+    }
+    .popover.bottom .arrow:after {
+      border-bottom-color: #555;
+    }
+    .popover a {
+      color: #cecece;
     }
     #top-bar .close {
       background: url(/img/topbar-close.png) no-repeat;
@@ -82,6 +117,7 @@
       background-size: 13px;
       margin-top: 1px;
       float: left;
+      opacity: 1; /*overriding boostrap*/
     }
     #top-bar .invisible a {
       color: #3B3B3B;
