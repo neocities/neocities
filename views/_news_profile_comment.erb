@@ -1,8 +1,9 @@
 <% actioning_site = profile_comment.actioning_site_dataset.select(:id, :username, :stripe_customer_id).first %>
 <% site = profile_comment.site_dataset.select(:id, :username, :stripe_customer_id).first %>
+<div class="news-item comment <% if (current_site && current_site.id == profile_comment.site_id) || (request.path != '/') %>for-me<% end %>" id="event_<%= event.id %>">
 
 <div class="title">
-  <div class="icon" style="background-image:url(<%= actioning_site.screenshot_url('index.html', '100x100') %>);"></div>
+  <div class="icon" style="<% if current_site && current_site.id == profile_comment.site_id %>background-image:url(<%= actioning_site.screenshot_url('index.html', '100x100') %>);<% end %>"></div>
 
   <% if current_site && current_site.id == actioning_site.id %>
     You
