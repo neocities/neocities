@@ -267,6 +267,16 @@ get '/plan/?' do
   erb :'plan/index'
 end
 
+get '/plan/create' do
+  erb :''
+end
+
+=begin
+get '/plan/?' do
+  @title = 'Supporter'
+  erb :'plan/index'
+end
+
 post '/plan/create' do
   require_login
 
@@ -345,6 +355,7 @@ post '/plan/end' do
 
   redirect '/plan'
 end
+=end
 
 get '/site/:username/tip' do |username|
   @site = Site[username: username]
