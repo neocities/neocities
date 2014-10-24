@@ -267,10 +267,6 @@ get '/plan/?' do
   erb :'plan/index'
 end
 
-get '/plan/create' do
-  erb :''
-end
-
 =begin
 get '/plan/?' do
   @title = 'Supporter'
@@ -510,7 +506,7 @@ end
 
 post '/create_validate_all' do
   content_type :json
-  fields = params.select {|p| p.match /username|password|email|new_tags_string/}
+  fields = params.select {|p| p.match /^username$|^password$|^email$|^new_tags_string$/}
 
   site = Site.new fields
   return [].to_json if site.valid?
@@ -520,7 +516,7 @@ end
 post '/create_validate' do
   content_type :json
 
-  if !params[:field].match /username|password|email|new_tags_string/
+  if !params[:field].match /^username$|^password$|^email$|^new_tags_string$/
     return {error: 'not a valid field'}.to_json
   end
 

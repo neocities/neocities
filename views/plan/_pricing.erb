@@ -1,6 +1,25 @@
+<%
+  def plan_pricing_button(plan_type)
+    plan_type = plan_type.to_s
+
+    if !parent_site
+      %{<a href="/#new" class="btn-Action">Sign Up</a>}
+    elsif parent_site && parent_site.plan_type == plan_type
+      %{<p style="padding-top: 15px; padding-bottom: 14px"><strong>Current Plan</strong></p>}
+    else
+      if plan_type == 'supporter'
+        plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]*12}, once per year"
+      else
+        plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]}, monthly"
+      end
+      %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="return false" class="btn-Action planPricingButton">Choose</a>}
+    end
+  end
+%>
+
 <section class="section plans">
-  <h2>Need more power? We’ve got you covered.<br>Upgrading gives you more space, bandwidth, features, <strong>and helps us keep the free sites free, forever.</strong></h2>
-  
+  <h2>Need more power? We’ve got you covered.<br>Upgrading gives you more space, bandwidth, features, <strong>and helps us stay independent and keep the free sites free.</strong></h2>
+
   <div class="plan-overview">
     <div class="header">
       <div class="col col-25 personal">
@@ -10,7 +29,7 @@
         Supporter
       </div>
     </div>
-    
+
     <div class="body">
       <div class="col col-25 free">
         <div class="plan-image free" data-original-title="Pick me!">
@@ -18,7 +37,7 @@
         <h3>Free</h3>
         <div class="price">$<%= Site::PLAN_FEATURES[:free][:price] %></div>
         <div class="interval">per month</div>
-        <a href="/" class="btn-Action">Choose</a>
+        <%== plan_pricing_button :free %>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %></strong> storage</li>
           <li><strong><%= Site::PLAN_FEATURES[:free][:bandwidth].to_space_pretty %></strong> bandwidth</li>
@@ -26,13 +45,13 @@
         <ul>
         </ul>
       </div>
-      
+
       <div class="col col-25 supporter">
         <div class="plan-image" data-original-title="No no, pick me!"></div>
         <h3>Supporter</h3>
         <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
         <div class="interval">per month, billed annually</div>
-        <a href="/" class="btn-Action">Choose</a>
+        <%== plan_pricing_button :supporter %>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_space_pretty %></strong> storage</li>
           <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_space_pretty %></strong> bandwidth</li>
@@ -42,14 +61,14 @@
           <li>More space</li>
         </ul>
       </div>
-      
+
       <div class="col col-25 catbus">
 
         <div class="plan-image" data-original-title="VROOOOOOM!"></div>
         <h3>Cat Bus</h3>
         <div class="price">$<%= Site::PLAN_FEATURES[:catbus][:price] %></div>
         <div class="interval">per month</div>
-        <a href="/" class="btn-Action">Choose</a>
+        <%== plan_pricing_button :catbus %>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:catbus][:space].to_space_pretty %></strong> storage</li>
           <li><strong><%= Site::PLAN_FEATURES[:catbus][:bandwidth].to_space_pretty %></strong> bandwidth</li>
@@ -61,13 +80,13 @@
           <li>Even more space</li>
         </ul>
       </div>
-      
+
       <div class="col col-25 fatcat">
         <div class="plan-image" data-original-title="Jolly good."></div>
         <h3>Fat Cat</h3>
         <div class="price">$<%= Site::PLAN_FEATURES[:fatcat][:price] %></div>
         <div class="interval">per month</div>
-        <a href="/" class="btn-Action">Choose</a>
+        <%== plan_pricing_button :fatcat %>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:fatcat][:space].to_space_pretty %></strong> storage</li>
           <li><strong><%= Site::PLAN_FEATURES[:fatcat][:bandwidth].to_space_pretty %></strong> bandwidth</li>
@@ -79,11 +98,9 @@
           <li>A lot more space!</li>
         </ul>
       </div>
-      
     </div>
-    
   </div>
-  
+
   <!-- <h2><a href="">Compare Plans <i class="fa fa-caret-down"></i></a></h2> -->
   <h2 style="margin-top: 2em">Compare Plans</h2>
   <table class="plan-chart">
@@ -92,22 +109,22 @@
       <th>
         <h3>Free</h3>
         <p>$<%= Site::PLAN_FEATURES[:free][:price] %>/mo</p>
-        <a href="/" class="btn-Action">Choose</a>
+        <%== plan_pricing_button :free %>
       </th>
       <th class="professional">
         <h3>Supporter</h3>
         <p>$<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo</p>
-        <a href="/" class="btn-Action">Choose</a>
+        <%== plan_pricing_button :supporter %>
       </th>
       <th class="professional">
         <h3>Cat Bus</h3>
         <p>$<%= Site::PLAN_FEATURES[:catbus][:price] %>/mo</p>
-        <a href="/" class="btn-Action">Choose</a>
+        <%== plan_pricing_button :catbus %>
       </th>
       <th class="professional">
         <h3>Fat Cat</h3>
         <p>$<%= Site::PLAN_FEATURES[:fatcat][:price] %>/mo</p>
-        <a href="/" class="btn-Action">Choose</a>
+        <%== plan_pricing_button :fatcat %>
       </th>
     </tr>
     <tr>
@@ -264,6 +281,57 @@
       <td><i class="fa fa-check"></i></td>
     </tr>
   </table>
+
+  <% if request.path.match /\/plan/ %>
+    <div class="row" style="margin-top: 50px; margin-bottom: 0px;">
+      <div class="col-50" style="margin-left: auto; margin-right: auto">
+        <h2>Why get the Supporter Plan?</h2>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 0px">
+      <div class="col-75" style="margin-left: auto; margin-right: auto;">
+        <h3 style="margin-top: 0px">
+          The Neocities Supporter Plans are a way to help sustain the site. When you join the Supporter Plan, you are directly helping our quest to bring back the creative, independent web, and to continue to improve Neocities for everyone.
+        </h3>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-60" style="margin-left: auto; margin-right: auto">
+        <ul>
+          <li>
+            <strong>You get more space!</strong> Right now supporter plans get up to <strong><%= Site::SUPPORTER_MAXIMUM.to_space_pretty %></strong>.
+          </li>
+          <li>
+            <strong>It helps your site.</strong> Funding helps us make your site faster globally, and provide more features.
+          </li>
+          <li>
+            <strong>It helps us build.</strong> It allows us to work on Neocities full-time, without worrying about bills.
+          </li>
+          <li>
+            <strong>It helps the web.</strong> The web needs more independent, creative sites. Neocities is leading the way.
+          </li>
+          <li>
+            <strong>It's Open Source.</strong> Neocities is <a href="https://github.com/neocities" target="_blank">completely open source</a>, and we share code with the community.
+          </li>
+          <li>
+            <strong>No lock-in.</strong> Redirecting your site is easy, free site downloads, and support for custom domains.
+          </li>
+          <li><strong>No ads, ever.</strong> We'll never put ads or watermarks on sites, and we don't sell user data.</li>
+          <li>
+            <strong>It's safe.</strong> We use <a href="https://stripe.com" target="_blank">Stripe</a> for payments, and never store your credit card information directly.
+          </li>
+          <li>
+            <strong>It's affordable.</strong> As low as <strong>$<%= Site::PLAN_FEATURES[:supporter][:price] %>/month</strong> (billed once every year). Higher tiers are optional (and appreciated!)
+          </li>
+          <li>
+            <strong>You can cancel anytime.</strong>
+          </li>
+        </ul>
+      </div>
+    </div>
+  <% end %>
 </section>
 
 <script>
@@ -276,4 +344,54 @@
       placement: 'top'
     })
   })
+
+  $(".planPricingButton").on('click', function(obj) {
+    $('#upgradePlanType').val($(obj.target).attr('data-plan_type'))
+    $('#upgradeFormPlanName').text($(obj.target).attr('data-plan_name'))
+    $('#upgradeFormPlanPrice').text($(obj.target).attr('data-plan_price'))
+    $('#planSignup').modal()
+  })
 </script>
+
+<div class="modal hide fade" id="planSignup" tabindex="-1" role="dialog" aria-labelledby="planSignupLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+    <h3 id="planSignupLabel">Upgrade</h3>
+  </div>
+  <div class="modal-body">
+    <form>
+      <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+      <input type="hidden" value="" name="plan_type" id="upgradePlanType">
+      <div>
+        You are upgrading to the <strong><span id="upgradeFormPlanName"></span> Plan</strong>. You will be charged <span id="upgradeFormPlanPrice"></span>.
+      </div>
+
+      <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
+
+      <div style="margin-top: 30px">
+        <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
+
+        <% if params[:stripe_token] %>
+          <p>Billing information has been saved, thank you!</p>
+        <% else %>
+          <p>
+            Card Number: <input type="text" size="20" data-stripe="number" placeholder="XXXX-XXXX-XXXX-XXXX">
+            CVC: <input type="text" size="4" maxlength="4" data-stripe="cvc" style="width: 60px" placeholder="123">
+          </p>
+          <p>
+            Expiration:
+            <input type="text" size="2" data-stripe="exp-month" placeholder="MM" maxlength="2" style="width: 50px">
+            <input type="text" size="4" data-stripe="exp-year" placeholder="YYYY" maxlength="4" style="width: 60px">
+          </p>
+        <% end %>
+      </div>
+
+      <p><strong>We accept alternative ways to send money.</strong> If you would prefer to use Bitcoin or Paypal, <a href="/donate" target="_blank">click here</a>.</p>
+
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button type="submit" class="btn btn-Action">Upgrade</button>
+  </div>
+</div>
