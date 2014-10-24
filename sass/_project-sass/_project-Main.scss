@@ -510,6 +510,9 @@ a.tag:hover {
   margin: 0 4px 4px 0;
   float: left;
 }
+.misc-page.columns a:visited {
+  color: $c-Brand-1;
+}
 .news-item {
   width: 100%;
   float: left;
@@ -520,7 +523,10 @@ a.tag:hover {
 }
 .news-item .user {
   font-weight: bold;
-  color: #000;
+  color: #000!important;
+}
+.news-item .you {
+  color: #000!important;
 }
 .news-item .comment {
   color: #000;
@@ -533,7 +539,6 @@ a.tag:hover {
   margin-top: .2em;
   font-size: .9em;
   margin-bottom: -.1em;
-  margin-left: 2.35em;
 }
 .news-item .icon {
   width: 20px;
@@ -579,7 +584,7 @@ a.tag:hover {
   margin-top: .5em;
 }
 .news-item .date a {
-  color: #aaa;
+  color: #aaa!important;
 }
 .news-item .files {
   background: #F5F5F5;
@@ -616,9 +621,17 @@ a.tag:hover {
   float: none;
   margin-left: 4px;
 }
+.news-item .comments .actions, .news-item .comments p {
+  margin-left: 47px;
+}
+.news-item .comments p {
+  margin-bottom: .4em;
+  margin-top: .15em;
+  font-size: 1em;
+}
 .news-item .actions {
   font-size: 11px;
-  margin-left: 2.9em;
+  margin-left: 32px;
 }
 .news-item .actions a {
   margin-right: 6px;
@@ -632,12 +645,17 @@ a.tag:hover {
 .news-item .comments .comment {
   font-size: .8em;
   clear: both;
+  margin-top: 1em;
 }
 .news-item .comments .comment .user {
   margin-right: 5px;
 }
 .news-item .comments .comment .actions {
   margin-top: .3em;
+}
+.news-item .comment-symbol {
+  font-size: 80%;
+  margin-left: .2em;
 }
 .news-item .avatar {
   margin-right: 10px;
