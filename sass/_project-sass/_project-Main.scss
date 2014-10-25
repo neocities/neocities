@@ -849,6 +849,55 @@ a.tag:hover {
 .section p, .section li {
   font-size: .85em;
 }
+.section.previews {
+  background: #FAF6F1;
+  h3 {
+    line-height: 130%;
+    font-size: 1.6em;
+    margin-top: 0;
+  }
+  h2, h3 {
+    color: #335062;
+  }
+  p {
+    color: #666;
+    line-height: 180%;
+    font-size: .9em;
+  }
+  .row {
+    margin: 5em 10%;
+    padding: 0;
+    &:first-of-type {
+      margin-top: 3.5em;
+    }
+    &:last-of-type {
+      margin-bottom: 2.5em;
+    }
+    .col {
+      padding-left: 0;
+      padding-right: 30px;
+      &.text {
+        padding-top: 2em;
+      }
+    }
+    .screenshot {
+      width: 100%;
+      height: 250px;
+      margin-right: 30px;
+      background: white;
+      border: 6px solid white;
+      @include box-shadow(1px 1px 2px 0px rgba(0, 0, 0, 0.18));
+    }
+    &.right {
+      .col {
+        padding-right: 0;
+        &.text {
+          padding-right: 30px;
+        }
+      }
+    }
+  }
+}
 .section.featured-Websites {
   background: #971D31;
   padding: 30px 0;
