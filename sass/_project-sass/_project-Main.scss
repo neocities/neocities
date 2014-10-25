@@ -160,6 +160,13 @@
   float: left;
   font-weight:bold;
   margin-top: 4px;
+  a {
+    color: white;
+  }
+  .fa-angle-right {
+    font-size: 1.3em;
+    margin: 0 .2em 0 .2em;
+  }
 }
 .files .actions {
   float: right;
@@ -292,7 +299,7 @@
   display: block;
   padding-top: 35px;
   font-size: 14px;
-  color: #bbb;
+  color: #C0C0C0;
   font-weight: bold;
   margin-left: auto;
   margin-right: auto;

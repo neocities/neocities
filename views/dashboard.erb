@@ -92,7 +92,7 @@
         <% dir_array = @dir.split '/' %>
         <% dir_array.each_with_index do |dir,i| %>
           <% if i+1 < dir_array.length %>
-            <a href="/dashboard?dir=<%= Rack::Utils.escape dir %>"><%= dir %></a> / 
+            <a href="/dashboard?dir=<%= Rack::Utils.escape dir %>"><%= dir %></a> <i class="fa fa-angle-right"></i> 
           <% else %>
             <%= dir %>
           <% end %>
