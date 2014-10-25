@@ -12,13 +12,19 @@
       else
         plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]}, monthly"
       end
-      %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="return false" class="btn-Action planPricingButton">Choose</a>}
+      %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="return false" class="btn-Action planPricingButton">#{parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'}</a>}
     end
   end
 %>
 
 <section class="section plans">
-  <h2>Need more power? We’ve got you covered.<br>Upgrading gives you more space, bandwidth, features, <strong>and helps us stay independent and keep the free sites free.</strong></h2>
+  <h2>
+    Need more space? We’ve got you covered.
+    <% if request.path == '/' %>
+      <br>
+      Upgrading gives you more space, bandwidth, features, <strong>and helps us stay independent and keep the free sites free.</strong>
+    <% end %>
+  </h2>
 
   <div class="plan-overview">
     <div class="header">
@@ -285,7 +291,7 @@
   <% if request.path.match /\/plan/ %>
     <div class="row" style="margin-top: 50px; margin-bottom: 0px;">
       <div class="col-50" style="margin-left: auto; margin-right: auto">
-        <h2>Why get the Supporter Plan?</h2>
+        <h2>Why get a Supporter Plan?</h2>
       </div>
     </div>
 
@@ -301,13 +307,13 @@
       <div class="col-60" style="margin-left: auto; margin-right: auto">
         <ul>
           <li>
-            <strong>You get more space!</strong> Right now supporter plans get up to <strong><%= Site::SUPPORTER_MAXIMUM.to_space_pretty %></strong>.
+            <strong>You get more space!</strong> Right now supporter plans get up to <strong><%= Site::PLAN_FEATURES[:fatcat][:space].to_space_pretty %></strong>.
           </li>
           <li>
             <strong>It helps your site.</strong> Funding helps us make your site faster globally, and provide more features.
           </li>
           <li>
-            <strong>It helps us build.</strong> It allows us to work on Neocities full-time, without worrying about bills.
+            <strong>It helps us build.</strong> It supports our goal to work on Neocities full-time, without worrying about bills.
           </li>
           <li>
             <strong>It helps the web.</strong> The web needs more independent, creative sites. Neocities is leading the way.
@@ -354,44 +360,121 @@
 </script>
 
 <div class="modal hide fade" id="planSignup" tabindex="-1" role="dialog" aria-labelledby="planSignupLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
-    <h3 id="planSignupLabel">Upgrade</h3>
-  </div>
-  <div class="modal-body">
-    <form>
-      <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-      <input type="hidden" value="" name="plan_type" id="upgradePlanType">
-      <div>
-        You are upgrading to the <strong><span id="upgradeFormPlanName"></span> Plan</strong>. You will be charged <span id="upgradeFormPlanPrice"></span>.
-      </div>
-
-      <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
-
-      <div style="margin-top: 30px">
-        <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
-
-        <% if params[:stripe_token] %>
-          <p>Billing information has been saved, thank you!</p>
+  <form id="upgradeForm" method="POST" action="/plan/update">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <input type="hidden" value="" name="plan_type" id="upgradePlanType">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <h3 id="planSignupLabel">
+        <% if parent_site && parent_site.plan_type == 'free' %>
+          Upgrade
         <% else %>
-          <p>
-            Card Number: <input type="text" size="20" data-stripe="number" placeholder="XXXX-XXXX-XXXX-XXXX">
-            CVC: <input type="text" size="4" maxlength="4" data-stripe="cvc" style="width: 60px" placeholder="123">
-          </p>
-          <p>
-            Expiration:
-            <input type="text" size="2" data-stripe="exp-month" placeholder="MM" maxlength="2" style="width: 50px">
-            <input type="text" size="4" data-stripe="exp-year" placeholder="YYYY" maxlength="4" style="width: 60px">
-          </p>
+          Change
         <% end %>
-      </div>
+      </h3>
+    </div>
+    <div class="modal-body">
+        <div>
+          You are <% if current_site && parent_site.plan_type == 'free' %>upgrading<%else%>changing<%end%> to the <strong><span id="upgradeFormPlanName"></span> Plan</strong>. You will be charged <span id="upgradeFormPlanPrice"></span>. Please enter your Credit Card number:
+        </div>
 
-      <p><strong>We accept alternative ways to send money.</strong> If you would prefer to use Bitcoin or Paypal, <a href="/donate" target="_blank">click here</a>.</p>
+        <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
 
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button type="submit" class="btn btn-Action">Upgrade</button>
-  </div>
+        <div style="margin-top: 30px">
+          <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
+
+          <% if params[:stripe_token] %>
+            <p>Billing information has been saved, thank you!</p>
+          <% else %>
+          <div class="credit-card-input no-js" id="skeuocard" style="margin-left: auto; margin-right: auto; margin-bottom: 20px">
+            <p class="no-support-warning"></p>
+            <label for="cc_type">Card Type</label>
+            <select name="cc_type">
+              <option value="">...</option>
+              <option value="visa">Visa</option>
+              <option value="discover">Discover</option>
+              <option value="mastercard">MasterCard</option>
+              <option value="maestro">Maestro</option>
+              <option value="jcb">JCB</option>
+              <option value="unionpay">China UnionPay</option>
+              <option value="amex">American Express</option>
+              <option value="dinersclubintl">Diners Club</option>
+            </select>
+            <label for="cc_number">Card Number</label>
+            <input type="text" name="cc_number" id="cc_number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" size="19">
+            <label for="cc_exp_month">Expiration Month</label>
+            <input type="text" name="cc_exp_month" id="cc_exp_month" placeholder="00">
+            <label for="cc_exp_year">Expiration Year</label>
+            <input type="text" name="cc_exp_year" id="cc_exp_year" placeholder="00">
+            <label for="cc_name">Cardholder's Name</label>
+            <input type="text" name="cc_name" id="cc_name" placeholder="John Doe">
+            <label for="cc_cvc">Card Validation Code</label>
+            <input type="text" name="cc_cvc" id="cc_cvc" placeholder="123" maxlength="3" size="3">
+          </div>
+          <% end %>
+        </div>
+
+        <p><strong>Don't have a Credit Card?</strong> We support Bitcoin and Paypal! <a href="/donate" target="_blank">Click here</a> for more information.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn btn-Action">Upgrade</button>
+    </div>
+  </form>
 </div>
+
+<% if current_site %>
+  <link rel="stylesheet" href="/css/skeuocard.reset.css" />
+  <link rel="stylesheet" href="/css/skeuocard.css" />
+  <script src="/js/skeuocard.min.js"></script>
+  <script src="/js/cssua.min.js"></script>
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+  <script>
+    Stripe.setPublishableKey('<%= $config['stripe_publishable_key'] %>')
+
+    $(function() {
+      card = new Skeuocard($("#skeuocard"))
+    })
+
+    $('#upgradeForm').submit(function(event) {
+      if($('#stripe_token').val() != '')
+        return true
+
+      console.log(event)
+
+      var planError = $('#plan_error')
+      planError.css('display', 'none')
+      var signupform = $(event.target)
+      signupform.find(':submit').prop('disabled', true)
+
+      Stripe.card.createToken({
+        number: $('[name="cc_number"]').val(),
+        cvc: $('[name="cc_cvc"]').val(),
+        exp_month: $('[name="cc_exp_month"]').val(),
+        exp_year: $('[name="cc_exp_year"]').val()
+      }, function(status, response) {
+        console.log(response)
+        if(response.error) {
+          planError.text(response.error.message)
+          planError.css('display', 'block')
+          window.location = '#plan_error_link'
+          signupform.find(':submit').prop('disabled', false)
+          return false
+        } else {
+          $('.credit-card-input').text('Thank you!')
+          $('#stripe_token').val(response.id)
+          signupform.submit()
+        }
+      })
+
+      return false
+    })
+
+    $(function() {
+      $('#upgradeForm').find(':submit').prop('disabled', false)
+    })
+  </script>
+
+
+<% end %>

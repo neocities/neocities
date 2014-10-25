@@ -74,7 +74,7 @@
         <div class="site-info">
           <div class="username">
             <a href="/site/<%= site.username %>" title="Profile">
-              <i class="fa fa-user"><% if site.supporter? && !site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><%= site.username %>
+              <i class="fa fa-user"><% if site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= site.username %>
             </a>
           </div>
           <div class="site-stats">

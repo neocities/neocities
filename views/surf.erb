@@ -177,7 +177,7 @@
       <% end %>
     </ul>
     <ul class="site-actions">
-      <li><a href="/site/<%= @site.username %>"><i class="fa fa-user"><% if @site.supporter? && !@site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i> <strong><%= @site.username %></strong></a></li>
+      <li><a href="/site/<%= @site.username %>"><i class="fa fa-user"><% if @site.supporter? %><i class="fa fa-heart"></i><% end %></i> <strong><%= @site.username %></strong></a></li>
 
       <% if current_site && current_site != @site %>
         <li>
