@@ -332,7 +332,7 @@
             <strong>It's affordable.</strong> As low as <strong>$<%= Site::PLAN_FEATURES[:supporter][:price] %>/month</strong> (billed once every year). Higher tiers are optional (and appreciated!)
           </li>
           <li>
-            <strong>You can cancel anytime.</strong>
+            <strong>You can cancel or change plans anytime.</strong> If you do, we'll refund/prorate the amount you didn't use.
           </li>
         </ul>
       </div>
@@ -375,7 +375,10 @@
     </div>
     <div class="modal-body">
         <div>
-          You are <% if current_site && parent_site.plan_type == 'free' %>upgrading<%else%>changing<%end%> to the <strong><span id="upgradeFormPlanName"></span> Plan</strong>. You will be charged <span id="upgradeFormPlanPrice"></span>. Please enter your Credit Card number:
+          You are <% if current_site && parent_site.plan_type == 'free' %>upgrading<%else%>changing<%end%> to the <strong><span id="upgradeFormPlanName"></span> Plan</strong>. You will be charged <span id="upgradeFormPlanPrice"></span>. 
+          <% unless current_site && parent_site.stripe_customer_id %>
+            Please enter your Credit Card number:
+          <% end %>
         </div>
 
         <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
@@ -383,38 +386,40 @@
         <div style="margin-top: 30px">
           <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
 
-          <% if params[:stripe_token] %>
-            <p>Billing information has been saved, thank you!</p>
-          <% else %>
-          <div class="credit-card-input no-js" id="skeuocard" style="margin-left: auto; margin-right: auto; margin-bottom: 20px">
-            <p class="no-support-warning"></p>
-            <label for="cc_type">Card Type</label>
-            <select name="cc_type">
-              <option value="">...</option>
-              <option value="visa">Visa</option>
-              <option value="discover">Discover</option>
-              <option value="mastercard">MasterCard</option>
-              <option value="maestro">Maestro</option>
-              <option value="jcb">JCB</option>
-              <option value="unionpay">China UnionPay</option>
-              <option value="amex">American Express</option>
-              <option value="dinersclubintl">Diners Club</option>
-            </select>
-            <label for="cc_number">Card Number</label>
-            <input type="text" name="cc_number" id="cc_number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" size="19">
-            <label for="cc_exp_month">Expiration Month</label>
-            <input type="text" name="cc_exp_month" id="cc_exp_month" placeholder="00">
-            <label for="cc_exp_year">Expiration Year</label>
-            <input type="text" name="cc_exp_year" id="cc_exp_year" placeholder="00">
-            <label for="cc_name">Cardholder's Name</label>
-            <input type="text" name="cc_name" id="cc_name" placeholder="John Doe">
-            <label for="cc_cvc">Card Validation Code</label>
-            <input type="text" name="cc_cvc" id="cc_cvc" placeholder="123" maxlength="3" size="3">
-          </div>
+          <% unless params[:stripe_token] || (current_site && parent_site.stripe_customer_id) %>
+            <div class="credit-card-input no-js" id="skeuocard" style="margin-left: auto; margin-right: auto; margin-bottom: 20px">
+              <p class="no-support-warning"></p>
+              <label for="cc_type">Card Type</label>
+              <select name="cc_type">
+                <option value="">...</option>
+                <option value="visa">Visa</option>
+                <option value="discover">Discover</option>
+                <option value="mastercard">MasterCard</option>
+                <option value="maestro">Maestro</option>
+                <option value="jcb">JCB</option>
+                <option value="unionpay">China UnionPay</option>
+                <option value="amex">American Express</option>
+                <option value="dinersclubintl">Diners Club</option>
+              </select>
+              <label for="cc_number">Card Number</label>
+              <input type="text" name="cc_number" id="cc_number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" size="19">
+              <label for="cc_exp_month">Expiration Month</label>
+              <input type="text" name="cc_exp_month" id="cc_exp_month" placeholder="00">
+              <label for="cc_exp_year">Expiration Year</label>
+              <input type="text" name="cc_exp_year" id="cc_exp_year" placeholder="00">
+              <label for="cc_name">Cardholder's Name</label>
+              <input type="text" name="cc_name" id="cc_name" placeholder="John Doe">
+              <label for="cc_cvc">Card Validation Code</label>
+              <input type="text" name="cc_cvc" id="cc_cvc" placeholder="123" maxlength="3" size="3">
+            </div>
           <% end %>
         </div>
 
-        <p><strong>Don't have a Credit Card?</strong> We support Bitcoin and Paypal! <a href="/donate" target="_blank">Click here</a> for more information.</p>
+        <% unless params[:stripe_token] || (current_site && parent_site.stripe_customer_id) %>
+          <p>
+            <strong>Don't have a Credit Card?</strong> We support Bitcoin and Paypal! <a href="/donate" target="_blank">Click here</a> for more information.
+          </p>
+        <% end %>
     </div>
     <div class="modal-footer">
       <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -441,11 +446,14 @@
       if($('#stripe_token').val() != '')
         return true
 
-      console.log(event)
+      var signupform = $(event.target)
+
+      <% if current_site && parent_site.stripe_subscription_id %>
+        return true
+      <% end %>
 
       var planError = $('#plan_error')
       planError.css('display', 'none')
-      var signupform = $(event.target)
       signupform.find(':submit').prop('disabled', true)
 
       Stripe.card.createToken({
