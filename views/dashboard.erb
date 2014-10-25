@@ -143,13 +143,13 @@
             </a>
             <div class="overlay">
               <% if file[:is_editable] %>
-                <a href="/site_files/text_editor<%= file[:path] %>"><i class="fa fa-edit" title="Edit"> Edit</i></a>
+                <a href="/site_files/text_editor<%= file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
               <% end %>
               <% if file[:is_directory] %>
-                <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"> Manage</i></a>
+                <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
               <% end %>
               <% if !file[:is_root_index] %>
-                <a href="#" onclick="confirmFileDelete('<%= file[:path] %>')"><i class="fa fa-trash" title="Delete"> Delete</i></a>
+                <a href="#" onclick="confirmFileDelete('<%= file[:path] %>')"><i class="fa fa-trash" title="Delete"></i> Delete</a>
               <% end %>
               <a class="link-overlay" href="http://<%= current_site.username %>.neocities.org<%= file[:path] %>" title="View <%= file[:path] %>" target="_blank"></a>
             </div>
