@@ -24,7 +24,7 @@
       <% if current_site && current_site.id == actioning_site.id %>
         <a href="/site/<%= current_site.username %>" class="you">You</a>
       <% else %>
-        <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"><% if actioning_site.supporter? && !actioning_site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
+        <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"><% if actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
       <% end %>
 
       followed
@@ -32,7 +32,7 @@
       <% if current_site && event_site.id == current_site.id %>
         <a href="/site/<%= current_site.username %>" class="you">you</a>
       <% else %>
-        <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? && !event_site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a>
+        <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a>
       <% end %>
 
       <span class="date">
@@ -91,7 +91,7 @@
           <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id).first %>
           <div class="comment" id="comment_<%= comment.id %>">
             <img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>">
-            <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><i class="fa fa-user"><% if comment_actioning_site.supporter? && !comment_actioning_site.ended_supporter? %><i class="fa fa-heart"></i><% end %></i><%= comment_actioning_site.username %></a>
+            <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><i class="fa fa-user"><% if comment_actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= comment_actioning_site.username %></a>
             <span class="date">
               <a href="?event_id=<%= event.id %>"><%= comment.created_at.ago %></a>
             </span>

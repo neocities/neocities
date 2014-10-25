@@ -830,12 +830,10 @@ class Site < Sequel::Model
     ((total_used_space.to_f / maximum_space) * 100).round(1)
   end
 
-  # This returns true even if they end their support plan.
   def supporter?
-    !owner.values[:stripe_customer_id].nil?
+    plan_type != 'free'
   end
 
-  # This will return false if they have ended their plan.
   def ended_supporter?
     owner.values[:plan_ended]
   end
