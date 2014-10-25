@@ -187,7 +187,7 @@
     border:0 solid black;
     @include box-shadow($inputAreaShadow);
     color:#C2CFD4;
-    margin-bottom:30px;
+    margin-bottom:27px;
     margin-right:$spacing;
     padding: 10px 10px 7px 10px;
     width:100%;
@@ -211,7 +211,7 @@
   }
   .btn-Action{
     padding:10px 25px;
-    margin-top: 6px;
+    margin-top: 2em;
     font-size: 1em;
   }
 }

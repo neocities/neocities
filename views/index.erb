@@ -85,7 +85,7 @@
                 <li>
                   <a href="/signout" class="sign-In">Signout</a>
                 </li>
-              <% end %>`
+              <% end %>
             </ul>
           </nav>
 
@@ -161,6 +161,8 @@
             <hr />
             <div class="siteCreateInputs">
               <label for="create-Input">Username</label>
+              <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" class="hidden" />
+              <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" class="hidden" />
               <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
               <label for="create-Input" id="domain-name">.neocities.org</label>
 
@@ -177,12 +179,14 @@
               <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
               </div>
 
-              <div class="col col-25">
+              <div class="col col-50" style="padding-left:0;">
               <label for="question_answer-input"><%= @question_first_number %> + <%= @question_last_number %> =</label>
-              <input type="text" class="input-Area" name="question_answer" placeholder="" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" maxlength="2" style="width: 50px" />
+              <input type="text" class="input-Area" name="question_answer" placeholder="" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" maxlength="2" style="width: 50%;" />
               </div>
 
+              <div class="col col-50">
               <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+              </div>
             </div>
           </fieldset>
         </form>
