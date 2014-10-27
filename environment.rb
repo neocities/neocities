@@ -88,7 +88,6 @@ Sequel.extension :core_extensions
 Sequel.extension :migration
 Sequel::Model.plugin :validation_helpers
 Sequel::Model.plugin :force_encoding, 'UTF-8'
-Sequel::Model.plugin :timestamps, create: :created_at, update: :updated_at
 Sequel::Model.plugin :defaults_setter
 Sequel.default_timezone = 'UTC'
 Sequel::Migrator.apply DB, './migrations'

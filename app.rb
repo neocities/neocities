@@ -308,7 +308,7 @@ post '/plan/update' do
     })
   end
 
-  redirect '/plan/thanks'
+  redirect params[:plan_type] == 'free' ? '/plan' : '/plan/thanks'
 end
 
 get '/plan/thanks' do
@@ -591,7 +591,8 @@ post '/create' do
     password: params[:password],
     email: params[:email],
     new_tags_string: params[:tags],
-    ip: request.ip
+    ip: request.ip,
+    created_at: Time.now
   )
 
   black_box_answered = BlackBox.valid? params[:blackbox_answer], request.ip

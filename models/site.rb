@@ -34,9 +34,6 @@ class Site < Sequel::Model
     geojson csv tsv mf ico pdf asc key pgp xml mid midi
   }
 
-  FREE_MAXIMUM = 20 * Numeric::ONE_MEGABYTE
-  SUPPORTER_MAXIMUM = 1000 * Numeric::ONE_MEGABYTE
-
   MINIMUM_PASSWORD_LENGTH = 5
   BAD_USERNAME_REGEX = /[^\w-]/i
   VALID_HOSTNAME = /^[a-z0-9][a-z0-9-]+?[a-z0-9]$/i # http://tools.ietf.org/html/rfc1123
@@ -457,7 +454,7 @@ class Site < Sequel::Model
     path = files_path path
 
     if File.exist?(path) &&
-       Digest::SHA2.file(path).digest == Digest::SHA2.file(uploaded.path).digest
+       Digest::SHA1.file(path).digest == Digest::SHA1.file(uploaded.path).digest
       return false
     end
 
@@ -802,32 +799,32 @@ class Site < Sequel::Model
   end
 
   def file_size_too_large?(size)
-    return true if size + used_space > maximum_space
+    return true if size + space_used > maximum_space
     false
   end
 
-  def used_space
+  def actual_space_used
     space = Dir.glob(File.join(files_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
     space.nil? ? 0 : space
   end
 
-  def total_used_space
+  def total_space_used
     total = 0
-    account_sites.each {|s| total += s.used_space}
+    account_sites.each {|s| total += s.space_used}
     total
   end
 
   def remaining_space
-    remaining = maximum_space - total_used_space
+    remaining = maximum_space - total_space_used
     remaining < 0 ? 0 : remaining
   end
 
   def maximum_space
-    (parent? ? self : parent).supporter? ? SUPPORTER_MAXIMUM : FREE_MAXIMUM
+    PLAN_FEATURES[(parent? ? self : parent).plan_type.to_sym][:space]
   end
 
   def space_percentage_used
-    ((total_used_space.to_f / maximum_space) * 100).round(1)
+    ((total_space_used.to_f / maximum_space) * 100).round(1)
   end
 
   def supporter?

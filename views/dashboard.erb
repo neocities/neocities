@@ -34,7 +34,7 @@
 <% if current_site.updated_at %>
 	<li>Last updated <%= current_site.updated_at.ago.downcase %></li>
 <% end %>
-	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_used_space.to_space_pretty %>) of your <%= current_site.maximum_space.to_space_pretty %></strong>.
+	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_space_used.to_space_pretty %>) of your <%= current_site.maximum_space.to_space_pretty %></strong>.
   <br>
   <% if !current_site.supporter? %>Need more space? <a href="/plan">Become a Supporter!</a><% end %></li>
 	<li><strong><%= current_site.hits.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %></strong> hits</li>
