@@ -3,7 +3,7 @@
     <div class="col col-66">
       <h3>Your Feed</h3>
       <div class="feed-filter">
-        <% if !@events.empty? || params[:activity] == 'mine' %>
+        <% if !@events.empty? && (site.followings_dataset.count > 0) %>
         <a href="/" <% if params[:activity] != 'mine' %>class="selected"<% end %>>All Activity</a>
         &nbsp;&nbsp;
         <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>
