@@ -172,6 +172,22 @@ task :update_screenshots => [:environment] do
   sleep
 end
 
+desc 'prime_space_used'
+task :prime_space_used => [:environment] do
+  Site.select(:id,:username,:space_used).all.each do |s|
+    s.space_used += s.actual_space_used
+    s.save_changes validate: false
+  end
+end
+
+desc 'prime site_updated_at'
+task :prime_site_updated_at => [:environment] do
+  Site.select(:id,:username,:site_updated_at, :updated_at).all.each do |s|
+    s.site_updated_at = s.updated_at
+    s.save_changes validate: false
+  end
+end
+
 =begin
 desc 'Update screenshots'
 task :update_screenshots => [:environment] do
