@@ -384,6 +384,12 @@
   width: 100%;
   position: relative;
   border-right: 1px solid #ddd;
+  h2 {
+    margin-top: 1em;
+    float: left;
+    width: 100%;
+    margin-bottom: .75em;
+  }
 }
 .right-col {
   background: #FAF6F1;
