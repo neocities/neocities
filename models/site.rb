@@ -492,6 +492,8 @@ class Site < Sequel::Model
       end
 
       self.site_changed = true
+      self.site_updated_at = Time.now
+      self.updated_at = Time.now
 
       save_changes(validate: false)
     end
@@ -536,7 +538,6 @@ class Site < Sequel::Model
 
   def increment_changed_count
     self.changed_count += 1
-    self.updated_at = Time.now
     save_changes(validate: false)
   end
 

@@ -463,9 +463,9 @@ def browse_sites_dataset
 
   case params[:sort_by]
     when 'hits'
-      site_dataset.order!(:hits.desc, :updated_at.desc)
+      site_dataset.order!(:hits.desc, :site_updated_at.desc)
     when 'views'
-      site_dataset.order!(:views.desc, :updated_at.desc)
+      site_dataset.order!(:views.desc, :site_updated_at.desc)
     when 'newest'
       site_dataset.order!(:created_at.desc, :views.desc)
     when 'oldest'
@@ -474,14 +474,14 @@ def browse_sites_dataset
       site_dataset.where! 'random() < 0.01'
     when 'last_updated'
       params[:sort_by] = 'last_updated'
-      site_dataset.order!(:updated_at.desc, :views.desc)
+      site_dataset.order!(:site_updated_at.desc, :views.desc)
     else
       if params[:tag]
         params[:sort_by] = 'views'
-        site_dataset.order!(:views.desc, :updated_at.desc)
+        site_dataset.order!(:views.desc, :site_updated_at.desc)
       else
         params[:sort_by] = 'last_updated'
-        site_dataset.order!(:updated_at.desc, :views.desc)
+        site_dataset.order!(:site_updated_at.desc, :views.desc)
       end
   end
 
@@ -591,8 +591,7 @@ post '/create' do
     password: params[:password],
     email: params[:email],
     new_tags_string: params[:tags],
-    ip: request.ip,
-    created_at: Time.now
+    ip: request.ip
   )
 
   black_box_answered = BlackBox.valid? params[:blackbox_answer], request.ip
@@ -1376,7 +1375,7 @@ def api_info_for(site)
       views: site.views,
       hits: site.hits,
       created_at: site.created_at.rfc2822,
-      last_updated: site.updated_at.rfc2822,
+      last_updated: site.site_updated_at ? site.site_updated_at.rfc2822 : nil,
       domain: site.domain,
       tags: site.tags.collect {|t| t.name}
     }
