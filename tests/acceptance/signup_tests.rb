@@ -104,6 +104,8 @@ describe 'signup' do
     page.must_have_content /email.+exists/
   end
 
+puts "$$$$$$$$$$$$$$$$$$$$$$ TODO FIX TAGS TESTS"
+
 =begin
   it 'succeeds with no tags' do
     fill_in_valid

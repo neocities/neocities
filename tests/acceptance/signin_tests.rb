@@ -38,29 +38,23 @@ describe 'signin' do
   end
 
   it 'signs in with proper credentials' do
-    visit '/'
-    click_button 'Create My Site'
-    fill_in_valid_signup
-    click_button 'Create Home Page'
-    Capybara.reset_sessions!
+    pass = SecureRandom.hex
+    @site = Fabricate :site, password: pass
     visit '/'
     click_link 'Sign In'
-    fill_in 'username', with: @site[:username]
-    fill_in 'password', with: @site[:password]
+    fill_in 'username', with: @site.username
+    fill_in 'password', with: pass
     click_button 'Sign In'
     page.must_have_content 'Your Feed'
   end
 
   it 'signs in with email' do
-    visit '/'
-    click_button 'Create My Site'
-    fill_in_valid_signup
-    click_button 'Create Home Page'
-    Capybara.reset_sessions!
+    pass = SecureRandom.hex
+    @site = Fabricate :site, password: pass
     visit '/'
     click_link 'Sign In'
-    fill_in 'username', with: @site[:email]
-    fill_in 'password', with: @site[:password]
+    fill_in 'username', with: @site.email
+    fill_in 'password', with: pass
     click_button 'Sign In'
     page.must_have_content 'Your Feed'
   end
