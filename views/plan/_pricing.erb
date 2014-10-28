@@ -364,7 +364,7 @@
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <input type="hidden" value="" name="plan_type" id="upgradePlanType">
     <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
       <h3 id="planSignupLabel">
         <% if parent_site && parent_site.plan_type == 'free' %>
           Upgrade
@@ -422,7 +422,7 @@
         <% end %>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
       <button type="submit" class="btn btn-Action">Upgrade</button>
     </div>
   </form>

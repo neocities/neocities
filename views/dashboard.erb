@@ -170,15 +170,15 @@
 
       <div class="modal hide fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
         <div class="modal-header">
-          <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+          <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
           <h3 id="deleteConfirmModalLabel">Confirm deletion</h3>
         </div>
         <div class="modal-body">
           <p>You are about to delete "<span id="deleteFileName"></span>". Are you sure?</p>
         </div>
         <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-          <button class="btn btn-danger" onclick="fileDelete()">Delete</button>
+          <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+          <button class="btn btn-Action btn-danger" onclick="fileDelete()"><i class="fa fa-trash" title="Delete"></i>Delete</button>
         </div>
       </div>
 
@@ -255,18 +255,15 @@
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <input type="hidden" value="<%= @dir %>" name="dir">
     <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
       <h3 id="createDirLabel">Create Folder</h3>
     </div>
     <div class="modal-body">
-      <p>
-        Folder name:
-      </p>
-      <input name="name" type="text" placeholder="images">
+      <input name="name" type="text" placeholder="folder_name">
     </div>
     <div class="modal-footer">
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
       <button type="submit" class="btn btn-Action">Create</button>
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
     </div>
   </form>
 </div>

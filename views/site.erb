@@ -133,7 +133,7 @@
   <form method="POST" action="/site/<%= site.username %>/report">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
       <h3 id="reportLabel">Report Site</h3>
     </div>
     <div class="modal-body">
@@ -149,10 +149,10 @@
         </select>
       </p>
       <p>Comments:</p>
-      <textarea name="comments" type="text" style="width: 400px"></textarea>
+      <textarea name="comments" type="text" style="width: 400px; margin-bottom: 20px;"></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
       <button type="submit" class="btn btn-Action">Report</button>
     </div>
   </form>
@@ -162,7 +162,7 @@
   <form method="POST" action="/site/<%= site.username %>/block">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
       <h3 id="blockLabel">Block Site</h3>
     </div>
     <div class="modal-body">
@@ -178,7 +178,7 @@
       <p>Are you sure you want to do this?</p>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
       <button type="submit" class="btn btn-Action">Block Site</button>
     </div>
   </form>

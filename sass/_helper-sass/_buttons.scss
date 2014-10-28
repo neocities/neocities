@@ -28,6 +28,11 @@
     }
     
     &:visited{color:$c-Lighter;}
+    
+    &.cancel {
+      background: #999;
+      text-shadow: none;
+    }
 }
 
 
@@ -78,7 +83,6 @@
     &:hover{
       @include linear-gradient(top, #d51c3a, #841526);
     }
-    
     .fa {
       margin-right:5px;
     }

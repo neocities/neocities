@@ -62,3 +62,31 @@ a{
 .alert{
    background-color:#F5BA00; color:#fff;
 }
+
+.modal {
+  &.fade.in {
+    top: 20%;
+  }
+  form {
+    margin-bottom: 0;
+  }
+  @include border-radius(20px 20px 6px 6px);
+}
+.modal-header {
+  background: #5e95a1;
+  padding: 12px 16px 9px 23px;
+  @include border-radius(6px 6px 0px 0px);
+  
+  h3 {
+    color: white;
+    font-size: 1.6em;
+  }
+}
+.modal-body {
+  padding: 20px 23px 0 23px;
+}
+.modal-footer {
+  border: 0;
+  background: none;
+  padding: 0 23px 19px 0;
+}

@@ -21,18 +21,17 @@
   <form method="POST" action="/tags/add">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
       <h3 id="addTagLabel">Add a Tag</h3>
     </div>
     <div class="modal-body">
       <p>
         A tag can only be a single word, and can only contain letters and numbers.
       </p>
-      <p>Tag:</p>
       <input type="text" name="tags" class="typeahead">
     </div>
     <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
       <button type="submit" class="btn btn-Action">Add Tag</button>
     </div>
   </form>
@@ -42,7 +41,7 @@
   <form method="POST" action="/tags/remove">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
       <h3 id="removeTagLabel">Remove Tags</h3>
     </div>
     <div class="modal-body">
@@ -55,7 +54,7 @@
       <% end %>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
       <button type="submit" class="btn btn-Action">Remove Tag(s)</button>
     </div>
   </form>
