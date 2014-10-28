@@ -201,28 +201,13 @@ describe 'site/settings' do
   describe 'change username' do
     include Capybara::DSL
 
-    def visit_signup
-      visit '/'
-      click_button 'Create My Site'
-    end
-
-    def fill_in_valid
-      @site = Fabricate.attributes_for(:site)
-      fill_in 'username', with: @site[:username]
-      fill_in 'password', with: @site[:password]
-      fill_in 'email',    with: @site[:email]
-    end
-
     before do
       Capybara.reset_sessions!
-      visit_signup
+      @site = Fabricate :site
+      page.set_rack_session id: @site.id
     end
 
     it 'does not allow bad usernames' do
-      visit '/'
-      click_button 'Create My Site'
-      fill_in_valid
-      click_button 'Create Home Page'
       visit "/settings/#{@site[:username]}#username"
       fill_in 'name', with: ''
       click_button 'Change Name'
@@ -233,7 +218,7 @@ describe 'site/settings' do
       ## TODO fix this without screwing up legacy sites
       #fill_in 'name', with: '-'
       #click_button 'Change Name'
-      page.must_have_content /valid.+name.+required/i
+      page.must_have_content /Usernames can only contain/i
       Site[username: @site[:username]].wont_equal nil
       Site[username: ''].must_equal nil
     end
