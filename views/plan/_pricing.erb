@@ -5,7 +5,7 @@
     if !parent_site
       %{<a href="/#new" class="btn-Action">Sign Up</a>}
     elsif parent_site && parent_site.plan_type == plan_type
-      %{<p style="padding-top: 15px; padding-bottom: 14px"><strong>Current Plan</strong></p>}
+      %{<div class="current-plan">Current Plan</div>}
     else
       if plan_type == 'supporter'
         plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]*12}, once per year"
