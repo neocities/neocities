@@ -825,11 +825,11 @@ a.tag:hover {
   margin-top: 4px;
 }
 .comment-policy {
-  margin-top: .5em;
-  float: left;
   font-style: italic;
   font-size: .8em;
-  margin-right: 45px;
+  margin-right: 45px;  
+  clear: both;
+  margin-top: 2em;
 }
 .supporter-badge {
   background:url(/img/supporter.png);
