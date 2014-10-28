@@ -11,21 +11,26 @@
     position:relative;
     top:-50px;
   }
+  .page {
+    background: #161718;
+    position: fixed;
+    height: 100%;
+  }
+  .footer-Base {
+    display: none;
+  }
 </style>
 
-<div class="header-Outro">
+<div class="header-Outro editor">
   <div class="row content">
-    <h1>Editing <%= @filename %></h1>
-    <% if @filename.match /index.html$/ %>
-      <h3 class="subtitle">Note: index.html is the first web page that gets loaded when users visit your site. Make sure there are <a href="http://www.w3schools.com/html/html_links.asp" target="_blank">HTML links</a> to your other pages from this page.</h3>
-    <% end %>
-  </div>
-</div>
-
-<div class="content">
-  <div class="row">
-    <div class="col col-50">
-      <p>
+    <div class="breadcrumbs">
+      <a href="/dashboard">Dashboard</a> > <span class="filename"><%= @filename %></span>
+      <% if @filename.match /index.html$/ %>
+        <h3 class="subtitle">Note: index.html is the first web page that gets loaded when users visit your site. Make sure there are <a href="http://www.w3schools.com/html/html_links.asp" target="_blank">HTML links</a> to your other pages from this page.</h3>
+      <% end %>
+    </div>
+    <div class="tools">
+      <div class="theme">
         Theme:
         <select id="theme" size="1" onchange="setTheme();" onkeyup="setTheme();">
           <optgroup label="Bright">
@@ -53,9 +58,9 @@
             <option value="ace/theme/mono_industrial">Mono Industrial</option>
             <option value="ace/theme/monokai">Monokai</option>
             <option value="ace/theme/pastel_on_dark">Pastel on dark</option>
-            <option value="ace/theme/solarized_dark" selected="selected">Solarized Dark</option>
+            <option value="ace/theme/solarized_dark">Solarized Dark</option>
             <option value="ace/theme/terminal">Terminal</option>
-            <option value="ace/theme/tomorrow_night">Tomorrow Night</option>
+            <option value="ace/theme/tomorrow_night" selected="selected">Tomorrow Night</option>
             <option value="ace/theme/tomorrow_night_blue">Tomorrow Night Blue</option>
             <option value="ace/theme/tomorrow_night_bright">Tomorrow Night Bright</option>
             <option value="ace/theme/tomorrow_night_eighties">Tomorrow Night 80s</option>
@@ -63,47 +68,20 @@
             <option value="ace/theme/vibrant_ink">Vibrant Ink</option>
           </optgroup>
         </select>
-      </p>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col col-100">
-      <div id="editor" style="width: 100%; position: relative; margin-bottom:25px"><%==encoding_fix(@file_data) %>
       </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col col-25">
-      <div class="txt-Center">
-        <a class="btn-Action" href="/dashboard"><i class="fa fa-remove"></i>&nbsp;&nbsp;Exit Without Saving</a>
-      </div>
-    </div>
-
-    <div class="col col-25">
-      <div class="txt-Center">
-        <a id="saveButton" class="btn-Action" href="#" onclick="saveTextFile(false); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save Changes</a>
-      </div>
-    </div>
-
-    <div class="col col-25">
-      <div class="txt-Center">
-        <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a>
-      </div>
-    </div>
-    <div class="col col-25">
-      <div class="txt-Center">
-        <a class="btn-Action" href="//<%= current_site.host %>/<%= @filename %>" target="_blank"><i class="fa fa-eye"></i>&nbsp;&nbsp;View</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col col-100 txt-Center">
+      <a id="saveButton" class="btn btn-Action" href="#" onclick="saveTextFile(false); return false" style="opacity: 0.5"><i class="fa fa-save"></i>Save</a>
+      <a class="btn btn-Action" href="//<%= current_site.host %>/<%= @filename %>" target="_blank">View</a>
+    <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
       <div id="editorUpdates" class="alert alert-success hidden">
         <span></span>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="row editor">
+  <div class="col col-100">
+    <div id="editor" style="width: 100%; position: relative;"><%==encoding_fix(@file_data) %>
     </div>
   </div>
 </div>

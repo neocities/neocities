@@ -1310,3 +1310,57 @@ a.tag:hover {
   vertical-align: .1em;
   margin-left: .1em;
 }
+.interior .header-Outro.editor {
+  padding-top: 0px;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  margin-top: 22px;
+  font-size: 15px;
+  
+  a, a:visited {
+    color: white;
+  }
+  .breadcrumbs {
+    float: left;
+    margin: 4px 0;
+    .filename {
+      font-weight: bold;
+    }
+  }
+  .row.content {
+    padding: 15px 20px;
+    max-width: none;
+    margin: 0;
+  }
+  .tools {
+    color: #8099A7;
+    float: right;
+    
+    .theme {
+      font-size: .9em;
+      display: inline;
+      
+      select#theme {
+        vertical-align: baseline;
+        background: #25333c;
+        color: #8099A7;
+      } 
+    }
+    #saveButton {
+      margin-top: 0;
+    }
+  }
+}
+.row.editor {
+  float: left;
+  width: 100%;
+  overflow: scroll;
+  position: absolute;
+  top: 105px;
+  bottom: 0;
+  margin: 0;
+  .col {
+    padding: 0;
+  }
+}
