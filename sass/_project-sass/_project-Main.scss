@@ -377,7 +377,6 @@
   position: relative;
   clear: both;
   width: 100%;
-  overflow: hidden;
 }
 .col-left {
   float: left;
@@ -401,7 +400,6 @@
   margin-top: 0;
 }
 .right-col .col-left {
-  background-color: white;
   right: 33%;
 }
 .content.misc-page.columns .col, .site-profile-padding {
@@ -411,13 +409,19 @@
 .content.misc-page.columns .col-66 {
   width: 67%;
   left: 33%;
+  background: white;
 }
 .site-profile .content.misc-page.columns .col-66 {
   padding: 0;
+  min-height: 38em;
+}
+.news-feed .content.misc-page.columns .col-66 {
+  min-height: 56em;
 }
 .content.misc-page.columns .col-33 {
   width: 33%;
   left: 33%;
+  float: right;
 }
 .interior .header-Outro.with-columns {
     padding-top: 22px;
