@@ -406,10 +406,12 @@
 .content.misc-page.columns .col, .site-profile-padding {
   padding: 25px 30px 30px 30px;
   position: relative;
+  float: left;
+  width: 100%;
 }
 .content.misc-page.columns .col-66 {
-  width: 67%;
-  left: 33%;
+  width: 66.95%;
+  left: 33.05%;
   background: white;
 }
 .site-profile .content.misc-page.columns .col-66 {
