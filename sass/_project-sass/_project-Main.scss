@@ -38,6 +38,7 @@
 .site-url {
   font-size:18px;
   margin-bottom: 8px;
+  word-wrap: break-word;
 }
 .site-url a {
   color: #e93250;
@@ -377,7 +378,6 @@
   position: relative;
   clear: both;
   width: 100%;
-  overflow: hidden;
 }
 .col-left {
   float: left;
@@ -401,7 +401,6 @@
   margin-top: 0;
 }
 .right-col .col-left {
-  background-color: white;
   right: 33%;
 }
 .content.misc-page.columns .col, .site-profile-padding {
@@ -411,13 +410,19 @@
 .content.misc-page.columns .col-66 {
   width: 67%;
   left: 33%;
+  background: white;
 }
 .site-profile .content.misc-page.columns .col-66 {
   padding: 0;
+  min-height: 38em;
+}
+.news-feed .content.misc-page.columns .col-66 {
+  min-height: 56em;
 }
 .content.misc-page.columns .col-33 {
   width: 33%;
   left: 33%;
+  float: right;
 }
 .interior .header-Outro.with-columns {
     padding-top: 22px;
@@ -498,11 +503,11 @@
   margin-top: .2em;
   margin-bottom: -.2em;
 }
-a.tag {
+a.tag, a.tag:visited {
   font-size: .7em;
   text-transform: uppercase;
   background: #FFFFCC;
-  color: #C1A009;
+  color: #C1A009!important;
   float: left;
   padding: 1px 5px;
   -moz-box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.2);
@@ -807,10 +812,9 @@ a.tag:hover {
 }
 .post-comment {
   background: #DAEEA5;
-  float: left;
   width: 100%;
-  padding: 20px 0 10px 30px;
-  margin: 0 0 28px 0;
+  padding: 20px 0 15px 30px;
+  margin: 0 0 3px 0;
 }
 .post-comment input {
   width: 84%;
