@@ -256,8 +256,13 @@ get '/?' do
 end
 
 def generate_question
-  question_first_number = rand 5
-  question_last_number = rand 5
+  if ENV['RACK_ENV'] == 'test'
+    question_first_number = 1
+    question_last_number = 1
+  else
+    question_first_number = rand 5
+    question_last_number = rand 5
+  end
   session[:question_answer] = (question_first_number + question_last_number).to_s
   [question_first_number, question_last_number]
 end
@@ -304,7 +309,7 @@ post '/plan/update' do
       reply_to: 'contact@neocities.org',
       to: current_site.email || parent_site.email,
       subject: "[Neocities] You've become a supporter!",
-      body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: Site::PLAN_FEATURES[params[:plan_type].to_sym][:name])
+      body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: Site::PLAN_FEATURES[params[:plan_type].to_sym][:name], plan_space: Site::PLAN_FEATURES[params[:plan_type].to_sym][:space].to_space_pretty)
     })
   end
 
