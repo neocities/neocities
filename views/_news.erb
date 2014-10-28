@@ -50,7 +50,6 @@
           <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(45) %></a> has been updated.
         <% end %>
         <span class="date">
-          <% binding.pry %>
           <a href="?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
         </span>
       </div>
