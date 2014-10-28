@@ -1092,8 +1092,16 @@ a.tag:hover {
   font-size: .8em;
   margin-top: -.6em;
 }
-.plan-overview .btn-Action {
+.plan-overview .btn-Action, .plan-overview .current-plan {
   margin: .9em 0 1.4em 0;
+}
+.plans .current-plan {
+  @extend %btn;
+  background: #777;
+  &:hover{
+    background: #777;
+    cursor: default;
+  }
 }
 .plan-overview .col {
   padding-bottom:1.5em;
