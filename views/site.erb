@@ -51,7 +51,7 @@
   </div>
 </div>
 
-<div class="container">
+<div class="container site-profile">
 <div class="content misc-page columns right-col"><div class="col-left">
   <div class="col col-66">
     <% if current_site && site.profile_comments_enabled %>
@@ -80,7 +80,7 @@
     <% end %>
 
     <% if @latest_events.empty? %>
-      <div>
+      <div class="site-profile-padding">
         <p>No recent activity.</p>
         <% if current_site && site.owned_by?(parent_site) %>
           <p>
@@ -90,9 +90,8 @@
       </div>
       <%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %>
     <% else %>
-      <div><%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %></div>
+      <div class="site-profile-padding"><%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %></div>
     <% end %>
-
   </div>
 
   <div class="col col-33">

@@ -404,14 +404,16 @@
   background-color: white;
   right: 33%;
 }
-.content.misc-page.columns .col  {
+.content.misc-page.columns .col, .site-profile-padding {
   padding: 25px 30px 30px 30px;
   position: relative;
-	overflow:hidden;
 }
 .content.misc-page.columns .col-66 {
   width: 67%;
   left: 33%;
+}
+.site-profile .content.misc-page.columns .col-66 {
+  padding: 0;
 }
 .content.misc-page.columns .col-33 {
   width: 33%;
@@ -806,9 +808,9 @@ a.tag:hover {
 .post-comment {
   background: #DAEEA5;
   float: left;
-  width: 111%;
+  width: 100%;
   padding: 20px 0 10px 30px;
-  margin: -25px 0 28px -30px;
+  margin: 0 0 28px 0;
 }
 .post-comment input {
   width: 84%;
