@@ -72,8 +72,11 @@
       <a id="saveButton" class="btn btn-Action" href="#" onclick="saveTextFile(false); return false" style="opacity: 0.5"><i class="fa fa-save"></i>Save</a>
       <a class="btn btn-Action" href="//<%= current_site.host %>/<%= @filename %>" target="_blank">View</a>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
-      <div id="editorUpdates" class="alert alert-success hidden">
-        <span></span>
+      <div id="editorUpdates" class="tooltip fade bottom in hidden" style="top: 90px;right: 46px;">
+        <div class="tooltip-arrow"></div>
+        <div class="tooltip-inner">
+          <span></span>
+        </div>
       </div>
     </div>
   </div>
@@ -132,6 +135,7 @@
           }
           
         } else {
+          $('#saveButton').tooltip('show')
           $('#editorUpdates span').text(response)
         }
         $('#editorUpdates').fadeIn()

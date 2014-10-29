@@ -1313,7 +1313,6 @@ a.tag:hover {
 .interior .header-Outro.editor {
   padding-top: 0px;
   overflow: hidden;
-  position: fixed;
   width: 100%;
   margin-top: 22px;
   font-size: 15px;
@@ -1349,6 +1348,14 @@ a.tag:hover {
     }
     #saveButton {
       margin-top: 0;
+    }
+    .tooltip {    
+      &.bottom .tooltip-arrow {
+        border-bottom-color: #971D31;
+      }
+      .tooltip-inner {
+        background-color: #971D31;
+      }
     }
   }
 }
