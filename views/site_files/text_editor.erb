@@ -81,7 +81,7 @@
 
 <div class="row editor">
   <div class="col col-100">
-    <div id="editor" style="width: 100%; position: relative;"><%==encoding_fix(@file_data) %>
+    <div id="editor"><%==encoding_fix(@file_data) %>
     </div>
   </div>
 </div>
@@ -152,7 +152,8 @@
     editor.setFontSize(14)
     editor.setShowPrintMargin(false)
     editor.setOptions({
-      maxLines: Infinity
+      maxLines: Infinity,
+      autoScrollEditorIntoView: true
     })
 
     editor.on('change', function(obj) {
