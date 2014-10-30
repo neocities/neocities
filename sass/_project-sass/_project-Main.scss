@@ -1058,8 +1058,15 @@ a.tag:hover {
     padding: 55px 3%;
   }
 }
-.section.plans h2 {
+.section.plans h2, .section.plans h3.subtitle {
   color:#4F7E89;
+  text-align: center;
+}
+.section.plans h3.subtitle {
+  margin: 0 0 -.25em 0;
+}
+.interior .section.plans {
+  padding-top: 63px;
 }
 .plan-overview {
   margin-top: 3.5em;

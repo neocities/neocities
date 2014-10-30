@@ -19,12 +19,24 @@
 
 <section class="section plans">
   <h2>
-    Need more space? We’ve got you covered.
     <% if request.path == '/' %>
+    Need more space? We’ve got you covered.
       <br>
       Upgrading gives you more space, bandwidth, features, <strong>and helps us stay independent and keep the free sites free.</strong>
+    <% elsif request.path.match /\/plan/ %>
+      Support Us
     <% end %>
   </h2>
+
+  <% if request.path.match /\/plan/ %>
+    <div class="row" style="margin-top: 0px">
+      <div class="col-75" style="margin-left: auto; margin-right: auto;">
+        <h3 class="subtitle">
+          The Neocities Supporter Plans are a way to help sustain the site. When you join a Supporter Plan, you are directly helping our quest to bring back the creative, independent web, and to continue to improve Neocities for everyone.
+        </h3>
+      </div>
+    </div>
+  <% end %>
 
   <div class="plan-overview">
     <div class="header">
@@ -292,14 +304,6 @@
     <div class="row" style="margin-top: 50px; margin-bottom: 0px;">
       <div class="col-50" style="margin-left: auto; margin-right: auto">
         <h2>Why get a Supporter Plan?</h2>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: 0px">
-      <div class="col-75" style="margin-left: auto; margin-right: auto;">
-        <h3 style="margin-top: 0px">
-          The Neocities Supporter Plans are a way to help sustain the site. When you join the Supporter Plan, you are directly helping our quest to bring back the creative, independent web, and to continue to improve Neocities for everyone.
-        </h3>
       </div>
     </div>
     
