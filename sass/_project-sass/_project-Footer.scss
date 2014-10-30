@@ -146,7 +146,13 @@
   border-top:1px solid #b3c388;
   overflow:hidden;
   
-  a{color:#5e5b56}
+  a{
+    color:#5e5b56;
+    text-decoration:underline;
+    &:hover {
+      text-decoration:none;
+    }
+  }
 }
 .credits{margin-bottom:0}
 .footer-Nav{
@@ -160,6 +166,12 @@
       li:first-child a{padding-left:0}
     }
   }
-  .h-Nav a{padding:0 $spacing*2}
+  .h-Nav a{
+    padding:0 $spacing*2;
+    text-decoration:none;
+    &:hover {
+      text-decoration:underline;
+    }
+  }
   .h-Nav li:last-child a{padding-right:0}
 }
