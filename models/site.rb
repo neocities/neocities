@@ -246,7 +246,7 @@ class Site < Sequel::Model
   end
 
   def unseen_notifications_dataset
-    events_dataset.where notification_seen: false
+    events_dataset.where(notification_seen: false).exclude(actioning_site_id: self.id)
   end
 
   def unseen_notifications_count
