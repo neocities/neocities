@@ -36,7 +36,7 @@ describe 'api info' do
     res[:info][:sitename].must_equal @site.username
     res[:info][:hits].must_equal 31337
     res[:info][:created_at].must_equal @site.created_at.rfc2822
-    res[:info][:last_updated].must_equal @site.updated_at.rfc2822
+    res[:info][:last_updated].must_equal nil
     res[:info][:domain].must_equal 'derp.com'
     res[:info][:tags].must_equal ['derpie', 'man']
   end
