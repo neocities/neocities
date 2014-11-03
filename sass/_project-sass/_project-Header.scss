@@ -66,10 +66,13 @@
       
       a {
         color: #B8D375;
-        text-decoration: underline;
+        border-bottom: 1px solid rgba(184, 211, 117, 0.5);
+        line-height: 97%;
+        display: inline-block;
       }
       a:hover {
         text-decoration: none;
+        border-bottom: none;
       }
     }
     h2.section-header {
