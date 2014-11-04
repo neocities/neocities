@@ -144,6 +144,8 @@ class Site < Sequel::Model
   many_to_one :parent, :key => :parent_site_id, :class => self
   one_to_many :children, :key => :parent_site_id, :class => self
 
+  one_to_many :site_files
+
   def account_sites_dataset
     Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id})).order(:parent_site_id.desc, :username)
   end
@@ -453,8 +455,11 @@ class Site < Sequel::Model
     relative_path = scrubbed_path path
     path = files_path path
 
-    if File.exist?(path) &&
-       Digest::SHA1.file(path).digest == Digest::SHA1.file(uploaded.path).digest
+    site_file = site_files_dataset.where(path: relative_path).first
+
+    uploaded_sha1 = Digest::SHA1.file(uploaded.path).hexdigest
+
+    if site_file && site_file.sha1_hash == uploaded_sha1
       return false
     end
 
@@ -504,8 +509,19 @@ class Site < Sequel::Model
       FileUtils.mkdir_p dirname
     end
 
+    uploaded_size = uploaded.size
+
     FileUtils.mv uploaded.path, path
     File.chmod 0640, path
+
+    site_file ||= SiteFile.new site_id: self.id, path: relative_path
+
+    site_file.set_all(
+      size: uploaded_size,
+      sha1_hash: uploaded_sha1,
+      updated_at: Time.now
+    )
+    site_file.save
 
     purge_cache path
 
@@ -581,6 +597,7 @@ class Site < Sequel::Model
 
     path = path[1..path.length] if path[0] == '/'
 
+    site_files_dataset.where(path: path).delete
     SiteChangeFile.filter(site_id: self.id, filename: path).delete
 
     true
