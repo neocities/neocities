@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<div class="content misc-page txt-Center">
+<div class="content misc-page single-Col txt-Center" style="padding-top: 20px;">
 
   <% if flash.keys.length > 0 %>
     <div class="alert alert-error alert-block">
@@ -22,32 +22,31 @@
         <%== csrf_token_input_html %>
         <p>Site Name:</p>
         <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
-        <p><input class="btn btn-danger" type="submit" value="Ban"></p>
+        <p><input class="btn btn-Action" type="submit" value="Ban"></p>
       </form>
     </div>
-
     <div class="col col-50">
-      <h2>Ban By IP</h2>
-      <form action="/admin/banip" method="POST">
-        <%== csrf_token_input_html %>
-        <p>All sites with this IP address will be removed.</p>
-        <p>Site Name:</p>
-        <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
-        <p><input class="btn btn-danger" type="submit" value="Ban"></p>
-      </form>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col col-50">
-      <h2>Ban By IP</h2>
+      <h2>Mark as NSFW</h2>
       <form action="/admin/mark_nsfw" method="POST">
         <%== csrf_token_input_html %>
         <p>Site Name:</p>
         <p>
           <input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off">
         </p>
-        <p><input class="btn btn-danger" type="submit" value="Mark NSFW"></p>
+        <p><input class="btn btn-Action" type="submit" value="Mark NSFW"></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col col-50">
+      <h2>Ban by IP</h2>
+      <form action="/admin/banip" method="POST">
+        <%== csrf_token_input_html %>
+        <p>All sites with this IP address will be removed.</p>
+        <p>Site Name:</p>
+        <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
+        <p><input class="btn btn-Action" type="submit" value="Ban"></p>
       </form>
     </div>
   </div>
