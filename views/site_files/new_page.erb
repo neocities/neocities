@@ -20,6 +20,7 @@
     <section>
       <form method="POST" action="/site_files/create_page" enctype="multipart/form-data">
         <%== csrf_token_input_html %>
+        <input name="dir" type="hidden" value="<%= params[:dir] %>">
         <h2>What's the name of your page?</h2>
         <p><input type="text" name="pagefilename" autocapitalize="off" autocorrect="off">.html</p>
         <p><input class="btn-Action" type="submit" value="Create Page"></p>

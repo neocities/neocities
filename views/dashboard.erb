@@ -100,7 +100,7 @@
       <% end %>
     </div>
     <div class="actions">
-      <a href="/site_files/new_page" class="btn-Action"><i class="fa fa-file"></i>  New Page</a>
+      <a href="/site_files/new_page?dir=<%= Rack::Utils.escape @dir %>" class="btn-Action"><i class="fa fa-file"></i> New Page</a>
       <a href="#createDir" class="btn-Action" data-toggle="modal"><i class="fa fa-folder"></i> New Folder</a>
       <a href="#" class="btn-Action" onclick="clickUploadFiles(); return false"><i class="fa fa-upload"></i> Upload</a>
     </div>

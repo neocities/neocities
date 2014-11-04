@@ -127,7 +127,7 @@
           if(quit === true) {
             window.location = '/dashboard'
           } else {
-            $('#editorUpdates span').html('<i class="icon-save icon-2x"></i>&nbsp;&nbsp;<span style="font-size: 14pt">Your file has been saved.</span>')
+            $('#editorUpdates span').html('<i class="fa fa-floppy-o"></i>&nbsp;&nbsp;Your file has been saved.')
             $('a#saveButton,a#saveAndExitButton').css('opacity', 0.5)
             setTimeout(function() {
               $('#editorUpdates').fadeOut();  //.addClass('hidden');

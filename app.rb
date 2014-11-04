@@ -1037,6 +1037,8 @@ post '/site_files/create_page' do
 
   name = "#{params[:pagefilename]}.html"
 
+  name = "#{params[:dir]}/#{name}" if params[:dir]
+
   if current_site.file_exists?(name)
     @errors << %{Web page "#{name}" already exists! Choose another name.}
     halt erb(:'site_files/new_page')
@@ -1046,7 +1048,7 @@ post '/site_files/create_page' do
 
   flash[:success] = %{#{name} was created! <a style="color: #FFFFFF; text-decoration: underline" href="/site_files/text_editor/#{name}">Click here to edit it</a>.}
 
-  redirect '/dashboard'
+  redirect params[:dir] ? "/dashboard?dir=#{Rack::Utils.escape params[:dir]}" : '/dashboard'
 end
 
 get '/site_files/new' do
