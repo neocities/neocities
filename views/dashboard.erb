@@ -174,7 +174,7 @@
           <h3 id="deleteConfirmModalLabel">Confirm deletion</h3>
         </div>
         <div class="modal-body">
-          <p>You are about to delete "<span id="deleteFileName"></span>". Are you sure?</p>
+          <p>You are about to delete <strong><span id="deleteFileName"></span></strong>. Are you sure?</p>
         </div>
         <div class="modal-footer">
           <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -202,7 +202,7 @@
 <script type="text/javascript">
 
   function confirmFileDelete(name) {
-    $('#deleteFileName').html(name);
+    $('#deleteFileName').html(name.replace('/',''));
     $('#deleteConfirmModal').modal();
   }
 
