@@ -1567,9 +1567,9 @@ end
 def require_unbanned_ip
   if Site.banned_ip?(request.ip)
     session[:id] = nil
-    flash[:error] = 'Your IP address has been banned due to misconduct. '+
+    flash[:error] = 'Your IP address has been banned due to misconduct/spam. '+
     'If you believe this to be in error, <a href="/contact">contact the site admin</a>.'
-    redirect '/'
+    return {result: 'error'}.to_json
   end
 end
 
