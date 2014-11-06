@@ -308,9 +308,9 @@
   margin-right: auto;
 }
 .folder-icon {
-  background: url(/img/folder.png) no-repeat 0px 0px;
-  width: 95px;
-  height: 65px;
+  background: url(/img/folder.png) 6px 3px no-repeat;
+  background-size: 95px;
+  height: 69px;
   display: block;
   padding-top: 35px;
 }
@@ -1389,16 +1389,25 @@ a.tag:hover {
   padding: 25px 40px 40px 40px;
 }
 .brand-asset {
-  margin-bottom: 3em;
+  margin-bottom: 2.7em;
   p {
     margin-top: 10px;
   }
 }
-.columns.press {
+.columns.press .col-66 {
   h3 {
     margin-bottom: 0;
     line-height: 150%;
     margin-bottom: 10px;
     margin-top: 1.5em;
+  }
+  blockquote {
+    quotes: none;
+    margin: 0 1.5em;
+    font-style: italic;
+    font-size: .85em;
+  }
+  blockquote:before, blockquote:after {
+    content: none;
   }
 }

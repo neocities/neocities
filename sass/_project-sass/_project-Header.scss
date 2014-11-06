@@ -389,7 +389,7 @@
 
 .hp .logo{
   padding-top:45px;
-  
+  img { width: 300px; }
    @media (max-device-width:480px), screen and (max-width:800px){
     padding-left:20px;
     padding-right:20px;
@@ -442,12 +442,12 @@
   left:0;
   position:absolute;
   top:0;
-  width:70px;
+  width:73px;
   z-index:9;
 }
 
 .interior .header-Nav{
-  padding-left:70px;
+  padding-left:74px;
   @media (max-device-width:480px), screen and (max-width:800px){
     width:100%;
   }  
