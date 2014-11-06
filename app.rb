@@ -1192,6 +1192,10 @@ get '/privacy' do
   erb :'privacy'
 end
 
+get '/press' do
+  erb :'press'
+end
+
 get '/admin' do
   require_admin
   @banned_sites = Site.select(:username).filter(is_banned: true).order(:username).all
