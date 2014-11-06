@@ -378,6 +378,10 @@
   position: relative;
   clear: both;
   width: 100%;
+  
+  h2:first-of-type, h3:first-of-type {
+    margin-top: 0;
+  }
 }
 .col-left {
   float: left;
@@ -1376,5 +1380,25 @@ a.tag:hover {
   margin: 0;
   .col {
     padding: 0;
+  }
+}
+.header-Outro.with-columns.press .col {
+  padding: 25px 40px 15px 40px;
+}
+.content.misc-page.columns.right-col.press .col {
+  padding: 25px 40px 40px 40px;
+}
+.brand-asset {
+  margin-bottom: 3em;
+  p {
+    margin-top: 10px;
+  }
+}
+.columns.press {
+  h3 {
+    margin-bottom: 0;
+    line-height: 150%;
+    margin-bottom: 10px;
+    margin-top: 1.5em;
   }
 }
