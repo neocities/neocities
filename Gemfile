@@ -24,6 +24,7 @@ gem 'sass', require: nil
 gem 'dav4rack'
 gem 'filesize'
 gem 'thread'
+gem 'scrypt'
 
 platform :mri do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

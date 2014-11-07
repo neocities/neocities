@@ -26,6 +26,8 @@ else
 end
 # :nocov:
 
+raise 'hash_ip_salt is required' unless $config['ip_hash_salt']
+
 DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $config['database_pool']
 DB.extension :pagination
 

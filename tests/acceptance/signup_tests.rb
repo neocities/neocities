@@ -48,6 +48,8 @@ describe 'signup' do
     site.site_files.length.must_equal 4
     site.site_changed.must_equal false
     site.site_updated_at.must_equal nil
+
+    site.ip.must_equal Site.hash_ip('127.0.0.1')
   end
 
   it 'fails to create for existing site' do

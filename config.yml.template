@@ -8,6 +8,7 @@ development:
   sidekiq_pass: ENTER PASS HERE
   stripe_publishable_key: fillout
   stripe_api_key: fillout
+  ip_hash_salt: "400$8$1$fc21863da5d531c1"
 test:
   database: 'postgres://neocities@127.0.0.1/neocities_test'
   database_pool: 1
@@ -18,3 +19,4 @@ test:
   sidekiq_pass: ENTER PASS HERE
   stripe_publishable_key: fillout
   stripe_api_key: fillout
+  ip_hash_salt: "400$8$1$fc21863da5d531c1"

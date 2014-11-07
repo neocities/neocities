@@ -1216,8 +1216,7 @@ post '/admin/banip' do
     flash[:error] = 'IP is blank, cannot continue'
     redirect '/admin'
   end
-
-  sites = Site.filter(ip: site.ip, is_banned: false).all
+  sites = Site.filter(ip: Site.hash_ip(site.ip), is_banned: false).all
   sites.each {|s| s.ban!}
   flash[:error] = "#{sites.length} sites have been banned."
   redirect '/admin'
@@ -1495,7 +1494,7 @@ post '/site/:username/report' do |username|
     redirect request.referer if current_site.id == site.id
     report.reporting_site_id = current_site.id
   else
-    report.ip = request.ip
+    report.ip = Site.hash_ip request.ip
   end
 
   report.save
@@ -1533,8 +1532,8 @@ def dashboard_if_signed_in
 end
 
 def require_login_ajax
-  halt 'You are banned.' if Site.banned_ip?(request.ip)
   halt 'You are not logged in!' unless signed_in?
+  halt 'You are banned.' if current_site.is_banned? || parent_site.is_banned?
 end
 
 def csrf_safe?
@@ -1546,8 +1545,11 @@ def csrf_token
 end
 
 def require_login
-  require_unbanned_ip
   redirect '/' unless signed_in?
+  if current_site.is_banned || parent_site.is_banned
+    session[:id] = nil
+    redirect '/'
+  end
 end
 
 def signed_in?
