@@ -188,6 +188,15 @@ task :prime_site_updated_at => [:environment] do
   end
 end
 
+desc 'hash_ips'
+task :hash_ips => [:environment] do
+  Site.select(:id,:ip).order(:id).all.each do |s|
+    next if s.ip.nil? || s.ip.match(/#{$config['ip_hash_salt']}/)
+    s.ip = s.ip
+    s.save_changes validate: false
+  end
+end
+
 =begin
 desc 'Update screenshots'
 task :update_screenshots => [:environment] do

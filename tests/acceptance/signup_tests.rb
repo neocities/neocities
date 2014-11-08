@@ -38,10 +38,18 @@ describe 'signup' do
     fill_in_valid
     click_signup_button
     site_created?.must_equal true
+
     assert_equal(
       true,
       File.exist?(File.join(Site::SITE_FILES_ROOT, @site[:username], 'index.html'))
     )
+
+    site = Site[username: @site[:username]]
+    site.site_files.length.must_equal 4
+    site.site_changed.must_equal false
+    site.site_updated_at.must_equal nil
+
+    site.ip.must_equal Site.hash_ip('127.0.0.1')
   end
 
   it 'fails to create for existing site' do

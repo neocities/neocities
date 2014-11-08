@@ -202,20 +202,29 @@ class Site < Sequel::Model
     end
 
     def ip_create_limit?(ip)
-      Site.where('created_at > ?', Date.today.to_time).where(ip: ip).count > IP_CREATE_LIMIT ||
-      Site.where(ip: ip).count > TOTAL_IP_CREATE_LIMIT
+      hashed_ip = hash_ip ip
+      Site.where('created_at > ?', Date.today.to_time).where(ip: hashed_ip).count > IP_CREATE_LIMIT ||
+      Site.where(ip: hashed_ip).count > TOTAL_IP_CREATE_LIMIT
+    end
+
+    def hash_ip(ip)
+      SCrypt::Engine.hash_secret ip, $config['ip_hash_salt']
+    end
+
+    def banned_ip?(ip)
+      return true if Site.where(is_banned: true).
+        where(ip: hash_ip(ip)).
+        where(['updated_at > ?', Time.now-BANNED_TIME]).
+        first
+
+      return true if BlockedIp[ip]
+
+      false
     end
   end
 
-  def self.banned_ip?(ip)
-    return true if Site.where(is_banned: true).
-      where(ip: ip).
-      where(['updated_at > ?', Time.now-BANNED_TIME]).
-      first
-
-    return true if BlockedIp[ip]
-
-    false
+  def ip=(ip)
+    super self.class.hash_ip(ip)
   end
 
   def is_following?(site)
@@ -296,12 +305,24 @@ class Site < Sequel::Model
     FileUtils.mkdir_p files_path
 
     %w{index not_found}.each do |name|
-      File.write files_path("#{name}.html"), render_template("#{name}.erb")
+      tmpfile = Tempfile.new "newinstall-#{name}"
+      tmpfile.write render_template("#{name}.erb")
+      tmpfile.close
+
+      store_file "#{name}.html", tmpfile, new_install: true
       purge_cache "/#{name}.html"
       ScreenshotWorker.perform_async values[:username], "#{name}.html"
     end
 
-    FileUtils.cp template_file_path('cat.png'), files_path('cat.png')
+    tmpfile = Tempfile.new 'style.css'
+    tmpfile.close
+    FileUtils.cp template_file_path('style.css'), tmpfile.path
+    store_file 'style.css', tmpfile, new_install: true
+
+    tmpfile = Tempfile.new 'cat.png'
+    tmpfile.close
+    FileUtils.cp template_file_path('cat.png'), tmpfile.path
+    store_file 'cat.png', tmpfile, new_install: true
   end
 
   def get_file(path)
@@ -451,7 +472,7 @@ class Site < Sequel::Model
     PurgeCacheWorker.perform_async payload
   end
 
-  def store_file(path, uploaded)
+  def store_file(path, uploaded, opts={})
     relative_path = scrubbed_path path
     path = files_path path
 
@@ -486,7 +507,8 @@ class Site < Sequel::Model
     end
 
     pathname = Pathname(path)
-    if pathname.basename.to_s == 'index.html'
+
+    if pathname.basename.to_s == 'index.html' && opts[:new_install] != true
       begin
         new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
       rescue NoMethodError => e
@@ -533,7 +555,7 @@ class Site < Sequel::Model
       ThumbnailWorker.perform_async values[:username], relative_path
     end
 
-    SiteChange.record self, relative_path
+    SiteChange.record self, relative_path unless opts[:new_install]
 
     true
   end

@@ -72,8 +72,8 @@ describe 'site_files' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/img/test.jpg', 'image/jpeg')
       last_response.body.must_match /successfully uploaded/i
       @site.reload.changed_count.must_equal 2
-      @site.site_files.count.must_equal 1
-      digest.wont_equal @site.reload.site_files.first.sha1_hash
+      @site.site_files.select {|f| f.path == 'test.jpg'}.length.must_equal 1
+      digest.wont_equal @site.site_files_dataset.where(path: 'test.jpg').first.sha1_hash
     end
 
     it 'works with directory path' do
