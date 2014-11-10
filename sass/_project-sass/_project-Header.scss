@@ -258,8 +258,33 @@
 	  @media (max-device-width:480px), screen and (max-width:800px){
 	    display:block;
 	  }
+    
+    >.fa-heart {
+      vertical-align: .5em;
+      margin-left: .3em;
+      font-size: 9px;
+      position: relative;    
+      color: rgba(255, 255, 255, 0.4);
+    
+      >.fa-heart {
+        display:none;
+      }
+    }
 	  
-		&:hover{background:#528995; text-decoration:underline}
+		&:hover{
+      background:#528995; text-decoration:underline;
+      >.fa-heart {
+        color: rgba(255, 255, 255, 1);
+        >.fa-heart {
+          color: $c-Brand-1;
+          position: absolute;
+          left: 2px;
+          top: .25em;
+          font-size: 7px;
+          display: inline;
+        }
+      }
+    }
 		&.selected, &:active{background:#528995; text-decoration:underline}
 	}
   
