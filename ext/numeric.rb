@@ -21,13 +21,15 @@ class Numeric
     end
   end
 
-  def format_large_numbers
+  def format_large_number
     if self > 999999999
-      return sprintf "%.2fB", (self/1000000000.0)
+      return sprintf "%.1fB", (self/1000000000.0)
     elsif self > 999999
-      return sprintf "%.2fM", (self/1000000.0)
+      return sprintf "%.1fM", (self/1000000.0)
+    elsif self > 9999
+      return sprintf "%.1fK", (self/1000.0)
     elsif self > 999
-      return sprintf "%.2fK", (self/1000.0)
+      return self.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
     else
       return self
     end
