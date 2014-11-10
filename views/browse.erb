@@ -80,9 +80,9 @@
           <div class="site-stats">
             <a href="/site/<%= site.username %>">
               <% if params[:sort_by] == 'hits' %>
-                <%= site.hits %>&nbsp;hit<%= site.hits == 1 ? '' : 's' %>
+                <%= site.hits.format_large_number %>&nbsp;hit<%= site.hits == 1 ? '' : 's' %>
               <% else %>
-                <%= site.views %>&nbsp;view<%= site.views == 1 ? '' : 's' %>
+                <%= site.views.format_large_number %>&nbsp;view<%= site.views == 1 ? '' : 's' %>
               <% end %>
             </a>
           </div>
