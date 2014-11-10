@@ -843,10 +843,10 @@ a.tag:hover {
 .supporter-badge {
   background:url(/img/supporter.png);
   width: 99px;
-  height: 26px;
-  float: left;
+  height: 24px;
+  background-size: 99px;
+  display: inline-block;
   margin-top: 7px;
-  margin-left: 10px; 
 }
 .title-with-badge {
   float: left;
@@ -855,6 +855,7 @@ a.tag:hover {
 }
 .title-with-badge span {
   float: left;
+  margin-right: 10px;
 }
 .section {
   padding: 55px 8%;
