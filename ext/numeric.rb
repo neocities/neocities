@@ -21,6 +21,18 @@ class Numeric
     end
   end
 
+  def format_large_numbers
+    if self > 999999999
+      return sprintf "%.2fB", (self/1000000000.0)
+    elsif self > 999999
+      return sprintf "%.2fM", (self/1000000.0)
+    elsif self > 999
+      return sprintf "%.2fK", (self/1000.0)
+    else
+      return self
+    end
+  end
+
   def to_space_pretty
     to_bytes_pretty
   end
