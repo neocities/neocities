@@ -1390,7 +1390,13 @@ a.tag:hover {
   padding: 25px 40px 40px 40px;
 }
 .brand-asset {
-  margin-bottom: 2.7em;
+  margin-bottom: 2em;
+  float: left;
+  clear: both;
+  background: rgba(228, 228, 228, 0.42);
+  width: 100%;
+  text-align: center;
+  padding: 26px 0 5px;  
   p {
     margin-top: 10px;
   }
