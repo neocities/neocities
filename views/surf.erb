@@ -137,6 +137,37 @@
       display:none!important;
       visibility:hidden
     }
+    #followLink .follow {
+      display: inline;
+    }
+    #followLink .following {
+      display: none;
+    }
+    #followLink .unfollow { 
+      display: none;
+    }
+    #followLink.is-following {
+      width: 6em;
+      display: block;
+    }
+    #followLink.is-following .follow {
+      display: none;
+    }
+    #followLink.is-following .following { 
+      display: inline;
+    }
+    #followLink.is-following .unfollow { 
+      display: none;
+    }
+    #followLink.is-following.unfollow .follow {
+      display: none;
+    }
+    #followLink.is-following.unfollow .following { 
+      display: none;
+    }
+    #followLink.is-following.unfollow .unfollow { 
+      display: inline;
+    }
     </style>
   </head>
   <body>
@@ -182,12 +213,10 @@
 
       <% if current_site && current_site != @site %>
         <li>
-          <a id="followLink" href="" onclick="toggleFollow(<%= @site.id %>); return false">
-            <% if current_site.is_following? @site %>
-              <i class="fa fa-times"></i> Unfollow
-            <% else %>
-              <i class="fa fa-plus"></i> Follow
-            <% end %>
+          <a id="followLink" href="#" onclick="toggleFollow(<%= @site.id %>); return false" class="<% if current_site.is_following? @site %>is-following<% end %>">
+            <span class="unfollow"><i class="fa fa-times"></i> Unfollow</span>
+            <span class="following"><i class="fa fa-check"></i> Following</span>
+            <span class="follow"><i class="fa fa-plus"></i> Follow</span>
           </a>
         </li>
       <% end %>
@@ -230,15 +259,25 @@
       e.target.form.submit()
     })
 
+    var link = $('a#followLink');
+    
     function toggleFollow(id) {
       $.post('/site/'+id+'/toggle_follow', {csrf_token: '<%= csrf_token %>'}, function(res) {
         if(res.result == 'followed')
-          $('#followLink').html('<i class="fa fa-times"></i> Unfollow')
+          link.addClass('is-following')
 
         if(res.result == 'unfollowed')
-          $('#followLink').html('<i class="fa fa-plus"></i> Follow')
+          link.removeClass('is-following')
       })
     }
+
+    link.hover(function() {
+      if (link.hasClass('is-following')) {
+        link.addClass('unfollow');
+      }
+    }, function() {
+      link.removeClass('unfollow');
+    });
   </script>
   </body>
 </html>

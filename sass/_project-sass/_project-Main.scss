@@ -721,14 +721,14 @@ a.tag:hover {
   margin-left: 0;
 }
 .interior .header-Outro .stats {
-  margin-bottom: 1.2em;
+  margin-bottom: 1.3em;
   float: left;
   width: 100%;
-  margin-top: 2em;
+  margin-top: 1.9em;
 }
 .interior .header-Outro .stats strong {
   font-size: 1.5em;
-  font-weight: bold;
+  font-weight: normal;
   color: #DAEEA5;
 }
 .interior .header-Outro .stats span {
@@ -739,8 +739,9 @@ a.tag:hover {
 }
 .interior .header-Outro .stats .stat {
   float: left;
-  width: 90px;
   text-align: center;
+  margin-right: 28px;
+  color: #84997E;
 }
 .interior .header-Outro .stats .stat.tips {
   width: 60px;
@@ -842,17 +843,17 @@ a.tag:hover {
 .supporter-badge {
   background:url(/img/supporter.png);
   width: 99px;
-  height: 26px;
-  float: left;
-  margin-top: 7px;
-  margin-left: 10px; 
+  height: 24px;
+  background-size: 99px;
+  display: inline-block;
 }
 .title-with-badge {
   float: left;
   width: 100%;
+  margin-bottom: 3px;
 }
 .title-with-badge span {
-  float: left;
+  margin-right: 5px;
 }
 .section {
   padding: 55px 8%;
@@ -1389,7 +1390,13 @@ a.tag:hover {
   padding: 25px 40px 40px 40px;
 }
 .brand-asset {
-  margin-bottom: 2.7em;
+  margin-bottom: 2em;
+  float: left;
+  clear: both;
+  background: rgba(228, 228, 228, 0.42);
+  width: 100%;
+  text-align: center;
+  padding: 26px 0 5px;  
   p {
     margin-top: 10px;
   }

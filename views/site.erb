@@ -22,9 +22,9 @@
       <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? %><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
       <p class="site-url"><a href="/surf/<%= site.username %>"><%= site.host %></a></p>
       <div class="stats">
-        <div class="stat"><strong><%= site.views_english %></strong> <span>views</span></div>
-        <div class="stat"><strong><%= site.hits_english %></strong> <span>hits</span></div>
-        <div class="stat"><strong><%= site.follows_dataset.count %></strong> <span>followers</span></div>
+        <div class="stat"><strong><%= site.views.format_large_number %></strong> <span>views</span></div>
+        <div class="stat"><strong><%= site.hits.format_large_number %></strong> <span>hits</span></div>
+        <div class="stat"><strong><%= site.follows_dataset.count.format_large_number %></strong> <span>followers</span></div>
         <!-- <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div> -->
       </div>
       <div class="actions">
@@ -107,8 +107,8 @@
           <% end %>
         </strong>
       </div>
-      <div class="stat"><span>Number of updates</span><strong><%= site.changed_count %></strong></div>
-      <div class="stat"><span>Created</span><strong><%= site.created_at.strftime('%B %-d, %Y') %></strong></div>
+      <div class="stat"><span>Number of updates</span><strong><%= site.changed_count.format_large_number %></strong></div>
+      <div class="stat"><span>Created</span><strong><%= site.created_at.strftime('%b %-d, %Y') %></strong></div>
     </div>
 
     <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>

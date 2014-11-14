@@ -62,12 +62,12 @@
               <div class="site-info">
                 <div class="username">
                   <a href="/site/<%= suggested_site.username %>" title="Profile">
-                    <i class="fa fa-user"></i><%= suggested_site  .username %>
+                    <i class="fa fa-user"></i><%= suggested_site.username %>
                   </a>
                 </div>
                 <div class="site-stats">
                   <a href="/site/<%= suggested_site.username %>">
-                      <%= suggested_site.views %>&nbsp;view<%= suggested_site.views == 1 ? '' : 's' %>
+                      <%= suggested_site.views.format_large_number %>&nbsp;view<%= suggested_site.views == 1 ? '' : 's' %>
                   </a>
                 </div>
                 <div class="site-tags">
@@ -97,9 +97,9 @@
             <% end %>
           </div>
           <div class="col col-50">
-            <div><strong><%= site.views_english %></strong> unique views</div>
-            <div><strong><%= site.hits_english %></strong> hits</div>
-            <div><strong><%= site.follows_dataset.count %></strong> followers</div>
+            <div><strong><%= site.views.format_large_number %></strong> unique views</div>
+            <div><strong><%= site.hits.format_large_number %></strong> hits</div>
+            <div><strong><%= site.follows_dataset.count.format_large_number %></strong> followers</div>
           </div>
         </div>
 

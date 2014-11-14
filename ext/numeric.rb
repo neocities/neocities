@@ -21,15 +21,33 @@ class Numeric
     end
   end
 
-  def format_large_numbers
-    if self > 999999999
-      return sprintf "%.2fB", (self/1000000000.0)
-    elsif self > 999999
-      return sprintf "%.2fM", (self/1000000.0)
-    elsif self > 999
-      return sprintf "%.2fK", (self/1000.0)
+  def format_large_number
+    if self > 9999
+      if self > 999999999
+        unit_char = 'B' #billion
+        unit_amount = 1000000000.0
+      elsif self > 999999
+        unit_char = 'M' #million
+        unit_amount = 1000000.0
+      elsif self > 9999
+        unit_char = 'K' #thousand
+        unit_amount = 1000.0
+      end
+    
+      self_divided = self.to_f / unit_amount
+      self_rounded = self_divided.round(1)
+
+      if self_rounded.denominator == 1
+        return sprintf ("%.0f" + unit_char), self_divided
+      else
+        return sprintf ("%.1f" + unit_char), self_divided
+      end
     else
-      return self
+      if self > 999
+        return self.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+      else
+        return self
+      end
     end
   end
 

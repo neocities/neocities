@@ -930,14 +930,6 @@ class Site < Sequel::Model
     end
   end
 
-  def hits_english
-    values[:hits].to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
-  end
-
-  def views_english
-    values[:views].to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
-  end
-
   def screenshots_delete(path)
     SCREENSHOT_RESOLUTIONS.each do |res|
       begin

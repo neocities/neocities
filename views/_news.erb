@@ -90,7 +90,7 @@
         <% event.comments.each do |comment| %>
           <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id).first %>
           <div class="comment" id="comment_<%= comment.id %>">
-            <img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>">
+            <a href="/site/<%= comment_actioning_site.username %>"><img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>"></a>
             <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><i class="fa fa-user"><% if comment_actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= comment_actioning_site.username %></a>
             <span class="date">
               <a href="?event_id=<%= event.id %>"><%= comment.created_at.ago %></a>
