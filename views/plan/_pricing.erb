@@ -67,9 +67,19 @@
       <div class="col col-25 supporter">
         <div class="plan-image" data-original-title="No no, pick me!"></div>
         <h3>Supporter</h3>
-        <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
-        <div class="interval">per month, billed annually</div>
-        <%== plan_pricing_button :supporter %>
+        <% if parent_site && parent_site.legacy_supporter? %>
+          <div class="price">$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site[:plan_type].to_sym] %></div>
+          <div class="interval">per month, billed annually</div>
+        <% else %>
+          <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
+          <div class="interval">per month, billed annually</div>
+        <% end %>
+
+        <% if parent_site && parent_site.legacy_supporter? %>
+          <div class="current-plan">Current Plan</div>
+        <% else %>
+          <%== plan_pricing_button :supporter %>
+        <% end %>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_space_pretty %></strong> storage</li>
           <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_space_pretty %></strong> bandwidth</li>
@@ -131,8 +141,13 @@
       </th>
       <th class="professional">
         <h3>Supporter</h3>
-        <p>$<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo</p>
-        <%== plan_pricing_button :supporter %>
+        <% if parent_site && parent_site.legacy_supporter? %>
+          <p>$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site.values[:plan_type].to_sym] %>/mo</p>
+          <div class="current-plan">Current Plan</div>
+        <% else %>
+          <p>$<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo</p>
+          <%== plan_pricing_button :supporter %>
+        <% end %>
       </th>
       <th class="professional">
         <h3>Cat Bus</h3>

@@ -115,6 +115,15 @@ class Site < Sequel::Model
     unlimited_site_creation: false
   )
 
+  LEGACY_SUPPORTER_PRICES = {
+    plan_one: 1,
+    plan_two: 2,
+    plan_three: 3,
+    plan_four: 4,
+    plan_five: 5
+  }
+
+
   many_to_many :tags
 
   one_to_many :profile_comments
@@ -879,8 +888,17 @@ class Site < Sequel::Model
     PLAN_FEATURES[plan_type.to_sym][:name]
   end
 
+  def unconverted_legacy_supporter?
+    stripe_customer_id && !plan_ended && values[:plan_type].nil? && stripe_subscription_id.nil?
+  end
+
+  def legacy_supporter?
+    !values[:plan_type].match(/plan_/).nil?
+  end
+
   def plan_type
     return 'free' if values[:plan_type].nil?
+    return 'supporter' if values[:plan_type].match /^plan_/
     values[:plan_type]
   end
 

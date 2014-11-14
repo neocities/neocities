@@ -268,7 +268,16 @@ def generate_question
 end
 
 get '/plan/?' do
-  @title = 'Supporter'
+  @title = 'Support Us'
+
+  if parent_site && parent_site.unconverted_legacy_supporter?
+    customer = Stripe::Customer.retrieve(parent_site.stripe_customer_id)
+    subscription = customer.subscriptions.first
+    parent_site.stripe_subscription_id = subscription.id
+    parent_site.plan_type = subscription.plan.id
+    parent_site.save_changes
+  end
+
   erb :'plan/index'
 end
 
@@ -320,92 +329,6 @@ get '/plan/thanks' do
   require_login
   erb :'plan/thanks'
 end
-
-=begin
-get '/plan/?' do
-  @title = 'Supporter'
-  erb :'plan/index'
-end
-
-post '/plan/create' do
-  require_login
-
-  DB.transaction do
-    customer = Stripe::Customer.create(
-      card: params[:stripe_token],
-      description: "#{parent_site.username} - #{parent_site.id}",
-      email: current_site.email,
-      plan: params[:selected_plan]
-    )
-
-    parent_site.update stripe_customer_id: customer.id, plan_ended: false
-
-    plan_name = customer.subscriptions.first['plan']['name']
-
-    if current_site.email || parent_site.email
-      EmailWorker.perform_async({
-        from: 'web@neocities.org',
-        reply_to: 'contact@neocities.org',
-        to: current_site.email || parent_site.email,
-        subject: "[Neocities] You've become a supporter!",
-        body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: plan_name)
-      })
-    end
-  end
-
-  redirect '/plan'
-end
-
-def get_plan_name(customer_id)
-  subscriptions = Stripe::Customer.retrieve(parent_site.stripe_customer_id).subscriptions.all
-  @plan_name = subscriptions.first.plan.name
-end
-
-def require_active_subscription
-  redirect '/plan' unless parent_site.supporter? && !parent_site.plan_ended
-end
-
-get '/plan/manage' do
-  require_login
-  require_active_subscription
-  @title = 'Manage Plan'
-  @plan_name = get_plan_name parent_site.stripe_customer_id
-  erb :'plan/manage'
-end
-
-get '/plan/end' do
-  require_login
-  require_active_subscription
-  @title = 'End Plan'
-  @plan_name = get_plan_name parent_site.stripe_customer_id
-  erb :'plan/end'
-end
-
-post '/plan/end' do
-  require_login
-  require_active_subscription
-
-  recaptcha_is_valid = ENV['RACK_ENV'] == 'test' || recaptcha_valid?
-
-  if !recaptcha_is_valid
-    @error = 'Recaptcha was filled out incorrectly, please try re-entering.'
-    @plan_name = get_plan_name parent_site.stripe_customer_id
-    halt erb :'plan/end'
-  end
-
-  customer = Stripe::Customer.retrieve parent_site.stripe_customer_id
-  subscriptions = customer.subscriptions.all
-
-  DB.transaction do
-    subscriptions.each do |subscription|
-      customer.subscriptions.retrieve(subscription.id).delete
-    end
-    parent_site.update plan_ended: true
-  end
-
-  redirect '/plan'
-end
-=end
 
 get '/site/:username/tip' do |username|
   @site = Site[username: username]
