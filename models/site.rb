@@ -877,7 +877,7 @@ class Site < Sequel::Model
   end
 
   def supporter?
-    plan_type != 'free'
+    owner.plan_type != 'free'
   end
 
   def ended_supporter?
