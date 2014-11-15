@@ -380,7 +380,6 @@
       $('#createSiteForm').on('submit', function(obj) {
         $("input[name=blackbox_answer]").val("<%= @blackbox_question %>")
         $.post('/create_validate_all', $(obj.target).serialize(), function(errors) {
-          console.log(errors)
           if(errors.length == 0) {
             $.post('/create', $('#createSiteForm').serialize(), function(res) {
               if(res.result == 'ok')
@@ -412,6 +411,7 @@
           if(res.result == 'ok') {
             return $(obj.target).tooltip('hide')
           }
+
           $(obj.target).attr('data-original-title', res.error)
           $(obj.target).tooltip('show')
         })

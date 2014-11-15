@@ -495,7 +495,7 @@ post '/create_validate' do
 
   if !params[:field].match /^username$|^password$|^email$|^new_tags_string$/
     return {error: 'not a valid field'}.to_json
-  end
+  end  
 
   site = Site.new(params[:field] => params[:value])
   site.valid?

@@ -762,28 +762,28 @@ class Site < Sequel::Model
       @new_filtered_tags = []
 
       if ((new? ? 0 : tags_dataset.count) + new_tags.length > 5)
-        errors.add :tags, 'Cannot have more than 5 tags for your site.'
+        errors.add :new_tags_string, 'Cannot have more than 5 tags for your site.'
       end
 
       new_tags.each do |tag|
         tag.strip!
         if tag.match(/[^a-zA-Z0-9 ]/)
-          errors.add :tags, "Tag \"#{tag}\" can only contain letters (A-Z) and numbers (0-9)."
+          errors.add :new_tags_string, "Tag \"#{tag}\" can only contain letters (A-Z) and numbers (0-9)."
           break
         end
 
         if tag.length > Tag::NAME_LENGTH_MAX
-          errors.add :tags, "Tag \"#{tag}\" cannot be longer than #{Tag::NAME_LENGTH_MAX} characters."
+          errors.add :new_tags_string, "Tag \"#{tag}\" cannot be longer than #{Tag::NAME_LENGTH_MAX} characters."
           break
         end
 
         if tag.match(/  /)
-          errors.add :tags, "Tag \"#{tag}\" cannot have spaces."
+          errors.add :new_tags_string, "Tag \"#{tag}\" cannot have spaces."
           break
         end
 
         if tag.split(' ').length > Tag::NAME_WORDS_MAX
-          errors.add :tags, "Tag \"#{tag}\" cannot be more than #{Tag::NAME_WORDS_MAX} word."
+          errors.add :new_tags_string, "Tag \"#{tag}\" cannot be more than #{Tag::NAME_WORDS_MAX} word."
           break
         end
 
