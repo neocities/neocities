@@ -1393,6 +1393,10 @@ a.tag:hover {
         background: #25333c;
         color: #8099A7;
       } 
+      
+      @media (max-device-width:480px), screen and (max-width:800px) {
+        display: none;
+      }
     }
     #saveButton {
       margin-top: 0;
