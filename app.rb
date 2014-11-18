@@ -124,7 +124,7 @@ post '/settings/create_child' do
 
   if site.valid?
     site.save
-    flash[:success] = 'Your new site has been created!'
+    flash[:success] = 'Your new site has been created! To manage it, click your username in the top right and go to "Switch Site".'
     redirect '/settings#sites'
   else
     flash[:error] = site.errors.first.last.first
