@@ -367,6 +367,10 @@ class Site < Sequel::Model
     }
   end
 
+  def is_banned?
+    is_banned
+  end
+
   def ban!
     if username.nil? || username.empty?
       raise 'username is missing'
