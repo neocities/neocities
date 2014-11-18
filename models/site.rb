@@ -50,7 +50,7 @@ class Site < Sequel::Model
   IMAGE_REGEX          = /jpg|jpeg|png|bmp|gif/
   LOSSLESS_IMAGE_REGEX = /png|bmp|gif/
   LOSSY_IMAGE_REGEX    = /jpg|jpeg/
-  HTML_REGEX           = /htm|html/
+  HTML_REGEX           = /.html$|.htm$/
   MAX_COMMENT_SIZE     = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
 
   SCREENSHOT_RESOLUTIONS = ['540x405', '210x158', '100x100', '50x50']
@@ -532,6 +532,10 @@ class Site < Sequel::Model
       self.updated_at = Time.now
 
       save_changes(validate: false)
+    end
+
+    if pathname.extname.match HTML_REGEX
+      # SPAM and phishing checking code goes here
     end
 
     dirname = pathname.dirname.to_s
