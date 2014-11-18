@@ -484,6 +484,7 @@ class Site < Sequel::Model
   def store_file(path, uploaded, opts={})
     relative_path = scrubbed_path path
     path = files_path path
+    pathname = Pathname(path)
 
     site_file = site_files_dataset.where(path: relative_path).first
 
@@ -493,7 +494,7 @@ class Site < Sequel::Model
       return false
     end
 
-    if File.extname(relative_path).match /\.#{EDITABLE_FILE_EXT}/
+    if pathname.extname.match EDITABLE_FILE_EXT
       open(uploaded.path) {|f|
         matches = f.grep SPAM_MATCH_REGEX
 
@@ -514,8 +515,6 @@ class Site < Sequel::Model
         end
       }
     end
-
-    pathname = Pathname(path)
 
     if pathname.basename.to_s == 'index.html' && opts[:new_install] != true
       begin
@@ -560,11 +559,9 @@ class Site < Sequel::Model
 
     purge_cache path
 
-    ext = File.extname(path).gsub(/^./, '')
-
-    if ext.match HTML_REGEX
+    if pathname.extname.match HTML_REGEX
       ScreenshotWorker.perform_async values[:username], relative_path
-    elsif ext.match IMAGE_REGEX
+    elsif pathname.extname.match IMAGE_REGEX
       ThumbnailWorker.perform_async values[:username], relative_path
     end
 
