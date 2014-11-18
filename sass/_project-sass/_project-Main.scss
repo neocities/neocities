@@ -1410,6 +1410,11 @@ a.tag:hover {
       }
     }
   }
+  #editorUpdates .tooltip-inner {
+    padding: 14px 20px;
+    width: 200px;
+    white-space: normal;
+  }
 }
 .row.editor {
   float: left;
