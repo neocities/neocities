@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="col col-32">
-      <h3>Your Website</h3>
+      <h3>Your Site</h3>
       <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i>Edit Site</a>
     </div>
   </div>
@@ -87,25 +87,27 @@
       </div>
 
       <div class="col col-33">
-        <p class="site-url"><a href="//<%= current_site.host %>" target="_blank"><%= site.title %></a></p>
-        <div class="stats">
-          <div class="col col-50">
-            <% if site.updated_at %>
-              Last updated<br><strong><%= site.updated_at.ago %></strong>
-            <% else %>
-              Your new website!<br><strong><a href="/dashboard"><i class="fa fa-edit" title="Edit"></i> Start Building</a></strong>
-            <% end %>
-          </div>
-          <div class="col col-50">
-            <div><strong><%= site.views.format_large_number %></strong> unique views</div>
-            <div><strong><%= site.hits.format_large_number %></strong> hits</div>
-            <div><strong><%= site.follows_dataset.count.format_large_number %></strong> followers</div>
+        <div class="news-site-info">
+          <p class="site-url"><a href="//<%= current_site.host %>" target="_blank"><%= site.title %></a></p>
+          <div class="stats">
+            <div class="col col-50">
+              <% if site.updated_at %>
+                Last updated<br><strong><%= site.updated_at.ago %></strong>
+              <% else %>
+                Your new website!<br><strong><a href="/dashboard"><i class="fa fa-edit" title="Edit"></i> Start Building</a></strong>
+              <% end %>
+            </div>
+            <div class="col col-50">
+              <div><strong><%= site.views.format_large_number %></strong> views</div>
+              <div><strong><%= site.hits.format_large_number %></strong> hits</div>
+              <div><strong><%= site.follows_dataset.count.format_large_number %></strong> followers</div>
+            </div>
           </div>
         </div>
 
         <a href="//<%= site.host %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
 
-        <div style="margin-top: 20px; margin-bottom: 2em" class="txt-Center">
+        <div class="news-profile-button">
           <a href="/site/<%= site.username %>" class="btn-Action">View Site Profile</a>
         </div>
 

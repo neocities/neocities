@@ -35,6 +35,18 @@
   font-size: 2.5em;
   margin-top: 15px;
 }
+.news-site-info {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    float: right;
+    width: 35%;
+    
+    .col-50 {
+      width:100%;
+      margin-bottom: 1em!important;
+    }
+  }
+  
+}
 .site-url {
   font-size:18px;
   margin-bottom: 8px;
@@ -449,6 +461,10 @@
 }
 .news-feed .content.misc-page.columns .col-66 {
   min-height: 56em;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    min-height: 0;
+  }
 }
 .content.misc-page.columns .col-33 {
   width: 33%;
@@ -475,10 +491,27 @@
 }
 .interior .header-Outro.with-columns .col-32 {
   width: 33%;
+  
+  h3 {
+    @media (max-device-width:480px), screen and (max-width:800px) {
+      display: none;
+    }
+  }
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    width: 10em!important;
+    float: right;
+    padding: 0 0 18px 0;
+    margin-top: -28px;
+  }
 }
 .interior .header-Outro.with-columns .col-66 {
   width: 67%;
   border-right: 1px solid #0B0F11;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+   border-right: 0;
+   padding: 15px 0 27px 30px; 
+  }
 }
 .interior .header-Outro.with-columns .col-32 .edit {
   margin-top: 4px;
@@ -520,6 +553,10 @@
   background-size: cover;
   float: left;
   margin-bottom: 20px;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    width: 60%;
+  }
 }
 .site-portrait {
   border: 5px solid white;
@@ -537,6 +574,15 @@
   font-size: .8em;
   margin-top: .2em;
   margin-bottom: -.2em;
+}
+.news-profile-button {
+  clear: both;
+  margin: 20px auto 2em auto;
+  text-align: center;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    text-align: left;
+  }
 }
 a.tag, a.tag:visited {
   font-size: .7em;
