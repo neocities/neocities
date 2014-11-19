@@ -745,17 +745,34 @@ a.tag:hover {
 .report, .report a {
   color: #999;
 }
-.interior .header-Outro .actions a {
-  margin-right: 6px;
+.interior .header-Outro .profile-info {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    text-align: center;
+    padding: 10px 0 15px 0;
+  }
 }
-.interior .header-Outro .actions a:first-of-type {
-  margin-left: 0;
+.interior .header-Outro .actions {
+  clear: both;
+  a {
+    margin-right: 6px;
+  }
+  a:first-of-type {
+    margin-left: 0;
+  }
+  
 }
 .interior .header-Outro .stats {
   margin-bottom: 1.3em;
   float: left;
   width: 100%;
   margin-top: 1.9em;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    float: none;
+    width: 270px;
+    margin: 0.9em auto 5.5em auto;
+    text-align: center;
+  }
 }
 .interior .header-Outro .stats strong {
   font-size: 1.5em;
@@ -773,6 +790,11 @@ a.tag:hover {
   text-align: center;
   margin-right: 28px;
   color: #84997E;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    margin: 0;
+    width: 90px;
+  }
 }
 .interior .header-Outro .stats .stat.tips {
   width: 60px;
