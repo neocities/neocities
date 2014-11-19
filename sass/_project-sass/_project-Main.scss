@@ -100,7 +100,11 @@
 }
 
 // Dashboard
-.interior .header-Outro .col.col-50.signup-Area {padding-left: 0;}
+.interior .header-Outro .col.col-50.signup-Area {
+  padding-left: 0;
+  float: left;
+  width: 293px!important;
+}
 .interior .header-Outro a {color:#E93250}
 .interior .header-Outro .btn-Action {color:#fff}
 .interior .signup-Area {
@@ -151,6 +155,17 @@
 .interior .header-Outro h2 {
   margin-top: 12px;
   font-size: 1.8em;
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    margin-top: 0;
+  }
+}
+.interior .header-Outro .col-50:nth-of-type(2) {
+  float: left;
+  
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    width: 42%!important;
+    margin-left: 22px;
+  }
 }
 .welcome {
   background: #daeea5 url(/img/heartcat.png) no-repeat 20px center;
