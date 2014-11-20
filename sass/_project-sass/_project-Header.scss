@@ -17,9 +17,9 @@
   padding-bottom:27px;
 }
 
-.header-Content{
+.header-Content.content{
 	@media(max-device-width:480px), screen and (max-width:800px){
-	  padding:0;
+    padding: 14px 5% 20px 5%;
 	}
 }
 .blurb{background:#fff}
@@ -32,6 +32,7 @@
   @media (max-device-width:480px), screen and (max-width:800px){
     @include vendor(background-size, cover);
     min-height:2px;
+    background-position: 36%;
   }
 }
 
@@ -87,13 +88,14 @@
   @extend %kill-List;
   @media (max-device-width:480px), screen and (max-width:800px){
     margin-bottom:20px;
-    padding:20px!important;
+    padding:4px 20px 4px 14px;
   }
   
   li{
     padding-left:$spacing*9;
     padding-right:$spacing*3;
     margin-bottom:20px;
+    margin-left: 8px;
   }
   
   h2{
@@ -174,9 +176,6 @@
   
   label{
     color:#81b8c6;
-    @media (max-device-width:480px), screen and (max-width:800px){
-      font-size:70%
-    }
   }
   
   label#domain-name {
@@ -216,6 +215,10 @@
     padding:10px 25px;
     margin-top: 2em;
     font-size: 1em;
+    
+    @media (max-device-width:480px), screen and (max-width:800px){
+      margin-top: 0;
+    }
   }
 }
 
@@ -275,6 +278,7 @@
 	}
   
   a.small-Nav{
+    background: #65a0ad;
     display:none;
     position:fixed;
     right:0;
