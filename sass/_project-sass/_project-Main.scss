@@ -35,6 +35,18 @@
   font-size: 2.5em;
   margin-top: 15px;
 }
+.news-site-info {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    float: right;
+    width: 35%;
+    
+    .col-50 {
+      width:100%;
+      margin-bottom: 1em!important;
+    }
+  }
+  
+}
 .site-url {
   font-size:18px;
   margin-bottom: 8px;
@@ -88,7 +100,13 @@
 }
 
 // Dashboard
-.interior .header-Outro .col.col-50.signup-Area {padding-left: 0;}
+.interior .header-Outro .col.col-50.signup-Area {
+  padding-left: 0;
+}
+.interior .header-Outro.dashboard .col.col-50.signup-Area {
+  width: 293px!important;
+  float: left;
+}
 .interior .header-Outro a {color:#E93250}
 .interior .header-Outro .btn-Action {color:#fff}
 .interior .signup-Area {
@@ -139,6 +157,19 @@
 .interior .header-Outro h2 {
   margin-top: 12px;
   font-size: 1.8em;
+}
+.interior .header-Outro.dashboard h2 {
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    margin-top: 0;
+  }
+}
+.interior .header-Outro.dashboard .col-50:nth-of-type(2) {
+  float: left;
+  
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    width: 42%!important;
+    margin-left: 22px;
+  }
 }
 .welcome {
   background: #daeea5 url(/img/heartcat.png) no-repeat 20px center;
@@ -449,6 +480,10 @@
 }
 .news-feed .content.misc-page.columns .col-66 {
   min-height: 56em;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    min-height: 0;
+  }
 }
 .content.misc-page.columns .col-33 {
   width: 33%;
@@ -475,10 +510,27 @@
 }
 .interior .header-Outro.with-columns .col-32 {
   width: 33%;
+  
+  h3 {
+    @media (max-device-width:480px), screen and (max-width:800px) {
+      display: none;
+    }
+  }
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    width: 10em!important;
+    float: right;
+    padding: 0 0 18px 0;
+    margin-top: -28px;
+  }
 }
 .interior .header-Outro.with-columns .col-66 {
   width: 67%;
   border-right: 1px solid #0B0F11;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+   border-right: 0;
+   padding: 15px 0 27px 30px; 
+  }
 }
 .interior .header-Outro.with-columns .col-32 .edit {
   margin-top: 4px;
@@ -520,6 +572,10 @@
   background-size: cover;
   float: left;
   margin-bottom: 20px;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    width: 60%;
+  }
 }
 .site-portrait {
   border: 5px solid white;
@@ -537,6 +593,15 @@
   font-size: .8em;
   margin-top: .2em;
   margin-bottom: -.2em;
+}
+.news-profile-button {
+  clear: both;
+  margin: 20px auto 2em auto;
+  text-align: center;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    text-align: left;
+  }
 }
 a.tag, a.tag:visited {
   font-size: .7em;
@@ -745,17 +810,34 @@ a.tag:hover {
 .report, .report a {
   color: #999;
 }
-.interior .header-Outro .actions a {
-  margin-right: 6px;
+.interior .header-Outro .profile-info {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    text-align: center;
+    padding: 10px 0 15px 0;
+  }
 }
-.interior .header-Outro .actions a:first-of-type {
-  margin-left: 0;
+.interior .header-Outro .actions {
+  clear: both;
+  a {
+    margin-right: 6px;
+  }
+  a:first-of-type {
+    margin-left: 0;
+  }
+  
 }
 .interior .header-Outro .stats {
   margin-bottom: 1.3em;
   float: left;
   width: 100%;
   margin-top: 1.9em;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    float: none;
+    width: 270px;
+    margin: 0.9em auto 5.5em auto;
+    text-align: center;
+  }
 }
 .interior .header-Outro .stats strong {
   font-size: 1.5em;
@@ -773,6 +855,11 @@ a.tag:hover {
   text-align: center;
   margin-right: 28px;
   color: #84997E;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    margin: 0;
+    width: 90px;
+  }
 }
 .interior .header-Outro .stats .stat.tips {
   width: 60px;
@@ -1393,6 +1480,10 @@ a.tag:hover {
         background: #25333c;
         color: #8099A7;
       } 
+      
+      @media (max-device-width:480px), screen and (max-width:800px) {
+        display: none;
+      }
     }
     #saveButton {
       margin-top: 0;
@@ -1405,6 +1496,11 @@ a.tag:hover {
         background-color: #971D31;
       }
     }
+  }
+  #editorUpdates .tooltip-inner {
+    padding: 14px 20px;
+    width: 200px;
+    white-space: normal;
   }
 }
 .row.editor {

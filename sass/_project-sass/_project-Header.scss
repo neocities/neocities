@@ -219,21 +219,6 @@
   }
 }
 
-.small-Nav{
-  background:#30424B;
-  display:none;
-  position:fixed;
-  right:0;
-  top:0;
-  width:50px;
-  z-index:9999;
-  
-  @media (max-device-width:480px), screen and (max-width:800px){
-    display:block
-  }
-}
-
-
 // Top nav area
 .header-Nav{
 	background:#5e95a1;
@@ -248,6 +233,7 @@
 	
 	&.show-Nav{
   	top:0!important;
+    padding-bottom: 2px;
 	}
 	
 	a, a:visited{
@@ -287,6 +273,21 @@
     }
 		&.selected, &:active{background:#528995; text-decoration:underline}
 	}
+  
+  a.small-Nav{
+    display:none;
+    position:fixed;
+    right:0;
+    top:0;
+    width:50px;
+    height:36px;
+    z-index:9999;
+    padding: 5px 12px 0px 12px;
+  
+    @media (max-device-width:480px), screen and (max-width:800px){
+      display:block;
+    }
+  }
   
   .notification-value {
     background: $c-Brand-1;
