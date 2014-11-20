@@ -11,4 +11,8 @@ class String
       self[0..length]
     end
   end
+
+  def unindent
+    gsub /^#{scan(/^\s*/).min_by{|l|l.length}}/, ""
+  end
 end

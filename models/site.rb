@@ -230,6 +230,14 @@ class Site < Sequel::Model
 
       false
     end
+
+    def ssl_sites
+      select(:id, :username, :domain, :ssl_key, :ssl_cert).
+      exclude(domain: nil).
+      exclude(ssl_key: nil).
+      exclude(ssl_cert: nil).
+      all
+    end
   end
 
   def ip=(ip)
