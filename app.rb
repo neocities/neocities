@@ -1487,8 +1487,8 @@ get '/sysops/proxy/sslcerts.tar.gz' do
         server {
           listen 443 ssl;
           server_name #{site.domain} *.#{site.domain};
-          ssl_certificate certs/#{site.username}.crt;
-          ssl_certificate_key certs/#{site.username}.key;
+          ssl_certificate sslcerts/certs/#{site.username}.crt;
+          ssl_certificate_key sslcerts/certs/#{site.username}.key;
 
           location / {
             proxy_http_version 1.1;
