@@ -1020,6 +1020,11 @@ a.tag:hover {
   .row {
     margin: 5em 10%;
     padding: 0;
+    
+    @media (max-device-width:480px), screen and (max-width:800px){
+      margin: 4em 5%;
+    }
+    
     &:first-of-type {
       margin-top: 3.5em;
     }
@@ -1031,6 +1036,11 @@ a.tag:hover {
       padding-right: 30px;
       &.text {
         padding-top: 2em;
+        float: left;
+      }
+      
+      @media (max-device-width:480px), screen and (max-width:800px){
+        width: 100%;
       }
     }
     .screenshot {
@@ -1044,6 +1054,9 @@ a.tag:hover {
     &.right {
       .col {
         padding-right: 0;
+        &:first-child {
+          float: right;
+        }
         &.text {
           padding-right: 30px;
         }
@@ -1077,6 +1090,12 @@ a.tag:hover {
 .section.features {
   background: #4F7E89;
   text-align: center;
+  
+  .row:first-child {
+    @media (max-device-width:480px), screen and (max-width:800px){
+      margin-bottom: 0;
+    }
+  }
 }
 .section.features .col {
   padding-left: 40px;
@@ -1128,7 +1147,10 @@ a.tag:hover {
   margin-right: 30px;
   
   @media (max-device-width:480px), screen and (max-width:800px){
-    margin-top: 20px !important;
+    margin-top: 25px !important;
+    display:block;
+    float:none;
+    margin: 0px auto 0 auto;
   }
 }
 .section .logo.wired {
