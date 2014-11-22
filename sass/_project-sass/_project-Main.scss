@@ -57,7 +57,11 @@
   font-weight: bold;
 }
 .interior .header-Outro .row.content {
-
+  padding-left: 3%;
+  padding-right: 3%;
+  h1, h2, h3 {
+    padding-left: 2px;
+  }
 }
 .interior .header-Outro .subtitle {
   font-size: 1em;
