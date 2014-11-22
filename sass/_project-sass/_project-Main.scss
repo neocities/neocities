@@ -884,13 +884,14 @@ a.tag:hover {
   }
 }
 #followLink.is-following {
-  width: 8.7em;
+  
   
   .follow {
     display: none;
   }
   .following { 
-    display: inline;
+    display: block;
+    width: 5.9em;
   }
   .unfollow { 
     display: none;
@@ -904,7 +905,8 @@ a.tag:hover {
     display: none;
   }
   .unfollow { 
-    display: inline;
+    display: block;
+    width: 5.9em;
   }
 }
 .popover {
