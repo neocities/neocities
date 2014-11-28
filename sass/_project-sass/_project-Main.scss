@@ -57,7 +57,11 @@
   font-weight: bold;
 }
 .interior .header-Outro .row.content {
-
+  padding-left: 3%;
+  padding-right: 3%;
+  h1, h2, h3 {
+    padding-left: 2px;
+  }
 }
 .interior .header-Outro .subtitle {
   font-size: 1em;
@@ -72,10 +76,13 @@
   -moz-box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.10);
   -webkit-box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.10);
   box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.10);
-  padding: 1px 3% 40px 3%;
+  padding: 25px 3% 40px 3%;
   
   h1, h2, h3, h4, h5, h6 {
     margin-top: 1em;
+    &:first-child {
+      margin-top: 0;
+    }
   }
 }
 .content.single-Col.misc-page {
@@ -175,7 +182,7 @@
   background: #daeea5 url(/img/heartcat.png) no-repeat 20px center;
   background-size: 77px 81px;
   padding: 20px 20px 20px 111px;
-  margin-bottom: 20px;
+  margin-bottom: 13px;
 }
 .welcome h4 {
   font-size: 1.2em;
@@ -192,6 +199,7 @@
   background: #E4D8CB;
   width: 100%;
   position: relative;
+  margin-top: 7px;
 }
 .files .header {
   background: #5E95A1;
@@ -876,13 +884,14 @@ a.tag:hover {
   }
 }
 #followLink.is-following {
-  width: 8.7em;
+  
   
   .follow {
     display: none;
   }
   .following { 
-    display: inline;
+    display: block;
+    width: 5.9em;
   }
   .unfollow { 
     display: none;
@@ -896,7 +905,8 @@ a.tag:hover {
     display: none;
   }
   .unfollow { 
-    display: inline;
+    display: block;
+    width: 5.9em;
   }
 }
 .popover {
@@ -1145,8 +1155,16 @@ a.tag:hover {
   float:left;
   background-repeat: no-repeat;
   margin-right: 30px;
+  background-size: 100%;
   
-  @media (max-device-width:480px), screen and (max-width:800px){
+  @media (max-width:1170px) and (min-width:900px){
+    margin-right: 25px!important;
+    
+    &:last-child {
+      margin-right: 0!important;
+    }
+  }
+  @media (max-device-width:480px), screen and (max-width:900px){
     margin-top: 25px !important;
     display:block;
     float:none;
@@ -1157,29 +1175,40 @@ a.tag:hover {
   width: 211px;
   height: 44px;  
   background-image: url(/img/wired-logo.png);
-  background-size: 211px;
   margin-top: 6px;
   margin-right: 38px;
+  
+  @media (max-width:1170px) and (min-width:900px){
+    width: 170px;
+  }
 }
 .section .logo.fastco {
   width: 262px;
   height: 39px;  
   background-image: url(/img/fastcompany-logo.png);
-  background-size: 262px;
-    margin-top: 7px;
+  margin-top: 7px;
+  @media (max-width:1170px) and (min-width:900px){
+    width: 220px;
+  }
 }
 .section .logo.vice {
   width: 160px;
   height: 50px;  
   background-image: url(/img/vice-logo.png);
-  background-size: 160px;
+  @media (max-width:1170px) and (min-width:900px){
+    width: 120px;
+    margin-top: 4px;
+  }
 }
 .section .logo.ars {
   width: 187px;  
   height: 62px;
   background-image: url(/img/ars-logo.png);
-  background-size: 187px;
   margin-top: -4px;
+  @media (max-width:1170px) and (min-width:900px){
+    width: 130px;
+    margin-top: 0;
+  }
 }
 .section .press .more {
   color: #A0BAC0;
