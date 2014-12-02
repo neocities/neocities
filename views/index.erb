@@ -116,23 +116,23 @@
 <div class="header-Outro">
   <div class="row header-Content content">
     <div class="col intro">
-    <h2 class="section-header">Make your own free website and discover new favorites.</h2>
+    <h2 class="section-header">Create your own free web site.</h2>
     <p class="intro-text">
-     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> websites</a> that are bringing back creative expression on the web. Anyone can make a site—only your imagination is required. We provide the space, you provide the ideas. Join us!
+     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web by giving everyone in the world a free web site. Anyone can make a site—only your imagination is required. Join us!
     </p>
     <ul class="intro-List">
       <li class="intro-Social">
         <span class="intro-Icon"></span>
         <h2 class="delta">Share your web creation with the world</h2>
         <p class="base">
-          Follow your favorite Neocities sites to keep up with all their latest updates. Discover new websites related to your interests, comment on them, and share them. Unlimited creativity, zero ads.
+          Follow your favorite Neocities sites to keep up with all their latest updates. Discover new websites related to your interests using Site Tags, comment on them, and share them. Unlimited creativity, zero ads.
         </p>
       </li>
       <li class="intro-Tools">
         <span class="intro-Icon"></span>
         <h2 class="delta">Powerful new features to help you build</h2>
         <p class="base">
-          We’ve made it easier to build your website and explore other sites. Neocities has custom domain support, tag browsing (webrings), faster site performance, easy file uploading, RSS, subdirectory support, and much more.
+          We’ve made it easier to build your website and explore other sites. Neocities has an in-browser HTML editor, custom domain support, tag browsing (webrings), faster site loading, easy file uploading, RSS, subdirectory support, and much more.
       </li>
     </ul>
     </div>
@@ -204,7 +204,9 @@
 <main class="content-Base">
 
 <div class="section featured-Websites">
+  <!--
   <div class="nav prev"></div>
+  -->
   <ul class="website-Gallery hp-Gallery">
     <li>
       <a href="http://dragonquest.neocities.org/" title="The Quest of Dragons" target="_blank">
@@ -237,71 +239,70 @@
       </a>
     </li>
   </ul>
+  <!--
   <div class="nav next"></div>
+  -->
 </div>
-
+<!--
 <div class="section previews">
-  <h2>Forget boring social networks. Let’s make the internet fun again. It’s time to bring back web surfing!</h2>
+  <h2>Welcome to the new Neocities</h2>
+
   <div class="row content">
-    <div class="col col-50"><div class="screenshot"><img src="/img/front-editor-screenshot.png"></div></div>
+    <div class="col col-50"><div class="screenshot"><img src="/img/front-browse-screenshot.png"></div></div>
     <div class="col col-50 text">
-      <h3>Follow your favorite Neocities sites</h3>
-      <p>Find an neat site in our <a href="/browse">website gallery</a>? You can now keep track of new updates by following Neocities sites. Any changes to the sites will show up in your news feed.</p>
+      <h3>Discover new sites related to your interests</h3>
+      <p>Follow your favorite sites and see when they get updated. Easily form communities of sites using site tags. Web Rings, reloaded.</p>
     </div>
   </div>
   
   <div class="row content right">
     <div class="col col-50"><div class="screenshot"></div></div>
     <div class="col col-50 text">
-      <h3>Leave comments on Neocities site profiles</h3>
-      <p>Fate. It protects fools, little children, and ships named "Enterprise." I'll be sure to note that in my log. That might've been one of the shortest assignments in the history of Starfleet. Damage report!</p>
+      <h3>Follow your favorite Neocities sites</h3>
+      <p></p>
     </div>
   </div>
 
   <div class="row content">
-    <div class="col col-50"><div class="screenshot"><img src="/img/front-browse-screenshot.png"></div></div>
+    <div class="col col-50"><div class="screenshot"><img src="/img/front-editor-screenshot.png"></div></div>
     <div class="col col-50 text">
-      <h3>Discover new sites related to your interests</h3>
-      <p>Fate. It protects fools, little children, and ships named "Enterprise." I'll be sure to note that in my log. That might've been one of the shortest assignments in the history of Starfleet. Damage report!</p>
+      <h3>HTML editor, right in your browser</h3>
+      <p>No tools needed! With our easy to use HTML editor, you're ready to start building (or changing) your awesome site right now.</p>
+      <p>But if you'd rather use your favorite editor, no problem! Uploading files is as easy as drag-and-drop.</p>
     </div>
   </div>
-</div>
 
+</div>
+-->
 
   <section class="section features">
-
-    <h2 class="delta">Forget boring social networks. Let’s make the internet fun again. It’s time to bring back web surfing!</h2>
+    <h2 class="delta">Our mission: to make the web fun again, by giving you back control of how you express yourself online.</h2>
+    <h2 class="delta"><img src="/img/front-editor-screenshot.png"></h2>
     <div class="row">
-      <div class="col col-33">
-        <h3><i class="fa fa-home"></i>You own your site</h3>
-        <p>Sites hosted by Neocities are owned by you, not us. And we support custom domains (yoursite.com) for free. This means you always control the content on your site, and you can move it to/from Neocities whenever you want. And of course, all sites still get a subdomain (sitename.neocities.org) for free.</p>
-      </div>
-      <div class="col col-33">
-        <h3><i class="fa fa-tachometer"></i>More space, speed, and security</h3>
-        <p>Neocities now uses distributed, globally-cached web servers in datacenters all over the world to serve your site. Whether it’s your personal home page, or a busy professional site for your business, your site loads fast. We also provide Snowden-grade SSL cryptography, preventing snoops from seeing what you browse.</p>
+      <div class="col col-50">
+        <h3><i class="fa fa-eye-slash"></i>Zero advertising</h3>
+        <p>Neocities will never sell your personal data or embed advertising on your site. Instead, we are <a href="/plan">supporter</a> and <a href="/donate">donation</a> driven.</p>
       </div>
 
-      <div class="col col-33">
-        <h3><i class="fa fa-lock"></i>Something awesome goes here</h3>
-        <p>wooooo.</p>
+
+      <div class="col col-50">
+        <h3><i class="fa fa-tachometer"></i>More space, speed, and security</h3>
+        <p>Neocities now uses distributed, globally-cached web servers in datacenters all over the world to serve your site. Whether it’s your personal home page, or a busy professional site, your site loads fast. And if you need more space, <a href="/plan">we've got you covered</a>. We also provide Snowden-grade SSL cryptography on all sites, preventing snoops from seeing what you browse.</p>
       </div>
     </div>
 
     <div class="row">
-      <div class="col col-33">
+      <div class="col col-50">
         <h3><i class="fa fa-wrench"></i>Developer tools</h3>
-        <p>We now have powerful APIs for developers building applications, and support for remote file uploading via command line tools. Using our new WebDAV support, you can mount your site to your computer, just like Dropbox.</p>
+        <p>We have an in-browser HTML editor, file uploading, mounting your site to your computer (just like Dropbox), powerful APIs for building developer applications, and much more!</p>
       </div>
 
-      <div class="col col-33">
+      <div class="col col-50">
         <h3><i class="fa fa-university"></i>Open Company</h3>
-        <p>Neocities is a member of the <a href="http://www.opencompany.org/" target="_blank">Open Company Initative</a>, working to help improve trustability in tech companies. We <a href="https://github.com/neocities" target="_blank">publish</a> the code that powers the site for inspection, and keep open records for everyone to inspect. And if someone sends a bad takedown request, we fight it. We want to win your trust - not lock you in.</p>
+        <p>Neocities is a member of the <a href="http://www.opencompany.org/" target="_blank">Open Company Initative</a>, working to help improve trustability in tech companies. We <a href="https://github.com/neocities" target="_blank">publish</a> the code that powers the site for inspection, and strive for openness in our company's operations. We want to win your trust - not lock you in.</p>
       </div>
 
-      <div class="col col-33">
-        <h3><i class="fa fa-eye-slash"></i>Zero advertising</h3>
-        <p>Neocities does not sell your personal data, or put ads on your site. In fact, we're prohibited from doing that in our own Terms of Service. We want to succeed the old fashioned way - by providing a great service that helps people be awesome.</p>
-      </div>
+
     </div>
     
     <div class="col col-100">
@@ -322,10 +323,10 @@
     </div>
   </section>
   
-  <%== erb :'plan/_pricing' %>
+  <% # erb :'plan/_pricing' %>
 
   <section class="section bottom-signup">
-    <h2>What are you waiting for? <a href="#new">Start building your web site!</a></h2>
+    <h2>What are you waiting for? <a href="#new">Start building your web site now!</a></h2>
   </section>
 </main>
 
