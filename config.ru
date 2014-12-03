@@ -1,11 +1,15 @@
 require 'rubygems'
 require './app.rb'
 require 'sidekiq/web'
+require 'unicorn/preread_input'
+
+if defined?(Unicorn)
+  use Unicorn::PrereadInput
+end
 
 map('/') { run Sinatra::Application }
 
 map '/webdav' do
-
   use Rack::Auth::Basic do |username, password|
     Site.valid_login? username, password
   end
