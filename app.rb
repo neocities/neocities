@@ -119,6 +119,12 @@ end
 
 post '/settings/create_child' do
   require_login
+
+  if !current_site.plan_feature(:unlimited_site_creation)
+    flash[:error] = 'Cannot create a new site with your current plan, please become a supporter.'
+    redirect '/settings#sites'
+  end
+
   site = Site.new
 
   site.parent_site_id = parent_site.id

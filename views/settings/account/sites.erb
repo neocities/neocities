@@ -18,15 +18,19 @@
 
 <h3>Create New Site</h3>
 
-<p>You can now create new sites that are linked to this account! All of your sites will share the free space you have available.</p>
+<% if current_site.plan_feature(:unlimited_site_creation) %>
+  <p>You can now create new sites that are linked to this account! All of your sites will share the free space you have available.</p>
 
-<form action="/settings/create_child" method="POST">
-  <%== csrf_token_input_html %>
-  
-  <p>Site Name:</p>
-  <input name="username" type="text">
+  <form action="/settings/create_child" method="POST">
+    <%== csrf_token_input_html %>
+    
+    <p>Site Name:</p>
+    <input name="username" type="text">
 
-  <div>
-    <input class="btn-Action" type="submit" value="Create New Site">
-  </div>
-</form>
+    <div>
+      <input class="btn-Action" type="submit" value="Create New Site">
+    </div>
+  </form>
+<% else %>
+  <p>Multiple site creation is only available for supporter accounts. <a href="/plan">Upgrade now</a>!</p>
+<% end %>

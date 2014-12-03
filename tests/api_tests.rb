@@ -252,4 +252,3 @@ end
 def res
   JSON.parse last_response.body, symbolize_names: true
 end
-

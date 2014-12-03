@@ -920,9 +920,9 @@ class Site < Sequel::Model
   end
 
   def plan_type
-    return 'free' if values[:plan_type].nil?
-    return 'supporter' if values[:plan_type].match /^plan_/
-    values[:plan_type]
+    return 'free' if owner.values[:plan_type].nil?
+    return 'supporter' if owner.values[:plan_type].match /^plan_/
+    owner.values[:plan_type]
   end
 
   def latest_events(current_page=1, limit=10)
