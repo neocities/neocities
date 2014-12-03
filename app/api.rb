@@ -1,3 +1,4 @@
+require 'base64'
 
 get '/api' do
   @title = 'Developers API'
