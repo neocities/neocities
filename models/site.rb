@@ -459,6 +459,11 @@ class Site < Sequel::Model
     !username.empty? && username.match(/^[a-zA-Z0-9_\-]+$/i)
   end
 
+  def okay_to_upload?(uploaded_file)
+    return true if [:catbus, :fatcat].include?(plan_type.to_sym)
+    self.class.valid_file_type?(uploaded_file)
+  end
+
   def self.valid_file_type?(uploaded_file)
     mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
 

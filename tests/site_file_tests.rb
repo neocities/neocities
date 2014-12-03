@@ -65,6 +65,23 @@ describe 'site_files' do
       @site.site_changed.must_equal false
     end
 
+    it 'fails with unsupported file' do
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
+      last_response.body.must_match /not allowed on this site/i
+      File.exists?(@site.files_path('flowercrime.wav')).must_equal false
+      @site.site_changed.must_equal false
+    end
+
+    it 'succeeds for usually unsupported file on supported plans' do
+      no_file_restriction_plans = Site::PLAN_FEATURES.select {|p,v| v[:no_file_restrictions] == true}
+      no_file_restriction_plans.each do |plan_type,hash|
+        @site = Fabricate :site, plan_type: plan_type
+        upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
+        last_response.body.must_match /successfully uploaded/i
+        File.exists?(@site.files_path('flowercrime.wav')).must_equal true
+      end
+    end
+
     it 'overwrites existing file with new file' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       last_response.body.must_match /successfully uploaded/i

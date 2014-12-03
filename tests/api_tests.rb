@@ -3,9 +3,13 @@ require 'rack/test'
 
 include Rack::Test::Methods
 
-def create_site
+def app
+  Sinatra::Application
+end
+
+def create_site(opts={})
   site_attr = Fabricate.attributes_for :site
-  @site = Site.create site_attr
+  @site = Site.create site_attr.merge(opts)
   @user = site_attr[:username]
   @pass = site_attr[:password]
 end
@@ -219,10 +223,30 @@ describe 'api upload' do
     site_file_exists?('test.jpg').must_equal true
     site_file_exists?('test2.jpg').must_equal true
   end
+
+  it 'fails with unwhitelisted file' do
+    create_site
+    basic_authorize @user, @pass
+    post '/api/upload', 'flowercrime.wav' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
+    res[:result].must_equal 'error'
+    res[:error_type].must_equal 'invalid_file_type'
+    site_file_exists?('flowercrime.wav').must_equal false
+  end
+
+  it 'succeeds for unwhitelisted file on supported plans' do
+    no_file_restriction_plans = Site::PLAN_FEATURES.select {|p,v| v[:no_file_restrictions] == true}
+    no_file_restriction_plans.each do |plan_type,hash|
+      create_site plan_type: plan_type
+      basic_authorize @user, @pass
+      post '/api/upload', 'flowercrime.wav' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
+      res[:result].must_equal 'success'
+      site_file_exists?('flowercrime.wav').must_equal true
+    end
+  end
 end
 
 def site_file_exists?(file)
-  File.exist?(@site.files_path('test.jpg'))
+  File.exist?(@site.files_path(file))
 end
 
 def res

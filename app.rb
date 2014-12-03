@@ -1026,8 +1026,8 @@ post '/site_files/upload' do
     if current_site.file_size_too_large? file[:tempfile].size
       file_upload_response "#{params[:dir]}/#{file[:filename]} is too large, upload cancelled."
     end
-    if !Site.valid_file_type? file
-      file_upload_response "#{params[:dir]}/#{file[:filename]}: file type (or content in file) is not allowed on Neocities, upload cancelled."
+    if !current_site.okay_to_upload? file
+      file_upload_response "#{params[:dir]}/#{file[:filename]}: file type (or content in file) is not allowed on this site, upload cancelled. You can upgrade your account to remove the file type restrictions."
     end
   end
 
@@ -1243,8 +1243,8 @@ post '/api/upload' do
   end
 
   files.each do |file|
-    if !Site.valid_file_type?(file)
-      api_error 400, 'invalid_file_type', "#{file[:filename]} is not a valid file type (or contains not allowed content), files have not been uploaded"
+    if !current_site.okay_to_upload?(file)
+      api_error 400, 'invalid_file_type', "#{file[:filename]} is not a valid file type (or contains not allowed content) for this site, files have not been uploaded"
     end
 
     if File.directory? file[:filename]
