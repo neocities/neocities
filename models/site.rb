@@ -115,6 +115,10 @@ class Site < Sequel::Model
     unlimited_site_creation: false
   )
 
+  def plan_feature(key)
+    PLAN_FEATURES[plan_type.to_sym][key.to_sym]
+  end
+
   LEGACY_SUPPORTER_PRICES = {
     plan_one: 1,
     plan_two: 2,
