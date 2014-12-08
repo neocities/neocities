@@ -30,7 +30,7 @@ class Site < Sequel::Model
     audio/midi
   }
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff json
+    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json
     geojson csv tsv mf ico pdf asc key pgp xml mid midi
   }
 
