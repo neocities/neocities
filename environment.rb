@@ -126,7 +126,7 @@ Sass::Plugin.options[:style] = :nested
 
 if ENV['RACK_ENV'] != 'development'
   Sass::Plugin.options[:style] = :compressed
-  Sass::Plugin.options[:never_update] = true
+  # Sass::Plugin.options[:never_update] = true
   Sass::Plugin.options[:full_exception] = false
 end
 
