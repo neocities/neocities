@@ -8,7 +8,6 @@ describe 'signup' do
     fill_in 'username', with: @site[:username]
     fill_in 'password', with: @site[:password]
     fill_in 'email',    with: @site[:email]
-    fill_in 'question_answer', with: 2
   end
 
   def click_signup_button

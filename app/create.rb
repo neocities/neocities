@@ -1,9 +1,32 @@
+def new_recaptcha_valid?
+  return session[:captcha_valid] = true if ENV['RACK_ENV'] == 'test'
+  resp = Net::HTTP.get URI(
+    'https://www.google.com/recaptcha/api/siteverify?'+
+    Rack::Utils.build_query(
+      secret: $config['recaptcha_private_key'],
+      response: params[:'g-recaptcha-response']
+    )
+  )
+
+  if JSON.parse(resp)['success'] == true
+    session[:captcha_valid] = true
+    true
+  else
+    false
+  end
+end
+
 post '/create_validate_all' do
   content_type :json
   fields = params.select {|p| p.match /^username$|^password$|^email$|^new_tags_string$/}
 
   site = Site.new fields
-  return [].to_json if site.valid?
+
+  if site.valid?
+    return [].to_json if new_recaptcha_valid?
+    return [['captcha', 'Please complete the captcha.']].to_json
+  end
+
   site.errors.collect {|e| [e.first, e.last.first]}.to_json
 end
 
@@ -39,24 +62,19 @@ post '/create' do
     ip: request.ip
   )
 
-  black_box_answered = BlackBox.valid? params[:blackbox_answer], request.ip
-  question_answered_correctly = params[:question_answer] == session[:question_answer]
-
-  if !question_answered_correctly
-    question_first_number, question_last_number = generate_question
-    return {
-      result: 'bad_answer',
-      question_first_number: question_first_number,
-      question_last_number: question_last_number
-    }.to_json
+  if session[:captcha_valid] != true
+    flash[:error] = 'The captcha was not valid, please try again.'
+    return {result: 'error'}.to_json
   end
 
-  if !black_box_answered || !@site.valid? || Site.ip_create_limit?(request.ip)
+  if !@site.valid? || Site.ip_create_limit?(request.ip)
     flash[:error] = 'There was an unknown error, please try again.'
     return {result: 'error'}.to_json
   end
 
   @site.save
+
+  session[:captcha_valid] = nil
 
   EmailWorker.perform_async({
     from: 'web@neocities.org',

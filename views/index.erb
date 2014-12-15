@@ -37,6 +37,7 @@
   <![endif]-->
 
   <script src="/js/jquery-1.11.0.min.js"></script>
+  <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 
   <body class="hp"><a id="new"></a>
@@ -116,9 +117,9 @@
 <div class="header-Outro">
   <div class="row header-Content content">
     <div class="col intro">
-    <h2 class="section-header">Create your own free web site.</h2>
+    <h2 class="section-header">Create your own free web site, and discover new ones.</h2>
     <p class="intro-text">
-     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web by giving everyone in the world a free web site. Anyone can make a site—only your imagination is required. Join us!
+     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web by giving everyone in the world free web space. Anyone can make a site—only your imagination is required. Join us!
     </p>
     <ul class="intro-List">
       <li class="intro-Social">
@@ -155,7 +156,6 @@
       <% else %>
         <form id="createSiteForm" class="signup-Form" onsubmit="return false">
           <input type="hidden" name="csrf_token" value="<%= csrf_token %>">
-          <input type="hidden" name="blackbox_answer" value="">
           <fieldset class="content">
             <h2 class="gamma">Sign up for free</h2>
             <hr />
@@ -180,12 +180,14 @@
               </div>
 
               <div class="col col-50" style="padding-left:0;">
-              <label for="question_answer-input"><%= @question_first_number %> + <%= @question_last_number %> =</label>
-              <input type="text" class="input-Area" name="question_answer" placeholder="" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" maxlength="2" style="width: 50%;" />
+              <label for="g-recaptcha">Confirm you are human</label>
+              <div id="captcha-input" class="g-recaptcha" data-sitekey="<%= $config['recaptcha_public_key'] %>" data-theme="dark" data-placement="left" data-trigger="manual"></div>
               </div>
 
               <div class="col col-50">
-              <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+                <div style="margin-top: 15px">
+                  <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+                </div>
               </div>
             </div>
           </fieldset>
@@ -379,35 +381,28 @@
     <script>
 
       $('#createSiteForm').on('submit', function(obj) {
-        $("input[name=blackbox_answer]").val("<%= @blackbox_question %>")
         $.post('/create_validate_all', $(obj.target).serialize(), function(errors) {
           if(errors.length == 0) {
             $.post('/create', $('#createSiteForm').serialize(), function(res) {
-              if(res.result == 'ok')
-                location.reload()
-              else if(res.result == 'bad_answer') {
-                $('label[for=question_answer-input]').text(res.question_first_number+' + '+res.question_last_number+' = ')
-                var input = $('input[name=question_answer]')
-                input.attr('data-original-title', 'Please answer the question correctly.')
-                input.tooltip('show')
-              } else {
-                location.reload()
-              }
+              location.reload()
             })
-          }
-
-          for(var i=0; i<errors.length;i++) {
-            var ele = $('input[name='+errors[i][0]+']')
-            ele.attr('data-original-title', errors[i][1])
-            ele.tooltip('show')
+          } else {
+            for(var i=0; i<errors.length;i++) {
+              if(errors[i][0] == 'captcha') {
+                var captchaDiv = $('#captcha-input')
+                captchaDiv.attr('data-original-title', errors[i][1])
+                captchaDiv.tooltip('show')
+              } else {
+                var ele = $('input[name='+errors[i][0]+']')
+                ele.attr('data-original-title', errors[i][1])
+                ele.tooltip('show')
+              }
+            }
           }
         })
       })
 
       $('input[type=text],input[type=password]').on('change focusout', function(obj) {
-        if(obj.target.name == 'question_answer')
-          return
-
         $.post('/create_validate', {field: obj.target.name, value: obj.target.value, csrf_token: '<%= csrf_token %>'}, function(res) {
           if(res.result == 'ok') {
             return $(obj.target).tooltip('hide')
