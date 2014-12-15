@@ -119,21 +119,21 @@
     <div class="col intro">
     <h2 class="section-header">Create your own free web site, and discover new ones.</h2>
     <p class="intro-text">
-     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web by giving everyone in the world free web space. Anyone can make a site—only your imagination is required. Join us!
+     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We provide free hosting and tools that allow anyone to make a web site. Only your imagination is required. Join us!
     </p>
     <ul class="intro-List">
       <li class="intro-Social">
         <span class="intro-Icon"></span>
         <h2 class="delta">Share your web creation with the world</h2>
         <p class="base">
-          Follow your favorite Neocities sites to keep up with all their latest updates. Discover new websites related to your interests using Site Tags, comment on them, and share them. Unlimited creativity, zero ads.
+          Follow your favorite Neocities sites to keep up with all their latest updates. Discover new websites related to your interests using tags, comment on them, and share them. Unlimited creativity, zero ads.
         </p>
       </li>
       <li class="intro-Tools">
         <span class="intro-Icon"></span>
         <h2 class="delta">Powerful new features to help you build</h2>
         <p class="base">
-          We’ve made it easier to build your website and explore other sites. Neocities has an in-browser HTML editor, custom domain support, tag browsing (webrings), faster site loading, easy file uploading, RSS, subdirectory support, and much more.
+          We’ve made it easier to build your website and explore other sites. Neocities features an in-browser HTML editor, custom domain support, faster site loading, easy file uploading, RSS feeds, folder support, and much more.
       </li>
     </ul>
     </div>
@@ -180,8 +180,8 @@
               </div>
 
               <div class="col col-50" style="padding-left:0;">
-              <label for="g-recaptcha">Confirm you are human</label>
-              <div id="captcha-input" class="g-recaptcha" data-sitekey="<%= $config['recaptcha_public_key'] %>" data-theme="dark" data-placement="left" data-trigger="manual"></div>
+                <label for="g-recaptcha">Confirm you are human</label>
+                <div id="captcha-input" class="g-recaptcha" data-sitekey="<%= $config['recaptcha_public_key'] %>" data-theme="dark" data-placement="left" data-trigger="manual"></div>
               </div>
 
               <div class="col col-50">
@@ -278,30 +278,30 @@
 -->
 
   <section class="section features">
-    <h2 class="delta">Our mission: to make the web fun again, by giving you back control of how you express yourself online.</h2>
-    <h2 class="delta"><img src="/img/front-editor-screenshot.png"></h2>
+    <h2 class="delta">Our mission: To make the web fun again by giving you back control of how you express yourself online.</h2>
+    <h2 class="delta"><img style="margin-top: .5em;" src="/img/front-editor-screenshot.png"></h2>
     <div class="row">
       <div class="col col-50">
         <h3><i class="fa fa-eye-slash"></i>Zero advertising</h3>
-        <p>Neocities will never sell your personal data or embed advertising on your site. Instead, we are <a href="/plan">supporter</a> and <a href="/donate">donation</a> driven.</p>
+        <p>Neocities will never sell your personal data or embed advertising on your site. Instead, we are funded directly by our community through <a href="/plan">supporter plans</a> and <a href="/donate">donations</a>. This allows us to base all our decisions on making the best possible web building experience for you, rather than on appeasing ad companies.</p>
       </div>
 
 
       <div class="col col-50">
         <h3><i class="fa fa-tachometer"></i>More space, speed, and security</h3>
-        <p>Neocities now uses distributed, globally-cached web servers in datacenters all over the world to serve your site. Whether it’s your personal home page, or a busy professional site, your site loads fast. And if you need more space, <a href="/plan">we've got you covered</a>. We also provide Snowden-grade SSL cryptography on all sites, preventing snoops from seeing what you browse.</p>
+        <p>Neocities now uses distributed, globally-cached web servers in datacenters all over the world to serve your site. Whether it’s your personal home page or a busy professional site, your site loads fast. And if you need more space, <a href="/plan">we've got you covered</a>. We also provide Snowden-grade SSL cryptography on all sites, preventing snoops from seeing what you browse.</p>
       </div>
     </div>
 
     <div class="row">
       <div class="col col-50">
         <h3><i class="fa fa-wrench"></i>Developer tools</h3>
-        <p>We have an in-browser HTML editor, file uploading, mounting your site to your computer (just like Dropbox), powerful APIs for building developer applications, and much more!</p>
+        <p>We have an in-browser HTML editor, easy file uploading, WebDAV publishing, support for custom domains, RSS feeds for every site, powerful APIs for building developer applications, and much more!</p>
       </div>
 
       <div class="col col-50">
         <h3><i class="fa fa-university"></i>Open Company</h3>
-        <p>Neocities is a member of the <a href="http://www.opencompany.org/" target="_blank">Open Company Initative</a>, working to help improve trustability in tech companies. We <a href="https://github.com/neocities" target="_blank">publish</a> the code that powers the site for inspection, and strive for openness in our company's operations. We want to win your trust - not lock you in.</p>
+        <p>Neocities is a member of the <a href="http://www.opencompany.org/" target="_blank">Open Company Initative</a>, working to help improve trustability in tech companies. We <a href="https://github.com/neocities" target="_blank">publish</a> the code that powers the site for inspection, and strive for openness in our company's operations. We want to win your trust—not lock you in.</p>
       </div>
 
 
@@ -341,8 +341,7 @@
         <span class="footer-icon"></span>
         <h2 class="delta">Support Us</h2>
         <p class="tiny">
-          Neocities is funded exclusively by supporters and donations. If you’d like to contribute, you can help us
-          pay our server costs using CC, Bitcoin, or PayPal.
+          Neocities is funded by <a href="/plan">supporters</a> and <a href="/donate">donations</a>. If you’d like to contribute, you can help us pay our server costs using credit card, Bitcoin, or PayPal.
         </p>
         <a href="/donate" title="Donate to Neocities" class="action-Link">Donate Today</a>
       </div>

@@ -145,8 +145,10 @@
   border-radius:4px 4px 0 0;
   @include box-shadow($signupShadow);
   height:700%;
+  float: left;
   position:absolute;
   top: -40px;
+  margin-bottom: 15px;
   
   @media (max-device-width:480px), screen and (max-width:800px){
     height:auto;
@@ -154,7 +156,7 @@
     overflow:visible;
     padding-bottom:20px;
     position:static;
-    width:auto;
+    width:100%;
   }
   
   h2{
@@ -166,12 +168,13 @@
   hr{
     border-bottom:1px solid #4a6677;
     border-top:1px solid #1d282d;
-    margin:4px 0 26px;
+    margin: 4px 0 21px;
   }
   
   fieldset{
-    background:url(/img/sign-up-bg.png) repeat-x center top; 
     padding: 25px 33px;
+    background:url(/img/sign-up-bg.png) repeat-x center top; 
+    border-radius: 4px 4px 0 0;
   }
   
   label{
@@ -180,7 +183,7 @@
   
   label#domain-name {
     display: inline;
-    vertical-align: 51%;
+    vertical-align: 8px;
     color: #C2CFD4;
   }
   
@@ -189,7 +192,7 @@
     border:0 solid black;
     @include box-shadow($inputAreaShadow);
     color:#C2CFD4;
-    margin-bottom:27px;
+    margin-bottom: 21px;
     margin-right:$spacing;
     padding: 10px 10px 7px 10px;
     width:100%;
@@ -215,10 +218,6 @@
     padding:10px 25px;
     margin-top: 2em;
     font-size: 1em;
-    
-    @media (max-device-width:480px), screen and (max-width:800px){
-      margin-top: 0;
-    }
   }
 }
 

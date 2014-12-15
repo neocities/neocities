@@ -1101,10 +1101,8 @@ a.tag:hover {
   background: #4F7E89;
   text-align: center;
   
-  .row:first-child {
-    @media (max-device-width:480px), screen and (max-width:800px){
-      margin-bottom: 0;
-    }
+  .row:first-of-type {
+    margin-bottom: 0;
   }
 }
 .section.features .col {
@@ -1116,6 +1114,7 @@ a.tag:hover {
   
   @media (max-device-width:480px), screen and (max-width:800px){
     padding-left: 20px;
+    width: 100%;
   }
 }
 
@@ -1181,6 +1180,9 @@ a.tag:hover {
   @media (max-width:1170px) and (min-width:900px){
     width: 170px;
   }
+  @media (max-device-width:480px), screen and (max-width:900px){
+    margin-right: auto!important;
+  }
 }
 .section .logo.fastco {
   width: 262px;
@@ -1221,6 +1223,7 @@ a.tag:hover {
   margin: 0 auto .5em auto;
   
   h3 {
+    margin-top: .5em;
     text-align: center;
     font-style: italic;
     font-size: 1.4em;
@@ -1397,10 +1400,15 @@ a.tag:hover {
   }
 }
 .section.bottom-signup {
-  padding-top: 1em;
-  padding-bottom: 6.5em;
+//  padding-top: 1em;
+//  padding-bottom: 6.5em;
+  
+  padding-top: 0;
+  background: #4F7E89;
+  padding-bottom: 7em;
   
   a {
+    color: white;
     text-decoration: underline;
     font-weight:bold;
     &:hover {
@@ -1408,6 +1416,7 @@ a.tag:hover {
     }
   }
   h2 {
+    color: white;
     max-width: none;
   }
 }
