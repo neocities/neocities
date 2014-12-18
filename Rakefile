@@ -79,7 +79,12 @@ end
 
 desc 'Compile domain map for nginx'
 task :compile_domain_map => [:environment] do
-  File.open('./files/map.txt', 'w'){|f| Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.collect {|s| f.write "#{s.domain} #{s.username};\n"  }}
+  File.open('./files/map.txt', 'w') do |file|
+    Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.collect do |site|
+      file.write "#{site.domain} #{site.username};\n"
+      file.write "*.#{site.domain} #{site.username};\n"
+    end
+  end
 end
 
 desc 'Produce SSL config package for proxy'
