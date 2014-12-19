@@ -916,6 +916,7 @@ class Site < Sequel::Model
   end
 
   def legacy_supporter?
+    return false if values[:plan_type].nil?
     !values[:plan_type].match(/plan_/).nil?
   end
 
