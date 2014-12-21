@@ -50,7 +50,8 @@ class ScreenshotWorker
       # :nocov:
       puts "#{username}/#{path} is timing out, discontinuing"
       site = Site[username: username]
-      site.update is_crashing: true
+      site.is_crashing = true
+      site.save_changes validate: false
       
       # Don't enable until we know it works well.
 =begin
