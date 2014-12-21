@@ -1,30 +1,48 @@
 <h2>Custom Domain</h2>
-<h3 class="subtitle">Add your own domain name to your Neocities site!</h3>
+<h3 class="subtitle">Add your own domain name to your Neocities site</h3>
 
 <p>
-  Adding a custom domain allows you to have a domain name attached to your web site. So if you had a domain like <strong>catsknitting.com</strong>, you could have it point to your Neocities site!
+  Adding a custom domain allows you to have a domain name attached to your web site. So if you had a domain like <strong>catsknitting.com</strong>, you could have it point to your Neocities site.
 </p>
 
 <p>
-  You will have to purchase a domain name from a registrar like <a href="https://www.namecheap.com/?aff=53678" target="_blank">Namecheap</a>, and then add an A record to point your domain (catsknitting.com) to the following IP address:
+  You will have to purchase a domain name from a registrar like <a href="https://www.namecheap.com/?aff=53678" target="_blank">Namecheap</a> first. We are working on providing domain purchasing from Neocities in the future, but in general it is best if you own the domain, because then you control your site.
 </p>
 
-<p><code>198.27.81.179</code></p>
+<% if current_site.custom_domain_available? %>
+  <p>
+    We will be using <strong>catsknitting.com</strong> for the examples below.
+  </p>
 
-<p>
-  If you want to add a <strong>www</strong> subdomain, or use a wildcard that will answer to everything (<strong>*</strong>), you will have to make a CNAME pointing to <strong>catsknitting.com</strong> for <strong>www</strong> and/or <strong>*</strong>.
-</p>
 
-<p>
-  After that, you can add the domain to the box below (just the <strong>catsknitting.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes:
-</p>
+  <h3>Step 1</h3>
+  <p>
+    First, you need to add an "A record" to point your root domain (catsknitting.com) to the following IP address:
+  </p>
 
-<form method="POST" action="/settings/<%= @site.username %>/custom_domain">
-  <%== csrf_token_input_html %>
-  <input name="domain" type="text" placeholder="catsknitting.com" value="<%= @site.domain %>">
-  <br>
-  <input class="btn-Action" type="submit" value="Update Domain">
-</form>
+  <p><code>54.68.34.66</code></p>
+
+  <h3>Step 2</h3>
+
+  <p>
+    Next, you need to add a CNAME record which points <strong>www.catsknitting.com</strong> to <strong>proxy.neocitiesops.net</strong>.
+  </p>
+
+  <h3>Step 3</h3>
+
+  <p>
+    Add the domain name to the box below (just the <strong>catsknitting.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes:
+  </p>
+
+  <form method="POST" action="/settings/<%= @site.username %>/custom_domain">
+    <%== csrf_token_input_html %>
+    <input name="domain" type="text" placeholder="catsknitting.com" value="<%= @site.domain %>">
+    <br>
+    <input class="btn-Action" type="submit" value="Update Domain">
+  </form>
+<% else %>
+  <strong>Custom domains require a Supporter account. <a href="/plan">Upgrade now</a>.</strong>
+<% end %>
 
 <h2>Add SSL Certificate</h2>
 <p>

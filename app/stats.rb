@@ -21,9 +21,9 @@ get '/stats/?' do
 
   monthly_stats = []
 
-  now = Time.now
+  now = Date.today
 
-  until runner.year == now.year && runner.month == now.month+1
+  until runner.to_time > now.next_month.to_time
     monthly_stats.push(
       date: runner,
       sites_created: Site.where(created_at: runner..runner.next_month).count,

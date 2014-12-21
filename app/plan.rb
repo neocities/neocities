@@ -60,3 +60,7 @@ get '/plan/thanks' do
   require_login
   erb :'plan/thanks'
 end
+
+get '/plan/alternate' do
+  erb :'/plan/alternate'
+end

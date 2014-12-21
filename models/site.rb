@@ -79,44 +79,36 @@ class Site < Sequel::Model
   IP_CREATE_LIMIT = 50
   TOTAL_IP_CREATE_LIMIT = 300
 
-  PLAN_FEATURES = {
-    fatcat: {
-      name: 'Fat Cat',
-      space: Filesize.from('20GB').to_i,
-      bandwidth: Filesize.from('3TB').to_i,
-      price: 10,
-      unlimited_site_creation: true,
-      custom_ssl_certificates: true,
-      no_file_restrictions: true
-    }
-  }
+  PLAN_FEATURES = {}
 
-  PLAN_FEATURES[:catbus] = PLAN_FEATURES[:fatcat].merge(
-    name: 'Cat Bus',
+  PLAN_FEATURES[:supporter] = {
+    name: 'Supporter',
     space: Filesize.from('5GB').to_i,
     bandwidth: Filesize.from('1TB').to_i,
     price: 5,
-  )
-
-  PLAN_FEATURES[:supporter] = PLAN_FEATURES[:catbus].merge(
-    name: 'Supporter',
-    space: Filesize.from('1GB').to_i,
-    bandwidth: Filesize.from('0.5TB').to_i,
-    price: 2,
-    custom_ssl_certificates: false,
-    no_file_restrictions: false
-  )
+    unlimited_site_creation: true,
+    custom_ssl_certificates: true,
+    no_file_restrictions: true,
+    custom_domains: true
+  }
 
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
     name: 'Free',
-    space: Filesize.from('30MB').to_i,
-    bandwidth: Filesize.from('100GB').to_i,
+    space: Filesize.from('50MB').to_i,
+    bandwidth: Filesize.from('50GB').to_i,
     price: 0,
-    unlimited_site_creation: false
+    unlimited_site_creation: false,
+    custom_ssl_certificates: false,
+    no_file_restrictions: false,
+    custom_domains: false
   )
 
   def plan_feature(key)
     PLAN_FEATURES[plan_type.to_sym][key.to_sym]
+  end
+
+  def custom_domain_available?
+    owner.plan_feature(:custom_domains) == true || !domain.nil?
   end
 
   LEGACY_SUPPORTER_PRICES = {
@@ -464,7 +456,7 @@ class Site < Sequel::Model
   end
 
   def okay_to_upload?(uploaded_file)
-    return true if [:catbus, :fatcat].include?(plan_type.to_sym)
+    return true if [:supporter].include?(plan_type.to_sym)
     self.class.valid_file_type?(uploaded_file)
   end
 

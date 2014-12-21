@@ -7,11 +7,11 @@
     elsif parent_site && parent_site.plan_type == plan_type
       %{<div class="current-plan">Current Plan</div>}
     else
-      if plan_type == 'supporter'
-        plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]*12}, once per year"
-      else
+      #if plan_type == 'supporter'
+      #  plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]*12}, once per year"
+      #else
         plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]}, monthly"
-      end
+      #end
       %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="return false" class="btn-Action planPricingButton">#{parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'}</a>}
     end
   end
@@ -20,7 +20,7 @@
 <section class="section plans">
   <h2>
     <% if request.path == '/' %>
-    Need more space? We’ve got you covered.
+      Need more space? We’ve got you covered.
       <br>
       Upgrading gives you more space, bandwidth, features, <strong>and helps us stay independent and keep the free sites free.</strong>
     <% elsif request.path.match /\/plan/ %>
@@ -32,7 +32,7 @@
     <div class="row" style="margin-top: 0px">
       <div class="col-75" style="margin-left: auto; margin-right: auto;">
         <h3 class="subtitle">
-          The Neocities Supporter Plans are a way to help sustain the site. When you join a Supporter Plan, you are directly helping our quest to bring back the creative, independent web, and to continue to improve Neocities for everyone.
+          The Neocities Supporter Plan is a way to help sustain the site. When you become a supporter, you are directly helping our quest to bring back the creative, independent web, and to continue to improve Neocities for everyone.
         </h3>
       </div>
     </div>
@@ -40,17 +40,17 @@
 
   <div class="plan-overview">
     <div class="header">
-      <div class="col col-25 personal">
+      <div class="col col-50 personal">
         Free
       </div>
-      <div class="col col-75 professional">
+      <div class="col col-50 professional">
         Supporter
       </div>
     </div>
 
     <div class="body">
       <div class="col col-25 free">
-        <div class="plan-image free" data-original-title="Pick me!">
+        <div class="plan-image free">
         </div>
         <h3>Free</h3>
         <div class="price">$<%= Site::PLAN_FEATURES[:free][:price] %></div>
@@ -65,14 +65,14 @@
       </div>
 
       <div class="col col-25 supporter">
-        <div class="plan-image" data-original-title="No no, pick me!"></div>
+        <div class="plan-image" data-original-title="Pick me!"></div>
         <h3>Supporter</h3>
         <% if parent_site && parent_site.legacy_supporter? %>
           <div class="price">$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site[:plan_type].to_sym] %></div>
           <div class="interval">per month, billed annually</div>
         <% else %>
           <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
-          <div class="interval">per month, billed annually</div>
+          <div class="interval">per month</div>
         <% end %>
 
         <% if parent_site && parent_site.legacy_supporter? %>
@@ -82,55 +82,23 @@
         <% end %>
         <ul>
           <li><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_space_pretty %></strong> storage</li>
-          <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_space_pretty %></strong> bandwidth</li>
+          <li><strong>1000 GB</strong> bandwidth</li>
         </ul>
         <ul>
-          <li>Unlimited Sites</li>
-          <li>More space</li>
+          <li>Lots of Web Space</li>
+          <li>No File Upload Type Restrictions</li>
+          <li>Unlimited Site Creation</li>
+          <li>Custom Domains (yoursite.com)</li>
+          <li>Remote Filesystem Support</li>
+          <li>Custom SSL Certs (coming soon!)</li>
         </ul>
       </div>
 
-      <div class="col col-25 catbus">
-
-        <div class="plan-image" data-original-title="いきましょう"></div>
-        <h3>Cat Bus</h3>
-        <div class="price">$<%= Site::PLAN_FEATURES[:catbus][:price] %></div>
-        <div class="interval">per month</div>
-        <%== plan_pricing_button :catbus %>
-        <ul>
-          <li><strong><%= Site::PLAN_FEATURES[:catbus][:space].to_space_pretty %></strong> storage</li>
-          <li><strong><%= Site::PLAN_FEATURES[:catbus][:bandwidth].to_space_pretty %></strong> bandwidth</li>
-        </ul>
-        <ul>
-          <li>Unlimited Sites</li>
-          <li>Custom SSL Certificates (coming soon)</li>
-          <li>No upload type restrictions</li>
-          <li>Even more space</li>
-        </ul>
-      </div>
-
-      <div class="col col-25 fatcat">
-        <div class="plan-image" data-original-title="Jolly good."></div>
-        <h3>Fat Cat</h3>
-        <div class="price">$<%= Site::PLAN_FEATURES[:fatcat][:price] %></div>
-        <div class="interval">per month</div>
-        <%== plan_pricing_button :fatcat %>
-        <ul>
-          <li><strong><%= Site::PLAN_FEATURES[:fatcat][:space].to_space_pretty %></strong> storage</li>
-          <li><strong><%= Site::PLAN_FEATURES[:fatcat][:bandwidth].to_space_pretty %></strong> bandwidth</li>
-        </ul>
-        <ul>
-          <li>Unlimited Sites</li>
-          <li>Custom SSL Certificates (coming soon)</li>
-          <li>No upload type restrictions</li>
-          <li>A lot more space!</li>
-        </ul>
-      </div>
     </div>
   </div>
 
   <!-- <h2><a href="">Compare Plans <i class="fa fa-caret-down"></i></a></h2> -->
-  <h2 style="margin-top: 2em">Compare Plans</h2>
+  <h2 style="margin-top: 2em">Compare</h2>
   <table class="plan-chart">
     <tr>
       <th class="feature-column"></th>
@@ -149,16 +117,6 @@
           <%== plan_pricing_button :supporter %>
         <% end %>
       </th>
-      <th class="professional">
-        <h3>Cat Bus</h3>
-        <p>$<%= Site::PLAN_FEATURES[:catbus][:price] %>/mo</p>
-        <%== plan_pricing_button :catbus %>
-      </th>
-      <th class="professional">
-        <h3>Fat Cat</h3>
-        <p>$<%= Site::PLAN_FEATURES[:fatcat][:price] %>/mo</p>
-        <%== plan_pricing_button :fatcat %>
-      </th>
     </tr>
     <tr>
       <td class="feature-column">
@@ -166,24 +124,18 @@
       </td>
       <td><%= Site::PLAN_FEATURES[:free][:space].to_bytes_pretty %></td>
       <td><%= Site::PLAN_FEATURES[:supporter][:space].to_bytes_pretty %></td>
-      <td><%= Site::PLAN_FEATURES[:catbus][:space].to_bytes_pretty %></td>
-      <td><%= Site::PLAN_FEATURES[:fatcat][:space].to_bytes_pretty %></td>
     </tr>
     <tr>
       <td class="feature-column">
         <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">Bandwidth</span>
       </td>
       <td><%= Site::PLAN_FEATURES[:free][:bandwidth].to_bytes_pretty %></td>
-      <td><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></td>
-      <td><%= Site::PLAN_FEATURES[:catbus][:bandwidth].to_bytes_pretty %></td>
-      <td><%= Site::PLAN_FEATURES[:fatcat][:bandwidth].to_bytes_pretty %></td>
+      <td>1000 GB</td>
     </tr>
     <tr>
       <td class="feature-column">
         <span data-original-title="We will never put ads on your site, or give your data to marketers. In fact, we’re prohibited from doing it in our own Terms of Service.">No advertising, ever</span>
       </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
@@ -193,33 +145,11 @@
       </td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
     </tr>
     <tr>
       <td class="feature-column">
         <span data-original-title="Each site comes with a free Neocities address (yoursitename.neocities.org).">Free Site Subdomain</span>
       </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domains</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="You can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">WebDAV Uploading</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
@@ -229,15 +159,11 @@
       </td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
     </tr>
     <tr>
       <td class="feature-column">
         <span data-original-title="Site tags make it easy to find sites you’re interested in, and join communities of sites. It’s like a web ring, but even better.">Site Tags</span>
       </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
@@ -247,15 +173,11 @@
       </td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
     </tr>
     <tr>
       <td class="feature-column">
         <span data-original-title="Like a site on Neocities? Now you can follow it, and see when they update!">Follow Your Favorite Sites</span>
       </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
@@ -265,15 +187,11 @@
       </td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
     </tr>
     <tr>
       <td class="feature-column">
         <span data-original-title="Our HTML5 site editor makes it easy to make quick changes to your site, even if you’re on the run.">Neocities Site Editor</span>
       </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
@@ -282,17 +200,27 @@
       <td class="feature-column">Site Tipping (Coming Soon)</td>
       <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
     </tr>
     -->
+    <tr>
+      <td class="feature-column">
+        <span data-original-title="You can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">WebDAV Uploading</span>
+      </td>
+      <td></td>
+      <td><i class="fa fa-check"></i></td>
+    </tr>
+    <tr>
+      <td class="feature-column">
+        <span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domains</span>
+      </td>
+      <td></td>
+      <td><i class="fa fa-check"></i></td>
+    </tr>
     <tr>
       <td class="feature-column">
         <span data-original-title="Make as many sites as you want with one account, and easily switch between them.">Unlimited Site Creation</span>
       </td>
       <td></td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
     <tr>
@@ -300,8 +228,6 @@
         <span data-original-title="Upload your SSL certificate for your custom domain name, preventing snoops from seeing your user’s traffic.">Custom SSL Certs (soon)</span>
       </td>
       <td></td>
-      <td></td>
-      <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
     <tr>
@@ -309,8 +235,6 @@
         <span data-original-title="No whitelists—you can upload anything you want (no copyrighted content, trojans, or w4r3z, please).">No File Upload Type Restrictions</span>
       </td>
       <td></td>
-      <td></td>
-      <td><i class="fa fa-check"></i></td>
       <td><i class="fa fa-check"></i></td>
     </tr>
   </table>
@@ -318,7 +242,7 @@
   <% if request.path.match /\/plan/ %>
     <div class="row" style="margin-top: 50px; margin-bottom: 0px;">
       <div class="col-50" style="margin-left: auto; margin-right: auto">
-        <h2>Why get a Supporter Plan?</h2>
+        <h2>Why become a Supporter?</h2>
       </div>
     </div>
     
@@ -326,7 +250,7 @@
       <div class="col-60" style="margin-left: auto; margin-right: auto">
         <ul>
           <li>
-            <strong>You get more space!</strong> Right now supporter plans get up to <strong><%= Site::PLAN_FEATURES[:fatcat][:space].to_space_pretty %></strong>.
+            <strong>You get more space!</strong> Right now supporter plans get up to <strong><%= Site::PLAN_FEATURES[:supporter][:space].to_space_pretty %></strong>.
           </li>
           <li>
             <strong>It helps your site.</strong> Funding helps us make your site faster globally, and provide more features.
@@ -335,10 +259,10 @@
             <strong>It helps us build.</strong> It supports our goal to work on Neocities full-time, without worrying about bills.
           </li>
           <li>
-            <strong>It helps the web.</strong> The web needs more independent, creative sites. Neocities is leading the way.
+            <strong>It helps the web.</strong> The web needs more independent, creative sites.
           </li>
           <li>
-            <strong>It's Open Source.</strong> Neocities is <a href="https://github.com/neocities" target="_blank">completely open source</a>, and we share code with the community.
+            <strong>It's Open Source.</strong> Neocities is an <a href="http://www.opencompany.org">Open Company</a>, our site is <a href="https://github.com/neocities">completely open source</a>, and we share code with the community.
           </li>
           <li>
             <strong>No lock-in.</strong> Redirecting your site is easy, free site downloads, and support for custom domains.
@@ -436,7 +360,7 @@
 
         <% unless params[:stripe_token] || (current_site && parent_site.stripe_customer_id) %>
           <p>
-            <strong>Don't have a Credit Card?</strong> We support Bitcoin and Paypal! <a href="/donate" target="_blank">Click here</a> for more information.
+            <strong>Don't have a Credit/Debit Card?</strong> We support Bitcoin and Paypal! <a href="/plan/alternate">Click here</a> for more information.
           </p>
         <% end %>
     </div>
