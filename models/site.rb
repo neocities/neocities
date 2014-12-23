@@ -559,7 +559,7 @@ class Site < Sequel::Model
 
     uploaded_size = uploaded.size
 
-    FileUtils.mv uploaded.path, path
+    FileUtils.cp uploaded.path, path
     File.chmod 0640, path
 
     site_file ||= SiteFile.new site_id: self.id, path: relative_path
