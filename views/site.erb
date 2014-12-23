@@ -23,8 +23,8 @@
       <p class="site-url"><a href="/surf/<%= site.username %>"><%= site.host %></a></p>
       <div class="stats">
         <div class="stat"><strong><%= site.views.format_large_number %></strong> <span>views</span></div>
-        <div class="stat"><strong><%= site.hits.format_large_number %></strong> <span>hits</span></div>
-        <div class="stat"><strong><%= site.follows_dataset.count.format_large_number %></strong> <span>followers</span></div>
+        <% follows_count = site.follows_dataset.count %>
+        <div class="stat"><strong><%= follows_count.format_large_number %></strong> <span>follower<% follows_count == 0 ? '' : 's' %></span></div>
         <!-- <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div> -->
       </div>
       <div class="actions">

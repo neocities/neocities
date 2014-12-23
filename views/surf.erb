@@ -226,7 +226,14 @@
           <i class="fa fa-share-alt"></i> Share
         </a>
       </li>
-      <li><a class="close" href="//<%= @site.host %>" alt="close" title="close"></a></li>
+      <% unless signed_in? %>
+        <li>
+          <a href="/">Create your own free web site</a>
+        </li>
+      <% end %>
+      <li>
+        <a class="close" href="//<%= @site.host %>" alt="close" title="close"></a>
+      </li>
     </ul>
   
   </div>
