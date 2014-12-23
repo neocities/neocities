@@ -31,8 +31,8 @@
     <h2 class="eps"><%= current_site.title %></h2>
     <p class="site-url" style="margin-top: -9px;"><a href="//<%= current_site.host %>" target="_blank"><%= current_site.host %></a></p>
 	<ul>
-<% if current_site.updated_at %>
-	<li>Last updated <%= current_site.updated_at.ago.downcase %></li>
+<% if current_site.site_updated_at %>
+	<li>Last updated <%= current_site.site_updated_at.ago.downcase %></li>
 <% end %>
 	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_space_used.to_space_pretty %>) of your <%= current_site.maximum_space.to_space_pretty %></strong>.
   <br>
