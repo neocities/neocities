@@ -63,13 +63,13 @@
   <ul class="row website-Gallery content int-Gall">
     <% @sites.each_with_index do |site,i| %>
       <li>
-        <a href="" class="neo-Screen-Shot" title="<%= site.title %>" onclick="surf(<%= ((@current_page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false">
+        <a href="<%= site.uri %>" class="neo-Screen-Shot" title="<%= site.title %>" onclick="return true; surf(<%= ((@current_page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false">
           <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
             <img src="/img/placeholder.png" alt="<%= site.title %>" />
           </span>
         </a>
         <div class="title">
-          <a href="" title="<%= site.title %>" onclick="surf(<%= i+1 %>); return false"><%= site.title.shorten(30) %></a>
+          <a href="<%= site.uri %>" title="<%= site.title %>" onclick="return true; surf(<%= i+1 %>); return false"><%= site.title.shorten(30) %></a>
         </div>
         <div class="site-info">
           <div class="username">

@@ -938,6 +938,11 @@ class Site < Sequel::Model
     !domain.empty? ? domain : "#{username}.neocities.org"
   end
 
+  def uri
+    # Switch-over for when SSL defaulting is ready
+    "http://#{host}"
+  end
+
   def title
     if values[:title].nil? || values[:title].empty?
       !domain.nil? && !domain.empty? ? domain : "#{username}.neocities.org"

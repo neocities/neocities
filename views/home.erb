@@ -51,13 +51,13 @@
           <ul class="row website-Gallery content int-Gall suggestions">
           <% @suggestions.each do |suggested_site| %>
             <li>
-              <a href="/surf/<%= suggested_site.username %>" class="neo-Screen-Shot" title="<%= suggested_site.title %>">
+              <a href="<%= suggested_site.uri %>" class="neo-Screen-Shot" title="<%= suggested_site.title %>">
                 <span class="img-Holder" style="background:url(<%= suggested_site.screenshot_url('index.html', '540x405') %>) no-repeat;">
                   <img src="/img/placeholder.png" alt="<%= suggested_site.title %>" />
                 </span>
               </a>
               <div class="title">
-                <a href="/surf/<%= suggested_site.username %>" title="<%= suggested_site.title %>"><%= suggested_site.title.shorten(30) %></a>
+                <a href="<%= suggested_site.uri %>" title="<%= suggested_site.title %>"><%= suggested_site.title.shorten(30) %></a>
               </div>
               <div class="site-info">
                 <div class="username">
