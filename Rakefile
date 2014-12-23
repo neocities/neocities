@@ -164,16 +164,11 @@ task :cleantags => [:environment] do
   Tag.where(name: 'porn').first.update is_nsfw: true
 end
 
-require 'thread/pool'
-
 desc 'update screenshots'
 task :update_screenshots => [:environment] do
-  pool = Thread.pool 10
   Site.select(:username).where(site_changed: true, is_banned: false, is_crashing: false).filter(~{updated_at: nil}).order(:updated_at.desc).all.each do |site|
-    pool.process { ScreenshotWorker.new.perform site.username, 'index.html' }
+    ScreenshotWorker.perform_async site.username, 'index.html'
   end
-
-  sleep
 end
 
 desc 'prime_space_used'
