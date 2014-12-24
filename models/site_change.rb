@@ -1,5 +1,5 @@
 class SiteChange < Sequel::Model
-  NEW_CHANGE_TIMEOUT = 3600 * 4 # 4 hours
+  NEW_CHANGE_TIMEOUT = 3600 * 24 # 24 hours
   many_to_one :site
   one_to_one  :event
   one_to_one  :site_change
