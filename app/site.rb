@@ -30,7 +30,8 @@ end
 
 post '/site/:username/set_editor_theme' do
   require_login
-  current_site.update editor_theme: params[:editor_theme]
+  current_site.editor_theme = params[:editor_theme]
+  current_site.save_changes validate: false
   'ok'
 end
 
