@@ -116,10 +116,22 @@ end
 
 desc 'Set existing stripe customers to internal supporter plan'
 task :primenewstriperunonlyonce => [:environment] do
-  Site.exclude(stripe_customer_id: nil).all.each do |site|
-    site.plan_type = 'supporter'
-    site.save_changes validate: false
+#  Site.exclude(stripe_customer_id: nil).all.each do |site|
+#    site.plan_type = 'supporter'
+#    site.save_changes validate: false
+#  end
+
+  Site.exclude(stripe_customer_id: nil).where(plan_type: nil).where(plan_ended: false).all.each do |s|
+    customer = Stripe::Customer.retrieve(s.stripe_customer_id)
+    subscription = customer.subscriptions.first
+    next if subscription.nil?
+    puts "set subscription id to #{subscription.id}"
+    puts "set plan type to #{subscription.plan.id}"
+    s.stripe_subscription_id = subscription.id
+    s.plan_type = subscription.plan.id
+    s.save_changes(validate: false)
   end
+
 end
 
 desc 'Clean tags'
