@@ -77,7 +77,7 @@ post '/site/create_directory' do
   result = current_site.create_directory path
 
   if result != true
-    flash[:error] = e.message
+    flash[:error] = result
   end
 
   redirect "/dashboard?dir=#{Rack::Utils.escape params[:dir]}"
