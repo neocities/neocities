@@ -914,7 +914,8 @@ class Site < Sequel::Model
 
   def plan_type
     return 'free' if owner.values[:plan_type].nil?
-    return 'supporter' if owner.values[:plan_type].match /^plan_/ || owner.values[:plan_type] == 'special'
+    return 'supporter' if owner.values[:plan_type].match /^plan_/
+    return 'supporter' if owner.values[:plan_type] == 'special'
     owner.values[:plan_type]
   end
 
