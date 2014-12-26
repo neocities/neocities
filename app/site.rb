@@ -85,7 +85,7 @@ end
 
 get '/site/:username/confirm_email/:token' do
   site = Site[username: params[:username]]
-  if site.email_confirmation_token == params[:token]
+  if !site.nil? && site.email_confirmation_token == params[:token]
     site.email_confirmed = true
     site.save_changes
 
