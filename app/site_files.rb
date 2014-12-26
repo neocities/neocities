@@ -3,6 +3,12 @@ get '/site_files/new_page' do
   erb :'site_files/new_page'
 end
 
+# Redirect from original path
+get '/site_files/new' do
+  require_login
+  redirect '/site_files/new_page'
+end
+
 post '/site_files/create_page' do
   require_login
   @errors = []
@@ -29,11 +35,6 @@ post '/site_files/create_page' do
   flash[:success] = %{#{name} was created! <a style="color: #FFFFFF; text-decoration: underline" href="/site_files/text_editor/#{name}">Click here to edit it</a>.}
 
   redirect params[:dir] ? "/dashboard?dir=#{Rack::Utils.escape params[:dir]}" : '/dashboard'
-end
-
-get '/site_files/new' do
-  require_login
-  erb :'site_files/new'
 end
 
 def file_upload_response(error=nil)
