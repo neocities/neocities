@@ -109,6 +109,7 @@
     <form action="/site_files/upload" class="dropzone" id="uploads">
       <div class="dz-message" style="display: none"></div>
       <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+      <input name="dir" type="hidden" value="<%= @dir %>">
       <div class="upload-Boundary <%= @file_list.length <= 5 ? 'with-instruction' : '' %>">
         <% @file_list.each do |file| %>
           <div class="file filehover">
@@ -240,7 +241,8 @@
 
       this.on("error", function(file, errorMessage) {
         hideUploadProgress()
-        alert('Failed: '+errorMessage)
+        location.href = '/dashboard<%= @dir ? "?dir=#{@dir}" : "" %>'
+        // alert('Failed: '+errorMessage)
       })
 
       this.on("totaluploadprogress", function(progress, totalBytes, totalBytesSent) {
