@@ -6,7 +6,7 @@
       <p>You are not following any sites yet. Add some by <a href="/browse">browsing sites</a> or looking at your tags.
     <% else %>
       <% site.followings_dataset.select(:site_id).all.each do |following| %>
-        <a href="/site/<%= following.site_dataset.select(:username).first.username %>"><img src="<%= following.site.screenshot_url 'index.html', '50x50' %>" class="avatar"></a>
+        <a href="/site/<%= following.site_dataset.select(:username).first.username %>" title="<%= following.site.title %>"><img src="<%= following.site.screenshot_url 'index.html', '50x50' %>" class="avatar"></a>
       <% end %>
     <% end %>
   </div>
@@ -21,7 +21,7 @@
     <% else %>
       <% site.follows_dataset.select(:actioning_site_id).all.each do |follow| %>
         <% follow_actioning_site = follow.actioning_site_dataset.select(:username).first %>
-        <a href="/site/<%= follow_actioning_site.username %>"><img src="<%= follow_actioning_site.screenshot_url 'index.html', '50x50' %>" class="avatar"></a>
+        <a href="/site/<%= follow_actioning_site.username %>" title="<%= follow_actioning_site.title %>"><img src="<%= follow_actioning_site.screenshot_url 'index.html', '50x50' %>" class="avatar"></a>
       <% end %>
     <% end %>
   </div>
