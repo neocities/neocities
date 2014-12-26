@@ -14,6 +14,19 @@ def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
 end
 
+def dashboard_init
+  if params[:dir] && params[:dir][0] != '/'
+    params[:dir] = '/'+params[:dir]
+  end
+
+  if !File.directory?(current_site.files_path(params[:dir]))
+    redirect '/dashboard'
+  end
+
+  @dir = params[:dir]
+  @file_list = current_site.file_list @dir
+end
+
 def require_login_ajax
   halt 'You are not logged in!' unless signed_in?
   halt 'You are banned.' if current_site.is_banned? || parent_site.is_banned?

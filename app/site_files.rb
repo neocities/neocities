@@ -43,6 +43,7 @@ def file_upload_response(error=nil)
   if params[:from_button]
     if error
       @error = error
+      dashboard_init
       halt 200, erb(:'dashboard')
     else
       query_string = params[:dir] ? "?"+Rack::Utils.build_query(dir: params[:dir]) : ''
@@ -69,7 +70,7 @@ post '/site_files/upload' do
       file_upload_response "#{params[:dir]}/#{file[:filename]} is too large, upload cancelled."
     end
     if !current_site.okay_to_upload? file
-      file_upload_response "#{params[:dir]}/#{file[:filename]}: file type (or content in file) is not allowed on this site, upload cancelled. You can upgrade your account to remove the file type restrictions."
+      file_upload_response %{#{params[:dir]}#{file[:filename]}: file type (or content in file) is only supported by <a href="/plan">supporter accounts</a>. <a href="/site_files/allowed_types">Why We Do This</a>}
     end
   end
 
