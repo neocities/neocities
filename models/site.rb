@@ -521,7 +521,6 @@ class Site < Sequel::Model
             body: %{
               #{username}
               https://#{self.host}/#{relative_path}
-              Match: #{matches.first.strip}
             }
           })
         end
