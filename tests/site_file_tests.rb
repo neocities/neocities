@@ -34,6 +34,11 @@ describe 'site_files' do
   end
 
   describe 'upload' do
+    it 'manages files with invalid UTF8' do
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/invalidutf8.html', 'text/html')
+      File.exists?(@site.files_path('invalidutf8.html')).must_equal true
+    end
+
     it 'succeeds with index.html file' do
       @site.site_changed.must_equal false
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
@@ -67,12 +72,12 @@ describe 'site_files' do
 
     it 'fails with unsupported file' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
-      last_response.body.must_match /not allowed on this site/i
+      last_response.body.must_match /only supported by.+supporter account/i
       File.exists?(@site.files_path('flowercrime.wav')).must_equal false
       @site.site_changed.must_equal false
     end
 
-    it 'succeeds for usually unsupported file on supported plans' do
+    it 'succeeds for unwhitelisted file on supporter plans' do
       no_file_restriction_plans = Site::PLAN_FEATURES.select {|p,v| v[:no_file_restrictions] == true}
       no_file_restriction_plans.each do |plan_type,hash|
         @site = Fabricate :site, plan_type: plan_type

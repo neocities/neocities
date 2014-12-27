@@ -509,7 +509,7 @@ class Site < Sequel::Model
     end
 
     if pathname.extname.match EDITABLE_FILE_EXT
-      open(uploaded.path) {|f|
+      open(uploaded.path, 'r:binary') {|f|
         matches = f.grep SPAM_MATCH_REGEX
 
         if !matches.empty?
@@ -520,10 +520,8 @@ class Site < Sequel::Model
             subject: "[Neocities SPAM]: #{username}",
             body: %{
               #{username}
-              <br>
-              https://#{self.host}#{relative_path}
-              <br>
-              <a href="https://#{self.host}/#{relative_path}">link</a>
+              https://#{self.host}/#{relative_path}
+              Match: #{matches.first.strip}
             }
           })
         end
