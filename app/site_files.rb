@@ -115,6 +115,9 @@ get %r{\/site_files\/text_editor\/(.+)} do
   rescue Errno::ENOENT
     flash[:error] = 'We could not find the requested file.'
     redirect '/dashboard'
+  rescue Errno::EISDIR
+    flash[:error] = 'Cannot edit a directory.'
+    redirect '/dashboard'
   end
   erb :'site_files/text_editor'
 end
