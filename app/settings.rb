@@ -177,7 +177,8 @@ post '/settings/:username/change_nsfw' do
   require_login
   require_ownership_for_settings
 
-  @site.update is_nsfw: params[:is_nsfw]
+  @site.is_nsfw = params[:is_nsfw]
+  @site.save_changes validate: false
   flash[:success] = @site.is_nsfw ? 'Marked 18+' : 'Unmarked 18+'
   redirect "/settings/#{@site.username}#nsfw"
 end
