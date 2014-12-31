@@ -31,7 +31,7 @@ class Site < Sequel::Model
   }
   VALID_EXTENSIONS = %w{
     html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json
-    geojson csv tsv mf ico pdf asc key pgp xml mid midi
+    geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
@@ -66,7 +66,7 @@ class Site < Sequel::Model
 
   SPAM_MATCH_REGEX = ENV['RACK_ENV'] == 'test' ? /pillz/ : /#{$config['spam_smart_filter'].join('|')}/i
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
-  EDITABLE_FILE_EXT = /html|htm|txt|js|css|md/i
+  EDITABLE_FILE_EXT = /html|htm|txt|js|css|md|manifest/i
   BANNED_TIME = 2592000 # 30 days in seconds
   TITLE_MAX = 100
 
@@ -462,9 +462,16 @@ class Site < Sequel::Model
 
   def self.valid_file_type?(uploaded_file)
     mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
+    extname = File.extname uploaded_file[:filename]
 
-    return false unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) &&
-                        Site::VALID_EXTENSIONS.include?(File.extname(uploaded_file[:filename]).sub(/^./, '').downcase)
+    if extname == ''
+      extname = uploaded_file[:filename]
+    end
+
+    unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) &&
+           Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
+      return false
+    end
 
     # clamdscan doesn't work on travis for testing
     return true if ENV['TRAVIS'] == 'true'

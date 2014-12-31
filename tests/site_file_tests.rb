@@ -39,6 +39,12 @@ describe 'site_files' do
       File.exists?(@site.files_path('invalidutf8.html')).must_equal true
     end
 
+    it 'works with manifest files' do
+      $debug = true
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/.manifest', 'text/plain')
+      File.exists?(@site.files_path('.manifest')).must_equal true
+    end
+
     it 'succeeds with index.html file' do
       @site.site_changed.must_equal false
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
