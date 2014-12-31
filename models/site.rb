@@ -17,6 +17,7 @@ class Site < Sequel::Model
     image/svg+xml
     application/vnd.ms-fontobject
     application/x-font-ttf
+    application/vnd.ms-opentype
     application/octet-stream
     text/csv
     text/tsv
@@ -28,10 +29,11 @@ class Site < Sequel::Model
     text/xml
     application/xml
     audio/midi
+    text/cache-manifest
   }
+
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json
-    geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest
+    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
@@ -464,9 +466,10 @@ class Site < Sequel::Model
     mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
     extname = File.extname uploaded_file[:filename]
 
-    if extname == ''
-      extname = uploaded_file[:filename]
-    end
+    # Possibly needed logic for .dotfiles
+    #if extname == ''
+    #  extname = uploaded_file[:filename]
+    #end
 
     unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) &&
            Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)

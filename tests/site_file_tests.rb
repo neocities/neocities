@@ -40,9 +40,13 @@ describe 'site_files' do
     end
 
     it 'works with manifest files' do
-      $debug = true
-      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/.manifest', 'text/plain')
-      File.exists?(@site.files_path('.manifest')).must_equal true
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/cache.manifest', 'text/cache-manifest')
+      File.exists?(@site.files_path('cache.manifest')).must_equal true
+    end
+
+    it 'works with otf fonts' do
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/chunkfive.otf', 'application/vnd.ms-opentype')
+      File.exists?(@site.files_path('chunkfive.otf')).must_equal true
     end
 
     it 'succeeds with index.html file' do
