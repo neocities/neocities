@@ -15,7 +15,7 @@ task :default => :test
 
 desc "parse logs"
 task :parse_logs => [:environment] do
-  Dir["/home/web/proxy/logs/*.log"].each do |log_path|
+  Dir[File.join($config['logs_path'], '*.log')].each do |log_path|
     hits = {}
     visits = {}
     visit_ips = {}
