@@ -195,7 +195,10 @@ task :rebuild_thumbnails => [:environment] do
     path = '/'+full_path[1..full_path.length].join('/')
 
     if Pathname(path).extname.gsub('.', '').match Site::IMAGE_REGEX
-      ThumbnailWorker.new.perform username, path
+      begin
+        ThumbnailWorker.new.perform username, path
+      rescue Magick::ImageMagickError
+      end
     end
   end
 end
