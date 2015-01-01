@@ -183,6 +183,23 @@ task :update_screenshots => [:environment] do
   end
 end
 
+desc 'rebuild_thumbnails'
+task :rebuild_thumbnails => [:environment] do
+  dirs = Dir[Site::SITE_FILES_ROOT+'/**/*'].collect {|s| s.sub(Site::SITE_FILES_ROOT, '')}.collect {|s| s.sub('/', '')}
+  dirs.each do |d|
+    next if File.directory?(d)
+
+    full_path = d.split('/')
+
+    username = full_path.first
+    path = '/'+full_path[1..full_path.length].join('/')
+
+    if Pathname(path).extname.gsub('.', '').match Site::IMAGE_REGEX
+      ThumbnailWorker.new.perform username, path
+    end
+  end
+end
+
 desc 'prime_space_used'
 task :prime_space_used => [:environment] do
   Site.select(:id,:username,:space_used).all.each do |s|
