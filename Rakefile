@@ -53,7 +53,6 @@ end
 
 desc 'Update banned IPs list'
 task :update_blocked_ips => [:environment] do
-
   uri = URI.parse('http://www.stopforumspam.com/downloads/listed_ip_90.zip')
   blocked_ips_zip = Tempfile.new('blockedipszip', Dir.tmpdir, 'wb')
   blocked_ips_zip.binmode
@@ -64,15 +63,17 @@ task :update_blocked_ips => [:environment] do
     blocked_ips_zip.flush
   end
 
-  Zip::File.open(blocked_ips_zip.path) do |zip_file|
-    ips = zip_file.glob('listed_ip_90.txt').first.get_input_stream.read
-    insert_hashes = []
-    ips.each_line {|ip| insert_hashes << {ip: ip.strip, created_at: Time.now}}
-    ips = nil
+  Zip::Archive.open(blocked_ips_zip.path) do |ar|
+    ar.fopen('listed_ip_90.txt') do |f|
+      ips = f.read
+      insert_hashes = []
+      ips.each_line {|ip| insert_hashes << {ip: ip.strip, created_at: Time.now}}
+      ips = nil
 
-    DB.transaction do
-      DB[:blocked_ips].delete
-      DB[:blocked_ips].multi_insert insert_hashes
+      DB.transaction do
+        DB[:blocked_ips].delete
+        DB[:blocked_ips].multi_insert insert_hashes
+      end
     end
   end
 end
