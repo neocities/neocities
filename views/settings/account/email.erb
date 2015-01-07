@@ -10,3 +10,42 @@
     <input class="btn-Action" type="submit" value="Change Email">
   </div>
 </form>
+
+<h2>Email Notification Settings</h2>
+<form method="POST" action="/settings/change_email_notification">
+  <%== csrf_token_input_html %>
+
+  <p>
+    Receive Emails:
+    <input name="send_emails" type="hidden" value="false">
+    <input name="send_emails" type="checkbox" value="true"
+      <% if current_site.owner.send_emails %>
+        checked
+      <% end %>
+    >
+  </p>
+
+  <p>
+    Receive Comment Emails:
+    <input name="send_comment_emails" type="hidden" value="false">
+    <input name="send_comment_emails" type="checkbox" value="true"
+      <% if current_site.owner.send_comment_emails %>
+        checked
+      <% end %>
+    >
+  </p>
+
+  <p>
+    Receive Follow Emails:
+    <input name="send_follow_emails" type="hidden" value="false">
+    <input name="send_follow_emails" type="checkbox" value="true"
+      <% if current_site.owner.send_follow_emails %>
+        checked
+      <% end %>
+    >
+  </p>
+
+  <div>
+    <input class="btn-Action" type="submit" value="Update Notification Settings">
+  </div>
+</form>

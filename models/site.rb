@@ -733,7 +733,7 @@ class Site < Sequel::Model
     if can_email?(args[:col])
       EmailWorker.perform_async({
         from: FROM_EMAIL,
-        to: email,
+        to: owner.email,
         subject: args[:subject],
         body: args[:body]
       })

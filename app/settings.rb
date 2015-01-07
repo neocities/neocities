@@ -247,6 +247,19 @@ post '/settings/change_email' do
   redirect '/settings#email'
 end
 
+post '/settings/change_email_notification' do
+  require_login
+
+  owner = current_site.owner
+
+  owner.send_emails = params[:send_emails]
+  owner.send_comment_emails = params[:send_comment_emails]
+  owner.send_follow_emails = params[:send_follow_emails]
+  owner.save_changes validate: false
+  flash[:success] = 'Email notification settings have been updated.'
+  redirect '/settings#email'
+end
+
 post '/settings/create_child' do
   require_login
 

@@ -48,6 +48,22 @@ describe 'site/settings' do
       @site.email.wont_equal @new_email
       EmailWorker.jobs.empty?.must_equal true
     end
+
+    it 'should update email preferences' do
+      uncheck 'send_emails'
+      uncheck 'send_comment_emails'
+      uncheck 'send_follow_emails'
+
+      @site.send_emails.must_equal true
+      @site.send_comment_emails.must_equal true
+      @site.send_follow_emails.must_equal true
+
+      click_button 'Update Notification Settings'
+      @site.reload
+      @site.send_emails.must_equal false
+      @site.send_comment_emails.must_equal false
+      @site.send_follow_emails.must_equal false
+    end
   end
 
   describe 'change password' do
