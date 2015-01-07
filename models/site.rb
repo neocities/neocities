@@ -206,6 +206,14 @@ class Site < Sequel::Model
   end
 
   class << self
+    def valid_email_unsubscribe_token?(email, token)
+      email_unsubscribe_token(email) == token
+    end
+
+    def email_unsubscribe_token(email)
+      Digest::SHA2.hexdigest email+$config['email_unsubscribe_token']
+    end
+
     def valid_login?(username_or_email, plaintext)
       site = get_with_identifier username_or_email
 

@@ -66,6 +66,49 @@ describe 'site/settings' do
     end
   end
 
+  describe 'unsubscribe email' do
+    include Capybara::DSL
+
+    before do
+      @email = "#{SecureRandom.uuid.gsub('-', '')}@example.com"
+      @site = Fabricate :site, email: @email
+      EmailWorker.jobs.clear
+      Mail::TestMailer.deliveries.clear
+
+      @params = {
+        email: @site.email,
+        token: Site.email_unsubscribe_token(@site.email)
+      }
+      @params_query = Rack::Utils.build_query(@params)
+
+      @email_unsubscribe_url = "https://neocities.org/settings/unsubscribe_email?"+@params_query
+      page.set_rack_session id: nil
+    end
+
+    it 'should redirect to settings page if logged in' do
+      page.set_rack_session id: @site.id
+
+    end
+
+    it 'should unsubscribe for valid token' do
+      @site.send_email subject: 'Hello', body: 'Okay'
+      EmailWorker.drain
+      email = Mail::TestMailer.deliveries.first
+
+      email.body.to_s.must_match @email_unsubscribe_url
+      @site.send_emails.must_equal true
+      visit '/settings/unsubscribe_email?'+@params_query
+
+      page.body.must_match /You have been successfully unsubscribed.+#{@site.email}/i
+
+      @site.reload.send_emails.must_equal false
+    end
+
+    it 'should fail to subscribe for bad token' do
+
+    end
+  end
+
   describe 'change password' do
     include Capybara::DSL
 

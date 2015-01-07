@@ -15,7 +15,10 @@ def require_ownership_for_settings
   end
 end
 
-get '/settings/:username/?' do
+get '/settings/:username/?' do |username|
+  # This is for the email_unsubscribe below
+  pass if Site.select(:id).where(username: username).first.nil?
+
   require_login
   require_ownership_for_settings
   erb :'settings/site'
@@ -281,4 +284,20 @@ post '/settings/create_child' do
     flash[:error] = site.errors.first.last.first
     redirect '/settings#sites'
   end
+end
+
+get '/settings/unsubscribe_email/?' do
+  redirect "/settings/#email" if signed_in?
+
+  if params[:email] && params[:token] && params[:email] != '' && Site.valid_email_unsubscribe_token?(params[:email], params[:token])
+    Site.where(email: params[:email]).all.each do |site|
+      site.send_emails = false
+      site.save_changes validate: false
+    end
+
+    @message = "You have been successfully unsubscribed from future emails to #{params[:email]}. Our apologies for the inconvenience."
+  else
+    @message = 'There was an error unsubscribing your email address. Please contact support.'
+  end
+  erb :'settings/account/unsubscribe'
 end

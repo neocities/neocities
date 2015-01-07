@@ -18,6 +18,9 @@ describe EmailWorker do
     mail.from.first.must_equal 'from@example.com'
     mail.to.first.must_equal 'to@example.com'
     mail.subject.must_equal 'Hello World'
-    mail.body.to_s.must_equal 'testing'
+    body = mail.body.to_s
+    puts body
+    body.must_match /testing/
+    body.must_match /unsubscribe/
   end
 end
