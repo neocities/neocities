@@ -33,7 +33,7 @@ class Site < Sequel::Model
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf
+    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
@@ -80,6 +80,8 @@ class Site < Sequel::Model
 
   IP_CREATE_LIMIT = 50
   TOTAL_IP_CREATE_LIMIT = 300
+
+  FROM_EMAIL = 'noreply@neocities.org'
 
   PLAN_FEATURES = {}
 
@@ -181,6 +183,25 @@ class Site < Sequel::Model
 
   def owned_by?(site)
     !account_sites_dataset.select(:id).where(id: site.id).first.nil?
+  end
+
+  def add_profile_comment(opts)
+    DB.transaction {
+      profile_comment = super
+      actioning_site = Site[id: opts[:actioning_site_id]]
+
+      return if actioning_site.owner == owner
+
+      send_email(
+        subject: "#{actioning_site.username.capitalize} commented on your site",
+        body: render_template(
+          'email/new_comment.erb',
+          actioning_site: actioning_site,
+          message: opts[:message],
+          profile_comment: profile_comment
+        )
+      )
+    }
   end
 
   class << self
@@ -429,7 +450,7 @@ class Site < Sequel::Model
       return true
     end
 
-    if account_sites_events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT &&
+    if (account_sites_events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT || (created_at < Date.new(2014, 12, 25).to_time && changed_count >= COMMENTING_ALLOWED_UPDATED_COUNT )) &&
        created_at < Time.now - 604800
       owner.set commenting_allowed: true
       owner.save_changes validate: false
@@ -698,6 +719,27 @@ class Site < Sequel::Model
     super
   end
 
+  def can_email?(col=nil)
+    return false unless owner.send_emails
+    return false if col && !owner.send(col)
+    true
+  end
+
+  def send_email(args={})
+    %i{subject body}.each do |a|
+      raise ArgumentError, "argument missing: #{a}" if args[a].nil?
+    end
+
+    if can_email?(args[:col])
+      EmailWorker.perform_async({
+        from: FROM_EMAIL,
+        to: email,
+        subject: args[:subject],
+        body: args[:body]
+      })
+    end
+  end
+
   def parent?
     parent_site_id.nil?
   end
@@ -817,8 +859,8 @@ class Site < Sequel::Model
     end
   end
 
-  def render_template(name)
-    Tilt.new(template_file_path(name), pretty: true).render self
+  def render_template(name, locals={})
+    Tilt.new(template_file_path(name), pretty: true).render self, locals
   end
 
   def template_file_path(name)

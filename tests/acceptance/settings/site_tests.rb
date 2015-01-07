@@ -103,6 +103,7 @@ describe 'site/settings' do
     end
   end
 
+=begin
   describe 'ssl' do
     include Capybara::DSL
 
@@ -197,6 +198,7 @@ describe 'site/settings' do
       end
     end
   end
+=end
 
   describe 'change username' do
     include Capybara::DSL

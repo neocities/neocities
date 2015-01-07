@@ -7,6 +7,25 @@ describe 'site page' do
     Capybara.default_driver = :rack_test
   end
 
+  it 'allows commenting' do
+    site = Fabricate :site
+    commenting_site = Fabricate :site, commenting_allowed: true
+    page.set_rack_session id: commenting_site.id
+    visit "/site/#{site.username}"
+    fill_in 'message', with: 'I love your site!'
+    click_button 'Post'
+    site.profile_comments.count.must_equal 1
+    profile_comment = site.profile_comments.first
+    profile_comment.actioning_site.must_equal commenting_site
+    profile_comment.message.must_equal 'I love your site!'
+  end
+
+  it 'does not allow commenting without requirements met' do
+    #site = Fabricate :site
+    #commenting_site
+    puts "FIXTHIS"
+  end
+
   it '404s for missing site' do
     visit '/site/failderp'
     page.status_code.must_equal 404
