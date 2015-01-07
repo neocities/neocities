@@ -36,7 +36,7 @@ get '/stats/?' do
 
   @stats[:monthly_stats] = monthly_stats
 
-  customers = Stripe::Customer.all
+  customers = Stripe::Customer.all limit: 100000
 
   @stats[:total_recurring_revenue] = 0.0
 
