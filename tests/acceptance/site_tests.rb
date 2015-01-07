@@ -7,18 +7,42 @@ describe 'site page' do
     Capybara.default_driver = :rack_test
   end
 
-  it 'allows commenting' do
-    site = Fabricate :site
-    commenting_site = Fabricate :site, commenting_allowed: true
-    page.set_rack_session id: commenting_site.id
-    visit "/site/#{site.username}"
-    fill_in 'message', with: 'I love your site!'
-    click_button 'Post'
-    site.profile_comments.count.must_equal 1
-    profile_comment = site.profile_comments.first
-    profile_comment.actioning_site.must_equal commenting_site
-    profile_comment.message.must_equal 'I love your site!'
+  describe 'commenting' do
+    before do
+      @site = Fabricate :site
+      @commenting_site = Fabricate :site, commenting_allowed: true
+      page.set_rack_session id: @commenting_site.id
+      visit "/site/#{@site.username}"
+      EmailWorker.jobs.clear
+    end
+
+    it 'allows commenting' do
+      fill_in 'message', with: 'I love your site!'
+      click_button 'Post'
+      @site.profile_comments.count.must_equal 1
+      profile_comment = @site.profile_comments.first
+      profile_comment.actioning_site.must_equal @commenting_site
+      profile_comment.message.must_equal 'I love your site!'
+    end
+
+    it 'does not send comment email if not wished' do
+      @site.update send_comment_emails: false
+      fill_in 'message', with: 'I am annoying'
+      click_button 'Post'
+      @site.profile_comments.count.must_equal 1
+      EmailWorker.jobs.length.must_equal 0
+    end
+
+    it 'does not send email if there is none' do
+      @site.email = nil
+      @site.save_changes validate: false
+      fill_in 'message', with: 'DERP'
+      click_button 'Post'
+      EmailWorker.jobs.length.must_equal 0
+    end
   end
+
+
 
   it 'does not allow commenting without requirements met' do
     #site = Fabricate :site

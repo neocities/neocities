@@ -193,6 +193,7 @@ class Site < Sequel::Model
       return if actioning_site.owner == owner
 
       send_email(
+        col: :send_comment_emails,
         subject: "#{actioning_site.username.capitalize} commented on your site",
         body: render_template(
           'email/new_comment.erb',
@@ -730,7 +731,7 @@ class Site < Sequel::Model
       raise ArgumentError, "argument missing: #{a}" if args[a].nil?
     end
 
-    if can_email?(args[:col])
+    if email && can_email?(args[:col])
       EmailWorker.perform_async({
         from: FROM_EMAIL,
         to: owner.email,
