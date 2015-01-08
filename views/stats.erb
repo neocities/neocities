@@ -69,7 +69,13 @@
 
     <h2>Subscriptions</h2>
     <h3>Current Recurring Revenue: <strong><%= format("$%.2f", @stats[:total_recurring_revenue]) %> (<%= format("$%.2f", @stats[:total_recurring_revenue]/12.0) %>/month)</strong>
-    <br>Active Subscriptions: <strong><%= @stats[:subscriptions].select {|s| s[:status] == 'active' }.length %></strong></h3>
+    <br>
+    Active Subscriptions: <strong><%= @stats[:subscriptions].select {|s| s[:status] == 'active' }.length %></strong>
+    <br>
+    Cancelled Subscriptions: <strong><%= @stats[:cancelled_subscriptions] %></strong>
+    </h3>
+
+    <!--
     <table class="table">
       <tr>
         <th>Status</th>
@@ -84,6 +90,7 @@
         </tr>
       <% end %>
     </table>
+    -->
     <p>
     </p>
   </article>

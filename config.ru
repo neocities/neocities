@@ -7,7 +7,14 @@ if defined?(Unicorn)
   use Unicorn::PrereadInput
 end
 
-map('/') { run Sinatra::Application }
+map('/') do
+  use(Rack::Cache,
+    verbose: false,
+    metastore: 'file:/tmp/neocitiesrackcache/meta',
+    entitystore: 'file:/tmp/neocitiesrackcache/body'
+  )
+  run Sinatra::Application
+end
 
 map '/webdav' do
   use Rack::Auth::Basic do |username, password|

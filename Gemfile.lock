@@ -122,6 +122,8 @@ GEM
     puma (2.8.1)
       rack (>= 1.1, < 2.0)
     rack (1.5.2)
+    rack-cache (1.2)
+      rack (>= 0.4)
     rack-protection (1.5.2)
       rack
     rack-recaptcha (0.6.6)
@@ -238,6 +240,7 @@ DEPENDENCIES
   pry
   pry-byebug
   puma
+  rack-cache
   rack-recaptcha
   rack-test
   rack_session_access

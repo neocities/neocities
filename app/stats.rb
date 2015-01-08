@@ -1,5 +1,5 @@
 get '/stats/?' do
-  require_admin
+  expires 14400, :public, :must_revalidate # 4 hours
 
   @stats = {
     total_sites: Site.count,
@@ -41,19 +41,29 @@ get '/stats/?' do
   @stats[:total_recurring_revenue] = 0.0
 
   subscriptions = []
-  cancelled_subscriptions = 0
+  @stats[:cancelled_subscriptions] = 0
 
   customers.each do |customer|
     sub = {created_at: Time.at(customer.created)}
-    if customer[:subscriptions]
-      if customer[:subscriptions][:data].empty?
-        sub[:status] = 'cancelled'
-      else
-        sub[:status] = 'active'
-        sub[:amount] = (customer[:subscriptions][:data].first[:plan][:amount] / 100.0).round(2)
-        @stats[:total_recurring_revenue] += sub[:amount]
-      end
+
+    if customer[:subscriptions][:data].empty?
+      @stats[:cancelled_subscriptions] += 1
+      next
     end
+
+    next if customer[:subscriptions][:data].first[:plan][:amount] == 0
+
+    sub[:status] = 'active'
+    plan = customer[:subscriptions][:data].first[:plan]
+
+    sub[:amount] = (plan[:amount] / 100.0).round(2)
+
+    if(plan[:interval] == 'year')
+      sub[:amount] = (sub[:amount] / 12).round(2)
+    end
+
+    @stats[:total_recurring_revenue] += sub[:amount]
+
     subscriptions.push sub
   end
 
