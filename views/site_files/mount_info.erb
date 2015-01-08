@@ -13,35 +13,44 @@
       Neocities now supports <strong>WebDAV</strong>, which allows you to mount your Neocities share on your computer. Now you can access and change your files on your own computer's file manager!
     </p>
 
-    <h2>Instructions for Windows 7</h2>
+    <% if !current_site.supporter? %>
+      <p>
+        This feature requires a supporter account. <a href="/plan">Click here</a> to become a supporter.
+      </p>
+    <% else %>
 
-    <p>
-      <a href="http://www.onemetric.com.au/Documentation/Mounting-A-WebDAV-Share-Windows-7">Use these instructions</a>, except use this URL to connect: <strong>https://neocities.org/webdav</strong>
+      <h2>Instructions for Windows 7</h2>
+
+      <p>
+        <a href="http://www.onemetric.com.au/Documentation/Mounting-A-WebDAV-Share-Windows-7">Use these instructions</a>, except use this URL to connect: <strong>https://neocities.org/webdav</strong>
+        <br>
+        Enter your login info when requested.
+      </p>
+
+      <h2>Instructions for OSX</h2>
+
+      <p>
+      <a href="http://support.apple.com/kb/ph3857">Use these instructions</a>, and use this URL to connect: <strong>https://neocities.org/webdav</strong>
       <br>
-      Enter your login info when requested.
-    </p>
+      Enter login info when requested.
+      </p>
 
-    <h2>Instructions for OSX</h2>
+      <h2>Instructions for Linux (Ubuntu)</h2>
 
-    <p>
-    <a href="http://support.apple.com/kb/ph3857">Use these instructions</a>, and use this URL to connect: <strong>https://neocities.org/webdav</strong>
-    <br>
-    Enter login info when requested.
-    </p>
+      <p>
+        <ol>
+          <li>Open Nautilus.</li>
+          <li>Press ALT-L to show the location bar.</li>
+          <li>Type davs://neocities.org/webdav into location bar.</li>
+          <li>Enter your login into the popup.</li>
+        </ol>
+      </p>
 
-    <h2>Instructions for Linux (Ubuntu)</h2>
+      <h2>Instructions for Linux (command line)</h2>
 
-    <p>
-      <ol>
-        <li>Open Nautilus.</li>
-        <li>Press ALT-L to show the location bar.</li>
-        <li>Type davs://neocities.org/webdav into location bar.</li>
-        <li>Enter your login into the popup.</li>
-      </ol>
-    </p>
-
-    <h2>Instructions for Linux (command line)</h2>
-
-    <p>For command line, use the <a href="http://johnreid.it/2009/09/26/mount-a-webdav-folder-in-ubuntu-linux/">davfs2</a> package.
+      <p>
+        For command line, use the <a href="http://johnreid.it/2009/09/26/mount-a-webdav-folder-in-ubuntu-linux/">davfs2</a> package.
+      </p>
+    <% end %>
   </article>
 </div>
