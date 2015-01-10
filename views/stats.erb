@@ -68,7 +68,7 @@
     </table>
 
     <h2>Supporters</h2>
-    <h3>Current Recurring Monthly Revenue: <strong><%= format("$%.2f", @stats[:total_recurring_revenue]) %> (<%= format("$%.2f", @stats[:total_recurring_revenue]*12) %>/year)</strong>
+    <h3>Current Recurring Monthly Revenue: <strong><%= format("$%.2f", @stats[:monthly_revenue]) %> (<%= format("$%.2f", @stats[:monthly_revenue]*12) %>/year)</strong>
     <br>
     Active Supporters: <strong><%= @stats[:subscriptions].select {|s| s[:status] == 'active' }.length %></strong>
     <br>
@@ -91,7 +91,30 @@
       <% end %>
     </table>
     -->
+
+    <h2>Burn Rate</h2>
     <p>
+      Approximate server expenses (burn rate): <strong><%= format("$%.2f", @stats[:expenses]) %>/mo</strong>
     </p>
+
+    <h1>Revenue Goals</h1>
+
+    <p>Neocities pays for itself:</p>
+    <p><strong><%= format '%.2f', @stats[:percent_until_profit] %>% of goal</strong> ($<%= format('%.2f', @stats[:monthly_revenue]) %> / $<%= format('%.2f', @stats[:expenses]) %>)</p>
+    <div class="progress progress-striped">
+      <div class="bar" style="width: <%= @stats[:percent_until_profit].round %>%;"></div>
+    </div>
+
+    <p>Neocities earnings rise above <a href="http://en.wikipedia.org/wiki/Poverty_threshold">US poverty threshold</a>:</p>
+    <p><strong><%= format '%.2f', @stats[:poverty_threshold_percent] %>% of goal</strong> ($<%= format('%.2f', @stats[:monthly_revenue]) %> / $<%= format('%.2f', @stats[:poverty_threshold]) %> + $<%= @stats[:expenses] %>)</p>
+    <div class="progress progress-striped">
+      <div class="bar" style="width: <%= format('%.2f', @stats[:poverty_threshold_percent]) %>%;"></div>
+    </div>
+
+    <p>Neocities earns average US developer salary:</p>
+    <p><strong><%= format '%.2f', @stats[:percent_until_developer_salary] %>% of goal</strong> ($<%= format('%.2f', @stats[:monthly_revenue]) %> / $<%= format('%.2f', @stats[:average_developer_salary]) %> + $<%= @stats[:expenses] %>)</p>
+    <div class="progress progress-striped">
+      <div class="bar" style="width: <%= format('%.2f', @stats[:percent_until_developer_salary]) %>%;"></div>
+    </div>
   </article>
 </div>

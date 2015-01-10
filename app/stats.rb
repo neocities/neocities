@@ -1,5 +1,5 @@
 get '/stats/?' do
-  expires 14400, :public, :must_revalidate # 4 hours
+  expires 14400, :public, :must_revalidate if self.class.production? # 4 hours
 
   @stats = {
     total_sites: Site.count,
@@ -38,7 +38,7 @@ get '/stats/?' do
 
   customers = Stripe::Customer.all limit: 100000
 
-  @stats[:total_recurring_revenue] = 0.0
+  @stats[:monthly_revenue] = 0.0
 
   subscriptions = []
   @stats[:cancelled_subscriptions] = 0
@@ -62,11 +62,26 @@ get '/stats/?' do
       sub[:amount] = (sub[:amount] / 12).round(2)
     end
 
-    @stats[:total_recurring_revenue] += sub[:amount]
+    @stats[:monthly_revenue] += sub[:amount]
 
     subscriptions.push sub
   end
 
   @stats[:subscriptions] = subscriptions
+
+  # Hotwired for now
+  @stats[:expenses] = 300.0 #/mo
+  @stats[:percent_until_profit] = (
+    (@stats[:monthly_revenue].to_f / @stats[:expenses]) * 100
+  )
+
+  @stats[:poverty_threshold] = 11_945
+  @stats[:poverty_threshold_percent] = (@stats[:monthly_revenue].to_f / (@stats[:poverty_threshold] + @stats[:expenses])) * 100
+
+  # http://en.wikipedia.org/wiki/Poverty_threshold
+
+  @stats[:average_developer_salary] = 93_280.00 # google "average developer salary"
+  @stats[:percent_until_developer_salary] = (@stats[:monthly_revenue].to_f / (@stats[:average_developer_salary] + @stats[:expenses])) * 100
+
   erb :'stats'
 end
