@@ -23,7 +23,7 @@ get '/stats/?' do
 
   now = Date.today
 
-  until runner.to_time > now.next_month.to_time
+  while runner.to_time < now.to_time
     monthly_stats.push(
       date: runner,
       sites_created: Site.where(created_at: runner..runner.next_month).count,
