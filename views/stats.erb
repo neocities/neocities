@@ -106,13 +106,13 @@
     </div>
 
     <p>Neocities earnings rise above <a href="http://en.wikipedia.org/wiki/Poverty_threshold">US poverty threshold</a>:</p>
-    <p><strong><%= format '%.2f', @stats[:poverty_threshold_percent] %>% of goal</strong> ($<%= format('%.2f', @stats[:monthly_revenue]) %> / $<%= format('%.2f', @stats[:poverty_threshold]) %> + $<%= @stats[:expenses] %>)</p>
+    <p><strong><%= format '%.2f', @stats[:poverty_threshold_percent] %>% of goal</strong> ($<%= format('%.2f', @stats[:monthly_revenue]) %> / ($<%= format('%.2f', @stats[:poverty_threshold]) %> / 12 months + $<%= @stats[:expenses] %>)) * 100</p>
     <div class="progress progress-striped">
       <div class="bar" style="width: <%= format('%.2f', @stats[:poverty_threshold_percent]) %>%;"></div>
     </div>
 
     <p>Neocities earns average US developer salary:</p>
-    <p><strong><%= format '%.2f', @stats[:percent_until_developer_salary] %>% of goal</strong> ($<%= format('%.2f', @stats[:monthly_revenue]) %> / $<%= format('%.2f', @stats[:average_developer_salary]) %> + $<%= @stats[:expenses] %>)</p>
+    <p><strong><%= format '%.2f', @stats[:percent_until_developer_salary] %>% of goal</strong> ($<%= format('%.2f', @stats[:monthly_revenue]) %> / ($<%= format('%.2f', @stats[:average_developer_salary]) %> / 12 months + $<%= @stats[:expenses] %>)) * 100</p>
     <div class="progress progress-striped">
       <div class="bar" style="width: <%= format('%.2f', @stats[:percent_until_developer_salary]) %>%;"></div>
     </div>

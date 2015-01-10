@@ -76,12 +76,12 @@ get '/stats/?' do
   )
 
   @stats[:poverty_threshold] = 11_945
-  @stats[:poverty_threshold_percent] = (@stats[:monthly_revenue].to_f / (@stats[:poverty_threshold] + @stats[:expenses])) * 100
+  @stats[:poverty_threshold_percent] = (@stats[:monthly_revenue].to_f / ((@stats[:poverty_threshold]/12) + @stats[:expenses])) * 100
 
   # http://en.wikipedia.org/wiki/Poverty_threshold
 
   @stats[:average_developer_salary] = 93_280.00 # google "average developer salary"
-  @stats[:percent_until_developer_salary] = (@stats[:monthly_revenue].to_f / (@stats[:average_developer_salary] + @stats[:expenses])) * 100
+  @stats[:percent_until_developer_salary] = (@stats[:monthly_revenue].to_f / ((@stats[:average_developer_salary]/12) + @stats[:expenses])) * 100
 
   erb :'stats'
 end
