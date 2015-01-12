@@ -13,7 +13,7 @@
       Neocities now supports <strong>WebDAV</strong>, which allows you to mount your Neocities share on your computer. Now you can access and change your files on your own computer's file manager!
     </p>
 
-    <% if !current_site.supporter? %>
+    <% if current_site.nil? || !current_site.supporter? %>
       <p>
         This feature requires a supporter account. <a href="/plan">Click here</a> to become a supporter.
       </p>
