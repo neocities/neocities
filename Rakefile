@@ -13,6 +13,22 @@ end
 
 task :default => :test
 
+=begin
+desc "send domain update email"
+task :send_domain_update_email => [:environment] do
+  Site.exclude(domain: nil).exclude(domain: '').all.each do |site|
+    msg = <<-HERE
+MESSAGE GOES HERE TEST
+HERE
+
+    site.send_email(
+      subject: 'SUBJECT GOES HERE',
+      body: msg
+    )
+  end
+end
+=end
+
 desc "parse logs"
 task :parse_logs => [:environment] do
   Dir[File.join($config['logs_path'], '*.log')].each do |log_path|
