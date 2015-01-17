@@ -31,8 +31,9 @@ Rainbows! do
   stderr_path "/var/log/neocities/neocities.log"
   stdout_path "/var/log/neocities/neocities.log"
 
-  preload_app true
- 
+  # preload_app does not restart with code changes, so we turn it off.
+  preload_app false
+
   before_fork do |server, worker|
     old_pid = "/var/run/neocities/neocities.pid.oldbin"
     if File.exists?(old_pid) && server.pid != old_pid
@@ -43,7 +44,7 @@ Rainbows! do
       end
     end
   end
-  
+
   after_fork do |server, worker|
     DB.disconnect
   end
