@@ -24,7 +24,7 @@
       <div class="stats">
         <div class="stat"><strong><%= site.views.format_large_number %></strong> <span>views</span></div>
         <% follows_count = site.follows_dataset.count %>
-        <div class="stat"><strong><%= follows_count.format_large_number %></strong> <span>follower<% follows_count == 0 ? '' : 's' %></span></div>
+        <div class="stat"><strong><%= follows_count.format_large_number %></strong> <span>follower<%= follows_count == 0 ? '' : 's' %></span></div>
         <!-- <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div> -->
       </div>
       <div class="actions">
