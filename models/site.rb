@@ -567,7 +567,7 @@ class Site < Sequel::Model
       }
     end
 
-    if pathname.basename.to_s == 'index.html' && opts[:new_install] != true
+    if relative_path == 'index.html' && opts[:new_install] != true
       begin
         new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
       rescue NoMethodError => e
