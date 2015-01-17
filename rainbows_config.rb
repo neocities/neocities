@@ -31,8 +31,7 @@ Rainbows! do
   stderr_path "/var/log/neocities/neocities.log"
   stdout_path "/var/log/neocities/neocities.log"
 
-  # preload_app does not restart with code changes, so we turn it off.
-  preload_app false
+  preload_app true
 
   before_fork do |server, worker|
     old_pid = "/var/run/neocities/neocities.pid.oldbin"
