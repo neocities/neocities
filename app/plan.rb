@@ -12,29 +12,45 @@ get '/plan/?' do
   erb :'plan/index'
 end
 
+def is_special_upgrade
+  params[:username] && params[:plan_type] == 'special'
+end
+
 post '/plan/update' do
   require_login
 
+  if is_special_upgrade
+    require_admin
+    site = Site[username: params[:username]]
+
+    if site.nil?
+      flash[:error] = 'Cannot find the requested user.'
+      redirect '/admin'
+    end
+  end
+
+  site ||= parent_site
+
   DB.transaction do
-    if parent_site.stripe_subscription_id
-      customer = Stripe::Customer.retrieve parent_site.stripe_customer_id
-      subscription = customer.subscriptions.retrieve parent_site.stripe_subscription_id
+    if site.stripe_subscription_id
+      customer = Stripe::Customer.retrieve site.stripe_customer_id
+      subscription = customer.subscriptions.retrieve site.stripe_subscription_id
       subscription.plan = params[:plan_type]
       subscription.save
 
-      parent_site.update(
+      site.update(
         plan_ended: false,
         plan_type: params[:plan_type]
       )
     else
       customer = Stripe::Customer.create(
         card: params[:stripe_token],
-        description: "#{parent_site.username} - #{parent_site.id}",
-        email: (current_site.email || parent_site.email),
+        description: "#{site.username} - #{site.id}",
+        email: site.email,
         plan: params[:plan_type]
       )
 
-      parent_site.update(
+      site.update(
         stripe_customer_id: customer.id,
         stripe_subscription_id: customer.subscriptions.first.id,
         plan_ended: false,
@@ -43,14 +59,25 @@ post '/plan/update' do
     end
   end
 
-  if current_site.email || parent_site.email
-    EmailWorker.perform_async({
-      from: 'web@neocities.org',
-      reply_to: 'contact@neocities.org',
-      to: current_site.email || parent_site.email,
-      subject: "[Neocities] You've become a supporter!",
-      body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: Site::PLAN_FEATURES[params[:plan_type].to_sym][:name], plan_space: Site::PLAN_FEATURES[params[:plan_type].to_sym][:space].to_space_pretty)
-    })
+  if site.email
+    if is_special_upgrade
+      site.send_email(
+        subject: "[Neocities] Your site has been upgraded to supporter!",
+        body: Tilt.new('./views/templates/email/supporter_upgrade.erb', pretty: true).render(self)
+      )
+
+      redirect '/admin'
+    else
+      site.send_email(
+        subject: "[Neocities] You've become a supporter!",
+        body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: Site::PLAN_FEATURES[params[:plan_type].to_sym][:name], plan_space: Site::PLAN_FEATURES[params[:plan_type].to_sym][:space].to_space_pretty)
+      )
+    end
+  end
+
+  if is_special_upgrade
+    flash[:success] = "#{site.username} has been upgraded to supporter."
+    redirect '/admin'
   end
 
   redirect params[:plan_type] == 'free' ? '/plan' : '/plan/thanks'
