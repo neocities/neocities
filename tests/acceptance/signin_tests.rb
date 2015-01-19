@@ -9,11 +9,6 @@ describe 'signin' do
     fill_in 'password', with: @site[:password]
   end
 
-  def fill_in_valid_signup
-    fill_in_valid
-    fill_in 'email', with: @site[:email]
-  end
-
   before do
     Capybara.reset_sessions!
   end
