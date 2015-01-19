@@ -56,17 +56,18 @@ end
 
 group :test do
   gem 'faker'
-  gem 'fabrication',        require: 'fabrication'
+  gem 'fabrication',           require: 'fabrication'
   gem 'minitest'
-  gem 'minitest-reporters', require: 'minitest/reporters'
-  gem 'rack-test',          require: 'rack/test'
-  gem 'mocha',              require: nil
-  gem 'rake',               require: nil
+  gem 'minitest-reporters',    require: 'minitest/reporters'
+  gem 'rack-test',             require: 'rack/test'
+  gem 'mocha',                 require: nil
+  gem 'rake',                  require: nil
   gem 'poltergeist'
-  gem 'phantomjs',          require: 'phantomjs/poltergeist'
+  gem 'phantomjs',             require: 'phantomjs/poltergeist'
   gem 'capybara_minitest_spec'
-  gem 'rack_session_access', require: nil
-  gem 'webmock',             require: nil
+  gem 'rack_session_access',   require: nil
+  gem 'webmock',               require: nil
+  gem 'stripe-ruby-mock',      '~> 2.0.1', require: 'stripe_mock'
 
   platform :mri do
     gem 'simplecov',        require: nil

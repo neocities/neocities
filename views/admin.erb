@@ -52,13 +52,13 @@
 
     <div class="col col-50">
       <h2>Upgrade to Supporter</h2>
-      <form action="/plan/update" method="POST">
+      <form id="upgradeToSupporter" action="/plan/update" method="POST">
         <input type="hidden" name="plan_type" value="special">
         <%== csrf_token_input_html %>
         <p>This site will be upgraded to the supporter plan.</p>
         <p>Site Name:</p>
         <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
-        <p><input class="btn btn-Action" type="submit" value="Ban"></p>
+        <p><input class="btn btn-Action" type="submit" value="Upgrade to Supporter"></p>
       </form>
     </div>
   </div>
