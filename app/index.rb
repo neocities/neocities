@@ -31,9 +31,6 @@ get '/?' do
     @sites_count = SimpleCache.get :sites_count
   end
 
-  @blackbox_question = BlackBox.generate
-  @question_first_number, @question_last_number = generate_question
-
   erb :index, layout: false
 end
 
