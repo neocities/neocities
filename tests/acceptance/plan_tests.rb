@@ -1,11 +1,5 @@
 require_relative './environment.rb'
 
-include Rack::Test::Methods
-
-def app
-  Sinatra::Application
-end
-
 describe '/plan' do
   include Capybara::DSL
 
