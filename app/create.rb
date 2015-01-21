@@ -76,13 +76,10 @@ post '/create' do
 
   session[:captcha_valid] = nil
 
-  EmailWorker.perform_async({
-    from: 'web@neocities.org',
-    reply_to: 'contact@neocities.org',
-    to: @site.email,
+  @site.send_email(
     subject: "[Neocities] Welcome to Neocities!",
     body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
-  })
+  )
 
   send_confirmation_email @site
 
