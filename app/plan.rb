@@ -4,6 +4,12 @@ get '/plan/?' do
   if parent_site && parent_site.unconverted_legacy_supporter?
     customer = Stripe::Customer.retrieve(parent_site.stripe_customer_id)
     subscription = customer.subscriptions.first
+
+    # Subscription was deleted, add to free plan.
+    if subscription.nil?
+      subscription = customer.subscriptions.create plan: 'free'
+    end
+
     parent_site.stripe_subscription_id = subscription.id
     parent_site.plan_type = subscription.plan.id
     parent_site.save_changes
