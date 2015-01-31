@@ -4,42 +4,23 @@
 
 The web site for NeoCities! It's open source. Want a feature on the site? Send a pull request!
 
-## Installation (OSX)
+## Getting Started
 
-Install homebrew:
-```
-ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
-```
-
-Install deps:
-```
-$ brew install redis postgresql phantomjs libmagic imagemagick
-```
-
-Fork the repository on Github.
-Clone the forked repo to your local machine: git clone git@github.com:YOURUSERNAME/neocities.git
-Install deps:
+Neocities can be quickly launched in development mode with (Vagrant)[https://www.vagrantup.com]. Vagrant builds a virtual machine that automatically installs everything you need to run Neocities as a developer. Install Vagrant, then from the command line:
 
 ```
-$ cd neocities
-$ gem install bundler
-$ bundle install
+vagrant up --provision
 ```
 
-Create postgres databases:
+![Vagrant takes a while, make a pizza while waiting](http://i.imgur.com/vfIJPXP.png)
 
 ```
-createdb neocities_test
-createdb neocities_dev
+vagrant ssh
+cd /vagrant
+bundle exec rackup
 ```
 
-Copy config.yml.template to config.yml.
-
-Run the tests to see if they work:
-
-```
-  bundle exec rake test
-```
+Now you can access the running site from your browser: http://127.0.0.1:9292
 
 ## Want to contribute?
 

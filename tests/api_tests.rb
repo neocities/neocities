@@ -170,6 +170,7 @@ describe 'api upload' do
     post '/api/upload', {
       '' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
     }
+
     res[:error_type].must_equal 'missing_files'
   end
 

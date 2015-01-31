@@ -509,7 +509,7 @@ class Site < Sequel::Model
     # clamdscan doesn't work on travis for testing
     return true if ENV['TRAVIS'] == 'true'
 
-    File.chmod 0640, uploaded_file[:tempfile].path
+    File.chmod 0666, uploaded_file[:tempfile].path
     line = Cocaine::CommandLine.new(
       "clamdscan", "-i --remove=no --no-summary --stdout :path",
       expected_outcodes: [0, 1]

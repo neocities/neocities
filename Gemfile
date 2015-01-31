@@ -1,4 +1,3 @@
-source 'https://code.stripe.com'
 source 'https://rubygems.org'
 
 gem 'sinatra'
@@ -16,7 +15,7 @@ gem 'mail'
 gem 'google-api-client',  require: 'google/api_client'
 gem 'tilt'
 gem 'erubis'
-gem 'stripe'
+gem 'stripe', source: 'https://code.stripe.com/'
 gem 'screencap'
 gem 'cocaine'
 gem 'zipruby'
@@ -63,7 +62,6 @@ group :test do
   gem 'mocha',                 require: nil
   gem 'rake',                  require: nil
   gem 'poltergeist'
-  gem 'phantomjs',             require: 'phantomjs/poltergeist'
   gem 'capybara_minitest_spec'
   gem 'rack_session_access',   require: nil
   gem 'webmock',               require: nil
