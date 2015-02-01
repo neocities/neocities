@@ -42,6 +42,7 @@ def browse_sites_dataset
       site_dataset.where!{views > 100}
       site_dataset.where! 'random() < 0.01'
     when 'last_updated'
+      site_dataset.where!{views > 100}
       params[:sort_by] = 'last_updated'
       site_dataset.order!(:site_updated_at.desc, :views.desc)
     else
