@@ -40,16 +40,17 @@
   <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 
-  <body class="hp"><a id="new"></a>
+  <body class="hp">
+    <a id="new"></a>
 
     <div class="page">
 
-      <header class="header-Base">
+      <header class="header-Base" role="banner">
         <nav class="header-Nav clearfix" role="navigation">
             <a href="#!" title="show small screen nav" class="small-Nav">
               <img src="/img/nav-Icon.png" alt="navigation icon" />
             </a>
-            <ul class="h-Nav constant-Nav">
+            <ul class="h-Nav constant-Nav" role="presentation">
               <li>
                 <a href="/">Neocities</a>
               </li>
@@ -84,7 +85,7 @@
                   <a href="/settings" class="sign-In">Settings</a>
                 </li>
                 <li>
-                  <a href="/signout" class="sign-In">Signout</a>
+                  <a href="/signout" class="sign-In">Sign Out</a>
                 </li>
               <% end %>
             </ul>
@@ -117,25 +118,25 @@
 <div class="header-Outro">
   <div class="row header-Content content">
     <div class="col intro">
-    <h2 class="section-header">Create your own free web site, and discover new ones.</h2>
-    <p class="intro-text">
-     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We provide free hosting and tools that allow anyone to make a web site. Only your imagination is required. Join us!
-    </p>
-    <ul class="intro-List">
-      <li class="intro-Social">
-        <span class="intro-Icon"></span>
-        <h2 class="delta">Share your web creation with the world</h2>
-        <p class="base">
-          Follow your favorite Neocities sites to keep up with all their latest updates. Discover new websites related to your interests using tags, comment on them, and share them. Unlimited creativity, zero ads.
-        </p>
-      </li>
-      <li class="intro-Tools">
-        <span class="intro-Icon"></span>
-        <h2 class="delta">Powerful new features to help you build</h2>
-        <p class="base">
-          We’ve made it easier to build your website and explore other sites. Neocities features an in-browser HTML editor, custom domain support, faster site loading, easy file uploading, RSS feeds, folder support, and much more.
-      </li>
-    </ul>
+      <h2 class="section-header">Create your own free web site, and discover new ones.</h2>
+      <p class="intro-text">
+       Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We provide free hosting and tools that allow anyone to make a web site. Only your imagination is required. Join us!
+      </p>
+      <ul class="intro-List">
+        <li class="intro-Social">
+          <span class="intro-Icon"></span>
+          <h3 class="delta">Share your web creation with the world</h3>
+          <p class="base">
+            Follow your favorite Neocities sites to keep up with all their latest updates. Discover new websites related to your interests using tags, comment on them, and share them. Unlimited creativity, zero ads.
+          </p>
+        </li>
+        <li class="intro-Tools">
+          <span class="intro-Icon"></span>
+          <h3 class="delta">Powerful new features to help you build</h3>
+          <p class="base">
+            We’ve made it easier to build your website and explore other sites. Neocities features an in-browser HTML editor, custom domain support, faster site loading, easy file uploading, RSS feeds, folder support, and much more.
+        </li>
+      </ul>
     </div>
 
     <div class="col signup-Area">
@@ -143,15 +144,15 @@
 
         <div class="signup-Form">
           <div class="content">
-            <h2 class="gamma txt-Center">Build your Website!</h2>
+            <h3 class="gamma txt-Center">Build your Website!</h3>
           </div>
           <p class="txt-Center">
             Go to your dashboard to<br> start editing your website!
           </p>
           <br />
-            <div class="txt-Center">
-              <a href="/dashboard" class="btn-Action">Get Started</a>
-            </div>
+          <div class="txt-Center">
+            <a href="/dashboard" class="btn-Action">Get Started</a>
+          </div>
         </div>
       <% else %>
         <form id="createSiteForm" class="signup-Form" onsubmit="return false">
@@ -160,7 +161,7 @@
             <h2 class="gamma">Sign up for free</h2>
             <hr />
             <div class="siteCreateInputs">
-              <label for="create-Input">Username</label>
+              <label for="create-Input">User Name</label>
               <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" style="position:absolute; top:-2000px; left:-2000px;" />
               <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" style="position:absolute; top:-2000px; left:-2000px;" />
               <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
@@ -170,18 +171,34 @@
               <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
 
               <div class="col col-50" style="padding-left:0;">
-              <label for="password-input">Password</label>
-              <input type="password" class="input-Area" id="password-input" name="password" placeholder="password" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+                <label for="password-input">
+                  Password
+                </label>
+                <input type="password" class="input-Area" id="password-input"
+                        name="password" placeholder="password"
+                        data-placement="left" data-trigger="manual"
+                        autocapitalize="off" autocorrect="off" autocomplete="off" />
               </div>
 
               <div class="col col-50">
-              <label for="email-input">Email</label>
-              <input type="text" class="input-Area" id="email-input" name="email" placeholder="me@example.com" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+                <label for="email-input">
+                  Email
+                </label>
+                <input type="email" class="input-Area"
+                       id="email-input" name="email"
+                       placeholder="me@example.com" data-placement="left"
+                       data-trigger="manual" autocapitalize="off"
+                       autocorrect="off" autocomplete="off" />
               </div>
 
               <div class="col col-50" style="padding-left:0;">
-                <label for="g-recaptcha">Confirm you are human</label>
-                <div id="captcha-input" class="g-recaptcha" data-sitekey="<%= $config['recaptcha_public_key'] %>" data-theme="dark" data-placement="left" data-trigger="manual"></div>
+                <label>
+                  Confirm you are human
+                </label>
+                <div id="captcha-input" class="g-recaptcha"
+                     data-sitekey="<%= $config['recaptcha_public_key'] %>"
+                     data-theme="dark" data-placement="left" data-trigger="manual">
+                </div>
               </div>
 
               <div class="col col-50">
@@ -256,7 +273,7 @@
       <p>Follow your favorite sites and see when they get updated. Easily form communities of sites using site tags. Web Rings, reloaded.</p>
     </div>
   </div>
-  
+
   <div class="row content right">
     <div class="col col-50"><div class="screenshot"></div></div>
     <div class="col col-50 text">
@@ -278,12 +295,20 @@
 -->
 
   <section class="section features">
-    <h2 class="delta">Our mission: To make the web fun again by giving you back control of how you express yourself online.</h2>
-    <h2 class="delta"><img style="margin-top: .5em;" src="/img/front-editor-screenshot.png"></h2>
+    <h2 class="delta">
+      Our mission: To make the web fun again by giving you back control of how you express yourself online.
+    </h2>
+
+      <img style="margin-top: .5em; max-width: 80%;" src="/img/front-editor-screenshot.png" alt="screen shot of neocities code editor" />
+
     <div class="row">
       <div class="col col-50">
-        <h3><i class="fa fa-eye-slash"></i>Zero advertising</h3>
-        <p>Neocities will never sell your personal data or embed advertising on your site. Instead, we are funded directly by our community through <a href="/plan">supporter plans</a> and <a href="/donate">donations</a>. This allows us to base all our decisions on making the best possible web building experience for you, rather than on appeasing ad companies.</p>
+        <h3>
+          <i class="fa fa-eye-slash"></i>Zero advertising
+        </h3>
+        <p>
+          Neocities will never sell your personal data or embed advertising on your site. Instead, we are funded directly by our community through <a href="/plan">supporter plans</a> and <a href="/donate">donations</a>. This allows us to base all our decisions on making the best possible web building experience for you, rather than on appeasing ad companies.
+        </p>
       </div>
 
 
@@ -306,7 +331,7 @@
 
 
     </div>
-    
+
     <div class="col col-100">
       <div class="row press">
         <a href="http://www.wired.com/2013/07/neocities/" class="logo wired"></a>
@@ -319,12 +344,12 @@
           <h3>
             "Designed as a 21st century reincarnation of GeoCities, Neocities lets you make your own site for free. <strong>And it just might spark a renaissance of creativity online.</strong>"
             <br />
-            —Matthew Guay, <a href="http://web.appstorm.net/reviews/web-dev/neocities-the-free-place-to-code-your-own-site-from-scratch" target="_blank">AppStorm</a>. <a href="/press">View All Press »</a>
+            <cite>— Matthew Guay, <a href="http://web.appstorm.net/reviews/web-dev/neocities-the-free-place-to-code-your-own-site-from-scratch" target="_blank">AppStorm</a>. <a href="/press">View All Press »</a></cite>
           </h3>
       </div>
     </div>
   </section>
-  
+
   <% # erb :'plan/_pricing' %>
 
   <section class="section bottom-signup">
@@ -332,44 +357,44 @@
   </section>
 </main>
 
-<footer class="footer-Base">
-  <section class="footer-Intro">
-  <div class="footer-Content">
-  <div class="row">
-    <div class="col col-33">
-      <div class="f-Col f-Col-1 clearfix">
-        <span class="footer-icon"></span>
-        <h2 class="delta">Support Us</h2>
-        <p class="tiny">
-          Neocities is funded by <a href="/plan">supporters</a> and <a href="/donate">donations</a>. If you’d like to contribute, you can help us pay our server costs using credit card, Bitcoin, or PayPal.
-        </p>
-        <a href="/donate" title="Donate to Neocities" class="action-Link">Donate Today</a>
-      </div>
-    </div>
-    <div class="col col-33">
-      <div class="f-Col f-Col-2 clearfix">
-        <span class="footer-icon"></span>
-        <h2 class="delta">About Us</h2>
-        <p class="tiny">
-          Neocities is here to bring back the creativity and
-          free expression to the world wide web that made it great.
-        </p>
-        <a href="/about" title="More about Neocities" class="action-Link">More About Us</a>
-      </div>
-    </div>
-    <div class="col col-33">
-      <div class="f-Col f-Col-3 clearfix">
-        <span class="footer-icon"></span>
-        <h2 class="delta">Latest News</h2>
-        <p class="tiny">
-          The latest news on Neocities can be found on our blog.
-        </p>
-        <a href="/blog" title="Read about Neocities news and updates" class="action-Link">Read More</a>
+<footer class="footer-Base" role="contentinfo">
+  <div class="footer-Intro">
+    <div class="footer-Content">
+      <div class="row">
+        <div class="col col-33">
+          <div class="f-Col f-Col-1 clearfix">
+            <span class="footer-icon"></span>
+            <h2 class="delta">Support Us</h2>
+            <p class="tiny">
+              Neocities is funded by <a href="/plan">supporters</a> and <a href="/donate">donations</a>. If you’d like to contribute, you can help us pay our server costs using credit card, Bitcoin, or PayPal.
+            </p>
+            <a href="/donate" title="Donate to Neocities" class="action-Link">Donate Today</a>
+          </div>
+        </div>
+        <div class="col col-33">
+          <div class="f-Col f-Col-2 clearfix">
+            <span class="footer-icon"></span>
+            <h2 class="delta">About Us</h2>
+            <p class="tiny">
+              Neocities is here to bring back the creativity and
+              free expression to the world wide web that made it great.
+            </p>
+            <a href="/about" title="More about Neocities" class="action-Link">More About Us</a>
+          </div>
+        </div>
+        <div class="col col-33">
+          <div class="f-Col f-Col-3 clearfix">
+            <span class="footer-icon"></span>
+            <h2 class="delta">Latest News</h2>
+            <p class="tiny">
+              The latest news on Neocities can be found on our blog.
+            </p>
+            <a href="/blog" title="Read about Neocities news and updates" class="action-Link">Read More</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  </div>
-</section>
 
   <%== erb :'_footer', layout: false%>
 </footer>
