@@ -150,7 +150,7 @@
                 <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
               <% end %>
               <% if !file[:is_root_index] %>
-                <a href="#" onclick="confirmFileDelete('<%= file[:path] %>')"><i class="fa fa-trash" title="Delete"></i> Delete</a>
+                <a href="#" onclick="confirmFileDelete('<%= file[:path].gsub("'", '&apos;') %>')"><i class="fa fa-trash" title="Delete"></i> Delete</a>
               <% end %>
               <% if file[:is_directory] %>
               <a class="link-overlay" href="?dir=<%= Rack::Utils.escape file[:path] %>" title="View <%= file[:path] %>"></a>
