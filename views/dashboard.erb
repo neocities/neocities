@@ -44,7 +44,7 @@
   </div> <!-- end .row -->
 </div> <!-- end .header-Outro -->
 
-<main class="content-Base">
+<main class="content-Base" role="main">
 
 <div class="content wide">
 
@@ -92,7 +92,7 @@
         <% dir_array = @dir.split '/' %>
         <% dir_array.each_with_index do |dir,i| %>
           <% if i+1 < dir_array.length %>
-            <a href="/dashboard?dir=<%= Rack::Utils.escape dir %>"><%= dir %></a> <i class="fa fa-angle-right"></i> 
+            <a href="/dashboard?dir=<%= Rack::Utils.escape dir %>"><%= dir %></a> <i class="fa fa-angle-right"></i>
           <% else %>
             <%= dir %>
           <% end %>
@@ -115,19 +115,19 @@
           <div class="file filehover">
             <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '210x158') %>
               <div class="html-thumbnail html fileimagehover">
-                <img src="<%= current_site.screenshot_url(file[:path], '210x158') %>">
+                <img src="<%= current_site.screenshot_url(file[:path], '210x158') %>" alt="">
                 <div class="overlay"></div>
               </div>
             <% elsif file[:is_image] && current_site.thumbnail_exists?(file[:path], '210x158') %>
               <div class="html-thumbnail image fileimagehover">
-                <img src="<%= current_site.thumbnail_url(file[:path], '210x158') %>">
+                <img src="<%= current_site.thumbnail_url(file[:path], '210x158') %>" alt="">
                 <div class="overlay"></div>
               </div>
             <% elsif file[:is_directory] %>
               <div class="html-thumbnail folder fileimagehover">
                 <div class="folder-icon"></div>
                 <div class="overlay"></div>
-              </div> 
+              </div>
             <% else %>
               <div class="html-thumbnail misc fileimagehover">
                 <div class="misc-icon"><%= file[:ext] %></div>
@@ -150,7 +150,7 @@
                 <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
               <% end %>
               <% if !file[:is_root_index] %>
-                <a href="#" onclick="confirmFileDelete('<%= file[:path] %>')"><i class="fa fa-trash" title="Delete"></i> Delete</a>
+                <a href="#" onclick="confirmFileDelete('<%= file[:path].gsub("'", '&apos;') %>')"><i class="fa fa-trash" title="Delete"></i> Delete</a>
               <% end %>
               <% if file[:is_directory] %>
               <a class="link-overlay" href="?dir=<%= Rack::Utils.escape file[:path] %>" title="View <%= file[:path] %>"></a>
@@ -178,8 +178,8 @@
           <p>You are about to delete <strong><span id="deleteFileName"></span></strong>. Are you sure?</p>
         </div>
         <div class="modal-footer">
-          <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-          <button class="btn btn-Action btn-danger" onclick="fileDelete()"><i class="fa fa-trash" title="Delete"></i>Delete</button>
+          <button class="btn cancel" data-dismiss="modal" aria-hidden="true" type="button">Cancel</button>
+          <button class="btn btn-Action btn-danger" type="button" onclick="fileDelete()"><i class="fa fa-trash" title="Delete"></i>Delete</button>
         </div>
       </div>
 
@@ -202,7 +202,7 @@
 </form>
 
 <script src="/js/dropzone.min.js"></script>
-<script type="text/javascript">
+<script>
 
   function confirmFileDelete(name) {
     $('#deleteFileName').html(name.replace('/',''));
@@ -255,7 +255,7 @@
 </script>
 
 <div class="modal hide fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
-  <form method="POST" action="/site/create_directory">
+  <form method="post" action="/site/create_directory">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <input type="hidden" value="<%= @dir %>" name="dir">
     <div class="modal-header">
@@ -266,7 +266,7 @@
       <input name="name" type="text" placeholder="folder_name">
     </div>
     <div class="modal-footer">
-      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
       <button type="submit" class="btn btn-Action">Create</button>
     </div>
   </form>

@@ -75,23 +75,6 @@
     Cancelled: <strong><%= @stats[:cancelled_subscriptions] %></strong>
     </h3>
 
-    <!--
-    <table class="table">
-      <tr>
-        <th>Status</th>
-        <th>Amount</th>
-        <th>Date Subscribed</th>
-      </tr>
-      <% @stats[:subscriptions].each do |sub| %>
-        <tr>
-          <td><%= sub[:status] %></td>
-          <td><%= sub[:amount].nil? ? '$0.00' : format("$%.2f", sub[:amount]) %></td>
-          <td><%= sub[:created_at].strftime('%Y %B') %></td>
-        </tr>
-      <% end %>
-    </table>
-    -->
-
     <h2>Burn Rate</h2>
     <p>
       Approximate server expenses (burn rate): <strong><%= format("$%.2f", @stats[:expenses]) %>/mo</strong>

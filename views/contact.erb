@@ -7,7 +7,6 @@
 <div class="header-Outro">
   <div class="row content single-Col">
   <h1>Contact Us</h1>
-  <h3 class="subtitle"></h3>
   </div>
 </div>
 
@@ -19,7 +18,7 @@
       <% end %>
     </div>
   <% end %>
-  
+
   <h6>Please Note Before Contacting:</h6>
 
   <ul>
@@ -34,14 +33,14 @@
   <form action="/contact" method="POST" class="content">
     <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
     <fieldset>
-      <label>Email address</label>
-      <input type="email" name="email" placeholder="Your Email" style="width: 300px" value="<%= params[:email] %>">
+      <label for="your_email">Email address</label>
+      <input type="email" id="your_email" name="email" placeholder="Your Email" style="width: 300px" value="<%= params[:email] %>">
 
-      <label>Subject</label>
-      <input type="text" name="subject" placeholder="Subject" style="width: 400px" value="<%= params[:subject] %>">
+      <label for="email_subject">Subject</label>
+      <input type="text" id="email_subject" name="subject" placeholder="Subject" style="width: 400px" value="<%= params[:subject] %>">
 
-      <label>Comments</label>
-      <textarea name="body" style="width: 600px" rows="10"><%= params[:body] %></textarea>
+      <label for="your_comments">Comments</label>
+      <textarea name="body" id="your_comments" style="width: 600px" rows="10"><%= params[:body] %></textarea>
 
       <label>Fill out captcha so we know you're not a robot:</label>
       <div class="recaptcha">

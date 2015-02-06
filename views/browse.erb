@@ -17,7 +17,7 @@
         <h1>Sites on Neocities</h1>
       <% end %>
     </div>
-  
+
     <form id="search_criteria" action="/browse" method="GET">
       <div class="col col-50 filter">
         <fieldset class="grouping">
@@ -44,7 +44,7 @@
         <form method="GET" action="browse">
         <fieldset class="grouping">
         <label class="text-Label" for="tag">Search by tag:</label>
-        <input class="input-Area typeahead" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
+        <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
         <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Search">
         </fieldset>
       </div>
@@ -88,12 +88,27 @@
           </div>
           <div class="site-tags">
             <% if site.tags.count > 0 %>
-              <i class="fa fa-tag"></i> 
+              <i class="fa fa-tag"></i>
               <% site.tags.each_with_index do |tag, index| %>
-                <a class="" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a><% if index != site.tags.length - 1 %>,<% end %> 
+                <a class="" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a><% if index != site.tags.length - 1 %>,<% end %>
               <% end %>
             <% end %>
           </div>
+          <% if signed_in? && current_site.is_admin %>
+            <div class="admin">
+              <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
+                <%== csrf_token_input_html %>
+                <input type="hidden" name="username" value="<%= site.username %>">
+                <button>Ban</button>
+              </form>
+
+              <form action="/admin/mark_nsfw" target="_blank" method="POST" onsubmit="return confirm('Confirm NSFW marking of <%= site.username %>');">
+                <%== csrf_token_input_html %>
+                <input type="hidden" name="username" value="<%= site.username %>">
+                <button>Mark NSFW</button>
+              </form>
+            </div>
+          <% end %>
         </div>
       </li>
     <% end %>

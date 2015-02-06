@@ -1,6 +1,6 @@
 GEM
-  remote: https://code.stripe.com/
   remote: https://rubygems.org/
+  remote: https://code.stripe.com/
   specs:
     activesupport (4.1.4)
       i18n (~> 0.6, >= 0.6.9)
@@ -154,7 +154,7 @@ GEM
       netrc (~> 0.7)
     retriable (1.4.1)
     rmagick (2.13.3)
-    safe_yaml (1.0.1)
+    safe_yaml (1.0.4)
     sass (3.3.8)
     screencap (0.1.1)
       phantomjs
@@ -246,7 +246,6 @@ DEPENDENCIES
   minitest-reporters
   mocha
   pg
-  phantomjs
   poltergeist
   pry
   pry-byebug
@@ -271,7 +270,7 @@ DEPENDENCIES
   sinatra
   sinatra-flash
   sinatra-xsendfile
-  stripe
+  stripe!
   stripe-ruby-mock (~> 2.0.1)
   thread
   tilt

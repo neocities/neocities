@@ -38,10 +38,8 @@ describe 'signup' do
     click_signup_button
     site_created?.must_equal true
 
-    assert_equal(
-      true,
-      File.exist?(File.join(Site::SITE_FILES_ROOT, @site[:username], 'index.html'))
-    )
+    index_file_path = File.join Site::SITE_FILES_ROOT, @site[:username], 'index.html'
+    File.exist?(index_file_path).must_equal true
 
     site = Site[username: @site[:username]]
     site.site_files.length.must_equal 4

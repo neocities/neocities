@@ -28,16 +28,21 @@ def browse_sites_dataset
 
   case params[:sort_by]
     when 'hits'
+      site_dataset.where!{views > 100}
       site_dataset.order!(:hits.desc, :site_updated_at.desc)
     when 'views'
+      site_dataset.where!{views > 100}
       site_dataset.order!(:views.desc, :site_updated_at.desc)
     when 'newest'
       site_dataset.order!(:created_at.desc, :views.desc)
     when 'oldest'
+      site_dataset.where!{views > 100}
       site_dataset.order!(:created_at, :views.desc)
     when 'random'
+      site_dataset.where!{views > 100}
       site_dataset.where! 'random() < 0.01'
     when 'last_updated'
+      site_dataset.where!{views > 100}
       params[:sort_by] = 'last_updated'
       site_dataset.order!(:site_updated_at.desc, :views.desc)
     else
@@ -46,6 +51,7 @@ def browse_sites_dataset
         site_dataset.order!(:views.desc, :site_updated_at.desc)
       else
         params[:sort_by] = 'last_updated'
+        site_dataset.where!{views > 100}
         site_dataset.order!(:site_updated_at.desc, :views.desc)
       end
   end

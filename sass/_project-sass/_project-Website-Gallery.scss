@@ -104,6 +104,21 @@
       padding: 4% 2%;
     }
   }
+
+  .admin {
+    font-size: 80%;
+    form {
+      display: inline;
+      padding-right: 10px;
+    }
+
+    button {
+      background:none!important;
+      border:none;
+      padding:0!important;
+      cursor: pointer;
+    }
+  }
 }
 
 .neo-SS, .z{

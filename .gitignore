@@ -31,3 +31,4 @@ files/map.txt
 files/sslsites.zip
 .tm_properties
 ./black_box.rb
+.vagrant

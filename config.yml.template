@@ -1,24 +1,24 @@
 development:
-  database: 'postgres://neocities@127.0.0.1/neocities'
+  database: 'postgres://neocities@localhost/neocities'
   database_pool: 1
-  session_secret: SECRET GOES HERE
-  recaptcha_public_key: ENTER PUBLIC KEY HERE
-  recaptcha_private_key: ENTER PRIVATE KEY HERE
-  sidekiq_user: ENTER USER HERE
-  sidekiq_pass: ENTER PASS HERE
-  stripe_publishable_key: fillout
-  stripe_api_key: fillout
+  session_secret: "SECRET GOES HERE"
+  recaptcha_public_key: "ENTER PUBLIC KEY HERE"
+  recaptcha_private_key: "ENTER PRIVATE KEY HERE"
+  sidekiq_user: "ENTER USER HERE"
+  sidekiq_pass: "ENTER PASS HERE"
+  stripe_publishable_key: "ENTER KEY HERE"
+  stripe_api_key: "ENTER KEY HERE"
   ip_hash_salt: "400$8$1$fc21863da5d531c1"
   proxy_pass: 'somethinglongandrandom'
 test:
-  database: 'postgres://neocities@127.0.0.1/neocities_test'
+  database: 'postgres://neocities@localhost/neocities_test'
   database_pool: 1
-  session_secret: SECRET GOES HERE
-  recaptcha_public_key: ENTER PUBLIC KEY HERE
-  recaptcha_private_key: ENTER PRIVATE KEY HERE
-  sidekiq_user: ENTER USER HERE
-  sidekiq_pass: ENTER PASS HERE
-  stripe_publishable_key: fillout
-  stripe_api_key: fillout
+  session_secret: "SECRET GOES HERE"
+  recaptcha_public_key: "ENTER PUBLIC KEY HERE"
+  recaptcha_private_key: "ENTER PRIVATE KEY HERE"
+  sidekiq_user: "ENTER USER HERE"
+  sidekiq_pass: "ENTER PASS HERE"
+  stripe_publishable_key: "ENTER KEY HERE"
+  stripe_api_key: "ENTER KEY HERE"
   ip_hash_salt: "400$8$1$fc21863da5d531c1"
   proxy_pass: 'somethinglongandrandom'

@@ -1,20 +1,21 @@
 <div class="header-Outro">
   <div class="row content single-Col">
-  <h1>Page Not Found (404)</h1>
-  <h3 class="subtitle"></h3>
+    <h1>Page Not Found (404)</h1>
   </div>
 </div>
 
 <div class="content single-Col misc-page">
-  <article>
-    <div class="txt-Center"><img src="/img/cat-larger.png"></div>
+  <article role="article">
+    <div class="txt-Center">
+      <img src="/img/neocitieslogo.svg" style="width:100px; margin: -5px 0;" alt="I can't find what you're looking for!">
+    </div>
     <p>
       Penelope the Neocities Cat tried very hard to locate the page you were looking for, but she couldn't find it. She's an awesome sysadmin. If she couldn't find it, it's probably not there.
     </p>
     <p>
       If you believe this to be in error, please <a href="/contact" title="contact us">contact us</a> and report the problem. Thank you!
     </p>
-    
+
     <% if request.referer %>
       <div class="txt-Center">
         <a class="btn-Action" href="<%= request.referer %>">Go Back</a>
