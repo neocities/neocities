@@ -29,7 +29,10 @@
     .username {
       float: left;
       overflow: hidden;
+      text-overflow: ellipsis;
       width: 63%;
+      height: 1.3em;
+      white-space: nowrap;
     }
     .site-stats {
       float: right;
@@ -42,6 +45,9 @@
       height: 1.4em;
       float: left;
       margin-top: -4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .site-tags .fa-tag {
       vertical-align: -2px;
@@ -54,6 +60,12 @@
     margin-top: 8px;
     margin-bottom: 2px;
     white-space: nowrap;
+    a {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      float: left;
+    }
   }
   
   &.int-Gall{
@@ -70,7 +82,8 @@
         width:32%
       }      
       @media (max-device-width:480px), screen and (max-width:800px){
-        width:49%
+        width:48%;
+        margin:0 1% 12px;
       }
     }
     &.suggestions {
@@ -85,6 +98,10 @@
           width:48%
         } 
       }
+    }
+    
+    @media (max-device-width:480px), screen and (max-width:800px){
+      padding: 4% 2%;
     }
   }
 }
