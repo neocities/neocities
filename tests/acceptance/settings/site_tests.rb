@@ -226,3 +226,119 @@ describe 'site/settings' do
     end
   end
 end
+
+describe 'delete' do
+  include Capybara::DSL
+
+  before do
+    Capybara.reset_sessions!
+    @site = Fabricate :site
+    page.set_rack_session id: @site.id
+    visit "/settings/#{@site[:username]}#delete"
+  end
+
+  after do
+    StripeMock.stop
+  end
+
+  it 'fails for incorrect entered username' do
+    fill_in 'username', with: 'NOPE'
+    click_button 'Delete Site'
+
+    page.body.must_match /Site user name and entered user name did not match/i
+    @site.reload.is_deleted.must_equal false
+  end
+
+  it 'succeeds' do
+    deleted_reason = 'Penelope left a hairball on my site'
+
+    fill_in 'confirm_username', with: @site.username
+    fill_in 'deleted_reason', with: deleted_reason
+    click_button 'Delete Site'
+
+    @site.reload
+    @site.is_deleted.must_equal true
+    @site.deleted_reason.must_equal deleted_reason
+    page.current_path.must_equal '/'
+
+    File.exist?(@site.files_path('./index.html')).must_equal false
+    Dir.exist?(@site.files_path).must_equal false
+
+    path = File.join Site::DELETED_SITES_ROOT, @site.username
+    Dir.exist?(path).must_equal true
+    File.exist?(File.join(path, 'index.html')).must_equal true
+
+    visit "/site/#{@site.username}"
+    page.status_code.must_equal 404
+  end
+
+  it 'stops charging for supporter account' do
+    @stripe_helper = StripeMock.create_test_helper
+    StripeMock.start
+    @stripe_helper.create_plan id: 'supporter', amount: 500
+    @stripe_helper.create_plan id: 'free', amount: 0
+
+    customer = Stripe::Customer.create(
+      card: @stripe_helper.generate_card_token
+    )
+
+    subscription = customer.subscriptions.create plan: 'supporter'
+
+    @site.update(
+      stripe_customer_id: customer.id,
+      stripe_subscription_id: subscription.id,
+      plan_type: 'supporter'
+    )
+
+    @site.plan_type = subscription.plan.id
+    @site.save_changes
+
+    fill_in 'confirm_username', with: @site.username
+    fill_in 'deleted_reason', with: 'derp'
+    click_button 'Delete Site'
+
+    subscription = Stripe::Customer.retrieve(@site.stripe_customer_id).subscriptions.first
+
+    subscription.plan.id.must_equal 'free'
+    @site.reload
+    @site.is_deleted.must_equal true
+    @site.plan_type.must_equal 'free'
+  end
+
+  it 'should fail unless owned by current user' do
+    someone_elses_site = Fabricate :site
+    page.set_rack_session id: @site.id
+
+    page.driver.post "/settings/#{someone_elses_site.username}/delete", {
+      username: someone_elses_site.username,
+      deleted_reason: 'Dade Murphy enters Acid Burns turf'
+    }
+
+    page.driver.status_code.must_equal 302
+    URI.parse(page.driver.response_headers['Location']).path.must_equal '/'
+    someone_elses_site.reload
+    someone_elses_site.is_deleted.must_equal false
+  end
+
+  it 'should succeed if you own the site' do
+    owned_site = Fabricate :site, parent_site_id: @site.id
+    visit "/settings/#{owned_site.username}#delete"
+    fill_in 'confirm_username', with: owned_site.username
+    fill_in 'deleted_reason', with: 'got bored with it'
+    click_button 'Delete Site'
+
+    @site.reload
+    owned_site.reload
+    owned_site.is_deleted.must_equal true
+    owned_site.deleted_reason.must_equal 'got bored with it'
+    @site.is_deleted.must_equal false
+
+    page.current_path.must_equal "/settings"
+  end
+
+  it 'fails to delete parent site if children exist' do
+    owned_site = Fabricate :site, parent_site_id: @site.id
+    visit "/settings/#{@site.username}#delete"
+    page.body.must_match /You cannot delete the parent site without deleting the children sites first/i
+  end
+end

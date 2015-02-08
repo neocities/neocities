@@ -41,6 +41,10 @@ end
 
 get '/signout' do
   require_login
-  session[:id] = nil
+  signout
   redirect '/'
+end
+
+def signout
+  session[:id] = nil
 end

@@ -1,0 +1,27 @@
+<h2>Delete Site</h2>
+<div>
+  <% if @site.parent? && @site.children.count > 0 %>
+    <p>
+      You cannot delete the parent site without deleting the children sites first.
+    </p>
+  <% else %>
+    <form method="POST" action="/settings/<%= @site.username %>/delete">
+      <%== csrf_token_input_html %>
+      <p>
+        <strong style="color: red;">WARNING:</strong> This will delete your site <strong><%= @site.username %> (<%= @site.host %>)</strong>. There is no undo! Be very sure you want to do this.
+      </p>
+
+      <p>
+        <label for="deleted_reason">We're sorry to see you go, but no worries, we're understanding. What's the reason you're deleting your site? We'd love to know so we can make sure we're doing a good job, and improve Neocities in the future. You can <a href="https://neocities.org/contact">contact us</a> too, if you'd like to see if it's something we can fix first.</label>
+         <textarea name="deleted_reason"></textarea>
+      </p>
+
+      <p>
+        <label for="confirm_username">Enter your user/site name to confirm deletion:</label>
+        <input name="confirm_username" type="text">.neocities.org
+      </p>
+
+      <input class="btn-Action" type="submit" value="Delete Site">
+    </form>
+  <% end %>
+</div>

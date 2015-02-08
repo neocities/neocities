@@ -32,3 +32,5 @@ files/sslsites.zip
 .tm_properties
 ./black_box.rb
 .vagrant
+public/banned_sites
+public/deleted_sites

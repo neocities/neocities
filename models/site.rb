@@ -49,6 +49,8 @@ class Site < Sequel::Model
   THUMBNAILS_ROOT      = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_thumbnails_test' : 'site_thumbnails'))
   SCREENSHOTS_URL_ROOT = ENV['RACK_ENV'] == 'test' ? '/site_screenshots_test' : '/site_screenshots'
   THUMBNAILS_URL_ROOT  = ENV['RACK_ENV'] == 'test' ? '/site_thumbnails_test' : '/site_thumbnails'
+  DELETED_SITES_ROOT   = File.join PUBLIC_ROOT, 'deleted_sites'
+  BANNED_SITES_ROOT    = File.join PUBLIC_ROOT, 'banned_sites'
   IMAGE_REGEX          = /jpg|jpeg|png|bmp|gif/
   LOSSLESS_IMAGE_REGEX = /png|bmp|gif/
   LOSSY_IMAGE_REGEX    = /jpg|jpeg/
@@ -376,31 +378,13 @@ class Site < Sequel::Model
   end
 
   def before_destroy
-    raise 'not finished'
     DB.transaction {
-      remove_all_tags
-      profile_comments.destroy
-      profile_commentings.destroy
-      follows.destroy
-      followings.destroy
-      #tips.destroy
-      #tippings.destroy
-      #blocks.destroy
-      #blockings.destroy
-      #reports.destroy
-      #reportings.destroy
-      #stats.destroy
-      #events.destroy
-      #site_changes.destroy
-      # TODO FIND THE REST, ASSOCIATE THEM PROPERLY!!!
-    }
-  end
+      if !Dir.exist? DELETED_SITES_ROOT
+        FileUtils.mkdir DELETED_SITES_ROOT
+      end
 
-  def delete_site!
-    raise 'not finished'
-    DB.transaction {
-      destroy
-      FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'deleted_sites', username)
+      FileUtils.mv files_path, File.join(DELETED_SITES_ROOT, username)
+      remove_all_tags
     }
   end
 
@@ -419,7 +403,12 @@ class Site < Sequel::Model
       self.is_banned = true
       self.updated_at = Time.now
       save(validate: false)
-      FileUtils.mv files_path, File.join(PUBLIC_ROOT, 'banned_sites', username)
+
+      if !Dir.exist? BANNED_SITES_ROOT
+        FileUtils.mkdir BANNED_SITES_ROOT
+      end
+
+      FileUtils.mv files_path, File.join(BANNED_SITES_ROOT, username)
     }
 
     file_list.each do |path|

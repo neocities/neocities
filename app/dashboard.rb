@@ -12,7 +12,7 @@ def dashboard_init
   if !File.directory?(current_site.files_path(params[:dir]))
     if !File.directory?(current_site.files_path)
       flash[:error] = 'Could not find your web site, please contact support.'
-      session[:id] = nil
+      signout
       redirect '/'
     else
       flash[:error] = 'Could not find the requested directory.'
