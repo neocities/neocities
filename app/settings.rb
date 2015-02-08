@@ -18,10 +18,41 @@ end
 get '/settings/:username/?' do |username|
   # This is for the email_unsubscribe below
   pass if Site.select(:id).where(username: username).first.nil?
-
   require_login
   require_ownership_for_settings
   erb :'settings/site'
+end
+
+post '/settings/:username/delete' do
+  require_login
+  require_ownership_for_settings
+
+  if params[:confirm_username] != @site.username
+    flash[:error] = 'Site user name and entered user name did not match.'
+    redirect "/settings/#{@site.username}#delete"
+  end
+
+  if @site.parent? && @site.stripe_customer_id
+    customer = Stripe::Customer.retrieve @site.stripe_customer_id
+    subscription = customer.subscriptions.retrieve @site.stripe_subscription_id
+    subscription.plan = 'free'
+    subscription.save
+    @site.plan_type = 'free'
+    @site.save_changes validate: false
+  end
+
+  @site.deleted_reason = params[:deleted_reason]
+  @site.save validate: false
+  @site.destroy
+
+  flash[:success] = 'Site deleted.'
+
+  if @site.username == current_site.username
+    signout
+    redirect '/'
+  end
+
+  redirect '/settings#sites'
 end
 
 post '/settings/:username/profile' do

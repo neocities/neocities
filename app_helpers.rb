@@ -18,7 +18,7 @@ end
 def require_login
   redirect '/' unless signed_in?
   if session[:banned] || current_site.is_banned || parent_site.is_banned
-    session[:id] = nil
+    signout
     session[:banned] = true
     redirect '/'
   end
@@ -40,7 +40,7 @@ end
 
 def require_unbanned_ip
   if session[:banned] || Site.banned_ip?(request.ip)
-    session[:id] = nil
+    signout
     session[:banned] = true
     flash[:error] = 'Site creation has been banned due to ToS violation/spam. '+
     'If you believe this to be in error, <a href="/contact">contact the site admin</a>.'
