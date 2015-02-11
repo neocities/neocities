@@ -396,7 +396,7 @@
     </div>
   </div>
 
-  <%== erb :'_footer', layout: false%>
+  <%== erb :'_footer', layout: false %>
 </footer>
 
     </div>
@@ -408,7 +408,7 @@
         $.post('/create_validate_all', $(obj.target).serialize(), function(errors) {
           if(errors.length == 0) {
             $.post('/create', $('#createSiteForm').serialize(), function(res) {
-              location.reload()
+              window.location.href = '/welcome'
             })
           } else {
             for(var i=0; i<errors.length;i++) {

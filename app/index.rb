@@ -34,6 +34,12 @@ get '/?' do
   erb :index, layout: false
 end
 
+get '/welcome' do
+  require_login
+  redirect '/' if current_site.plan_type != 'free'
+  erb :'welcome'
+end
+
 get '/tutorials' do
   erb :'tutorials'
 end

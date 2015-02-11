@@ -5,25 +5,41 @@
     if !parent_site
       %{<a href="/#new" class="btn-Action">Sign Up</a>}
     elsif parent_site && parent_site.plan_type == plan_type
-      %{<div class="current-plan">Current Plan</div>}
+      if request.path.match /\/welcome/
+        %{<a href="/" class="btn-Action">Get Started</a>}
+      else
+        %{<div class="current-plan">Current Plan</div>}
+      end
     else
       #if plan_type == 'supporter'
       #  plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]*12}, once per year"
       #else
         plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]}, monthly"
       #end
-      %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="return false" class="btn-Action planPricingButton">#{parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'}</a>}
+
+      if request.path.match /\/welcome/
+        button_title = 'Get Started'
+      else
+        button_title = parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'
+      end
+
+      %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="card = new Skeuocard($('#skeuocard')); return false" class="btn-Action planPricingButton">#{button_title}</a>}
     end
   end
 %>
 
 <section class="section plans">
+  <% if request.path.match /\/welcome/ %>
+    <div class="txt-Center"><img src="/img/heartcat.png"></div>
+  <% end %>
   <h2>
     <% if request.path == '/' %>
       Need more space? We’ve got you covered.
       <br>
       Upgrading gives you more space, bandwidth, features, <strong>and helps us stay independent and keep the free sites free.</strong>
-    <% elsif request.path.match /\/plan/ %>
+    <% elsif request.path.match /\/welcome/ %>
+      Welcome to Neocities!
+    <% else %>
       Support Us
     <% end %>
   </h2>
@@ -33,6 +49,18 @@
       <div class="col-75" style="margin-left: auto; margin-right: auto;">
         <h3 class="subtitle">
           The Neocities Supporter Plan is a way to help sustain the site. When you become a supporter, you are directly helping our quest to bring back the creative, independent web, and to continue to improve Neocities for everyone.
+        </h3>
+      </div>
+    </div>
+  <% elsif request.path.match /\/welcome/ %>
+    <div class="row" style="margin-top: 0px">
+      <div class="col-75" style="margin-left: auto; margin-right: auto;">
+        <h3 class="subtitle">
+          Welcome, and thanks for signing up! We can't wait to see your web site!
+          <br>
+          Neocities does not put advertising on your site, <strong>and we never will</strong>.
+          <br>
+          Instead, Neocities is powered by supporters like you. If you'd like to help us out, we'd love your support. Thank you!
         </h3>
       </div>
     </div>
@@ -65,7 +93,7 @@
       </div>
 
       <div class="col col-25 supporter">
-        <div class="plan-image" data-original-title="Pick me!"></div>
+        <div class="plan-image" data-original-title="Meow!"></div>
         <h3>Supporter</h3>
         <% if parent_site && parent_site.legacy_supporter? %>
           <div class="price">$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site[:plan_type].to_sym] %></div>
@@ -374,16 +402,12 @@
 <% if current_site %>
   <link rel="stylesheet" href="/css/skeuocard.reset.css" />
   <link rel="stylesheet" href="/css/skeuocard.css" />
-  <script src="/js/skeuocard.min.js"></script>
   <script src="/js/cssua.min.js"></script>
   <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
   <script>
     Stripe.setPublishableKey('<%= $config['stripe_publishable_key'] %>')
 
-    $(function() {
-      card = new Skeuocard($("#skeuocard"))
-    })
 
     $('#upgradeForm').submit(function(event) {
       if($('#stripe_token').val() != '')
@@ -427,5 +451,5 @@
     })
   </script>
 
-
+  <script src="/js/skeuocard.min.js"></script>
 <% end %>

@@ -1,5 +1,9 @@
 require_relative './environment.rb'
 
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, js_errors: false)
+end
+
 describe 'signup' do
   include Capybara::DSL
 
@@ -15,7 +19,7 @@ describe 'signup' do
   end
 
   def site_created?
-    page.must_have_content 'Your Feed'
+    page.must_have_content 'Welcome to Neocities'
   end
 
   def visit_signup
@@ -33,7 +37,6 @@ describe 'signup' do
   end
 
   it 'succeeds with valid data' do
-    Capybara.default_driver = :poltergeist
     fill_in_valid
     click_signup_button
     site_created?.must_equal true
@@ -52,7 +55,7 @@ describe 'signup' do
   it 'fails to create for existing site' do
     fill_in_valid
     click_signup_button
-    page.must_have_content 'Your Feed'
+    page.must_have_content 'Welcome to Neocities'
     Capybara.reset_sessions!
     visit_signup
     fill_in 'username', with: @site[:username]
