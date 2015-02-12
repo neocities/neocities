@@ -12,7 +12,7 @@ def browse_sites_dataset
   @current_page = @current_page.to_i
   @current_page = 1 if @current_page == 0
 
-  site_dataset = Site.filter(is_banned: false, is_crashing: false).filter(site_changed: true)
+  site_dataset = Site.filter(is_deleted: false, is_banned: false, is_crashing: false).filter(site_changed: true)
 
   if current_site
     if !current_site.blocking_site_ids.empty?

@@ -220,6 +220,7 @@ class Site < Sequel::Model
       site = get_with_identifier username_or_email
 
       return false if site.nil?
+      return false if site.is_deleted
       site.valid_password? plaintext
     end
 
@@ -385,8 +386,8 @@ class Site < Sequel::Model
 
       FileUtils.mv files_path, File.join(DELETED_SITES_ROOT, username)
       remove_all_tags
-      remove_all_events
-      Event.where(actioning_site_id: id).destroy
+      #remove_all_events
+      #Event.where(actioning_site_id: id).destroy
     }
   end
 
