@@ -385,6 +385,8 @@ class Site < Sequel::Model
 
       FileUtils.mv files_path, File.join(DELETED_SITES_ROOT, username)
       remove_all_tags
+      remove_all_events
+      Event.where(actioning_site_id: id).destroy
     }
   end
 

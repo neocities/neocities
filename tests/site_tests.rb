@@ -5,6 +5,17 @@ def app
 end
 
 describe Site do
+  describe 'destroy' do
+    it 'should delete events properly' do
+      site_commented_on = Fabricate :site
+      site_commenting = Fabricate :site
+      site_commented_on.add_profile_comment actioning_site_id: site_commenting.id, message: 'hi'
+      site_commented_on.events_dataset.count.must_equal 1
+      site_commenting.destroy
+      site_commented_on.events_dataset.count.must_equal 0
+    end
+  end
+
   describe 'can_email' do
     it 'should fail if send_emails is false' do
       site = Fabricate :site
