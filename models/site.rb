@@ -220,6 +220,7 @@ class Site < Sequel::Model
       site = get_with_identifier username_or_email
 
       return false if site.nil?
+      return false if site.is_deleted
       site.valid_password? plaintext
     end
 
@@ -385,6 +386,8 @@ class Site < Sequel::Model
 
       FileUtils.mv files_path, File.join(DELETED_SITES_ROOT, username)
       remove_all_tags
+      #remove_all_events
+      #Event.where(actioning_site_id: id).destroy
     }
   end
 
@@ -542,6 +545,7 @@ class Site < Sequel::Model
         matches = f.grep SPAM_MATCH_REGEX
 
         if !matches.empty?
+=begin
           EmailWorker.perform_async({
             from: 'web@neocities.org',
             reply_to: email,
@@ -552,6 +556,7 @@ class Site < Sequel::Model
               https://#{self.host}/#{relative_path}
             }
           })
+=end
         end
       }
     end
@@ -656,6 +661,11 @@ class Site < Sequel::Model
     begin
       FileUtils.rm files_path(path)
     rescue Errno::EISDIR
+      site_files.each do |site_file|
+        if site_file.path.match /^#{path}\//
+          site_file.destroy
+        end
+      end
       FileUtils.remove_dir files_path(path), true
     rescue Errno::ENOENT
     end

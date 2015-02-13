@@ -6,7 +6,8 @@ end
 
 get '/site/:username/?' do |username|
   site = Site[username: username]
-  not_found if site.nil? || site.is_banned
+  # TODO: There should probably be a "this site was deleted" page.
+  not_found if site.nil? || site.is_banned || site.is_deleted
 
   @title = site.title
 

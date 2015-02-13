@@ -19,7 +19,8 @@ module Sequel
       # so this adds the filter for the first time the class' dataset is accessed for the new model.
       def dataset
         if @_is_deleted_filter_set.nil?
-          @dataset.filter! is_deleted: false
+          #KD: I turned this off because I think it's easier to do this manually.
+          #@dataset.filter! is_deleted: false
           @_is_deleted_filter_set = true
         end
         super
