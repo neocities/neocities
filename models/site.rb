@@ -659,6 +659,11 @@ class Site < Sequel::Model
     begin
       FileUtils.rm files_path(path)
     rescue Errno::EISDIR
+      site_files.each do |site_file|
+        if site_file.path.match /^#{path}\//
+          site_file.destroy
+        end
+      end
       FileUtils.remove_dir files_path(path), true
     rescue Errno::ENOENT
     end

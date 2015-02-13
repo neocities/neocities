@@ -21,7 +21,7 @@ describe '/' do
       @another_site = Fabricate :site
       @followed_site.toggle_follow @another_site
       visit '/'
-      find('.news-item', match: :first).text.must_match /#{@followed_site.username} followed #{@another_site.username}/i
+      find('.news-item', match: :first).text.must_match /#{@followed_site.username} started following the site of #{@another_site.username}/i
     end
 
     it 'loads my activities only' do
@@ -37,7 +37,7 @@ describe '/' do
       @followed_site = Fabricate :site
       @site.toggle_follow @followed_site
       visit "/?event_id=#{@followed_site.events.first.id}"
-      find('.news-item').text.must_match /you followed #{@followed_site.username}/i
+      find('.news-item').text.must_match /you started following the site of #{@followed_site.username}/i
     end
   end
 

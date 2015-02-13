@@ -31,6 +31,20 @@ describe 'site_files' do
       File.exists?(file_path).must_equal false
       SiteFile[site_id: @site.id, path: 'test.jpg'].must_be_nil
     end
+
+    it 'deletes all files in a directory' do
+      upload(
+        'dir' => 'test',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      upload(
+        'dir' => '',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      delete_file filename: 'test'
+      @site.site_files.select {|f| f.path =~ /^test\//}.length.must_equal 0
+      @site.site_files.select {|f| f.path =~ /^test/}.length.must_equal 1
+    end
   end
 
   describe 'upload' do
