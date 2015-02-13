@@ -545,6 +545,7 @@ class Site < Sequel::Model
         matches = f.grep SPAM_MATCH_REGEX
 
         if !matches.empty?
+=begin
           EmailWorker.perform_async({
             from: 'web@neocities.org',
             reply_to: email,
@@ -555,6 +556,7 @@ class Site < Sequel::Model
               https://#{self.host}/#{relative_path}
             }
           })
+=end
         end
       }
     end
