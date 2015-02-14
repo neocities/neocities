@@ -1,15 +1,22 @@
 <div class="header-Outro with-columns">
   <div class="row content">
     <div class="col col-66">
-      <h3>Your Feed</h3>
+      <h3>
+        <% if params[:activity] == 'global' %>
+          Global Feed
+        <% else %>
+          Your Feed
+        <% end %>
+      </h3>
       <div class="feed-filter">
         <% if !@events.empty? && (site.followings_dataset.count > 0) %>
-        <a href="/" <% if params[:activity] != 'mine' %>class="selected"<% end %>>All Activity</a>
+        <a href="/" <% if params[:activity].nil? %>class="selected"<% end %>>All Activity</a>
         &nbsp;&nbsp;
         <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>
             Activity on your profile
         </a>
         <% end %>
+        <a href="/?activity=global" <% if params[:activity] == 'global' %>class="selected"<% end %>>Global Activity</a>
       </div>
     </div>
     <div class="col col-32">
@@ -33,7 +40,7 @@
             </p>
           </div>
         <% end %>
-        
+
         <% if !site.site_changed && site.followings_dataset.count > 0 %>
         <div class="welcome">
           <h4>Thanks for joining the Neocities community!</h4>
@@ -45,7 +52,7 @@
         <% if !@events.empty? %>
           <%== erb :'_news', layout: false, locals: {site: current_site, events: @events} %>
         <% end %>
-        
+
         <% if site.followings_dataset.count == 0 %>
           <% if !@events.empty? %><h2>Sites to Follow</h2><% end %>
           <ul class="row website-Gallery content int-Gall suggestions">
@@ -72,9 +79,9 @@
                 </div>
                 <div class="site-tags">
                   <% if suggested_site.tags.count > 0 %>
-                    <i class="fa fa-tag"></i> 
+                    <i class="fa fa-tag"></i>
                     <% suggested_site.tags.each_with_index do |tag, index| %>
-                      <a class="" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a><% if index != suggested_site.tags.length - 1 %>,<% end %> 
+                      <a class="" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a><% if index != suggested_site.tags.length - 1 %>,<% end %>
                     <% end %>
                   <% end %>
                 </div>
