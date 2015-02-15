@@ -15,7 +15,7 @@ class Event < Sequel::Model
   DEFAULT_GLOBAL_LIMIT = 100
   GLOBAL_VIEWS_MINIMUM = 500
 
-  def self.global_dataset(current_page, limit=DEFAULT_GLOBAL_LIMIT)
+  def self.global_dataset(current_page=1, limit=DEFAULT_GLOBAL_LIMIT)
     select_all(:events).
       order(:created_at.desc).
       paginate(current_page, 100).

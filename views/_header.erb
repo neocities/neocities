@@ -1,29 +1,15 @@
 <header class="header-Base">
 
   <nav class="header-Nav clearfix" role="navigation">
-  
+
     <a href="#!" title="show small screen nav" class="small-Nav">
       <img src="/img/nav-Icon.png" alt="navigation icon" />
     </a>
-    
+
     <ul class="h-Nav constant-Nav">
-      <li>
-        <a href="/browse">Websites</a>
-      </li>
-      <li>
-        <a href="/about">About</a>
-      </li>
-      <li>
-        <a href="/tutorials">Tutorials</a>
-      </li>
-      <li>
-        <a href="/api">API</a>
-      </li>
-      <li>
-        <a href="/plan">Support Us<i class="fa fa-heart"><i class="fa fa-heart"></i></i></a>
-      </li>
+      <%== erb :'_header_links', layout: false %>
     </ul>
-    
+
     <ul class="status-Nav">
       <% if !signed_in? %>
         <li>
@@ -35,7 +21,7 @@
       <% else %>
         <li class="dropdown">
           <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-            <%= current_site.username %> 
+            <%= current_site.username %>
             <span class="info">
               <% if current_site.unseen_notifications_count > 0 %>
                 <span class="notification-value"><%= current_site.unseen_notifications_count %></span>
@@ -46,7 +32,7 @@
           <ul class="dropdown-menu">
             <li><a href="/site/<%= current_site.username %>">Profile</a></li>
             <li>
-              <a href="/?activity=mine"><span class="float-Left">Activity</span> 
+              <a href="/?activity=mine"><span class="float-Left">Activity</span>
                 <% if current_site.unseen_notifications_count > 0 %>
                   <span class="notification-value"><%= current_site.unseen_notifications_count %></span>
                 <% end %>

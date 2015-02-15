@@ -1,0 +1,26 @@
+<div class="header-Outro with-columns">
+  <div class="row content">
+    <div class="col col-100">
+      <h3>Latest Activity on Neocities</h3>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="content misc-page columns">
+    <div class="col-left">
+      <div class="col col-100">
+        <% if !signed_in? %>
+          <div class="welcome">
+            <h4>All the latest Neocities site news!</h4>
+            <p>
+              Neocities allows everyone create a free web site to express themselves. Want to create your own websome site? <a href="/#new">Join us!</a>
+            </p>
+          </div>
+        <% end %>
+
+        <%== erb :'_news', locals: {current_site: nil, events: @events} %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,22 +1,14 @@
 <div class="header-Outro with-columns">
   <div class="row content">
     <div class="col col-66">
-      <h3>
-        <% if params[:activity] == 'global' %>
-          Global Feed
-        <% else %>
-          Your Feed
-        <% end %>
-      </h3>
+      <h3>Your Feed</h3>
       <div class="feed-filter">
         <% if !@events.empty? && (site.followings_dataset.count > 0) %>
         <a href="/" <% if params[:activity].nil? %>class="selected"<% end %>>All Activity</a>
         &nbsp;&nbsp;
-        <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>
-            Activity on your profile
-        </a>
+        <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>Activity on your profile</a>
         <% end %>
-        <a href="/?activity=global" <% if params[:activity] == 'global' %>class="selected"<% end %>>Global Activity</a>
+        <a href="/activity">Global Activity</a>
       </div>
     </div>
     <div class="col col-32">
