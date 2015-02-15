@@ -14,7 +14,7 @@ get '/?' do
       not_found if event.nil?
       events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
     elsif params[:activity] == 'global'
-      events_dataset = Event.select_all(:events).order(:created_at.desc).paginate(@current_page, 100).join_table(:inner, :sites, id: :site_id).where{views > 1500}.or(site_change_id: nil)
+      events_dataset = Event.global_dataset @current_page
     else
       events_dataset = current_site.news_feed(@current_page, 10)
     end

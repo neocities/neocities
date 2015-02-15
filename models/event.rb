@@ -12,6 +12,24 @@ class Event < Sequel::Model
   many_to_one :site
   many_to_one :actioning_site, key: :actioning_site_id, class: :Site
 
+  DEFAULT_GLOBAL_LIMIT = 100
+  GLOBAL_VIEWS_MINIMUM = 500
+
+  def self.global_dataset(current_page, limit=DEFAULT_GLOBAL_LIMIT)
+    select_all(:events).
+      order(:created_at.desc).
+      paginate(current_page, 100).
+      join_table(:inner, :sites, id: :site_id).
+      exclude(
+        Sequel.qualify(:sites, :is_deleted) => false,
+        :is_nsfw => false,
+        :is_banned => false,
+        :is_crashing => false
+      ).
+      where{views > GLOBAL_VIEWS_MINIMUM}.
+      or(site_change_id: nil)
+  end
+
   def created_by?(site)
     return true if actioning_site_id == site.id
     false
