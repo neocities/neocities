@@ -1399,6 +1399,42 @@ a.tag:hover {
     padding: 7px 10px;
   }
 }
+.section.plans.welcome {
+  h3 {
+    color: #5e95a1;
+  }
+  .plan-overview {
+    h3 {
+      color: $c-Brand-1;
+      font-size: $delta;
+    }
+    .col {
+      float: left;
+      background: 0;
+      padding-bottom: 0;
+    }
+    .col.free {
+      width: 29%;
+      background-color: #EBEBEB;
+      border: 1px solid #D5D5D5;
+      border-right-width: 0;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+    .col.supporter {
+      width: 71%;
+      background-color: #F5F5F5;
+      border: 1px solid #E0E0E0;
+      @include box-shadow(-1px 1px 5px 0px rgba(0,0,0,0.1));
+    }
+    .btn-Action {
+      margin-bottom: 1em;
+    }
+    .content {
+      padding: 20px 30px;
+    }
+  }
+}
 .section.bottom-signup {
 //  padding-top: 1em;
 //  padding-bottom: 6.5em;

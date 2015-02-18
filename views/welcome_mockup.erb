@@ -1,0 +1,103 @@
+<section class="section plans welcome">
+  <h2>Welcome to Neocities, <%= current_site.username %>!</h2>
+  <div class="col-66" style="margin-left: auto; margin-right: auto;">
+    <h3 class="subtitle">Free accounts will always be free and ad-free.
+You can support our quest to bring back the creative, independent web by upgrading to the Supporter Plan.</h3>
+  </div>
+  
+  <div class="plan-overview">
+    <div class="col free">
+      <div class="row content">
+        <div class="col col-100">
+          <h3>Free Plan</h3>
+          <div class="plan-image free">
+          </div>
+          <div class="price">$<%= Site::PLAN_FEATURES[:free][:price] %></div>
+          <div class="interval">per month</div>
+  
+          <ul>
+            <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %></strong> <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">storage</span></li>
+            <li><strong><%= Site::PLAN_FEATURES[:free][:bandwidth].to_space_pretty %></strong> <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row content txt-Center">
+        <a href="/" class="btn btn-Action">Continue</a>
+      </div>
+    </div>
+  
+    <div class="col supporter">
+      <div class="row content">
+        <div class="col col-33">
+          <h3>Supporter Plan</h3>
+          <div class="plan-image supporter">
+          </div>
+          <% if parent_site && parent_site.legacy_supporter? %>
+            <div class="price">$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site[:plan_type].to_sym] %></div>
+            <div class="interval">per month, billed annually</div>
+          <% else %>
+            <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
+            <div class="interval">per month</div>
+          <% end %>
+  
+          <ul>
+            <li><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_space_pretty %></strong> <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">storage</span></li>
+            <li><strong>1000 GB</strong> <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
+          </ul>
+  
+          <ul>
+            <li><span data-original-title="No whitelists—you can upload anything you want (no copyrighted content, trojans, or w4r3z, please).">No File Upload Type Restrictions</span></li>
+            <li><span data-original-title="Make as many sites as you want with one account, and easily switch between them.">Unlimited Site Creation</span></li>
+            <li><span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domain Support</span></li>
+            <li><span data-original-title="With WebDAV, you can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">Remote Filesystem Support</span></li>
+            <li><span data-original-title="Upload your SSL certificate for your custom domain name, preventing snoops from seeing your user’s traffic.">Custom SSL Certs (coming soon!)</span></li>
+          </ul>
+        </div>
+      
+        <div class="col col-66">
+          <p>To upgrade, enter your credit card info below:</p>
+          <div><img src="/img/skeuocard.png" style="max-width:377px"></div>
+        </div>
+      
+      </div>
+      
+      <div class="row content txt-Center">
+        <a href="/" class="btn btn-Action">Upgrade for 
+        <% if parent_site && parent_site.legacy_supporter? %>
+          $<%= Site::LEGACY_SUPPORTER_PRICES[parent_site[:plan_type].to_sym] %>
+        <% else %>
+          $<%= Site::PLAN_FEATURES[:supporter][:price] %>
+        <% end %>/mo
+        </a>
+        or pay with <a href="/plan/alternate/">PayPal</a> or <a href="/plan/alternate/">Bitcoin</a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col col-50">
+      <h3><i class="fa fa-users"></i> Powered by supporters like you</h3>
+      <p>Neocities will never sell your personal data or embed advertising on member sites. Instead, we are funded directly by our community through supporter plans and donations. This allows us to base all our decisions on making the best possible web building experience for you, rather than on appeasing ad companies.</p>
+    </div>
+
+
+    <div class="col col-50">
+      <h3><i class="fa fa-lock"></i> Risk-free and secure</h3>
+      <p>You can downgrade back to a free account at any time on the plan page. If you do, we’ll refund the amount you didn’t use.</p>
+
+      <p>We use Stripe and PayPal for payments, and never store your credit card information directly. </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col col-50">
+      <h3><i class="fa fa-globe"></i> Making a better web</h3>
+      <p>Maybe something about our goals to 1. bring back the creative web and 2. give a diverse group of people a welcoming place to learn coding skills...</p>
+    </div>
+
+    <div class="col col-50">
+      <h3><i class="fa fa-github"></i> Giving back</h3>
+      <p>Maybe something about open source...</p>
+    </div>
+  </div>
+</section>
