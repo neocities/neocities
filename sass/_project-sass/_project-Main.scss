@@ -1412,6 +1412,41 @@ a.tag:hover {
       float: left;
       background: 0;
       padding-bottom: 0;
+      
+      ul {
+        clear: both;
+        
+        &.main-features {
+          font-size: 140%;
+          margin-bottom: .7em;
+          li {
+            margin-bottom: .25em;
+          }
+        }
+      }
+      li span {
+        border-bottom: 1px dotted #bbb;
+        cursor: help;
+      }
+      .plan-image {
+          margin: 24px 15px 20px 0;
+          float: left;
+          width: 77px;
+      }
+      .price {
+        font-size: 2.4em;
+        margin-top: 30px;
+      }
+    }
+    .col.free, .col.supporter {
+      padding: 35px 40px 25px 40px;
+      .content {
+        padding: 0;
+      }
+      
+      @media(max-device-width:480px), screen and (max-width:550px) {
+       padding: 14px 10px; 
+      }
     }
     .col.free {
       width: 29%;
@@ -1420,18 +1455,34 @@ a.tag:hover {
       border-right-width: 0;
       margin-top: 15px;
       margin-bottom: 15px;
+      
+      .main-features {
+        margin-bottom: 94px;
+      }
     }
     .col.supporter {
       width: 71%;
       background-color: #F5F5F5;
       border: 1px solid #E0E0E0;
       @include box-shadow(-1px 1px 5px 0px rgba(0,0,0,0.1));
+      .col:first-child {
+        width: 40%;
+      }
+      .col:last-child {
+        width: 60%;
+        margin-top: 16px;
+        p {
+          font-weight: bold;
+          font-size: 100%;
+          color: #666;
+        }
+      }
+    }
+    .row.content.txt-Center {
+      margin-top: 0.6em;
     }
     .btn-Action {
       margin-bottom: 1em;
-    }
-    .content {
-      padding: 20px 30px;
     }
   }
 }

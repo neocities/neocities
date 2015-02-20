@@ -15,7 +15,7 @@ You can support our quest to bring back the creative, independent web by upgradi
           <div class="price">$<%= Site::PLAN_FEATURES[:free][:price] %></div>
           <div class="interval">per month</div>
   
-          <ul>
+          <ul class="main-features">
             <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %></strong> <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">storage</span></li>
             <li><strong><%= Site::PLAN_FEATURES[:free][:bandwidth].to_space_pretty %></strong> <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
           </ul>
@@ -40,7 +40,7 @@ You can support our quest to bring back the creative, independent web by upgradi
             <div class="interval">per month</div>
           <% end %>
   
-          <ul>
+          <ul class="main-features">
             <li><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_space_pretty %></strong> <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">storage</span></li>
             <li><strong>1000 GB</strong> <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
           </ul>
@@ -50,7 +50,7 @@ You can support our quest to bring back the creative, independent web by upgradi
             <li><span data-original-title="Make as many sites as you want with one account, and easily switch between them.">Unlimited Site Creation</span></li>
             <li><span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domain Support</span></li>
             <li><span data-original-title="With WebDAV, you can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">Remote Filesystem Support</span></li>
-            <li><span data-original-title="Upload your SSL certificate for your custom domain name, preventing snoops from seeing your user’s traffic.">Custom SSL Certs (coming soon!)</span></li>
+            <li><span data-original-title="Upload your SSL certificate for your custom domain name, preventing snoops from seeing your user’s traffic.">Custom SSL Certs (coming soon)</span></li>
           </ul>
         </div>
       
