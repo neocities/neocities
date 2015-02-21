@@ -59,7 +59,10 @@ def encoding_fix(file)
   begin
     Rack::Utils.escape_html file
   rescue ArgumentError => e
-    return Rack::Utils.escape_html(file.force_encoding('BINARY')) if e.message =~ /invalid byte sequence in UTF-8/
+    if e.message =~ /invalid byte sequence in UTF-8/ ||
+       e.message =~ /incompatible character encodings/
+      return Rack::Utils.escape_html(file.force_encoding('BINARY'))
+    end
     fail
   end
 end
