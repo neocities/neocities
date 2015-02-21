@@ -1,0 +1,12 @@
+<%= request.request_method %> <%= request.path %>
+
+<% if current_site %>
+  Site: <%= current_site.username %>
+  Email: <%= current_site.email %>
+<% end %>
+
+Params:
+<%= params.inspect %>
+
+Backtrace:
+<%= env['sinatra.error'].backtrace.join("\n") %>

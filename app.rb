@@ -42,9 +42,7 @@ error do
     from: 'web@neocities.org',
     to: 'errors@neocities.org',
     subject: "[Neocities Error] #{env['sinatra.error'].class}: #{env['sinatra.error'].message}",
-    body: "#{request.request_method} #{request.path}\n\n" +
-          (current_site ? "Site: #{current_site.username}\nEmail: #{current_site.email}\n\n" : '') +
-          env['sinatra.error'].backtrace.join("\n")
+    body: erb(:'views/templates/email/error')
   })
 
   if @api
