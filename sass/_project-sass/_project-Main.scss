@@ -1473,7 +1473,7 @@ a.tag:hover {
       }
     }
     .col.free, .col.supporter {
-      padding: 35px 40px 25px 40px;
+      padding: 28px 45px 25px 45px;
       .content {
         padding: 0;
       }
@@ -1487,7 +1487,7 @@ a.tag:hover {
       margin-bottom: 15px;
       
       .main-features {
-        margin-bottom: 96px;
+        margin-bottom: 97px;
       }
     }
     .col.supporter {
@@ -1495,17 +1495,22 @@ a.tag:hover {
       background-color: #F5F5F5;
       border: 1px solid #E0E0E0;
       @include box-shadow(-1px 1px 5px 0px rgba(0,0,0,0.1));
+      margin-bottom: 1.1em!important;
+      
       .col:first-child {
         width: 38%;
       }
       .col:last-child {
         width: 62%;
-        margin-top: 16px;
+        margin-top: .75em;
         p {
           font-weight: bold;
           font-size: 100%;
-          color: #666;
+          color: #777;
         }
+      }
+      .btn-Action {
+        margin-right: 3px;
       }
     }
     @media(max-device-width:480px), screen and (max-width:550px) { 
