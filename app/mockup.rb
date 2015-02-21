@@ -19,4 +19,9 @@ end
 get '/tips_mockup' do
   erb :'tips_mockup'
 end
+
+get '/welcome_mockup' do
+  require_login
+  erb :'welcome_mockup', locals: {site: current_site}
+end
 # :nocov:
