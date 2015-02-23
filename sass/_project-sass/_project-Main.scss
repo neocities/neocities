@@ -1108,10 +1108,6 @@ a.tag:hover {
 .section.features .col {
   padding-left: 40px;
   
-  :first-child {
-    padding-left: 0;
-  }
-  
   @media (max-device-width:480px), screen and (max-width:800px){
     padding-left: 20px;
     width: 100%;
@@ -1400,8 +1396,46 @@ a.tag:hover {
   }
 }
 .section.plans.welcome {
+  padding: 55px 3%;
+  
   h3 {
     color: #5e95a1;
+  }
+  .subtitle {
+    width: 68%;
+    margin-left: auto;
+    margin-right: auto;
+    
+    @media(max-device-width:480px), screen and (max-width:550px) {
+      width: 100%;
+    }
+  }
+  .plan-overview, >.row {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 990px;
+    min-width: 900px;
+    
+    @media(max-device-width:480px), screen and (max-width:550px) {
+      min-width: 0;
+    }
+  }
+  >.row >.col {
+    padding-left: 40px;
+  
+    &:first-child {
+      padding-left: 0;
+    }
+    
+    @media(max-device-width:480px), screen and (max-width:550px) {
+      padding-left: 0;
+      width: 100%;
+    }
+  }
+  >.row {
+    @media(max-device-width:480px), screen and (max-width:550px) {
+      margin-bottom: 0;
+    }
   }
   .plan-overview {
     h3 {
@@ -1439,13 +1473,9 @@ a.tag:hover {
       }
     }
     .col.free, .col.supporter {
-      padding: 35px 40px 25px 40px;
+      padding: 28px 45px 25px 45px;
       .content {
         padding: 0;
-      }
-      
-      @media(max-device-width:480px), screen and (max-width:550px) {
-       padding: 14px 10px; 
       }
     }
     .col.free {
@@ -1457,7 +1487,7 @@ a.tag:hover {
       margin-bottom: 15px;
       
       .main-features {
-        margin-bottom: 94px;
+        margin-bottom: 97px;
       }
     }
     .col.supporter {
@@ -1465,17 +1495,30 @@ a.tag:hover {
       background-color: #F5F5F5;
       border: 1px solid #E0E0E0;
       @include box-shadow(-1px 1px 5px 0px rgba(0,0,0,0.1));
+      margin-bottom: 1.1em!important;
+      
       .col:first-child {
-        width: 40%;
+        width: 38%;
       }
       .col:last-child {
-        width: 60%;
-        margin-top: 16px;
+        width: 62%;
+        margin-top: .75em;
         p {
           font-weight: bold;
           font-size: 100%;
-          color: #666;
+          color: #777;
         }
+      }
+      .btn-Action {
+        margin-right: 3px;
+      }
+    }
+    @media(max-device-width:480px), screen and (max-width:550px) { 
+      .col.free, .col.supporter, .col.supporter .col {
+        width: 100%!important;
+      }
+      .col.free .main-features {
+        margin-bottom: 10px;
       }
     }
     .row.content.txt-Center {
