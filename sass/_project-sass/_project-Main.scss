@@ -1396,7 +1396,7 @@ a.tag:hover {
   }
 }
 .section.plans.welcome {
-  padding: 55px 3%;
+  padding: 63px 3%;
   
   h3 {
     color: #5e95a1;
@@ -1433,9 +1433,7 @@ a.tag:hover {
     }
   }
   >.row {
-    @media(max-device-width:480px), screen and (max-width:550px) {
-      margin-bottom: 0;
-    }
+    margin-bottom: 0;
   }
   .plan-overview {
     h3 {
@@ -1487,7 +1485,7 @@ a.tag:hover {
       margin-bottom: 15px;
       
       .main-features {
-        margin-bottom: 97px;
+        margin-bottom: 76px;
       }
     }
     .col.supporter {
@@ -1495,7 +1493,7 @@ a.tag:hover {
       background-color: #F5F5F5;
       border: 1px solid #E0E0E0;
       @include box-shadow(-1px 1px 5px 0px rgba(0,0,0,0.1));
-      margin-bottom: 1.1em!important;
+      margin-bottom: 1.2em!important;
       
       .col:first-child {
         width: 38%;
@@ -1507,6 +1505,13 @@ a.tag:hover {
           font-weight: bold;
           font-size: 100%;
           color: #777;
+          margin-bottom: 1em;
+        }
+        .skeuocard.js .face {
+          @include box-shadow(0px 1px 2px 0px rgba(0,0,0,0.25));
+          &.valid {
+            @include box-shadow(0 0 10px #00cfa7);
+          }
         }
       }
       .btn-Action {
