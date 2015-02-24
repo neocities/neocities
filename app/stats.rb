@@ -1,5 +1,5 @@
 get '/stats/?' do
-  expires 14400, :public, :must_revalidate if self.class.production? # 4 hours
+  # expires 14400, :public, :must_revalidate if self.class.production? # 4 hours
 
   @stats = {
     total_sites: Site.count,
