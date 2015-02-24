@@ -26,7 +26,7 @@ gem 'thread'
 gem 'scrypt'
 gem 'rack-cache'
 
-platform :mri do
+platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
   gem 'pg'
   gem 'sequel_pg', require: nil
@@ -35,7 +35,7 @@ platform :mri do
 
   group :development, :test do
     gem 'pry'
-    gem 'pry-byebug'
+    # gem 'pry-byebug', platform: 'mri'
   end
 end
 
@@ -67,7 +67,7 @@ group :test do
   gem 'webmock',               require: nil
   gem 'stripe-ruby-mock',      '~> 2.0.1', require: 'stripe_mock'
 
-  platform :mri do
+  platform :mri, :rbx do
     gem 'simplecov',        require: nil
   end
 end
