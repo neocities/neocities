@@ -240,6 +240,7 @@ DEPENDENCIES
   pg
   poltergeist
   pry
+  pry-byebug
   puma
   rack-cache
   rack-recaptcha

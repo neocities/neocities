@@ -35,7 +35,12 @@ platform :mri, :rbx do
 
   group :development, :test do
     gem 'pry'
-    # gem 'pry-byebug', platform: 'mri'
+  end
+end
+
+platform :mri do
+  group :development, :test do
+    gem 'pry-byebug', platform: 'mri'
   end
 end
 
