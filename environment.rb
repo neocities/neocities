@@ -32,12 +32,14 @@ DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $c
 DB.extension :pagination
 
 # :nocov:
+=begin
 if defined?(Pry)
   Pry.commands.alias_command 'c', 'continue'
   Pry.commands.alias_command 's', 'step'
   Pry.commands.alias_command 'n', 'next'
   Pry.commands.alias_command 'f', 'finish'
 end
+=end
 # :nocov:
 
 Sidekiq::Logging.logger = nil unless ENV['RACK_ENV'] == 'production'

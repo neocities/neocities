@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="/css/skeuocard.reset.css" />
+<link rel="stylesheet" href="/css/skeuocard.css" />
+<script src="/js/cssua.min.js"></script>
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+<script>
+  Stripe.setPublishableKey('<%= $config['stripe_publishable_key'] %>')
+
+
+  $('#upgradeForm').submit(function(event) {
+    if($('#stripe_token').val() != '')
+      return true
+
+    var signupform = $(event.target)
+
+    <% if current_site && parent_site.stripe_subscription_id %>
+      return true
+    <% end %>
+
+    var planError = $('#plan_error')
+    planError.css('display', 'none')
+    signupform.find(':submit').prop('disabled', true)
+
+    Stripe.card.createToken({
+      number: $('[name="cc_number"]').val(),
+      cvc: $('[name="cc_cvc"]').val(),
+      exp_month: $('[name="cc_exp_month"]').val(),
+      exp_year: $('[name="cc_exp_year"]').val()
+    }, function(status, response) {
+      console.log(response)
+      if(response.error) {
+        planError.text(response.error.message)
+        planError.css('display', 'block')
+        window.location = '#plan_error_link'
+        signupform.find(':submit').prop('disabled', false)
+        return false
+      } else {
+        $('.credit-card-input').text('Thank you!')
+        $('#stripe_token').val(response.id)
+        signupform.submit()
+      }
+    })
+
+    return false
+  })
+
+  $(function() {
+    $('#upgradeForm').find(':submit').prop('disabled', false)
+  })
+</script>
+
+<script src="/js/skeuocard.min.js"></script>

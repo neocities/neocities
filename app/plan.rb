@@ -94,6 +94,6 @@ get '/plan/thanks' do
   erb :'plan/thanks'
 end
 
-get '/plan/alternate' do
+get '/plan/alternate/?' do
   erb :'/plan/alternate'
 end

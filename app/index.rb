@@ -39,7 +39,7 @@ end
 get '/welcome' do
   require_login
   redirect '/' if current_site.plan_type != 'free'
-  erb :'welcome'
+  erb :'welcome', locals: {site: current_site}
 end
 
 get '/tutorials' do
