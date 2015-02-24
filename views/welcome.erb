@@ -1,6 +1,3 @@
-<style>
-  p { font-size: 200px; }
-</style>
 <section class="section plans welcome">
   <h2>Welcome to Neocities, <%= current_site.username %>!</h2>
   <h3 class="subtitle">Free accounts will always be free and ad-free.
@@ -55,7 +52,7 @@ You can support our quest to bring back the creative, independent web by upgradi
         </div>
 
         <div class="col col-66">
-          <p>To upgrade, enter your credit card info below:</p>
+          <p class="instructions">To upgrade, enter your credit card info below:</p>
           <div>
             <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
             <form id="upgradeForm" method="POST" action="/plan/update">
