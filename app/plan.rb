@@ -94,6 +94,11 @@ get '/plan/thanks' do
   erb :'plan/thanks'
 end
 
+get '/plan/thanks-paypal' do
+  require_login
+  erb :'plan/thanks-paypal'
+end
+
 get '/plan/alternate/?' do
   erb :'/plan/alternate'
 end
