@@ -493,7 +493,7 @@ class Site < Sequel::Model
     #  extname = uploaded_file[:filename]
     #end
 
-    unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/) &&
+    unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/ || mime_type =~ /inode\/x-empty/) &&
            Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
       return false
     end
