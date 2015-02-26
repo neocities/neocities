@@ -227,6 +227,8 @@
     $('#uploadingOverlay').css('display', 'none')
   }
 
+  allUploadsComplete = false
+
   Dropzone.options.uploads = {
     paramName: 'files',
     maxFilesize: <%= current_site.remaining_space.to_mb %>,
@@ -235,8 +237,9 @@
     dictDefaultMessage: '',
     uploadMultiple: true,
     init: function() {
-      this.on("successmultiple", function(file) {
-        location.reload()
+      this.on("completemultiple", function(file) {
+        if(allUploadsComplete == true)
+          location.reload()
       })
 
       this.on("error", function(file, errorMessage) {
@@ -246,6 +249,9 @@
       })
 
       this.on("totaluploadprogress", function(progress, totalBytes, totalBytesSent) {
+        if(progress == 100)
+          allUploadsComplete = true
+
         showUploadProgress()
         $('#progressBar').css('display', 'block')
         $('#uploadingProgress').css('width', progress+'%')
