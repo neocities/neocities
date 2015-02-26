@@ -57,6 +57,10 @@
               </li>
             <% end %>
 
+            <% if current_site.is_admin %>
+              <li><a href="/admin">Admin</a></li>
+            <% end %>
+
             <li><a href="/signout">Sign Out</a></li>
           </ul>
         </li>
