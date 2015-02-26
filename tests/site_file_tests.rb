@@ -48,6 +48,11 @@ describe 'site_files' do
   end
 
   describe 'upload' do
+    it 'works with empty files' do
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/empty.js', 'text/javascript')
+      File.exists?(@site.files_path('empty.js')).must_equal true
+    end
+
     it 'manages files with invalid UTF8' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/invalidutf8.html', 'text/html')
       File.exists?(@site.files_path('invalidutf8.html')).must_equal true

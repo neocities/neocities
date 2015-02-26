@@ -110,6 +110,17 @@ end
 get %r{\/site_files\/text_editor\/(.+)} do
   require_login
   @filename = params[:captures].first
+  extname = File.extname @filename
+
+  @ace_mode = case extname
+    when /htm|html/ then 'html'
+    when /js/ then 'javascript'
+    when /md/ then 'markdown'
+    when /css/ then 'css'
+    else
+      nil
+  end
+
   begin
     @file_data = current_site.get_file @filename
   rescue Errno::ENOENT

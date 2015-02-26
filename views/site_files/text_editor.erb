@@ -2,7 +2,7 @@
   html {
     overflow-y: hidden;
   }
-  #editor { 
+  #editor {
     position: absolute;
     top: 0;
     right: 0;
@@ -133,14 +133,14 @@
               $('#editorUpdates').fadeOut();  //.addClass('hidden');
             }, 2000)
           }
-          
+
         } else {
           $('#saveButton').tooltip('show')
           $('#editorUpdates span').text(response)
         }
         $('#editorUpdates').fadeIn()
         $('#editorUpdates').removeClass('hidden')
-        
+
       }
     })
   }
@@ -150,7 +150,9 @@
   $(document).ready(function() {
     editor = ace.edit("editor")
     setTheme()
-    editor.getSession().setMode("ace/mode/html")
+    <% if @ace_mode %>
+      editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
+    <% end %>
     editor.getSession().setTabSize(2)
     editor.getSession().setUseWrapMode(true)
     editor.setFontSize(14)
