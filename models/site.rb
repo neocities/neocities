@@ -68,6 +68,7 @@ class Site < Sequel::Model
     /PHP\.Hide/
   ]
 
+  PHISHING_FORM_REGEX = /www.formbuddy.com\/cgi-bin\/form.pl/i
   SPAM_MATCH_REGEX = ENV['RACK_ENV'] == 'test' ? /pillz/ : /#{$config['spam_smart_filter'].join('|')}/i
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
   EDITABLE_FILE_EXT = /html|htm|txt|js|css|md|manifest/i
@@ -481,7 +482,18 @@ class Site < Sequel::Model
 
   def okay_to_upload?(uploaded_file)
     return true if [:supporter].include?(plan_type.to_sym)
+    return false if self.class.possible_phishing?(uploaded_file)
     self.class.valid_file_type?(uploaded_file)
+  end
+
+  def self.possible_phishing?(uploaded_file)
+    if File.extname(uploaded_file[:filename]).match EDITABLE_FILE_EXT
+      open(uploaded_file[:tempfile].path, 'r:binary') {|f|
+        matches = f.grep PHISHING_FORM_REGEX
+        return true unless matches.empty?
+      }
+    end
+    false
   end
 
   def self.valid_file_type?(uploaded_file)
@@ -538,27 +550,6 @@ class Site < Sequel::Model
 
     if site_file && site_file.sha1_hash == uploaded_sha1
       return false
-    end
-
-    if pathname.extname.match EDITABLE_FILE_EXT
-      open(uploaded.path, 'r:binary') {|f|
-        matches = f.grep SPAM_MATCH_REGEX
-
-        if !matches.empty?
-=begin
-          EmailWorker.perform_async({
-            from: 'web@neocities.org',
-            reply_to: email,
-            to: 'spam@neocities.org',
-            subject: "[Neocities SPAM]: #{username}",
-            body: %{
-              #{username}
-              https://#{self.host}/#{relative_path}
-            }
-          })
-=end
-        end
-      }
     end
 
     if relative_path == 'index.html' && opts[:new_install] != true

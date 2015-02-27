@@ -48,6 +48,11 @@ describe 'site_files' do
   end
 
   describe 'upload' do
+    it 'fails for suspected phishing' do
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/phishing.html', 'text/html')
+      File.exists?(@site.files_path('phishing.html')).must_equal false
+    end
+
     it 'works with empty files' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/empty.js', 'text/javascript')
       File.exists?(@site.files_path('empty.js')).must_equal true
