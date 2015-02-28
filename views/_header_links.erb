@@ -1,4 +1,4 @@
-<% if request.path == '/' %>
+<% if request.path == '/' && !signed_in? %>
   <li>
     <a href="/">Neocities</a>
   </li>
@@ -8,9 +8,6 @@
   </li>
   <li>
     <a href="/activity">Activity</a>
-  </li>
-  <li>
-    <a href="/about">About</a>
   </li>
   <li>
     <a href="/tutorials">Tutorials</a>
