@@ -63,6 +63,7 @@ describe 'site page' do
     page.must_have_content /#{site.username}/
   end
 
+=begin
   it 'allows site blocking' do
     Capybara.default_driver = :poltergeist
     tag = SecureRandom.hex 10
@@ -88,6 +89,7 @@ describe 'site page' do
     site.blockings.length.must_equal 1
     site.blockings.first.site_id.must_equal blocked_site.id
   end
+=end
 
   it '404s if site is banned' do
     site = Fabricate :site
