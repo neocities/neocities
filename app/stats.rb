@@ -56,7 +56,10 @@ get '/stats/?' do
     sub[:status] = 'active'
     plan = customer[:subscriptions][:data].first[:plan]
 
-    sub[:amount] = (plan[:amount] / 100.0).round(2)
+    sub[:amount_without_fees] = (plan[:amount] / 100.0).round(2)
+    sub[:percentage_fee] = (sub[:amount_without_fees]/(100/2.9)).ceil_to(2)
+    sub[:fixed_fee] = 0.30
+    sub[:amount] = sub[:amount_without_fees] - sub[:percentage_fee] - sub[:fixed_fee]
 
     if(plan[:interval] == 'year')
       sub[:amount] = (sub[:amount] / 12).round(2)
