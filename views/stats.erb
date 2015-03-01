@@ -68,7 +68,7 @@
     </table>
 
     <h2>Supporters</h2>
-    <h3>Current Recurring Monthly Revenue: <strong><%= format("$%.2f", @stats[:monthly_revenue]) %> (<%= format("$%.2f", @stats[:monthly_revenue]*12) %>/year)</strong>
+    <h3>Current Recurring Monthly Revenue (after fees): <strong><%= format("$%.2f", @stats[:monthly_revenue]) %> (<%= format("$%.2f", @stats[:monthly_revenue]*12) %>/year)</strong>
     <br>
     Active Supporters: <strong><%= @stats[:subscriptions].select {|s| s[:status] == 'active' }.length %></strong>
     <br>
