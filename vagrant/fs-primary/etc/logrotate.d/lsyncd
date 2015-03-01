@@ -1,0 +1,13 @@
+/var/log/lsyncd*.log {
+  monthly
+  missingok
+  rotate 7
+  compress
+  delaycompress
+  notifempty
+  su root root
+  sharedscripts
+  postrotate
+    [ -s /run/lsyncd.pid ] && /usr/sbin/service lsyncd restart > /dev/null 2>/dev/null || true
+  endscript
+}
