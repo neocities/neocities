@@ -28,8 +28,8 @@
 .footer-Content{	
   padding-top:20px;
   padding-bottom:20px;
-  padding-left: 40px;
-  padding-right: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
   @media (max-device-width:480px), screen and (max-width:800px){
     padding-left: 20px; 
   }
@@ -154,9 +154,15 @@
     }
   }
 }
-.credits{margin-bottom:0}
+.credits{
+  margin-bottom: 0;
+  padding-left: 0;
+  width: 55%;
+}
 .footer-Nav{
   text-transform:uppercase;
+  width: 45%;
+  padding-left: 0;
   
   .h-Nav{float:right;
     @media (max-device-width:480px), screen and (max-width:800px){
