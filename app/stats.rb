@@ -36,7 +36,15 @@ get '/stats/?' do
 
   @stats[:monthly_stats] = monthly_stats
 
-  customers = Stripe::Customer.all limit: 100000
+  if $stripe_cache && Time.now < $stripe_cache[:time] + 14400
+    customers = $stripe_cache[:customers]
+  else
+    customers = Stripe::Customer.all limit: 100000
+    $stripe_cache = {
+      customers: customers,
+      time: Time.now
+    }
+  end
 
   @stats[:monthly_revenue] = 0.0
 
