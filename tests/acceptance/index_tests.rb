@@ -47,7 +47,7 @@ describe '/' do
     it 'loads static info pages' do
       links = [
         ['About', 'about'],
-        ['Tutorials', 'tutorials'],
+        ['Learn', 'tutorials'],
         ['Donate', 'donate'],
         ['API', 'api'],
         ['Terms', 'terms'],
