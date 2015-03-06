@@ -8,6 +8,8 @@ get '/activity' do
     global_dataset.where! Sequel.qualify(:events, :id) => params[:event_id]
   end
 
+  binding.pry
+
   @events = global_dataset.all
 
   erb :'activity'
