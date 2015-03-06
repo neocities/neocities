@@ -65,3 +65,7 @@ end
 get '/press' do
   erb :'press'
 end
+
+get '/legal/?' do
+  erb :'legal'
+end
