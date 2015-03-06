@@ -20,12 +20,10 @@ class Event < Sequel::Model
       order(:created_at.desc).
       paginate(current_page, 100).
       join_table(:inner, :sites, id: :site_id).
-      exclude(
-        Sequel.qualify(:sites, :is_deleted) => false,
-        :is_nsfw => false,
-        :is_banned => false,
-        :is_crashing => false
-      ).
+      exclude(Sequel.qualify(:sites, :is_deleted) => false).
+      exclude(is_nsfw: false).
+      exclude(is_banned: false).
+      exclude(is_crashing: false).
       where{views > GLOBAL_VIEWS_MINIMUM}.
       or(site_change_id: nil)
   end
