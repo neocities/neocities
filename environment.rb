@@ -131,9 +131,3 @@ if ENV['RACK_ENV'] != 'development'
   # Sass::Plugin.options[:never_update] = true
   Sass::Plugin.options[:full_exception] = false
 end
-
-Namecheap.configure do |config|
-  config.key = $config['namecheap_api_key']
-  config.username = $config['namecheap_api_username']
-  config.client_ip = '67.139.65.163'
-end

@@ -25,7 +25,6 @@ gem 'filesize'
 gem 'thread'
 gem 'scrypt'
 gem 'rack-cache'
-gem 'namecheap'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

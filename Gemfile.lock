@@ -74,9 +74,6 @@ GEM
       uuidtools (>= 2.1.0)
     hashie (2.0.5)
     hiredis (0.5.0)
-    httparty (0.13.3)
-      json (~> 1.8)
-      multi_xml (>= 0.5.2)
     i18n (0.6.9)
     jimson-temp (0.9.5)
       blankslate (>= 3.1.2)
@@ -107,11 +104,7 @@ GEM
     mocha (1.0.0)
       metaclass (~> 0.0.1)
     multi_json (1.10.1)
-    multi_xml (0.5.5)
     multipart-post (2.0.0)
-    namecheap (0.3.0)
-      activesupport (>= 3.0.0)
-      httparty
     netrc (0.7.7)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
@@ -252,7 +245,6 @@ DEPENDENCIES
   minitest
   minitest-reporters
   mocha
-  namecheap
   pg
   poltergeist
   pry
