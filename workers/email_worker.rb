@@ -5,7 +5,11 @@ class EmailWorker
   def perform(args={})
     unsubscribe_token = Site.email_unsubscribe_token args['to']
 
-    footer = "\n\n---\nYou are receiving this email because you have a Neocities site. If you would like to subscribe from Neocities emails, just visit this url:\nhttps://neocities.org/settings/unsubscribe_email?email=#{Rack::Utils.escape args['to']}&token=#{unsubscribe_token}"
+    if args['no_footer']
+      footer = ''
+    else
+      footer = "\n\n---\nYou are receiving this email because you have a Neocities site. If you would like to subscribe from Neocities emails, just visit this url:\nhttps://neocities.org/settings/unsubscribe_email?email=#{Rack::Utils.escape args['to']}&token=#{unsubscribe_token}"
+    end
 
     Mail.deliver do
       # TODO this is not doing UTF-8 properly.
