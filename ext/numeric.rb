@@ -12,9 +12,9 @@ class Numeric
   def to_bytes_pretty
     space = (self.to_f / ONE_MEGABYTE).round(2)
     space = space.to_i if space.denominator == 1
-    if space >= 1000000
-      "#{space/1000000} TB"
-    elsif space >= 1000
+#    if space >= 1000000
+#      "#{space/1000000} TB"
+    if space >= 1000
       "#{space/1000} GB"
     else
       "#{space} MB"

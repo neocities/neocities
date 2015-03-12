@@ -90,8 +90,8 @@ class Site < Sequel::Model
 
   PLAN_FEATURES[:supporter] = {
     name: 'Supporter',
-    space: Filesize.from('5GB').to_i,
-    bandwidth: Filesize.from('1TB').to_i,
+    space: Filesize.from('10GB').to_i,
+    bandwidth: Filesize.from('2TB').to_i,
     price: 5,
     unlimited_site_creation: true,
     custom_ssl_certificates: true,
