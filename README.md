@@ -6,7 +6,7 @@ The web site for Neocities! It's open source. Want a feature on the site? Send a
 
 ## Getting Started
 
-Neocities can be quickly launched in development mode with (Vagrant)[https://www.vagrantup.com]. Vagrant builds a virtual machine that automatically installs everything you need to run Neocities as a developer. Install Vagrant, then from the command line:
+Neocities can be quickly launched in development mode with [Vagrant](https://www.vagrantup.com). Vagrant builds a virtual machine that automatically installs everything you need to run Neocities as a developer. Install Vagrant, then from the command line:
 
 ```
 vagrant up --provision
@@ -26,7 +26,7 @@ Now you can access the running site from your browser: http://127.0.0.1:9292
 
 If you'd like to fix a bug, or make an improvement, or add a new feature, it's easy! Just send us a Pull Request.
 
-1. Fork it ( http://github.com/YOURUSERNAME/neocities/fork )
+1. Fork it (<http://github.com/YOURUSERNAME/neocities/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
