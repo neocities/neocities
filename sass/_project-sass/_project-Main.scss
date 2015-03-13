@@ -1786,3 +1786,14 @@ a.tag:hover {
     content: none;
   }
 }
+.hide-on-mobile {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    display: none;
+  }
+}
+.show-on-mobile {
+  display: none;
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    display: inline;
+  }
+}

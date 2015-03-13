@@ -21,7 +21,7 @@
     <form id="search_criteria" action="/browse" method="GET">
       <div class="col col-50 filter">
         <fieldset class="grouping">
-          <label class="text-Label" for="sort_by">Sort By:</label>
+          <label class="text-Label" for="sort_by">Sort by:</label>
           <div class="select-Container">
             <select name="sort_by" id="sort_by" class="input-Select">
               <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
@@ -43,7 +43,7 @@
       <div class="col col-50 filter">
         <form method="GET" action="browse">
         <fieldset class="grouping">
-        <label class="text-Label" for="tag">Search by tag:</label>
+        <label class="text-Label" for="tag"><span class="hide-on-mobile">Search by </span>Tag:</label>
         <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
         <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Search">
         </fieldset>
@@ -79,11 +79,15 @@
           </div>
           <div class="site-stats">
             <a href="/site/<%= site.username %>">
+              <span class="show-on-mobile">
+                <i class="fa fa-eye"></i>
+              </span>
               <% if params[:sort_by] == 'hits' %>
-                <%= site.hits.format_large_number %>&nbsp;hit<%= site.hits == 1 ? '' : 's' %>
+                <%= site.hits.format_large_number %><span class="hide-on-mobile">&nbsp;hit<%= site.hits == 1 ? '' : 's' %></span>
               <% else %>
-                <%= site.views.format_large_number %>&nbsp;view<%= site.views == 1 ? '' : 's' %>
+                <%= site.views.format_large_number %><span class="hide-on-mobile">&nbsp;view<%= site.views == 1 ? '' : 's' %></span>
               <% end %>
+
             </a>
           </div>
           <div class="site-tags">
