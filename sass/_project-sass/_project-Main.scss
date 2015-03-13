@@ -110,9 +110,19 @@
 .interior .header-Outro .col.col-50.signup-Area {
   padding-left: 0;
 }
-.interior .header-Outro.dashboard .col.col-50.signup-Area {
-  width: 293px!important;
-  float: left;
+.interior .header-Outro.dashboard {
+  .col.col-50.signup-Area {
+    width: 293px!important;
+    float: left;
+  }
+  .site-url {
+    margin-top: -9px;
+  } 
+  .btn-Action {
+    font-weight: normal;
+    font-size: 12px;
+    padding: 7px 15px;
+  }
 }
 .interior .header-Outro a {color:#E93250}
 .interior .header-Outro .btn-Action {color:#fff}
