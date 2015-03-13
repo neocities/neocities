@@ -76,7 +76,13 @@ post '/plan/update' do
     else
       site.send_email(
         subject: "[Neocities] You've become a supporter!",
-        body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(self, plan_name: Site::PLAN_FEATURES[params[:plan_type].to_sym][:name], plan_space: Site::PLAN_FEATURES[params[:plan_type].to_sym][:space].to_space_pretty)
+        body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(
+          self, {
+            username:   site.username,
+            plan_name:  Site::PLAN_FEATURES[params[:plan_type].to_sym][:name],
+            plan_space: Site::PLAN_FEATURES[params[:plan_type].to_sym][:space].to_space_pretty,
+            plan_bw:    Site::PLAN_FEATURES[params[:plan_type].to_sym][:bandwidth].to_space_pretty
+        })
       )
     end
   end
