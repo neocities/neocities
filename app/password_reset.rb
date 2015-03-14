@@ -41,7 +41,7 @@ the Neocities Cat
 end
 
 get '/password_reset_confirm' do
-  if params[:token].nil? || params[:token].empty?
+  if params[:token].nil? || params[:token].strip.empty?
     flash[:error] = 'Could not find a site with this token.'
     redirect '/'
   end
