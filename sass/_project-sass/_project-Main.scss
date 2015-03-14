@@ -15,6 +15,10 @@
 .content, .footer-Content {
 	padding: 20px 3%;
   
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    padding: 20px 7%;
+  }
+  
   @media screen and (min-width:1300px){
     padding: 20px 0;
   }
@@ -30,6 +34,10 @@
 .interior .header-Outro {
   padding-top: 30px;
   overflow: hidden;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    padding-top: 15px;
+  }
 }
 .interior .header-Outro h1 {
   font-size: 2.5em;
@@ -56,13 +64,6 @@
   color: #e93250;
   font-weight: bold;
 }
-.interior .header-Outro .row.content {
-  padding-left: 3%;
-  padding-right: 3%;
-  h1, h2, h3 {
-    padding-left: 2px;
-  }
-}
 .interior .header-Outro .subtitle {
   font-size: 1em;
   margin-top: -15px;
@@ -77,6 +78,10 @@
   -webkit-box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.10);
   box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.10);
   padding: 25px 3% 40px 3%;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    padding: 22px 7% 40px 7%;
+  }
   
   h1, h2, h3, h4, h5, h6 {
     margin-top: 1em;
@@ -555,6 +560,10 @@
 }
 .interior .header-Outro.with-columns .col {
   padding: 25px 0 8px 30px;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    padding: 10px 0 0 27px;
+  }
 }
 .interior .header-Outro.with-columns .col-32 {
   width: 33%;
