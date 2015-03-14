@@ -16,7 +16,7 @@ post '/site_files/create_page' do
   params[:pagefilename].gsub!(/[^a-zA-Z0-9_\-.]/, '')
   params[:pagefilename].gsub!(/\.html$/i, '')
 
-  if params[:pagefilename].nil? || params[:pagefilename].empty?
+  if params[:pagefilename].nil? || params[:pagefilename].strip.empty?
     @errors << 'You must provide a file name.'
     halt erb(:'site_files/new_page')
   end

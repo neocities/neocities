@@ -1,5 +1,5 @@
 get '/browse/?' do
-  params.delete 'tag' if params[:tag].nil? || params[:tag].empty?
+  params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
   site_dataset = browse_sites_dataset
   site_dataset = site_dataset.paginate @current_page, Site::BROWSE_PAGINATION_LENGTH
   @page_count = site_dataset.page_count || 1
