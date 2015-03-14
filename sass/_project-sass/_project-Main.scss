@@ -692,6 +692,9 @@ a.tag:hover {
 .misc-page.columns a:visited {
   color: $c-Brand-1;
 }
+.misc-page.columns a:focus {
+  color: darken($c-Link, 15%)
+}
 .news-item {
   width: 100%;
   float: left;
