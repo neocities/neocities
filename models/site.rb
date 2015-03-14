@@ -60,6 +60,8 @@ class Site < Sequel::Model
   SCREENSHOT_RESOLUTIONS = ['540x405', '210x158', '100x100', '50x50']
   THUMBNAIL_RESOLUTIONS  = ['210x158']
 
+  MAX_FILE_SIZE = 10**8 # 100 MB
+
   CLAMAV_THREAT_MATCHES = [
     /^VBS/,
     /^PUA\.Win32/,
@@ -911,7 +913,7 @@ class Site < Sequel::Model
   end
 
   def file_size_too_large?(size)
-    return true if size + space_used > maximum_space
+    return true if size > MAX_FILE_SIZE || size + space_used > maximum_space
     false
   end
 
