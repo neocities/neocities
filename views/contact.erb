@@ -23,10 +23,10 @@
 
   <ul>
     <li>
-      For security reasons, we cannot reset your password if you did not enter an e-mail for your site. You will have to make a new site (don't worry, it's free!). If you didn't get an e-mail from the password reset form, you didn't enter an e-mail (or it's in your spam folder). Again you will have to make a new site, we cannot help you for security reasons.
+      For security reasons, we cannot reset your password if you did not enter an email for your site. You will have to make a new site (don’t worry, it’s free!). If you didn’t get an email from the password reset form, you didn’t enter an email (or it’s in your spam folder). Again you will have to make a new site; we cannot help you for security reasons.
     </li>
     <li>
-      We do not support SFTP or GIT uploading, though we may in the future. Instead, we currently support <a href="/site_files/mount_info">WebDAV</a>.
+      We do not support SFTP or Git uploading, though we may in the future. Instead, we currently support <a href="/site_files/mount_info">WebDAV</a>.
     </li>
   </ul>
 
@@ -34,15 +34,15 @@
     <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
     <fieldset>
       <label for="your_email">Email address</label>
-      <input type="email" id="your_email" name="email" placeholder="Your Email" style="width: 300px" value="<%= params[:email] %>">
+      <input type="email" id="your_email" name="email" placeholder="me@example.com" class="col-50" value="<%= params[:email] %>">
 
       <label for="email_subject">Subject</label>
-      <input type="text" id="email_subject" name="subject" placeholder="Subject" style="width: 400px" value="<%= params[:subject] %>">
+      <input type="text" id="email_subject" name="subject" placeholder="Subject" class="col-50" value="<%= params[:subject] %>">
 
       <label for="your_comments">Comments</label>
-      <textarea name="body" id="your_comments" style="width: 600px" rows="10"><%= params[:body] %></textarea>
+      <textarea name="body" id="your_comments" class="col-75" rows="10"><%= params[:body] %></textarea>
 
-      <label>Fill out captcha so we know you're not a robot:</label>
+      <label>Fill out the captcha so we know you’re not a robot:</label>
       <div class="recaptcha">
         <%== recaptcha_tag :challenge, ssl: request.ssl? %>
       </div>
