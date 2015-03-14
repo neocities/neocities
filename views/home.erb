@@ -66,7 +66,8 @@
                 </div>
                 <div class="site-stats">
                   <a href="/site/<%= suggested_site.username %>">
-                      <%= suggested_site.views.format_large_number %>&nbsp;view<%= suggested_site.views == 1 ? '' : 's' %>
+                    <span class="show-on-mobile"><i class="fa fa-eye"></i></span>
+                    <%= suggested_site.views.format_large_number %><span class="hide-on-mobile">&nbsp;view<%= suggested_site.views == 1 ? '' : 's' %></span>
                   </a>
                 </div>
                 <div class="site-tags">

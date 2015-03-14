@@ -29,7 +29,10 @@
 
 	<div class="col col-50">
     <h2 class="eps"><%= current_site.title %></h2>
-    <p class="site-url" style="margin-top: -9px;"><a href="//<%= current_site.host %>" target="_blank"><%= current_site.host %></a></p>
+    <p class="site-url">
+      <a href="//<%= current_site.host %>" target="_blank"><%= current_site.host %></a>
+      <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'><i class="fa fa-share-alt"></i> <span>Share</span></a>
+    </p>
 	<ul>
 <% if current_site.site_updated_at %>
 	<li>Last updated <%= current_site.site_updated_at.ago.downcase %></li>
