@@ -577,7 +577,7 @@
     width: 10em!important;
     float: right;
     padding: 0 0 18px 0;
-    margin-top: -28px;
+    margin-top: -77px;
   }
 }
 .interior .header-Outro.with-columns .col-66 {
@@ -600,10 +600,16 @@
   margin-top: 1.4em;
   font-size: 0.8em;
   margin-left: 1.5em;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    margin: 0;
+    clear: left;
+    margin-bottom: 1.5em;
+  }
 }
 .interior .header-Outro .feed-filter a {
   color: white;
-  margin-left: 13px;
+  margin-right: 13px;
 }
 .site-suggestion {
   float: left;
