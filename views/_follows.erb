@@ -1,7 +1,7 @@
 <% site_followings = site.followings %>
 <% if (!is_current_site && !site_followings.empty?) || is_current_site %>
   <div class="following-list">
-    <h3><%= is_current_site ? 'You follow' : 'This site follows' %></h3>
+    <h3><a href="/site/<%= site.username %>/follows"><%= is_current_site ? 'You follow' : 'This site follows' %></h3>
     <% if site_followings.empty? %>
       <p>You are not following any sites yet. Add some by <a href="/browse">browsing sites</a> or looking at your tags.
     <% else %>
@@ -15,7 +15,7 @@
 <% site_follows = site.follows %>
 <% if (!is_current_site && !site_follows.empty?) || is_current_site %>
   <div class="follower-list">
-    <h3>Followers</h3>
+    <h3><a href="/site/<%= site.username %>/followers">Followers</a></h3>
     <% if site_follows.empty? %>
       No followers yet.
     <% else %>

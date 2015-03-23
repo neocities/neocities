@@ -1,0 +1,75 @@
+<div class="header-Outro with-columns browse-page">
+  <div class="row content">
+    <div class="col col-100">
+      <h1>Sites following <a href="/site/<%= @site.username %>"><%= @site.title %></a></h1>
+    </div>
+  </div>
+</div>
+
+<div class="browse-page">
+
+  <% if @sites.length == 0 %>
+    <div class="row website-Gallery content int-Gall" style="padding-left: 30px;">
+      <h3>No followers yet.</h3>
+      <p>Try another search, or <a href="/browse">browse all sites</a>!</p>
+    </div>
+  <% else %>
+    <ul class="row website-Gallery content int-Gall">
+      <% @sites.each_with_index do |site| %>
+        <li>
+          <a href="<%= site.uri %>" class="neo-Screen-Shot" title="<%= site.title %>">
+            <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
+              <img src="/img/placeholder.png" alt="<%= site.title %>" />
+            </span>
+          </a>
+          <div class="title">
+            <a href="<%= site.uri %>" title="<%= site.title %>"><%= site.title.shorten(30) %></a>
+          </div>
+          <div class="site-info">
+            <div class="username">
+              <a href="/site/<%= site.username %>" title="Profile">
+                <i class="fa fa-user"><% if site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= site.username %>
+              </a>
+            </div>
+            <div class="site-stats">
+              <a href="/site/<%= site.username %>">
+                <span class="show-on-mobile">
+                  <i class="fa fa-eye"></i>
+                </span>
+                <% if params[:sort_by] == 'hits' %>
+                  <%= site.hits.format_large_number %><span class="hide-on-mobile">&nbsp;hit<%= site.hits == 1 ? '' : 's' %></span>
+                <% else %>
+                  <%= site.views.format_large_number %><span class="hide-on-mobile">&nbsp;view<%= site.views == 1 ? '' : 's' %></span>
+                <% end %>
+
+              </a>
+            </div>
+            <div class="site-tags">
+              <% if site.tags.count > 0 %>
+                <i class="fa fa-tag"></i>
+                <% site.tags.each_with_index do |tag, index| %>
+                  <a class="" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a><% if index != site.tags.length - 1 %>,<% end %>
+                <% end %>
+              <% end %>
+            </div>
+            <% if signed_in? && current_site.is_admin %>
+              <div class="admin">
+                <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
+                  <%== csrf_token_input_html %>
+                  <input type="hidden" name="username" value="<%= site.username %>">
+                  <button>Ban</button>
+                </form>
+
+                <form action="/admin/mark_nsfw" target="_blank" method="POST" onsubmit="return confirm('Confirm NSFW marking of <%= site.username %>');">
+                  <%== csrf_token_input_html %>
+                  <input type="hidden" name="username" value="<%= site.username %>">
+                  <button>Mark NSFW</button>
+                </form>
+              </div>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

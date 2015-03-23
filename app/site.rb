@@ -36,6 +36,20 @@ post '/site/:username/set_editor_theme' do
   'ok'
 end
 
+get '/site/:username/follows' do |username|
+  @site = Site[username: username]
+  not_found if @site.nil?
+  @sites = @site.followings.collect {|f| f.site}
+  erb :'site/follows'
+end
+
+get '/site/:username/followers' do |username|
+  @site = Site[username: username]
+  not_found if @site.nil?
+  @sites = @site.follows.collect {|f| f.actioning_site}
+  erb :'site/followers'
+end
+
 post '/site/:username/comment' do |username|
   require_login
 
