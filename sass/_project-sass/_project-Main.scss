@@ -662,6 +662,10 @@
   margin: 20px auto 2em auto;
   text-align: center;
   
+  .btn:last-child {
+    margin-left: 10px;
+  }
+  
   @media (max-device-width:480px), screen and (max-width:800px) {
     text-align: left;
   }

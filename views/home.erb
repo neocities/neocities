@@ -107,7 +107,8 @@
         <a href="//<%= site.host %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
 
         <div class="news-profile-button">
-          <a href="/site/<%= site.username %>" class="btn-Action">View Site Profile</a>
+          <a href="/site/<%= site.username %>" class="btn btn-Action"><i class="fa fa-user"></i> Profile</a>
+          <a href="#" id="shareButton" class="btn btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'><i class="fa fa-share-alt"></i> Share</a>
         </div>
 
         <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
