@@ -1,0 +1,69 @@
+<script>
+  var RecaptchaOptions = {
+    theme : 'clean'
+  };
+</script>
+
+<div class="header-Outro">
+  <div class="row content single-Col">
+  <h1>DMCA Takedown Contact</h1>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <% if !@errors.nil? && !@errors.empty? %>
+    <div class="alert alert-block alert-error">
+      <% @errors.each do |error| %>
+        <p><%= error%></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <h2>Submit a DMCA copyright takedown notice</h2>
+
+  <p>
+    If you believe your copyright-protected work is being hosted on Neocities without authorization, you may submit a copyright infringement notification. <strong>These requests should only be submitted by the copyright owner or an agent authorized to act on the owner’s behalf.</strong>
+  </p>
+
+    <div class="alert">
+      <strong>Do not make false claims. Misuse of this process may result in the suspension of your account or other legal consequences.</strong>
+    </div>
+
+  <p>
+    The fastest and simplest way to notify Neocities of alleged copyright infringement is via this contact form. You can choose to email, phone, fax, or mail us with the contact information displayed after this form, but please note that they will take us much longer to get to than using the form.
+  </p>
+
+  <h2>Submit a copyright complaint</h2>
+
+  <form action="/dmca/contact" method="POST" class="content">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <fieldset>
+      <label for="your_email">Email address</label>
+      <input type="email" id="your_email" name="email" placeholder="me@example.com" class="col-50" value="<%= params[:email] %>">
+
+      <label for="email_subject">Subject</label>
+      <input type="text" id="email_subject" name="subject" placeholder="Subject" class="col-50" value="<%= params[:subject] %>">
+
+      <label for="urls">URLs of copyrighted content, enter one per line</label>
+      <textarea name="urls" id="urls" class="col-80" rows="3"><%= params[:urls] %></textarea>
+
+      <label for="your_comments">Text of Notice</label>
+      <textarea name="body" id="your_comments" class="col-80" rows="10"><%= params[:body] %></textarea>
+
+      <label>Fill out the captcha so we know you’re not a robot:</label>
+      <div class="recaptcha">
+        <%== recaptcha_tag :challenge, ssl: request.ssl? %>
+      </div>
+
+      <input class="btn-Action" type="submit" value="Send">
+    </fieldset>
+  </form>
+
+  <div id="contactInfo"></div>
+</div>
+
+<script>
+  $.get('/dmca/contact_info', function(res) {
+    $('#contactInfo').html(res.data)
+  })
+</script>
