@@ -111,7 +111,6 @@ get %r{\/site_files\/text_editor\/(.+)} do
   require_login
   @filename = params[:captures].first
   extname = File.extname @filename
-
   @ace_mode = case extname
     when /htm|html/ then 'html'
     when /js/ then 'javascript'
