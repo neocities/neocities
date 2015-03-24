@@ -14,7 +14,7 @@
     text-align:center;
     text-decoration:none!important; // set to !important so that if used inside of a .nav, no decoration doesn't get overridden
     text-shadow:0 1px 1px rgba(0,0,0,.4);
-    @include vendor(transition, all .25s ease-in-out 0s);
+    @include vendor(transition, none!important);
     vertical-align:middle;
     -webkit-appearance:none;
     
@@ -24,7 +24,7 @@
     
     &:hover, &:active{
         background:$c-Darker; 
-        color:$c-Lighter
+        color:$c-Lighter;
     }
     
     &:visited{color:$c-Lighter;}
@@ -78,14 +78,14 @@
 // ----------------------------------------------------------------
 .btn-Action{@extend %btn; 
   background:$c-Btn-1;
-    @include linear-gradient(top, #e93250, #b11f36);
+  @include linear-gradient(top, #e93250, #b11f36);
 
-    &:hover{
-      @include linear-gradient(top, #d51c3a, #841526);
-    }
-    .fa {
-      margin-right:5px;
-    }
+  &:hover, &:active {
+    @include linear-gradient(top, #d51c3a, #841526);
+  }
+  .fa {
+    margin-right:5px;
+  }
 }
    
 .btn-Action-2{@extend %btn; background:$c-Btn-2;
