@@ -44,9 +44,13 @@ get %r{\/surf\/proxy\/([\w-]+)\/(.+)|\/surf\/proxy\/([\w-]+)\/?} do
 
         new_ele = nil
 
-        if uri.match /^\//
-          new_ele = ele.gsub(uri, "#{$config['surf_proxy_uri']}/surf/proxy/#{site.username}#{uri}")
-        elsif !uri.match /^\w+:\/\//
+        if uri.match(/^\w+:\/\/|^\/\//i)
+          if ele.match(/^href/i)
+            new_ele = ele + ' target="_blank"'
+          else
+            new_ele = ele
+          end
+        else
           new_ele = ele.gsub(uri, "#{$config['surf_proxy_uri']}/surf/proxy/#{site.username}/#{uri}")
         end
 
