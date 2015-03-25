@@ -31,7 +31,7 @@ body{background:#CCDF9B}
 // ----------------------------------------------------------------
 a{   
 	color:$c-Link;
-	&:hover, &:active{color:darken($c-Link, 15%)}
+	&:hover, &:active, &:focus{color:darken($c-Link, 15%)}
   &:visited{color:#A5424B}
 //	&:visited{color:darken($c-Link, 30%)}
 }
