@@ -25,6 +25,7 @@ gem 'filesize'
 gem 'thread'
 gem 'scrypt'
 gem 'rack-cache'
+gem 'rest-client'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

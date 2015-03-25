@@ -8,7 +8,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
-    addressable (2.3.6)
+    addressable (2.3.7)
     ago (0.1.5)
     ansi (1.4.3)
     autoparse (0.3.3)
@@ -49,6 +49,8 @@ GEM
       uuidtools (~> 2.1.1)
     debugger-linecache (1.2.0)
     docile (1.1.3)
+    domain_name (0.5.23)
+      unf (>= 0.0.5, < 1.0.0)
     erubis (2.7.0)
     extlib (0.9.16)
     fabrication (2.11.0)
@@ -74,6 +76,8 @@ GEM
       uuidtools (>= 2.1.0)
     hashie (2.0.5)
     hiredis (0.5.0)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     i18n (0.6.9)
     jimson-temp (0.9.5)
       blankslate (>= 3.1.2)
@@ -105,7 +109,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.10.1)
     multipart-post (2.0.0)
-    netrc (0.7.7)
+    netrc (0.10.3)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
     pg (0.17.1)
@@ -149,7 +153,8 @@ GEM
     redis (3.0.7)
     redis-namespace (1.4.1)
       redis (~> 3.0.4)
-    rest-client (1.7.2)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
     retriable (1.4.1)
@@ -209,6 +214,9 @@ GEM
       polyglot (>= 0.3.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.6)
     unicorn (4.8.2)
       kgio (~> 2.6)
       rack
@@ -257,6 +265,7 @@ DEPENDENCIES
   rainbows
   rake
   redis
+  rest-client
   rmagick
   ruby-debug
   sass
