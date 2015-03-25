@@ -1,6 +1,5 @@
 GEM
   remote: https://rubygems.org/
-  remote: https://code.stripe.com/
   specs:
     activesupport (4.1.4)
       i18n (~> 0.6, >= 0.6.9)
@@ -279,7 +278,7 @@ DEPENDENCIES
   sinatra
   sinatra-flash
   sinatra-xsendfile
-  stripe!
+  stripe
   stripe-ruby-mock (~> 2.0.1)
   thread
   tilt

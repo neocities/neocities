@@ -23,7 +23,7 @@ Rainbows! do
 
   worker_processes processor_count
   worker_connections 32
-  timeout 10
+  timeout 600 # 10 minutes
 
   listen "unix:/var/run/neocities/neocities.sock", :backlog => 2048
 

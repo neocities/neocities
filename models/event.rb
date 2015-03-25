@@ -13,7 +13,7 @@ class Event < Sequel::Model
   many_to_one :actioning_site, key: :actioning_site_id, class: :Site
 
   DEFAULT_GLOBAL_LIMIT = 300
-  GLOBAL_VIEWS_MINIMUM = 50
+  GLOBAL_VIEWS_MINIMUM = 5
 
   def self.global_dataset(current_page=1, limit=DEFAULT_GLOBAL_LIMIT)
     select_all(:events).
