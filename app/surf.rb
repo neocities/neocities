@@ -16,6 +16,28 @@ get '/surf/:username' do |username|
   erb :'surf', layout: false
 end
 
+def surf_proxy
+  username = request.host.match /^(\w+)/i
+  resp = RestClient.get "http://#{username}.neocities.org#{request.path}"
+  content_type resp.headers[:content_type]
+
+  if content_type.match(/^text\/html/)
+    body = resp.body+erb(:'surf/_surf_iframe_injection', layout: false)
+  else
+    body = resp.body
+  end
+
+  halt body
+end
+
+def surf_proxy_uri(username)
+  $surf_proxy_uri ||= Addressable::URI.parse $config['surf_proxy_uri']
+  new_uri = $surf_proxy_uri.dup
+  new_uri.host = "#{username}.#{new_uri.host}"
+  new_uri.to_s
+end
+
+=begin
 get %r{\/surf\/proxy\/([\w-]+)\/(.+)|\/surf\/proxy\/([\w-]+)\/?} do
   captures = params[:captures].compact
   username = captures.first
@@ -39,8 +61,10 @@ get %r{\/surf\/proxy\/([\w-]+)\/(.+)|\/surf\/proxy\/([\w-]+)\/?} do
 
   site_body.gsub(/(?<name>\b\w+\b)\s*=\s*(?<value>"[^"]*"|'[^']*'|[^"'<>\s]+)/i) do |ele|
     attributes.each do |attr|
-      if ele.match attr
-        uri = ele.match(/\"(.+)\"|\'(.+)\'/).captures.first
+      if ele.match /#{attr} ?=/
+        ele_match = ele.match(/\"(.+)\"|\'(.+)\'/)
+        next if ele_match.nil? || ele_match.captures.nil?
+        uri = ele_match.captures.first
 
         new_ele = nil
 
@@ -61,3 +85,4 @@ get %r{\/surf\/proxy\/([\w-]+)\/(.+)|\/surf\/proxy\/([\w-]+)\/?} do
 
   new_site_body
 end
+=end
