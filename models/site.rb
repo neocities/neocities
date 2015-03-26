@@ -179,7 +179,7 @@ class Site < Sequel::Model
 
   def account_sites_events_dataset
     ids = account_sites_dataset.select(:id).all.collect {|s| s.id}
-    Event.where(id: ids)
+    Event.where(site_id: ids)
   end
 
   def owner
