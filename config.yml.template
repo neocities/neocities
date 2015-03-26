@@ -11,7 +11,8 @@ development:
   ip_hash_salt: "400$8$1$fc21863da5d531c1"
   proxy_pass: 'somethinglongandrandom'
   email_unsubscribe_token: 'somethingrandom'
-  surf_proxy_uri: 'http://127.0.0.1:9292'
+  surf_proxy_uri: 'http://surf.somedomain.local:9292' # May want to use dnsmasq instead of /etc/hosts here
+  surf_iframe_source: 'http://127.0.0.1:9292'
 test:
   database: 'postgres://neocities@localhost/neocities_test'
   database_pool: 1
@@ -25,4 +26,5 @@ test:
   ip_hash_salt: "400$8$1$fc21863da5d531c1"
   proxy_pass: 'somethinglongandrandom'
   email_unsubscribe_token: 'somethingrandom'
-  surf_proxy_uri: 'http://127.0.0.1:9292'
+  surf_proxy_uri: 'http://surf.somedomain.local:9292'
+  surf_iframe_source: 'http://127.0.0.1:9292'
