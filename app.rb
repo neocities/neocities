@@ -24,10 +24,6 @@ end
 set :protection, :frame_options => "ALLOW-FROM #{$config['surf_iframe_source']}"
 
 before do
-  if request.host.match /\w+\.#{Addressable::URI.parse($config['surf_proxy_uri']).host}/i
-    surf_proxy
-  end
-
   if request.path.match /^\/api\//i
     @api = true
     content_type :json
