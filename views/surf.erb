@@ -236,7 +236,7 @@
       </li>
     </ul>
   </div>
-  <iframe src="<%= "#{surf_proxy_uri @site.username}" %>" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" id="website-frame" name="website-frame"></iframe>
+  <iframe src="<%= @site.uri+"?surf=1" %>" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" id="website-frame" name="website-frame"></iframe>
 
   <script src="/js/jquery-1.11.0.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
