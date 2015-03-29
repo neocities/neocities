@@ -1080,8 +1080,8 @@ a.tag:hover {
     color: #335062;
   }
   h2 {
-    margin-top: .7em;
-    margin-bottom: 2.3em;
+    margin-top: 0.6em;
+    margin-bottom: 2.1em;
   }
   h3 {
     line-height: 130%;
@@ -1126,8 +1126,18 @@ a.tag:hover {
       background-color: white;
       background-size: 180%;
       background-repeat: none;
-      border: 6px solid white;
+      border: 13px solid #4f7d88;
       @include box-shadow(1px 1px 2px 0px rgba(0, 0, 0, 0.18));
+      
+    }
+    &:nth-child(3) .screenshot {
+      border: 13px solid $c-Brand-1;
+    }
+    &:nth-child(4) .screenshot {
+      border: 13px solid #BECF90;
+    }
+    &:nth-child(5) .screenshot {
+      border: 13px solid #FFCC00;
     }
     &.right {
       .col {
