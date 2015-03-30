@@ -211,6 +211,10 @@ class Site < Sequel::Model
   end
 
   class << self
+    def featured(limit=5)
+      select(:id, :username, :title, :domain).exclude(featured_at: nil).order(:featured_at.desc).limit(limit)
+    end
+
     def valid_email_unsubscribe_token?(email, token)
       email_unsubscribe_token(email) == token
     end

@@ -62,4 +62,17 @@
       </form>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col col-50">
+      <h2>Feature Site</h2>
+      <form id="featureSite" action="/admin/feature" method="POST">
+        <%== csrf_token_input_html %>
+        <p>This site will be featured on the front page and in a special browse section.</p>
+        <p>Site Name:</p>
+        <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
+        <p><input class="btn-Action" type="submit" value="Feature Site"></p>
+      </form>
+    </div>
+  </div>
 </div>

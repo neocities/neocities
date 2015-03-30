@@ -61,6 +61,21 @@ post '/admin/mark_nsfw' do
   redirect '/admin'
 end
 
+post '/admin/feature' do
+  require_admin
+  site = Site[username: params[:username]]
+
+  if site.nil?
+    flash[:error] = 'User not found'
+    redirect '/admin'
+  end
+
+  site.featured_at = Time.now
+  site.save_changes(validate: false)
+  flash[:success] = 'Site has been featured.'
+  redirect '/admin'
+end
+
 def require_admin
   redirect '/' unless signed_in? && current_site.is_admin
 end
