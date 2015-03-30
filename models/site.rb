@@ -211,7 +211,7 @@ class Site < Sequel::Model
   end
 
   class << self
-    def featured(limit=5)
+    def featured(limit=6)
       select(:id, :username, :title, :domain).exclude(featured_at: nil).order(:featured_at.desc).limit(limit)
     end
 
