@@ -8,7 +8,20 @@ get '/activity' do
     global_dataset.where! Sequel.qualify(:events, :id) => params[:event_id]
   end
 
-  @events = global_dataset.all
+  events = global_dataset.all
+  site_change_events = Event.global_site_changes_dataset.limit(25).all
+
+  @events = []
+
+  events.each do |event|
+    unless site_change_events.empty?
+      until site_change_events.first.created_at < event.created_at
+        @events << site_change_events.shift
+        break if site_change_events.empty?
+      end
+    end
+    @events << event
+  end
 
   erb :'activity'
 end

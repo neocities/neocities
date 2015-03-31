@@ -14,6 +14,7 @@ class Event < Sequel::Model
 
   DEFAULT_GLOBAL_LIMIT = 300
   GLOBAL_VIEWS_MINIMUM = 5
+  GLOBAL_VIEWS_SITE_CHANGE_MINIMUM = 1000
 
   def self.news_feed_default_dataset
     select_all(:events).
@@ -31,6 +32,14 @@ class Event < Sequel::Model
       exclude(is_crashing: true).
       where{views > GLOBAL_VIEWS_MINIMUM}.
       where(site_change_id: nil)
+  end
+
+  def self.global_site_changes_dataset
+    news_feed_default_dataset.
+      where{views > GLOBAL_VIEWS_SITE_CHANGE_MINIMUM}.
+      exclude(is_nsfw: true).
+      exclude(is_crashing: true).
+      exclude(site_change_id: nil)
   end
 
   def created_by?(site)
