@@ -1094,7 +1094,7 @@ a.tag:hover {
     font-size: .9em;
   }
   .row {
-    margin: 5em 10%;
+    margin: 5.5em 10%;
     padding: 0;
     
     @media (max-device-width:480px), screen and (max-width:800px){
@@ -1117,6 +1117,7 @@ a.tag:hover {
       
       @media (max-device-width:480px), screen and (max-width:800px){
         width: 100%;
+        padding-right: 0px;
       }
     }
     .screenshot {
@@ -1142,11 +1143,12 @@ a.tag:hover {
     &.right {
       .col {
         padding-right: 0;
+        padding-left: 30px;
         &:first-child {
           float: right;
         }
-        &.text {
-          padding-right: 30px;
+        @media (max-device-width:480px), screen and (max-width:800px){
+          padding-left: 0px;
         }
       }
     }
