@@ -15,17 +15,22 @@ class Event < Sequel::Model
   DEFAULT_GLOBAL_LIMIT = 300
   GLOBAL_VIEWS_MINIMUM = 5
 
-  def self.global_dataset(current_page=1, limit=DEFAULT_GLOBAL_LIMIT)
+  def self.news_feed_default_dataset
     select_all(:events).
       order(:created_at.desc).
-      paginate(current_page, 100).
       join_table(:inner, :sites, id: :site_id).
-      exclude(Sequel.qualify(:sites, :is_deleted) => false).
-      exclude(is_nsfw: false).
-      exclude(is_banned: false).
-      exclude(is_crashing: false).
+      exclude(Sequel.qualify(:sites, :is_deleted) => true).
+      exclude(Sequel.qualify(:events, :is_deleted) => true).
+      exclude(is_banned: true)
+  end
+
+  def self.global_dataset(current_page=1, limit=DEFAULT_GLOBAL_LIMIT)
+    news_feed_default_dataset.
+      paginate(current_page, 100).
+      exclude(is_nsfw: true).
+      exclude(is_crashing: true).
       where{views > GLOBAL_VIEWS_MINIMUM}.
-      or(site_change_id: nil)
+      where(site_change_id: nil)
   end
 
   def created_by?(site)
