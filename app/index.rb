@@ -12,6 +12,7 @@ get '/?' do
     elsif params[:event_id]
       event = Event.select(:id).where(id: params[:event_id]).first
       not_found if event.nil?
+      not_found if event.is_deleted
       events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
     elsif params[:activity] == 'global'
       events_dataset = Event.global_dataset @current_page

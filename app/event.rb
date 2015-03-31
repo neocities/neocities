@@ -36,9 +36,10 @@ end
 post '/event/:event_id/delete' do |event_id|
   require_login
   content_type :json
+
   event = Event[id: event_id]
 
-  if event.site_id == current_site.id || event.created_by?(current_site)
+  if event.site_id == current_site.id || event.actioning_site_id == current_site.id
     event.delete
     return {result: 'success'}.to_json
   end
