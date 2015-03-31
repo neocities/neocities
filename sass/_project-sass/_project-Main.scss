@@ -1124,8 +1124,8 @@ a.tag:hover {
       height: 250px;
       margin-right: 30px;
       background-color: white;
-      background-size: 180%;
-      background-repeat: none;
+      background-size: cover;
+      background-repeat: no-repeat;
       border: 13px solid #4f7d88;
       @include box-shadow(1px 1px 2px 0px rgba(0, 0, 0, 0.18));
       
