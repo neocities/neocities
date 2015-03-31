@@ -58,6 +58,7 @@ describe 'signup' do
     page.must_have_content 'Welcome to Neocities'
     Capybara.reset_sessions!
     visit_signup
+    sleep 0.3
     fill_in 'username', with: @site[:username]
     fill_in 'password', with: @site[:password]
     click_signup_button
