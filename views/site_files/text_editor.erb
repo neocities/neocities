@@ -169,6 +169,15 @@
     })
   })
 
+  $().ready(function() {
+    KeyboardJS.on('ctrl + s', function(event, keysPressed, keyComboString) {
+      saveTextFile(false)
+      event.preventDefault()
+      return false
+    });
+  })
+
+/*
   $(window).keypress(function(event) {
     if(event.ctrlKey == true && event.key == 's') {
       saveTextFile(false)
@@ -176,6 +185,7 @@
       return false
     }
   })
+*/
 
   window.onbeforeunload = function() {
     if(unsavedChanges == true)
