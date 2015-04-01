@@ -38,9 +38,20 @@
 
   <script src="/js/jquery-1.11.0.min.js"></script>
   <script src='https://www.google.com/recaptcha/api.js'></script>
+
+  <script src="/js/jquery.raptorize.1.0.js"></script>
+  <script type="text/javascript">
+     $(window).load(function() {
+        $('.pmarca').raptorize({
+          'enterOn' : 'timer', //timer, konami-code, click
+          'delayTime' : 1000 //time before raptor attacks on timer mode
+        });
+     });
+  </script>
 </head>
 
   <body class="hp">
+    <div class="pmarca"></div>
     <a id="new"></a>
 
     <div class="page">
@@ -251,7 +262,7 @@
       <p>Once you find some interesting sites in our website gallery, you can keep track of all new updates by following them. Any changes to the sites show up in your news feed. You'll also see what sites are followed by your favorite site builders.</p>
     </div>
   </div>
-  
+
   <div class="row content right">
     <div class="col col-50"><div class="screenshot" style="background-image:url(/img/front-comment-screenshot.png);"></div></div>
     <div class="col col-50 text">
