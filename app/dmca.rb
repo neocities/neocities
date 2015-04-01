@@ -26,7 +26,8 @@ post '/dmca/contact' do
       reply_to: params[:email],
       to: 'dmca@neocities.org',
       subject: "[Neocities DMCA Notice]: #{params[:subject]}",
-      body: "#{params[:urls].to_s}\n#{params[:body].to_s}"
+      body: "#{params[:urls].to_s}\n#{params[:body].to_s}",
+      no_footer: true
     })
 
     flash[:success] = 'Your DCMA notification has been sent.'

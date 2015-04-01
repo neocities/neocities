@@ -8,7 +8,8 @@ post '/stripe_webhook' do
       from:    'web@neocities.org',
       to:      'contact@neocities.org',
       subject: "[Neocities] New customer: #{username}",
-      body:    "#{username}\n#{email}\n#{Site[username: username].uri}"
+      body:    "#{username}\n#{email}\n#{Site[username: username].uri}",
+      no_footer: true
     })
   end
 

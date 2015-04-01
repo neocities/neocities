@@ -21,7 +21,8 @@ post '/contact' do
       reply_to: params[:email],
       to: 'contact@neocities.org',
       subject: "[Neocities Contact]: #{params[:subject]}",
-      body: params[:body]
+      body: params[:body],
+      no_footer: true
     })
 
     flash[:success] = 'Your contact has been sent.'

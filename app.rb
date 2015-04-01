@@ -44,7 +44,8 @@ error do
     from: 'web@neocities.org',
     to: 'errors@neocities.org',
     subject: "[Neocities Error] #{env['sinatra.error'].class}: #{env['sinatra.error'].message}",
-    body: erb(:'views/templates/email/error')
+    body: erb(:'views/templates/email/error'),
+    no_footer: true
   })
 
   if @api
