@@ -33,7 +33,7 @@ $(document).ready(function() {
 
     //Raptor Vars (Modify the 'src' to your prefrence)
     var raptorImageMarkup = '<img id="elRaptor" style="display: none" src="images/raptor.png" />'
-    var raptorAudioMarkup = '<audio id="elRaptorShriek" preload="auto"><source src="sounds/raptor-sound.mp3" /><source src="sounds/raptor-sound.ogg" /></audio>';
+    var raptorAudioMarkup = '<audio id="elRaptorShriek" preload="auto"><source src="sounds/raptor-sound.mp3" volume="0.2" /><source src="sounds/raptor-sound.ogg" volume="0.2" /></audio>';
     var locked = false;
 
     //Append Raptor and Style
