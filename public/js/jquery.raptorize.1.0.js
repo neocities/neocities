@@ -33,7 +33,7 @@ $(document).ready(function() {
 
     //Raptor Vars (Modify the 'src' to your prefrence)
     var raptorImageMarkup = '<img id="elRaptor" style="display: none" src="images/raptor.png" />'
-    var raptorAudioMarkup = '<audio id="elRaptorShriek" preload="auto"><source src="sounds/raptor-sound.mp3" volume="0.1" /><source src="sounds/raptor-sound.ogg" /></audio>';
+    var raptorAudioMarkup = '<audio id="elRaptorShriek" preload="auto"><source src="sounds/raptor-sound.mp3" /><source src="sounds/raptor-sound.ogg" /></audio>';
     var locked = false;
 
     //Append Raptor and Style
@@ -54,6 +54,7 @@ $(document).ready(function() {
       //Sound Hilarity
       if(audioSupported) {
         function playSound() {
+          document.getElementById('elRaptorShriek').volume = 0.2;
           document.getElementById('elRaptorShriek').play();
         }
         playSound();
