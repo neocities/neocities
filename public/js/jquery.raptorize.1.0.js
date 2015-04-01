@@ -57,6 +57,7 @@ $(document).ready(function() {
           document.getElementById('elRaptorShriek').play();
         }
         playSound();
+        window.scrollTo(0, 0);
       }
 
       // Movement Hilarity
