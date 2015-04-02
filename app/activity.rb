@@ -9,7 +9,7 @@ get '/activity' do
   end
 
   events = global_dataset.all
-  site_change_events = Event.global_site_changes_dataset.limit(25).all
+  site_change_events = Event.global_site_changes_dataset.limit(100).all
 
   @events = []
 
