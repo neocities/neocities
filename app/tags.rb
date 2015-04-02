@@ -14,9 +14,11 @@ end
 post '/tags/remove' do
   require_login
 
-  DB.transaction {
-    params[:tags].each {|tag| current_site.remove_tag Tag[name: tag]}
-  }
+  if params[:tags].is_a?(Array)
+    DB.transaction {
+      params[:tags].each {|tag| current_site.remove_tag Tag[name: tag]}
+    }
+  end
 
   redirect request.referer
 end
