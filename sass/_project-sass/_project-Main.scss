@@ -1156,8 +1156,22 @@ a.tag:hover {
 }
 .section.featured-Websites {
   background: #971D31;
+  border-top: 1px solid #C02841;
+  border-bottom: 1px solid #801629;
   padding: 30px 0;
   position: relative;
+  
+  h2.delta {
+    color: white;
+    margin: 0;
+    text-align: left;
+    margin-bottom: .5em;
+    margin-left: 5.25%;
+  }
+  .btn-Action {
+    margin-top: 1.8em;
+    margin-right: 5.25%;
+  }
 }
 .section.featured-Websites .nav {
   float:left;

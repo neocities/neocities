@@ -206,10 +206,11 @@
 <main class="content-Base">
 
 <div class="section featured-Websites">
+  <h2 class="delta">Featured Sites</h2>
   <!--
   <div class="nav prev"></div>
   -->
-  <ul class="website-Gallery hp-Gallery">
+  <ul class="website-Gallery hp-Gallery">    
     <% Site.featured.each do |site| %>
       <li>
         <a href="<%= site.uri %>" title="<%= site.title %>" target="_blank">
@@ -221,6 +222,7 @@
   <!--
   <div class="nav next"></div>
   -->
+  <a href="/browse" class="btn-Action float-Right">Browse all sites</a>
 </div>
 
 <div class="section previews">
