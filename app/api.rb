@@ -131,6 +131,8 @@ def init_api_credentials
       api_error_invalid_auth
     end
 
+    DB['update sites set api_calls=api_calls+1 where id=?', site.id].first
+
     session[:id] = site.id
   else
     api_error_invalid_auth

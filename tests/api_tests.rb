@@ -25,6 +25,7 @@ describe 'api info' do
     @site.update is_banned: true
     get '/api/info', sitename: @site.username
     res[:error_type].must_equal 'site_not_found'
+    @site.reload.api_calls.must_equal 0
   end
 
   it 'fails for nonexistent site' do
@@ -43,6 +44,7 @@ describe 'api info' do
     res[:info][:last_updated].must_equal nil
     res[:info][:domain].must_equal 'derp.com'
     res[:info][:tags].must_equal ['derpie', 'man']
+    @site.reload.api_calls.must_equal 0
   end
 
   it 'fails for bad auth' do
@@ -145,6 +147,7 @@ describe 'api upload' do
     }
     res[:result].must_equal 'success'
     File.exist?(File.join(Site::SITE_FILES_ROOT, @site.username, 'lol.jpg')).must_equal true
+    @site.reload.api_calls.must_equal 1
   end
 
   it 'scrubs root path slash' do
@@ -191,6 +194,19 @@ describe 'api upload' do
     }
     res[:result].must_equal 'success'
     File.exist?(@site.files_path('derpie/derpingtons/lol.jpg')).must_equal true
+  end
+
+  it 'records api calls that require auth' do
+    create_site
+    basic_authorize @user, @pass
+
+    2.times {
+      post '/api/upload', {
+        'derpie/derpingtons/lol.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      }
+    }
+
+    @site.reload.api_calls.must_equal 2
   end
 
   it 'fails for invalid files' do
