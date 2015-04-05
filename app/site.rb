@@ -115,6 +115,11 @@ post '/site/:username/report' do |username|
 
   redirect request.referer if site.nil?
 
+  if !recaptcha_valid?
+    flash[:error] = 'Captcha was not filled out (or was filled out incorrectly)'
+    redirect request.referer
+  end
+
   report = Report.new site_id: site.id, type: params[:type], comments: params[:comments]
 
   if current_site
@@ -132,6 +137,8 @@ post '/site/:username/report' do |username|
     subject: "[Neocities Report] #{site.username} has been reported for #{report.type}",
     body: "Reported by #{report.reporting_site_id ? report.reporting_site.username : report.ip}: #{report.comments}"
   })
+
+  flash[:success] = "Thank you for the report, we will look into it."
 
   redirect request.referer
 end

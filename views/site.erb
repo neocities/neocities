@@ -35,13 +35,13 @@
 
         <% if current_site && current_site != site %>
           <% is_following = current_site.is_following?(site) %>
-  
+
           <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>'); return false" class="btn-Action <%= is_following ? 'is-following' : '' %>">
               <span class="unfollow"><i class="fa fa-times"></i>Unfollow</span>
               <span class="following"><i class="fa fa-check"></i>Following</span>
               <span class="follow"><i class="fa fa-plus"></i>Follow</span>
           </a>
-            
+
           <!-- <a href="#" class="btn-Action tip"><span>Tip</span></a> -->
         <% end %>
 
@@ -60,8 +60,8 @@
         <div class="post-comment">
           <form method="POST" action="/site/<%= site.username %>/comment">
             <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
-            <input name="message" 
-                   type="text" 
+            <input name="message"
+                   type="text"
                    placeholder="Post a message..."
                    autocomplete="off"
                    maxlength="<%= Site::MAX_COMMENT_SIZE %>"
@@ -71,7 +71,7 @@
                     <% unless current_site.commenting_allowed? %>disabled<% end %>
             >Post</button>
           </form>
-          
+
           <% unless current_site.commenting_allowed? %>
               <p class="comment-policy">
                   To prevent spam, you cannot comment until you have updated your site <strong><%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %> times</strong> (on <%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %> separate days), and your account is one week old. While waiting, now is a great time to <a href="/dashboard">start building your awesome site!</a>
@@ -117,11 +117,14 @@
 
     <% if site != current_site %>
       <div class="report">
-        <a href="#report" data-toggle="modal">Report</a> | 
-        <% if current_site && current_site.is_blocking?(site) %>
-          <a href="#">Unblock</a>
-        <% else %>
-          <a href="#block" data-toggle="modal">Block</a>
+        <a href="#report" data-toggle="modal">Report</a>
+        <% if signed_in? %>
+          |
+          <% if current_site && current_site.is_blocking?(site) %>
+            <a href="#">Unblock</a>
+          <% else %>
+            <a href="#block" data-toggle="modal">Block</a>
+          <% end %>
         <% end %>
       </div>
     <% end %>
@@ -148,8 +151,13 @@
           <option value="other">Other</option>
         </select>
       </p>
-      <p>Comments:</p>
+      <p>Please describe the problem:</p>
       <textarea name="comments" type="text" style="width: 400px; margin-bottom: 20px;"></textarea>
+
+      <p>Please fill out the captcha so we know you're not a robot:</p>
+      <div class="recaptcha" style="margin-bottom: 20px">
+        <%== recaptcha_tag :challenge, ssl: request.ssl? %>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
