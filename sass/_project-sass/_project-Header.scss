@@ -214,6 +214,13 @@
       background-color: #971D31;
     }
   }
+  #captcha-input {
+    width: 182px;
+    overflow: hidden;
+    height: 76px;
+    border-radius: 9px;
+    opacity: .9;
+  }
   .btn-Action{
     padding:10px 25px;
     margin-top: 2em;
