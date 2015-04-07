@@ -2,6 +2,8 @@ get '/stats/?' do
   # expires 14400, :public, :must_revalidate if self.class.production? # 4 hours
 
   @stats = {
+    total_hosted_site_hits: DB['SELECT SUM(hits) FROM sites'].first[:sum],
+    total_hosted_site_views: DB['SELECT SUM(views) FROM sites'].first[:sum],
     total_sites: Site.count,
     total_unbanned_sites: Site.where(is_banned: false).count,
     total_banned_sites: Site.where(is_banned: true).count,

@@ -21,6 +21,10 @@ class Numeric
     end
   end
 
+  def to_comma_separated
+    self.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
+  end
+
   def format_large_number
     if self > 9999
       if self > 999999999
@@ -33,7 +37,7 @@ class Numeric
         unit_char = 'K' #thousand
         unit_amount = 1000.0
       end
-    
+
       self_divided = self.to_f / unit_amount
       self_rounded = self_divided.round(1)
 
