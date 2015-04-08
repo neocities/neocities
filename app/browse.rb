@@ -4,6 +4,9 @@ get '/browse/?' do
   site_dataset = site_dataset.paginate @current_page, Site::BROWSE_PAGINATION_LENGTH
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
+  if params[:tag]
+    @title = "Sites tagged #{params[:tag]}"
+  end
   erb :browse
 end
 

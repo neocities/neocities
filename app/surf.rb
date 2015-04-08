@@ -5,6 +5,7 @@ get '/surf/?' do
   @page_count = site_dataset.page_count || 1
   @site = site_dataset.first
   redirect "/browse?#{Rack::Utils.build_query params}" if @site.nil?
+    @title = "Surf Mode - #{@site.title}"
   erb :'surf', layout: false
 end
 

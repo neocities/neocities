@@ -68,5 +68,6 @@ get '/press' do
 end
 
 get '/legal/?' do
+  @title = 'Legal Guide to Neocities'
   erb :'legal'
 end
