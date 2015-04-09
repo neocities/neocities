@@ -708,8 +708,7 @@ a.tag:hover {
 .news-item {
   width: 100%;
   float: left;
-  margin: 1.25em 0 1.25em 0;
-  padding: 1em 0 0 0;
+  padding: 1.2em 0 1.2em 0;
   border-top: 1px solid #EBEBEB;
 }
 .news-item:nth-of-type(1) {
@@ -750,20 +749,11 @@ a.tag:hover {
 .news-item.comment .icon {
   background: #DAEEA5;
 }
-.news-item.comment.for-me .icon, .news-item.tip.for-me .icon {
-
-}
-.news-item .icon-mini {
-  
-}
 .news-item.update .icon {
   background: #E93250;
 }
 .news-item.tip .icon {
   background: #FFCC00;
-}
-.news-item.follow {
-  margin: .3em 0 .3em 0;
 }
 .news-item.follow .icon {
   background: #3399CC;
@@ -773,11 +763,16 @@ a.tag:hover {
   position: relative;
   width: 100%;
   float: left;
+  
+  .text {
+    float: left;
+    margin-top: .45em;
+  }
 }
 .news-item .date {
   float: right;
   font-size: 11px;
-  margin-top: .5em;
+  margin-top: 1.1em;
 }
 .news-item .date a {
   color: #aaa!important;
@@ -828,18 +823,15 @@ a.tag:hover {
 .news-item .actions {
   font-size: 11px;
 }
-.news-item > .actions {
-  margin-left: 61px!important;
-}
 .news-item .actions a {
   margin-right: 6px;
 }
 .news-item .content {
   padding: 0;
-  margin-left: 32px;
+  margin-left: 61px;
 }
-.news-item.comment .actions, .news-item.comment .content {
-  margin-left: 20px;
+.news-item .actions, .news-item.comment .content {
+  margin-left: 61px;
 }
 .news-item.comment .comments .actions {
   margin-left: 47px;
