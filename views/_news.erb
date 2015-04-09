@@ -29,12 +29,11 @@
           <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"><% if actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
         <% end %>
 
-        started following
+        followed
 
         <% if current_site && event_site.id == current_site.id %>
           <a href="/site/<%= current_site.username %>" class="you">you</a>
         <% else %>
-          the <a class="user" href="http://<%= event_site.host %>" title="<%= event_site.title %>">site</a> of
           <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a>
         <% end %>
       </div>
