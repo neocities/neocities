@@ -15,9 +15,9 @@ class Numeric
 #    if space >= 1000000
 #      "#{space/1000000} TB"
     if space >= 1000
-      "#{space/1000} GB"
+      "#{(space/1000).to_comma_separated} GB"
     else
-      "#{space} MB"
+      "#{space.to_comma_separated} MB"
     end
   end
 

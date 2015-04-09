@@ -76,3 +76,31 @@ def send_confirmation_email(site=current_site)
     body: Tilt.new('./views/templates/email_confirm.erb', pretty: true).render(self, site: site)
   })
 end
+
+def plan_pricing_button(plan_type)
+  plan_type = plan_type.to_s
+
+  if !parent_site
+    %{<a href="/#new" class="btn-Action">Sign Up</a>}
+  elsif parent_site && parent_site.plan_type == plan_type
+    if request.path.match /\/welcome/
+      %{<a href="/" class="btn-Action">Get Started</a>}
+    else
+      %{<div class="current-plan">Current Plan</div>}
+    end
+  else
+    #if plan_type == 'supporter'
+    #  plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]*12}, once per year"
+    #else
+      plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]}, monthly"
+    #end
+
+    if request.path.match /\/welcome/
+      button_title = 'Get Started'
+    else
+      button_title = parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'
+    end
+
+    %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="card = new Skeuocard($('#skeuocard')); return false" class="btn-Action planPricingButton">#{button_title}</a>}
+  end
+end

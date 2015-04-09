@@ -1,31 +1,5 @@
 <%
-  def plan_pricing_button(plan_type)
-    plan_type = plan_type.to_s
 
-    if !parent_site
-      %{<a href="/#new" class="btn-Action">Sign Up</a>}
-    elsif parent_site && parent_site.plan_type == plan_type
-      if request.path.match /\/welcome/
-        %{<a href="/" class="btn-Action">Get Started</a>}
-      else
-        %{<div class="current-plan">Current Plan</div>}
-      end
-    else
-      #if plan_type == 'supporter'
-      #  plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]*12}, once per year"
-      #else
-        plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]}, monthly"
-      #end
-
-      if request.path.match /\/welcome/
-        button_title = 'Get Started'
-      else
-        button_title = parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'
-      end
-
-      %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="card = new Skeuocard($('#skeuocard')); return false" class="btn-Action planPricingButton">#{button_title}</a>}
-    end
-  end
 %>
 
 <section class="section plans">
@@ -125,147 +99,7 @@
     </div>
   </div>
 
-  <!-- <h2><a href="">Compare Plans <i class="fa fa-caret-down"></i></a></h2> -->
-  <h2 style="margin-top: 2em">Compare</h2>
-  <table class="plan-chart">
-    <tr>
-      <th class="feature-column"></th>
-      <th>
-        <h3>Free</h3>
-        <p>$<%= Site::PLAN_FEATURES[:free][:price] %>/mo</p>
-        <%== plan_pricing_button :free %>
-      </th>
-      <th class="professional">
-        <h3>Supporter</h3>
-        <% if parent_site && parent_site.legacy_supporter? %>
-          <p>$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site.values[:plan_type].to_sym] %>/mo</p>
-          <div class="current-plan">Current Plan</div>
-        <% else %>
-          <p>$<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo</p>
-          <%== plan_pricing_button :supporter %>
-        <% end %>
-      </th>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">Storage</span>
-      </td>
-      <td><%= Site::PLAN_FEATURES[:free][:space].to_bytes_pretty %></td>
-      <td><%= Site::PLAN_FEATURES[:supporter][:space].to_bytes_pretty %></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">Bandwidth</span>
-      </td>
-      <td><%= Site::PLAN_FEATURES[:free][:bandwidth].to_bytes_pretty %></td>
-      <td>1000 GB</td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="We will never put ads on your site, or give your data to marketers. In fact, we’re prohibited from doing it in our own Terms of Service.">No advertising, ever</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Our worldwide network of CDN servers cache your web site regionally, making your site load fast—no matter where your users are. 頑張る, 日本!">Global CDN Site Cache</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Each site comes with a free Neocities address (yoursitename.neocities.org).">Free Site Subdomain</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Downloading your neocities site is as easy as clicking a button.">One-Click Backups</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Site tags make it easy to find sites you’re interested in, and join communities of sites. It’s like a web ring, but even better.">Site Tags</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Each site has its own RSS feed that make it easy to let people know when your site changes.">RSS Feed</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Like a site on Neocities? Now you can follow it, and see when they update!">Follow Your Favorite Sites</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Each site now has its own profile page, allowing users to see when your site updates, follow your site, and leave feedback.">Site Profile</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Our HTML5 site editor makes it easy to make quick changes to your site, even if you’re on the run.">Neocities Site Editor</span>
-      </td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <!--
-    <tr>
-      <td class="feature-column">Site Tipping (Coming Soon)</td>
-      <td><i class="fa fa-check"></i></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    -->
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="You can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">WebDAV Uploading</span>
-      </td>
-      <td></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domains</span>
-      </td>
-      <td></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Make as many sites as you want with one account, and easily switch between them.">Unlimited Site Creation</span>
-      </td>
-      <td></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="Upload your SSL certificate for your custom domain name, preventing snoops from seeing your user’s traffic.">Custom SSL Certs (soon)</span>
-      </td>
-      <td></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-    <tr>
-      <td class="feature-column">
-        <span data-original-title="No whitelists—you can upload anything you want (no copyrighted content, trojans, or w4r3z, please).">No File Upload Type Restrictions</span>
-      </td>
-      <td></td>
-      <td><i class="fa fa-check"></i></td>
-    </tr>
-  </table>
+  <%== erb :'plan/_compare', layout: false %>
 
   <% if request.path.match /\/plan/ %>
     <div class="row" style="margin-top: 50px; margin-bottom: 0px;">
@@ -313,10 +147,6 @@
 
 <script>
   $(function() {
-    $('.feature-column span').tooltip({
-      placement: 'right'
-    })
-
     $('.plan-image').tooltip({
       placement: 'top'
     })
