@@ -709,9 +709,12 @@ a.tag:hover {
   width: 100%;
   float: left;
   margin: 1.25em 0 1.25em 0;
+  padding: 1em 0 0 0;
+  border-top: 1px solid #EBEBEB;
 }
 .news-item:nth-of-type(1) {
   margin-top: 0!important;
+  border: 0;
 }
 .news-item .user {
   font-weight: bold;
@@ -733,21 +736,22 @@ a.tag:hover {
   margin-bottom: -.1em;
 }
 .news-item .icon {
-  width: 20px;
-  height: 20px;
+  width: 49px;
+  height: 37px;
   background: #E6E6E6;
   float: left;
+  padding-left: 12px;
   margin-right: 12px;
+  a {
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+  }
 }
 .news-item.comment .icon {
   background: #DAEEA5;
 }
 .news-item.comment.for-me .icon, .news-item.tip.for-me .icon {
-  background-size: 62px 62px;
-  width: 82px;
-  height: 62px;
-  background-position: right top;
-  background-repeat: no-repeat;
+
 }
 .news-item .icon-mini {
   
@@ -823,7 +827,9 @@ a.tag:hover {
 }
 .news-item .actions {
   font-size: 11px;
-  margin-left: 32px;
+}
+.news-item > .actions {
+  margin-left: 61px!important;
 }
 .news-item .actions a {
   margin-right: 6px;
