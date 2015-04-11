@@ -100,11 +100,88 @@ get '/plan/thanks' do
   erb :'plan/thanks'
 end
 
-get '/plan/thanks-paypal' do
-  require_login
-  erb :'plan/thanks-paypal'
+get '/plan/bitcoin/?' do
+  erb :'plan/bitcoin'
 end
 
 get '/plan/alternate/?' do
-  erb :'/plan/alternate'
+  redirect '/plan/bitcoin'
+end
+
+def paypal_recurring_hash
+  {
+    ipn_url:     "#{url}/webhooks/paypal",
+    description: 'Neocities Supporter',
+    amount:      Site::PLAN_FEATURES[:supporter][:price].to_s,
+    currency:    'USD'
+  }
+end
+
+def paypal_recurring_authorization_hash
+  url = ENV['RACK_ENV'] == 'development' ? 'http://127.0.0.1:9292' : 'https://neocities.org'
+  paypal_recurring_hash.merge(
+    return_url:  "#{url}/plan/paypal/return",
+    cancel_url:  "#{url}/plan",
+    ipn_url:     "#{url}/webhooks/paypal"
+  )
+end
+
+get '/plan/paypal' do
+  require_login
+
+  hash = paypal_recurring_authorization_hash
+
+  if current_site.paypal_token
+    hash.merge! token: current_site.paypal_token
+  end
+
+  ppr = PayPal::Recurring.new hash
+
+  paypal_response = ppr.checkout
+
+  redirect paypal_response.checkout_url if paypal_response.valid?
+end
+
+get '/plan/paypal/return' do
+  require_login
+
+  if params[:TOKEN].nil? || params[:PAYERID].nil?
+    flash[:error] = 'Unknown error, could not complete the request. Please contact Neocities support.'
+  end
+
+  ppr = PayPal::Recurring.new(paypal_recurring_hash.merge(
+    token:    params[:TOKEN],
+    payer_id: params[:PAYERID]
+  ))
+
+  paypal_response = ppr.request_payment
+  unless paypal_response.approved? && paypal_response.completed?
+    flash[:error] = 'Unknown error, could not complete the request. Please contact Neocities support.'
+    redirect '/plan'
+  end
+
+  ppr = PayPal::Recurring.new(paypal_recurring_authorization_hash.merge(
+    frequency:   1,
+    token:       params[:TOKEN],
+    period:      :monthly,
+    reference:   current_site.id.to_s,
+    payer_id:    params[:PAYERID],
+    start_at:    Time.now,
+    failed:      3,
+    outstanding: :next_billing
+  ))
+
+  paypal_response = ppr.create_recurring_profile
+
+  current_site.paypal_token = params[:TOKEN]
+  current_site.paypal_profile_id = paypal_response.profile_id
+  current_site.paypal_active = true
+  current_site.save_changes validate: false
+
+  redirect '/plan/thanks-paypal'
+end
+
+get '/plan/thanks-paypal' do
+  require_login
+  erb :'plan/thanks-paypal'
 end

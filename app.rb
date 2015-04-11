@@ -27,7 +27,7 @@ before do
   if request.path.match /^\/api\//i
     @api = true
     content_type :json
-  elsif request.path.match /^\/stripe_webhook$/
+  elsif request.path.match /^\/webhooks\//
     # Skips the CSRF check for stripe web hooks
   else
     content_type :html, 'charset' => 'utf-8'

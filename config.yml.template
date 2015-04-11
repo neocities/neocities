@@ -12,6 +12,9 @@ development:
   proxy_pass: 'somethinglongandrandom'
   email_unsubscribe_token: 'somethingrandom'
   logs_path: /path/to/nginx/logs
+  paypal_api_username: derp
+  paypal_api_password: ing
+  paypal_api_signature: tonz
 test:
   database: 'postgres://neocities@localhost/neocities_test'
   database_pool: 1
@@ -25,3 +28,6 @@ test:
   ip_hash_salt: "400$8$1$fc21863da5d531c1"
   proxy_pass: 'somethinglongandrandom'
   email_unsubscribe_token: 'somethingrandom'
+  paypal_api_username: derp
+  paypal_api_password: ing
+  paypal_api_signature: tonz

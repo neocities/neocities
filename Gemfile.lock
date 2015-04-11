@@ -111,6 +111,7 @@ GEM
     netrc (0.10.3)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
+    paypal-recurring (1.1.0)
     pg (0.17.1)
     phantomjs (1.9.7.1)
     poltergeist (1.5.1)
@@ -233,6 +234,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  addressable
   ago
   bcrypt
   capybara_minitest_spec
@@ -252,6 +254,7 @@ DEPENDENCIES
   minitest
   minitest-reporters
   mocha
+  paypal-recurring
   pg
   poltergeist
   pry

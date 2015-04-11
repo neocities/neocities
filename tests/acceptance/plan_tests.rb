@@ -19,6 +19,10 @@ describe '/plan' do
     StripeMock.stop
   end
 
+  it 'should work for paypal' do
+
+  end
+
   it 'should work for fresh signup' do
     visit '/plan'
     fill_in 'Card Number', with: '4242424242424242'

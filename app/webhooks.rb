@@ -1,4 +1,16 @@
-post '/stripe_webhook' do
+post '/webhooks/paypal' do
+  EmailWorker.perform_async({
+    from: 'web@neocities.org',
+    to: 'errors@neocities.org',
+    subject: "[Neocities Paypal Webhook] Received a Webhook from Paypal",
+    body: params.inspect,
+    no_footer: true
+  })
+
+  'ok'
+end
+
+post '/webhooks/stripe' do
   event = JSON.parse request.body.read
   if event['type'] == 'customer.created'
     username  = event['data']['object']['description'].split(' - ').first

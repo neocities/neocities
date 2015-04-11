@@ -131,3 +131,10 @@ if ENV['RACK_ENV'] != 'development'
   # Sass::Plugin.options[:never_update] = true
   Sass::Plugin.options[:full_exception] = false
 end
+
+PayPal::Recurring.configure do |config|
+  config.sandbox = false
+  config.username = $config['paypal_api_username']
+  config.password = $config['paypal_api_password']
+  config.signature = $config['paypal_api_signature']
+end
