@@ -712,7 +712,7 @@ a.tag:hover {
   border-top: 1px solid #EBEBEB;
 }
 .news-item:nth-of-type(1) {
-  margin-top: 0!important;
+  padding-top: 0;
   border: 0;
 }
 .news-item .user {
@@ -727,12 +727,15 @@ a.tag:hover {
   font-style: normal;
   font-size: .8em;
 }
-.news-item.for-me .comment {
+.news-item.for-me .title > .comment {
   color: #000;
   font-style: normal;
-  margin-top: .2em;
+  margin-top: -.1em;
   font-size: .9em;
-  margin-bottom: -.1em;
+  margin-bottom: .2em;
+  float: left;
+  clear: both;
+  margin-left: 61px;
 }
 .news-item .icon {
   width: 49px;

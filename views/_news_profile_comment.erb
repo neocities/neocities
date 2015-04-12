@@ -4,19 +4,21 @@
 <div class="title">
   <div class="icon"><a href="/site/<%= actioning_site.username %>" class="avatar" style="background-image:url(<%= actioning_site.screenshot_url('index.html', '50x50') %>);"></a></div>
 
-  <% if current_site && current_site.id == actioning_site.id %>
-    <a href="/site/<%= current_site.username %>" class="you">You</a>
-  <% else %>
-    <a href="/site/<%= actioning_site.username %>" class="user"><i class="fa fa-user"><% if actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
-  <% end %>
-
-  <i class="fa fa-chevron-right comment-symbol" title="commented on"></i>
-
-    <% if current_site && current_site.id == profile_comment.site_id %>
+  <div class="text">
+    <% if current_site && current_site.id == actioning_site.id %>
       <a href="/site/<%= current_site.username %>" class="you">You</a>
     <% else %>
-      <a href="/site/<%= profile_comment.site.username %>" class="user"><i class="fa fa-user"><% if profile_comment.site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= profile_comment.site.username %></a>
+      <a href="/site/<%= actioning_site.username %>" class="user"><i class="fa fa-user"><% if actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
     <% end %>
+
+    <i class="fa fa-chevron-right comment-symbol" title="commented on"></i>
+
+      <% if current_site && current_site.id == profile_comment.site_id %>
+        <a href="/site/<%= current_site.username %>" class="you">You</a>
+      <% else %>
+        <a href="/site/<%= profile_comment.site.username %>" class="user"><i class="fa fa-user"><% if profile_comment.site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= profile_comment.site.username %></a>
+      <% end %>
+    </div>
   <span class="date">
     <a href="/site/<%= site.username %>?event_id=<%= profile_comment.event.id %>"><%= profile_comment.created_at.ago %></a>
   </span>
