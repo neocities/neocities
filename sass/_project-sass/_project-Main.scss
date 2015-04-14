@@ -781,21 +781,31 @@ a.tag:hover {
   color: #aaa!important;
 }
 .news-item .files {
-  background: #F5F5F5;
-  padding: 0px 10px 6px 0px;
-  border-top: 1px solid #E7E7E7;
+  background: #fff;
+  padding: 0px;
   margin-bottom: 4px;
 }
 .news-item .file {
-  width: 90px;
+  width: auto;
   overflow: hidden;
   margin-bottom: 0;
   padding: 0;
-  margin-left: 17px;
-  margin-top: 10px;
+  margin-left: 0;
+  margin-right: 17px;
+  
+  .html-thumbnail {
+    width: 102px;
+  }
+  &:first-child .html-thumbnail.html {
+    width: 322px;
+    height: 100px;
+  }
+  &:first-child .html-thumbnail.html img {
+    width: 322px;
+    height: 200px;
+  }
 }
 .news-item .file .image-container {
-  height: 63px;
   float: left;
   width: 100%;
 }
