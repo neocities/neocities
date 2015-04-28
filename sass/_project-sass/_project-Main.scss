@@ -1223,6 +1223,12 @@ a.tag:hover {
     margin-bottom: 0;
   }
 }
+.section.support {
+  padding-bottom: 100px;
+  p {
+    font-size: 1.1em;
+  }
+}
 .section.features .col {
   padding-left: 40px;
   
@@ -1345,9 +1351,9 @@ a.tag:hover {
     font-family: $times;
     color: #afcbd1;
   }
-  a {
-    color: #afcbd1;
-  }
+}
+.section.press .quote a {
+  color: #afcbd1;
 }
 .section.plans {
   @media(max-device-width:480px), screen and (max-width:550px) {
