@@ -83,6 +83,19 @@
     }
   }
 }
+.hp.education {
+  .col.intro {
+    padding-top: 20px;
+    img {
+      @include vendor(transform, scaleX(-1));
+      width: 100px;
+      margin-right: 20px;
+    }
+    .intro-text {
+      font-size: 1.1em;
+    }
+  }
+}
 
 .intro-List{
   @extend %kill-List;

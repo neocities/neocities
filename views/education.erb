@@ -1,0 +1,317 @@
+<!doctype html>
+<!--[if IE 8 ]><html lang="en" class="ieAll ie8"><![endif]-->
+<!--[if IE 9 ]><html lang="en" class="ieAll ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en"><!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+  <title>Neocities: Create your free website now!</title>
+  <meta itemprop="name"         content="Neocities.org" />
+  <meta itemprop="description"  content="Create your own free home page, and do whatever you want with it." />
+  <meta name="description"      content="Neocities is the new Geocities. Create your own free home page, and do whatever you want with it." />
+  <meta name="keywords"         content="free website, html, css, learn to code, free hosting, build a website, create a web page" />
+
+  <link rel="canonical" href="//neocities.org" />
+
+  <meta property="og:title"       content="Neocities"/>
+  <meta property="og:site_name"   content="Neocities | neocities.org"/>
+  <meta property="og:type"        content="website"/>
+  <meta property="og:image"       content=""/>
+  <meta property="og:url"         content="//www.neocities.org"/>
+  <meta property="og:description" content="Neocities is the new Geocities. Create your own free home page, and do whatever you want with it."/>
+
+  <link rel="shortcut icon" type="image/ico"  href="/favicon.ico?v=4" />
+  <link rel="apple-touch-icon-precomposed"    href="#apple-icon-144.png" />
+  <link rel="apple-touch-startup-image"       href="#startup.png" />
+
+
+  <!-- Mobile Meta -->
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="MobileOptimized"  content="320" />
+  <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1" />
+
+  <link href="/css/neo.css" rel="stylesheet" type="text/css" media="all"/>
+
+  <!--[if lt IE 9]>
+    <script type="text/javascript" src="/js/html5.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/jquery-1.11.0.min.js"></script>
+  <script src='https://www.google.com/recaptcha/api.js'></script>
+</head>
+
+  <body class="hp education">
+    <a id="new"></a>
+
+    <div class="page">
+
+      <header class="header-Base" role="banner">
+        <nav class="header-Nav clearfix" role="navigation">
+            <a href="#!" title="show small screen nav" class="small-Nav">
+              <img src="/img/nav-Icon.png" alt="navigation icon" />
+            </a>
+            <ul class="h-Nav constant-Nav" role="presentation">
+              <%== erb :'_header_links', layout: false %>
+            </ul>
+
+            <ul class="status-Nav">
+
+              <% if !signed_in? %>
+                <li>
+                  <a href="/signin" class="sign-In">Sign In</a>
+                </li>
+              <% else %>
+                <li>
+                  <a href="/dashboard" class="sign-In">Dashboard</a>
+                </li>
+                <li>
+                  <a href="/settings" class="sign-In">Settings</a>
+                </li>
+                <li>
+                  <a href="/signout" class="sign-In">Sign Out</a>
+                </li>
+              <% end %>
+            </ul>
+          </nav>
+
+          <% if flash.keys.length > 0 %>
+            <div class="alert txt-Center">
+              <p style="padding:5px">
+                <% flash.keys.each do |key| %>
+                  <%== flash[key] %>
+                <% end %>
+              </p>
+            </div>
+          <% end %>
+
+<div class="int-Logo hp-Logo">
+  <a href="/" title="back to home">
+    <span class="hidden">Neocities.org</span>
+    <img src="/img/cat.png" alt="Neocities.org" />
+  </a>
+</div>
+
+<section class="header-Intro">
+  <h1 class="logo header-Content content">
+    <span class="hidden">Neocities.org</span>
+    <img src="/img/neocities-Logo.png" alt="Neocities.org" />
+  </h1>
+</section>
+
+<div class="header-Outro">
+  <div class="row header-Content content">
+    <div class="col intro">
+      <h3 class="delta">A great place to learn how to build websites</h2>
+      <img src="/img/heartcat.png" class="float-Right">
+      <p class="intro-text">Completely free and continuously under development, we're building Neocities into a simple and intuitive web hosting service for students learning HTML and CSS for the first time. Give us a try and <a href="/contact">let us know</a> what you think!</p>
+      
+      <h3 class="delta">Tools for creation and review</h2>
+      <img src="/img/about-neocities.png" class="float-Left">
+      <p class="intro-text">Neocities has a great built-in HTML editor and drag-and-drop upload. Instructors can easily review all class websites using our class tag feature. By signing up using this education page, students will get an experience tailored for them, and they'll only see sites from their class in the gallery.</p>
+    </div>
+
+    <div class="col signup-Area">
+      <% if signed_in? %>
+
+        <div class="signup-Form">
+          <div class="content">
+            <h3 class="gamma txt-Center">Build your Website!</h3>
+          </div>
+          <p class="txt-Center">
+            Go to your dashboard to<br> start editing your website!
+          </p>
+          <br />
+          <div class="txt-Center">
+            <a href="/dashboard" class="btn-Action">Get Started</a>
+          </div>
+        </div>
+      <% else %>
+        <form id="createSiteForm" class="signup-Form" onsubmit="return false">
+          <input type="hidden" name="csrf_token" value="<%= csrf_token %>">
+          <fieldset class="content">
+            <h2 class="gamma">Class Sign Up</h2>
+            <hr />
+            <div class="siteCreateInputs">
+              <label for="create-Input">User Name</label>
+              <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" style="position:absolute; top:-2000px; left:-2000px;" />
+              <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" style="position:absolute; top:-2000px; left:-2000px;" />
+              <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <label for="create-Input" id="domain-name">.neocities.org</label>
+
+              <label for="tags-input">Class Tag</label>
+              <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="E.g. SmithSummer2015" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+
+              <div class="col col-50" style="padding-left:0;">
+                <label for="password-input">
+                  Password
+                </label>
+                <input type="password" class="input-Area" id="password-input"
+                        name="password" placeholder="password"
+                        data-placement="left" data-trigger="manual"
+                        autocapitalize="off" autocorrect="off" autocomplete="off" />
+              </div>
+
+              <div class="col col-50">
+                <label for="email-input">
+                  Email
+                </label>
+                <input type="email" class="input-Area"
+                       id="email-input" name="email"
+                       placeholder="me@example.com" data-placement="left"
+                       data-trigger="manual" autocapitalize="off"
+                       autocorrect="off" autocomplete="off" />
+              </div>
+
+              <div class="col col-50" style="padding-left:0;">
+                <label>
+                  Confirm you are human
+                </label>
+                <div id="captcha-input" class="g-recaptcha"
+                     data-sitekey="<%= $config['recaptcha_public_key'] %>"
+                     data-theme="dark" data-placement="left" data-trigger="manual">
+                </div>
+              </div>
+
+              <div class="col col-50">
+                <div style="margin-top: 15px">
+                  <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+
+      <% end %>
+
+    </div> <!-- end .col-50 -->
+
+  </div> <!-- end .row -->
+
+</div> <!-- end .header-Outro -->
+
+</header>
+
+<main class="content-Base">
+
+<div class="section instructor-quotes">
+  <h2 class="delta">What Instructors Say</h2>
+  <div class="row content">
+    <div class="col col-33">
+      <div class="image" style="width:130px;height:130px;background:#aaa"></div>
+      <h3>Instructor Name<br>
+        Location<br>
+        Class name</h3>
+    
+      <p>"Neocities was an excellent resource for my students - it made everything very easy. 
+        The Neocities team did a great job responding to any    questions I had."</p>
+    </div>
+    <div class="col col-33">
+      <div class="image" style="width:130px;height:130px;background:#aaa"></div>
+      <h3>Instructor Name<br>
+        Location<br>
+        Class name</h3>
+    
+      <p>"Neocities was an excellent resource for my students - it made everything very easy. 
+        The Neocities team did a great job responding to any    questions I had."</p>
+    </div>
+    <div class="col col-33">
+      <div class="image" style="width:130px;height:130px;background:#aaa"></div>
+      <h3>Instructor Name<br>
+        Location<br>
+        Class name</h3>
+    
+      <p>"Neocities was an excellent resource for my students - it made everything very easy. 
+        The Neocities team did a great job responding to any    questions I had."</p>
+    </div>
+  </div>
+</div>
+
+<div class="section previews">
+  <h2 class="delta">Support Us</h2>
+  <p>Neocities is funded directly by our community through supporter plans and donations. We will never sell users' personal data or embed advertising on member sites.</p>
+  <p>Your support allows us to pay for server costs and continue working on Neocities full-time. You can support us on a subscription basis for $5/month or make a one-time donation.</p>
+</div>
+</main>
+
+<footer class="footer-Base" role="contentinfo">
+  <div class="footer-Intro">
+    <div class="footer-Content">
+      <div class="row">
+        <div class="col col-33">
+          <div class="f-Col f-Col-1 clearfix">
+            <span class="footer-icon"></span>
+            <h2 class="delta">Support Us</h2>
+            <p class="tiny">
+              Neocities is funded by <a href="/plan">supporters</a> and <a href="/donate">donations</a>. If you’d like to contribute, you can help us pay our server costs using credit card, Bitcoin, or PayPal.
+            </p>
+            <a href="/donate" title="Donate to Neocities" class="action-Link">Donate Today</a>
+          </div>
+        </div>
+        <div class="col col-33">
+          <div class="f-Col f-Col-2 clearfix">
+            <span class="footer-icon"></span>
+            <h2 class="delta">About Us</h2>
+            <p class="tiny">
+              Neocities is here to bring back the creativity and
+              free expression to the world wide web that made it great.
+            </p>
+            <a href="/about" title="More about Neocities" class="action-Link">More About Us</a>
+          </div>
+        </div>
+        <div class="col col-33">
+          <div class="f-Col f-Col-3 clearfix">
+            <span class="footer-icon"></span>
+            <h2 class="delta">Latest News</h2>
+            <p class="tiny">
+              The latest news on Neocities can be found on our blog.
+            </p>
+            <a href="/blog" title="Read about Neocities news and updates" class="action-Link">Read More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%== erb :'_footer', layout: false %>
+</footer>
+
+    </div>
+    <script src="/js/app.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script>
+
+      $('#createSiteForm').on('submit', function(obj) {
+        $.post('/create_validate_all', $(obj.target).serialize(), function(errors) {
+          if(errors.length == 0) {
+            $.post('/create', $('#createSiteForm').serialize(), function(res) {
+              window.location.href = '/welcome'
+            })
+          } else {
+            for(var i=0; i<errors.length;i++) {
+              if(errors[i][0] == 'captcha') {
+                var captchaDiv = $('#captcha-input')
+                captchaDiv.attr('data-original-title', errors[i][1])
+                captchaDiv.tooltip('show')
+              } else {
+                var ele = $('input[name='+errors[i][0]+']')
+                ele.attr('data-original-title', errors[i][1])
+                ele.tooltip('show')
+              }
+            }
+          }
+        })
+      })
+
+      $('input[type=text],input[type=password]').on('change focusout', function(obj) {
+        $.post('/create_validate', {field: obj.target.name, value: obj.target.value, csrf_token: '<%= csrf_token %>'}, function(res) {
+          if(res.result == 'ok') {
+            return $(obj.target).tooltip('hide')
+          }
+
+          $(obj.target).attr('data-original-title', res.error)
+          $(obj.target).tooltip('show')
+        })
+      })
+    </script>
+  </body>
+</html>

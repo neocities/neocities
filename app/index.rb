@@ -43,6 +43,10 @@ get '/welcome' do
   erb :'welcome', locals: {site: current_site}
 end
 
+get '/education' do
+  erb :education, layout: false
+end
+
 get '/tutorials' do
   erb :'tutorials'
 end

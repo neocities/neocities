@@ -1193,6 +1193,28 @@ a.tag:hover {
   background-image:url(/img/hpgallery-next.png);
   right: 0;
 }
+.section.instructor-quotes {
+  background: #971D31;
+  
+  h2, h3, p {
+    color: #fff;
+    text-align: left;
+  }
+  h2 {
+    margin-left: 20px;
+  }
+  p {
+    font-size: 1em;
+    font-style: italic;
+    margin-right: 30px;
+    margin-top: 20px;
+    clear: both;
+  }
+  .image {
+    float: left;
+    margin-right: 22px;
+  }
+}
 .section.features {
   background: #4F7E89;
   text-align: center;
