@@ -79,6 +79,7 @@ GEM
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     i18n (0.6.9)
+    io-extra (1.2.8)
     jimson-temp (0.9.5)
       blankslate (>= 3.1.2)
       multi_json (~> 1.0)
@@ -158,7 +159,7 @@ GEM
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
     retriable (1.4.1)
-    rmagick (2.13.3)
+    rmagick (2.15.0)
     safe_yaml (1.0.4)
     sass (3.3.8)
     screencap (0.1.1)
@@ -246,6 +247,7 @@ DEPENDENCIES
   geoip
   google-api-client
   hiredis
+  io-extra
   jdbc-postgres
   jruby-openssl
   json
