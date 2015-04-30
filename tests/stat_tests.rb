@@ -24,6 +24,27 @@ describe 'stats' do
     @s2u = @site_two.username
   end
 
+  it 'prunes logs for free sites' do
+    @free_site = Fabricate :site
+    @supporter_site = Fabricate :site, plan_type: 'supporter'
+
+    day = Date.today
+    (Stat::FREE_RETAINMENT_DAYS+1).times do |i|
+      [@free_site, @supporter_site].each do |site|
+        Stat.create site_id: site.id, created_at: day
+      end
+      day = day - 1
+    end
+
+    count_site_ids = [@free_site.id, @supporter_site.id]
+    expected_stat_count = (Stat::FREE_RETAINMENT_DAYS+1)*2
+
+    Stat.where(site_id: count_site_ids).count.must_equal expected_stat_count
+    Stat.prune!
+    Stat.where(site_id: count_site_ids).count.must_equal expected_stat_count-1
+    Stat.where(site_id: @supporter_site.id).count.must_equal expected_stat_count/2
+  end
+
   it 'parses multiple sets of logs' do
     geoip = GeoIP.new Stat::GEOCITY_PATH
 

@@ -1,5 +1,6 @@
 class Stat < Sequel::Model
   GEOCITY_PATH = './files/GeoLiteCity.dat'
+  FREE_RETAINMENT_DAYS = 7
 
   many_to_one :site
   one_to_many :stat_referrers
@@ -7,6 +8,13 @@ class Stat < Sequel::Model
   one_to_many :stat_paths
 
   class << self
+    def prune!
+      DB[
+        "DELETE FROM stats WHERE created_at < ? AND site_id NOT IN (SELECT id FROM sites WHERE plan_type IS NOT NULL OR plan_type != 'free')",
+        (FREE_RETAINMENT_DAYS-1).days.ago.to_date.to_s
+      ].first
+    end
+
     def parse_logfiles(path)
       Dir["#{path}/*.log"].each do |log_path|
         site_logs = {}

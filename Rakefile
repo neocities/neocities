@@ -31,10 +31,8 @@ end
 
 desc "parse logs"
 task :parse_logs => [:environment] do
-  Dir[File.join($config['logs_path'], '*.log')].each do |logfile_path|
-    Stat.parse logfile_path
-    FileUtils.rm logfile_path
-  end
+  Stat.parse_logfiles $config['logs_path']
+  Stat.prune!
 end
 
 desc 'Update banned IPs list'
