@@ -89,7 +89,11 @@
     img {
       @include vendor(transform, scaleX(-1));
       width: 100px;
-      margin-right: 20px;
+      margin-right: 25px;
+      
+      &.float-Right {
+        margin-left: 10px;
+      }
     }
     .intro-text {
       font-size: 1.1em;

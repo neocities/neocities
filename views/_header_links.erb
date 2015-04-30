@@ -1,4 +1,4 @@
-<% if request.path == '/' && !signed_in? %>
+<% if (request.path == '/'  && !signed_in?) || request.path == '/education' %>
   <li>
     <a href="/">Neocities</a>
   </li>
