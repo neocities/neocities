@@ -945,6 +945,7 @@ class Site < Sequel::Model
     ((total_space_used.to_f / maximum_space) * 100).round(1)
   end
 
+  # Note: Change Stat#prune! if you change this business logic.
   def supporter?
     owner.plan_type != 'free'
   end
@@ -966,6 +967,7 @@ class Site < Sequel::Model
     !values[:plan_type].match(/plan_/).nil?
   end
 
+  # Note: Change Stat#prune! if you change this business logic.
   def plan_type
     return 'free' if owner.values[:plan_type].nil?
     return 'supporter' if owner.values[:plan_type].match /^plan_/
