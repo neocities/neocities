@@ -13,6 +13,9 @@ class Stat < Sequel::Model
         "DELETE FROM stats WHERE created_at < ? AND site_id NOT IN (SELECT id FROM sites WHERE plan_type IS NOT NULL OR plan_type != 'free')",
         (FREE_RETAINMENT_DAYS-1).days.ago.to_date.to_s
       ].first
+
+      binding.pry
+
     end
 
     def parse_logfiles(path)
