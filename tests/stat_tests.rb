@@ -3,16 +3,6 @@ require_relative './environment.rb'
 STAT_LOGS_PATH = 'tests/stat_logs'
 STAT_LOGS_DIR_MATCH = "#{STAT_LOGS_PATH}/*.log"
 
-def log(&block)
-  File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |f|
-    yield f
-  end
-end
-
-def random_time
-  (Time.now - rand(5000)).iso8601
-end
-
 describe 'stats' do
   before do
     Dir[STAT_LOGS_DIR_MATCH].each {|f| FileUtils.rm f}
@@ -45,54 +35,48 @@ describe 'stats' do
     Stat.where(site_id: @supporter_site.id).count.must_equal expected_stat_count/2
   end
 
-  it 'parses multiple sets of logs' do
-    geoip = GeoIP.new Stat::GEOCITY_PATH
+  it 'parses logfile' do
+    time = Time.now.iso8601
+    log = [
+      "#{time} #{@site_one.username} 5000 / 67.180.75.140 http://example.com",
+      "#{time} #{@site_one.username} 5000 / 67.180.75.140 http://example.com",
+      "#{time} #{@site_one.username} 5000 / 172.56.16.152 http://example.com",
+      "#{time} #{@site_one.username} 5000 / 172.56.16.152 -",
+      "#{time} #{@site_two.username} 5000 / 67.180.75.140 http://example.com",
+      "#{time} #{@site_two.username} 5000 / 127.0.0.1 -",
+      "#{time} #{@site_two.username} 5000 / 127.0.0.2 https://example.com"
+    ]
 
-    paths = ["/", "/#{SecureRandom.hex}", "/#{SecureRandom.hex}"]
-    cities = [geoip.city('67.180.75.140'), geoip.city('172.56.16.152')]
-    referrers = ['-', "http://#{@site_one.host}", "https://#{@site_one.host}", "http://insaneclownpossee.com"]
-    sites = [@site_one, @site_two]
-
-    test_hits = []
-
-    100.times { |i|
-      test_hits.push({
-        time: random_time,
-        username: sites[rand(sites.length)].username,
-        size: rand(5000),
-        path: paths[rand(paths.length)],
-        ip: i.odd? ? cities.first.ip : cities.last.ip,
-        referrer: referrers[rand(referrers.length)]
-      })
-    }
-
-    log do |f|
-      test_hits.each {|h| f.puts "#{h[:time]} #{h[:username]} #{h[:size]} #{h[:path]} #{h[:ip]} #{h[:referrer]}"}
+    File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
+      file.write log.join("\n")
     end
 
     Stat.parse_logfiles STAT_LOGS_PATH
 
-    Dir["#{STAT_LOGS_PATH}/*.log"].length.must_equal 0
+    @site_one.reload
+    @site_one.hits.must_equal 4
+    @site_one.views.must_equal 2
+    stat = @site_one.stats.first
+    stat.hits.must_equal 4
+    stat.views.must_equal 2
+    referrer = stat.stat_referrers.first
+    referrer.url.must_equal 'http://example.com'
+    referrer.views.must_equal 2
 
-    sites_total = 0
-    [@site_one, @site_two].each do |site|
-      site.reload
-      sites_total += site.hits
-      site.views.must_equal 2
-    end
+    @site_two.reload
+    @site_two.hits.must_equal 3
+    @site_two.views.must_equal 3
+    stat = @site_two.stats.first
+    stat.hits.must_equal 3
+    stat.views.must_equal 3
+    stat.stat_referrers.length.must_equal 2
+    referrer = stat.stat_referrers.first
+    referrer.url.must_equal 'http://example.com'
+    referrer.views.must_equal 2
+    referrer = stat.stat_referrers.last
+    referrer.url.must_equal 'https://example.com'
+    referrer.views.must_equal 1
 
-    sites_total.must_equal 100
-
-    stats = Stat.where(site_id: [@site_one.id, @site_two.id]).all
-    stats.length.must_equal 2
-
-    stats.collect {|stat| stat.hits}.inject{|sum,x| sum + x }.must_equal 100
-    stats.collect {|stat| stat.views}.inject{|sum,x| sum + x }.must_equal 4
-
-    sites.each do |site|
-      test_hits.select {|h| h[:username] == site.username}.length.must_equal(
-        stats.select {|s| s.site.username == site.username}.first.hits
-      )
-    end
+    # [geoip.city('67.180.75.140'), geoip.city('172.56.16.152')]
   end
 end

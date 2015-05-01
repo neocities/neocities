@@ -28,7 +28,10 @@ class Stat < Sequel::Model
           site_logs[username] = {
             hits: 0,
             views: 0,
-            view_ips: []
+            view_ips: [],
+            ips: [],
+            referrers: {},
+            paths: {}
           } unless site_logs[username]
 
           site_logs[username][:hits] += 1
@@ -36,7 +39,15 @@ class Stat < Sequel::Model
           unless site_logs[username][:view_ips].include?(ip)
             site_logs[username][:views] += 1
             site_logs[username][:view_ips] << ip
+
+            if referrer != '-'
+              site_logs[username][:referrers][referrer] ||= 0
+              site_logs[username][:referrers][referrer] += 1
+            end
           end
+
+          site_logs[username][:paths][path] ||= 0
+          site_logs[username][:paths][path] += 1
         end
 
         logfile.close
@@ -67,6 +78,15 @@ class Stat < Sequel::Model
               site_log[:views],
               site_log[:id]
             ].first
+
+            site_log[:referrers].each do |referrer,views|
+              opts = {stat_id: stat.id, url: referrer}
+              stat_referrer = StatReferrer.select(:id).where(opts).first
+              DB[:stat_referrers].lock('EXCLUSIVE') {
+                stat_referrer = StatReferrer.create opts
+              } if stat_referrer.nil?
+              DB['update stat_referrers set views=views+? where stat_id=?', views, stat.id].first
+            end
           end
         end
 
