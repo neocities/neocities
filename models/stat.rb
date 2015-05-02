@@ -1,6 +1,6 @@
 class Stat < Sequel::Model
-  GEOCITY_PATH = './files/GeoLiteCity.dat'
   FREE_RETAINMENT_DAYS = 7
+  REFERRAL_RETAINMENT_DAYS = 7
 
   many_to_one :site
   one_to_many :stat_referrers
@@ -9,13 +9,23 @@ class Stat < Sequel::Model
 
   class << self
     def prune!
-      DB[
-        "DELETE FROM stats WHERE created_at < ? AND site_id NOT IN (SELECT id FROM sites WHERE plan_type IS NOT NULL OR plan_type != 'free')",
-        (FREE_RETAINMENT_DAYS-1).days.ago.to_date.to_s
-      ].first
+      supporter_site_ids = DB["select id from sites where plan_type is not null or plan_type != 'free'"].all.collect {|s| s[:id]}
 
-      binding.pry
+      delete_stats_dataset = where{created_at < (FREE_RETAINMENT_DAYS-1).days.ago.to_date.to_s}.exclude(site_id: supporter_site_ids)
 
+      deleted_stat_ids = delete_stats_dataset.select(:id).all.collect {|s| s.id}
+      delete_stats_dataset.delete
+
+      puts "TODO: stat_referrers/paths/locations needs created_at timestamp for pruning."
+
+      StatReferrer.where(stat_id: deleted_stat_ids).delete
+
+      #DB[
+      #  "DELETE FROM stats WHERE created_at < ? AND site_id NOT IN (SELECT id FROM sites WHERE plan_type IS NOT NULL OR plan_type != 'free')",
+      #  (FREE_RETAINMENT_DAYS-1).days.ago.to_date.to_s
+      #].first
+
+      #binding.pry
     end
 
     def parse_logfiles(path)
@@ -31,6 +41,7 @@ class Stat < Sequel::Model
           site_logs[username] = {
             hits: 0,
             views: 0,
+            bandwidth: 0,
             view_ips: [],
             ips: [],
             referrers: {},
@@ -38,6 +49,7 @@ class Stat < Sequel::Model
           } unless site_logs[username]
 
           site_logs[username][:hits] += 1
+          site_logs[username][:bandwidth] += size.to_i
 
           unless site_logs[username][:view_ips].include?(ip)
             site_logs[username][:views] += 1
@@ -76,19 +88,28 @@ class Stat < Sequel::Model
             DB[:stats].lock('EXCLUSIVE') { stat = Stat.create opts } if stat.nil?
 
             DB[
-              'update stats set hits=hits+?, views=views+? where site_id=?',
+              'update stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where site_id=?',
               site_log[:hits],
               site_log[:views],
+              site_log[:bandwidth],
               site_log[:id]
             ].first
 
-            site_log[:referrers].each do |referrer,views|
-              opts = {stat_id: stat.id, url: referrer}
-              stat_referrer = StatReferrer.select(:id).where(opts).first
-              DB[:stat_referrers].lock('EXCLUSIVE') {
-                stat_referrer = StatReferrer.create opts
-              } if stat_referrer.nil?
-              DB['update stat_referrers set views=views+? where stat_id=?', views, stat.id].first
+            site_log[:referrers].each do |referrer, views|
+              stat_referrer = StatReferrer.create_or_get site_log[:id], referrer
+              DB['update stat_referrers set views=views+? where site_id=?', views, site_log[:id]].first
+            end
+
+            site_log[:view_ips].each do |ip|
+              site_location = StatLocation.create_or_get site_log[:id], ip
+              next if site_location.nil?
+              DB['update stat_locations set views=views+1 where id=?', site_location.id].first
+            end
+
+            site_log[:paths].each do |path, views|
+              site_path = StatPath.create_or_get site_log[:id], path
+              next if site_path.nil?
+              DB['update stat_paths set views=views+? where id=?', views, site_path.id].first
             end
           end
         end

@@ -161,6 +161,11 @@ class Site < Sequel::Model
 
   one_to_many :site_files
 
+  one_to_many :stats
+  one_to_many :stat_referrers
+  one_to_many :stat_locations
+  one_to_many :stat_paths
+
   def account_sites_dataset
     Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id})).order(:parent_site_id.desc, :username)
   end
