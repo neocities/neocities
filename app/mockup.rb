@@ -24,4 +24,9 @@ get '/welcome_mockup' do
   require_login
   erb :'welcome_mockup', locals: {site: current_site}
 end
+
+get '/stats_mockup' do
+  require_login
+  erb :'stats_mockup', locals: {site: current_site}
+end
 # :nocov:

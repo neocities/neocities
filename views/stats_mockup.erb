@@ -1,0 +1,222 @@
+<script src="http://www.webglearth.com/v2/api.js"></script>
+    <script>
+      var earth;
+      function initialize() {
+        earth = new WE.map('earth_div');
+        earth.setView([14.732386, -107.050781], 2);
+        WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(earth);
+
+        // Start a simple rotation animation
+        var before = null;
+        requestAnimationFrame(function animate(now) {
+            var c = earth.getPosition();
+            var elapsed = before? now - before: 0;
+            before = now;
+            earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)]);
+            requestAnimationFrame(animate);
+        });
+      }
+    </script>
+  
+<body onload="initialize()">
+</body>
+
+<div class="header-Outro with-columns">
+  <div class="row content">
+    <div class="col col-66">
+      <h3>Your Stats</h3>
+      <div class="feed-filter">
+        <% if !@events.empty? && (site.followings_dataset.count > 0) %>
+        <a href="/" <% if params[:activity].nil? %>class="selected"<% end %>>All</a>
+        <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>Profile Activity</a>
+        <% end %>
+        <a href="/activity">Global Activity</a>
+      </div>
+    </div>
+    <div class="col col-32">
+      <h3>Your Site</h3>
+      <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i>Edit Site</a>
+    </div>
+  </div>
+</div>
+
+<div class="container news-feed">
+  <div class="content misc-page columns right-col">
+    <div class="col-left">
+      <div class="col col-66">
+        <div class="row">
+          <div class="col col-50">
+            <h2>Latest Visitors</h2>
+            <div id="earth_div" style="height: 300px"></div>
+          </div>
+          <div class="col col-50">
+            <table class="table table-striped" id="latest-visitors">
+              <thead>
+                <tr>
+                  <th>Location</th>
+                  <th>Referrer</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>San Francisco, CA</td>
+                  <td><a href="http://neocities.org">neocities.org</a></td>
+                  <td>4/27/15 7:11PM</td>
+                </tr>
+                <tr>
+                  <td>Portland,&nbsp;OR</td>
+                  <td>Google search</td>
+                  <td>4/27/15 7:15PM</td>
+                </tr>
+                <tr>
+                  <td>New York, NY</td>
+                  <td><a href="">violasong.com</a></td>
+                  <td>4/28/15 8:22PM</td>
+                </tr>
+                <tr>
+                  <td>Seattle, WA</td>
+                  <td>Facebook URL</td>
+                  <td>4/28/15 9:22PM</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR</td>
+                  <td>Google search</td>
+                  <td>4/30/15 7:15PM</td>
+                </tr>
+                <tr>
+                  <td>San Francisco, CA</td>
+                  <td><a href="http://neocities.org">neocities.org</a></td>
+                  <td>4/27/15 7:11PM</td>
+                </tr>
+                <tr>
+                  <td>Portland,&nbsp;OR</td>
+                  <td>Google search</td>
+                  <td>4/27/15 7:15PM</td>
+                </tr>
+                <tr>
+                  <td>New York, NY</td>
+                  <td><a href="">violasong.com</a></td>
+                  <td>4/28/15 8:22PM</td>
+                </tr>
+                <tr>
+                  <td>Seattle, WA</td>
+                  <td>Twitter URL</td>
+                  <td>4/28/15 9:22PM</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR</td>
+                  <td>Google search</td>
+                  <td>4/30/15 7:15PM</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col col-50">
+            <h2>Top Referrers</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Referrer</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        
+          <div class="col col-50">
+            <h2>Top Locations</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Locations</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Portland</td>
+                  <td>130</td>
+                </tr>
+                <tr>
+                  <td>Portland</td>
+                  <td>130</td>
+                </tr>
+                <tr>
+                  <td>Portland</td>
+                  <td>130</td>
+                </tr>
+                <tr>
+                  <td>Portland</td>
+                  <td>130</td>
+                </tr>
+                <tr>
+                  <td>Portland</td>
+                  <td>130</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col col-33">
+        <div class="news-site-info">
+          <p class="site-url"><a href="<%= current_site.uri %>" target="_blank"><%= site.title %></a></p>
+          <div class="stats">
+            <div class="col col-50">
+              <% if site.updated_at %>
+                Last updated<br><strong><%= site.updated_at.ago %></strong>
+              <% else %>
+                Your new website!<br><strong><a href="/dashboard"><i class="fa fa-edit" title="Edit"></i> Start Building</a></strong>
+              <% end %>
+            </div>
+            <div class="col col-50">
+              <div><strong><%= site.views.format_large_number %></strong> views</div>
+              <% follows_count = site.follows_dataset.count %>
+              <div><strong><%= follows_count.format_large_number %></strong> follower<%= follows_count == 1 ? '' : 's' %></div>
+            </div>
+          </div>
+        </div>
+
+        <a href="<%= site.uri %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
+
+        <div class="news-profile-button">
+          <a href="/site/<%= site.username %>" class="btn-Action"><i class="fa fa-user"></i> Profile</a>
+          <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'><i class="fa fa-share-alt"></i> Share</a>
+        </div>
+
+        <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
+
+        <%== erb :'_tags', layout: false, locals: {site: site, is_current_site: site == current_site} %>
+      </div>
+    </div>
+  </div>
+</div>

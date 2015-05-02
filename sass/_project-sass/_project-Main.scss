@@ -1881,3 +1881,9 @@ a.tag:hover {
     display: inline;
   }
 }
+table#latest-visitors {
+  td:nth-child(1), td:nth-child(2) {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
