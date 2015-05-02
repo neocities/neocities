@@ -1,6 +1,5 @@
 class Stat < Sequel::Model
-  FREE_RETAINMENT_DAYS = 7
-  REFERRAL_RETAINMENT_DAYS = 7
+  FREE_RETAINMENT_DAYS = 30
 
   many_to_one :site
   one_to_many :stat_referrers
@@ -9,23 +8,10 @@ class Stat < Sequel::Model
 
   class << self
     def prune!
-      supporter_site_ids = DB["select id from sites where plan_type is not null or plan_type != 'free'"].all.collect {|s| s[:id]}
-
-      delete_stats_dataset = where{created_at < (FREE_RETAINMENT_DAYS-1).days.ago.to_date.to_s}.exclude(site_id: supporter_site_ids)
-
-      deleted_stat_ids = delete_stats_dataset.select(:id).all.collect {|s| s.id}
-      delete_stats_dataset.delete
-
-      puts "TODO: stat_referrers/paths/locations needs created_at timestamp for pruning."
-
-      StatReferrer.where(stat_id: deleted_stat_ids).delete
-
-      #DB[
-      #  "DELETE FROM stats WHERE created_at < ? AND site_id NOT IN (SELECT id FROM sites WHERE plan_type IS NOT NULL OR plan_type != 'free')",
-      #  (FREE_RETAINMENT_DAYS-1).days.ago.to_date.to_s
-      #].first
-
-      #binding.pry
+      DB[
+        "DELETE FROM stats WHERE created_at < ? AND site_id NOT IN (SELECT id FROM sites WHERE plan_type IS NOT NULL OR plan_type != 'free')",
+        (FREE_RETAINMENT_DAYS-1).days.ago.to_date.to_s
+      ].first
     end
 
     def parse_logfiles(path)

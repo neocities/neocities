@@ -31,8 +31,11 @@ end
 
 desc "parse logs"
 task :parse_logs => [:environment] do
-  Stat.parse_logfiles $config['logs_path']
   Stat.prune!
+  StatLocation.prune!
+  StatReferrer.prune!
+  StatPath.prune!
+  Stat.parse_logfiles $config['logs_path']
 end
 
 desc 'Update banned IPs list'

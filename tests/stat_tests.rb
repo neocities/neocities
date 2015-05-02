@@ -26,7 +26,7 @@ describe 'stats' do
       file.write log.join("\n")
     end
   end
-=begin
+
   it 'prunes logs for free sites' do
     @free_site = Fabricate :site
     @supporter_site = Fabricate :site, plan_type: 'supporter'
@@ -42,19 +42,44 @@ describe 'stats' do
     count_site_ids = [@free_site.id, @supporter_site.id]
     expected_stat_count = (Stat::FREE_RETAINMENT_DAYS+1)*2
 
-    [@free_site, @supporter_site].each do |site|
-      site.stats.last.add_stat_referrer url: 'https://example.com'
-    end
-
     Stat.where(site_id: count_site_ids).count.must_equal expected_stat_count
     Stat.prune!
     Stat.where(site_id: count_site_ids).count.must_equal expected_stat_count-1
     Stat.where(site_id: @supporter_site.id).count.must_equal expected_stat_count/2
-
-    @free_site.stats.last.stat_referrers.length.must_equal 0
-    @supporter_site.stats.last.stat_referrers.length.must_equal 1
   end
-=end
+
+  it 'prunes referrers' do
+    stat_referrer_now = @site_one.add_stat_referrer created_at: Date.today, url: 'http://example.com/now'
+    stat_referrer = @site_one.add_stat_referrer created_at: (StatReferrer::RETAINMENT_DAYS-1).days.ago, url: 'http://example.com'
+    StatReferrer[stat_referrer.id].wont_be_nil
+    @site_one.stat_referrers_dataset.count.must_equal 2
+    StatReferrer.prune!
+    @site_one.stat_referrers_dataset.count.must_equal 1
+    StatReferrer[stat_referrer.id].must_be_nil
+  end
+
+  it 'prunes locations' do
+    stat_location = @site_one.add_stat_location(
+      created_at: (StatLocation::RETAINMENT_DAYS-1).days.ago,
+      country_code2: 'US',
+      region_name: 'Minnesota',
+      city_name: 'Minneapolis'
+    )
+    StatLocation[stat_location.id].wont_be_nil
+    StatLocation.prune!
+    StatLocation[stat_location.id].must_be_nil
+  end
+
+  it 'prunes paths' do
+    stat_path = @site_one.add_stat_path(
+      created_at: (StatPath::RETAINMENT_DAYS-1).days.ago,
+      name: '/derpie.html'
+    )
+    StatPath[stat_path.id].wont_be_nil
+    StatPath.prune!
+    StatPath[stat_path.id].must_be_nil
+  end
+
   it 'parses logfile' do
     Stat.parse_logfiles STAT_LOGS_PATH
 
