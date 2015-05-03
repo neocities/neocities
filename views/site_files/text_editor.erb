@@ -27,7 +27,12 @@
 <div class="header-Outro editor">
   <div class="row content">
     <div class="breadcrumbs">
-      <a href="/dashboard">Dashboard</a> > <span class="filename"><%= @filename %></span>
+      <a href="/dashboard">Dashboard</a> >
+      <span class="filename">
+        <% dir_array = Pathname(@filename).dirname.to_s.split '/' %>
+        <% dir_array = [] if dir_array == ['.'] %>
+        <% dir_array.each_with_index do |dir,i| %><a href="/dashboard?dir=<%= Rack::Utils.escape dir_array[0..i].join('/') %>"><%= dir %></a>/<% end %><%= Pathname(@filename).basename %>
+      </span>
     </div>
     <div class="tools">
       <div class="theme">
