@@ -246,8 +246,12 @@
 
       this.on("error", function(file, errorMessage) {
         hideUploadProgress()
-        location.href = '/dashboard<%= @dir ? "?dir=#{@dir}" : "" %>'
-        // alert('Failed: '+errorMessage)
+        // Guess a directory upload error
+        if(file.status == 'error' && file.name.match(/.+\..+/) == null && errorMessage == 'Server responded with 0 code.') {
+          alert('Recursive directory upload is only supported by the Chrome web browser.')
+        } else {
+          location.href = '/dashboard<%= @dir ? "?dir=#{@dir}" : "" %>'
+        }
       })
 
       this.on("totaluploadprogress", function(progress, totalBytes, totalBytesSent) {
@@ -257,6 +261,10 @@
         showUploadProgress()
         $('#progressBar').css('display', 'block')
         $('#uploadingProgress').css('width', progress+'%')
+      })
+
+      this.on("sending", function(file) {
+        $('#uploads').append('<input type="hidden" name="file_paths[]" value="'+file.fullPath+'">')
       })
     }
   }

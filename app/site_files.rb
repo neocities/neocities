@@ -59,8 +59,22 @@ post '/site_files/upload' do
     file_upload_response "Uploaded files were not seen by the server, cancelled. We don't know what's causing this yet. Please contact us so we can help fix it. Thanks!"
   end
 
-  params[:files].each do |file|
-    file[:filename] = "#{params[:dir]}/#{file[:filename]}" if params[:dir]
+  params[:files].each_with_index do |file,i|
+    dir_name = ''
+    dir_name = params[:dir] if params[:dir]
+
+    unless params[:file_paths].nil? || params[:file_paths].empty? || params[:file_paths].length == 0
+
+      file_path = params[:file_paths].select {|file_path|
+        file[:filename] == Pathname(file_path).basename.to_s
+      }.first
+
+      unless file_path.nil?
+        dir_name += '/' + Pathname(file_path).dirname.to_s
+      end
+    end
+
+    file[:filename] = "#{dir_name}/#{file[:filename]}"
     if current_site.file_size_too_large? file[:tempfile].size
       file_upload_response "#{file[:filename]} is too large, upload cancelled."
     end
