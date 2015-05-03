@@ -87,9 +87,12 @@ end
 post '/site_files/delete' do
   require_login
   current_site.delete_file params[:filename]
-
   flash[:success] = "Deleted #{params[:filename]}."
-  redirect '/dashboard'
+
+  dirname = Pathname(params[:filename]).dirname
+  dir_query = dirname.nil? || dirname.to_s == '.' ? '' : "?dir=#{Rack::Utils.escape dirname}"
+
+  redirect "/dashboard#{dir_query}"
 end
 
 get '/site_files/:username.zip' do |username|
