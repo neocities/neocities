@@ -93,8 +93,8 @@
           </div>
         </div>
         
-        <h2>Last 7 Days</h2>
-        <canvas id="myChart" width="400" height="400"></canvas>
+        <h2>Last 7 Days <small>(<a href="/plan">Upgrade</a> to see up to 90 days)</small></h2>
+        <canvas id="myChart" style="width:100%;height:400px;display:block"></canvas>
         
         <div class="row">
           <div class="col col-50">
@@ -235,9 +235,10 @@
 </div>
 
 <script src="http://www.webglearth.com/v2/api.js"></script>
+<script src="/js/Chart.min.js"></script>
 <script>
+  //OpenGL globe
   $(document).ready(function() {
-    console.log('lumpy space princess')
     var earth = new WE.map('earth_div');
     earth.setView([20, -100], 2.65);
     WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -253,8 +254,37 @@
         earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)]);
         requestAnimationFrame(animate);
     });
+    
+    //chart.js
+    var data = {
+      labels: ["May 1", "May 2", "May 3", "May 4", "May 5", "May 6", "May7"],
+      datasets: [
+        {
+          label: "Hits",
+          fillColor: "rgba(220,220,220,0.2)",
+          strokeColor: "rgba(220,220,220,1)",
+          pointColor: "rgba(220,220,220,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(220,220,220,1)",
+          data: [65, 59, 80, 81, 56, 55, 65]
+        },
+        {
+          label: "Visits",
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(151,187,205,1)",
+          data: [28, 48, 40, 66, 33, 27, 45]
+        }
+      ]
+    };
+    // Get context with jQuery - using jQuery's .get() method.
+    var ctx = $("#myChart").get(0).getContext("2d");
+    // This will get the first returned node in the jQuery collection.
+    //var myNewChart = new Chart(ctx);
+    var myLineChart = new Chart(ctx).Line(data, {bezierCurve: false});
   })
 </script>
-
-<!--<script src="/js/Chart.min.js"></script>
-<script src="/js/charts.js"></script>-->
