@@ -1,27 +1,4 @@
-<script src="http://www.webglearth.com/v2/api.js"></script>
-    <script>
-      var earth;
-      function initialize() {
-        earth = new WE.map('earth_div');
-        earth.setView([14.732386, -107.050781], 2);
-        WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(earth);
 
-        // Start a simple rotation animation
-        var before = null;
-        requestAnimationFrame(function animate(now) {
-            var c = earth.getPosition();
-            var elapsed = before? now - before: 0;
-            before = now;
-            earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)]);
-            requestAnimationFrame(animate);
-        });
-      }
-    </script>
-  
-<body onload="initialize()">
-</body>
 
 <div class="header-Outro with-columns">
   <div class="row content">
@@ -47,9 +24,9 @@
     <div class="col-left">
       <div class="col col-66">
         <div class="row">
-          <div class="col col-50">
+          <div class="col col-50" style="padding-right: 0;">
             <h2>Latest Visitors</h2>
-            <div id="earth_div" style="height: 300px"></div>
+            <div id="earth_div"></div>
           </div>
           <div class="col col-50">
             <table class="table table-striped" id="latest-visitors">
@@ -116,8 +93,78 @@
           </div>
         </div>
         
+        <h2>Last 7 Days</h2>
+        <canvas id="myChart" width="400" height="400"></canvas>
+        
         <div class="row">
           <div class="col col-50">
+            <h2>Top Paths</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Path</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>/</td>
+                  <td>130</td>
+                </tr>
+                <tr>
+                  <td>/contact</td>
+                  <td>110</td>
+                </tr>
+                <tr>
+                  <td>/art</td>
+                  <td>101</td>
+                </tr>
+                <tr>
+                  <td>/about</td>
+                  <td>99</td>
+                </tr>
+                <tr>
+                  <td>/links</td>
+                  <td>33</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <h2>Top Locations</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>City</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        
+          <div class="col col-50">
+
             <h2>Top Referrers</h2>
             <table class="table table-striped">
               <thead>
@@ -146,40 +193,6 @@
                 <tr>
                   <td>Google search</td>
                   <td>22</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        
-          <div class="col col-50">
-            <h2>Top Locations</h2>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Locations</th>
-                  <th>Visits</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
-                </tr>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
-                </tr>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
-                </tr>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
-                </tr>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
                 </tr>
               </tbody>
             </table>
@@ -220,3 +233,28 @@
     </div>
   </div>
 </div>
+
+<script src="http://www.webglearth.com/v2/api.js"></script>
+<script>
+  $(document).ready(function() {
+    console.log('lumpy space princess')
+    var earth = new WE.map('earth_div');
+    earth.setView([20, -100], 2.65);
+    WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution: '© OpenStreetMap'
+    }).addTo(earth);
+
+    // Start a simple rotation animation
+    var before = null;
+    requestAnimationFrame(function animate(now) {
+        var c = earth.getPosition();
+        var elapsed = before? now - before: 0;
+        before = now;
+        earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)]);
+        requestAnimationFrame(animate);
+    });
+  })
+</script>
+
+<!--<script src="/js/Chart.min.js"></script>
+<script src="/js/charts.js"></script>-->
