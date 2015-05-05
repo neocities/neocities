@@ -1882,9 +1882,21 @@ a.tag:hover {
   }
 }
 table#latest-visitors {
-  td:nth-child(1), td:nth-child(2) {
+  width: 100%;
+  color: #777;
+  font-size: .8em;
+  
+  td {
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+  span {
+    display: block;
+  }
+  .location {
+    color: #2f4149;
+    font-weight: bold;
+    font-size: 1.2em;
   }
 }
 #earth_div {
