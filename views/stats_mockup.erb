@@ -25,7 +25,7 @@
       <div class="col col-66">
         <div class="row">
           
-          <div class="col col-50" style="padding-right: 0;">
+          <div class="col col-50" style="padding-right: 0; padding-top: 4px;">
             <h2>Latest Visitors</h2>
             <div id="earth_div"></div>
           </div>
@@ -292,7 +292,7 @@
   //OpenGL globe
   $(document).ready(function() {
     var earth = new WE.map('earth_div');
-    earth.setView([20, -100], 2.65);
+    earth.setView([20, -100], 2.07);
     WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
       attribution: '© OpenStreetMap'
     }).addTo(earth);
