@@ -1907,3 +1907,12 @@ table#latest-visitors {
   width: 100%;
   height: 400px;
 }
+.content.misc-page.columns .col.globe {
+  padding-right: 0; 
+  padding-top: 4px;
+}
+.news-feed .content.misc-page .col-50 {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    width: 100%;
+  }
+}
