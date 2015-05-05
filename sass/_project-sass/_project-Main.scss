@@ -1888,7 +1888,7 @@ table#latest-visitors {
   
   td {
     white-space: nowrap;
-    text-overflow: ellipsis;
+    max-width: 0;
   }
   span {
     display: block;
@@ -1897,6 +1897,10 @@ table#latest-visitors {
     color: #2f4149;
     font-weight: bold;
     font-size: 1.2em;
+  }
+  .paths {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 #earth_div {
