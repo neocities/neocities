@@ -30,6 +30,9 @@ def browse_sites_dataset
   end
 
   case params[:sort_by]
+    when 'featured'
+      site_dataset.exclude! featured_at: nil
+      site_dataset.order! :featured_at.desc
     when 'hits'
       site_dataset.where!{views > 100}
       site_dataset.order!(:hits.desc, :site_updated_at.desc)

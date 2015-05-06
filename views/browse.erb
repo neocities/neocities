@@ -25,6 +25,7 @@
           <div class="select-Container">
             <select name="sort_by" id="sort_by" class="input-Select">
               <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
+              <option value="featured" <%= params[:sort_by] == 'featured' ? 'selected' : '' %>>Featured</option>
               <option value="views" <%= params[:sort_by] == 'views' ? 'selected' : '' %>>Most Views</option>
               <option value="hits" <%= params[:sort_by] == 'hits' ? 'selected' : '' %>>Most Hits</option>
               <option value="newest" <%= params[:sort_by] == 'newest' ? 'selected' : '' %>>Newest</option>
