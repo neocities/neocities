@@ -835,6 +835,18 @@ class Site < Sequel::Model
       new_tags.compact!
       @new_filtered_tags = []
 
+      if values[:is_education] == true
+        if new?
+          if @new_tags_string.nil? || @new_tags_string.empty?
+            errors.add :new_tags_string, 'A Class Tag is required.'
+          end
+
+          if new_tags.length > 1
+            errors.add :new_tags_string, 'Must only have one tag'
+          end
+        end
+      end
+
       if ((new? ? 0 : tags_dataset.count) + new_tags.length > 5)
         errors.add :new_tags_string, 'Cannot have more than 5 tags for your site.'
       end
@@ -861,7 +873,7 @@ class Site < Sequel::Model
           break
         end
 
-        next if tags.collect {|t| t.name}.include? tag
+        next if !new? && tags.collect {|t| t.name}.include?(tag)
 
         @new_filtered_tags << tag
         @new_filtered_tags.uniq!

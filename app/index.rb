@@ -34,7 +34,7 @@ get '/?' do
     @sites_count = SimpleCache.get :sites_count
   end
 
-  erb :index, layout: false
+  erb :index, layout: :index_layout
 end
 
 get '/welcome' do
@@ -44,7 +44,8 @@ get '/welcome' do
 end
 
 get '/education' do
-  erb :education, layout: false
+  redirect '/' if signed_in?
+  erb :education, layout: :index_layout
 end
 
 get '/tutorials' do

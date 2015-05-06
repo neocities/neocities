@@ -1,0 +1,37 @@
+<script src="/js/app.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script>
+
+  $('#createSiteForm').on('submit', function(obj) {
+    $.post('/create_validate_all', $(obj.target).serialize(), function(errors) {
+      if(errors.length == 0) {
+        $.post('/create', $('#createSiteForm').serialize(), function(res) {
+          window.location.href = '/welcome'
+        })
+      } else {
+        for(var i=0; i<errors.length;i++) {
+          if(errors[i][0] == 'captcha') {
+            var captchaDiv = $('#captcha-input')
+            captchaDiv.attr('data-original-title', errors[i][1])
+            captchaDiv.tooltip('show')
+          } else {
+            var ele = $('input[name='+errors[i][0]+']')
+            ele.attr('data-original-title', errors[i][1])
+            ele.tooltip('show')
+          }
+        }
+      }
+    })
+  })
+
+  $('input[type=text],input[type=password]').on('change focusout', function(obj) {
+    $.post('/create_validate', {field: obj.target.name, value: obj.target.value, is_education: $('input[name=is_education]')[0].value, csrf_token: '<%= csrf_token %>'}, function(res) {
+      if(res.result == 'ok') {
+        return $(obj.target).tooltip('hide')
+      }
+
+      $(obj.target).attr('data-original-title', res.error)
+      $(obj.target).tooltip('show')
+    })
+  })
+</script>

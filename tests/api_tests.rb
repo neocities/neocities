@@ -167,14 +167,6 @@ describe 'api upload' do
       '/' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
     }
     res[:error_type].must_equal 'invalid_file_type'
-
-    create_site
-    basic_authorize @user, @pass
-    post '/api/upload', {
-      '' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
-    }
-
-    res[:error_type].must_equal 'missing_files'
   end
 
   it 'fails for file with no extension' do

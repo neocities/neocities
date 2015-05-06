@@ -7,6 +7,7 @@ end
 
 post '/api/upload' do
   require_api_credentials
+
   files = []
   params.each do |k,v|
     next unless v.is_a?(Hash) && v[:tempfile]

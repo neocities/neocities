@@ -30,6 +30,7 @@ describe 'signup' do
     Capybara.default_driver = :poltergeist
     Capybara.reset_sessions!
     visit_signup
+    page.must_have_content 'Neocities' # Used to force load wait
   end
 
   after do
@@ -48,19 +49,15 @@ describe 'signup' do
     site.site_files.length.must_equal 4
     site.site_changed.must_equal false
     site.site_updated_at.must_equal nil
+    site.is_education.must_equal false
 
     site.ip.must_equal Site.hash_ip('127.0.0.1')
   end
 
   it 'fails to create for existing site' do
+    @existing_site = Fabricate :site
     fill_in_valid
-    click_signup_button
-    page.must_have_content 'Welcome to Neocities'
-    Capybara.reset_sessions!
-    visit_signup
-    sleep 0.3
-    fill_in 'username', with: @site[:username]
-    fill_in 'password', with: @site[:password]
+    fill_in 'username', with: @existing_site.username
     click_signup_button
     page.must_have_content 'already taken'
   end
@@ -113,9 +110,6 @@ describe 'signup' do
     page.must_have_content /email.+exists/
   end
 
-puts "$$$$$$$$$$$$$$$$$$$$$$ TODO FIX TAGS TESTS"
-
-=begin
   it 'succeeds with no tags' do
     fill_in_valid
     fill_in 'new_tags_string', with: ''
@@ -139,7 +133,7 @@ puts "$$$$$$$$$$$$$$$$$$$$$$ TODO FIX TAGS TESTS"
     Site.last.tags.collect {|t| t.name}.must_equal ['derpie', 'shoujo']
   end
 
-    it 'fails with invalid tag chars' do
+  it 'fails with invalid tag chars' do
     fill_in_valid
     fill_in 'new_tags_string', with: '$POLICE OFFICER$$$$$, derp'
     click_signup_button
@@ -179,9 +173,10 @@ puts "$$$$$$$$$$$$$$$$$$$$$$ TODO FIX TAGS TESTS"
     fill_in 'new_tags_string', with: 'one, one'
     click_signup_button
 
-    site = Site.last
+    page.must_have_content /Welcome to Neocities/
+
+    site = Site[username: @site[:username]]
     site.tags.length.must_equal 1
     site.tags.first.name.must_equal 'one'
   end
-=end
 end
