@@ -1,27 +1,4 @@
-<script src="http://www.webglearth.com/v2/api.js"></script>
-    <script>
-      var earth;
-      function initialize() {
-        earth = new WE.map('earth_div');
-        earth.setView([14.732386, -107.050781], 2);
-        WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(earth);
 
-        // Start a simple rotation animation
-        var before = null;
-        requestAnimationFrame(function animate(now) {
-            var c = earth.getPosition();
-            var elapsed = before? now - before: 0;
-            before = now;
-            earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)]);
-            requestAnimationFrame(animate);
-        });
-      }
-    </script>
-  
-<body onload="initialize()">
-</body>
 
 <div class="header-Outro with-columns">
   <div class="row content">
@@ -47,77 +24,199 @@
     <div class="col-left">
       <div class="col col-66">
         <div class="row">
-          <div class="col col-50">
+          
+          <div class="col col-50 globe">
             <h2>Latest Visitors</h2>
-            <div id="earth_div" style="height: 300px"></div>
+            <div id="earth_div"></div>
           </div>
-          <div class="col col-50">
+          <div class="col col-50" style="padding-right: 0;">
             <table class="table table-striped" id="latest-visitors">
-              <thead>
-                <tr>
-                  <th>Location</th>
-                  <th>Referrer</th>
-                  <th>Time</th>
-                </tr>
-              </thead>
               <tbody>
                 <tr>
-                  <td>San Francisco, CA</td>
-                  <td><a href="http://neocities.org">neocities.org</a></td>
-                  <td>4/27/15 7:11PM</td>
+                  <td>
+                      <span class="location">San Francisco, CA</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> neocities.org</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a></span>
+                  </td>
                 </tr>
                 <tr>
-                  <td>Portland,&nbsp;OR</td>
-                  <td>Google search</td>
-                  <td>4/27/15 7:15PM</td>
+                  <td>
+                      <span class="location">Portland, OR</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a></span>
+                  </td>
                 </tr>
                 <tr>
-                  <td>New York, NY</td>
-                  <td><a href="">violasong.com</a></td>
-                  <td>4/28/15 8:22PM</td>
+                  <td>
+                      <span class="location">London, UK</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> Twitter URL</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/about</a></span>
+                  </td>
                 </tr>
                 <tr>
-                  <td>Seattle, WA</td>
-                  <td>Facebook URL</td>
-                  <td>4/28/15 9:22PM</td>
+                  <td>
+                      <span class="location">Hong Kong, China</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a></span>
+                  </td>
                 </tr>
                 <tr>
-                  <td>Portland, OR</td>
-                  <td>Google search</td>
-                  <td>4/30/15 7:15PM</td>
+                  <td>
+                      <span class="location">San Francisco, CA</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> Facebook URL</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a></span>
+                  </td>
                 </tr>
                 <tr>
-                  <td>San Francisco, CA</td>
-                  <td><a href="http://neocities.org">neocities.org</a></td>
-                  <td>4/27/15 7:11PM</td>
+                  <td>
+                      <span class="location">San Francisco, CA</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> neocities.org</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a>, <a href="">/about</a></span>
+                  </td>
                 </tr>
                 <tr>
-                  <td>Portland,&nbsp;OR</td>
-                  <td>Google search</td>
-                  <td>4/27/15 7:15PM</td>
+                  <td>
+                      <span class="location">Portland, OR</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a></span>
+                  </td>
                 </tr>
                 <tr>
-                  <td>New York, NY</td>
-                  <td><a href="">violasong.com</a></td>
-                  <td>4/28/15 8:22PM</td>
+                  <td>
+                      <span class="location">London, UK</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> Twitter URL</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/about</a></span>
+                  </td>
                 </tr>
                 <tr>
-                  <td>Seattle, WA</td>
-                  <td>Twitter URL</td>
-                  <td>4/28/15 9:22PM</td>
+                  <td>
+                      <span class="location">Hong Kong, China</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a>, <a href="">/tech</a>, <a href="">/about</a></span>
+                  </td>
                 </tr>
                 <tr>
-                  <td>Portland, OR</td>
-                  <td>Google search</td>
-                  <td>4/30/15 7:15PM</td>
+                  <td>
+                      <span class="location">Hong Kong, China</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a></span>
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
         
+        <h2>Last 7 Days</h2>
+        <p>(<a href="/plan">Upgrade</a> to see up to see stats for all time)</p>
+        <ul class="nav h-Nav">
+          <li><a href="">Month</a></li>
+          <li><a href="">3 months</a></li>
+          <li><a href="">1 Year</a></li>
+          <li><a href="">All time</a></li>
+        </ul>
+        
+        <canvas id="myChart" style="width:100%;height:300px;display:block"></canvas>
+        
         <div class="row">
           <div class="col col-50">
+            <h2>Top Paths</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Path</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>/</td>
+                  <td>130</td>
+                </tr>
+                <tr>
+                  <td>/contact</td>
+                  <td>110</td>
+                </tr>
+                <tr>
+                  <td>/art</td>
+                  <td>101</td>
+                </tr>
+                <tr>
+                  <td>/about</td>
+                  <td>99</td>
+                </tr>
+                <tr>
+                  <td>/links</td>
+                  <td>33</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <h2>Top Locations</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>City</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        
+          <div class="col col-50">
+
             <h2>Top Referrers</h2>
             <table class="table table-striped">
               <thead>
@@ -146,40 +245,6 @@
                 <tr>
                   <td>Google search</td>
                   <td>22</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        
-          <div class="col col-50">
-            <h2>Top Locations</h2>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Locations</th>
-                  <th>Visits</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
-                </tr>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
-                </tr>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
-                </tr>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
-                </tr>
-                <tr>
-                  <td>Portland</td>
-                  <td>130</td>
                 </tr>
               </tbody>
             </table>
@@ -220,3 +285,58 @@
     </div>
   </div>
 </div>
+
+<script src="http://www.webglearth.com/v2/api.js"></script>
+<script src="/js/Chart.min.js"></script>
+<script>
+  //OpenGL globe
+  $(document).ready(function() {
+    var earth = new WE.map('earth_div');
+    earth.setView([20, -100], 2.07);
+    WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution: '© OpenStreetMap'
+    }).addTo(earth);
+
+    // Start a simple rotation animation
+    var before = null;
+    requestAnimationFrame(function animate(now) {
+        var c = earth.getPosition();
+        var elapsed = before? now - before: 0;
+        before = now;
+        earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)]);
+        requestAnimationFrame(animate);
+    });
+    
+    //chart.js
+    var data = {
+      labels: ["May 1", "May 2", "May 3", "May 4", "May 5", "May 6", "May7"],
+      datasets: [
+        {
+          label: "Hits",
+          fillColor: "rgba(220,220,220,0.2)",
+          strokeColor: "rgba(220,220,220,1)",
+          pointColor: "rgba(220,220,220,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(220,220,220,1)",
+          data: [65, 59, 80, 81, 56, 55, 65]
+        },
+        {
+          label: "Visits",
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(151,187,205,1)",
+          data: [28, 48, 40, 66, 33, 27, 45]
+        }
+      ]
+    };
+    // Get context with jQuery - using jQuery's .get() method.
+    var ctx = $("#myChart").get(0).getContext("2d");
+    // This will get the first returned node in the jQuery collection.
+    //var myNewChart = new Chart(ctx);
+    var myLineChart = new Chart(ctx).Line(data, {bezierCurve: false});
+  })
+</script>

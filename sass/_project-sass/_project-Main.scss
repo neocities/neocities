@@ -1882,8 +1882,37 @@ a.tag:hover {
   }
 }
 table#latest-visitors {
-  td:nth-child(1), td:nth-child(2) {
+  width: 100%;
+  color: #777;
+  font-size: .8em;
+  
+  td {
     white-space: nowrap;
+    max-width: 0;
+  }
+  span {
+    display: block;
+  }
+  .location {
+    color: #2f4149;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+  .paths {
+    overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+#earth_div {
+  width: 100%;
+  height: 400px;
+}
+.content.misc-page.columns .col.globe {
+  padding-right: 0; 
+  padding-top: 4px;
+}
+.news-feed .content.misc-page .col-50 {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    width: 100%;
   }
 }
