@@ -203,6 +203,26 @@
   <input id="uploadFiles" type="file" name="files[]" multiple onchange="$('#uploadFilesButtonForm').submit()">
 </form>
 
+
+<div class="modal hide fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
+  <form method="post" action="/site/create_directory">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <input type="hidden" value="<%= @dir %>" name="dir">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+      <h3 id="createDirLabel">Create Folder</h3>
+    </div>
+    <div class="modal-body">
+      <input id="newDirInput" name="name" type="text" placeholder="folder_name">
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn-Action">Create</button>
+    </div>
+  </form>
+</div>
+
+
 <script src="/js/dropzone.min.js"></script>
 <script>
 
@@ -268,22 +288,8 @@
       })
     }
   }
-</script>
 
-<div class="modal hide fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
-  <form method="post" action="/site/create_directory">
-    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-    <input type="hidden" value="<%= @dir %>" name="dir">
-    <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-      <h3 id="createDirLabel">Create Folder</h3>
-    </div>
-    <div class="modal-body">
-      <input name="name" type="text" placeholder="folder_name">
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button type="submit" class="btn-Action">Create</button>
-    </div>
-  </form>
-</div>
+  $('#createDir').on('shown', function () {
+    $('#newDirInput').focus();
+  })
+</script>
