@@ -22,7 +22,7 @@ class Stat < Sequel::Model
         while hit = logfile.gets
           time, username, size, path, ip, referrer = hit.split ' '
 
-          next if referrer.match /bot/i
+          next if !referrer.nil? && referrer.match(/bot/i)
 
           site_logs[username] = {
             hits: 0,
@@ -41,7 +41,7 @@ class Stat < Sequel::Model
             site_logs[username][:views] += 1
             site_logs[username][:view_ips] << ip
 
-            if referrer != '-'
+            if referrer != '-' && !referrer.nil?
               site_logs[username][:referrers][referrer] ||= 0
               site_logs[username][:referrers][referrer] += 1
             end
