@@ -36,6 +36,10 @@ class Site < Sequel::Model
     html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp
   }
 
+  VALID_EDITABLE_EXTENSIONS = %w{
+    html htm txt js css md manifest
+  }
+
   MINIMUM_PASSWORD_LENGTH = 5
   BAD_USERNAME_REGEX = /[^\w-]/i
   VALID_HOSTNAME = /^[a-z0-9][a-z0-9-]+?[a-z0-9]$/i # http://tools.ietf.org/html/rfc1123
@@ -73,7 +77,7 @@ class Site < Sequel::Model
   PHISHING_FORM_REGEX = /www.formbuddy.com\/cgi-bin\/form.pl/i
   SPAM_MATCH_REGEX = ENV['RACK_ENV'] == 'test' ? /pillz/ : /#{$config['spam_smart_filter'].join('|')}/i
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
-  EDITABLE_FILE_EXT = /html|htm|txt|js|css|md|manifest/i
+  EDITABLE_FILE_EXT = /#{VALID_EDITABLE_EXTENSIONS.join('|')}/i
   BANNED_TIME = 2592000 # 30 days in seconds
   TITLE_MAX = 100
 
@@ -692,8 +696,12 @@ class Site < Sequel::Model
   end
 
   def install_new_html_file(path)
-    File.write files_path(path), render_template('index.erb')
+    tmpfile = Tempfile.new 'neocities_html_template'
+    tmpfile.write render_template('index.erb')
+    tmpfile.close
+    store_file path, tmpfile
     purge_cache path
+    tmpfile.unlink
   end
 
   def file_exists?(path)

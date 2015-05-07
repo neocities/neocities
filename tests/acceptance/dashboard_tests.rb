@@ -17,9 +17,21 @@ describe 'dashboard' do
         visit '/dashboard'
         click_link 'New Folder'
         fill_in 'name', with: 'testimages'
-        click_button 'Create'
+        #click_button 'Create'
+        all('#createDir button[type=submit]').first.click
         page.must_have_content /testimages/
         File.directory?(@site.files_path('testimages')).must_equal true
+      end
+
+      it 'creates a new file' do
+        random = SecureRandom.uuid.gsub('-', '')
+        visit '/dashboard'
+        click_link 'New Page / File'
+        fill_in 'filename', with: "#{random}.html"
+        #click_button 'Create'
+        all('#createFile button[type=submit]').first.click
+        page.must_have_content /#{random}\.html/
+        File.exist?(@site.files_path("#{random}.html")).must_equal true
       end
     end
   end
