@@ -27,6 +27,18 @@ describe 'stats' do
     end
   end
 
+  it 'deals with spaces in paths' do
+    @site = Fabricate :site
+    File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
+      file.write "2015-05-02T21:16:35+00:00 #{@site.username} 612917 /images/derpie space.png 67.180.75.140 http://derp.com\n"
+    end
+
+    Stat.parse_logfiles STAT_LOGS_PATH
+    @site.stats.first.bandwidth.must_equal 612917
+    @site.stat_referrers.first.url.must_equal 'http://derp.com'
+    @site.stat_locations.first.city_name.must_equal 'Menlo Park'
+  end
+
   it 'prunes logs for free sites' do
     @free_site = Fabricate :site
     @supporter_site = Fabricate :site, plan_type: 'supporter'
