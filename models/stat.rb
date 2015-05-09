@@ -20,20 +20,11 @@ class Stat < Sequel::Model
         logfile = File.open log_path, 'r'
 
         while hit = logfile.gets
-          hit_array = hit.split ' '
+          hit_array = hit.strip.split "\t"
 
-          # If > 6, then the path has a space in it, combine.
-          if hit_array.length > 6
-            time = hit_array[0]
-            username = hit_array[1]
-            size = hit_array[2]
-            path_end_length = 3 + (hit_array.length - 6)
-            path = hit_array[3..path_end_length].join ' '
-            ip = hit_array[path_end_length+1]
-            referrer = hit_array[path_end_length+2]
-          else
-            time, username, size, path, ip, referrer = hit_array
-          end
+          raise ArgumentError, hit.inspect if hit_array.length > 6
+
+          time, username, size, path, ip, referrer = hit_array
 
           next if !referrer.nil? && referrer.match(/bot/i)
 

@@ -13,13 +13,13 @@ describe 'stats' do
     @time_iso8601 = @time.iso8601
 
     log = [
-      "#{@time_iso8601} #{@site_one.username} 5000 / 67.180.75.140 http://example.com",
-      "#{@time_iso8601} #{@site_one.username} 5000 / 67.180.75.140 http://example.com",
-      "#{@time_iso8601} #{@site_one.username} 5000 / 172.56.16.152 http://example.com",
-      "#{@time_iso8601} #{@site_one.username} 5000 / 172.56.16.152 -",
-      "#{@time_iso8601} #{@site_two.username} 5000 / 67.180.75.140 http://example.com",
-      "#{@time_iso8601} #{@site_two.username} 5000 / 127.0.0.1 -",
-      "#{@time_iso8601} #{@site_two.username} 5000 /derp.html 127.0.0.2 https://example.com"
+      "#{@time_iso8601}\t#{@site_one.username}\t5000\t/\t67.180.75.140\thttp://example.com",
+      "#{@time_iso8601}\t#{@site_one.username}\t5000\t/\t67.180.75.140\thttp://example.com",
+      "#{@time_iso8601}\t#{@site_one.username}\t5000\t/\t172.56.16.152\thttp://example.com",
+      "#{@time_iso8601}\t#{@site_one.username}\t5000\t/\t172.56.16.152\t-",
+      "#{@time_iso8601}\t#{@site_two.username}\t5000\t/\t67.180.75.140\thttp://example.com",
+      "#{@time_iso8601}\t#{@site_two.username}\t5000\t/\t127.0.0.1\t-",
+      "#{@time_iso8601}\t#{@site_two.username}\t5000\t/derp.html\t127.0.0.2\thttps://example.com"
     ]
 
     File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
@@ -30,13 +30,23 @@ describe 'stats' do
   it 'deals with spaces in paths' do
     @site = Fabricate :site
     File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
-      file.write "2015-05-02T21:16:35+00:00 #{@site.username} 612917 /images/derpie space.png 67.180.75.140 http://derp.com\n"
+      file.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
+      file.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
     end
 
     Stat.parse_logfiles STAT_LOGS_PATH
-    @site.stats.first.bandwidth.must_equal 612917
+    @site.stats.first.bandwidth.must_equal 612917*2
     @site.stat_referrers.first.url.must_equal 'http://derp.com'
     @site.stat_locations.first.city_name.must_equal 'Menlo Park'
+  end
+
+  it 'deals with spaces in referrer' do
+    @site = Fabricate :site
+    File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
+      file.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com?q=what the lump\n"
+    end
+
+    Stat.parse_logfiles STAT_LOGS_PATH
   end
 
   it 'prunes logs for free sites' do
