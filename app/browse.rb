@@ -43,6 +43,10 @@ def browse_sites_dataset
   end
 
   case params[:sort_by]
+    when 'supporters'
+      site_dataset.exclude! plan_type: nil
+      site_dataset.exclude! plan_type: 'free'
+      site_dataset.order! :views.desc, :site_updated_at.desc
     when 'featured'
       site_dataset.exclude! featured_at: nil
       site_dataset.order! :featured_at.desc
