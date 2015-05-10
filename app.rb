@@ -55,4 +55,4 @@ error do
   erb :'error'
 end
 
-://neocities.org/surf?current_page=3&sort_by=newest&tag=ir['./app/**/*.rb'].each {|f| require f}
+Dir['./app/**/*.rb'].each {|f| require f}
