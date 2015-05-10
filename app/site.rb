@@ -9,6 +9,8 @@ get '/site/:username/?' do |username|
   # TODO: There should probably be a "this site was deleted" page.
   not_found if site.nil? || site.is_banned || site.is_deleted
 
+  redirect '/' if site.is_education
+
   @title = site.title
 
   @current_page = params[:current_page]

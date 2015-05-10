@@ -15,6 +15,10 @@ def csrf_token
    session[:_csrf_token] ||= SecureRandom.base64(32)
 end
 
+def is_education?
+  current_site && current_site.is_education
+end
+
 def require_login
   redirect '/' unless signed_in?
   if session[:banned] || current_site.is_banned || parent_site.is_banned

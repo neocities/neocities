@@ -6,12 +6,16 @@
   <li>
     <a href="/browse">Websites</a>
   </li>
+  <% unless is_education? %>
   <li>
     <a href="/activity">Activity</a>
   </li>
+  <% end %>
   <li>
     <a href="/tutorials">Learn</a>
   </li>
+  <% unless is_education? %>
   <li>
     <a href="/plan">Support Us<i class="fa fa-heart"><i class="fa fa-heart"></i></i></a>
   </li>
+  <% end %>

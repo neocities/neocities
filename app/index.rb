@@ -2,6 +2,8 @@ get '/?' do
   if current_site
     require_login
 
+    redirect '/dashboard' if current_site.is_education
+
     @suggestions = current_site.suggestions
 
     @current_page = params[:current_page].to_i

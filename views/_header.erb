@@ -30,15 +30,17 @@
             </span>
           </a>
           <ul class="dropdown-menu">
-            <li><a href="/site/<%= current_site.username %>">Profile</a></li>
-            <li>
-              <a href="/?activity=mine"><span class="float-Left">Activity</span>
-                <% if current_site.unseen_notifications_count > 0 %>
-                  <span class="notification-value"><%= current_site.unseen_notifications_count %></span>
-                <% end %>
-              </a>
-            </li>
-            <li class="divider"></li>
+            <% unless is_education? %>
+              <li><a href="/site/<%= current_site.username %>">Profile</a></li>
+              <li>
+                <a href="/?activity=mine"><span class="float-Left">Activity</span>
+                  <% if current_site.unseen_notifications_count > 0 %>
+                    <span class="notification-value"><%= current_site.unseen_notifications_count %></span>
+                  <% end %>
+                </a>
+              </li>
+              <li class="divider"></li>
+            <% end %>
             <li><a href="/dashboard">Edit Site</a></li>
             <li><a href="<%= current_site.uri %>" target="_blank">View Site</a></li>
             <li class="divider"></li>

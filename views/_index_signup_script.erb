@@ -6,7 +6,11 @@
     $.post('/create_validate_all', $(obj.target).serialize(), function(errors) {
       if(errors.length == 0) {
         $.post('/create', $('#createSiteForm').serialize(), function(res) {
-          window.location.href = '/welcome'
+          if($('input[name=is_education]').val() == 'true') {
+            window.location.href = '/dashboard'
+          } else {
+            window.location.href = '/welcome'
+          }
         })
       } else {
         for(var i=0; i<errors.length;i++) {

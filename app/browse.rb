@@ -1,6 +1,16 @@
 get '/browse/?' do
+  @current_page = params[:current_page]
+  @current_page = @current_page.to_i
+  @current_page = 1 if @current_page == 0
+
   params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
-  site_dataset = browse_sites_dataset
+
+  if is_education?
+    site_dataset = education_sites_dataset
+  else
+    site_dataset = browse_sites_dataset
+  end
+
   site_dataset = site_dataset.paginate @current_page, Site::BROWSE_PAGINATION_LENGTH
   @page_count = site_dataset.page_count || 1
   @sites = site_dataset.all
@@ -10,11 +20,14 @@ get '/browse/?' do
   erb :browse
 end
 
-def browse_sites_dataset
-  @current_page = params[:current_page]
-  @current_page = @current_page.to_i
-  @current_page = 1 if @current_page == 0
+def education_sites_dataset
+  site_dataset = Site.filter is_deleted: false
+  site_dataset = site_dataset.association_join(:tags).select_all(:sites)
+  params[:tag] = current_site.tags.first.name
+  site_dataset.where! ['tags.name = ?', params[:tag]]
+end
 
+def browse_sites_dataset
   site_dataset = Site.filter(is_deleted: false, is_banned: false, is_crashing: false).filter(site_changed: true)
 
   if current_site
