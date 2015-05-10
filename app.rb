@@ -44,7 +44,7 @@ error do
     from: 'web@neocities.org',
     to: 'errors@neocities.org',
     subject: "[Neocities Error] #{env['sinatra.error'].class}: #{env['sinatra.error'].message}",
-    body: erb(:'views/templates/email/error'),
+    body: erb(:'templates/email/error', layout: false),
     no_footer: true
   })
 
@@ -55,4 +55,4 @@ error do
   erb :'error'
 end
 
-Dir['./app/**/*.rb'].each {|f| require f}
+://neocities.org/surf?current_page=3&sort_by=newest&tag=ir['./app/**/*.rb'].each {|f| require f}
