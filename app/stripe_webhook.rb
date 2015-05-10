@@ -14,6 +14,14 @@ post '/stripe_webhook' do
   end
 
   if event['type'] == 'charge.failed'
+
+    EmailWorker.perform_async({
+      from:    'web@neocities.org',
+      to:      'kyle@neocities.org',
+      subject: "[Neocities] charge.failed debug",
+      body:    event.inspect
+    })
+
     site_id = event['data']['object']['description'].split(' - ').last
     site = Site[site_id]
 
