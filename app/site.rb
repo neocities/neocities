@@ -32,6 +32,50 @@ get '/site/:username/?' do |username|
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
+get '/site/:username/stats' do
+  @site = Site[username: params[:username]]
+  not_found if @site.nil?
+
+  @stats = {}
+
+  %i{referrers locations paths}.each do |stat|
+    @stats[stat] = @site.send("stat_#{stat}_dataset".to_sym).order(:views.desc).limit(100).all
+  end
+
+  @stats[:locations].collect! do |location|
+    location_name = ''
+
+    location_name += location.city_name if location.city_name
+
+    if location.region_name
+      # Some of the region names are numbers for some reason.
+      begin
+        Integer(location.region_name)
+      rescue
+        location_name += ', ' unless location_name == ''
+        location_name += location.region_name
+      end
+    end
+
+    if location.country_code2 && !$country_codes[location.country_code2].nil?
+      location_name += ', ' unless location_name == ''
+      location_name += $country_codes[location.country_code2]
+    end
+
+    location_hash = {name: location_name, views: location.views}
+    if location.latitude && location.longitude
+      location_hash.merge! latitude: location.latitude, longitude: location.longitude
+    end
+    location_hash
+  end
+
+  @stats[:stat_days] = @site.stats_dataset.order(:created_at.desc).limit(7).all.reverse
+
+  @multi_tooltip_template = "<%= datasetLabel %> - <%= value %>"
+
+  erb :'site/stats', locals: {site: @site}
+end
+
 post '/site/:username/set_editor_theme' do
   require_login
   current_site.editor_theme = params[:editor_theme]

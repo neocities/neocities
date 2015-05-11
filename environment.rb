@@ -131,3 +131,11 @@ if ENV['RACK_ENV'] != 'development'
   # Sass::Plugin.options[:never_update] = true
   Sass::Plugin.options[:full_exception] = false
 end
+
+require 'csv'
+
+$country_codes = {}
+
+CSV.foreach("./files/country_codes.csv") do |row|
+  $country_codes[row.last] = row.first
+end
