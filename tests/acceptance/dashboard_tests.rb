@@ -26,7 +26,7 @@ describe 'dashboard' do
       it 'creates a new file' do
         random = SecureRandom.uuid.gsub('-', '')
         visit '/dashboard'
-        click_link 'New Page / File'
+        click_link 'New File'
         fill_in 'filename', with: "#{random}.html"
         #click_button 'Create'
         all('#createFile button[type=submit]').first.click
