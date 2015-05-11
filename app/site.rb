@@ -18,6 +18,7 @@ get '/site/:username/?' do |username|
   @current_page = 1 if @current_page == 0
 
   if params[:event_id]
+    not_found unless params[:is_integer].is_integer?
     event = Event.select(:id).where(id: params[:event_id]).first
     not_found if event.nil?
     events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
