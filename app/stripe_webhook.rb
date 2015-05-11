@@ -15,7 +15,7 @@ def stripe_get_site_from_event(event)
     site_where = {id: desc_split.last}
   end
 
-  site.where(site_where).first
+  Site.where(site_where).first
 end
 
 post '/stripe_webhook' do
