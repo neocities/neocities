@@ -492,6 +492,14 @@
   }
   .file > .overlay {
     border-radius: 3px;
+    padding-top: 3px;
+    text-align: right;
+    
+    a {
+      color: #e93250;
+      display: inline;
+      margin-right: 5px;
+    }
   }
   .html-thumbnail > .overlay {
     background-color: transparent;
