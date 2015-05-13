@@ -498,7 +498,8 @@
     border-radius: 3px;
     padding-top: 3px;
     text-align: right;
-    background-color: rgba(0, 0, 0, 0.06);
+    background-color: transparent;
+    display: block;
     
     a {
       color: #e93250;
