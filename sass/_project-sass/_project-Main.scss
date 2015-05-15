@@ -360,6 +360,7 @@
   white-space: nowrap;
   overflow: hidden;
   display: block;
+  text-overflow: ellipsis;
 }
 .html-thumbnail {
   font-size: 11px;
@@ -465,6 +466,9 @@
       margin-top: 2px;
       float: left;
       font-size: 13px;
+      text-align: left;
+      width: 30%;
+      text-overflow: ellipsis;
     }
   }
   .html-thumbnail, .misc-icon {
@@ -492,9 +496,23 @@
   }
   .file > .overlay {
     border-radius: 3px;
+    padding-top: 3px;
+    text-align: right;
+    background-color: transparent;
+    display: block;
+    
+    a {
+      color: #e93250;
+      display: inline;
+      margin-right: 5px;
+    }
   }
   .html-thumbnail > .overlay {
     background-color: transparent;
+  }
+  .column {
+    float: left;
+    width: 15%;
   }
 }
 .site-actions {

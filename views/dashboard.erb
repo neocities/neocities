@@ -137,12 +137,15 @@
             <% end %>
 
             <a class="title">
-              <% if file[:name].length > 19 %>
-                <%= file[:name].slice(0..18) %>&hellip;
-              <% else %>
-                <%= file[:name] %>
-              <% end %>
+              <%= file[:name] %>
             </a>
+            <div class="column size">
+              5KB
+            </div>
+            <div class="column updated">
+              5/13/15
+            </div>
+            
             <div class="overlay">
               <% if file[:is_editable] %>
                 <a href="/site_files/text_editor<%= file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
