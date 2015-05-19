@@ -114,6 +114,7 @@
       <div class="upload-Boundary <%= @file_list.length <= 5 ? 'with-instruction' : '' %>">
         <% @file_list.each do |file| %>
           <div class="file filehover">
+            <input type="checkbox" name="" value="" />
             <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '210x158') %>
               <div class="html-thumbnail html fileimagehover">
                 <img src="<%= current_site.screenshot_url(file[:path], '210x158') %>" alt="">

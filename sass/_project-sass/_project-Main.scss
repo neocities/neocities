@@ -237,6 +237,10 @@
   width: 100%;
   position: relative;
   margin-top: 7px;
+  
+  .column, input[type='checkbox'] {
+    display: none;
+  }
 }
 .files .header {
   background: #5E95A1;
@@ -470,6 +474,12 @@
       width: 30%;
       text-overflow: ellipsis;
     }
+    input[type='checkbox'] {
+      display: block;
+      float: left;
+      margin-top: 5px;
+      margin-right: 6px;
+    }
   }
   .html-thumbnail, .misc-icon {
     margin: 0;
@@ -495,8 +505,9 @@
     height: 23px;
   }
   .file > .overlay {
-    border-radius: 3px;
     padding-top: 3px;
+    margin-left: 20px;
+    padding-right: 20px;
     text-align: right;
     background-color: transparent;
     display: block;
@@ -506,13 +517,17 @@
       display: inline;
       margin-right: 5px;
     }
+    .link-overlay {
+      width: 30%;
+    }
   }
   .html-thumbnail > .overlay {
-    background-color: transparent;
+    display: none;
   }
   .column {
     float: left;
     width: 15%;
+    display: block;
   }
 }
 .site-actions {
