@@ -245,6 +245,7 @@
   .btn-group {
     float: left;
     margin-right: 15px;
+    margin-left: -3px;
     
     >.btn+.btn {
       margin-left: 0px;
@@ -253,14 +254,13 @@
     .btn {
       padding: 7px 11px;
       margin-top: 1px;
-      margin-left: -3px;
       background: #77ABB8;
       @include box-shadow(0 0 5px rgba(0, 0, 0, 0.2));
 
       &:hover {
         background: #83B3C0;
       }
-      &:focus {
+      &:focus, &.active {
         outline: 0;
         background: #4F727B;
       }
@@ -288,12 +288,22 @@
 }
 .files .actions {
   float: right;
+  
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    float: left;
+    margin-top: 7px;
+    
+    .fa {
+      display: none;
+    }
+  }
 }
 .files .btn-Action {
   margin-left: 8px;
   
   @media (max-device-width:480px), screen and (max-width:800px) {
-    margin: 4px 8px 4px 0;
+    margin: 4px 3px 4px 0;
+    padding: 8px 17px;
   }
 }
 .files .list {
@@ -503,6 +513,10 @@
       text-align: left;
       width: 30%;
       text-overflow: ellipsis;
+      
+      @media (max-device-width:480px), screen and (max-width:800px) {
+        width: 33%;
+      }
     }
     input[type='checkbox'] {
       display: block;
@@ -550,6 +564,10 @@
     .link-overlay {
       width: 30%;
     }
+    
+    @media (max-device-width:480px), screen and (max-width:800px) {
+      width: 84%;
+    }
   }
   .html-thumbnail > .overlay {
     display: none;
@@ -560,6 +578,10 @@
     font-size: 13px;
     display: block;
     padding-top: 4px;
+    
+    @media (max-device-width:480px), screen and (max-width:800px) {
+      display: none;
+    }
   }
 }
 .site-actions {
