@@ -241,6 +241,26 @@
   .column, input[type='checkbox'] {
     display: none;
   }
+  
+  .btn-group {
+    float: left;
+    margin-right: 15px;
+    .btn {
+      padding-left: 11px;
+      padding-right: 11px;
+      padding-top: 7px;
+      padding-bottom: 7px;
+      margin-top: 1px;
+      margin-left: -3px;
+      background: #77ABB8;
+      @include box-shadow(0 0 5px rgba(0, 0, 0, 0.25));
+      
+      &:focus {
+          outline: 0;
+      }
+      
+    }
+  }
 }
 .files .header {
   background: #5E95A1;
