@@ -97,7 +97,7 @@ describe 'site_files' do
       args = ScreenshotWorker.jobs.first['args']
       args.first.must_equal @site.username
       args.last.must_equal 'index.html'
-      @site.title.must_equal "#{@site.username}.neocities.org"
+      @site.title.must_equal "The web site of #{@site.username}"
       @site.reload
       @site.site_changed.must_equal true
       @site.title.must_equal 'Hello?'
@@ -111,7 +111,6 @@ describe 'site_files' do
       )
       @site.reload.title.must_equal title
     end
-
 
     it 'succeeds with valid file' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')

@@ -89,7 +89,7 @@ describe 'api delete' do
   it 'succeeds with weird filenames' do
     create_site
     basic_authorize @user, @pass
-    @site.store_file 't$st.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    @site.store_files [{filename: 't$st.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
     post '/api/delete', filenames: ['t$st.jpg']
     res[:result].must_equal 'success'
 
@@ -102,7 +102,7 @@ describe 'api delete' do
   it 'fails with missing files' do
     create_site
     basic_authorize @user, @pass
-    @site.store_file 'test.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    @site.store_files [{filename: 'test.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
     post '/api/delete', filenames: ['doesntexist.jpg']
     res[:error_type].must_equal 'missing_files'
   end
@@ -110,8 +110,8 @@ describe 'api delete' do
   it 'succeeds with valid filenames' do
     create_site
     basic_authorize @user, @pass
-    @site.store_file 'test.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
-    @site.store_file 'test2.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    @site.store_files [{filename: 'test.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
+    @site.store_files [{filename: 'test2.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
     post '/api/delete', filenames: ['test.jpg', 'test2.jpg']
     res[:result].must_equal 'success'
     site_file_exists?('test.jpg').must_equal false

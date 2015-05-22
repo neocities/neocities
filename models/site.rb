@@ -170,6 +170,8 @@ class Site < Sequel::Model
   one_to_many :stat_locations
   one_to_many :stat_paths
 
+  one_to_many :archives
+
   def account_sites_dataset
     Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id})).order(:parent_site_id.desc, :username)
   end
@@ -369,25 +371,26 @@ class Site < Sequel::Model
   def install_new_files
     FileUtils.mkdir_p files_path
 
+    files = []
+
     %w{index not_found}.each do |name|
       tmpfile = Tempfile.new "newinstall-#{name}"
       tmpfile.write render_template("#{name}.erb")
       tmpfile.close
-
-      store_file "#{name}.html", tmpfile, new_install: true
-      purge_cache "/#{name}.html"
-      ScreenshotWorker.perform_async values[:username], "#{name}.html"
+      files << {filename: "#{name}.html", tempfile: tmpfile}
     end
 
     tmpfile = Tempfile.new 'style.css'
     tmpfile.close
     FileUtils.cp template_file_path('style.css'), tmpfile.path
-    store_file 'style.css', tmpfile, new_install: true
+    files << {filename: 'style.css', tempfile: tmpfile}
 
     tmpfile = Tempfile.new 'cat.png'
     tmpfile.close
     FileUtils.cp template_file_path('cat.png'), tmpfile.path
-    store_file 'cat.png', tmpfile, new_install: true
+    files << {filename: 'cat.png', tempfile: tmpfile}
+
+    store_files files, new_install: true
   end
 
   def get_file(path)
@@ -554,71 +557,26 @@ class Site < Sequel::Model
     PurgeCacheWorker.perform_async payload
   end
 
-  def store_file(path, uploaded, opts={})
-    relative_path = scrubbed_path path
-    path = files_path path
-    pathname = Pathname(path)
+  def add_to_ipfs
+    line = Cocaine::CommandLine.new('ipfs', 'add -r :path')
+    response = line.run path: files_path
+    ipfs_hash = response.split("\n").last.split(' ')[1]
+    ipfs_hash
+  end
 
-    site_file = site_files_dataset.where(path: relative_path).first
+  def archive!
+    #if ENV["RACK_ENV"] == 'test'
+    #  ipfs_hash = "QmcKi2ae3uGb1kBg1yBpsuwoVqfmcByNdMiZ2pukxyLWD8"
+    #else
+    #end
 
-    uploaded_sha1 = Digest::SHA1.file(uploaded.path).hexdigest
-
-    if site_file && site_file.sha1_hash == uploaded_sha1
-      return false
+    archive = archives_dataset.where(ipfs_hash: ipfs_hash).first
+    if archive
+      archive.updated_at = Time.now
+      archive.save_changes
+    else
+      add_archive ipfs_hash: ipfs_hash, updated_at: Time.now
     end
-
-    if relative_path == 'index.html' && opts[:new_install] != true
-      begin
-        new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
-      rescue NoMethodError => e
-      else
-        if new_title.length < TITLE_MAX
-          self.title = new_title
-        end
-      end
-
-      self.site_changed = true
-      self.site_updated_at = Time.now
-      self.updated_at = Time.now
-
-      save_changes(validate: false)
-    end
-
-    if pathname.extname.match HTML_REGEX
-      # SPAM and phishing checking code goes here
-    end
-
-    dirname = pathname.dirname.to_s
-
-    if !File.exists? dirname
-      FileUtils.mkdir_p dirname
-    end
-
-    uploaded_size = uploaded.size
-
-    FileUtils.cp uploaded.path, path
-    File.chmod 0640, path
-
-    site_file ||= SiteFile.new site_id: self.id, path: relative_path
-
-    site_file.set_all(
-      size: uploaded_size,
-      sha1_hash: uploaded_sha1,
-      updated_at: Time.now
-    )
-    site_file.save
-
-    purge_cache path
-
-    if pathname.extname.match HTML_REGEX
-      ScreenshotWorker.perform_async values[:username], relative_path
-    elsif pathname.extname.match IMAGE_REGEX
-      ThumbnailWorker.perform_async values[:username], relative_path
-    end
-
-    SiteChange.record self, relative_path unless opts[:new_install]
-
-    true
   end
 
   def is_directory?(path)
@@ -699,7 +657,7 @@ class Site < Sequel::Model
     tmpfile = Tempfile.new 'neocities_html_template'
     tmpfile.write render_template('index.erb')
     tmpfile.close
-    store_file path, tmpfile
+    store_files [{filename: path, tempfile: tmpfile}]
     purge_cache path
     tmpfile.unlink
   end
@@ -1116,4 +1074,89 @@ class Site < Sequel::Model
       end
     end
   end
+
+  # array of hashes: filename, tempfile, opts.
+  def store_files(files, opts={})
+    results = []
+    files.each do |file|
+      results << store_file(file[:filename], file[:tempfile], file[:opts] || opts)
+    end
+
+    if results.include? true && opts[:new_install] != true
+      self.site_changed = true
+      self.site_updated_at = Time.now
+      self.updated_at = Time.now
+      save_changes validate: false
+      increment_changed_count
+      archive!
+      #SiteChange.record self, relative_path unless opts[:new_install]
+      ArchiveWorker.perform_async self.id
+    end
+
+    results
+  end
+
+  private
+
+  def store_file(path, uploaded, opts={})
+    relative_path = scrubbed_path path
+    path = files_path path
+    pathname = Pathname(path)
+
+    site_file = site_files_dataset.where(path: relative_path).first
+
+    uploaded_sha1 = Digest::SHA1.file(uploaded.path).hexdigest
+
+    if site_file && site_file.sha1_hash == uploaded_sha1
+      return false
+    end
+
+    if relative_path == 'index.html'
+      begin
+        new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
+      rescue NoMethodError => e
+      else
+        if new_title.length < TITLE_MAX
+          self.title = new_title
+          save_changes validate: false
+        end
+      end
+    end
+
+    if pathname.extname.match HTML_REGEX
+      # SPAM and phishing checking code goes here
+    end
+
+    dirname = pathname.dirname.to_s
+
+    if !File.exists? dirname
+      FileUtils.mkdir_p dirname
+    end
+
+    uploaded_size = uploaded.size
+
+    FileUtils.cp uploaded.path, path
+    File.chmod 0640, path
+
+    SiteChange.record self, relative_path unless opts[:new_install]
+
+    site_file ||= SiteFile.new site_id: self.id, path: relative_path
+
+    site_file.set_all(
+      size: uploaded_size,
+      sha1_hash: uploaded_sha1,
+      updated_at: Time.now
+    )
+    site_file.save
+
+    purge_cache path
+
+    if pathname.extname.match HTML_REGEX
+      ScreenshotWorker.perform_async values[:username], relative_path
+    elsif pathname.extname.match IMAGE_REGEX
+      ThumbnailWorker.perform_async values[:username], relative_path
+    end
+    true
+  end
+
 end

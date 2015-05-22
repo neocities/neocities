@@ -33,13 +33,7 @@ post '/api/upload' do
     end
   end
 
-  results = []
-  files.each do |file|
-    results << current_site.store_file(file[:filename], file[:tempfile])
-  end
-
-  current_site.increment_changed_count if results.include?(true)
-
+  results = current_site.store_files files
   api_success 'your file(s) have been successfully uploaded'
 end
 

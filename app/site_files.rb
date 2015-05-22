@@ -124,12 +124,7 @@ post '/site_files/upload' do
     file_upload_response "File(s) do not fit in your available space, upload cancelled."
   end
 
-  results = []
-  params[:files].each do |file|
-    results << current_site.store_file(file[:filename], file[:tempfile])
-  end
-  current_site.increment_changed_count if results.include?(true)
-
+  results = current_site.store_files params[:files]
   file_upload_response
 end
 
@@ -199,7 +194,7 @@ post %r{\/site_files\/save\/(.+)} do
     halt 'File is too large to fit in your space, it has NOT been saved. You will need to reduce the size or upgrade to a new plan.'
   end
 
-  current_site.store_file filename, tempfile
+  current_site.store_files [{filename: filename, tempfile: tempfile}]
 
   'ok'
 end
