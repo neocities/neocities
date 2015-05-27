@@ -9,6 +9,8 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.7)
     ago (0.1.5)
+    annoy (0.5.6)
+      highline (>= 1.5.0)
     ansi (1.4.3)
     autoparse (0.3.3)
       addressable (>= 2.3.1)
@@ -50,6 +52,7 @@ GEM
     docile (1.1.3)
     domain_name (0.5.23)
       unf (>= 0.0.5, < 1.0.0)
+    drydock (0.6.9)
     erubis (2.7.0)
     extlib (0.9.16)
     fabrication (2.11.0)
@@ -75,6 +78,7 @@ GEM
       signet (>= 0.5.0)
       uuidtools (>= 2.1.0)
     hashie (2.0.5)
+    highline (1.7.2)
     hiredis (0.5.0)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
@@ -110,6 +114,9 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.11.0)
     multipart-post (2.0.0)
+    net-scp (1.2.1)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.9.2)
     netrc (0.10.3)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
@@ -160,6 +167,13 @@ GEM
       netrc (~> 0.7)
     retriable (1.4.1)
     rmagick (2.15.0)
+    rye (0.9.13)
+      annoy
+      docile (>= 1.0.1)
+      highline (>= 1.5.1)
+      net-scp (>= 1.0.2)
+      net-ssh (>= 2.0.13)
+      sysinfo (>= 0.8.1)
     safe_yaml (1.0.4)
     sass (3.3.8)
     screencap (0.1.1)
@@ -198,6 +212,7 @@ GEM
     sinatra-xsendfile (0.4.2)
       sinatra (>= 0.9.1)
     slop (3.5.0)
+    storable (0.8.9)
     stripe (1.15.0)
       json (~> 1.8.1)
       mime-types (>= 1.25, < 3.0)
@@ -206,6 +221,9 @@ GEM
       dante (>= 0.2.0)
       jimson-temp
       stripe (>= 1.15.0)
+    sysinfo (0.8.1)
+      drydock
+      storable
     thread (0.1.4)
     thread_safe (0.3.4)
     tilt (1.4.1)
@@ -273,6 +291,7 @@ DEPENDENCIES
   rest-client
   rmagick
   ruby-debug
+  rye
   sass
   screencap
   scrypt

@@ -32,6 +32,17 @@ get '/site/:username/?' do |username|
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
+get '/site/:username/archives' do
+  require_login
+  @site = Site[username: params[:username]]
+  not_found if @site.nil?
+  redirect request.referrer unless current_site.id == @site.id
+
+  @archives = @site.archives_dataset.limit(300).order(:updated_at.desc).all
+
+  erb :'site/archives'
+end
+
 get '/site/:username/stats' do
   @site = Site[username: params[:username]]
   not_found if @site.nil?

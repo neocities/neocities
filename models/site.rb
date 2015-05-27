@@ -558,10 +558,19 @@ class Site < Sequel::Model
   end
 
   def add_to_ipfs
-    line = Cocaine::CommandLine.new('ipfs', 'add -r :path')
-    response = line.run path: files_path
-    ipfs_hash = response.split("\n").last.split(' ')[1]
-    ipfs_hash
+    # Not ideal. An SoA version is in progress.
+    if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
+      Rye::Cmd.add_command :ipfs, nil, 'add', :r
+      rbox = Rye::Box.new $config['ipfs_ssh_host'], :user => $config['ipfs_ssh_user']
+      response = rbox.ipfs "sites/#{self.username.gsub(/\/|\.\./, '')}"
+      output_array = response
+    else
+      line = Cocaine::CommandLine.new('ipfs', 'add -r :path')
+      response = line.run path: files_path
+      output_array = response.to_s.split("\n")
+    end
+
+    output_array.last.split(' ')[1]
   end
 
   def archive!
@@ -570,6 +579,8 @@ class Site < Sequel::Model
     #else
     #end
 
+    ipfs_hash = add_to_ipfs
+
     archive = archives_dataset.where(ipfs_hash: ipfs_hash).first
     if archive
       archive.updated_at = Time.now
@@ -577,6 +588,10 @@ class Site < Sequel::Model
     else
       add_archive ipfs_hash: ipfs_hash, updated_at: Time.now
     end
+  end
+
+  def latest_archive
+    @latest_archive ||= archives_dataset.order(:updated_at.desc).first
   end
 
   def is_directory?(path)

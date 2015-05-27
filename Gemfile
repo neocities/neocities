@@ -28,6 +28,7 @@ gem 'rack-cache'
 gem 'rest-client'
 gem 'geoip'
 gem 'io-extra', require: 'io/extra'
+gem 'rye'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
