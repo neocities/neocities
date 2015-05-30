@@ -557,13 +557,15 @@ class Site < Sequel::Model
     PurgeCacheWorker.perform_async payload
   end
 
+  Rye::Cmd.add_command :ipfs, nil, 'add', :r
+
   def add_to_ipfs
     # Not ideal. An SoA version is in progress.
     if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
-      Rye::Cmd.add_command :ipfs, nil, 'add', :r
       rbox = Rye::Box.new $config['ipfs_ssh_host'], :user => $config['ipfs_ssh_user']
       response = rbox.ipfs "sites/#{self.username.gsub(/\/|\.\./, '')}"
       output_array = response
+      rbox.disconnect
     else
       line = Cocaine::CommandLine.new('ipfs', 'add -r :path')
       response = line.run path: files_path
