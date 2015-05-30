@@ -78,3 +78,7 @@ get '/legal/?' do
   @title = 'Legal Guide to Neocities'
   erb :'legal'
 end
+
+get '/permanent-web' do
+  erb :'permanent_web'
+end
