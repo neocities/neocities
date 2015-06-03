@@ -36,6 +36,7 @@ before do
 end
 
 not_found do
+  @title = 'Not Found'
   erb :'not_found'
 end
 
