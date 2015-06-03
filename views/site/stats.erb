@@ -212,7 +212,7 @@
 
       <div class="col col-33">
         <div class="news-site-info">
-          <p class="site-url"><a href="<%= current_site.uri %>" target="_blank"><%= site.title %></a></p>
+          <p class="site-url"><a href="<%= @site.uri %>" target="_blank"><%= @site.title %></a></p>
           <div class="stats">
             <div class="col col-50">
               <% if site.updated_at %>
@@ -233,12 +233,7 @@
 
         <div class="news-profile-button">
           <a href="/site/<%= site.username %>" class="btn-Action"><i class="fa fa-user"></i> Profile</a>
-          <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'><i class="fa fa-share-alt"></i> Share</a>
         </div>
-
-        <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
-
-        <%== erb :'_tags', layout: false, locals: {site: site, is_current_site: site == current_site} %>
       </div>
     </div>
   </div>
