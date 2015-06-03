@@ -1108,7 +1108,6 @@ class Site < Sequel::Model
       self.updated_at = Time.now
       save_changes validate: false
       increment_changed_count
-      archive!
       #SiteChange.record self, relative_path unless opts[:new_install]
       ArchiveWorker.perform_async self.id
     end
