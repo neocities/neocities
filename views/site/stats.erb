@@ -7,7 +7,6 @@
         <a href="/" <% if params[:activity].nil? %>class="selected"<% end %>>All</a>
         <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>Profile Activity</a>
         <% end %>
-        <a href="/activity">Global Activity</a>
       </div>
     </div>
     <div class="col col-32">
@@ -23,10 +22,11 @@
       <div class="col col-66">
         <div class="row">
 
-          <div class="col col-50 globe">
-            <h2>Latest Visitors</h2>
+          <div class="col col-100 globe">
+            <h2>Most popular locations (this week)</h2>
             <div id="earth_div"></div>
           </div>
+          <!--
           <div class="col col-50" style="padding-right: 0;">
             <table class="table table-striped" id="latest-visitors">
               <tbody>
@@ -133,16 +133,24 @@
               </tbody>
             </table>
           </div>
+          -->
         </div>
 
-        <h2>Last 7 Days</h2>
-        <p>(<a href="/plan">Upgrade</a> to see up to see stats for all time)</p>
-        <ul class="nav h-Nav">
-          <li><a href="">Month</a></li>
-          <li><a href="">3 months</a></li>
-          <li><a href="">1 Year</a></li>
-          <li><a href="">All time</a></li>
-        </ul>
+        <h2>Total Visitors (last 7 days)</h2>
+
+        <% if current_site && current_site.id == @site.id %>
+
+          <% if current_site.supporter? %>
+            <ul class="nav h-Nav">
+              <li><a href="">1 month</a></li>
+              <li><a href="">3 months</a></li>
+              <li><a href="">1 year</a></li>
+              <li><a href="">All time</a></li>
+            </ul>
+          <% else %>
+            <p>(<a href="/plan">Upgrade</a> to see up to see stats for all time)</p>
+          <% end %>
+        <% end %>
 
         <canvas id="myChart" style="width:100%;height:300px;display:block"></canvas>
 
@@ -165,7 +173,8 @@
                 <% end %>
               </tbody>
             </table>
-
+          </div>
+          <div class="col col-50">
             <h2>Top Locations</h2>
             <table class="table table-striped">
               <thead>
@@ -186,28 +195,33 @@
               </tbody>
             </table>
           </div>
-
-          <div class="col col-50">
-
-            <h2>Top Referrers</h2>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Referrer</th>
-                  <th>Visits</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @stats[:referrers].each do |referrer| %>
-                  <tr>
-                    <td><%= referrer.url %></td>
-                    <td><%= referrer.views %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
         </div>
+
+        <% if current_site && current_site.id == @site.id %>
+
+          <div class="row">
+            <div class="col col-100">
+              <h2>Top Referrers</h2>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Referrer</th>
+                    <th>Visits</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @stats[:referrers].each do |referrer| %>
+                    <tr>
+                      <td><%= referrer.url %></td>
+                      <td><%= referrer.views %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        <% end %>
       </div>
 
       <div class="col col-33">
@@ -244,11 +258,32 @@
 <script>
   //OpenGL globe
   $(document).ready(function() {
-    var earth = new WE.map('earth_div');
-    earth.setView([20, -100], 2.07);
+    var options = {
+      sky: true,
+      atmosphere: false,
+      dragging: true,
+      tilting: true,
+      center: [46.8011, 8.2266],
+      zoom: 2
+    }
+
+    var earth = new WE.map('earth_div', options)
+    earth.setView([20, -100], 2.07)
+
+    /*
     WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
       attribution: '© OpenStreetMap'
     }).addTo(earth);
+    */
+
+    WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
+      tileSize: 256,
+      bounds: [[-85, -180], [85, 180]],
+      minZoom: 0,
+      maxZoom: 16,
+      attribution: 'WebGL Earth Tiles',
+      tms: true
+    }).addTo(earth)
 
     <% @stats[:locations].each do |location| %>
       var marker = WE.marker([<%= location[:latitude] %>, <%= location[:longitude] %>]).addTo(earth);
@@ -258,13 +293,13 @@
 
 
     // Start a simple rotation animation
-    var before = null;
+    var before = null
     requestAnimationFrame(function animate(now) {
-        var c = earth.getPosition();
-        var elapsed = before? now - before: 0;
-        before = now;
-        earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)]);
-        requestAnimationFrame(animate);
+        var c = earth.getPosition()
+        var elapsed = before? now - before: 0
+        before = now
+        earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)])
+        requestAnimationFrame(animate)
     });
 
     //chart.js
@@ -292,14 +327,14 @@
           data: <%== @stats[:stat_days].collect {|s| s.views}.to_json %>
         }
       ]
-    };
+    }
     // Get context with jQuery - using jQuery's .get() method.
-    var ctx = $("#myChart").get(0).getContext("2d");
+    var ctx = $("#myChart").get(0).getContext("2d")
     // This will get the first returned node in the jQuery collection.
     //var myNewChart = new Chart(ctx);
     var myLineChart = new Chart(ctx).Line(data, {
       bezierCurve: false,
       multiTooltipTemplate: "<%== @multi_tooltip_template %>"
-    });
+    })
   })
 </script>
