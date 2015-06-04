@@ -78,11 +78,11 @@ class Stat < Sequel::Model
             DB[:stats].lock('EXCLUSIVE') { stat = Stat.create opts } if stat.nil?
 
             DB[
-              'update stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where site_id=?',
+              'update stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where id=?',
               site_log[:hits],
               site_log[:views],
               site_log[:bandwidth],
-              site_log[:id]
+              stat.id
             ].first
 
             site_log[:referrers].each do |referrer, views|
@@ -105,15 +105,6 @@ class Stat < Sequel::Model
         end
 
         FileUtils.rm log_path
-      end
-    end
-
-    def get_or_create
-      DB[:stats].lock 'EXCLUSIVE' do
-        stat = Stat.where(opts).first
-        stat ||= Stat.new opts
-        stat.hits += site_log[:hits]
-        stat.views += site_log[:views]
       end
     end
   end
