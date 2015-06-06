@@ -43,6 +43,12 @@ def browse_sites_dataset
   end
 
   case params[:sort_by]
+    when 'followers'
+      site_dataset = site_dataset.association_left_join :follows
+      site_dataset.select_all! :sites
+      site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
+      site_dataset.group! :sites__id
+      site_dataset.order! :follow_count.desc, :updated_at.desc
     when 'supporters'
       site_dataset.exclude! plan_type: nil
       site_dataset.exclude! plan_type: 'free'
@@ -81,7 +87,7 @@ def browse_sites_dataset
 
   site_dataset.where! ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
 
-  if params[:tag]
+  if params[:tag] && params[:sort_by] != 'followers'
     site_dataset = site_dataset.association_join(:tags).select_all(:sites)
     site_dataset.where! ['tags.name = ?', params[:tag]]
     site_dataset.where! ['tags.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
