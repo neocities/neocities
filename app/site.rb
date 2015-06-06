@@ -47,6 +47,8 @@ get '/site/:username/stats' do
   @site = Site[username: params[:username]]
   not_found if @site.nil?
 
+  @title = "Site stats for #{@site.host}"
+
   @stats = {}
 
   %i{referrers locations paths}.each do |stat|

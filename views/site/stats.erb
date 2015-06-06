@@ -1,17 +1,15 @@
+
 <div class="header-Outro with-columns">
   <div class="row content">
-    <div class="col col-66">
-      <h3>Your Stats</h3>
+    <div class="col col-100">
+      <h3>Site Statistics</h3>
+
       <div class="feed-filter">
         <% if !@events.empty? && (site.followings_dataset.count > 0) %>
         <a href="/" <% if params[:activity].nil? %>class="selected"<% end %>>All</a>
         <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>Profile Activity</a>
         <% end %>
       </div>
-    </div>
-    <div class="col col-32">
-      <h3>Your Site</h3>
-      <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i>Edit Site</a>
     </div>
   </div>
 </div>
@@ -23,7 +21,6 @@
         <div class="row">
 
           <div class="col col-100 globe">
-            <h2>Most popular locations (this week)</h2>
             <div id="earth_div"></div>
           </div>
           <!--
@@ -136,7 +133,7 @@
           -->
         </div>
 
-        <h2>Total Visitors (last 7 days)</h2>
+        <h2>Total Visitors <small>last 7 days</small></h2>
 
         <% if current_site && current_site.id == @site.id %>
 
@@ -156,7 +153,7 @@
 
         <div class="row">
           <div class="col col-50">
-            <h2>Top Paths</h2>
+            <h2>Top Paths <small>last 7 days</small></h2>
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -175,7 +172,7 @@
             </table>
           </div>
           <div class="col col-50">
-            <h2>Top Locations</h2>
+            <h2>Top Locations <small>last 7 days</small></h2>
             <table class="table table-striped">
               <thead>
                 <tr>
