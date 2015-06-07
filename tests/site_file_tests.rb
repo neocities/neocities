@@ -24,12 +24,15 @@ describe 'site_files' do
 
   describe 'delete' do
     it 'works' do
-      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
+      @site.reload.space_used.must_equal uploaded_file.size
       file_path = @site.files_path 'test.jpg'
       File.exists?(file_path).must_equal true
       delete_file filename: 'test.jpg'
       File.exists?(file_path).must_equal false
       SiteFile[site_id: @site.id, path: 'test.jpg'].must_be_nil
+      @site.reload.space_used.must_equal 0
     end
 
     it 'deletes a directory and all files in it' do
@@ -113,13 +116,19 @@ describe 'site_files' do
     end
 
     it 'succeeds with valid file' do
-      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      puts uploaded_file.size
+      upload 'files[]' => uploaded_file
       last_response.body.must_match /successfully uploaded/i
       File.exists?(@site.files_path('test.jpg')).must_equal true
 
       queue_args = PurgeCacheWorker.jobs.first['args'].first
       queue_args['site'].must_equal @site.username
       queue_args['path'].must_equal '/test.jpg'
+
+      @site.reload
+      @site.space_used.wont_equal 0
+      @site.space_used.must_equal uploaded_file.size
 
       ThumbnailWorker.jobs.length.must_equal 1
       ThumbnailWorker.drain

@@ -613,11 +613,6 @@ class Site < Sequel::Model
     true
   end
 
-  def increment_changed_count
-    self.changed_count += 1
-    save_changes(validate: false)
-  end
-
   def files_zip
     zip_name = "neocities-#{username}"
 
@@ -663,8 +658,14 @@ class Site < Sequel::Model
 
     path = path[1..path.length] if path[0] == '/'
 
-    site_files_dataset.where(path: path).delete
-    SiteChangeFile.filter(site_id: self.id, filename: path).delete
+    DB.transaction do
+      site_file = site_files_dataset.where(path: path).first
+      if site_file
+        DB['update sites set space_used=space_used-? where id=?', site_file.size, self.id].first
+        site_file.delete
+      end
+      SiteChangeFile.filter(site_id: self.id, filename: path).delete
+    end
 
     true
   end
@@ -1098,16 +1099,32 @@ class Site < Sequel::Model
   # array of hashes: filename, tempfile, opts.
   def store_files(files, opts={})
     results = []
+    new_size = 0
+    html_uploaded = false
+
     files.each do |file|
+      new_size += file[:tempfile].size
+      html_uploaded = true if file[:filename].match HTML_REGEX
       results << store_file(file[:filename], file[:tempfile], file[:opts] || opts)
     end
 
     if results.include? true && opts[:new_install] != true
-      self.site_changed = true
-      self.site_updated_at = Time.now
-      self.updated_at = Time.now
-      save_changes validate: false
-      increment_changed_count
+      time = Time.now
+      DB['update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1, space_used=space_used+? where id=?',
+        html_uploaded,
+        time,
+        time,
+        new_size,
+        self.id
+      ].first
+
+      #self.site_changed = true
+      #self.site_updated_at = Time.now
+      #self.updated_at = Time.now
+      #self.changed_count += 1
+      #save_changes validate: false
+      reload
+
       #SiteChange.record self, relative_path unless opts[:new_install]
       ArchiveWorker.perform_async self.id
     end
