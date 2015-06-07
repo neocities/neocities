@@ -132,7 +132,7 @@ class Site < Sequel::Model
     plan_five: 5
   }
 
-  BROWSE_PAGINATION_LENGTH = 300
+  BROWSE_PAGINATION_LENGTH = 100
 
   many_to_many :tags
 
