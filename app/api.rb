@@ -48,6 +48,10 @@ post '/api/delete' do
       api_error 400, 'bad_filename', "#{path} is not a valid filename, canceled deleting"
     end
 
+    if current_site.files_path(path) == current_site.files_path
+      api_error 400, 'cannot_delete_site_directory', 'cannot delete the root directory of the site'
+    end
+
     if !current_site.file_exists?(path)
       api_error 400, 'missing_files', "#{path} was not found on your site, canceled deleting"
     end

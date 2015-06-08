@@ -107,6 +107,27 @@ describe 'api delete' do
     res[:error_type].must_equal 'missing_files'
   end
 
+  it 'fails to delete site directory' do
+    create_site
+    basic_authorize @user, @pass
+    post '/api/delete', filenames: ['/']
+    res[:error_type].must_equal 'cannot_delete_site_directory'
+    File.exist?(@site.files_path).must_equal true
+  end
+
+  it 'fails to delete other directories' do
+    create_site
+    @other_site = @site
+    create_site
+    basic_authorize @user, @pass
+    post '/api/delete', filenames: ["../#{@other_site.username}"]
+    File.exist?(@other_site.base_files_path).must_equal true
+    res[:error_type].must_equal 'missing_files'
+    post '/api/delete', filenames: ["../#{@other_site.username}/index.html"]
+    File.exist?(@other_site.base_files_path+'/index.html').must_equal true
+    res[:error_type].must_equal 'missing_files'
+  end
+
   it 'succeeds with valid filenames' do
     create_site
     basic_authorize @user, @pass

@@ -637,6 +637,7 @@ class Site < Sequel::Model
   end
 
   def delete_file(path)
+    return false if files_path(path) == files_path
     begin
       FileUtils.rm files_path(path)
     rescue Errno::EISDIR
