@@ -79,9 +79,11 @@ def browse_sites_dataset
         params[:sort_by] = 'views'
         site_dataset.order!(:views.desc, :site_updated_at.desc)
       else
-        params[:sort_by] = 'last_updated'
-        site_dataset.where!{views > 100}
-        site_dataset.order!(:site_updated_at.desc, :views.desc)
+        site_dataset = site_dataset.association_left_join :follows
+        site_dataset.select_all! :sites
+        site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
+        site_dataset.group! :sites__id
+        site_dataset.order! :follow_count.desc, :updated_at.desc
       end
   end
 
