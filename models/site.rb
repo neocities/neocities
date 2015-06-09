@@ -102,7 +102,8 @@ class Site < Sequel::Model
     unlimited_site_creation: true,
     custom_ssl_certificates: true,
     no_file_restrictions: true,
-    custom_domains: true
+    custom_domains: true,
+    maximum_site_files: 25000
   }
 
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
@@ -113,8 +114,13 @@ class Site < Sequel::Model
     unlimited_site_creation: false,
     custom_ssl_certificates: false,
     no_file_restrictions: false,
-    custom_domains: false
+    custom_domains: false,
+    maximum_site_files: 1000
   )
+
+  def too_many_files?(file_count=0)
+    (site_files_dataset.count + file_count) > plan_feature(:maximum_site_files)
+  end
 
   def plan_feature(key)
     PLAN_FEATURES[plan_type.to_sym][key.to_sym]
@@ -1102,6 +1108,11 @@ class Site < Sequel::Model
     results = []
     new_size = 0
     html_uploaded = false
+
+    if too_many_files?(files.length)
+      results << false
+      return results
+    end
 
     files.each do |file|
       new_size += file[:tempfile].size
