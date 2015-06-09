@@ -139,10 +139,10 @@
 
           <% if current_site.supporter? %>
             <ul class="nav h-Nav">
-              <li><a href="">1 month</a></li>
-              <li><a href="">3 months</a></li>
-              <li><a href="">1 year</a></li>
-              <li><a href="">All time</a></li>
+              <li><a href="?days=30">30 days</a></li>
+              <li><a href="?days=90">90 days</a></li>
+              <li><a href="?days=365">1 year</a></li>
+              <li><a href="?days=sincethebigbang">All time</a></li>
             </ul>
           <% else %>
             <p>(<a href="/plan">Upgrade</a> to see up to see stats for all time)</p>

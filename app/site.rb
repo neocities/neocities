@@ -82,8 +82,21 @@ get '/site/:username/stats' do
     location_hash
   end
 
-  @stats[:stat_days] = @site.stats_dataset.order(:created_at.desc).limit(7).all.reverse
+  stats_dataset = @site.stats_dataset.order(:created_at.desc)
 
+  if @site.supporter?
+    unless params[:days].to_s == 'sincethebigbang'
+      if params[:days]
+        stats_dataset.limit! params[:days]
+      else
+        stats_dataset.limit! 7
+      end
+    end
+  else
+    stats_dataset.limit! 7
+  end
+
+  @stats[:stat_days] = stats_dataset.all.reverse
   @multi_tooltip_template = "<%= datasetLabel %> - <%= value %>"
 
   erb :'site/stats', locals: {site: @site}
