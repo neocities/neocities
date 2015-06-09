@@ -160,6 +160,19 @@ describe 'api upload' do
     res[:error_type].must_equal 'missing_files'
   end
 
+  it 'fails with too many files' do
+    create_site
+    basic_authorize @user, @pass
+    @site.plan_feature(:maximum_site_files).times {
+      uuid = SecureRandom.uuid.gsub('-', '')+'.html'
+      @site.add_site_file path: uuid
+    }
+    post '/api/upload', {
+      '/lol.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    }
+    res[:error_type].must_equal 'too_many_files'
+  end
+
   it 'resists directory traversal attack' do
     create_site
     basic_authorize @user, @pass

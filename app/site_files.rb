@@ -124,6 +124,10 @@ post '/site_files/upload' do
     file_upload_response "File(s) do not fit in your available space, upload cancelled."
   end
 
+  if current_site.too_many_files? params[:files].length
+    file_upload_response "Too many files, cannot upload"
+  end
+
   results = current_site.store_files params[:files]
   file_upload_response
 end

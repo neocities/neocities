@@ -23,6 +23,10 @@ post '/api/upload' do
     api_error 400, 'too_large', 'files are too large to fit in your space, try uploading smaller (or less) files'
   end
 
+  if current_site.too_many_files?(files.length)
+    api_error 400, 'too_many_files', "cannot exceed the maximum site files limit (#{current_site.plan_feature(:maximum_site_files)}), #{current_site.supporter? ? 'please contact support' : 'please upgrade to a supporter account'}"
+  end
+
   files.each do |file|
     if !current_site.okay_to_upload?(file)
       api_error 400, 'invalid_file_type', "#{file[:filename]} is not a valid file type (or contains not allowed content) for this site, files have not been uploaded"
