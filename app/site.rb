@@ -82,7 +82,7 @@ get '/site/:username/stats' do
     location_hash
   end
 
-  stats_dataset = @site.stats_dataset.order(:created_at.desc)
+  stats_dataset = @site.stats_dataset.order(:created_at.desc).exclude(created_at: Date.today)
 
   if @site.supporter?
     unless params[:days].to_s == 'sincethebigbang'
