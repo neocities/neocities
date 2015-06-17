@@ -36,8 +36,8 @@ describe 'stats' do
 
     Stat.parse_logfiles STAT_LOGS_PATH
     @site.stats.first.bandwidth.must_equal 612917*2
-    @site.stat_referrers.first.url.must_equal 'http://derp.com'
-    @site.stat_locations.first.city_name.must_equal 'Menlo Park'
+    #@site.stat_referrers.first.url.must_equal 'http://derp.com'
+    #@site.stat_locations.first.city_name.must_equal 'Menlo Park'
   end
 
   it 'deals with spaces in referrer' do
@@ -112,23 +112,24 @@ describe 'stats' do
     stat.hits.must_equal 4
     stat.views.must_equal 2
     stat.bandwidth.must_equal 20_000
-    @site_one.stat_referrers.count.must_equal 1
-    stat_referrer = @site_one.stat_referrers.first
-    stat_referrer.url.must_equal 'http://example.com'
-    stat_referrer.created_at.must_equal @time.to_date
-    stat_referrer.views.must_equal 2
 
-    @site_one.stat_paths.length.must_equal 1
-    stat_path = @site_one.stat_paths.first
-    stat_path.name.must_equal '/'
-    stat_path.views.must_equal 4
+    #@site_one.stat_referrers.count.must_equal 1
+    #stat_referrer = @site_one.stat_referrers.first
+    #stat_referrer.url.must_equal 'http://example.com'
+    #stat_referrer.created_at.must_equal @time.to_date
+    #stat_referrer.views.must_equal 2
 
-    @site_one.stat_locations.length.must_equal 2
-    stat_location = @site_one.stat_locations.first
-    stat_location.country_code2.must_equal 'US'
-    stat_location.region_name.must_equal 'CA'
-    stat_location.city_name.must_equal 'Menlo Park'
-    stat_location.views.must_equal 1
+    #@site_one.stat_paths.length.must_equal 1
+    #stat_path = @site_one.stat_paths.first
+    #stat_path.name.must_equal '/'
+    #stat_path.views.must_equal 4
+
+    #@site_one.stat_locations.length.must_equal 2
+    #stat_location = @site_one.stat_locations.first
+    #stat_location.country_code2.must_equal 'US'
+    #stat_location.region_name.must_equal 'CA'
+    #stat_location.city_name.must_equal 'Menlo Park'
+    #stat_location.views.must_equal 1
 
     @site_two.reload
     @site_two.hits.must_equal 3
@@ -137,15 +138,15 @@ describe 'stats' do
     stat.hits.must_equal 3
     stat.views.must_equal 3
     stat.bandwidth.must_equal 15_000
-    @site_two.stat_referrers.count.must_equal 2
-    stat_referrer = @site_two.stat_referrers.first
-    stat_referrer.url.must_equal 'http://example.com'
-    stat_referrer.views.must_equal 2
+    #@site_two.stat_referrers.count.must_equal 2
+    #stat_referrer = @site_two.stat_referrers.first
+    #stat_referrer.url.must_equal 'http://example.com'
+    #stat_referrer.views.must_equal 2
 
-    stat_paths = @site_two.stat_paths
-    stat_paths.length.must_equal 2
-    stat_paths.first.name.must_equal '/'
-    stat_paths.last.name.must_equal '/derp.html'
+    #stat_paths = @site_two.stat_paths
+    #stat_paths.length.must_equal 2
+    #stat_paths.first.name.must_equal '/'
+    #stat_paths.last.name.must_equal '/derp.html'
 
     # [geoip.city('67.180.75.140'), geoip.city('172.56.16.152')]
   end

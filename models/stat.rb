@@ -85,6 +85,7 @@ class Stat < Sequel::Model
               stat.id
             ].first
 
+=begin
             site_log[:referrers].each do |referrer, views|
               stat_referrer = StatReferrer.create_or_get site_log[:id], referrer
               DB['update stat_referrers set views=views+? where site_id=?', views, site_log[:id]].first
@@ -101,6 +102,7 @@ class Stat < Sequel::Model
               next if site_path.nil?
               DB['update stat_paths set views=views+? where id=?', views, site_path.id].first
             end
+=end
           end
         end
 

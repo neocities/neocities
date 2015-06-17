@@ -18,7 +18,9 @@
   <div class="content misc-page columns right-col">
     <div class="col-left">
       <div class="col col-66">
+        <!--
         <div class="row">
+
 
           <div class="col col-100 globe">
             <div id="earth_div"></div>
@@ -130,8 +132,9 @@
               </tbody>
             </table>
           </div>
-          -->
+
         </div>
+        -->
 
         <h2>Total Visitors <small>last 7 days</small></h2>
 
@@ -151,6 +154,7 @@
 
         <canvas id="myChart" style="width:100%;height:300px;display:block"></canvas>
 
+        <!--
         <div class="row">
           <div class="col col-50">
             <h2>Top Paths <small>last 7 days</small></h2>
@@ -219,6 +223,7 @@
           </div>
 
         <% end %>
+      -->
       </div>
 
       <div class="col col-33">
@@ -250,11 +255,12 @@
   </div>
 </div>
 
-<script src="//www.webglearth.com/v2/api.js"></script>
+<!-- <script src="//www.webglearth.com/v2/api.js"></script> -->
 <script src="/js/Chart.min.js"></script>
 <script>
   //OpenGL globe
   $(document).ready(function() {
+    /*
     var options = {
       sky: true,
       atmosphere: false,
@@ -267,11 +273,9 @@
     var earth = new WE.map('earth_div', options)
     earth.setView([20, -100], 2.07)
 
-    /*
-    WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution: '© OpenStreetMap'
-    }).addTo(earth);
-    */
+    // WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    //  attribution: '© OpenStreetMap'
+    //}).addTo(earth);
 
     WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
       tileSize: 256,
@@ -298,6 +302,7 @@
         earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)])
         requestAnimationFrame(animate)
     });
+    */
 
     //chart.js
     var data = {
