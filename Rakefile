@@ -194,7 +194,7 @@ end
 desc 'prime_space_used'
 task :prime_space_used => [:environment] do
   Site.select(:id,:username,:space_used).all.each do |s|
-    s.space_used += s.actual_space_used
+    s.space_used = s.actual_space_used
     s.save_changes validate: false
   end
 end
