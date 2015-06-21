@@ -106,6 +106,14 @@ describe 'site_files' do
       @site.title.must_equal 'Hello?'
     end
 
+    it 'provides the correct space used after overwriting an existing file' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
+      second_uploaded_file = Rack::Test::UploadedFile.new('./tests/files/img/test.jpg', 'image/jpeg')
+      upload 'files[]' => second_uploaded_file
+      @site.reload.space_used.must_equal second_uploaded_file.size
+    end
+
     it 'does not change title for subdir index.html' do
       title = @site.title
       upload(
@@ -117,7 +125,6 @@ describe 'site_files' do
 
     it 'succeeds with valid file' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
-      puts uploaded_file.size
       upload 'files[]' => uploaded_file
       last_response.body.must_match /successfully uploaded/i
       File.exists?(@site.files_path('test.jpg')).must_equal true

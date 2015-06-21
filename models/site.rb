@@ -642,41 +642,6 @@ class Site < Sequel::Model
     tmpfile.path
   end
 
-  def delete_file(path)
-    return false if files_path(path) == files_path
-    begin
-      FileUtils.rm files_path(path)
-    rescue Errno::EISDIR
-      site_files.each do |site_file|
-        if site_file.path.match /^#{path}\//
-          site_file.destroy
-        end
-      end
-      FileUtils.remove_dir files_path(path), true
-    rescue Errno::ENOENT
-    end
-
-    purge_cache path
-
-    ext = File.extname(path).gsub(/^./, '')
-
-    screenshots_delete(path) if ext.match HTML_REGEX
-    thumbnails_delete(path) if ext.match IMAGE_REGEX
-
-    path = path[1..path.length] if path[0] == '/'
-
-    DB.transaction do
-      site_file = site_files_dataset.where(path: path).first
-      if site_file
-        DB['update sites set space_used=space_used-? where id=?', site_file.size, self.id].first
-        site_file.delete
-      end
-      SiteChangeFile.filter(site_id: self.id, filename: path).delete
-    end
-
-    true
-  end
-
   def move_files_from(oldusername)
     FileUtils.mv base_files_path(oldusername), base_files_path
   end
@@ -1115,26 +1080,31 @@ class Site < Sequel::Model
     end
 
     files.each do |file|
-      new_size += file[:tempfile].size
       html_uploaded = true if file[:filename].match HTML_REGEX
-      results << store_file(file[:filename], file[:tempfile], file[:opts] || opts)
+
+      existing_size = 0
+      site_file = site_files_dataset.where(path: scrubbed_path(file[:filename])).first
+      if site_file
+        existing_size = site_file.size
+      end
+
+      res = store_file(file[:filename], file[:tempfile], file[:opts] || opts)
+      if res == true
+        new_size -= existing_size
+        new_size += file[:tempfile].size
+      end
+      results << res
     end
 
     if results.include? true && opts[:new_install] != true
       time = Time.now
-      DB['update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1, space_used=space_used+? where id=?',
+      sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1, space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?",
         html_uploaded,
         time,
         time,
-        new_size,
         self.id
-      ].first
-
-      #self.site_changed = true
-      #self.site_updated_at = Time.now
-      #self.updated_at = Time.now
-      #self.changed_count += 1
-      #save_changes validate: false
+      ]
+      sql.first
       reload
 
       #SiteChange.record self, relative_path unless opts[:new_install]
@@ -1142,6 +1112,41 @@ class Site < Sequel::Model
     end
 
     results
+  end
+
+  def delete_file(path)
+    return false if files_path(path) == files_path
+    begin
+      FileUtils.rm files_path(path)
+    rescue Errno::EISDIR
+      site_files.each do |site_file|
+        if site_file.path.match /^#{path}\//
+          site_file.destroy
+        end
+      end
+      FileUtils.remove_dir files_path(path), true
+    rescue Errno::ENOENT
+    end
+
+    purge_cache path
+
+    ext = File.extname(path).gsub(/^./, '')
+
+    screenshots_delete(path) if ext.match HTML_REGEX
+    thumbnails_delete(path) if ext.match IMAGE_REGEX
+
+    path = path[1..path.length] if path[0] == '/'
+
+    DB.transaction do
+      site_file = site_files_dataset.where(path: path).first
+      if site_file
+        DB['update sites set space_used=space_used-? where id=?', site_file.size, self.id].first
+        site_file.delete
+      end
+      SiteChangeFile.filter(site_id: self.id, filename: path).delete
+    end
+
+    true
   end
 
   private
