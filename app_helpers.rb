@@ -59,7 +59,7 @@ def send_banned_report
     reply_to: 'contact@neocities.org',
     to: 'errors@neocities.org',
     subject: "[Neocities] Ban report",
-    body: "IP: #{request.ip}\n\nSession: #{session.inspect}\n\nParams:#{params.inspect}"
+    body: "IP: #{request.ip}\n\nSession: #{session.inspect}\n\nParams:#{params}"
   })
 end
 
