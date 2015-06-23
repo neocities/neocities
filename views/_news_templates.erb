@@ -1,5 +1,5 @@
 <div id="comment-template" style="display: none">
-  <form onsubmit="Comment.create({{ eventId }}, '<%= csrf_token %>', this); location.reload(); return false">
+  <form onsubmit="Comment.create({{ eventId }}, '<%= csrf_token %>', this); return false">
     <input name="comment" type="text" autocomplete="off" maxlength="<%= Site::MAX_COMMENT_SIZE %>" style="width: 100%" placeholder="Comment on this...">
     <button class="btn-Action">Post</button>
   </form>
