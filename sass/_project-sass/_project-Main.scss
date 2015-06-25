@@ -1916,3 +1916,15 @@ table#latest-visitors {
     width: 100%;
   }
 }
+.intro-List.kickstarter {
+  padding: 1.2em 0em 2.5em;
+  
+  .title a {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  p {
+    margin-top: 15px;
+  }
+}
