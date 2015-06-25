@@ -144,7 +144,7 @@ describe 'site_files' do
         File.exists?(@site.thumbnail_path('test.jpg', resolution)).must_equal true
       end
 
-      @site.site_changed.must_equal false
+      @site.site_changed.must_equal true
     end
 
     it 'fails with unsupported file' do

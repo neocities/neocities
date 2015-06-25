@@ -1099,7 +1099,7 @@ class Site < Sequel::Model
     if results.include? true && opts[:new_install] != true
       time = Time.now
       sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1, space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?",
-        html_uploaded,
+        true,
         time,
         time,
         self.id

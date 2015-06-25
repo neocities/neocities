@@ -21,7 +21,13 @@
   <div class="content misc-page columns right-col">
     <div class="col-left">
       <div class="col col-66">
-        <% if site.followings_dataset.count == 0 %>
+        <% if site.site_changed == false || site.changed_count == 0 %>
+          <div class="welcome">
+            <h4>Thanks for joining the Neocities community!</h4>
+            <p>Now start <a href="/dashboard">building your website</a>!</a>
+            </p>
+          </div>
+        <% elsif site.followings_dataset.count == 0 %>
           <div class="welcome">
             <h4>Welcome to your Neocities news feed!</h4>
             <p>
@@ -30,14 +36,6 @@
               Below are some website suggestions for you. For more, <a href="/browse">check out all the sites on Neocities</a>!
             </p>
           </div>
-        <% end %>
-
-        <% if !site.site_changed && site.followings_dataset.count > 0 %>
-        <div class="welcome">
-          <h4>Thanks for joining the Neocities community!</h4>
-          <p>Now start <a href="/dashboard">building your website</a>!</a>
-          </p>
-        </div>
         <% end %>
 
         <% if !@events.empty? %>
