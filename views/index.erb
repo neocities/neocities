@@ -57,20 +57,24 @@
 <div class="header-Outro">
 <div class="row header-Content content">
   <div class="col intro">
-    <h2 class="section-header">Create your own free web site.<br>Unlimited creativity, zero ads.</h2>
+    <h2 class="section-header">Create your own free web site. Unlimited creativity, zero ads.</h2>
     <p class="intro-text">
      Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We provide free hosting and tools that allow anyone to make a web site. Only your imagination is required. Join us!
     </p>
     <div class="intro-List kickstarter">
-      <div class="title">
-      <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">
-      <img src="/img/kickstarterthumbnail.jpg" style="width: 200px; float: left; margin-right: 20px; border: 3px solid white;">
-      SUPPORT OUR
-      <img src="/img/kickstarterlogo.png" style="width: 280px; display:block; margin: 8px 0px;">
-      29 DAYS LEFT
-      </a>
+      <div class="col col-40">
+        <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev"><img src="/img/kickstarterthumbnail.jpg" style="width: 100%; float: left; margin-right: 20px; border: 3px solid white;margin-bottom: 1em"></a>
       </div>
-      <p>We need your help to build an amazing HTML/CSS course into Neocities! <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">Learn More >></a></p>
+      <div class="col col-60">
+        <div class="title">
+        <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">
+        SUPPORT OUR
+        <img src="/img/kickstarterlogo.png" style="width: 280px; display:block; margin: 11px 0px;">
+        29 DAYS LEFT
+        </a>
+        </div>
+        <p>We need your help to build an amazing HTML/CSS course into Neocities! <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">Learn More&nbsp;>></a></p>
+      </div>
     </div>
     <!--<ul class="intro-List">
       <li class="intro-Social">

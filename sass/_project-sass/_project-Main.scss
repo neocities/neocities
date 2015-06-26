@@ -1916,9 +1916,18 @@ table#latest-visitors {
     width: 100%;
   }
 }
-.intro-List.kickstarter {
-  padding: 1.2em 0em 2.5em;
+.intro-List.kickstarter .col {
+  padding-top: 1em;
+  padding-bottom: .8em;
+  margin-left: 0;
   
+  &:first-child{
+    padding-left: 2px; 
+  }
+  
+  .title {
+    margin-top: 1%;
+  }
   .title a {
     color: white;
     font-weight: bold;
