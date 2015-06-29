@@ -1937,3 +1937,18 @@ table#latest-visitors {
     margin-top: 15px;
   }
 }
+.welcome.kickstarter {
+  background: #daeea5 url(/img/tutorialthumbnail.png) no-repeat;
+  background-position:  right center;
+  background-size: auto 100%;
+  padding: 15px 100px 4px 23px;
+  margin-bottom: 13px;
+  font-size: 95%;
+  
+  h4 {
+    margin-bottom: .2em;
+    a {
+      color: #2c3e50!important;
+    }
+  }
+}
