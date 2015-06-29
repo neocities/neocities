@@ -25,6 +25,7 @@ post '/admin/email' do
   day = 0
 
   until sites.empty?
+    seconds = 0.0
     queued_sites = []
     Site::EMAIL_BLAST_MAXIMUM_PER_DAY.times {
       break if sites.empty?
@@ -32,12 +33,13 @@ post '/admin/email' do
     }
 
     queued_sites.each do |site|
-      EmailWorker.perform_at(day.days.from_now, {
-        from: 'noreply@neocities.org',
+      EmailWorker.perform_at((day.days.from_now + seconds), {
+        from: 'Kyle from Neocities <kyle@neocities.org>',
         to: site.email,
         subject: params[:subject],
         body: params[:body]
       })
+      seconds += 0.5
     end
 
     day += 1

@@ -41,16 +41,16 @@ describe 'email blasting' do
 
       relevant_jobs.each do |job|
         args = job['args'].first
-        args['from'].must_equal 'noreply@neocities.org'
+        args['from'].must_equal 'Kyle from Neocities <kyle@neocities.org>'
         args['subject'].must_equal 'Subject Test'
         args['body'].must_equal 'Body Test'
       end
 
-      immediate_emails = relevant_jobs.select {|j| j['at'].nil? || j['at'] == Time.now.to_f}
-      immediate_emails.length.must_equal Site::EMAIL_BLAST_MAXIMUM_PER_DAY
+      relevant_jobs.select {|j| j['at'].nil? || j['at'] == Time.now.to_f}.length.must_equal 1
+      relevant_jobs.select {|j| j['at'] == (Time.now + 0.5).to_f}.length.must_equal 1
 
-      tomorrows_emails = relevant_jobs.select {|j| j['at'] == (time+1.day.to_i).to_f}
-      tomorrows_emails.length.must_equal Site::EMAIL_BLAST_MAXIMUM_PER_DAY
+      relevant_jobs.select {|j| j['at'] == (time+1.day.to_i).to_f}.length.must_equal 1
+      relevant_jobs.select {|j| j['at'] == (time+1.day.to_i+0.5).to_f}.length.must_equal 1
     end
   end
 end

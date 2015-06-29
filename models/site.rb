@@ -154,7 +154,7 @@ class Site < Sequel::Model
   if ENV['RACK_ENV'] == 'test'
     EMAIL_BLAST_MAXIMUM_PER_DAY = 2
   else
-    EMAIL_BLAST_MAXIMUM_PER_DAY = 2000
+    EMAIL_BLAST_MAXIMUM_PER_DAY = 1000
   end
 
   many_to_many :tags
