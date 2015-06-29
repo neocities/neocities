@@ -9,7 +9,7 @@ class EmailWorker
     if args['no_footer']
       footer = ''
     else
-      footer = "\n\n---\nYou are receiving this email because you have a Neocities site. If you would like to subscribe from Neocities emails, just visit this url:\nhttps://neocities.org/settings/unsubscribe_email?email=#{Rack::Utils.escape args['to']}&token=#{unsubscribe_token}"
+      footer = "\n\n---\nYou are receiving this email because you have a Neocities site. If you would like to unsubscribe from Neocities emails, just visit this url:\nhttps://neocities.org/settings/unsubscribe_email?email=#{Rack::Utils.escape args['to']}&token=#{unsubscribe_token}"
     end
 
     Mail.deliver do
