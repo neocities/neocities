@@ -1,3 +1,13 @@
+def kickstarter_days_remaining
+  ending = Time.parse('Sat, Jul 25 2015 3:05 PM PDT')
+  today = Time.now
+
+  remaining = ending - today
+  return 0 if remaining < 0
+
+  ((ending - today) / 86400).to_i
+end
+
 def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
 end
