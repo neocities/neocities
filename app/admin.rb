@@ -5,6 +5,48 @@ get '/admin' do
   erb :'admin'
 end
 
+get '/admin/email' do
+  require_admin
+  erb :'admin/email'
+end
+
+post '/admin/email' do
+  require_admin
+
+  %i{subject body}.each do |k|
+    if params[k].nil? || params[k].empty?
+      flash[:error] = "#{k.capitalize} is missing."
+      redirect '/admin/email'
+    end
+  end
+
+  sites = Site.newsletter_sites
+
+  day = 0
+
+  until sites.empty?
+    queued_sites = []
+    Site::EMAIL_BLAST_MAXIMUM_PER_DAY.times {
+      break if sites.empty?
+      queued_sites << sites.pop
+    }
+
+    queued_sites.each do |site|
+      EmailWorker.perform_at(day.days.from_now, {
+        from: 'noreply@neocities.org',
+        to: site.email,
+        subject: params[:subject],
+        body: params[:body]
+      })
+    end
+
+    day += 1
+  end
+
+  flash[:success] = "#{sites.length} emails have been queued, #{Site::EMAIL_BLAST_MAXIMUM_PER_DAY} per day."
+  redirect '/'
+end
+
 post '/admin/banip' do
   require_admin
   site = Site[username: params[:username]]

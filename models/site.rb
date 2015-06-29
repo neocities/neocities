@@ -118,6 +118,15 @@ class Site < Sequel::Model
     maximum_site_files: 1000
   )
 
+  def self.newsletter_sites
+     Site.select(:email).
+       exclude(email: 'nil').exclude(is_banned: true).
+       where{updated_at > EMAIL_BLAST_MAXIMUM_AGE}.
+       where{changed_count > 0}.
+       order(:updated_at.desc).
+       all
+  end
+
   def too_many_files?(file_count=0)
     (site_files_dataset.count + file_count) > plan_feature(:maximum_site_files)
   end
@@ -139,6 +148,14 @@ class Site < Sequel::Model
   }
 
   BROWSE_PAGINATION_LENGTH = 100
+
+  EMAIL_BLAST_MAXIMUM_AGE = 6.months.ago
+
+  if ENV['RACK_ENV'] == 'test'
+    EMAIL_BLAST_MAXIMUM_PER_DAY = 2
+  else
+    EMAIL_BLAST_MAXIMUM_PER_DAY = 2000
+  end
 
   many_to_many :tags
 

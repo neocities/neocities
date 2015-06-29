@@ -3,6 +3,7 @@ class EmailWorker
   sidekiq_options queue: :emails, retry: 10, backtrace: true
 
   def perform(args={})
+    raise 'no' if ENV['RACK_ENV'].nil? || ENV['RACK_ENV'] == 'development'
     unsubscribe_token = Site.email_unsubscribe_token args['to']
 
     if args['no_footer']

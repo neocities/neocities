@@ -1,0 +1,49 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>Email Mass Send</h1>
+    <h2 class="subtitle">Use wisely.</h2>
+  </div>
+</div>
+
+<div class="content misc-page single-Col txt-Center" style="padding-top: 20px;">
+
+  <% if flash.keys.length > 0 %>
+    <div class="alert alert-error alert-block">
+      <% flash.keys.each do |key| %>
+        <%== flash[key] %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col col-100">
+      <p>
+        This sends to all emails on Neocities that have not opted out. It trickles it out, 4000/day to prevent spam report issues.
+      </p>
+
+      <form method="POST" action="/admin/email">
+        <%== csrf_token_input_html %>
+        <p>
+          Subject:
+        </p>
+
+        <p>
+          <input name="subject" type="text" style="width: 600px">
+        </p>
+
+        <p>
+          Body:
+        </p>
+
+        <p>
+          <textarea name="body" style="width: 600px" rows="10"></textarea>
+        </p>
+
+        <p>
+          <input type="submit" value="Send" class="btn">
+        </p>
+      </form>
+    </div>
+  </div>
+
+</div>

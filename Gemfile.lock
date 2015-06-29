@@ -227,6 +227,7 @@ GEM
     thread (0.1.4)
     thread_safe (0.3.4)
     tilt (1.4.1)
+    timecop (0.7.4)
     timers (1.1.0)
     treetop (1.4.15)
       polyglot
@@ -307,6 +308,7 @@ DEPENDENCIES
   stripe-ruby-mock (~> 2.0.1)
   thread
   tilt
+  timecop
   webmock
   zipruby
 
