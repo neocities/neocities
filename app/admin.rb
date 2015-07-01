@@ -62,7 +62,7 @@ post '/admin/banip' do
     flash[:error] = 'IP is blank, cannot continue'
     redirect '/admin'
   end
-  sites = Site.filter(ip: Site.hash_ip(site.ip), is_banned: false).all
+  sites = Site.filter(ip: site.ip, is_banned: false).all
   sites.each {|s| s.ban!}
   flash[:error] = "#{sites.length} sites have been banned."
   redirect '/admin'

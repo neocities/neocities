@@ -1,0 +1,28 @@
+<div class="header-Outro">
+  <div class="row content single-Col txt-Center">
+  <h1>Search Neocities Sites</h1>
+  <h3 class="subtitle"></h3>
+  </div>
+</div>
+
+<div class="content txt-Center single-Col misc-page">
+  <form id="searchForm" method="GET" action="https://duckduckgo.com" class="content" onsubmit="return addSiteToSearch()">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <fieldset>
+      <input id="searchQuery" name="q" type="text" placeholder="keywords" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= flash[:username] %>" style="width: 290px">
+    </fieldset>
+    <input class="btn-Action" type="submit" value="Search">
+  </form>
+
+  <p>Search powered by <a href="https://duckduckgo.com">DuckDuckGo</a>, a search engine that cares about your privacy as much as we do.</p>
+</div>
+
+<script>
+  function addSiteToSearch() {
+    var searchQuery = $('#searchQuery')
+    var finalSearchQuery = searchQuery.val() + ' site:neocities.org'
+
+    window.location = 'https://duckduckgo.com/?q='+encodeURI(finalSearchQuery)
+    return false
+  }
+</script>
