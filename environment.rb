@@ -75,18 +75,6 @@ if ENV['RACK_ENV'] == 'development'
 end
 # :nocov:
 
-# :nocov:
-if $config['pubsub_url']
-  $pubsub_pool = ConnectionPool.new(size: 10, timeout: 5) {
-    Redis.new url: $config['pubsub_url']
-  }
-end
-
-if $config['pubsub_url'].nil? && ENV['RACK_ENV'] == 'production'
-  raise 'pubsub_url is missing from config'
-end
-# :nocov:
-
 Sequel.datetime_class = Time
 Sequel.extension :core_extensions
 Sequel.extension :migration
