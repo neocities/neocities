@@ -2,46 +2,38 @@ require_relative '../environment.rb'
 
 describe PurgeCacheWorker do
   before do
-    @test_ips = ['10.0.0.1', '10.0.0.2']
+    @test_ip = '10.0.0.1'
   end
 
   it 'throws exception without 200 or 404 http status' do
-    @test_ips.each do |ip|
-      stub_request(:get, "https://#{ip}/:cache/purgetest.jpg").
-        with(headers: {'Host' => 'kyledrake.neocities.org'})
-        .to_return(status: 503)
-    end
+    stub_request(:get, "http://#{@test_ip}/:cache/purgetest.jpg").
+      with(headers: {'Host' => 'kyledrake.neocities.org'})
+      .to_return(status: 503)
 
     worker = PurgeCacheWorker.new
 
     proc {
-      worker.perform 'kyledrake', 'test.jpg'
+      worker.perform @test_ip, 'kyledrake', 'test.jpg'
     }.must_raise RestClient::ServiceUnavailable
   end
 
   it 'handles 404 without exception' do
-    @test_ips.each do |ip|
-      stub_request(:get, "https://#{ip}/:cache/purgetest.jpg").
-        with(headers: {'Host' => 'kyledrake.neocities.org'})
-        .to_return(status: 404)
-    end
+    stub_request(:get, "http://#{@test_ip}/:cache/purgetest.jpg").
+      with(headers: {'Host' => 'kyledrake.neocities.org'})
+      .to_return(status: 404)
 
     worker = PurgeCacheWorker.new
-    worker.perform 'kyledrake', 'test.jpg'
+    worker.perform @test_ip, 'kyledrake', 'test.jpg'
   end
 
-  it 'sends a purge to each dns ip' do
-    @test_ips.each do |ip|
-      stub_request(:get, "https://#{ip}/:cache/purgetest.jpg").
-        with(headers: {'Host' => 'kyledrake.neocities.org'})
-        .to_return(status: 200)
-    end
+  it 'sends a purge request' do
+    stub_request(:get, "http://#{@test_ip}/:cache/purgetest.jpg").
+      with(headers: {'Host' => 'kyledrake.neocities.org'})
+      .to_return(status: 200)
 
     worker = PurgeCacheWorker.new
-    worker.perform 'kyledrake', 'test.jpg'
+    worker.perform @test_ip, 'kyledrake', 'test.jpg'
 
-    @test_ips.each do |ip|
-      assert_requested :get, "https://#{ip}/:cache/purgetest.jpg"
-    end
+    assert_requested :get, "http://#{@test_ip}/:cache/purgetest.jpg"
   end
 end

@@ -18,6 +18,7 @@ describe 'site_files' do
   before do
     @site = Fabricate :site
     ThumbnailWorker.jobs.clear
+    PurgeCacheOrderWorker.jobs.clear
     PurgeCacheWorker.jobs.clear
     ScreenshotWorker.jobs.clear
   end
@@ -104,6 +105,19 @@ describe 'site_files' do
       @site.reload
       @site.site_changed.must_equal true
       @site.title.must_equal 'Hello?'
+
+      # Purge cache needs to flush / and index.html for either scenario.
+      PurgeCacheOrderWorker.jobs.length.must_equal 2
+      first_purge = PurgeCacheOrderWorker.jobs.first
+      dirname_purge = PurgeCacheOrderWorker.jobs.last
+
+      username, pathname = first_purge['args']
+      username.must_equal @site.username
+      pathname.must_equal '/index.html'
+      username, pathame = nil
+      username, pathname = dirname_purge['args']
+      username.must_equal @site.username
+      pathname.must_equal '/'
     end
 
     it 'provides the correct space used after overwriting an existing file' do
@@ -129,9 +143,9 @@ describe 'site_files' do
       last_response.body.must_match /successfully uploaded/i
       File.exists?(@site.files_path('test.jpg')).must_equal true
 
-      queue_args = PurgeCacheWorker.jobs.first['args'].first
-      queue_args['site'].must_equal @site.username
-      queue_args['path'].must_equal '/test.jpg'
+      username, path = PurgeCacheOrderWorker.jobs.first['args']
+      username.must_equal @site.username
+      path.must_equal '/test.jpg'
 
       @site.reload
       @site.space_used.wont_equal 0
@@ -183,9 +197,18 @@ describe 'site_files' do
       last_response.body.must_match /successfully uploaded/i
       File.exists?(@site.files_path('derpie/derptest/test.jpg')).must_equal true
 
-      PurgeCacheWorker.jobs.length.must_equal 1
-      queue_args = PurgeCacheWorker.jobs.first['args'].first
-      queue_args['path'].must_equal '/derpie/derptest/test.jpg'
+      PurgeCacheOrderWorker.jobs.length.must_equal 1
+      username, path = PurgeCacheOrderWorker.jobs.first['args']
+      path.must_equal '/derpie/derptest/test.jpg'
+
+      PurgeCacheOrderWorker.drain
+
+      PurgeCacheWorker.jobs.length.must_equal 2
+      ip, username, path = PurgeCacheWorker.jobs.first['args']
+      ip.must_equal '10.0.0.1'
+      username.must_equal @site.username
+      path.must_equal '/derpie/derptest/test.jpg'
+      PurgeCacheWorker.jobs.last['args'].first.must_equal '10.0.0.2'
 
       ThumbnailWorker.jobs.length.must_equal 1
       ThumbnailWorker.drain

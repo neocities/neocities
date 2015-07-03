@@ -574,10 +574,15 @@ class Site < Sequel::Model
   end
 
   def purge_cache(path)
-    relative_path = path.gsub(base_files_path, '')
-    payload = {site: username, path: relative_path}
-    payload[:domain] = domain if !domain.empty?
-    PurgeCacheWorker.perform_async payload
+    relative_path = path.gsub base_files_path, ''
+
+    # We gotta flush the dirname too if it's an index file.
+    if relative_path != '' && relative_path.match(/\/$|index\.html?$/i)
+      PurgeCacheOrderWorker.perform_async username, relative_path
+      PurgeCacheOrderWorker.perform_async username, Pathname(relative_path).dirname.to_s
+    else
+      PurgeCacheOrderWorker.perform_async username, relative_path
+    end
   end
 
   Rye::Cmd.add_command :ipfs, nil, 'add', :r
