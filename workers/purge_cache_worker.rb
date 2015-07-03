@@ -1,3 +1,5 @@
+require 'open-uri'
+
 class PurgeCacheWorker
   include Sidekiq::Worker
   sidekiq_options queue: :purgecache, retry: 1000, backtrace: false, average_scheduled_poll_interval: 1
@@ -8,9 +10,12 @@ class PurgeCacheWorker
   end
 
   def perform(proxy_ip, username, path)
-    url = "http://#{proxy_ip}/:cache/purge#{path}"
+    url = Addressable::URI.encode_component(
+      "http://#{proxy_ip}/:cache/purge#{path}",
+      Addressable::URI::CharacterClasses::QUERY
+    )
     begin
-      RestClient.get(url, host: "#{username}.neocities.org")
+      RestClient.get(url, host: URI::encode("#{username}.neocities.org"))
     rescue RestClient::ResourceNotFound
     end
   end
