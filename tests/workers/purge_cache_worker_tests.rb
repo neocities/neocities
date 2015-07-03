@@ -52,4 +52,13 @@ describe PurgeCacheWorker do
 
     assert_requested :get, url
   end
+
+  it 'works without forward slash' do
+    stub_request(:get, "http://#{@test_ip}/:cache/purge/test.jpg").
+      with(headers: {'Host' => 'kyledrake.neocities.org'})
+      .to_return(status: 200)
+
+    worker = PurgeCacheWorker.new
+    worker.perform @test_ip, 'kyledrake', 'test.jpg'
+  end
 end

@@ -10,6 +10,9 @@ class PurgeCacheWorker
   end
 
   def perform(proxy_ip, username, path)
+    # Must always have a forward slash
+    path = '/' + path if path[0] != '/'
+
     url = Addressable::URI.encode_component(
       "http://#{proxy_ip}/:cache/purge#{path}",
       Addressable::URI::CharacterClasses::QUERY
