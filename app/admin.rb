@@ -5,6 +5,12 @@ get '/admin' do
   erb :'admin'
 end
 
+get '/admin/reports' do
+  require_admin
+  @reports = Report.order(:created_at.desc).all
+  erb :'admin/reports'
+end
+
 get '/admin/email' do
   require_admin
   erb :'admin/email'

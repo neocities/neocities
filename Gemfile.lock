@@ -212,7 +212,7 @@ GEM
       sinatra (>= 1.0.0)
     sinatra-xsendfile (0.4.2)
       sinatra (>= 0.9.1)
-    slop (3.5.0)
+    slop (3.6.0)
     storable (0.8.9)
     stripe (1.15.0)
       json (~> 1.8.1)

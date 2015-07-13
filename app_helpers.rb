@@ -53,24 +53,14 @@ def parent_site
 end
 
 def require_unbanned_ip
-  if session[:banned] || Site.banned_ip?(request.ip)
+  if session[:banned] || (is_banned_ip = Site.banned_ip?(request.ip))
     signout
     session[:banned] = request.ip if !session[:banned]
-    send_banned_report
-    flash[:error] = 'Site creation has been banned due to a Terms of Service violation. '+
+
+    flash[:error] = 'Site creation has been banned due to a Terms of Service violation from your location. '+
     'If you believe this to be in error, <a href="/contact">contact the site admin</a>.'
     return {result: 'error'}.to_json
   end
-end
-
-def send_banned_report
-  EmailWorker.perform_async({
-    from: 'web@neocities.org',
-    reply_to: 'contact@neocities.org',
-    to: 'errors@neocities.org',
-    subject: "[Neocities] Ban report",
-    body: "IP: #{request.ip}\n\nSession: #{session.inspect}\n\nParams:#{params}"
-  })
 end
 
 def title
