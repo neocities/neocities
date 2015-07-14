@@ -2,6 +2,8 @@ get '/?' do
   if current_site
     require_login
 
+    redirect '/dashboard' if current_site.is_education
+
     @suggestions = current_site.suggestions
 
     @current_page = params[:current_page].to_i
@@ -34,13 +36,18 @@ get '/?' do
     @sites_count = SimpleCache.get :sites_count
   end
 
-  erb :index, layout: false
+  erb :index, layout: :index_layout
 end
 
 get '/welcome' do
   require_login
   redirect '/' if current_site.plan_type != 'free'
   erb :'welcome', locals: {site: current_site}
+end
+
+get '/education' do
+  redirect '/' if signed_in?
+  erb :education, layout: :index_layout
 end
 
 get '/tutorials' do
@@ -70,4 +77,8 @@ end
 get '/legal/?' do
   @title = 'Legal Guide to Neocities'
   erb :'legal'
+end
+
+get '/permanent-web' do
+  erb :'permanent_web'
 end

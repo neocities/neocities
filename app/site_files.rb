@@ -9,32 +9,67 @@ get '/site_files/new' do
   redirect '/site_files/new_page'
 end
 
-post '/site_files/create_page' do
+post '/site_files/create' do
   require_login
   @errors = []
 
-  params[:pagefilename].gsub!(/[^a-zA-Z0-9_\-.]/, '')
-  params[:pagefilename].gsub!(/\.html$/i, '')
+  filename = params[:pagefilename] || params[:filename]
 
-  if params[:pagefilename].nil? || params[:pagefilename].strip.empty?
-    @errors << 'You must provide a file name.'
-    halt erb(:'site_files/new_page')
+  filename.gsub!(/[^a-zA-Z0-9_\-.]/, '')
+
+  redirect_uri = '/dashboard'
+  redirect_uri += "?dir=#{Rack::Utils.escape params[:dir]}" if params[:dir]
+
+  if filename.nil? || filename.strip.empty?
+    flash[:error] = 'You must provide a file name.'
+    redirect redirect_uri
   end
 
-  name = "#{params[:pagefilename]}.html"
+  name = "#{filename}"
 
   name = "#{params[:dir]}/#{name}" if params[:dir]
 
+  name = current_site.scrubbed_path name
+
   if current_site.file_exists?(name)
-    @errors << %{Web page "#{name}" already exists! Choose another name.}
-    halt erb(:'site_files/new_page')
+    flash[:error] = %{Web page "#{name}" already exists! Choose another name.}
+    redirect redirect_uri
   end
 
-  current_site.install_new_html_file name
+  extname = File.extname name
+
+  unless extname.match /^\.#{Site::EDITABLE_FILE_EXT}/i
+    flash[:error] = "Must be an text editable file type (#{Site::VALID_EDITABLE_EXTENSIONS.join(', ')})."
+    redirect redirect_uri
+  end
+
+  site_file = current_site.site_files_dataset.where(path: name).first
+
+  if site_file
+    flash[:error] = 'File already exists, cannot create.'
+    redirect redirect_uri
+  end
+
+  if extname.match(/^\.html|^\.htm/i)
+    current_site.install_new_html_file name
+  else
+    file_path = current_site.files_path(name)
+    FileUtils.touch file_path
+    File.chmod 0640, file_path
+
+    site_file ||= SiteFile.new site_id: current_site.id, path: name
+
+    site_file.set_all(
+      size: 0,
+      sha1_hash: Digest::SHA1.hexdigest(''),
+      updated_at: Time.now
+    )
+    site_file.save
+  end
 
   flash[:success] = %{#{name} was created! <a style="color: #FFFFFF; text-decoration: underline" href="/site_files/text_editor/#{name}">Click here to edit it</a>.}
 
-  redirect params[:dir] ? "/dashboard?dir=#{Rack::Utils.escape params[:dir]}" : '/dashboard'
+  redirect redirect_uri
 end
 
 def file_upload_response(error=nil)
@@ -59,8 +94,22 @@ post '/site_files/upload' do
     file_upload_response "Uploaded files were not seen by the server, cancelled. We don't know what's causing this yet. Please contact us so we can help fix it. Thanks!"
   end
 
-  params[:files].each do |file|
-    file[:filename] = "#{params[:dir]}/#{file[:filename]}" if params[:dir]
+  params[:files].each_with_index do |file,i|
+    dir_name = ''
+    dir_name = params[:dir] if params[:dir]
+
+    unless params[:file_paths].nil? || params[:file_paths].empty? || params[:file_paths].length == 0
+
+      file_path = params[:file_paths].select {|file_path|
+        file[:filename] == Pathname(file_path).basename.to_s
+      }.first
+
+      unless file_path.nil?
+        dir_name += '/' + Pathname(file_path).dirname.to_s
+      end
+    end
+
+    file[:filename] = "#{dir_name}/#{file[:filename]}"
     if current_site.file_size_too_large? file[:tempfile].size
       file_upload_response "#{file[:filename]} is too large, upload cancelled."
     end
@@ -75,21 +124,23 @@ post '/site_files/upload' do
     file_upload_response "File(s) do not fit in your available space, upload cancelled."
   end
 
-  results = []
-  params[:files].each do |file|
-    results << current_site.store_file(file[:filename], file[:tempfile])
+  if current_site.too_many_files? params[:files].length
+    file_upload_response "Too many files, cannot upload"
   end
-  current_site.increment_changed_count if results.include?(true)
 
+  results = current_site.store_files params[:files]
   file_upload_response
 end
 
 post '/site_files/delete' do
   require_login
   current_site.delete_file params[:filename]
-
   flash[:success] = "Deleted #{params[:filename]}."
-  redirect '/dashboard'
+
+  dirname = Pathname(params[:filename]).dirname
+  dir_query = dirname.nil? || dirname.to_s == '.' ? '' : "?dir=#{Rack::Utils.escape dirname}"
+
+  redirect "/dashboard#{dir_query}"
 end
 
 get '/site_files/:username.zip' do |username|
@@ -147,7 +198,7 @@ post %r{\/site_files\/save\/(.+)} do
     halt 'File is too large to fit in your space, it has NOT been saved. You will need to reduce the size or upgrade to a new plan.'
   end
 
-  current_site.store_file filename, tempfile
+  current_site.store_files [{filename: filename, tempfile: tempfile}]
 
   'ok'
 end

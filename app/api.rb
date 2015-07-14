@@ -7,6 +7,7 @@ end
 
 post '/api/upload' do
   require_api_credentials
+
   files = []
   params.each do |k,v|
     next unless v.is_a?(Hash) && v[:tempfile]
@@ -22,6 +23,10 @@ post '/api/upload' do
     api_error 400, 'too_large', 'files are too large to fit in your space, try uploading smaller (or less) files'
   end
 
+  if current_site.too_many_files?(files.length)
+    api_error 400, 'too_many_files', "cannot exceed the maximum site files limit (#{current_site.plan_feature(:maximum_site_files)}), #{current_site.supporter? ? 'please contact support' : 'please upgrade to a supporter account'}"
+  end
+
   files.each do |file|
     if !current_site.okay_to_upload?(file)
       api_error 400, 'invalid_file_type', "#{file[:filename]} is not a valid file type (or contains not allowed content) for this site, files have not been uploaded"
@@ -32,13 +37,7 @@ post '/api/upload' do
     end
   end
 
-  results = []
-  files.each do |file|
-    results << current_site.store_file(file[:filename], file[:tempfile])
-  end
-
-  current_site.increment_changed_count if results.include?(true)
-
+  results = current_site.store_files files
   api_success 'your file(s) have been successfully uploaded'
 end
 
@@ -51,6 +50,10 @@ post '/api/delete' do
   params[:filenames].each do |path|
     unless path.is_a?(String)
       api_error 400, 'bad_filename', "#{path} is not a valid filename, canceled deleting"
+    end
+
+    if current_site.files_path(path) == current_site.files_path
+      api_error 400, 'cannot_delete_site_directory', 'cannot delete the root directory of the site'
     end
 
     if !current_site.file_exists?(path)

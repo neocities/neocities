@@ -1,12 +1,28 @@
-<%= request.request_method %> <%= request.path %>
+#### Route
+<%== request.request_method %> <%== request.path %>
 
 <% if current_site %>
-  Site: <%= current_site.username %>
-  Email: <%= current_site.email %>
+    #### Site
+  <%== current_site.username %>
+  <% if current_site.email %>
+    Email: <%== current_site.email %>
+  <% else %>
+    User does not have an email address.
+  <% end %>
+<% else %>
+  Not a logged in session.
 <% end %>
 
-Params:
-<%= params.inspect %>
+#### Params
+<%== params.inspect %>
 
-Backtrace:
-<%= env['sinatra.error'].backtrace.join("\n") %>
+#### Session
+
+<%== session.inspect %>
+
+#### HTTP REFERRER
+
+<%== request.referrer %>
+
+#### Backtrace
+<%== env['sinatra.error'].backtrace.join("\n") %>

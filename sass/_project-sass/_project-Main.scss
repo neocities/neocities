@@ -7,18 +7,18 @@
   background:#f6f0e6;
 	min-height:500px;
 	padding-bottom:50px;
-	
+
 	h1, h2, h3, h4, h5, h6{
   	color:#e93250
 	}
 }
 .content, .footer-Content {
 	padding: 20px 3%;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     padding: 20px 7%;
   }
-  
+
   @media screen and (min-width:1300px){
     padding: 20px 0;
   }
@@ -34,7 +34,7 @@
 .interior .header-Outro {
   padding-top: 30px;
   overflow: hidden;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     padding-top: 15px;
   }
@@ -47,13 +47,13 @@
   @media (max-device-width:480px), screen and (max-width:800px) {
     float: right;
     width: 35%;
-    
+
     .col-50 {
       width:100%;
       margin-bottom: 1em!important;
     }
   }
-  
+
 }
 .site-url {
   font-size:18px;
@@ -78,11 +78,11 @@
   -webkit-box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.10);
   box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.10);
   padding: 25px 3% 40px 3%;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     padding: 22px 7% 40px 7%;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     margin-top: 1em;
     &:first-child {
@@ -122,19 +122,19 @@
   }
   .site-url {
     margin-top: -9px;
-  } 
+  }
   .btn-Action {
     font-weight: normal;
     font-size: 12px;
     padding: 7px 15px;
-    
+
     @media (max-device-width:480px), screen and (max-width:800px) {
       margin: 6px 0px 8px;
     }
   }
   .row.content {
     margin-left: 6%;
-    margin-right: 6%; 
+    margin-right: 6%;
   }
 }
 .interior .header-Outro a {color:#E93250}
@@ -151,7 +151,7 @@
   -webkit-box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.10);
   box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.10);
   border: 4px solid white;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     margin: 0 auto;
   }
@@ -165,7 +165,7 @@
   -webkit-background-size:cover;
   background-size:cover;
   background-position: center top;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     width: 100%;
     height: 300px;
@@ -203,7 +203,7 @@
 }
 .interior .header-Outro.dashboard .col-50:nth-of-type(2) {
   float: left;
-  
+
   @media (max-device-width: 480px), screen and (max-width: 800px) {
     margin-left: 22px;
     margin-top: 18px;
@@ -215,7 +215,7 @@
   background-size: 77px 81px;
   padding: 20px 20px 20px 111px;
   margin-bottom: 13px;
-  
+
   @media (max-device-width: 480px), screen and (max-width: 800px) {
     padding: 111px 20px 20px 20px;
     background-position: center 20px;
@@ -233,7 +233,7 @@
 }
 .files {
   float:left;
-  background: #E4D8CB;
+  background: #EAE1D5;
   width: 100%;
   position: relative;
   margin-top: 7px;
@@ -262,7 +262,7 @@
 }
 .files .btn-Action {
   margin-left: 8px;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     margin: 4px 8px 4px 0;
   }
@@ -278,12 +278,12 @@
   padding: 10px;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
-  border-radius: 8px;
+  border-radius: 6px;
   min-height: 300px;
 }
 .files .list .upload-Boundary.with-instruction {
   background: url(/img/drag-drop.png) no-repeat center center;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     background: 0;
   }
@@ -312,7 +312,7 @@
   margin-bottom: 2px;
 }
 .files .progress-bar {
- background:#CCCCCC; 
+ background:#CCCCCC;
  -webkit-border-radius: 8px;
  -moz-border-radius: 8px;
  border-radius: 8px;
@@ -472,7 +472,7 @@
   position: relative;
   clear: both;
   width: 100%;
-  
+
   h2:first-of-type, h3:first-of-type {
     margin-top: 0;
   }
@@ -516,7 +516,7 @@
   width: 66.95%;
   left: 33.05%;
   background: white;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     width: 100%;
     border-bottom: 1px solid #ddd;
@@ -526,14 +526,14 @@
 .site-profile .content.misc-page.columns .col-66 {
   padding: 0;
   min-height: 38em;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     min-height: 0px;
   }
 }
 .news-feed .content.misc-page.columns .col-66 {
   min-height: 56em;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     min-height: 0;
   }
@@ -542,14 +542,14 @@
   width: 33%;
   left: 33%;
   float: right;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     width: 100%;
   }
 }
 .interior .header-Outro.with-columns {
     padding-top: 22px;
-} 
+}
 .interior .header-Outro.with-columns h3 {
   float: left;
   margin-bottom: 0;
@@ -560,14 +560,14 @@
 }
 .interior .header-Outro.with-columns .col {
   padding: 25px 0 8px 30px;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     padding: 10px 0 0 27px;
   }
 }
 .interior .header-Outro.with-columns .col-32 {
   width: 33%;
-  
+
   h3 {
     @media (max-device-width:480px), screen and (max-width:800px) {
       display: none;
@@ -583,10 +583,10 @@
 .interior .header-Outro.with-columns .col-66 {
   width: 67%;
   border-right: 1px solid #0B0F11;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
    border-right: 0;
-   padding: 15px 0 27px 30px; 
+   padding: 15px 0 27px 30px;
   }
 }
 .interior .header-Outro.with-columns .col-32 .edit {
@@ -600,7 +600,7 @@
   margin-top: 1.4em;
   font-size: 0.8em;
   margin-left: 1.5em;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     margin: 0;
     clear: left;
@@ -635,7 +635,7 @@
   background-size: cover;
   float: left;
   margin-bottom: 20px;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     width: 60%;
   }
@@ -661,11 +661,11 @@
   clear: both;
   margin: 20px auto 2em auto;
   text-align: center;
-  
+
   .btn-Action:last-child {
     margin-left: 10px;
   }
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     text-align: left;
   }
@@ -750,7 +750,7 @@ a.tag:hover {
   background-repeat: no-repeat;
 }
 .news-item .icon-mini {
-  
+
 }
 .news-item.update .icon {
   background: #E93250;
@@ -797,7 +797,7 @@ a.tag:hover {
   float: left;
   width: 100%;
 }
-.news-item .file a:hover { 
+.news-item .file a:hover {
   text-decoration: none;
 }
 .news-item .html-thumbnail {
@@ -863,7 +863,7 @@ a.tag:hover {
 .signup-Area.large {
   width: 418px;
   height: 236px;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     height: auto;
   }
@@ -894,14 +894,14 @@ a.tag:hover {
   a:first-of-type {
     margin-left: 0;
   }
-  
+
 }
 .interior .header-Outro .stats {
   margin-bottom: 1.3em;
   float: left;
   width: 100%;
   margin-top: 1.9em;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     float: none;
     width: 270px;
@@ -925,7 +925,7 @@ a.tag:hover {
   text-align: center;
   margin-right: 28px;
   color: #84997E;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     margin: 0;
     width: 90px;
@@ -941,21 +941,21 @@ a.tag:hover {
   .following {
     display: none;
   }
-  .unfollow { 
+  .unfollow {
     display: none;
   }
 }
 #followLink.is-following {
-  
-  
+
+
   .follow {
     display: none;
   }
-  .following { 
+  .following {
     display: block;
     width: 5.9em;
   }
-  .unfollow { 
+  .unfollow {
     display: none;
   }
 }
@@ -963,10 +963,10 @@ a.tag:hover {
   .follow {
     display: none;
   }
-  .following { 
+  .following {
     display: none;
   }
-  .unfollow { 
+  .unfollow {
     display: block;
     width: 5.9em;
   }
@@ -997,7 +997,7 @@ a.tag:hover {
   border: 3px solid white;
   -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
   -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
-  box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3); 
+  box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
   width: 72px;
 }
 .archives img {
@@ -1014,11 +1014,11 @@ a.tag:hover {
   width: 100%;
   padding: 20px 0 15px 30px;
   margin: 0 0 3px 0;
-  
+
   input {
     width: 86%;
     float: left;
-    
+
     @media (max-width:950px) {
       width: 82%;
     }
@@ -1031,7 +1031,7 @@ a.tag:hover {
 .comment-policy {
   font-style: italic;
   font-size: .8em;
-  margin-right: 45px;  
+  margin-right: 45px;
   clear: both;
   margin-top: 2em;
 }
@@ -1096,11 +1096,11 @@ a.tag:hover {
   .row {
     margin: 5.5em 10%;
     padding: 0;
-    
+
     @media (max-device-width:480px), screen and (max-width:800px){
       margin: 4em 5%;
     }
-    
+
     &:first-of-type {
       margin-top: 3.5em;
     }
@@ -1114,7 +1114,7 @@ a.tag:hover {
         padding-top: 2em;
         float: left;
       }
-      
+
       @media (max-device-width:480px), screen and (max-width:800px){
         width: 100%;
         padding-right: 0px;
@@ -1129,7 +1129,7 @@ a.tag:hover {
       background-repeat: no-repeat;
       border: 13px solid #4f7d88;
       @include box-shadow(1px 1px 2px 0px rgba(0, 0, 0, 0.18));
-      
+
     }
     &:nth-child(3) .screenshot {
       border: 13px solid $c-Brand-1;
@@ -1160,7 +1160,7 @@ a.tag:hover {
   border-bottom: 1px solid #801629;
   padding: 30px 0;
   position: relative;
-  
+
   h2.delta {
     color: white;
     margin: 0;
@@ -1193,17 +1193,45 @@ a.tag:hover {
   background-image:url(/img/hpgallery-next.png);
   right: 0;
 }
+.section.instructor-quotes {
+  background: #971D31;
+
+  h2, h3, p {
+    color: #fff;
+    text-align: left;
+  }
+  h2 {
+    margin-left: 20px;
+  }
+  p {
+    font-size: 1em;
+    font-style: italic;
+    margin-right: 30px;
+    margin-top: 20px;
+    clear: both;
+  }
+  .image {
+    float: left;
+    margin-right: 22px;
+  }
+}
 .section.features {
   background: #4F7E89;
   text-align: center;
-  
+
   .row:first-of-type {
     margin-bottom: 0;
   }
 }
+.section.support {
+  padding-bottom: 100px;
+  p {
+    font-size: 1.1em;
+  }
+}
 .section.features .col {
   padding-left: 40px;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px){
     padding-left: 20px;
     width: 100%;
@@ -1237,7 +1265,7 @@ a.tag:hover {
   clear: both;
   margin-top: 30px;
   margin-bottom: 0px;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px){
     margin-top: 0;
   }
@@ -1247,10 +1275,10 @@ a.tag:hover {
   background-repeat: no-repeat;
   margin-right: 30px;
   background-size: 100%;
-  
+
   @media (max-width:1170px) and (min-width:900px){
     margin-right: 25px!important;
-    
+
     &:last-child {
       margin-right: 0!important;
     }
@@ -1264,11 +1292,11 @@ a.tag:hover {
 }
 .section .logo.wired {
   width: 211px;
-  height: 44px;  
+  height: 44px;
   background-image: url(/img/wired-logo.png);
   margin-top: 6px;
   margin-right: 38px;
-  
+
   @media (max-width:1170px) and (min-width:900px){
     width: 170px;
   }
@@ -1278,7 +1306,7 @@ a.tag:hover {
 }
 .section .logo.fastco {
   width: 262px;
-  height: 39px;  
+  height: 39px;
   background-image: url(/img/fastcompany-logo.png);
   margin-top: 7px;
   @media (max-width:1170px) and (min-width:900px){
@@ -1287,7 +1315,7 @@ a.tag:hover {
 }
 .section .logo.vice {
   width: 160px;
-  height: 50px;  
+  height: 50px;
   background-image: url(/img/vice-logo.png);
   @media (max-width:1170px) and (min-width:900px){
     width: 120px;
@@ -1295,7 +1323,7 @@ a.tag:hover {
   }
 }
 .section .logo.ars {
-  width: 187px;  
+  width: 187px;
   height: 62px;
   background-image: url(/img/ars-logo.png);
   margin-top: -4px;
@@ -1313,7 +1341,7 @@ a.tag:hover {
 .section .quote {
   width: 70%;
   margin: 0 auto .5em auto;
-  
+
   h3 {
     margin-top: .5em;
     text-align: center;
@@ -1323,9 +1351,9 @@ a.tag:hover {
     font-family: $times;
     color: #afcbd1;
   }
-  a {
-    color: #afcbd1;
-  }
+}
+.section.press .quote a {
+  color: #afcbd1;
 }
 .section.plans {
   @media(max-device-width:480px), screen and (max-width:550px) {
@@ -1470,12 +1498,12 @@ a.tag:hover {
   border: 0;
   background: 0;
   padding-right: 15px;
-  
+
   span {
     border-bottom: 1px dotted #bbb;
     cursor: help;
   }
-  
+
   @media(max-device-width:480px), screen and (max-width:800px) {
     width: 26%;
   }
@@ -1493,7 +1521,7 @@ a.tag:hover {
 }
 .section.plans.welcome {
   padding: 63px 3% 0 3%;
-  
+
   h3 {
     color: #5e95a1;
   }
@@ -1501,7 +1529,7 @@ a.tag:hover {
     width: 68%;
     margin-left: auto;
     margin-right: auto;
-    
+
     @media(max-device-width:480px), screen and (max-width:550px) {
       width: 100%;
     }
@@ -1511,18 +1539,18 @@ a.tag:hover {
     margin-right: auto;
     max-width: 990px;
     min-width: 900px;
-    
+
     @media(max-device-width:480px), screen and (max-width:550px) {
       min-width: 0;
     }
   }
   >.row >.col {
     padding-left: 40px;
-  
+
     &:first-child {
       padding-left: 0;
     }
-    
+
     @media(max-device-width:480px), screen and (max-width:550px) {
       padding-left: 0;
       width: 100%;
@@ -1540,10 +1568,10 @@ a.tag:hover {
       float: left;
       background: 0;
       padding-bottom: 0;
-      
+
       ul {
         clear: both;
-        
+
         &.main-features {
           font-size: 140%;
           margin-bottom: .7em;
@@ -1579,7 +1607,7 @@ a.tag:hover {
       border-right-width: 0;
       margin-top: 15px;
       margin-bottom: 15px;
-      
+
       .main-features {
         margin-bottom: 76px;
       }
@@ -1590,7 +1618,7 @@ a.tag:hover {
       border: 1px solid #E0E0E0;
       @include box-shadow(-1px 1px 5px 0px rgba(0,0,0,0.1));
       margin-bottom: 1.2em!important;
-      
+
       .col:first-child {
         width: 38%;
       }
@@ -1614,7 +1642,7 @@ a.tag:hover {
         margin-right: 3px;
       }
     }
-    @media(max-device-width:480px), screen and (max-width:550px) { 
+    @media(max-device-width:480px), screen and (max-width:550px) {
       .col.free, .col.supporter, .col.supporter .col {
         width: 100%!important;
       }
@@ -1633,11 +1661,11 @@ a.tag:hover {
 .section.bottom-signup {
 //  padding-top: 1em;
 //  padding-bottom: 6.5em;
-  
+
   padding-top: 0;
   background: #4F7E89;
   padding-bottom: 7em;
-  
+
   a {
     color: white;
     text-decoration: underline;
@@ -1743,7 +1771,7 @@ a.tag:hover {
   width: 100%;
   margin-top: 22px;
   font-size: 15px;
-  
+
   a, a:visited {
     color: white;
   }
@@ -1762,17 +1790,17 @@ a.tag:hover {
   .tools {
     color: #8099A7;
     float: right;
-    
+
     .theme {
       font-size: .9em;
       display: inline;
-      
+
       select#theme {
         vertical-align: baseline;
         background: #25333c;
         color: #8099A7;
-      } 
-      
+      }
+
       @media (max-device-width:480px), screen and (max-width:800px) {
         display: none;
       }
@@ -1780,7 +1808,7 @@ a.tag:hover {
     #saveButton {
       margin-top: 0;
     }
-    .tooltip {    
+    .tooltip {
       &.bottom .tooltip-arrow {
         border-bottom-color: #971D31;
       }
@@ -1820,7 +1848,7 @@ a.tag:hover {
   background: rgba(228, 228, 228, 0.42);
   width: 100%;
   text-align: center;
-  padding: 26px 0 5px;  
+  padding: 26px 0 5px;
   p {
     margin-top: 10px;
   }
@@ -1851,5 +1879,76 @@ a.tag:hover {
   display: none;
   @media (max-device-width:480px), screen and (max-width:800px) {
     display: inline;
+  }
+}
+table#latest-visitors {
+  width: 100%;
+  color: #777;
+  font-size: .8em;
+
+  td {
+    white-space: nowrap;
+    max-width: 0;
+  }
+  span {
+    display: block;
+  }
+  .location {
+    color: #2f4149;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+  .paths {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+#earth_div {
+  width: 100%;
+  height: 400px;
+}
+.content.misc-page.columns .col.globe {
+  padding-right: 0;
+  padding-top: 4px;
+}
+.news-feed .content.misc-page .col-50 {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    width: 100%;
+  }
+}
+.intro-List.kickstarter .col {
+  padding-top: 1em;
+  padding-bottom: .8em;
+  margin-left: 0;
+  
+  &:first-child{
+    padding-left: 2px; 
+  }
+  
+  .title {
+    margin-top: 1%;
+  }
+  .title a {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  p {
+    margin-top: 15px;
+  }
+}
+.welcome.kickstarter {
+  background: #daeea5 url(/img/tutorialthumbnail.png) no-repeat;
+  background-position:  right center;
+  background-size: auto 100%;
+  padding: 15px 100px 4px 23px;
+  margin-bottom: 13px;
+  font-size: 95%;
+  
+  h4 {
+    margin-bottom: .2em;
+    a {
+      color: #2c3e50!important;
+    }
   }
 }

@@ -1,3 +1,13 @@
+def kickstarter_days_remaining
+  ending = Time.parse('Sat, Jul 25 2015 3:05 PM PDT')
+  today = Time.now
+
+  remaining = ending - today
+  return 0 if remaining < 0
+
+  ((ending - today) / 86400).to_i
+end
+
 def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
 end
@@ -13,6 +23,10 @@ end
 
 def csrf_token
    session[:_csrf_token] ||= SecureRandom.base64(32)
+end
+
+def is_education?
+  current_site && current_site.is_education
 end
 
 def require_login
@@ -39,10 +53,11 @@ def parent_site
 end
 
 def require_unbanned_ip
-  if session[:banned] || Site.banned_ip?(request.ip)
+  if session[:banned] || (is_banned_ip = Site.banned_ip?(request.ip))
     signout
-    session[:banned] = true
-    flash[:error] = 'Site creation has been banned due to ToS violation/spam. '+
+    session[:banned] = request.ip if !session[:banned]
+
+    flash[:error] = 'Site creation has been banned due to a Terms of Service violation from your location. '+
     'If you believe this to be in error, <a href="/contact">contact the site admin</a>.'
     return {result: 'error'}.to_json
   end

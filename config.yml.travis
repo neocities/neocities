@@ -10,3 +10,4 @@ email_unsubscribe_token: "somethingrandomderrrrp"
 paypal_api_username: derp
 paypal_api_password: ing
 paypal_api_signature: tonz
+logs_path: "/tmp/neocitiestestlogs"

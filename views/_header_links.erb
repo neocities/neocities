@@ -1,4 +1,4 @@
-<% if request.path == '/' && !signed_in? %>
+<% if (request.path == '/'  && !signed_in?) || request.path == '/education' %>
   <li>
     <a href="/">Neocities</a>
   </li>
@@ -6,12 +6,19 @@
   <li>
     <a href="/browse">Websites</a>
   </li>
+  <% unless is_education? %>
+  <li>
+    <a href="/search">Search</a>
+  </li>
   <li>
     <a href="/activity">Activity</a>
   </li>
+  <% end %>
   <li>
     <a href="/tutorials">Learn</a>
   </li>
+  <% unless is_education? %>
   <li>
-    <a href="/plan">Support Us<i class="fa fa-heart"><i class="fa fa-heart"></i></i></a>
+    <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">Support Our Kickstarter<i class="fa fa-heart"><i class="fa fa-heart"></i></i></a>
   </li>
+  <% end %>

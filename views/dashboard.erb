@@ -18,7 +18,6 @@
 
 <div class="header-Outro with-site-image dashboard">
   <div class="row content wide">
-
     <div class="col col-50 signup-Area">
       <div class="signup-Form">
   	  <fieldset class="content">
@@ -30,7 +29,7 @@
 	<div class="col col-50">
     <h2 class="eps"><%= current_site.title %></h2>
     <p class="site-url">
-      <a href="//<%= current_site.host %>" target="_blank"><%= current_site.host %></a>
+      <a href="<%= current_site.uri %>" target="_blank"><%= current_site.host %></a>
       <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'><i class="fa fa-share-alt"></i> <span>Share</span></a>
     </p>
 	<ul>
@@ -39,7 +38,7 @@
 <% end %>
 	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_space_used.to_space_pretty %>) of your <%= current_site.maximum_space.to_space_pretty %></strong>.
   <br>
-  <% if !current_site.supporter? %>Need more space? <a href="/plan">Become a Supporter!</a><% end %></li>
+  <% unless current_site.is_education || current_site.supporter? %>Need more space? <a href="/plan">Become a Supporter!</a><% end %></li>
 	<li><strong><%= current_site.views.format_large_number %></strong> views</li>
 	</ul>
 	</div>
@@ -51,7 +50,7 @@
 
 <div class="content wide">
 
-<% unless current_site.changed_count > 5 %>
+<% unless current_site.changed_count >= 1 %>
 <div class="welcome">
   <!-- <div class="close-button"></div> -->
   <h4>Hello! Welcome to your new site.</h4>
@@ -102,7 +101,7 @@
       <% end %>
     </div>
     <div class="actions">
-      <a href="/site_files/new_page?dir=<%= Rack::Utils.escape @dir %>" class="btn-Action"><i class="fa fa-file"></i> New Page</a>
+      <a href="#createFile" class="btn-Action" data-toggle="modal"><i class="fa fa-file"></i> New File</a>
       <a href="#createDir" class="btn-Action" data-toggle="modal"><i class="fa fa-folder"></i> New Folder</a>
       <a href="#" class="btn-Action" onclick="clickUploadFiles(); return false"><i class="fa fa-arrow-circle-up"></i> Upload</a>
     </div>
@@ -189,8 +188,10 @@
   <% if !current_site.plan_feature(:no_file_restrictions) %>
     <a href="/site_files/allowed_types">Allowed file types</a> |
   <% end %>
-  <a href="/site_files/<%= current_site.username %>.zip">Download entire site</a> |
-  <a href="/site_files/mount_info">Mount your site as a drive on your computer!</a>
+  <a href="/site_files/<%= current_site.username %>.zip">Download entire site</a>
+  <% unless is_education? %>
+   | <a href="/site_files/mount_info">Mount your site as a drive on your computer!</a>
+  <% end %>
 </div>
 
 </div>
@@ -202,6 +203,44 @@
   <input name="dir" type="hidden" value="<%= @dir %>">
   <input id="uploadFiles" type="file" name="files[]" multiple onchange="$('#uploadFilesButtonForm').submit()">
 </form>
+
+
+<div class="modal hide fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
+  <form method="post" action="/site/create_directory">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <input type="hidden" value="<%= @dir %>" name="dir">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+      <h3 id="createDirLabel">Create Folder</h3>
+    </div>
+    <div class="modal-body">
+      <input id="newDirInput" name="name" type="text" placeholder="folder_name">
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn-Action">Create</button>
+    </div>
+  </form>
+</div>
+
+<div class="modal hide fade" id="createFile" tabindex="-1" role="dialog" aria-labelledby="createFileLabel" aria-hidden="true">
+  <form method="post" action="/site_files/create">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <input type="hidden" value="<%= @dir %>" name="dir">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+      <h3 id="createFileLabel">Create New File</h3>
+    </div>
+    <div class="modal-body">
+      <input id="newFileInput" name="filename" type="text" placeholder="newfile.html">
+      <p>Note: We will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn-Action">Create</button>
+    </div>
+  </form>
+</div>
 
 <script src="/js/dropzone.min.js"></script>
 <script>
@@ -246,8 +285,12 @@
 
       this.on("error", function(file, errorMessage) {
         hideUploadProgress()
-        location.href = '/dashboard<%= @dir ? "?dir=#{@dir}" : "" %>'
-        // alert('Failed: '+errorMessage)
+        // Guess a directory upload error
+        if(file.status == 'error' && file.name.match(/.+\..+/) == null && errorMessage == 'Server responded with 0 code.') {
+          alert('Recursive directory upload is only supported by the Chrome web browser.')
+        } else {
+          location.href = '/dashboard<%= @dir ? "?dir=#{@dir}" : "" %>'
+        }
       })
 
       this.on("totaluploadprogress", function(progress, totalBytes, totalBytesSent) {
@@ -258,24 +301,18 @@
         $('#progressBar').css('display', 'block')
         $('#uploadingProgress').css('width', progress+'%')
       })
+
+      this.on("sending", function(file) {
+        $('#uploads').append('<input type="hidden" name="file_paths[]" value="'+file.fullPath+'">')
+      })
     }
   }
-</script>
 
-<div class="modal hide fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
-  <form method="post" action="/site/create_directory">
-    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-    <input type="hidden" value="<%= @dir %>" name="dir">
-    <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-      <h3 id="createDirLabel">Create Folder</h3>
-    </div>
-    <div class="modal-body">
-      <input name="name" type="text" placeholder="folder_name">
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button type="submit" class="btn-Action">Create</button>
-    </div>
-  </form>
-</div>
+  $('#createDir').on('shown', function () {
+    $('#newDirInput').focus();
+  })
+
+  $('#createFile').on('shown', function () {
+    $('#newFileInput').focus();
+  })
+</script>

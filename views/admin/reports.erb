@@ -1,0 +1,45 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>Site Reports</h1>
+  </div>
+</div>
+
+<div class="content" style="background: white">
+  <form method="POST" action="/admin/report">
+    <table class="table">
+      <tr>
+        <th>Site</th>
+        <th>Type</th>
+        <th>Comments</th>
+        <th>Actions</th>
+      </tr>
+      <% @reports.each do |report| %>
+        <tr>
+          <td>
+            <a href="<%= report.site.uri %>"><%= report.site.title %></a>
+            <br>
+            <img src="<%= report.site.screenshot_url('/index.html', '540x405') %>">
+            <br>
+            Reported <%= report.created_at.ago %>
+            <% if report.reporting_site %>
+              by <a href="<%= report.reporting_site.uri %>"><%= report.reporting_site.username %></a>
+            <% end %>
+          </td>
+          <td><%= report.type %></td>
+          <td><%= report.comments[0...100] %></td>
+          <td>
+            <select name="sites[<%= report.site_id %>]">
+              <option value="">No Action</option>
+              <option value="ban">Ban Site</option>
+              <option value="nsfw">Mark NSFW</option>
+            </select>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+
+    <input type="submit" value="Perform Actions" class="btn">
+  </form>
+
+
+</div>

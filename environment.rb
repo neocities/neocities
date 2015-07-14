@@ -75,18 +75,6 @@ if ENV['RACK_ENV'] == 'development'
 end
 # :nocov:
 
-# :nocov:
-if $config['pubsub_url']
-  $pubsub_pool = ConnectionPool.new(size: 10, timeout: 5) {
-    Redis.new url: $config['pubsub_url']
-  }
-end
-
-if $config['pubsub_url'].nil? && ENV['RACK_ENV'] == 'production'
-  raise 'pubsub_url is missing from config'
-end
-# :nocov:
-
 Sequel.datetime_class = Time
 Sequel.extension :core_extensions
 Sequel.extension :migration
@@ -137,4 +125,12 @@ PayPal::Recurring.configure do |config|
   config.username = $config['paypal_api_username']
   config.password = $config['paypal_api_password']
   config.signature = $config['paypal_api_signature']
+end
+
+require 'csv'
+
+$country_codes = {}
+
+CSV.foreach("./files/country_codes.csv") do |row|
+  $country_codes[row.last] = row.first
 end

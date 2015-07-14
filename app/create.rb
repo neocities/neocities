@@ -16,9 +16,11 @@ def new_recaptcha_valid?
   end
 end
 
+CREATE_MATCH_REGEX = /^username$|^password$|^email$|^new_tags_string$|^is_education$/
+
 post '/create_validate_all' do
   content_type :json
-  fields = params.select {|p| p.match /^username$|^password$|^email$|^new_tags_string$/}
+  fields = params.select {|p| p.match CREATE_MATCH_REGEX}
 
   site = Site.new fields
 
@@ -33,11 +35,12 @@ end
 post '/create_validate' do
   content_type :json
 
-  if !params[:field].match /^username$|^password$|^email$|^new_tags_string$/
+  if !params[:field].match CREATE_MATCH_REGEX
     return {error: 'not a valid field'}.to_json
-  end  
+  end
 
   site = Site.new(params[:field] => params[:value])
+  site.is_education = params[:is_education]
   site.valid?
 
   field_sym = params[:field].to_sym
@@ -58,7 +61,8 @@ post '/create' do
     username: params[:username],
     password: params[:password],
     email: params[:email],
-    new_tags_string: params[:tags],
+    new_tags_string: params[:new_tags_string],
+    is_education: params[:is_education] == 'true' ? true : false,
     ip: request.ip
   )
 

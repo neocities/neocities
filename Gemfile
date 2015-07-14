@@ -28,6 +28,10 @@ gem 'rack-cache'
 gem 'rest-client', require: 'rest_client'
 gem 'addressable'
 gem 'paypal-recurring', require: 'paypal/recurring'
+gem 'geoip'
+gem 'io-extra', require: 'io/extra'
+gem 'rye'
+gem 'dnsruby'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
@@ -74,6 +78,7 @@ group :test do
   gem 'rack_session_access',   require: nil
   gem 'webmock',               require: nil
   gem 'stripe-ruby-mock',      '~> 2.0.1', require: 'stripe_mock'
+  gem 'timecop'
 
   platform :mri, :rbx do
     gem 'simplecov',        require: nil

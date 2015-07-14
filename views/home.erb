@@ -21,7 +21,18 @@
   <div class="content misc-page columns right-col">
     <div class="col-left">
       <div class="col col-66">
-        <% if site.followings_dataset.count == 0 %>
+        <div class="welcome kickstarter">
+          <h4><a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">The Neocities Kickstarter: An HTML/CSS course for everyone</a></h4>
+          <p><strong><%= kickstarter_days_remaining %> days left</strong> to get Neocities rewards and support our education goals! <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">Learn More&nbsp;>></a></p>
+        </div>
+
+        <% if site.site_changed == false || site.changed_count == 0 %>
+          <div class="welcome">
+            <h4>Thanks for joining the Neocities community!</h4>
+            <p>Now start <a href="/dashboard">building your website</a>!</a>
+            </p>
+          </div>
+        <% elsif site.followings_dataset.count == 0 %>
           <div class="welcome">
             <h4>Welcome to your Neocities news feed!</h4>
             <p>
@@ -30,14 +41,6 @@
               Below are some website suggestions for you. For more, <a href="/browse">check out all the sites on Neocities</a>!
             </p>
           </div>
-        <% end %>
-
-        <% if !site.site_changed && site.followings_dataset.count > 0 %>
-        <div class="welcome">
-          <h4>Thanks for joining the Neocities community!</h4>
-          <p>Now start <a href="/dashboard">building your website</a>!</a>
-          </p>
-        </div>
         <% end %>
 
         <% if !@events.empty? %>
@@ -87,7 +90,7 @@
 
       <div class="col col-33">
         <div class="news-site-info">
-          <p class="site-url"><a href="//<%= current_site.host %>" target="_blank"><%= site.title %></a></p>
+          <p class="site-url"><a href="<%= current_site.uri %>" target="_blank"><%= site.title %></a></p>
           <div class="stats">
             <div class="col col-50">
               <% if site.updated_at %>
@@ -104,7 +107,7 @@
           </div>
         </div>
 
-        <a href="//<%= site.host %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
+        <a href="<%= site.uri %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
 
         <div class="news-profile-button">
           <a href="/site/<%= site.username %>" class="btn-Action"><i class="fa fa-user"></i> Profile</a>

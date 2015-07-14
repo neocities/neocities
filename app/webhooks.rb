@@ -26,8 +26,7 @@ post '/webhooks/stripe' do
   end
 
   if event['type'] == 'charge.failed'
-    site_id = event['data']['object']['description'].split(' - ').last
-    site = Site[site_id]
+    site = stripe_get_site_from_event event
 
     EmailWorker.perform_async({
       from:    'web@neocities.org',
@@ -38,8 +37,7 @@ post '/webhooks/stripe' do
   end
 
   if event['type'] == 'customer.subscription.deleted'
-    site_id = event['data']['object']['description'].split(' - ').last
-    site = Site[site_id]
+    site = stripe_get_site_from_event event
     site.stripe_subscription_id = nil
     site.plan_type = nil
     site.save_changes validate: false
@@ -53,4 +51,24 @@ post '/webhooks/stripe' do
   end
 
   'ok'
+end
+
+def stripe_get_site_from_event(event)
+  customer_id = event['data']['object']['customer']
+  customer = Stripe::Customer.retrieve customer_id
+
+  # Some old accounts only have a username for the desc
+  desc_split = customer.description.split(' - ')
+
+  if desc_split.length == 1
+    site_where = {username: desc_split.first}
+  end
+
+  if desc_split.last.to_i == 0
+    site_where = {username: desc_split.first}
+  else
+    site_where = {id: desc_split.last}
+  end
+
+  Site.where(site_where).first
 end

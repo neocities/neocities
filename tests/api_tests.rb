@@ -89,7 +89,7 @@ describe 'api delete' do
   it 'succeeds with weird filenames' do
     create_site
     basic_authorize @user, @pass
-    @site.store_file 't$st.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    @site.store_files [{filename: 't$st.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
     post '/api/delete', filenames: ['t$st.jpg']
     res[:result].must_equal 'success'
 
@@ -102,16 +102,37 @@ describe 'api delete' do
   it 'fails with missing files' do
     create_site
     basic_authorize @user, @pass
-    @site.store_file 'test.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    @site.store_files [{filename: 'test.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
     post '/api/delete', filenames: ['doesntexist.jpg']
+    res[:error_type].must_equal 'missing_files'
+  end
+
+  it 'fails to delete site directory' do
+    create_site
+    basic_authorize @user, @pass
+    post '/api/delete', filenames: ['/']
+    res[:error_type].must_equal 'cannot_delete_site_directory'
+    File.exist?(@site.files_path).must_equal true
+  end
+
+  it 'fails to delete other directories' do
+    create_site
+    @other_site = @site
+    create_site
+    basic_authorize @user, @pass
+    post '/api/delete', filenames: ["../#{@other_site.username}"]
+    File.exist?(@other_site.base_files_path).must_equal true
+    res[:error_type].must_equal 'missing_files'
+    post '/api/delete', filenames: ["../#{@other_site.username}/index.html"]
+    File.exist?(@other_site.base_files_path+'/index.html').must_equal true
     res[:error_type].must_equal 'missing_files'
   end
 
   it 'succeeds with valid filenames' do
     create_site
     basic_authorize @user, @pass
-    @site.store_file 'test.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
-    @site.store_file 'test2.jpg', Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    @site.store_files [{filename: 'test.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
+    @site.store_files [{filename: 'test2.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
     post '/api/delete', filenames: ['test.jpg', 'test2.jpg']
     res[:result].must_equal 'success'
     site_file_exists?('test.jpg').must_equal false
@@ -137,6 +158,19 @@ describe 'api upload' do
     basic_authorize @user, @pass
     post '/api/upload'
     res[:error_type].must_equal 'missing_files'
+  end
+
+  it 'fails with too many files' do
+    create_site
+    basic_authorize @user, @pass
+    @site.plan_feature(:maximum_site_files).times {
+      uuid = SecureRandom.uuid.gsub('-', '')+'.html'
+      @site.add_site_file path: uuid
+    }
+    post '/api/upload', {
+      '/lol.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    }
+    res[:error_type].must_equal 'too_many_files'
   end
 
   it 'resists directory traversal attack' do
@@ -167,14 +201,6 @@ describe 'api upload' do
       '/' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
     }
     res[:error_type].must_equal 'invalid_file_type'
-
-    create_site
-    basic_authorize @user, @pass
-    post '/api/upload', {
-      '' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
-    }
-
-    res[:error_type].must_equal 'missing_files'
   end
 
   it 'fails for file with no extension' do

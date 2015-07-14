@@ -1,0 +1,342 @@
+
+<div class="header-Outro with-columns">
+  <div class="row content">
+    <div class="col col-100">
+      <h3>Site Statistics</h3>
+
+      <div class="feed-filter">
+        <% if !@events.empty? && (site.followings_dataset.count > 0) %>
+        <a href="/" <% if params[:activity].nil? %>class="selected"<% end %>>All</a>
+        <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>Profile Activity</a>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container news-feed">
+  <div class="content misc-page columns right-col">
+    <div class="col-left">
+      <div class="col col-66">
+        <!--
+        <div class="row">
+
+
+          <div class="col col-100 globe">
+            <div id="earth_div"></div>
+          </div>
+          <!--
+          <div class="col col-50" style="padding-right: 0;">
+            <table class="table table-striped" id="latest-visitors">
+              <tbody>
+                <tr>
+                  <td>
+                      <span class="location">San Francisco, CA</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> neocities.org</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Portland, OR</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">London, UK</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> Twitter URL</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/about</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Hong Kong, China</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">San Francisco, CA</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> Facebook URL</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">San Francisco, CA</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> neocities.org</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a>, <a href="">/about</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Portland, OR</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">London, UK</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> Twitter URL</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/about</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Hong Kong, China</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a>, <a href="">/tech</a>, <a href="">/about</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Hong Kong, China</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+        -->
+
+        <h2>Total Visitors <small>last 7 days</small></h2>
+
+        <% if current_site && current_site.id == @site.id %>
+
+          <% if current_site.supporter? %>
+            <ul class="nav h-Nav">
+              <li><a href="?days=30">30 days</a></li>
+              <li><a href="?days=90">90 days</a></li>
+              <li><a href="?days=365">1 year</a></li>
+              <li><a href="?days=sincethebigbang">All time</a></li>
+            </ul>
+          <% else %>
+            <p>(<a href="/plan">Upgrade</a> to see up to see stats for all time)</p>
+          <% end %>
+        <% end %>
+
+        <canvas id="myChart" style="width:100%;height:300px;display:block"></canvas>
+
+        <!--
+        <div class="row">
+          <div class="col col-50">
+            <h2>Top Paths <small>last 7 days</small></h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Path</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @stats[:paths].each do |path| %>
+                  <tr>
+                    <td><a href="<%= @site.uri+path.name %>" target="_blank"><%= path.name.gsub(/\?.+/i, '') %></a></td>
+                    <td><%= path.views %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="col col-50">
+            <h2>Top Locations <small>last 7 days</small></h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>City</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @stats[:locations].each do |location| %>
+                  <tr>
+                    <td>
+                      <%= location[:name] %>
+                    </td>
+                    <td><%= location[:views] %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <% if current_site && current_site.id == @site.id %>
+
+          <div class="row">
+            <div class="col col-100">
+              <h2>Top Referrers</h2>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Referrer</th>
+                    <th>Visits</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @stats[:referrers].each do |referrer| %>
+                    <tr>
+                      <td><%= referrer.url %></td>
+                      <td><%= referrer.views %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        <% end %>
+      -->
+      </div>
+
+      <div class="col col-33">
+        <div class="news-site-info">
+          <p class="site-url"><a href="<%= @site.uri %>" target="_blank"><%= @site.title %></a></p>
+          <div class="stats">
+            <div class="col col-50">
+              <% if site.updated_at %>
+                Last updated<br><strong><%= site.updated_at.ago %></strong>
+              <% else %>
+                Your new website!<br><strong><a href="/dashboard"><i class="fa fa-edit" title="Edit"></i> Start Building</a></strong>
+              <% end %>
+            </div>
+            <div class="col col-50">
+              <div><strong><%= site.views.format_large_number %></strong> views</div>
+              <% follows_count = site.follows_dataset.count %>
+              <div><strong><%= follows_count.format_large_number %></strong> follower<%= follows_count == 1 ? '' : 's' %></div>
+            </div>
+          </div>
+        </div>
+
+        <a href="<%= site.uri %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
+
+        <div class="news-profile-button">
+          <a href="/site/<%= site.username %>" class="btn-Action"><i class="fa fa-user"></i> Profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <script src="//www.webglearth.com/v2/api.js"></script> -->
+<script src="/js/Chart.min.js"></script>
+<script>
+  //OpenGL globe
+  $(document).ready(function() {
+    /*
+    var options = {
+      sky: true,
+      atmosphere: false,
+      dragging: true,
+      tilting: true,
+      center: [46.8011, 8.2266],
+      zoom: 2
+    }
+
+    var earth = new WE.map('earth_div', options)
+    earth.setView([20, -100], 2.07)
+
+    // WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    //  attribution: '© OpenStreetMap'
+    //}).addTo(earth);
+
+    WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
+      tileSize: 256,
+      bounds: [[-85, -180], [85, 180]],
+      minZoom: 0,
+      maxZoom: 16,
+      attribution: 'WebGL Earth Tiles',
+      tms: true
+    }).addTo(earth)
+
+    <% @stats[:locations].each do |location| %>
+      var marker = WE.marker([<%= location[:latitude] %>, <%= location[:longitude] %>]).addTo(earth);
+      marker.bindPopup("<b><%= location[:name] %></b><br><%= location[:views] %> views", {maxWidth: 150, closeButton: true})
+    <% end %>
+
+
+
+    // Start a simple rotation animation
+    var before = null
+    requestAnimationFrame(function animate(now) {
+        var c = earth.getPosition()
+        var elapsed = before? now - before: 0
+        before = now
+        earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)])
+        requestAnimationFrame(animate)
+    });
+    */
+
+    //chart.js
+    var data = {
+      labels: <%== @stats[:stat_days].collect {|s| s.created_at.strftime("%b %-d")}.to_json %>,
+      datasets: [
+        {
+          label: "Hits",
+          fillColor: "rgba(220,220,220,0.2)",
+          strokeColor: "rgba(220,220,220,1)",
+          pointColor: "rgba(220,220,220,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(220,220,220,1)",
+          data: <%== @stats[:stat_days].collect {|s| s.hits}.to_json %>
+        },
+        {
+          label: "Unique Visits",
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(151,187,205,1)",
+          data: <%== @stats[:stat_days].collect {|s| s.views}.to_json %>
+        }
+      ]
+    }
+    // Get context with jQuery - using jQuery's .get() method.
+    var ctx = $("#myChart").get(0).getContext("2d")
+    // This will get the first returned node in the jQuery collection.
+    //var myNewChart = new Chart(ctx);
+    var myLineChart = new Chart(ctx).Line(data, {
+      bezierCurve: false,
+      multiTooltipTemplate: "<%== @multi_tooltip_template %>"
+    })
+  })
+</script>

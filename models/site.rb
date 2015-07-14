@@ -36,6 +36,10 @@ class Site < Sequel::Model
     html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp
   }
 
+  VALID_EDITABLE_EXTENSIONS = %w{
+    html htm txt js css md manifest
+  }
+
   MINIMUM_PASSWORD_LENGTH = 5
   BAD_USERNAME_REGEX = /[^\w-]/i
   VALID_HOSTNAME = /^[a-z0-9][a-z0-9-]+?[a-z0-9]$/i # http://tools.ietf.org/html/rfc1123
@@ -73,7 +77,7 @@ class Site < Sequel::Model
   PHISHING_FORM_REGEX = /www.formbuddy.com\/cgi-bin\/form.pl/i
   SPAM_MATCH_REGEX = ENV['RACK_ENV'] == 'test' ? /pillz/ : /#{$config['spam_smart_filter'].join('|')}/i
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
-  EDITABLE_FILE_EXT = /html|htm|txt|js|css|md|manifest/i
+  EDITABLE_FILE_EXT = /#{VALID_EDITABLE_EXTENSIONS.join('|')}/i
   BANNED_TIME = 2592000 # 30 days in seconds
   TITLE_MAX = 100
 
@@ -98,19 +102,34 @@ class Site < Sequel::Model
     unlimited_site_creation: true,
     custom_ssl_certificates: true,
     no_file_restrictions: true,
-    custom_domains: true
+    custom_domains: true,
+    maximum_site_files: 25000
   }
 
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
     name: 'Free',
-    space: Filesize.from('50MB').to_i,
+    space: Filesize.from('100MB').to_i,
     bandwidth: Filesize.from('50GB').to_i,
     price: 0,
     unlimited_site_creation: false,
     custom_ssl_certificates: false,
     no_file_restrictions: false,
-    custom_domains: false
+    custom_domains: false,
+    maximum_site_files: 1000
   )
+
+  def self.newsletter_sites
+     Site.select(:email).
+       exclude(email: 'nil').exclude(is_banned: true).
+       where{updated_at > EMAIL_BLAST_MAXIMUM_AGE}.
+       where{changed_count > 0}.
+       order(:updated_at.desc).
+       all
+  end
+
+  def too_many_files?(file_count=0)
+    (site_files_dataset.count + file_count) > plan_feature(:maximum_site_files)
+  end
 
   def plan_feature(key)
     PLAN_FEATURES[plan_type.to_sym][key.to_sym]
@@ -128,7 +147,15 @@ class Site < Sequel::Model
     plan_five: 5
   }
 
-  BROWSE_PAGINATION_LENGTH = 300
+  BROWSE_PAGINATION_LENGTH = 100
+
+  EMAIL_BLAST_MAXIMUM_AGE = 6.months.ago
+
+  if ENV['RACK_ENV'] == 'test'
+    EMAIL_BLAST_MAXIMUM_PER_DAY = 2
+  else
+    EMAIL_BLAST_MAXIMUM_PER_DAY = 1000
+  end
 
   many_to_many :tags
 
@@ -160,6 +187,13 @@ class Site < Sequel::Model
   one_to_many :children, :key => :parent_site_id, :class => self
 
   one_to_many :site_files
+
+  one_to_many :stats
+  one_to_many :stat_referrers
+  one_to_many :stat_locations
+  one_to_many :stat_paths
+
+  one_to_many :archives
 
   def account_sites_dataset
     Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id})).order(:parent_site_id.desc, :username)
@@ -360,25 +394,26 @@ class Site < Sequel::Model
   def install_new_files
     FileUtils.mkdir_p files_path
 
+    files = []
+
     %w{index not_found}.each do |name|
       tmpfile = Tempfile.new "newinstall-#{name}"
       tmpfile.write render_template("#{name}.erb")
       tmpfile.close
-
-      store_file "#{name}.html", tmpfile, new_install: true
-      purge_cache "/#{name}.html"
-      ScreenshotWorker.perform_async values[:username], "#{name}.html"
+      files << {filename: "#{name}.html", tempfile: tmpfile}
     end
 
     tmpfile = Tempfile.new 'style.css'
     tmpfile.close
     FileUtils.cp template_file_path('style.css'), tmpfile.path
-    store_file 'style.css', tmpfile, new_install: true
+    files << {filename: 'style.css', tempfile: tmpfile}
 
     tmpfile = Tempfile.new 'cat.png'
     tmpfile.close
     FileUtils.cp template_file_path('cat.png'), tmpfile.path
-    store_file 'cat.png', tmpfile, new_install: true
+    files << {filename: 'cat.png', tempfile: tmpfile}
+
+    store_files files, new_install: true
   end
 
   def get_file(path)
@@ -539,77 +574,57 @@ class Site < Sequel::Model
   end
 
   def purge_cache(path)
-    relative_path = path.gsub(base_files_path, '')
-    payload = {site: username, path: relative_path}
-    payload[:domain] = domain if !domain.empty?
-    PurgeCacheWorker.perform_async payload
+    relative_path = path.gsub base_files_path, ''
+
+    # We gotta flush the dirname too if it's an index file.
+    if relative_path != '' && relative_path.match(/\/$|index\.html?$/i)
+      PurgeCacheOrderWorker.perform_async username, relative_path
+      PurgeCacheOrderWorker.perform_async username, Pathname(relative_path).dirname.to_s
+    else
+      PurgeCacheOrderWorker.perform_async username, relative_path
+    end
   end
 
-  def store_file(path, uploaded, opts={})
-    relative_path = scrubbed_path path
-    path = files_path path
-    pathname = Pathname(path)
+  Rye::Cmd.add_command :ipfs, nil, 'add', :r
 
-    site_file = site_files_dataset.where(path: relative_path).first
-
-    uploaded_sha1 = Digest::SHA1.file(uploaded.path).hexdigest
-
-    if site_file && site_file.sha1_hash == uploaded_sha1
-      return false
-    end
-
-    if relative_path == 'index.html' && opts[:new_install] != true
+  def add_to_ipfs
+    # Not ideal. An SoA version is in progress.
+    if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
+      rbox = Rye::Box.new $config['ipfs_ssh_host'], :user => $config['ipfs_ssh_user']
       begin
-        new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
-      rescue NoMethodError => e
-      else
-        if new_title.length < TITLE_MAX
-          self.title = new_title
-        end
+        response = rbox.ipfs "sites/#{self.username.gsub(/\/|\.\./, '')}"
+        output_array = response
+      ensure
+        rbox.disconnect
       end
-
-      self.site_changed = true
-      self.site_updated_at = Time.now
-      self.updated_at = Time.now
-
-      save_changes(validate: false)
+    else
+      line = Cocaine::CommandLine.new('ipfs', 'add -r :path')
+      response = line.run path: files_path
+      output_array = response.to_s.split("\n")
     end
 
-    if pathname.extname.match HTML_REGEX
-      # SPAM and phishing checking code goes here
+    output_array.last.split(' ')[1]
+  end
+
+  def archive!
+    #if ENV["RACK_ENV"] == 'test'
+    #  ipfs_hash = "QmcKi2ae3uGb1kBg1yBpsuwoVqfmcByNdMiZ2pukxyLWD8"
+    #else
+    #end
+
+    ipfs_hash = add_to_ipfs
+
+    archive = archives_dataset.where(ipfs_hash: ipfs_hash).first
+    if archive
+      archive.updated_at = Time.now
+      archive.save_changes
+    else
+      add_archive ipfs_hash: ipfs_hash, updated_at: Time.now
     end
+  end
 
-    dirname = pathname.dirname.to_s
-
-    if !File.exists? dirname
-      FileUtils.mkdir_p dirname
-    end
-
-    uploaded_size = uploaded.size
-
-    FileUtils.cp uploaded.path, path
-    File.chmod 0640, path
-
-    site_file ||= SiteFile.new site_id: self.id, path: relative_path
-
-    site_file.set_all(
-      size: uploaded_size,
-      sha1_hash: uploaded_sha1,
-      updated_at: Time.now
-    )
-    site_file.save
-
-    purge_cache path
-
-    if pathname.extname.match HTML_REGEX
-      ScreenshotWorker.perform_async values[:username], relative_path
-    elsif pathname.extname.match IMAGE_REGEX
-      ThumbnailWorker.perform_async values[:username], relative_path
-    end
-
-    SiteChange.record self, relative_path unless opts[:new_install]
-
-    true
+  def latest_archive
+    @latest_archive ||= archives_dataset.order(:updated_at.desc).first
   end
 
   def is_directory?(path)
@@ -624,11 +639,6 @@ class Site < Sequel::Model
 
     FileUtils.mkdir_p relative_path
     true
-  end
-
-  def increment_changed_count
-    self.changed_count += 1
-    save_changes(validate: false)
   end
 
   def files_zip
@@ -654,41 +664,17 @@ class Site < Sequel::Model
     tmpfile.path
   end
 
-  def delete_file(path)
-    begin
-      FileUtils.rm files_path(path)
-    rescue Errno::EISDIR
-      site_files.each do |site_file|
-        if site_file.path.match /^#{path}\//
-          site_file.destroy
-        end
-      end
-      FileUtils.remove_dir files_path(path), true
-    rescue Errno::ENOENT
-    end
-
-    purge_cache path
-
-    ext = File.extname(path).gsub(/^./, '')
-
-    screenshots_delete(path) if ext.match HTML_REGEX
-    thumbnails_delete(path) if ext.match IMAGE_REGEX
-
-    path = path[1..path.length] if path[0] == '/'
-
-    site_files_dataset.where(path: path).delete
-    SiteChangeFile.filter(site_id: self.id, filename: path).delete
-
-    true
-  end
-
   def move_files_from(oldusername)
     FileUtils.mv base_files_path(oldusername), base_files_path
   end
 
   def install_new_html_file(path)
-    File.write files_path(path), render_template('index.erb')
+    tmpfile = Tempfile.new 'neocities_html_template'
+    tmpfile.write render_template('index.erb')
+    tmpfile.close
+    store_files [{filename: path, tempfile: tmpfile}]
     purge_cache path
+    tmpfile.unlink
   end
 
   def file_exists?(path)
@@ -830,6 +816,18 @@ class Site < Sequel::Model
       new_tags.compact!
       @new_filtered_tags = []
 
+      if values[:is_education] == true
+        if new?
+          if @new_tags_string.nil? || @new_tags_string.empty?
+            errors.add :new_tags_string, 'A Class Tag is required.'
+          end
+
+          if new_tags.length > 1
+            errors.add :new_tags_string, 'Must only have one tag'
+          end
+        end
+      end
+
       if ((new? ? 0 : tags_dataset.count) + new_tags.length > 5)
         errors.add :new_tags_string, 'Cannot have more than 5 tags for your site.'
       end
@@ -856,7 +854,7 @@ class Site < Sequel::Model
           break
         end
 
-        next if tags.collect {|t| t.name}.include? tag
+        next if !new? && tags.collect {|t| t.name}.include?(tag)
 
         @new_filtered_tags << tag
         @new_filtered_tags.uniq!
@@ -945,6 +943,7 @@ class Site < Sequel::Model
     ((total_space_used.to_f / maximum_space) * 100).round(1)
   end
 
+  # Note: Change Stat#prune! if you change this business logic.
   def supporter?
     owner.plan_type != 'free'
   end
@@ -966,6 +965,7 @@ class Site < Sequel::Model
     !values[:plan_type].match(/plan_/).nil?
   end
 
+  # Note: Change Stat#prune! if you change this business logic.
   def plan_type
     return 'free' if owner.values[:plan_type].nil?
     return 'supporter' if owner.values[:plan_type].match /^plan_/
@@ -1089,4 +1089,149 @@ class Site < Sequel::Model
       end
     end
   end
+
+  # array of hashes: filename, tempfile, opts.
+  def store_files(files, opts={})
+    results = []
+    new_size = 0
+    html_uploaded = false
+
+    if too_many_files?(files.length)
+      results << false
+      return results
+    end
+
+    files.each do |file|
+      html_uploaded = true if file[:filename].match HTML_REGEX
+
+      existing_size = 0
+      site_file = site_files_dataset.where(path: scrubbed_path(file[:filename])).first
+      if site_file
+        existing_size = site_file.size
+      end
+
+      res = store_file(file[:filename], file[:tempfile], file[:opts] || opts)
+      if res == true
+        new_size -= existing_size
+        new_size += file[:tempfile].size
+      end
+      results << res
+    end
+
+    if results.include? true && opts[:new_install] != true
+      time = Time.now
+      sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1, space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?",
+        true,
+        time,
+        time,
+        self.id
+      ]
+      sql.first
+      reload
+
+      #SiteChange.record self, relative_path unless opts[:new_install]
+      ArchiveWorker.perform_async self.id
+    end
+
+    results
+  end
+
+  def delete_file(path)
+    return false if files_path(path) == files_path
+    begin
+      FileUtils.rm files_path(path)
+    rescue Errno::EISDIR
+      site_files.each do |site_file|
+        if site_file.path.match /^#{path}\//
+          site_file.destroy
+        end
+      end
+      FileUtils.remove_dir files_path(path), true
+    rescue Errno::ENOENT
+    end
+
+    purge_cache path
+
+    ext = File.extname(path).gsub(/^./, '')
+
+    screenshots_delete(path) if ext.match HTML_REGEX
+    thumbnails_delete(path) if ext.match IMAGE_REGEX
+
+    path = path[1..path.length] if path[0] == '/'
+
+    DB.transaction do
+      site_file = site_files_dataset.where(path: path).first
+      if site_file
+        DB['update sites set space_used=space_used-? where id=?', site_file.size, self.id].first
+        site_file.delete
+      end
+      SiteChangeFile.filter(site_id: self.id, filename: path).delete
+    end
+
+    true
+  end
+
+  private
+
+  def store_file(path, uploaded, opts={})
+    relative_path = scrubbed_path path
+    path = files_path path
+    pathname = Pathname(path)
+
+    site_file = site_files_dataset.where(path: relative_path).first
+
+    uploaded_sha1 = Digest::SHA1.file(uploaded.path).hexdigest
+
+    if site_file && site_file.sha1_hash == uploaded_sha1
+      return false
+    end
+
+    if relative_path == 'index.html'
+      begin
+        new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
+      rescue NoMethodError => e
+      else
+        if new_title.length < TITLE_MAX
+          self.title = new_title
+          save_changes validate: false
+        end
+      end
+    end
+
+    if pathname.extname.match HTML_REGEX
+      # SPAM and phishing checking code goes here
+    end
+
+    dirname = pathname.dirname.to_s
+
+    if !File.exists? dirname
+      FileUtils.mkdir_p dirname
+    end
+
+    uploaded_size = uploaded.size
+
+    FileUtils.cp uploaded.path, path
+    File.chmod 0640, path
+
+    SiteChange.record self, relative_path unless opts[:new_install]
+
+    site_file ||= SiteFile.new site_id: self.id, path: relative_path
+
+    site_file.set_all(
+      size: uploaded_size,
+      sha1_hash: uploaded_sha1,
+      updated_at: Time.now
+    )
+    site_file.save
+
+    purge_cache path
+
+    if pathname.extname.match HTML_REGEX
+      ScreenshotWorker.perform_async values[:username], relative_path
+    elsif pathname.extname.match IMAGE_REGEX
+      ThumbnailWorker.perform_async values[:username], relative_path
+    end
+    true
+  end
+
 end

@@ -11,4 +11,8 @@ class String
   def unindent
     gsub /^#{scan(/^\s*/).min_by{|l|l.length}}/, ""
   end
+
+  def is_integer?
+    true if Integer(self) rescue false
+  end
 end

@@ -34,3 +34,4 @@ files/sslsites.zip
 .vagrant
 public/banned_sites
 public/deleted_sites
+tests/stat_logs/*

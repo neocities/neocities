@@ -27,7 +27,12 @@
 <div class="header-Outro editor">
   <div class="row content">
     <div class="breadcrumbs">
-      <a href="/dashboard">Dashboard</a> > <span class="filename"><%= @filename %></span>
+      <a href="/dashboard">Dashboard</a> >
+      <span class="filename">
+        <% dir_array = Pathname(@filename).dirname.to_s.split '/' %>
+        <% dir_array = [] if dir_array == ['.'] %>
+        <% dir_array.each_with_index do |dir,i| %><a href="/dashboard?dir=<%= Rack::Utils.escape dir_array[0..i].join('/') %>"><%= dir %></a>/<% end %><%= Pathname(@filename).basename %>
+      </span>
     </div>
     <div class="tools">
       <div class="theme">
@@ -70,7 +75,7 @@
         </select>
       </div>
       <a id="saveButton" class="btn-Action" href="#" onclick="saveTextFile(false); return false" style="opacity: 0.5"><i class="fa fa-save"></i>Save</a>
-      <a class="btn-Action" href="//<%= current_site.host %>/<%= @filename %>" target="_blank">View</a>
+      <a class="btn-Action" href="<%= current_site.uri %>/<%= @filename %>" target="_blank">View</a>
       <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'>Share</a>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
       <div id="editorUpdates" class="tooltip fade bottom in hidden" style="top: 90px;right: 12.5em;">
@@ -85,8 +90,7 @@
 
 <div class="row editor">
   <div class="col col-100">
-    <div id="editor"><%==encoding_fix(@file_data) %>
-    </div>
+    <div id="editor"><%==encoding_fix(@file_data) %></div>
   </div>
 </div>
 

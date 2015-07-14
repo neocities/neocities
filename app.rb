@@ -36,6 +36,7 @@ before do
 end
 
 not_found do
+  @title = 'Not Found'
   erb :'not_found'
 end
 
@@ -44,7 +45,7 @@ error do
     from: 'web@neocities.org',
     to: 'errors@neocities.org',
     subject: "[Neocities Error] #{env['sinatra.error'].class}: #{env['sinatra.error'].message}",
-    body: erb(:'views/templates/email/error'),
+    body: erb(:'templates/email/error', layout: false),
     no_footer: true
   })
 
