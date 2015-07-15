@@ -54,7 +54,15 @@ end
 
 post '/create' do
   content_type :json
-  require_unbanned_ip
+
+  if banned?(true)
+    signout
+    session[:banned] = true if !session[:banned]
+
+    flash[:error] = 'There was an error, please <a href="/contact">contact support</a> to log in.'
+    redirect '/'
+  end
+
   dashboard_if_signed_in
 
   @site = Site.new(

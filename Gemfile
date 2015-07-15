@@ -80,5 +80,6 @@ group :test do
 
   platform :mri, :rbx do
     gem 'simplecov',        require: nil
+    gem 'm'
   end
 end

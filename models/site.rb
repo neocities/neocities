@@ -294,6 +294,7 @@ class Site < Sequel::Model
     end
 
     def banned_ip?(ip)
+      return false if ENV['RACK_ENV'] == 'production' && ip == '127.0.0.1'
       return true if Site.where(is_banned: true).
         where(ip: hash_ip(ip)).
         where(['updated_at > ?', Time.now-BANNED_TIME]).
