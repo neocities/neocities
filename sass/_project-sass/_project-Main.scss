@@ -2129,6 +2129,10 @@ table#latest-visitors {
   padding: 15px 100px 4px 23px;
   margin-bottom: 13px;
   font-size: 95%;
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    background-size: 32%;
+    background-position: right top;
+  }
   
   h4 {
     margin-bottom: .2em;
