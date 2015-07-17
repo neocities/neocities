@@ -1960,6 +1960,12 @@ a.tag:hover {
     .filename {
       font-weight: bold;
     }
+    @media (max-device-width:480px), screen and (max-width:800px) {
+      width: 70%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
   .row.content {
     padding: 15px 20px;
