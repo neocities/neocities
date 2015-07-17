@@ -74,7 +74,7 @@
     </div>
   <% end %>
 
-<div id="filesDisplay" class="files list-view">
+<div id="filesDisplay" class="files">
   <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
     <div class="uploading">
         <p>Uploading, please wait...</p>
@@ -329,12 +329,25 @@
   })
 
   function listView() {
+    if(localStorage)
+      localStorage.setItem('viewType', 'list')
+
     $('#filesDisplay').addClass('list-view')
   }
 
   function iconView() {
+    if(localStorage)
+      localStorage.removeItem('viewType')
+
     $('#filesDisplay').removeClass('list-view')
   }
 
+  $(function() {
+    if(!localStorage)
+      return
+
+    if(localStorage.getItem('viewType') == 'list')
+      $('#filesDisplay').addClass('list-view')
+  })
 
 </script>
