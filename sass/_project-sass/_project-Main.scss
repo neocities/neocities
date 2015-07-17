@@ -131,14 +131,29 @@
     font-weight: normal;
     font-size: 12px;
     padding: 7px 15px;
-
-    @media (max-device-width:480px), screen and (max-width:800px) {
-      margin: 6px 0px 8px;
-    }
   }
   .row.content {
     margin-left: 6%;
     margin-right: 6%;
+  }
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    .signup-Area {
+      display: none;
+    }
+    ul {
+      display: none;
+    }
+    .row.content.wide {
+      margin: 0;
+      padding-top: 13px;
+      padding-bottom: 10px;
+    }
+    .btn-Action {
+      margin: 6px 4px 8px;
+    }
+    .site-url {
+      margin-top: -13px;
+    }
   }
 }
 .interior .header-Outro a {color:#E93250}
@@ -2129,6 +2144,10 @@ table#latest-visitors {
   padding: 15px 100px 4px 23px;
   margin-bottom: 13px;
   font-size: 95%;
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    background-size: 32%;
+    background-position: right top;
+  }
   
   h4 {
     margin-bottom: .2em;
