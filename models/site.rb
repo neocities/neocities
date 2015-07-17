@@ -905,9 +905,17 @@ class Site < Sequel::Model
         is_root_index: file_path == "#{base_files_path}/index.html"
       }
 
+      site_file = site_files_dataset.where(path: file_path.gsub(base_files_path, '').sub(/^\//, '')).first
+
+      if site_file
+        file[:size] = site_file.size unless file[:is_directory]
+        file[:updated_at] = site_file.updated_at
+      end
+
       file[:is_html] = !(file[:ext].match HTML_REGEX).nil?
       file[:is_image] = !(file[:ext].match IMAGE_REGEX).nil?
       file[:is_editable] = !(file[:ext].match EDITABLE_FILE_EXT).nil?
+
       file
     end
 

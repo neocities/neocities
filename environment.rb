@@ -61,6 +61,7 @@ end
 # :nocov:
 if ENV['RACK_ENV'] == 'development'
   # Run async jobs immediately in development.
+=begin
   module Sidekiq
     module Worker
       module ClassMethods
@@ -72,6 +73,7 @@ if ENV['RACK_ENV'] == 'development'
       end
     end
   end
+=end
 end
 # :nocov:
 
