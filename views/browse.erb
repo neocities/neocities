@@ -12,9 +12,9 @@
   <div class="row content">
     <div class="col col-100">
       <% if params[:tag] %>
-        <h1>Sites tagged <%= params[:tag] %></h1>
+        <h1><a href="/browse">Websites</a> > <%= params[:tag] %></h1>
       <% else %>
-        <h1>Sites on Neocities</h1>
+        <h1>Websites on Neocities</h1>
       <% end %>
     </div>
 
@@ -50,7 +50,7 @@
         <form method="GET" action="browse">
         <fieldset class="grouping">
         <% unless is_education? || params[:sort_by] == 'followers' %>
-          <label class="text-Label" for="tag"><span class="hide-on-mobile">Search by </span>Tag:</label>
+          <label class="text-Label" for="tag"><span class="hide-on-mobile">Filter by </span>Tag:</label>
           <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
           <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Search">
         <% end %>

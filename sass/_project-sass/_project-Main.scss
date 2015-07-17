@@ -42,6 +42,10 @@
 .interior .header-Outro h1 {
   font-size: 2.5em;
   margin-top: 15px;
+
+  a {
+    color: white;
+  }
 }
 .news-site-info {
   @media (max-device-width:480px), screen and (max-width:800px) {
