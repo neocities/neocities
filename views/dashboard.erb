@@ -75,6 +75,10 @@
   <% end %>
 
 <div id="filesDisplay" class="files">
+  <script>
+    if(localStorage && localStorage.getItem('viewType') == 'list')
+      $('#filesDisplay').addClass('list-view')
+  </script>
   <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
     <div class="uploading">
         <p>Uploading, please wait...</p>
@@ -341,13 +345,4 @@
 
     $('#filesDisplay').removeClass('list-view')
   }
-
-  $(function() {
-    if(!localStorage)
-      return
-
-    if(localStorage.getItem('viewType') == 'list')
-      $('#filesDisplay').addClass('list-view')
-  })
-
 </script>
