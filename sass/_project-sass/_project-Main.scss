@@ -492,7 +492,7 @@
 .html-thumbnail.misc.fileimagehover .overlay {
   margin: 1px 0 0 2px;
 }
-.files .list.list-view {
+@mixin dashboard-list-view {
   padding: 0;
   
   .upload-Boundary {
@@ -587,6 +587,14 @@
       display: none;
     }
   }
+}
+@media (max-device-width:480px), screen and (max-width:800px) {
+  .files .list {
+    @include dashboard-list-view;
+  }
+}
+.files .list.list-view {
+  @include dashboard-list-view;
 }
 .site-actions {
   float: left;
