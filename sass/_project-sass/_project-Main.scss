@@ -1734,8 +1734,20 @@ a.tag:hover {
 .browse-page h1 {
   margin-top: 0;
 }
-.browse-page .tags {
-  padding: 25px 30px 45px;
+.browse-page .row.content.misc {
+  form {
+    padding: 0;
+  }
+  input {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  &:last-child {
+    padding-bottom: 68px;
+  }
+  p {
+    margin-top: 1em;
+  }
 }
 .misc-page .pagination {
   width: 100%;

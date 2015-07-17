@@ -52,7 +52,7 @@
         <% unless is_education? || params[:sort_by] == 'followers' %>
           <label class="text-Label" for="tag"><span class="hide-on-mobile">Filter by </span>Tag:</label>
           <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
-          <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Search">
+          <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Filter">
         <% end %>
         </fieldset>
       </div>
@@ -150,7 +150,7 @@
 <% end %>
 
 <% unless is_education? %>
-<div class="row website-Gallery content int-Gall tags">
+<div class="row content misc">
   <h3>Popular Tags</h3>
   <p>
   <% Tag.popular_names(100).each do |tag| %>
@@ -158,5 +158,26 @@
   <% end %>
   </p>
 </div>
+<div class="row content misc">
+  <h3>Text Search</h3>
+  <form id="searchForm" method="GET" action="https://duckduckgo.com" class="content" onsubmit="return addSiteToSearch()">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <fieldset>
+      <input id="searchQuery" name="q" type="text" placeholder="keywords" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= flash[:username] %>" style="width: 50%">
+      <input class="btn btn-Action" type="submit" value="Search">
+    </fieldset>
+  </form>
+  <p>Search powered by <a href="https://duckduckgo.com/">Duck Duck Go</a></p>
+</div>
 <% end %>
 </div>
+
+<script>
+  function addSiteToSearch() {
+    var searchQuery = $('#searchQuery')
+    var finalSearchQuery = searchQuery.val() + ' site:neocities.org'
+
+    window.location = 'https://duckduckgo.com/?q='+encodeURI(finalSearchQuery)
+    return false
+  }
+</script>
