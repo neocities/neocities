@@ -1,6 +1,7 @@
 require 'open-uri'
 
 class PurgeCacheWorker
+  HTTP_TIMEOUT = 5
   include Sidekiq::Worker
   sidekiq_options queue: :purgecache, retry: 1000, backtrace: false, average_scheduled_poll_interval: 1
 
@@ -18,7 +19,9 @@ class PurgeCacheWorker
       Addressable::URI::CharacterClasses::QUERY
     )
     begin
-      RestClient.get(url, host: URI::encode("#{username}.neocities.org"))
+      RestClient::Request.execute method: :get, url: url, timeout: HTTP_TIMEOUT, headers: {
+        host: URI::encode("#{username}.neocities.org")
+      }
     rescue RestClient::ResourceNotFound
     end
   end
