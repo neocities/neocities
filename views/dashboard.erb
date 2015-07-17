@@ -74,7 +74,7 @@
     </div>
   <% end %>
 
-<div class="files">
+<div class="files list-view">
   <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
     <div class="uploading">
         <p>Uploading, please wait...</p>
@@ -110,7 +110,7 @@
       <a href="#" class="btn-Action" onclick="clickUploadFiles(); return false"><i class="fa fa-arrow-circle-up"></i> Upload</a>
     </div>
   </div>
-  <div class="list list-view">
+  <div class="list">
     <form action="/site_files/upload" class="dropzone" id="uploads">
       <div class="dz-message" style="display: none"></div>
       <input name="csrf_token" type="hidden" value="<%= csrf_token %>">

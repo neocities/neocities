@@ -593,7 +593,7 @@
     @include dashboard-list-view;
   }
 }
-.files .list.list-view {
+.files.list-view .list {
   @include dashboard-list-view;
 }
 .site-actions {
