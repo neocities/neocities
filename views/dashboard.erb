@@ -83,8 +83,8 @@
   </div>
   <div class="header">
     <div class="btn-group" role="group" aria-label="...">
-      <button type="button" class="btn btn-default" title="List View" onclick="listView()"><i class="fa fa-list"></i></button>
-      <button type="button" class="btn btn-default" title="Icon View" onclick="iconView()"><i class="fa fa-th"></i></button>
+      <button type="button" class="btn btn-default iconview-button" title="Icon View" onclick="iconView()"><i class="fa fa-th"></i></button>
+      <button type="button" class="btn btn-default listview-button" title="List View" onclick="listView()"><i class="fa fa-list"></i></button>
     </div>
     <div class="breadcrumbs">
       <% if params[:dir].nil? || params[:dir].empty? || params[:dir] == '/' %>

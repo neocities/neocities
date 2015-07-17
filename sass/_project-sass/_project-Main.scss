@@ -271,6 +271,22 @@
     }
   }
 }
+.files {
+  .btn.iconview-button {
+    background: #4F727B;
+  }
+  .btn.listview-button {
+    background: #77ABB8;
+  }
+}
+.files.list-view {
+  .btn.listview-button {
+    background: #4F727B;
+  }
+  .btn.iconview-button {
+    background: #77ABB8;
+  }
+}
 .files .header {
   background: #5E95A1;
   color: #fff;
@@ -591,6 +607,9 @@
 @media (max-device-width:480px), screen and (max-width:800px) {
   .files .list {
     @include dashboard-list-view;
+  }
+  .files .btn-group {
+    display: none;
   }
 }
 .files.list-view .list {
