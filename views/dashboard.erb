@@ -74,7 +74,7 @@
     </div>
   <% end %>
 
-<div class="files list-view">
+<div id="filesDisplay" class="files list-view">
   <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
     <div class="uploading">
         <p>Uploading, please wait...</p>
@@ -83,8 +83,8 @@
   </div>
   <div class="header">
     <div class="btn-group" role="group" aria-label="...">
-      <button type="button" class="btn btn-default" title="List View"><i class="fa fa-list"></i></button>
-      <button type="button" class="btn btn-default" title="Icon View"><i class="fa fa-th"></i></button>
+      <button type="button" class="btn btn-default" title="List View" onclick="listView()"><i class="fa fa-list"></i></button>
+      <button type="button" class="btn btn-default" title="Icon View" onclick="iconView()"><i class="fa fa-th"></i></button>
     </div>
     <div class="breadcrumbs">
       <% if params[:dir].nil? || params[:dir].empty? || params[:dir] == '/' %>
@@ -327,4 +327,14 @@
   $('#createFile').on('shown', function () {
     $('#newFileInput').focus();
   })
+
+  function listView() {
+    $('#filesDisplay').addClass('list-view')
+  }
+
+  function iconView() {
+    $('#filesDisplay').removeClass('list-view')
+  }
+
+
 </script>
