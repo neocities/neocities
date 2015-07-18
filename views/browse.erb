@@ -37,6 +37,8 @@
               </select>
             </div>
 
+            <input name="tag" type="hidden" value="<%= params[:tag] %>">
+
             <!--
               <div>
                 <input name="is_nsfw" type="checkbox" value="true" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>> Show 18+ content
