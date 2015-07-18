@@ -89,8 +89,9 @@ def browse_sites_dataset
 
   site_dataset.where! ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
 
-  if params[:tag] && params[:sort_by] != 'followers'
-    site_dataset = site_dataset.association_join(:tags).select_all(:sites)
+  if params[:tag]
+    site_dataset.inner_join! :sites_tags, :site_id => :id
+    site_dataset.inner_join! :tags, :id => :sites_tags__tag_id
     site_dataset.where! ['tags.name = ?', params[:tag]]
     site_dataset.where! ['tags.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
   end
