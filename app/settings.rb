@@ -211,6 +211,8 @@ post '/settings/:username/change_nsfw' do
   require_login
   require_ownership_for_settings
 
+  redirect "/settings/#{@site.username}" if @site.admin_nsfw == true
+
   @site.is_nsfw = params[:is_nsfw]
   @site.save_changes validate: false
   flash[:success] = @site.is_nsfw ? 'Marked 18+' : 'Unmarked 18+'
@@ -260,7 +262,7 @@ end
 
 post '/settings/change_email' do
   require_login
-  
+
   if params[:email] == parent_site.email
     flash[:error] = 'You are already using this email address for this account.'
     redirect '/settings#email'
