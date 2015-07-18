@@ -18,21 +18,25 @@ describe 'site_files' do
   before do
     @site = Fabricate :site
     ThumbnailWorker.jobs.clear
+    PurgeCacheOrderWorker.jobs.clear
     PurgeCacheWorker.jobs.clear
     ScreenshotWorker.jobs.clear
   end
 
   describe 'delete' do
     it 'works' do
-      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
+      @site.reload.space_used.must_equal uploaded_file.size
       file_path = @site.files_path 'test.jpg'
       File.exists?(file_path).must_equal true
       delete_file filename: 'test.jpg'
       File.exists?(file_path).must_equal false
       SiteFile[site_id: @site.id, path: 'test.jpg'].must_be_nil
+      @site.reload.space_used.must_equal 0
     end
 
-    it 'deletes all files in a directory' do
+    it 'deletes a directory and all files in it' do
       upload(
         'dir' => 'test',
         'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
@@ -44,6 +48,21 @@ describe 'site_files' do
       delete_file filename: 'test'
       @site.site_files.select {|f| f.path =~ /^test\//}.length.must_equal 0
       @site.site_files.select {|f| f.path =~ /^test/}.length.must_equal 1
+    end
+
+    it 'goes back to deleting directory' do
+      upload(
+        'dir' => 'test',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      delete_file filename: 'test/test.jpg'
+      last_response.headers['Location'].must_equal "http://example.org/dashboard?dir=test"
+
+      upload(
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      delete_file filename: 'test.jpg'
+      last_response.headers['Location'].must_equal "http://example.org/dashboard"
     end
   end
 
@@ -82,10 +101,31 @@ describe 'site_files' do
       args = ScreenshotWorker.jobs.first['args']
       args.first.must_equal @site.username
       args.last.must_equal 'index.html'
-      @site.title.must_equal "#{@site.username}.neocities.org"
+      @site.title.must_equal "The web site of #{@site.username}"
       @site.reload
       @site.site_changed.must_equal true
       @site.title.must_equal 'Hello?'
+
+      # Purge cache needs to flush / and index.html for either scenario.
+      PurgeCacheOrderWorker.jobs.length.must_equal 2
+      first_purge = PurgeCacheOrderWorker.jobs.first
+      dirname_purge = PurgeCacheOrderWorker.jobs.last
+
+      username, pathname = first_purge['args']
+      username.must_equal @site.username
+      pathname.must_equal '/index.html'
+      username, pathame = nil
+      username, pathname = dirname_purge['args']
+      username.must_equal @site.username
+      pathname.must_equal '/'
+    end
+
+    it 'provides the correct space used after overwriting an existing file' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
+      second_uploaded_file = Rack::Test::UploadedFile.new('./tests/files/img/test.jpg', 'image/jpeg')
+      upload 'files[]' => second_uploaded_file
+      @site.reload.space_used.must_equal second_uploaded_file.size
     end
 
     it 'does not change title for subdir index.html' do
@@ -97,15 +137,19 @@ describe 'site_files' do
       @site.reload.title.must_equal title
     end
 
-
     it 'succeeds with valid file' do
-      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
       last_response.body.must_match /successfully uploaded/i
       File.exists?(@site.files_path('test.jpg')).must_equal true
 
-      queue_args = PurgeCacheWorker.jobs.first['args'].first
-      queue_args['site'].must_equal @site.username
-      queue_args['path'].must_equal '/test.jpg'
+      username, path = PurgeCacheOrderWorker.jobs.first['args']
+      username.must_equal @site.username
+      path.must_equal '/test.jpg'
+
+      @site.reload
+      @site.space_used.wont_equal 0
+      @site.space_used.must_equal uploaded_file.size
 
       ThumbnailWorker.jobs.length.must_equal 1
       ThumbnailWorker.drain
@@ -114,7 +158,7 @@ describe 'site_files' do
         File.exists?(@site.thumbnail_path('test.jpg', resolution)).must_equal true
       end
 
-      @site.site_changed.must_equal false
+      @site.site_changed.must_equal true
     end
 
     it 'fails with unsupported file' do
@@ -153,9 +197,18 @@ describe 'site_files' do
       last_response.body.must_match /successfully uploaded/i
       File.exists?(@site.files_path('derpie/derptest/test.jpg')).must_equal true
 
-      PurgeCacheWorker.jobs.length.must_equal 1
-      queue_args = PurgeCacheWorker.jobs.first['args'].first
-      queue_args['path'].must_equal '/derpie/derptest/test.jpg'
+      PurgeCacheOrderWorker.jobs.length.must_equal 1
+      username, path = PurgeCacheOrderWorker.jobs.first['args']
+      path.must_equal '/derpie/derptest/test.jpg'
+
+      PurgeCacheOrderWorker.drain
+
+      PurgeCacheWorker.jobs.length.must_equal 2
+      ip, username, path = PurgeCacheWorker.jobs.first['args']
+      ip.must_equal '10.0.0.1'
+      username.must_equal @site.username
+      path.must_equal '/derpie/derptest/test.jpg'
+      PurgeCacheWorker.jobs.last['args'].first.must_equal '10.0.0.2'
 
       ThumbnailWorker.jobs.length.must_equal 1
       ThumbnailWorker.drain

@@ -12,40 +12,48 @@
   <div class="row content">
     <div class="col col-100">
       <% if params[:tag] %>
-        <h1>Sites tagged <%= params[:tag] %></h1>
+        <h1><a href="/browse">Websites</a> > <%= params[:tag] %></h1>
       <% else %>
-        <h1>Sites on Neocities</h1>
+        <h1>Websites on Neocities</h1>
       <% end %>
     </div>
 
     <form id="search_criteria" action="/browse" method="GET">
       <div class="col col-50 filter">
         <fieldset class="grouping">
-          <label class="text-Label" for="sort_by">Sort by:</label>
-          <div class="select-Container">
-            <select name="sort_by" id="sort_by" class="input-Select">
-              <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
-              <option value="views" <%= params[:sort_by] == 'views' ? 'selected' : '' %>>Most Views</option>
-              <option value="hits" <%= params[:sort_by] == 'hits' ? 'selected' : '' %>>Most Hits</option>
-              <option value="newest" <%= params[:sort_by] == 'newest' ? 'selected' : '' %>>Newest</option>
-              <option value="oldest" <%= params[:sort_by] == 'oldest' ? 'selected' : '' %>>Oldest</option>
-              <option value="random" <%= params[:sort_by] == 'random' ? 'selected' : '' %>>Random</option>
-            </select>
-          </div>
-        <!--
-          <div>
-            <input name="is_nsfw" type="checkbox" value="true" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>> Show 18+ content
-          </div>
-        -->
+          <% unless is_education? %>
+            <label class="text-Label" for="sort_by">Sort by:</label>
+            <div class="select-Container">
+              <select name="sort_by" id="sort_by" class="input-Select">
+                <option value="followers" <%= params[:sort_by] == 'followers' ? 'selected' : '' %>>Most Followed</option>
+                <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
+                <option value="supporters" <%= params[:sort_by] == 'supporters' ? 'selected' : '' %>>Neocities Supporters</option>
+                <option value="featured" <%= params[:sort_by] == 'featured' ? 'selected' : '' %>>Featured</option>
+                <option value="views" <%= params[:sort_by] == 'views' ? 'selected' : '' %>>Most Views</option>
+                <option value="hits" <%= params[:sort_by] == 'hits' ? 'selected' : '' %>>Most Hits</option>
+                <option value="newest" <%= params[:sort_by] == 'newest' ? 'selected' : '' %>>Newest</option>
+                <option value="oldest" <%= params[:sort_by] == 'oldest' ? 'selected' : '' %>>Oldest</option>
+                <option value="random" <%= params[:sort_by] == 'random' ? 'selected' : '' %>>Random</option>
+              </select>
+            </div>
+
+            <!--
+              <div>
+                <input name="is_nsfw" type="checkbox" value="true" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>> Show 18+ content
+              </div>
+            -->
             <input class="btn-Action" type="submit" value="Update">
+          <% end %>
         </fieldset>
       </div>
       <div class="col col-50 filter">
         <form method="GET" action="browse">
         <fieldset class="grouping">
-        <label class="text-Label" for="tag"><span class="hide-on-mobile">Search by </span>Tag:</label>
-        <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
-        <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Search">
+        <% unless is_education? || params[:sort_by] == 'followers' %>
+          <label class="text-Label" for="tag"><span class="hide-on-mobile">Filter by </span>Tag:</label>
+          <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
+          <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Filter">
+        <% end %>
         </fieldset>
       </div>
     </div>
@@ -141,12 +149,35 @@
   <% end %>
 <% end %>
 
-<div class="row website-Gallery content int-Gall tags">
-    <h3>Popular Tags</h3>
-    <p>
-    <% Tag.popular_names(100).each do |tag| %>
-      <a href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
-    <% end %>
-    </p>
+<% unless is_education? %>
+<div class="row content misc">
+  <h3>Popular Tags</h3>
+  <p>
+  <% Tag.popular_names(100).each do |tag| %>
+    <a href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
+  <% end %>
+  </p>
 </div>
+<div class="row content misc">
+  <h3>Text Search</h3>
+  <form id="searchForm" method="GET" action="https://duckduckgo.com" class="content" onsubmit="return addSiteToSearch()">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <fieldset>
+      <input id="searchQuery" name="q" type="text" placeholder="keywords" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= flash[:username] %>" style="width: 50%">
+      <input class="btn btn-Action" type="submit" value="Search">
+    </fieldset>
+  </form>
+  <p>Search powered by <a href="https://duckduckgo.com/">Duck Duck Go</a></p>
 </div>
+<% end %>
+</div>
+
+<script>
+  function addSiteToSearch() {
+    var searchQuery = $('#searchQuery')
+    var finalSearchQuery = searchQuery.val() + ' site:neocities.org'
+
+    window.location = 'https://duckduckgo.com/?q='+encodeURI(finalSearchQuery)
+    return false
+  }
+</script>

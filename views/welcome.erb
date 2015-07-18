@@ -1,13 +1,15 @@
 <section class="section plans welcome">
   <h2>Welcome to Neocities, <%= current_site.username %>!</h2>
-  <h3 class="subtitle">Free accounts will always be free and ad-free.
-You can support our quest to bring back the creative, independent web by upgrading to the Supporter&nbsp;Plan.</h3>
+  <h3 class="subtitle">
+    <strong>Neocities will never put advertising on your site.</strong> Instead, Neocities is powered by <strong>you</strong>.
+    Help us bring back creative personal websites by becoming a supporter.
+  </h3>
 
   <div class="plan-overview">
     <div class="col free">
       <div class="row content">
         <div class="col col-100">
-          <h3>Free Plan</h3>
+          <h3>Free</h3>
           <div class="plan-image free">
           </div>
           <div class="price">$<%= Site::PLAN_FEATURES[:free][:price] %></div>
@@ -27,7 +29,7 @@ You can support our quest to bring back the creative, independent web by upgradi
     <div class="col supporter">
       <div class="row content">
         <div class="col col-33">
-          <h3>Supporter Plan</h3>
+          <h3>Supporter</h3>
           <div class="plan-image supporter">
           </div>
           <% if parent_site && parent_site.legacy_supporter? %>
@@ -39,8 +41,8 @@ You can support our quest to bring back the creative, independent web by upgradi
           <% end %>
 
           <ul class="main-features">
-            <li><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_space_pretty %></strong> <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">storage</span></li>
-            <li><strong>1000 GB</strong> <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we’re very flexible.">bandwidth</span></li>
+            <li><strong><%= (Site::PLAN_FEATURES[:supporter][:space] / (10**6)).to_comma_separated %> MB</strong> <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">storage</span></li>
+            <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></strong> <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we’re very flexible.">bandwidth</span></li>
           </ul>
 
           <ul>
@@ -52,7 +54,7 @@ You can support our quest to bring back the creative, independent web by upgradi
         </div>
 
         <div class="col col-66">
-          <p class="instructions">To upgrade, enter your credit card info below:</p>
+          <p class="instructions">Just enter your card info, and you're done:</p>
           <div>
             <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
             <form id="upgradeForm" method="POST" action="/plan/update">
@@ -130,6 +132,12 @@ You can support our quest to bring back the creative, independent web by upgradi
     </div>
   </div>
 </section>
+
+<section class="section" style="padding-top: 0;">
+  <%== erb :'plan/_compare', layout: false %>
+</section>
+
+
 <%== erb :'plan/_signupcode', layout: false %>
 <script>
   $(function() {

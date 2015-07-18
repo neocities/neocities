@@ -53,10 +53,12 @@ describe Site do
     end
 
     it 'should match plan_type' do
-      %w{supporter neko catbus fatcat}.each do |plan_type|
+      %w{supporter free}.each do |plan_type|
         site = Fabricate :site, plan_type: plan_type
         site.plan_type.must_equal plan_type
       end
+      site = Fabricate :site, plan_type: nil
+      site.plan_type.must_equal 'free'
     end
   end
 

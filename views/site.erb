@@ -21,6 +21,11 @@
     <div class="col col-50 profile-info">
       <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? %><a href="/plan" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
       <p class="site-url"><a href="<%= site.uri %>"><%= site.host %></a></p>
+      <!--
+      <% if site.latest_archive %>
+        <p><a href="<%= site.latest_archive.url %>" style="margin-right: 5px">IPFS Link</a><small style="font-size: 7pt"><a href="/permanent-web">(what is this?)</a></small></p>
+      <% end %>
+      -->
       <div class="stats">
         <div class="stat"><strong><%= site.views.format_large_number %></strong> <span>view<%= site.views == 1 ? '' : 's' %></span></div>
         <% follows_count = site.follows_dataset.count %>
@@ -32,6 +37,12 @@
         <% if current_site == site %>
           <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i> Edit Site</a>
         <% end %>
+
+        <!--
+        <% if current_site && current_site.id == site.id && site.latest_archive %>
+          <a href="/site/<%= site.username %>/archives" class="btn-Action edit"><i class="fa fa-history" title="Archives"></i> Archives</a>
+        <% end %>
+        -->
 
         <% if current_site && current_site != site %>
           <% is_following = current_site.is_following?(site) %>
@@ -109,6 +120,7 @@
         </strong>
       </div>
       <div class="stat"><span>Created</span><strong><%= site.created_at.strftime('%b %-d, %Y') %></strong></div>
+      <a href="/site/<%= site.username %>/stats">Site Traffic Stats</a>
     </div>
 
     <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>

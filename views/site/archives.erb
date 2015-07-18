@@ -1,0 +1,30 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+  <h1>Permanent Web Archives</h1>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <article role="article">
+    <% if @archives.length == 0 %>
+      No archives yet.
+    <% else %>
+      <table class="table">
+        <tr>
+          <th>IPFS Hash <small style="display: inline"><a href="/permanent-web">(what is this?)</a></small></th>
+          <th>Archived Time</th>
+        </tr>
+        <% @archives.each do |archive| %>
+          <tr>
+            <td><a href="<%= archive.url %>"><%= archive.ipfs_hash %></a></td>
+            <td><%= archive.updated_at.ago.downcase %></td>
+          </tr>
+        <% end %>
+      </table>
+
+      <p>
+        Note: This is a very early preview release of a new technology! We're still figuring things out. We may stop hosting archives without notice. <a href="/permanent-web">Learn how you can host your own copies of these archives</a>.
+      </p>
+    <% end %>
+  </article>
+</div>

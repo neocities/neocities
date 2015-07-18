@@ -1,4 +1,4 @@
-require 'RMagick'
+require 'rmagick'
 require 'timeout'
 require 'securerandom'
 require 'thread'
@@ -52,7 +52,7 @@ class ScreenshotWorker
       site = Site[username: username]
       site.is_crashing = true
       site.save_changes validate: false
-      
+
       # Don't enable until we know it works well.
 =begin
       if site.email

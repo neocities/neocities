@@ -21,7 +21,7 @@ describe 'site page' do
       click_button 'Post'
       @site.profile_comments.count.must_equal 1
       profile_comment = @site.profile_comments.first
-      profile_comment.actioning_site.must_equal @commenting_site
+      profile_comment.actioning_site.id.must_equal @commenting_site.id
       profile_comment.message.must_equal 'I love your site!'
     end
 

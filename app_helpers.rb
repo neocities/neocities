@@ -1,10 +1,20 @@
+def kickstarter_days_remaining
+  ending = Time.parse('Sat, Jul 25 2015 3:05 PM PDT')
+  today = Time.now
+
+  remaining = ending - today
+  return 0 if remaining < 0
+
+  ((ending - today) / 86400).to_i
+end
+
 def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
 end
 
 def require_login_ajax
   halt 'You are not logged in!' unless signed_in?
-  halt 'You are banned.' if current_site.is_banned? || parent_site.is_banned?
+  halt 'Please contact support.' if banned?
 end
 
 def csrf_safe?
@@ -15,13 +25,13 @@ def csrf_token
    session[:_csrf_token] ||= SecureRandom.base64(32)
 end
 
+def is_education?
+  current_site && current_site.is_education
+end
+
 def require_login
   redirect '/' unless signed_in?
-  if session[:banned] || current_site.is_banned || parent_site.is_banned
-    signout
-    session[:banned] = true
-    redirect '/'
-  end
+  enforce_ban if banned?
 end
 
 def signed_in?
@@ -38,14 +48,18 @@ def parent_site
   current_site.parent? ? current_site : current_site.parent
 end
 
-def require_unbanned_ip
-  if session[:banned] || Site.banned_ip?(request.ip)
-    signout
-    session[:banned] = true
-    flash[:error] = 'Site creation has been banned due to ToS violation/spam. '+
-    'If you believe this to be in error, <a href="/contact">contact the site admin</a>.'
-    return {result: 'error'}.to_json
-  end
+def banned?(ip_check=false)
+  return true if session[:banned]
+  return true if current_site && (current_site.is_banned || parent_site.is_banned)
+
+  return true if ip_check && Site.banned_ip?(request.ip)
+  false
+end
+
+def enforce_ban
+  signout
+  session[:banned] = true
+  redirect '/'
 end
 
 def title
@@ -75,4 +89,32 @@ def send_confirmation_email(site=current_site)
     subject: "[Neocities] Confirm your email address",
     body: Tilt.new('./views/templates/email_confirm.erb', pretty: true).render(self, site: site)
   })
+end
+
+def plan_pricing_button(plan_type)
+  plan_type = plan_type.to_s
+
+  if !parent_site
+    %{<a href="/#new" class="btn-Action">Sign Up</a>}
+  elsif parent_site && parent_site.plan_type == plan_type
+    if request.path.match /\/welcome/
+      %{<a href="/" class="btn-Action">Get Started</a>}
+    else
+      %{<div class="current-plan">Current Plan</div>}
+    end
+  else
+    #if plan_type == 'supporter'
+    #  plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]*12}, once per year"
+    #else
+      plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]}, monthly"
+    #end
+
+    if request.path.match /\/welcome/
+      button_title = 'Get Started'
+    else
+      button_title = parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'
+    end
+
+    %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="card = new Skeuocard($('#skeuocard')); return false" class="btn-Action planPricingButton">#{button_title}</a>}
+  end
 end

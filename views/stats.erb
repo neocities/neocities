@@ -6,7 +6,7 @@
 
 <div class="content single-Col misc-page">
   <article>
-    <h2>Why our finances are open</h2>
+    <h2>Why our growth statistics and finances are open</h2>
 
     <p>
       Neocities is an <a href="http://www.opencompany.org">Open Company</a> startup, and are committed to openness as a defining element in how we create value.
@@ -17,11 +17,11 @@
     </p>
 
     <p>
-      Despite this, most companies today still treat their backend infrastructure and business finances as proprietary. The result is an erosion of user trust, where users become dependant on proprietary services that have bugs they can't help fix, financial sustainability problems they can't discover, and limitations they can't understand. We believe this is the biggest problem facing startups today.
+      Despite this, most companies today still treat their backend infrastructure and business operations as proprietary. The result is an erosion of user trust, where users become dependant on proprietary services that have bugs they can't help fix, financial sustainability problems they can't discover, and limitations they can't understand. We believe this is the biggest problem facing startups today.
     </p>
 
     <p>
-      We do not feel that opening of our finances is as risky as is currently believed, and that the increased trust we gain from doing it more than makes up for the risk. So we have decided to open our finances.
+      We do not feel that opening of our finances is as risky as is currently believed, and that the increased trust we gain from doing it more than makes up for the risk. So we have decided to open our growth statistics and finances.
     </p>
 
     <p>
@@ -29,7 +29,7 @@
     </p>
 
     <p>
-      Note that we do not disclose everything publicly. For example, we do not reveal the locations of our servers, the identities of our users, investors (if they choose to be anonymous) or any salaries or dividends we choose to issue. There are very legitimate security and privacy considerations to consider when providing open data, and we understand and respect that.
+      Note that we do not disclose everything publicly. For example, we do not currently reveal the locations of our servers, the identities of our users, investors (if they choose to be anonymous) or any salaries or dividends (in our case, member ownership percentages) we choose to issue. There are very legitimate security and privacy considerations to consider when providing open data, and we understand and respect that.
     </p>
 
     <p>
@@ -40,7 +40,15 @@
 
     <table class="table">
       <tr>
-        <td>Total Sites</td>
+        <td><strong>Total Hits</strong> (sites hosted on Neocities)</td>
+        <td><%= @stats[:total_hosted_site_hits].to_comma_separated %></td>
+      </tr>
+      <tr>
+        <td><strong>Total Views</strong> (sites hosted on Neocities)</td>
+        <td><%= @stats[:total_hosted_site_views].to_comma_separated %></td>
+      </tr>
+      <tr>
+        <td><strong>Total Sites</strong></td>
         <td><%= @stats[:total_sites] %></td>
       </tr>
       <tr>

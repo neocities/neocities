@@ -1,0 +1,342 @@
+
+
+<div class="header-Outro with-columns">
+  <div class="row content">
+    <div class="col col-66">
+      <h3>Your Stats</h3>
+      <div class="feed-filter">
+        <% if !@events.empty? && (site.followings_dataset.count > 0) %>
+        <a href="/" <% if params[:activity].nil? %>class="selected"<% end %>>All</a>
+        <a href="/?activity=mine" <% if params[:activity] == 'mine' %>class="selected"<% end %>>Profile Activity</a>
+        <% end %>
+        <a href="/activity">Global Activity</a>
+      </div>
+    </div>
+    <div class="col col-32">
+      <h3>Your Site</h3>
+      <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i>Edit Site</a>
+    </div>
+  </div>
+</div>
+
+<div class="container news-feed">
+  <div class="content misc-page columns right-col">
+    <div class="col-left">
+      <div class="col col-66">
+        <div class="row">
+          
+          <div class="col col-50 globe">
+            <h2>Latest Visitors</h2>
+            <div id="earth_div"></div>
+          </div>
+          <div class="col col-50" style="padding-right: 0;">
+            <table class="table table-striped" id="latest-visitors">
+              <tbody>
+                <tr>
+                  <td>
+                      <span class="location">San Francisco, CA</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> neocities.org</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Portland, OR</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">London, UK</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> Twitter URL</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/about</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Hong Kong, China</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">San Francisco, CA</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> Facebook URL</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">San Francisco, CA</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> neocities.org</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a>, <a href="">/about</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Portland, OR</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">London, UK</span>
+                      <a class="referrer" href=""><i class="fa fa-link"></i> Twitter URL</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/about</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Hong Kong, China</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a>, <a href="">/tech</a>, <a href="">/about</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                      <span class="location">Hong Kong, China</span>
+                      <a class="referrer" href=""><i class="fa fa-search"></i> Google search</a>
+                  </td>
+                  <td>
+                    <span class="time">7:11PM - 4/27/15</span>
+                    <span class="paths"><a href="">/index</a>, <a href="">/links</a>, <a href="">/art</a>, <a href="">/music</a></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <h2>Last 7 Days</h2>
+        <p>(<a href="/plan">Upgrade</a> to see up to see stats for all time)</p>
+        <ul class="nav h-Nav">
+          <li><a href="">Month</a></li>
+          <li><a href="">3 months</a></li>
+          <li><a href="">1 Year</a></li>
+          <li><a href="">All time</a></li>
+        </ul>
+        
+        <canvas id="myChart" style="width:100%;height:300px;display:block"></canvas>
+        
+        <div class="row">
+          <div class="col col-50">
+            <h2>Top Paths</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Path</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>/</td>
+                  <td>130</td>
+                </tr>
+                <tr>
+                  <td>/contact</td>
+                  <td>110</td>
+                </tr>
+                <tr>
+                  <td>/art</td>
+                  <td>101</td>
+                </tr>
+                <tr>
+                  <td>/about</td>
+                  <td>99</td>
+                </tr>
+                <tr>
+                  <td>/links</td>
+                  <td>33</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <h2>Top Locations</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>City</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Portland, OR, USA</td>
+                  <td>22</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        
+          <div class="col col-50">
+
+            <h2>Top Referrers</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Referrer</th>
+                  <th>Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Google search</td>
+                  <td>22</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col col-33">
+        <div class="news-site-info">
+          <p class="site-url"><a href="<%= current_site.uri %>" target="_blank"><%= site.title %></a></p>
+          <div class="stats">
+            <div class="col col-50">
+              <% if site.updated_at %>
+                Last updated<br><strong><%= site.updated_at.ago %></strong>
+              <% else %>
+                Your new website!<br><strong><a href="/dashboard"><i class="fa fa-edit" title="Edit"></i> Start Building</a></strong>
+              <% end %>
+            </div>
+            <div class="col col-50">
+              <div><strong><%= site.views.format_large_number %></strong> views</div>
+              <% follows_count = site.follows_dataset.count %>
+              <div><strong><%= follows_count.format_large_number %></strong> follower<%= follows_count == 1 ? '' : 's' %></div>
+            </div>
+          </div>
+        </div>
+
+        <a href="<%= site.uri %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
+
+        <div class="news-profile-button">
+          <a href="/site/<%= site.username %>" class="btn-Action"><i class="fa fa-user"></i> Profile</a>
+          <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'><i class="fa fa-share-alt"></i> Share</a>
+        </div>
+
+        <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
+
+        <%== erb :'_tags', layout: false, locals: {site: site, is_current_site: site == current_site} %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="http://www.webglearth.com/v2/api.js"></script>
+<script src="/js/Chart.min.js"></script>
+<script>
+  //OpenGL globe
+  $(document).ready(function() {
+    var earth = new WE.map('earth_div');
+    earth.setView([20, -100], 2.07);
+    WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution: '© OpenStreetMap'
+    }).addTo(earth);
+
+    // Start a simple rotation animation
+    var before = null;
+    requestAnimationFrame(function animate(now) {
+        var c = earth.getPosition();
+        var elapsed = before? now - before: 0;
+        before = now;
+        earth.setCenter([c[0], c[1] + 0.1*(elapsed/30)]);
+        requestAnimationFrame(animate);
+    });
+    
+    //chart.js
+    var data = {
+      labels: ["May 1", "May 2", "May 3", "May 4", "May 5", "May 6", "May7"],
+      datasets: [
+        {
+          label: "Hits",
+          fillColor: "rgba(220,220,220,0.2)",
+          strokeColor: "rgba(220,220,220,1)",
+          pointColor: "rgba(220,220,220,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(220,220,220,1)",
+          data: [65, 59, 80, 81, 56, 55, 65]
+        },
+        {
+          label: "Visits",
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(151,187,205,1)",
+          data: [28, 48, 40, 66, 33, 27, 45]
+        }
+      ]
+    };
+    // Get context with jQuery - using jQuery's .get() method.
+    var ctx = $("#myChart").get(0).getContext("2d");
+    // This will get the first returned node in the jQuery collection.
+    //var myNewChart = new Chart(ctx);
+    var myLineChart = new Chart(ctx).Line(data, {bezierCurve: false});
+  })
+</script>

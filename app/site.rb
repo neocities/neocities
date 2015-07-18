@@ -9,6 +9,8 @@ get '/site/:username/?' do |username|
   # TODO: There should probably be a "this site was deleted" page.
   not_found if site.nil? || site.is_banned || site.is_deleted
 
+  redirect '/' if site.is_education
+
   @title = site.title
 
   @current_page = params[:current_page]
@@ -16,6 +18,7 @@ get '/site/:username/?' do |username|
   @current_page = 1 if @current_page == 0
 
   if params[:event_id]
+    not_found unless params[:event_id].is_integer?
     event = Event.select(:id).where(id: params[:event_id]).first
     not_found if event.nil?
     events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
@@ -27,6 +30,76 @@ get '/site/:username/?' do |username|
   @latest_events = events_dataset.all
 
   erb :'site', locals: {site: site, is_current_site: site == current_site}
+end
+
+get '/site/:username/archives' do
+  require_login
+  @site = Site[username: params[:username]]
+  not_found if @site.nil?
+  redirect request.referrer unless current_site.id == @site.id
+
+  @archives = @site.archives_dataset.limit(300).order(:updated_at.desc).all
+
+  erb :'site/archives'
+end
+
+get '/site/:username/stats' do
+  @site = Site[username: params[:username]]
+  not_found if @site.nil?
+
+  @title = "Site stats for #{@site.host}"
+
+  @stats = {}
+
+  %i{referrers locations paths}.each do |stat|
+    @stats[stat] = @site.send("stat_#{stat}_dataset".to_sym).order(:views.desc).limit(100).all
+  end
+
+  @stats[:locations].collect! do |location|
+    location_name = ''
+
+    location_name += location.city_name if location.city_name
+
+    if location.region_name
+      # Some of the region names are numbers for some reason.
+      begin
+        Integer(location.region_name)
+      rescue
+        location_name += ', ' unless location_name == ''
+        location_name += location.region_name
+      end
+    end
+
+    if location.country_code2 && !$country_codes[location.country_code2].nil?
+      location_name += ', ' unless location_name == ''
+      location_name += $country_codes[location.country_code2]
+    end
+
+    location_hash = {name: location_name, views: location.views}
+    if location.latitude && location.longitude
+      location_hash.merge! latitude: location.latitude, longitude: location.longitude
+    end
+    location_hash
+  end
+
+  stats_dataset = @site.stats_dataset.order(:created_at.desc).exclude(created_at: Date.today)
+
+  if @site.supporter?
+    unless params[:days].to_s == 'sincethebigbang'
+      if params[:days]
+        stats_dataset.limit! params[:days]
+      else
+        stats_dataset.limit! 7
+      end
+    end
+  else
+    stats_dataset.limit! 7
+  end
+
+  @stats[:stat_days] = stats_dataset.all.reverse
+  @multi_tooltip_template = "<%= datasetLabel %> - <%= value %>"
+
+  erb :'site/stats', locals: {site: @site}
 end
 
 post '/site/:username/set_editor_theme' do

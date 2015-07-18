@@ -1,4 +1,4 @@
-require 'RMagick'
+require 'rmagick'
 
 class ThumbnailWorker
   THUMBNAILS_PATH = Site::THUMBNAILS_ROOT

@@ -10,15 +10,28 @@ class Numeric
   end
 
   def to_bytes_pretty
-    space = (self.to_f / ONE_MEGABYTE).round(2)
-    space = space.to_i if space.denominator == 1
-#    if space >= 1000000
-#      "#{space/1000000} TB"
-    if space >= 1000
-      "#{space/1000} GB"
-    else
-      "#{space} MB"
-    end
+    computed = nil
+    unit = nil
+    {
+      'B'  => 1000,
+      'KB' => 1000 * 1000,
+      'MB' => 1000 * 1000 * 1000,
+      'GB' => 1000 * 1000 * 1000 * 1000,
+      'TB' => 1000 * 1000 * 1000 * 1000 * 1000
+    }.each_pair { |e, s|
+      if self < s
+        computed = (self.to_f / (s / 1000)).round(2)
+        unit = e
+        break
+      end
+    }
+    computed = computed.to_i if computed.modulo(1) == 0.0
+
+    "#{computed} #{unit}"
+  end
+
+  def to_comma_separated
+    self.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
   end
 
   def format_large_number
@@ -33,7 +46,7 @@ class Numeric
         unit_char = 'K' #thousand
         unit_amount = 1000.0
       end
-    
+
       self_divided = self.to_f / unit_amount
       self_rounded = self_divided.round(1)
 

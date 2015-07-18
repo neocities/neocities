@@ -5,6 +5,56 @@ get '/admin' do
   erb :'admin'
 end
 
+get '/admin/reports' do
+  require_admin
+  @reports = Report.order(:created_at.desc).all
+  erb :'admin/reports'
+end
+
+get '/admin/email' do
+  require_admin
+  erb :'admin/email'
+end
+
+post '/admin/email' do
+  require_admin
+
+  %i{subject body}.each do |k|
+    if params[k].nil? || params[k].empty?
+      flash[:error] = "#{k.capitalize} is missing."
+      redirect '/admin/email'
+    end
+  end
+
+  sites = Site.newsletter_sites
+
+  day = 0
+
+  until sites.empty?
+    seconds = 0.0
+    queued_sites = []
+    Site::EMAIL_BLAST_MAXIMUM_PER_DAY.times {
+      break if sites.empty?
+      queued_sites << sites.pop
+    }
+
+    queued_sites.each do |site|
+      EmailWorker.perform_at((day.days.from_now + seconds), {
+        from: 'Kyle from Neocities <kyle@neocities.org>',
+        to: site.email,
+        subject: params[:subject],
+        body: params[:body]
+      })
+      seconds += 0.5
+    end
+
+    day += 1
+  end
+
+  flash[:success] = "#{sites.length} emails have been queued, #{Site::EMAIL_BLAST_MAXIMUM_PER_DAY} per day."
+  redirect '/'
+end
+
 post '/admin/banip' do
   require_admin
   site = Site[username: params[:username]]
@@ -18,7 +68,7 @@ post '/admin/banip' do
     flash[:error] = 'IP is blank, cannot continue'
     redirect '/admin'
   end
-  sites = Site.filter(ip: Site.hash_ip(site.ip), is_banned: false).all
+  sites = Site.filter(ip: site.ip, is_banned: false).all
   sites.each {|s| s.ban!}
   flash[:error] = "#{sites.length} sites have been banned."
   redirect '/admin'

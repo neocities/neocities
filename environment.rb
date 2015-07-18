@@ -61,6 +61,7 @@ end
 # :nocov:
 if ENV['RACK_ENV'] == 'development'
   # Run async jobs immediately in development.
+=begin
   module Sidekiq
     module Worker
       module ClassMethods
@@ -72,18 +73,7 @@ if ENV['RACK_ENV'] == 'development'
       end
     end
   end
-end
-# :nocov:
-
-# :nocov:
-if $config['pubsub_url']
-  $pubsub_pool = ConnectionPool.new(size: 10, timeout: 5) {
-    Redis.new url: $config['pubsub_url']
-  }
-end
-
-if $config['pubsub_url'].nil? && ENV['RACK_ENV'] == 'production'
-  raise 'pubsub_url is missing from config'
+=end
 end
 # :nocov:
 
@@ -130,4 +120,12 @@ if ENV['RACK_ENV'] != 'development'
   Sass::Plugin.options[:style] = :compressed
   # Sass::Plugin.options[:never_update] = true
   Sass::Plugin.options[:full_exception] = false
+end
+
+require 'csv'
+
+$country_codes = {}
+
+CSV.foreach("./files/country_codes.csv") do |row|
+  $country_codes[row.last] = row.first
 end

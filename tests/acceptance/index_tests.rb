@@ -11,8 +11,8 @@ describe '/' do
 
     it 'loads the news feed with welcome' do
       visit '/'
-      page.body.must_match /Neocities news feed/i
-      page.body.must_match /You aren’t following any websites yet/i
+      page.body.must_match /Thanks for joining the Neocities community/i
+      page.body.wont_match /You aren’t following any websites yet/i
     end
 
     it 'displays a follow and an unrelated follow' do

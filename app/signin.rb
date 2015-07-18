@@ -1,5 +1,6 @@
 get '/signin/?' do
   dashboard_if_signed_in
+  @title = 'Sign In'
   erb :'signin'
 end
 
