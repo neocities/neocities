@@ -319,7 +319,7 @@ class Site < Sequel::Model
   end
 
   def is_following?(site)
-    followings_dataset.select(:id).filter(site_id: site.id).first ? true : false
+    followings_dataset.select(:follows__id).filter(site_id: site.id).first ? true : false
   end
 
   def toggle_follow(site)
@@ -466,6 +466,16 @@ class Site < Sequel::Model
     DB.transaction {
       account_sites.all {|site| site.ban! }
     }
+  end
+
+  # Who this site follows
+  def followings_dataset
+    super.select_all(:follows).inner_join(:sites, :id=>:site_id).exclude(:sites__is_deleted => true).exclude(:sites__is_banned => true).exclude(:sites__is_crashing => true)
+  end
+
+  # Who this site is following
+  def follows_dataset
+    super.select_all(:follows).inner_join(:sites, :id=>:actioning_site_id).exclude(:sites__is_deleted => true).exclude(:sites__is_banned => true).exclude(:sites__is_crashing => true)
   end
 
 =begin
