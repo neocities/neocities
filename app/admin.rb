@@ -105,6 +105,7 @@ post '/admin/mark_nsfw' do
   end
 
   site.is_nsfw = true
+  site.admin_nsfw = true
   site.save_changes validate: false
 
   flash[:success] = 'MISSION ACCOMPLISHED'
