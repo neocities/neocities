@@ -752,10 +752,9 @@
     }
   }
   @media (max-device-width:480px), screen and (max-width:800px) {
-    width: 10em!important;
-    float: right;
-    padding: 0 0 18px 0;
-    margin-top: -77px;
+    position: absolute;
+    top: 46px;
+    right: -8px;
   }
 }
 .interior .header-Outro.with-columns .col-66 {
