@@ -16,7 +16,7 @@ gem 'google-api-client',  require: 'google/api_client'
 gem 'tilt'
 gem 'erubis'
 gem 'stripe' #, source: 'https://code.stripe.com/'
-gem 'screencap'
+gem 'screencap', '~> 0.1.4'
 gem 'cocaine'
 gem 'zipruby'
 gem 'sass', require: nil

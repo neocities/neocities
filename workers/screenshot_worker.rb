@@ -5,6 +5,7 @@ require 'thread'
 require 'open3'
 
 # Don't judge - Ruby handling of timeouts is a joke..
+=begin
 module Phantomjs
   def self.run(*args, &block)
     pid = nil
@@ -27,6 +28,7 @@ module Phantomjs
     # :nocov:
   end
 end
+=end
 
 class ScreenshotWorker
   SCREENSHOTS_PATH = Site::SCREENSHOTS_ROOT
@@ -44,9 +46,11 @@ class ScreenshotWorker
       f.fetch(
         output: screenshot_output_path,
         width: 1280,
-        height: 960
+        height: 960,
+        maxRenderWait: 25000,
+        cutoffWait: 30000
       )
-    rescue Timeout::Error
+    rescue => e
       # :nocov:
       puts "#{username}/#{path} is timing out, discontinuing"
       site = Site[username: username]
