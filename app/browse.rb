@@ -28,9 +28,12 @@ def education_sites_dataset
 end
 
 def browse_sites_dataset
-  site_dataset = Site.filter(is_deleted: false, is_banned: false, is_crashing: false).filter(site_changed: true)
+
+  site_dataset = Site.where(is_deleted: false, is_banned: false, is_crashing: false, site_changed: true)
 
   if current_site
+    site_dataset.or! sites__id: current_site.id
+
     if !current_site.blocking_site_ids.empty?
       site_dataset.where!(Sequel.~(Sequel.qualify(:sites, :id) => current_site.blocking_site_ids))
     end

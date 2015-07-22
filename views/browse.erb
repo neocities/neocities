@@ -37,8 +37,6 @@
               </select>
             </div>
 
-            <input name="tag" type="hidden" value="<%= params[:tag] %>">
-
             <!--
               <div>
                 <input name="is_nsfw" type="checkbox" value="true" <%= params[:is_nsfw].to_s == 'true' ? 'checked' : '' %>> Show 18+ content
@@ -51,10 +49,14 @@
       <div class="col col-50 filter">
         <form method="GET" action="browse">
         <fieldset class="grouping">
-        <% unless is_education? || params[:sort_by] == 'followers' %>
+        <% unless is_education? %>
           <label class="text-Label" for="tag"><span class="hide-on-mobile">Filter by </span>Tag:</label>
           <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
           <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Filter">
+        <% else %>
+          <% if params[:tag] %>
+            <input name="tag" type="hidden" value="<%= params[:tag] %>">
+          <% end %>
         <% end %>
         </fieldset>
       </div>
