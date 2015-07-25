@@ -7,7 +7,13 @@ class ThumbnailWorker
 
   def perform(username, path)
     img_list = Magick::ImageList.new
-    img_list.from_blob File.read(File.join(Site::SITE_FILES_ROOT, username, path))
+
+    begin
+      img_list.from_blob File.read(File.join(Site::SITE_FILES_ROOT, username, path))
+    rescue Errno::ENOENT => e # Not found, skip
+      return
+    end
+
     img = img_list.first
 
     user_thumbnails_path = File.join THUMBNAILS_PATH, username
