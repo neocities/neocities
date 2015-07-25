@@ -256,16 +256,16 @@
   width: 100%;
   position: relative;
   margin-top: 7px;
-  
+
   .column, input[type='checkbox'] {
     display: none;
   }
-  
+
   .btn-group {
     float: left;
     margin-right: 15px;
     margin-left: -3px;
-    
+
     >.btn+.btn {
       margin-left: 0px;
       border-left: 1px solid rgba(0, 0, 0, 0.1);
@@ -320,11 +320,11 @@
 }
 .files .actions {
   float: right;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     float: left;
     margin-top: 7px;
-    
+
     .fa {
       display: none;
     }
@@ -522,7 +522,7 @@
 }
 @mixin dashboard-list-view {
   padding: 0;
-  
+
   .upload-Boundary {
     padding: 0;
     border: 0;
@@ -532,7 +532,7 @@
     padding: 10px 20px;
     margin: 0;
     width: 100%;
-    
+
     &:nth-child(even) {
       background: #EFE8DC;
     }
@@ -545,7 +545,7 @@
       text-align: left;
       width: 30%;
       text-overflow: ellipsis;
-      
+
       @media (max-device-width:480px), screen and (max-width:800px) {
         width: 33%;
       }
@@ -565,7 +565,7 @@
     background-size: 23px;
     padding: 0;
     font-size: 8px;
-    
+
     img {
       max-width: 23px;
       max-height: 23px;
@@ -586,7 +586,7 @@
     background-color: transparent;
     display: block;
     width: 94%;
-    
+
     a {
       color: #e93250;
       display: inline;
@@ -595,7 +595,7 @@
     .link-overlay {
       width: 30%;
     }
-    
+
     @media (max-device-width:480px), screen and (max-width:800px) {
       width: 84%;
     }
@@ -609,7 +609,7 @@
     font-size: 13px;
     display: block;
     padding-top: 4px;
-    
+
     @media (max-device-width:480px), screen and (max-width:800px) {
       display: none;
     }
@@ -2110,45 +2110,5 @@ table#latest-visitors {
 .news-feed .content.misc-page .col-50 {
   @media (max-device-width:480px), screen and (max-width:800px) {
     width: 100%;
-  }
-}
-.intro-List.kickstarter .col {
-  padding-top: 1em;
-  padding-bottom: .8em;
-  margin-left: 0;
-  
-  &:first-child{
-    padding-left: 2px; 
-  }
-  
-  .title {
-    margin-top: 1%;
-  }
-  .title a {
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-  }
-  p {
-    margin-top: 15px;
-  }
-}
-.welcome.kickstarter {
-  background: #daeea5 url(/img/tutorialthumbnail.png) no-repeat;
-  background-position:  right center;
-  background-size: auto 100%;
-  padding: 15px 100px 4px 23px;
-  margin-bottom: 13px;
-  font-size: 95%;
-  @media (max-device-width:480px), screen and (max-width:800px) {
-    background-size: 32%;
-    background-position: right top;
-  }
-  
-  h4 {
-    margin-bottom: .2em;
-    a {
-      color: #2c3e50!important;
-    }
   }
 }

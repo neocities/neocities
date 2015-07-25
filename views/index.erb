@@ -57,26 +57,11 @@
 <div class="header-Outro">
 <div class="row header-Content content">
   <div class="col intro">
-    <h2 class="section-header">Create your own free website. Unlimited creativity, zero ads.</h2>
+    <h2 class="section-header">Create your own free website.<br>Unlimited creativity, zero ads.</h2>
     <p class="intro-text">
      Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We provide free web hosting and tools that allow anyone to make a website. Only your imagination is required. Join us!
     </p>
-    <div class="intro-List kickstarter">
-      <div class="col col-40">
-        <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev"><img src="/img/kickstarterthumbnail.jpg" style="width: 100%; float: left; margin-right: 20px; border: 3px solid white;margin-bottom: 1em"></a>
-      </div>
-      <div class="col col-60">
-        <div class="title">
-        <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">
-        SUPPORT OUR
-        <img src="/img/kickstarterlogo.png" style="width: 280px; display:block; margin: 11px 0px;">
-        <%= kickstarter_days_remaining %> DAY LEFT
-        </a>
-        </div>
-        <p>We need your help to build an amazing HTML/CSS course into Neocities! <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">Learn More&nbsp;>></a></p>
-      </div>
-    </div>
-    <!--<ul class="intro-List">
+    <ul class="intro-List">
       <li class="intro-Social">
         <span class="intro-Icon"></span>
         <h3 class="delta">Share your web creation with the world</h3>
@@ -90,7 +75,7 @@
         <p class="base">
           We’ve made it easier to build your website and explore other sites. Neocities features an in-browser HTML editor, custom domain support, faster site loading, easy file uploading, RSS feeds, folder support, and much more.
       </li>
-    </ul>-->
+    </ul>
   </div>
 
   <div class="col signup-Area">
