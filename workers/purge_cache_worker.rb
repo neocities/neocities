@@ -24,6 +24,7 @@ class PurgeCacheWorker
         cache_purge: '1'
       }
     rescue RestClient::ResourceNotFound
+    rescue RestClient::Forbidden
     end
   end
 end
