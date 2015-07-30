@@ -496,6 +496,7 @@ class Site < Sequel::Model
 =end
 
   def commenting_allowed?
+    return false if owner.commenting_banned == true
     return true if owner.commenting_allowed
 
     if owner.supporter?
