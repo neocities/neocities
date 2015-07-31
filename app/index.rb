@@ -86,3 +86,7 @@ end
 get '/hotlinking/?' do
   erb :'hotlinking'
 end
+
+get '/thankyou' do
+  erb :'thankyou'
+end

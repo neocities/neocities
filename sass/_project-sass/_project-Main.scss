@@ -1842,7 +1842,7 @@ a.tag:hover {
 
   padding-top: 0;
   background: #4F7E89;
-  padding-bottom: 7em;
+  padding-bottom: 5em;
 
   a {
     color: white;
@@ -2110,5 +2110,34 @@ table#latest-visitors {
 .news-feed .content.misc-page .col-50 {
   @media (max-device-width:480px), screen and (max-width:800px) {
     width: 100%;
+  }
+}
+.section.thankyou {
+  text-align: center;
+  color: #4F7E89;
+  padding: 6.5em 8% 7em;
+      
+  a {
+    color: #4F7E89;
+    text-decoration: underline;
+  }
+  img {
+    margin-bottom: 1em;
+  }
+  p {
+    font-size: 1em;
+  }
+  p:first-child {
+    font-size: 120%;
+    margin-bottom: .2em;
+  }
+}
+ul.thankyou {
+  list-style: none;
+  margin-top: 1.5em;
+  
+  li {
+    display: inline-block;
+    width: 32%;
   }
 }
