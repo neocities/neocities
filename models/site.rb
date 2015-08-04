@@ -591,7 +591,11 @@ class Site < Sequel::Model
     # We gotta flush the dirname too if it's an index file.
     if relative_path != '' && relative_path.match(/\/$|index\.html?$/i)
       PurgeCacheOrderWorker.perform_async username, relative_path
-      PurgeCacheOrderWorker.perform_async username, Pathname(relative_path).dirname.to_s
+
+      purge_file_path = Pathname(relative_path).dirname.to_s
+
+      PurgeCacheOrderWorker.perform_async username, '/?surf=1' if purge_file_path == '/'
+      PurgeCacheOrderWorker.perform_async username, purge_file_path
     else
       PurgeCacheOrderWorker.perform_async username, relative_path
     end

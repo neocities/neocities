@@ -107,13 +107,17 @@ describe 'site_files' do
       @site.title.must_equal 'Hello?'
 
       # Purge cache needs to flush / and index.html for either scenario.
-      PurgeCacheOrderWorker.jobs.length.must_equal 2
+      PurgeCacheOrderWorker.jobs.length.must_equal 3
       first_purge = PurgeCacheOrderWorker.jobs.first
+      surf_purge = PurgeCacheOrderWorker.jobs[1]
       dirname_purge = PurgeCacheOrderWorker.jobs.last
 
       username, pathname = first_purge['args']
       username.must_equal @site.username
       pathname.must_equal '/index.html'
+
+      surf_purge['args'].last.must_equal '/?surf=1'
+
       username, pathame = nil
       username, pathname = dirname_purge['args']
       username.must_equal @site.username
