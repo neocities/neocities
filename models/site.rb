@@ -980,6 +980,10 @@ class Site < Sequel::Model
     PLAN_FEATURES[plan_type.to_sym][:name]
   end
 
+  def stripe_paying_supporter?
+    stripe_customer_id && !plan_ended && values[:plan_type].match(/free|special/).nil?
+  end
+
   def unconverted_legacy_supporter?
     stripe_customer_id && !plan_ended && values[:plan_type].nil? && stripe_subscription_id.nil?
   end
