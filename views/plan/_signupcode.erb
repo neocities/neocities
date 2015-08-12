@@ -13,6 +13,10 @@
 
     var signupform = $(event.target)
 
+    <% if current_site && parent_site.stripe_subscription_id && !request.path.match(/\/settings/) %>
+      return true
+    <% end %>
+
     var planError = $('#plan_error')
     planError.css('display', 'none')
     signupform.find(':submit').prop('disabled', true)

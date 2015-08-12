@@ -35,9 +35,6 @@ post '/plan/update' do
     end
   end
 
-  # Do not create customer if there is already a customer. Is this necessary?
-  redirect request.referrer if current_site.stripe_subscription_id
-
   site ||= parent_site
 
   DB.transaction do
