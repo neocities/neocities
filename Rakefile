@@ -240,6 +240,19 @@ task :prime_site_files => [:environment] do
   end
 end
 
+desc 'dedupe_follows'
+task :dedupe_follows => [:environment] do
+  follows = Follow.all
+  deduped_follows = Follow.all.uniq {|f| "#{f.site_id}_#{f.actioning_site_id}"}
+
+  follows.each do |follow|
+    unless deduped_follows.include?(follow)
+      puts "deleting dedupe: #{follow.inspect}"
+      follow.delete
+    end
+  end
+end
+
 =begin
 desc 'Update screenshots'
 task :update_screenshots => [:environment] do
