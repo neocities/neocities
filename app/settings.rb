@@ -334,3 +334,29 @@ get '/settings/unsubscribe_email/?' do
   end
   erb :'settings/account/unsubscribe'
 end
+
+post '/settings/update_card' do
+  require_login
+
+  customer = Stripe::Customer.retrieve current_site.stripe_customer_id
+
+  old_card_ids = customer.sources.collect {|s| s.id}
+
+  begin
+    customer.sources.create source: params[:stripe_token]
+  rescue Stripe::InvalidRequestError => e
+    if  e.message.match /cannot use a.+token more than once/
+      flash[:error] = 'Card is already being used.'
+      redirect '/settings#billing'
+    else
+      raise e
+    end
+  end
+
+  old_card_ids.each do |card_id|
+    customer.sources.retrieve(card_id).delete
+  end
+
+  flash[:success] = 'Card information updated.'
+  redirect '/settings#billing'
+end

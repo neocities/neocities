@@ -216,6 +216,43 @@ task :hash_ips => [:environment] do
   end
 end
 
+desc 'prime_site_files'
+task :prime_site_files => [:environment] do
+  Site.where(is_banned: false).select(:id, :username).all.each do |site|
+    Dir.glob(File.join(site.files_path, '**/*')).each do |file|
+      next unless site.username == 'kyledrake'
+      path = file.gsub(site.base_files_path, '').sub(/^\//, '')
+
+      site_file = site.site_files_dataset[path: path]
+
+      if site_file.nil?
+        next if File.directory? file
+        mtime = File.mtime file
+        site.add_site_file(
+          path: path,
+          size: File.size(file),
+          sha1_hash: Digest::SHA1.file(file).hexdigest,
+          updated_at: mtime,
+          created_at: mtime
+        )
+      end
+    end
+  end
+end
+
+desc 'dedupe_follows'
+task :dedupe_follows => [:environment] do
+  follows = Follow.all
+  deduped_follows = Follow.all.uniq {|f| "#{f.site_id}_#{f.actioning_site_id}"}
+
+  follows.each do |follow|
+    unless deduped_follows.include?(follow)
+      puts "deleting dedupe: #{follow.inspect}"
+      follow.delete
+    end
+  end
+end
+
 =begin
 desc 'Update screenshots'
 task :update_screenshots => [:environment] do
