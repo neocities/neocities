@@ -11,6 +11,10 @@ get '/admin/reports' do
   erb :'admin/reports'
 end
 
+post '/admin/reports' do
+
+end
+
 get '/admin/email' do
   require_admin
   erb :'admin/email'
