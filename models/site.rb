@@ -1162,7 +1162,7 @@ class Site < Sequel::Model
       reload
 
       #SiteChange.record self, relative_path unless opts[:new_install]
-      ArchiveWorker.perform_async self.id
+      ArchiveWorker.perform_in 24.hours, self.id
     end
 
     results
