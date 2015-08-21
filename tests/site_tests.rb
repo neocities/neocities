@@ -5,6 +5,16 @@ def app
 end
 
 describe Site do
+  describe 'custom_max_space' do
+    it 'should use the custom max space if it is more' do
+      site = Fabricate :site
+      site.maximum_space.must_equal Site::PLAN_FEATURES[:free][:space]
+      site.custom_max_space = 10**9
+      site.save_changes
+      site.maximum_space.must_equal 10**9
+    end
+  end
+
   describe 'can_email' do
     it 'should fail if send_emails is false' do
       site = Fabricate :site

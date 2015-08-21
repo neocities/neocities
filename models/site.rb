@@ -960,7 +960,11 @@ class Site < Sequel::Model
   end
 
   def maximum_space
-    PLAN_FEATURES[(parent? ? self : parent).plan_type.to_sym][:space]
+    plan_space = PLAN_FEATURES[(parent? ? self : parent).plan_type.to_sym][:space]
+
+    return custom_max_space if custom_max_space > plan_space
+
+    plan_space
   end
 
   def space_percentage_used
