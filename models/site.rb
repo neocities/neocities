@@ -458,7 +458,7 @@ class Site < Sequel::Model
     }
 
     file_list.each do |path|
-      purge_cache path
+      delete_cache path
     end
   end
 
@@ -598,6 +598,22 @@ class Site < Sequel::Model
       PurgeCacheOrderWorker.perform_async username, purge_file_path
     else
       PurgeCacheOrderWorker.perform_async username, relative_path
+    end
+  end
+
+  # TODO DRY this up
+
+  def delete_cache(path)
+    relative_path = path.gsub base_files_path, ''
+
+    DeleteCacheOrderWorker.perform_async username, relative_path
+
+    # We gotta flush the dirname too if it's an index file.
+    if relative_path != '' && relative_path.match(/\/$|index\.html?$/i)
+      purge_file_path = Pathname(relative_path).dirname.to_s
+
+      DeleteCacheOrderWorker.perform_async username, '/?surf=1' if purge_file_path == '/'
+      DeleteCacheOrderWorker.perform_async username, purge_file_path
     end
   end
 
@@ -1182,7 +1198,7 @@ class Site < Sequel::Model
     rescue Errno::ENOENT
     end
 
-    purge_cache path
+    delete_cache path
 
     ext = File.extname(path).gsub(/^./, '')
 

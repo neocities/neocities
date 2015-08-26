@@ -24,16 +24,39 @@ describe 'site_files' do
   end
 
   describe 'delete' do
+    before do
+      DeleteCacheWorker.jobs.clear
+      DeleteCacheOrderWorker.jobs.clear
+    end
+
     it 'works' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
+
+      PurgeCacheOrderWorker.jobs.clear
+
       @site.reload.space_used.must_equal uploaded_file.size
       file_path = @site.files_path 'test.jpg'
       File.exists?(file_path).must_equal true
       delete_file filename: 'test.jpg'
+
       File.exists?(file_path).must_equal false
       SiteFile[site_id: @site.id, path: 'test.jpg'].must_be_nil
       @site.reload.space_used.must_equal 0
+
+      PurgeCacheOrderWorker.jobs.length.must_equal 0
+      DeleteCacheOrderWorker.jobs.length.must_equal 1
+      args = DeleteCacheOrderWorker.jobs.first['args']
+      args[0].must_equal @site.username
+      args[1].must_equal 'test.jpg'
+    end
+
+    it 'flushes surf for index.html' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
+      upload 'files[]' => uploaded_file
+      delete_file filename: '/index.html'
+      DeleteCacheOrderWorker.jobs.length.must_equal 3
+      DeleteCacheOrderWorker.jobs.collect {|j| j['args'].last}.must_equal ['/index.html', '/?surf=1', '/']
     end
 
     it 'deletes a directory and all files in it' do

@@ -196,7 +196,7 @@ post '/settings/:username/change_name' do
     }
 
     old_file_paths.each do |file_path|
-      @site.purge_cache file_path
+      @site.delete_cache file_path
     end
 
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
