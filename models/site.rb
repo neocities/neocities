@@ -1205,9 +1205,15 @@ class Site < Sequel::Model
     end
 
     if results.include? true && opts[:new_install] != true
+      if files.select {|f| f[:filename] =~ /^\/?index.html$/}.length > 0 || site_changed == true
+        index_changed = true
+      else
+        index_changed = false
+      end
+
       time = Time.now
       sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1, space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?",
-        true,
+        index_changed,
         time,
         time,
         self.id

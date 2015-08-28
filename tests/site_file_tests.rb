@@ -185,7 +185,7 @@ describe 'site_files' do
         File.exists?(@site.thumbnail_path('test.jpg', resolution)).must_equal true
       end
 
-      @site.site_changed.must_equal true
+      @site.site_changed.must_equal false
     end
 
     it 'fails with unsupported file' do
@@ -246,6 +246,20 @@ describe 'site_files' do
           File.join "#{Site::THUMBNAILS_URL_ROOT}", @site.username, "/derpie/derptest/test.jpg.#{resolution}.jpg"
         )
       end
+    end
+
+    it 'does not register site changing until root index.html is changed' do
+      upload(
+        'dir' => 'derpie/derptest',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      @site.reload.site_changed.must_equal false
+
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
+      @site.reload.site_changed.must_equal true
+
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/chunkfive.otf', 'application/vnd.ms-opentype')
+      @site.reload.site_changed.must_equal true
     end
 
     it 'does not store new file if hash matches' do
