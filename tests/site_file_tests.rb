@@ -188,6 +188,14 @@ describe 'site_files' do
       @site.site_changed.must_equal false
     end
 
+    it 'sets site changed to false if index is empty' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/blankindex/index.html', 'text/html')
+      upload 'files[]' => uploaded_file
+      last_response.body.must_match /successfully uploaded/i
+      @site.empty_index?.must_equal true
+      @site.site_changed.must_equal false
+    end
+
     it 'fails with unsupported file' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
       last_response.body.must_match /only supported by.+supporter account/i

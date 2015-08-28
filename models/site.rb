@@ -74,6 +74,8 @@ class Site < Sequel::Model
     /PHP\.Hide/
   ]
 
+  EMPTY_FILE_HASH = Digest::SHA1.hexdigest ''
+
   PHISHING_FORM_REGEX = /www.formbuddy.com\/cgi-bin\/form.pl/i
   SPAM_MATCH_REGEX = ENV['RACK_ENV'] == 'test' ? /pillz/ : /#{$config['spam_smart_filter'].join('|')}/i
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
@@ -1177,6 +1179,10 @@ class Site < Sequel::Model
     end
   end
 
+  def empty_index?
+    !site_files_dataset.where(path: /^\/?index.html$/).where(sha1_hash: EMPTY_FILE_HASH).first.nil?
+  end
+
   # array of hashes: filename, tempfile, opts.
   def store_files(files, opts={})
     results = []
@@ -1206,11 +1212,13 @@ class Site < Sequel::Model
     end
 
     if results.include? true && opts[:new_install] != true
-      if files.select {|f| f[:filename] =~ /^\/?index.html$/}.length > 0 || site_changed == true
+      if((files.select {|f| f[:filename] =~ /^\/?index.html$/}.length > 0 || site_changed == true))
         index_changed = true
       else
         index_changed = false
       end
+
+      index_changed = false if empty_index?
 
       time = Time.now
       sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1, space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?",
