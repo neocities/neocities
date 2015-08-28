@@ -1089,7 +1089,7 @@ class Site < Sequel::Model
 
   def compute_score
     points = 0
-    points += follows_dataset.count * 5
+    points += follows_dataset.count * 30
     points += profile_comments_dataset.count * 1
     points += views / 1000
     points += 20 if !featured_at.nil?
