@@ -1094,6 +1094,7 @@ class Site < Sequel::Model
 
     # penalties
     points = 0 if changed_count < 2
+    points = 0 if api_calls > 1000
 
     (points / ((Time.now - updated_at) / 7.days)**SCORE_GRAVITY).round(4)
   end
