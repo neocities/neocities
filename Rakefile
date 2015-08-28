@@ -253,6 +253,23 @@ task :dedupe_follows => [:environment] do
   end
 end
 
+desc 'flush_empty_index_sites'
+task :flush_empty_index_sites => [:environment] do
+  sites = Site.select(:id).all
+
+  counter = 0
+
+  sites.each do |site|
+    if site.empty_index?
+      counter += 1
+      site.site_changed = false
+      site.save_changes validate: false
+    end
+  end
+
+  puts "#{counter} sites set to not changed."
+end
+
 =begin
 desc 'Update screenshots'
 task :update_screenshots => [:environment] do
