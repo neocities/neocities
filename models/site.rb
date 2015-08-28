@@ -1076,6 +1076,31 @@ class Site < Sequel::Model
     end
   end
 
+  def self.compute_scores
+    select(:id, :username, :created_at, :updated_at, :views).exclude(is_banned: true).exclude(is_crashing: true).exclude(is_nsfw: true).exclude(updated_at: nil).all.each do |s|
+      s.score = s.compute_score
+      s.save_changes validate: false
+    end
+  end
+
+  def compute_score
+    score = 0
+    begin
+      score += (Time.now - created_at) / 1.day
+    rescue => e
+      binding.pry
+    end
+    score -= ((Time.now - updated_at) / 1.day) * 2
+    score += 500 if (updated_at > 1.week.ago)
+    score -= 1000 if
+    follow_count = follows_dataset.count
+    score -= 1000 if follow_count == 0
+    score += follow_count * 100
+    score += profile_comments_dataset.count * 5
+    score += profile_commentings_dataset.count
+    score.to_i
+  end
+
   def suggestions(limit=SUGGESTIONS_LIMIT, offset=0)
     suggestions_dataset = Site.exclude(id: id).exclude(is_banned: true).exclude(is_nsfw: true).order(:views.desc, :updated_at.desc)
     suggestions = suggestions_dataset.where(tags: tags).limit(limit, offset).all
@@ -1281,5 +1306,4 @@ class Site < Sequel::Model
     end
     true
   end
-
 end

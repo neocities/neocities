@@ -46,6 +46,9 @@ def browse_sites_dataset
   end
 
   case params[:sort_by]
+    when 'special_sauce'
+      site_dataset.exclude! score: nil
+      site_dataset.order! :score.desc
     when 'followers'
       site_dataset = site_dataset.association_left_join :follows
       site_dataset.select_all! :sites
