@@ -270,6 +270,11 @@ task :flush_empty_index_sites => [:environment] do
   puts "#{counter} sites set to not changed."
 end
 
+desc 'compute_scores'
+task :compute_scores => [:environment] do
+  Site.compute_scores
+end
+
 =begin
 desc 'Update screenshots'
 task :update_screenshots => [:environment] do
