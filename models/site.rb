@@ -1077,7 +1077,7 @@ class Site < Sequel::Model
   end
 
   def self.compute_scores
-    select(:id, :username, :created_at, :updated_at, :views, :featured_at, :changed_count).exclude(is_banned: true).exclude(is_crashing: true).exclude(is_nsfw: true).exclude(updated_at: nil).all.each do |s|
+    select(:id, :username, :created_at, :updated_at, :views, :featured_at, :changed_count).exclude(is_banned: true).exclude(is_crashing: true).exclude(is_nsfw: true).exclude(updated_at: nil).where(site_changed: true).all.each do |s|
       s.score = s.compute_score
       s.save_changes validate: false
     end
