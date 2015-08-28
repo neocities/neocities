@@ -1077,19 +1077,31 @@ class Site < Sequel::Model
   end
 
   def self.compute_scores
-    select(:id, :username, :created_at, :updated_at, :views).exclude(is_banned: true).exclude(is_crashing: true).exclude(is_nsfw: true).exclude(updated_at: nil).all.each do |s|
+    select(:id, :username, :created_at, :updated_at, :views, :featured_at, :changed_count).exclude(is_banned: true).exclude(is_crashing: true).exclude(is_nsfw: true).exclude(updated_at: nil).all.each do |s|
       s.score = s.compute_score
       s.save_changes validate: false
     end
   end
 
+  SCORE_GRAVITY = 1.8
+
+  def compute_score
+    points = 0
+    points += follows_dataset.count * 5
+    points += profile_comments_dataset.count * 1
+    points += views / 1000
+    points += 20 if !featured_at.nil?
+
+    # penalties
+    points = 0 if changed_count < 2
+
+    (points / ((Time.now - updated_at) / 7.days)**SCORE_GRAVITY).round(4)
+  end
+
+=begin
   def compute_score
     score = 0
-    begin
-      score += (Time.now - created_at) / 1.day
-    rescue => e
-      binding.pry
-    end
+    score += (Time.now - created_at) / 1.day
     score -= ((Time.now - updated_at) / 1.day) * 2
     score += 500 if (updated_at > 1.week.ago)
     score -= 1000 if
@@ -1100,6 +1112,7 @@ class Site < Sequel::Model
     score += profile_commentings_dataset.count
     score.to_i
   end
+=end
 
   def suggestions(limit=SUGGESTIONS_LIMIT, offset=0)
     suggestions_dataset = Site.exclude(id: id).exclude(is_banned: true).exclude(is_nsfw: true).order(:views.desc, :updated_at.desc)
