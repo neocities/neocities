@@ -1,0 +1,31 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>Bandwidth Stats</h1>
+    <h2 class="subtitle">John James Cowperthwaite cares that I care about this</h2>
+  </div>
+</div>
+
+<div class="content misc-page single-Col txt-Center" style="padding-top: 20px;">
+  <div class="row">
+    <div class="col col-100">
+      <table class="table">
+        <tr>
+          <th>Views</th>
+          <th>Hits</th>
+          <th>Bandwidth</th>
+          <th>Date</th>
+        </tr>
+
+        <% @monthly_stats.each do |monthly_stat| %>
+          <tr>
+            <td><%= monthly_stat[:views].to_comma_separated %></td>
+            <td><%= monthly_stat[:hits].to_comma_separated %></td>
+            <td><%= monthly_stat[:bandwidth].to_bytes_pretty %></td>
+            <td><%= monthly_stat[:date].strftime('%Y %B') %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -15,6 +15,37 @@ post '/admin/reports' do
 
 end
 
+get '/admin/usage' do
+  require_admin
+  today = Date.today
+  current_month = Date.new today.year, today.month, 1
+
+  @monthly_stats = []
+
+  month = current_month
+
+  until month.year == 2015 && month.month == 1 do
+    stats = DB[
+      'select sum(views) as views, sum(hits) as hits, sum(bandwidth) as bandwidth from stats where created_at >= ? and created_at < ?',
+      month,
+      month.next_month].first
+
+    stats.keys.each do |key|
+      stats[key] ||= 0
+    end
+
+    stats.collect {|s| s == 0}.uniq
+
+    unless stats.select {|k,v| v == 0}.length == stats.keys.length
+      @monthly_stats.push stats.merge(date: month)
+    end
+
+    month = month.prev_month
+  end
+
+  erb :'admin/usage'
+end
+
 get '/admin/email' do
   require_admin
   erb :'admin/email'
