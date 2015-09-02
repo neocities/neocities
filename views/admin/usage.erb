@@ -28,4 +28,27 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="col col-100">
+      <h1>Popular Sites</h1>
+      <% @monthly_stats.each do |monthly_stat| %>
+        <h2><%= monthly_stat[:date].strftime('%Y %B') %></h2>
+        <table class="table">
+          <tr>
+            <th>Username</th>
+            <th>Profile</th>
+            <th>Bandwidth</th>
+          </tr>
+          <% monthly_stat[:popular_sites].each do |s| %>
+          <tr>
+            <td style="text-align: left"><a href="http://<%= s[:username] %>.neocities.org"><%= s[:username] %></a></td>
+            <td><a href="/site/<%= s[:username] %>">link</a></td>
+            <td style="text-align: left"><%= s[:bandwidth].to_bytes_pretty %></td>
+          </tr>
+          <% end %>
+        </table
+      <% end %>
+    </div>
+  </div>
+
 </div>

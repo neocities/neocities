@@ -36,8 +36,14 @@ get '/admin/usage' do
 
     stats.collect {|s| s == 0}.uniq
 
-    unless stats.select {|k,v| v == 0}.length == stats.keys.length
-      @monthly_stats.push stats.merge(date: month)
+    if stats[:views] != 0 && stats[:hits] != 0 && stats[:bandwidth] != 0
+      popular_sites = DB[
+        'select sum(bandwidth) as bandwidth,username from stats left join sites on sites.id=stats.site_id where stats.created_at >= ? and stats.created_at < ? group by username order by bandwidth desc limit 50',
+        month,
+        month.next_month
+      ].all
+
+      @monthly_stats.push stats.merge(date: month).merge(popular_sites: popular_sites)
     end
 
     month = month.prev_month
