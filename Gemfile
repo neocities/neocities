@@ -30,6 +30,7 @@ gem 'geoip'
 gem 'io-extra', require: 'io/extra'
 gem 'rye'
 gem 'dnsruby'
+gem 'base32'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
