@@ -38,11 +38,9 @@
           <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i> Edit Site</a>
         <% end %>
 
-        <!--
         <% if current_site && current_site.id == site.id && site.latest_archive %>
           <a href="/site/<%= site.username %>/archives" class="btn-Action edit"><i class="fa fa-history" title="Archives"></i> Archives</a>
         <% end %>
-        -->
 
         <% if current_site && current_site != site %>
           <% is_following = current_site.is_following?(site) %>
