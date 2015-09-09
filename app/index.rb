@@ -50,10 +50,6 @@ get '/education' do
   erb :education, layout: :index_layout
 end
 
-get '/tutorials' do
-  erb :'tutorials'
-end
-
 get '/donate' do
   erb :'donate'
 end

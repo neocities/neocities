@@ -1,0 +1,38 @@
+<section class="section tutorial">
+  <div class="row">
+    <div class="col col-60 lesson">
+      <h1><%= @section.upcase %> Tutorial</h1>
+      <h2 class="subtitle">Page <%= @page %>/10</h2>
+
+      <%== erb "tutorial/#{@section}/#{@page}".to_sym, layout: false %>
+    </div>
+
+    <div class="col col-40 interact">
+      <input id="submit" class="btn btn-action" type="submit" value="Save">
+      <h3>HTML</h3>
+      <textarea id="editor" class="editor">
+<html>
+  <body>
+
+    Hello World!
+
+  </body>
+</html>
+      </textarea>
+
+      <h3>Site Preview</h3>
+      <div class="preview">
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="text/javascript">
+  $('.tutorial #submit').on('click', function() {
+    var editor = $('#editor')
+    var result = checkHomework(editor)
+    if(result == true) {
+      window.location.href = '/tutorial/<%= @section %>/<%= @page.to_i+1 %>'
+    }
+  })
+</script>
