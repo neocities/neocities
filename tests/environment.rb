@@ -1,19 +1,16 @@
 ENV['RACK_ENV'] = 'test'
 raise 'Forget it.' if ENV['RACK_ENV'] == 'production'
 
-if ENV['TRAVIS']
-  require 'coveralls'
-  Coveralls.wear!
-else
+require 'coveralls'
+require 'simplecov'
 
-  require 'simplecov'
-  SimpleCov.coverage_dir File.join('tests', 'coverage')
-  SimpleCov.start do
-    add_filter "/migrations/"
-  end
-
-  SimpleCov.command_name 'minitest'
+SimpleCov.formatter = Coveralls::SimpleCov::Formatter
+SimpleCov.coverage_dir File.join('tests', 'coverage')
+SimpleCov.start do
+  add_filter "/migrations/"
 end
+
+SimpleCov.command_name 'minitest'
 
 require 'rack_session_access'
 require './environment'
