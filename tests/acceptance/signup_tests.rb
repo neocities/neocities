@@ -16,6 +16,7 @@ describe 'signup' do
       fill_in 'password', with: @site[:password]
       fill_in 'email',    with: @site[:email]
     rescue Capybara::ElementNotFound
+      puts "Waiting on fill_in #{Time.now - time} seconds"
       raise if Time.now - time > 30
       sleep 0.5
       retry
