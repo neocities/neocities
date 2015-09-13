@@ -18,6 +18,7 @@ describe 'signup' do
     rescue Capybara::ElementNotFound
       puts "Waiting on fill_in #{Time.now - time} seconds"
       raise if Time.now - time > 30
+      visit_signup
       sleep 0.5
       retry
     end
