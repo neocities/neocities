@@ -7,8 +7,15 @@ end
 describe 'signup' do
   include Capybara::DSL
 
+  def wait_for_ajax
+    Timeout.timeout(Capybara.default_wait_time) do
+      loop until page.evaluate_script('jQuery.active').zero?
+    end
+  end
+
   def fill_in_valid
     @site = Fabricate.attributes_for(:site)
+    wait_for_ajax
     fill_in 'username', with: @site[:username]
     fill_in 'password', with: @site[:password]
     fill_in 'email',    with: @site[:email]
