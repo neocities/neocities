@@ -8,7 +8,21 @@
     <form method="POST" action="/settings/<%= @site.username %>/delete">
       <%== csrf_token_input_html %>
       <p>
-        <strong style="color: red;">WARNING:</strong> This will delete your site <strong><%= @site.username %> (<%= @site.host %>)</strong>. There is no undo! Be very sure you want to do this.
+        <strong style="color: red;">WARNING:</strong>
+        <ul style="text-align: left">
+          <li>
+            This will delete your site <strong><%= @site.username %> (<%= @site.host %>)</strong>.
+          </li>
+          <li>
+            If you just want to rename your site, use the <strong>Change Site (User) Name</strong> tab instead.
+          </li>
+          <li>
+            You will not be able to use your email address to register a new site after deleting this one.
+          </li>
+          <li>
+            There is no undo! Be very sure you want to do this.
+          </li>
+        </ul>
       </p>
 
       <p>
