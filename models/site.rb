@@ -619,7 +619,7 @@ class Site < Sequel::Model
     end
   end
 
-  Rye::Cmd.add_command :ipfs, nil, 'add', :r, :w
+  Rye::Cmd.add_command :ipfs, nil, 'add', :r
 
   def add_to_ipfs
     # Not ideal. An SoA version is in progress.
