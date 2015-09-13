@@ -11,6 +11,7 @@ SimpleCov::Formatter::MultiFormatter[
 SimpleCov.coverage_dir File.join('tests', 'coverage')
 SimpleCov.start do
   add_filter "/migrations/"
+  add_filter "/tests/"
 end
 
 SimpleCov.command_name 'minitest'
