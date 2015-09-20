@@ -3,6 +3,9 @@
 // ----------------------------------------------------------------
 
 .tutorial {
+  p {
+    font-size: 1em;
+  }
   .interact {
     textarea.editor {
       height: 350px!important;
@@ -34,6 +37,7 @@
     }
     .comic {
       position: relative;
+      background-repeat: no-repeat;
     }
     .dialogue {
       width: 180px;
