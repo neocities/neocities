@@ -69,8 +69,30 @@ describe 'site_files' do
         'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       )
       delete_file filename: 'test'
+      @site.site_files.select {|f| f.path == 'test'}.length.must_equal 0
       @site.site_files.select {|f| f.path =~ /^test\//}.length.must_equal 0
-      @site.site_files.select {|f| f.path =~ /^test/}.length.must_equal 1
+      @site.site_files.select {|f| f.path =~ /^test.jpg/}.length.must_equal 1
+    end
+
+    it 'deletes records for nested directories' do
+      upload(
+        'dir' => 'derp/ing/tons',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+
+      expected_site_file_paths = ['derp', 'derp/ing', 'derp/ing/tons', 'derp/ing/tons/test.jpg']
+
+      expected_site_file_paths.each do |path|
+        @site.site_files.select {|f| f.path == path}.length.must_equal 1
+      end
+
+      delete_file filename: 'derp'
+
+      @site.reload
+
+      expected_site_file_paths.each do |path|
+        @site.site_files.select {|f| f.path == path}.length.must_equal 0
+      end
     end
 
     it 'goes back to deleting directory' do
@@ -247,6 +269,10 @@ describe 'site_files' do
 
       ThumbnailWorker.jobs.length.must_equal 1
       ThumbnailWorker.drain
+
+      @site.site_files_dataset.where(path: 'derpie').count.must_equal 1
+      @site.site_files_dataset.where(path: 'derpie/derptest').count.must_equal 1
+      @site.site_files_dataset.where(path: 'derpie/derptest/test.jpg').count.must_equal 1
 
       Site::THUMBNAIL_RESOLUTIONS.each do |resolution|
         File.exists?(@site.thumbnail_path('derpie/derptest/test.jpg', resolution)).must_equal true

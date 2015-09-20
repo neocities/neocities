@@ -671,6 +671,30 @@ class Site < Sequel::Model
       return 'Directory (or file) already exists.'
     end
 
+    path_dirs = path.to_s.split '/'
+
+    path_site_file = ''
+
+    until path_dirs.empty?
+      if path_site_file == ''
+        path_site_file += path_dirs.shift
+      else
+        path_site_file += '/' + path_dirs.shift
+      end
+
+      site_file = SiteFile.where(site_id: self.id, path: path_site_file).first
+
+      if site_file.nil?
+        SiteFile.create(
+          site_id: self.id,
+          path: path_site_file,
+          is_directory: true,
+          created_at: Time.now,
+          updated_at: Time.now
+        )
+      end
+    end
+
     FileUtils.mkdir_p relative_path
     true
   end
@@ -914,7 +938,7 @@ class Site < Sequel::Model
     path ||= ''
     clean = []
 
-    parts = path.split '/'
+    parts = path.to_s.split '/'
 
     parts.each do |part|
       next if part.empty? || part == '.'
@@ -1243,7 +1267,7 @@ class Site < Sequel::Model
       FileUtils.rm files_path(path)
     rescue Errno::EISDIR
       site_files.each do |site_file|
-        if site_file.path.match /^#{path}\//
+        if site_file.path.match(/^#{path}\//) || site_file.path == path
           site_file.destroy
         end
       end
@@ -1262,7 +1286,7 @@ class Site < Sequel::Model
 
     DB.transaction do
       site_file = site_files_dataset.where(path: path).first
-      if site_file
+      if site_file && !site_file.size.nil? && !site_file.is_directory
         DB['update sites set space_used=space_used-? where id=?', site_file.size, self.id].first
         site_file.delete
       end
@@ -1287,6 +1311,15 @@ class Site < Sequel::Model
       return false
     end
 
+    if pathname.extname.match HTML_REGEX
+      # SPAM and phishing checking code goes here
+    end
+
+    relative_path_dir = Pathname(relative_path).dirname
+    create_directory relative_path_dir unless relative_path_dir == '.'
+
+    uploaded_size = uploaded.size
+
     if relative_path == 'index.html'
       begin
         new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
@@ -1298,18 +1331,6 @@ class Site < Sequel::Model
         end
       end
     end
-
-    if pathname.extname.match HTML_REGEX
-      # SPAM and phishing checking code goes here
-    end
-
-    dirname = pathname.dirname.to_s
-
-    if !File.exists? dirname
-      FileUtils.mkdir_p dirname
-    end
-
-    uploaded_size = uploaded.size
 
     FileUtils.cp uploaded.path, path
     File.chmod 0640, path
@@ -1332,6 +1353,7 @@ class Site < Sequel::Model
     elsif pathname.extname.match IMAGE_REGEX
       ThumbnailWorker.perform_async values[:username], relative_path
     end
+
     true
   end
 end
