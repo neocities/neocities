@@ -12,14 +12,22 @@
     What's your name?
   </div>
   <div style="position: absolute; left: 460px; top:840px;">
-    <input type="text" placeholder="First Name" style="position: relative">
-    <a class="btn btn-active">Submit</a>
+    <input id="nameInput" type="text" placeholder="First Name" style="position: relative">
+    <button id="checkButton" class="btn btn-active">Submit</button>
   </div>
 </div>
 
 <script>
-  function checkHomework(editor) {
-    alert('this checks homework, but its true for now')
-    return true
+  $('#checkButton').on('click', function(button) {
+    checkHomework($('#nameInput').val())
+  })
+
+  function checkHomework(name) {
+    if(name == '' || name == undefined)
+      alert("I need to know your name!")
+    else {
+      sessionStorage.setItem('name', name)
+      window.location.href = '/tutorial/html/2'
+    }
   }
 </script>

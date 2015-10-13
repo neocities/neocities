@@ -3,7 +3,7 @@
     <p>All you need to build your first site is a computer language called HTML.</p><p>HTML is made of tags - there's usually an opening tag and a closing tag, with content in between them.</p>
   </div>
   <div class="dialogue" style="left: 370px; top: 0px;">
-    And here's some HTML, right in this box! Let's make a change. Replace Hello World with Victoria's Website, and click save!
+    And here's some HTML, right in this box! Let's make a change. Replace <strong>Hello World</strong> with <strong>The Website of <span id="studentName"></span></strong>, and click save!
   </div>
   <div class="dialogue" style="left: 370px; top: 230px;">
     <p>You'll see the results here.</p>
@@ -15,14 +15,29 @@
 
 <div class="welcome">
   <h4>Welcome to HTML!</h4>
-  <p>HTML stands for <strong>H</strong>yper<strong>T</strong>ext <strong>M</strong>arkup <strong>L</strong>anguage. 
+  <p>HTML stands for <strong>H</strong>yper<strong>T</strong>ext <strong>M</strong>arkup <strong>L</strong>anguage.
     Hypertext refers to text that has links, and markup refers to the tags.</p>
 
   <p>Don't worry if anything seems confusing - you'll get the hang of it once you try coding! If you ever get stuck, click the <strong>Help</strong> link below.</p>
 </div>
 
 <script>
+  var storedName = sessionStorage.getItem('name')
+  var answer = 'The Website of '+storedName
+  $('#studentName').text(storedName)
+
   function checkHomework(editor) {
-    alert('check homework here')
+    var html = editor.val()
+
+    var match = '<html>.+<body>.+'+answer+'.+</body>.+</html>'
+    var re = new XRegExp(match, 'gis')
+
+    if(html.match(re) === null) {
+      alert("That's not right! Try again.")
+    } else {
+      alert('Great, you did it!')
+      sessionStorage.setItem('tutorialHtml', html)
+      window.location.href = '/tutorial/html/3'
+    }
   }
 </script>

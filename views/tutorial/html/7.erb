@@ -8,7 +8,7 @@
     </ul>
   </div>
   <div class="dialogue">
-    First, add a list to your page, but replace my favorite activities with your own! 
+    First, add a list to your page, but replace my favorite activities with your own!
   </div>
   <div class="dialogue" style="left: 380px; top: 140px;">
     Second, put an h2 header above the list with some kind of title, like "Interests."
@@ -27,6 +27,18 @@
 
 <script>
   function checkHomework(editor) {
-    alert('check homework here')
+    var html = editor.val()
+
+    /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
+    var match = '<html>.+<body>.+<ul>.+<li>.+</li>.+</ul>.+</body>.+</html>'
+    var re = new XRegExp(match, 'gis')
+
+    if(html.match(re) === null) {
+      alert("That's not right! Try again.")
+    } else {
+      alert('Great, you did it!')
+      sessionStorage.setItem('tutorialHtml', html)
+      window.location.href = '/tutorial/html/8'
+    }
   }
 </script>

@@ -5,9 +5,9 @@
   <div class="dialogue" style="top: -20px; width: 320px">
     <p>For example, links look like this:</p>
 
-    <p>[a href="http://neocities.org"]Check out Neocities![/a]</p>
-    
-    <p>Add a link to your favorite site to the end of the paragraph, right before the [/p] closing tag!</p>
+    <p><strong>&lt;a href="http://neocities.org"&gt;Check out Neocities!&lt;/a&gt;</strong></p>
+
+    <p>Add a link to your favorite site to the end of the paragraph, right before the &lt;/p&gt; closing tag!</p>
   </div>
 </div>
 
@@ -26,6 +26,18 @@ But this isn't!
 
 <script>
   function checkHomework(editor) {
-    alert('check homework here')
+    var html = editor.val()
+
+    /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
+    var match = '<html>.+<body>.+<h1>.+</h1>.+<p>.+<a.+href=".+">.+</a>[^.+]?</p>.+</body>.+</html>'
+    var re = new XRegExp(match, 'gis')
+
+    if(html.match(re) === null) {
+      alert("That's not right! Try again.")
+    } else {
+      alert('Great, you did it!')
+      sessionStorage.setItem('tutorialHtml', html)
+      window.location.href = '/tutorial/html/6'
+    }
   }
 </script>

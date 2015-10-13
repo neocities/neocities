@@ -3,10 +3,10 @@
     Great job! You can see what you've done so far at <a href="">victoria.neocities.org</a>. Now let's try an image.
   </div>
   <div class="dialogue" style="top: 20px; left: 360px">
-    Your Neocities web directory already includes a portrait of me called cat.png.
+    Your Neocities web directory already includes a portrait of me called <strong>cat.png</strong>.
   </div>
   <div class="dialogue" style="top: 140px; left: 390px">
-    Add it to your page like so: [img src="cat.png"]
+    Add it to your page like so: <strong>&lt;img src="/cat.png"&gt;</strong>
   </div>
   <div class="dialogue" style="top: 230px; left: 400px">
     That's it! No closing tag needed for images.
@@ -22,6 +22,18 @@
 
 <script>
   function checkHomework(editor) {
-    alert('check homework here')
+    var html = editor.val()
+
+    /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
+    var match = '<html>.+<body>.+<img.+src="/cat.png">.+</body>.+</html>'
+    var re = new XRegExp(match, 'gis')
+
+    if(html.match(re) === null) {
+      alert("That's not right! Try again.")
+    } else {
+      alert('Great, you did it!')
+      sessionStorage.setItem('tutorialHtml', html)
+      window.location.href = '/tutorial/html/7'
+    }
   }
 </script>

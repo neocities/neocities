@@ -1,15 +1,26 @@
 <div class="comic" style="height: 600px; background-image: url(/img/tutorial/ch1pg4.png);">
   <div class="dialogue">
-    Now let's add a paragraph of text below the heading. Perhaps "Welcome to my website" or your favorite quote.
+    Now let's add a paragraph of text below the heading (h1). Perhaps "Welcome to my website" or your favorite quote.
   </div>
   <div class="dialogue" style="left: 300px; top: 0px">
-    To make a paragraph, surround your text with the [p] tag. So it should look something like 
-    [p]Hello![/p]
+    To make a paragraph, surround your text with the <strong>&lt;p&gt;</strong> tag. So it should look something like
+    <strong>&lt;p&gt;Hello!&lt;p&gt;</strong>
   </div>
 </div>
 
 <script>
   function checkHomework(editor) {
-    alert('check homework here')
+    var html = editor.val()
+
+    var match = '<html>.+<body>.+<h1>.+</h1>.+<p>.+</p>.+</body>.+</html>'
+    var re = new XRegExp(match, 'gis')
+
+    if(html.match(re) === null) {
+      alert("That's not right! Try again.")
+    } else {
+      alert('Great, you did it!')
+      sessionStorage.setItem('tutorialHtml', html)
+      window.location.href = '/tutorial/html/5'
+    }
   }
 </script>

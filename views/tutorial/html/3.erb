@@ -1,14 +1,14 @@
 <div class="comic" style="height: 600px; background-image: url(/img/tutorial/ch1pg3.png);">
   <div class="dialogue" style="left: 50px; top: 20px;">
-    Great! 
-    Check out your site at <a href="">victoria.neocities.org</a>. 
+    Great!
+    Check out your site at <a href="">victoria.neocities.org</a>.
     You did it!
   </div>
   <div class="dialogue" style="left: 300px; top: 20px; width: 250px">
-    But... hm... it needs a little something more. Let's make your name a heading by putting a Heading Level 1 tag around it. 
+    But... hm... it needs a little something more. Let's make your name a heading by putting a Heading Level 1 tag around it.
   </div>
   <div class="dialogue" style="left: 330px; top: 140px; width: 250px">
-    Change the text to this: [h1]Victoria's Website[/h1]
+    Change the text to this: <strong><span id="answer"></span></strong>
     and click save.
   </div>
 </div>
@@ -28,7 +28,22 @@
 </div>
 
 <script>
+  var answer = '<h1>The website of '+sessionStorage.getItem('name')+'</h1>'
+
+  $('#answer').text(answer)
+
   function checkHomework(editor) {
-    alert('check homework here')
+    var html = editor.val()
+
+    var match = '<html>.+<body>.+'+answer+'.+</body>.+</html>'
+    var re = new XRegExp(match, 'gis')
+
+    if(html.match(re) === null) {
+      alert("That's not right! Try again.")
+    } else {
+      alert('Great, you did it!')
+      sessionStorage.setItem('tutorialHtml', html)
+      window.location.href = '/tutorial/html/4'
+    }
   }
 </script>
