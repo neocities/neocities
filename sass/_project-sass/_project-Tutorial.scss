@@ -13,6 +13,8 @@
       background-color: #1D1F21;
       color: white;
       font: 16px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+      margin-bottom: 0;
+      border: 0;
     }
     h3 {
       margin-top: 10px;
@@ -24,6 +26,12 @@
     }
     .btn {
       float: right;
+    }
+    .error {
+      background: #93771b;
+      color: #fff;
+      padding: 5px 10px;
+      font-size: 14px;
     }
   }
   .lesson {
