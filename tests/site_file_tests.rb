@@ -48,13 +48,14 @@ describe 'site_files' do
       DeleteCacheOrderWorker.jobs.length.must_equal 1
       args = DeleteCacheOrderWorker.jobs.first['args']
       args[0].must_equal @site.username
-      args[1].must_equal 'test.jpg'
+      args[1].must_equal '/test.jpg'
     end
 
     it 'flushes surf for index.html' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
       upload 'files[]' => uploaded_file
       delete_file filename: '/index.html'
+
       DeleteCacheOrderWorker.jobs.length.must_equal 3
       DeleteCacheOrderWorker.jobs.collect {|j| j['args'].last}.must_equal ['/index.html', '/?surf=1', '/']
     end
@@ -68,7 +69,12 @@ describe 'site_files' do
         'dir' => '',
         'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       )
+
+      space_used = @site.reload.space_used
       delete_file filename: 'test'
+
+      @site.reload.space_used.must_equal(space_used - File.size('./tests/files/test.jpg'))
+
       @site.site_files.select {|f| f.path == 'test'}.length.must_equal 0
       @site.site_files.select {|f| f.path =~ /^test\//}.length.must_equal 0
       @site.site_files.select {|f| f.path =~ /^test.jpg/}.length.must_equal 1

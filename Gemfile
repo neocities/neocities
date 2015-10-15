@@ -15,7 +15,7 @@ gem 'mail'
 gem 'google-api-client',  require: 'google/api_client'
 gem 'tilt'
 gem 'erubis'
-gem 'stripe' #, source: 'https://code.stripe.com/'
+gem 'stripe', '1.15.0' #, source: 'https://code.stripe.com/'
 gem 'screencap', '~> 0.1.4'
 gem 'cocaine'
 gem 'zipruby'
@@ -77,7 +77,7 @@ group :test do
   gem 'capybara_minitest_spec'
   gem 'rack_session_access',   require: nil
   gem 'webmock',               require: nil
-  gem 'stripe-ruby-mock',      '~> 2.0.1', require: 'stripe_mock'
+  gem 'stripe-ruby-mock', '2.0.1',      require: 'stripe_mock'
   gem 'timecop'
 
   platform :mri, :rbx do

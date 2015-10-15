@@ -1263,35 +1263,9 @@ class Site < Sequel::Model
 
   def delete_file(path)
     return false if files_path(path) == files_path
-    begin
-      FileUtils.rm files_path(path)
-    rescue Errno::EISDIR
-      site_files.each do |site_file|
-        if site_file.path.match(/^#{path}\//) || site_file.path == path
-          site_file.destroy
-        end
-      end
-      FileUtils.remove_dir files_path(path), true
-    rescue Errno::ENOENT
-    end
-
-    delete_cache path
-
-    ext = File.extname(path).gsub(/^./, '')
-
-    screenshots_delete(path) if ext.match HTML_REGEX
-    thumbnails_delete(path) if ext.match IMAGE_REGEX
-
-    path = path[1..path.length] if path[0] == '/'
-
-    DB.transaction do
-      site_file = site_files_dataset.where(path: path).first
-      if site_file && !site_file.size.nil? && !site_file.is_directory
-        DB['update sites set space_used=space_used-? where id=?', site_file.size, self.id].first
-        site_file.delete
-      end
-      SiteChangeFile.filter(site_id: self.id, filename: path).delete
-    end
+    path = scrubbed_path path
+    site_file = site_files_dataset.where(path: path).first
+    site_file.destroy if site_file
 
     true
   end
