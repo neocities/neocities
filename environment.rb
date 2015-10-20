@@ -11,6 +11,8 @@ require 'logger'
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
+require 'tilt/erubis'
+
 Dir['./ext/**/*.rb'].each {|f| require f}
 
 # :nocov:
