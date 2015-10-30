@@ -110,6 +110,14 @@ post '/api/:name' do
   api_not_found
 end
 
+options '/api/:name' do
+	response.headers["Access-Control-Allow-Origin"] = current_site.domain
+	response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+	response.headers["Access-Control-Allow-Credentials"] = "true"
+	response.headers["Access-Control-Allow-Headers"] = "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+	halt 200  
+end
+
 def require_api_credentials
   if !request.env['HTTP_AUTHORIZATION'].nil?
     init_api_credentials
@@ -155,6 +163,9 @@ def api_success(message_or_obj)
 end
 
 def api_response(status, output)
+  response.headers["Access-Control-Allow-Origin"] = current_site.domain
+	response.headers["Access-Control-Allow-Credentials"] = "true"
+	response.headers["Access-Control-Allow-Headers"] = "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   halt status, JSON.pretty_generate(output)+"\n"
 end
 
