@@ -1141,13 +1141,31 @@ class Site < Sequel::Model
   end
 =end
 
+  def self.browse_dataset
+    dataset.where is_deleted: false, is_banned: false, is_crashing: false, site_changed: true
+  end
+
   def suggestions(limit=SUGGESTIONS_LIMIT, offset=0)
     suggestions_dataset = Site.exclude(id: id).exclude(is_banned: true).exclude(is_nsfw: true).order(:views.desc, :updated_at.desc)
     suggestions = suggestions_dataset.where(tags: tags).limit(limit, offset).all
 
     return suggestions if suggestions.length == limit
 
-    suggestions += suggestions_dataset.where("views >= #{SUGGESTIONS_VIEWS_MIN}").limit(limit-suggestions.length).order(Sequel.lit('RANDOM()')).all
+    # Old.
+    #suggestions += suggestions_dataset.where("views >= #{SUGGESTIONS_VIEWS_MIN}").limit(limit-suggestions.length).order(Sequel.lit('RANDOM()')).all
+
+    # New:
+
+    site_dataset = self.class.browse_dataset.association_left_join :follows
+    site_dataset.select_all! :sites
+    site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
+    site_dataset.group! :sites__id
+    site_dataset.order! :follow_count.desc, :updated_at.desc
+    site_dataset.where! "views >= #{SUGGESTIONS_VIEWS_MIN}"
+    site_dataset.limit! limit-suggestions.length
+    #site_dataset.order! Sequel.lit('RANDOM()')
+
+    suggestions += site_dataset.all
   end
 
   def screenshot_path(path, resolution)

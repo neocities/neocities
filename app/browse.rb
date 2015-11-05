@@ -29,7 +29,7 @@ end
 
 def browse_sites_dataset
 
-  site_dataset = Site.where(is_deleted: false, is_banned: false, is_crashing: false, site_changed: true)
+  site_dataset = Site.browse_dataset
 
   if current_site
     site_dataset.or! sites__id: current_site.id
