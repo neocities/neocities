@@ -173,25 +173,15 @@
       $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
       unsavedChanges = true
     })
-  })
 
-  $().ready(function() {
-    KeyboardJS.on('ctrl + s', function(event, keysPressed, keyComboString) {
-      saveTextFile(false)
-      event.preventDefault()
-      return false
-    });
+    editor.commands.addCommand({
+        name: 'saveCommand',
+        bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+        exec: function(editor) {
+          saveTextFile(false)
+        }
+    })
   })
-
-/*
-  $(window).keypress(function(event) {
-    if(event.ctrlKey == true && event.key == 's') {
-      saveTextFile(false)
-      event.preventDefault()
-      return false
-    }
-  })
-*/
 
   window.onbeforeunload = function() {
     if(unsavedChanges == true)
