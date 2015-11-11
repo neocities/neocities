@@ -5,6 +5,19 @@ def app
 end
 
 describe Site do
+  describe 'directory create' do
+    it 'handles wacky pathnames' do
+      ['/derp', '/derp/'].each do |path|
+        site = Fabricate :site
+        site_file_count = site.site_files_dataset.count
+        site.create_directory path
+        site.site_files.select {|s| s.path == '' || s.path == '.'}.length.must_equal 0
+        site.site_files.select {|s| s.path == path.gsub('/', '')}.first.wont_be_nil
+        site.site_files_dataset.count.must_equal site_file_count+1
+      end
+    end
+  end
+
   describe 'custom_max_space' do
     it 'should use the custom max space if it is more' do
       site = Fabricate :site

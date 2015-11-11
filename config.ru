@@ -42,6 +42,11 @@ map '/webdav' do
       end
     end
 
+    if env['REQUEST_METHOD'] == 'MKCOL'
+      site.create_directory env['PATH_INFO']
+      return [201, {}, ['']]
+    end
+
     if env['REQUEST_METHOD'] == 'MOVE'
       tmpfile = Tempfile.new 'moved_file'
       tmpfile.close

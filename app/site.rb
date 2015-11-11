@@ -161,7 +161,6 @@ post '/site/create_directory' do
   require_login
 
   path = "#{params[:dir] || ''}/#{params[:name]}"
-
   result = current_site.create_directory path
 
   if result != true

@@ -671,7 +671,7 @@ class Site < Sequel::Model
       return 'Directory (or file) already exists.'
     end
 
-    path_dirs = path.to_s.split '/'
+    path_dirs = path.to_s.split('/').select {|p| ![nil, '.', ''].include?(p) }
 
     path_site_file = ''
 
@@ -681,6 +681,8 @@ class Site < Sequel::Model
       else
         path_site_file += '/' + path_dirs.shift
       end
+
+      raise ArgumentError, 'directory name cannot be empty' if path_site_file == ''
 
       site_file = SiteFile.where(site_id: self.id, path: path_site_file).first
 
