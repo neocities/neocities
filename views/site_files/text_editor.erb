@@ -169,6 +169,9 @@
       autoScrollEditorIntoView: true
     })
 
+    // Disable autocomplete
+    editor.setBehavioursEnabled(false)
+
     editor.on('change', function(obj) {
       $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
       unsavedChanges = true
