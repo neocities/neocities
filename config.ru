@@ -35,7 +35,7 @@ map '/webdav' do
       end
 
       if Site.valid_file_type?(filename: path, tempfile: tmpfile)
-        site.store_file path, tmpfile
+        site.store_files [{filename: path, tempfile: tmpfile}]
         return [201, {}, ['']]
       else
         return [415, {}, ['']]
@@ -51,7 +51,7 @@ map '/webdav' do
       FileUtils.cp site.files_path(env['PATH_INFO']), tmpfile.path
 
       DB.transaction do
-        site.store_file destination, tmpfile
+        site.store_files [{filename: destination, tempfile: tmpfile}]
         site.delete_file env['PATH_INFO']
       end
 
