@@ -30,7 +30,7 @@ post '/dmca/contact' do
       no_footer: true
     })
 
-    flash[:success] = 'Your DCMA notification has been sent.'
+    flash[:success] = 'Your DMCA notification has been sent.'
     redirect '/'
   end
 end
