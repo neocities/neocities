@@ -4,32 +4,9 @@ require 'securerandom'
 require 'thread'
 require 'open3'
 
-# Don't judge - Ruby handling of timeouts is a joke..
-module Phantomjs
-  def self.run(*args, &block)
-    pid = nil
-    stdin, stdout, stderr, wait_thr = nil
-    begin
-      Timeout::timeout(30) do
-        stdin, stdout, stderr, wait_thr = Open3.popen3(path, *args)
-        pid = wait_thr.pid
-        wait_thr.join
-        return stdout.read
-      end
-    # :nocov:
-    rescue Timeout::Error
-      stdin.close
-      stdout.close
-      stderr.close
-      Process.kill 'QUIT', pid
-      raise Timeout::Error
-    end
-    # :nocov:
-  end
-end
-
 class ScreenshotWorker
   SCREENSHOTS_PATH = Site::SCREENSHOTS_ROOT
+  HARD_TIMEOUT = 20.freeze
   include Sidekiq::Worker
   sidekiq_options queue: :screenshots, retry: 3, backtrace: true
 
@@ -39,42 +16,43 @@ class ScreenshotWorker
     screenshot.close
     screenshot_output_path = screenshot.path+'.png'
 
-    begin
-      f = Screencap::Fetcher.new("http://#{username}.neocities.org#{path}")
-      f.fetch(
-        output: screenshot_output_path,
-        width: 1280,
-        height: 960,
-        maxRenderWait: 25000,
-        cutoffWait: 30000
-      )
-    rescue Timeout::Error
-      # :nocov:
-      puts "#{username}/#{path} is timing out, discontinuing"
-      site = Site[username: username]
-      site.is_crashing = true
-      site.save_changes validate: false
+    line = Cocaine::CommandLine.new(
+      "timeout #{HARD_TIMEOUT} phantomjs #{File.join DIR_ROOT, 'files', 'phantomjs_screenshot.js'}", ":url :output",
+      expected_outcodes: [0]
+    )
 
-      # Don't enable until we know it works well.
+    begin
+      output = line.run(
+        url: "http://#{username}.neocities.org#{path}",
+        output: screenshot_output_path
+      )
+    rescue Cocaine::ExitStatusError => e
+      if e.message && e.message.match(/returned 124/)
+        puts "#{username}/#{path} is timing out, discontinuing"
+        site = Site[username: username]
+        site.is_crashing = true
+        site.save_changes validate: false
+        return true
 =begin
-      if site.email
-        EmailWorker.perform_async({
-          from: 'web@neocities.org',
-          to: site.email,
-          subject: "[NeoCities] The web page \"#{path}\" on your site (#{username}.neocities.org) is slow",
-          body: "Hi there! This is an automated email to inform you that we're having issues loading your site to take a "+
-                "screenshot. It is possible that this is an error specific to our screenshot program, but it is much more "+
-                "likely that your site is too slow to be used with browsers. We don't want Neocities sites crashing browsers, "+
-                "so we're taking steps to inform you and see if you can resolve the issue. "+
-                "We may have to de-list your web site from being viewable in our browse page if it is not resolved shortly. "+
-                "We will review the site manually before taking this step, so don't worry if your site is fine and we made "+
-                "a mistake."+
-                "\n\nOur best,\n- Neocities"
-        })
-      end
+        if site.email
+          EmailWorker.perform_async({
+            from: 'web@neocities.org',
+            to: site.email,
+            subject: "[NeoCities] The web page \"#{path}\" on your site (#{username}.neocities.org) is slow",
+            body: "Hi there! This is an automated email to inform you that we're having issues loading your site to take a "+
+                  "screenshot. It is possible that this is an error specific to our screenshot program, but it is much more "+
+                  "likely that your site is too slow to be used with browsers. We don't want Neocities sites crashing browsers, "+
+                  "so we're taking steps to inform you and see if you can resolve the issue. "+
+                  "We may have to de-list your web site from being viewable in our browse page if it is not resolved shortly. "+
+                  "We will review the site manually before taking this step, so don't worry if your site is fine and we made "+
+                  "a mistake."+
+                  "\n\nOur best,\n- Neocities"
+          })
+        end
 =end
-      return
-      # :nocov:
+      else
+        raise
+      end
     end
 
     img_list = Magick::ImageList.new
@@ -99,7 +77,6 @@ class ScreenshotWorker
       else
         new_img = img.scale width, height
       end
-
       new_img.write(File.join(user_screenshots_path, "#{path}.#{res}.jpg")) {
         self.quality = 90
       }

@@ -16,7 +16,7 @@ gem 'google-api-client',  require: 'google/api_client'
 gem 'tilt'
 gem 'erubis'
 gem 'stripe', '1.15.0' #, source: 'https://code.stripe.com/'
-gem 'screencap', '~> 0.1.4'
+#gem 'screencap', '~> 0.1.4'
 gem 'cocaine'
 gem 'zipruby'
 gem 'sass', require: nil
@@ -38,7 +38,7 @@ platform :mri, :rbx do
   gem 'pg'
   gem 'sequel_pg', require: nil
   gem 'hiredis'
-  gem 'rainbows',  require: nil
+  gem 'posix-spawn'
 
   group :development, :test do
     gem 'pry'
