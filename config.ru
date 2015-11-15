@@ -1,11 +1,6 @@
 require 'rubygems'
 require './app.rb'
 require 'sidekiq/web'
-require 'unicorn/preread_input'
-
-if defined?(Unicorn)
-  use Unicorn::PrereadInput
-end
 
 map('/') do
   use(Rack::Cache,
