@@ -1,8 +1,7 @@
 <div class="comic" style="height: 600px; background-image: url(/img/tutorial/ch1pg8.png);">
   <div class="dialogue">
     Now add a link to one of your list items. If nested properly, it should look something like this:
-
-    <li><a href="http://yarn.com">Yarn</a></li>
+<br><strong>&lt;li&gt;&lt;a href="http://yarn.com"&gt;Yarn&lt;/a&gt;&lt;/li&gt;</strong>
   </div>
 </div>
 
@@ -29,11 +28,10 @@
     var re = new XRegExp(match, 'gis')
 
     if(html.match(re) === null) {
-      alert("That's not right! Try again.")
+      notok("That's not right! Try again.")
     } else {
-      alert('Great, you did it!')
       sessionStorage.setItem('tutorialHtml', html)
-      window.location.href = '/tutorial/html/9'
+      ok('Great, you did it!', '/tutorial/html/9')
     }
   }
 </script>

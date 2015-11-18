@@ -27,7 +27,7 @@
   </body>
 </html>
       </textarea>
-      <div class="error">
+      <div class="error" style="display: none; margin-top: 10px">
         <i class="fa fa-exclamation-triangle"></i> Try again: make sure you change Hello World to something else.
       </div>
 
@@ -42,6 +42,30 @@
 </section>
 
 <script type="text/javascript">
+  var infoObj = $('.error')
+
+  function notok(msg) {
+    displayInfo('<i class="fa fa-exclamation-triangle"></i> ' + msg, {
+      background: '#93771B'
+    })
+  }
+
+  function ok(msg, path) {
+    displayInfo(msg, {
+      background: '#33CC33'
+    })
+
+    setTimeout(function() {
+      window.location.href = path
+    }, 3000)
+  }
+
+  function displayInfo(html, cssOpts) {
+    infoObj.fadeIn('slow')
+    infoObj.css(cssOpts)
+    infoObj.html(html)
+  }
+
   $('.tutorial #submit').on('click', function() {
     var editor = $('#editor')
     var result = checkHomework(editor)
@@ -56,6 +80,7 @@
   })
 
   $('.tutorial textarea').on('keypress keyup', function() {
+    $('.error').css('display', 'none')
     refreshIframe()
   })
 

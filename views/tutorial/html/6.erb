@@ -29,11 +29,10 @@
     var re = new XRegExp(match, 'gis')
 
     if(html.match(re) === null) {
-      alert("That's not right! Try again.")
+      notok("That's not right! Try again.")
     } else {
-      alert('Great, you did it!')
       sessionStorage.setItem('tutorialHtml', html)
-      window.location.href = '/tutorial/html/7'
+      ok('Great, you did it!', '/tutorial/html/7')
     }
   }
 </script>

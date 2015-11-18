@@ -1,11 +1,13 @@
 <div class="comic" style="height: 600px; background-image: url(/img/tutorial/ch1pg7.png);">
   <div class="dialogue" style="left: 0">
     Now maybe your website needs a list. Here's how an unordered list looks:
-    <ul>
-      <li>websites</li>
-      <li>yarn</li>
-      <li>catnip</li>
-    </ul>
+    <div style="text-align: left; font-weight: bold">
+    &lt;ul&gt;<br>
+&nbsp;&nbsp;&lt;li&gt;websites&lt;/li&gt;
+&nbsp;&nbsp;&lt;li&gt;yarn&lt;/li&gt;
+&nbsp;&nbsp;&lt;li&gt;catnip&lt;/li&gt;<br>
+    &lt;/ul&gt;
+    </div>
   </div>
   <div class="dialogue">
     First, add a list to your page, but replace my favorite activities with your own!
@@ -18,11 +20,13 @@
 <div class="welcome">
   <h4>Lists</h4>
   <p>You can make an ordered (numbered) list like so:</p>
-  <ol>
-  <li>First item</li>
-  <li>Second item</li>
-  <li>Third item</li>
-  </ol>
+  <div style="text-align: left; font-weight: bold">
+&lt;ol&gt;<br>
+&nbsp;&nbsp;&lt;li&gt;First item&lt;/li&gt;<br>
+&nbsp;&nbsp;&lt;li&gt;Second item&lt;/li&gt;<br>
+&nbsp;&nbsp;&lt;li&gt;Third item&lt;/li&gt;<br>
+&lt;/ol&gt;
+  </div>
 </div>
 
 <script>
@@ -34,11 +38,10 @@
     var re = new XRegExp(match, 'gis')
 
     if(html.match(re) === null) {
-      alert("That's not right! Try again.")
+      notok("That's not right! Try again.")
     } else {
-      alert('Great, you did it!')
       sessionStorage.setItem('tutorialHtml', html)
-      window.location.href = '/tutorial/html/8'
+      ok('Great, you did it!', '/tutorial/html/8')
     }
   }
 </script>

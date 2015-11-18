@@ -17,16 +17,18 @@
   </div>
 </div>
 
-<div class="comic" style="height: 300px; background-image: url(/img/tutorial/ch1pg1_2.png);background-size: 839px;">
-  <div class="dialogue" style="left: 200px; top:30px;">
-    Welcome, [NAME]! You're about to embark on a very exciting challenge: creating your first website! 
+<div class="nextPanel" style="display: none">
+  <div class="comic" style="height: 300px; background-image: url(/img/tutorial/ch1pg1_2.png);background-size: 839px;">
+    <div class="dialogue" style="left: 200px; top:30px;">
+      Welcome, [NAME]! You're about to embark on a very exciting challenge: creating your first website!
+    </div>
+    <div class="dialogue" style="left: 640px; top:20px;">
+      You've already made the first important step of starting this lesson, so here's a badge for your profile.
+    </div>
   </div>
-  <div class="dialogue" style="left: 640px; top:20px;">
-    You've already made the first important step of starting this lesson, so here's a badge for your profile.
-  </div>
-</div>
 
-<a href="./2">Next >></a>
+  <a href="/tutorial/html/2">Next >></a>
+</div>
 
 <script>
   $('#checkButton').on('click', function(button) {
@@ -38,7 +40,9 @@
       alert("I need to know your name!")
     else {
       sessionStorage.setItem('name', name)
-      window.location.href = '/tutorial/html/2'
+      var dialogueObj = $('.nextPanel .comic .dialogue')[0]
+      dialogueObj.innerHTML = dialogueObj.innerHTML.replace('[NAME]', name)
+      $('.nextPanel').css('display', 'block')
     }
   }
 </script>
