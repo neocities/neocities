@@ -1,11 +1,11 @@
-<div class="comic" style="height: 600px; background-image: url(/img/tutorial/ch1pg2.png);">
-  <div class="dialogue" style="left: 25px; top: 25px; width: 250px">
+<div class="comic" style="height: 600px; background-image: url(/img/tutorial/ch1pg2.png); background-size: 580px;">
+  <div class="dialogue" style="left: 25px; top: 40px; width: 250px">
     <p>All you need to build your first site is a computer language called HTML.</p><p>HTML is made of tags - there's usually an opening tag and a closing tag, with content in between them.</p>
   </div>
-  <div class="dialogue" style="left: 370px; top: 0px;">
-    And here's some HTML, right in this box! Let's make a change. Replace <strong>Hello World</strong> with <strong>The Website of <span id="studentName"></span></strong>, and click save!
+  <div class="dialogue" style="left: 430px; top: 0px;">
+    And here's some HTML, right in this box! Let's make a change. Replace <strong>Hello World</strong> with <strong><span id="studentName"></span>'s Website</strong>, and click save!
   </div>
-  <div class="dialogue" style="left: 370px; top: 230px;">
+  <div class="dialogue" style="left: 370px; top: 260px;">
     <p>You'll see the results here.</p>
     <p>Make sure to check the green boxes below for important bonus info!</p>
   </div>
@@ -21,7 +21,7 @@
 
 <script>
   var storedName = sessionStorage.getItem('name')
-  var answer = 'The Website of '+storedName
+  var answer = storedName+ "'s Website"
   $('#studentName').text(storedName)
 
   function checkHomework(editor) {

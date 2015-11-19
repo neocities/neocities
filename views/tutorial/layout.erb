@@ -15,8 +15,12 @@
     <% else %>
 
     <div class="col col-40 interact">
+      <% if request.path =~ /\/html\/9?/ %>
+      <a href="/tutorial/html/10" class="btn btn-action">Next</a>
+      <% else %>
       <input id="submit" class="btn btn-action" type="submit" value="Save">
       <input id="reset" class="btn btn-action" type="submit" value="Reset">
+      <% end %>
       <h3>HTML</h3>
       <textarea id="editor" class="editor">
 <html>
@@ -57,7 +61,7 @@
 
     setTimeout(function() {
       window.location.href = path
-    }, 3000)
+    }, 1000)
   }
 
   function displayInfo(html, cssOpts) {
