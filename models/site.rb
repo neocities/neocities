@@ -472,12 +472,12 @@ class Site < Sequel::Model
 
   # Who this site follows
   def followings_dataset
-    super.select_all(:follows).inner_join(:sites, :id=>:site_id).exclude(:sites__is_deleted => true).exclude(:sites__is_banned => true).exclude(:sites__is_crashing => true)
+    super.select_all(:follows).inner_join(:sites, :id=>:site_id).exclude(:sites__is_deleted => true).exclude(:sites__is_banned => true)
   end
 
   # Who this site is following
   def follows_dataset
-    super.select_all(:follows).inner_join(:sites, :id=>:actioning_site_id).exclude(:sites__is_deleted => true).exclude(:sites__is_banned => true).exclude(:sites__is_crashing => true)
+    super.select_all(:follows).inner_join(:sites, :id=>:actioning_site_id).exclude(:sites__is_deleted => true).exclude(:sites__is_banned => true)
   end
 
 =begin
