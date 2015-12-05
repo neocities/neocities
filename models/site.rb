@@ -117,7 +117,7 @@ class Site < Sequel::Model
     custom_ssl_certificates: false,
     no_file_restrictions: false,
     custom_domains: false,
-    maximum_site_files: 1000
+    maximum_site_files: 2000
   )
 
   def self.newsletter_sites
