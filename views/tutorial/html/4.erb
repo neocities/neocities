@@ -9,10 +9,9 @@
 </div>
 
 <script>
-  function checkHomework(editor) {
-    var html = editor.val()
-
-    var match = '<html>.+<body>.+<h1>.+</h1>.+<p>.+</p>.+</body>.+</html>'
+  function checkHomework() {
+    var html = editor.getValue()
+    var match = '<html.+>.+<body>.+<h1>.+</h1>.+<p>.+</p>.+</body>.+</html>'
     var re = new XRegExp(match, 'gis')
 
     if(html.match(re) === null) {

@@ -1,3 +1,22 @@
+def default_tutorial_html
+  <<-EOT.strip
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <title>My web site</title>
+
+  </head>
+  <body>
+
+    Hello World!
+
+  </body>
+</html>
+EOT
+end
+
 get '/tutorials' do
   erb :'tutorials'
 end
