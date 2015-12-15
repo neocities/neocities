@@ -32,10 +32,9 @@
   var answer = storedName+ "'s Website"
   $('#studentName').text(storedName)
 
-  function checkHomework(editor) {
-    var html = editor.val()
-
-    var match = '<html>.+<body>.+'+answer+'.+</body>.+</html>'
+  function checkHomework() {
+    var html = editor.getValue()
+    var match = '<html.+>.+<body>.+'+answer+'.+</body>.+</html>'
     var re = new XRegExp(match, 'gis')
 
     if(html.match(re) === null) {
@@ -43,7 +42,6 @@
     } else {
       sessionStorage.setItem('tutorialHtml', html)
       ok('Great, you did it!', '/tutorial/html/3')
-
     }
   }
 </script>

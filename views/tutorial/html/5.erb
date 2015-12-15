@@ -25,11 +25,10 @@ But this isn't!
 </div>
 
 <script>
-  function checkHomework(editor) {
-    var html = editor.val()
-
+  function checkHomework() {
+    var html = editor.getValue()
     /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
-    var match = '<html>.+<body>.+<h1>.+</h1>.+<p>.+<a.+href=".+">.+</a>[^.+]?</p>.+</body>.+</html>'
+    var match = '<html.+>.+<body>.+<h1>.+</h1>.+<p>.+<a.+href=".+">.+</a>[^.+]?</p>.+</body>.+</html>'
     var re = new XRegExp(match, 'gis')
 
     if(html.match(re) === null) {

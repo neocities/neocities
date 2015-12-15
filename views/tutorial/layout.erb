@@ -1,3 +1,7 @@
+<script src="/js/highlight.pack.js"></script>
+<link rel="stylesheet" href="/css/highlight/styles/sunburst.css">
+<script>hljs.initHighlightingOnLoad()</script>
+
 <section class="section tutorial">
   <div class="row">
     <% if request.path =~ /\/html\/10?/ %>
@@ -22,15 +26,43 @@
       <input id="reset" class="btn btn-action" type="submit" value="Reset">
       <% end %>
       <h3>HTML</h3>
-      <textarea id="editor" class="editor">
-<html>
-  <body>
 
-    Hello World!
+      <div id="editor" class="editor"><%== encoding_fix default_tutorial_html %></div>
 
-  </body>
-</html>
-      </textarea>
+      <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+
+      <script>
+        $(document).ready(function() {
+          editor = ace.edit("editor")
+          editor.setTheme('ace/theme/tomorrow_night')
+          editor.getSession().setMode("ace/mode/html")
+          editor.getSession().setTabSize(2)
+          editor.getSession().setUseWrapMode(true)
+          editor.setFontSize(14)
+          editor.setShowPrintMargin(false)
+          editor.setOptions({
+            maxLines: Infinity,
+            autoScrollEditorIntoView: true
+          })
+
+          // Disable autocomplete
+          editor.setBehavioursEnabled(false)
+
+          editor.on('change', function(obj) {
+            $('.error').css('display', 'none')
+            refreshIframe()
+          })
+
+          editor.commands.addCommand({
+            name: 'saveCommand',
+            bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+            exec: function(editor) {
+              $('#submit').click()
+            }
+          })
+        })
+      </script>
+
       <div class="error" style="display: none; margin-top: 0">
         <i class="fa fa-exclamation-triangle"></i> Try again: make sure you change Hello World to something else.
       </div>
@@ -71,8 +103,7 @@
   }
 
   $('.tutorial #submit').on('click', function() {
-    var editor = $('#editor')
-    var result = checkHomework(editor)
+    var result = checkHomework()
     if(result == true) {
       window.location.href = '/tutorial/<%= @section %>/<%= @page.to_i+1 %>'
     }
@@ -83,18 +114,12 @@
     editor.val(editor.text())
   })
 
-  $('.tutorial textarea').on('keypress keyup', function() {
-    $('.error').css('display', 'none')
-    refreshIframe()
-  })
-
   var tutorialHtml = sessionStorage.getItem('tutorialHtml')
   if(tutorialHtml)
     $('#editor').text(tutorialHtml)
 
   function refreshIframe() {
-    var editor = $('#editor')
-    $('.tutorial iframe').contents().find('html').html(editor.val())
+    $('.tutorial iframe').contents().find('html').html(editor.getValue())
   }
 
   $(function() {
