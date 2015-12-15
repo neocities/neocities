@@ -41,7 +41,7 @@ end
 desc 'Update banned IPs list'
 task :update_blocked_ips => [:environment] do
   uri = URI.parse('http://www.stopforumspam.com/downloads/listed_ip_90.zip')
-  blocked_ips_zip = Tempfile.new('blockedipszip', Dir.tmpdir, 'wb')
+  blocked_ips_zip = Tempfile.new('blockedipszip', Dir.tmpdir)
   blocked_ips_zip.binmode
 
   Net::HTTP.start(uri.host, uri.port) do |http|
