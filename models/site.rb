@@ -988,8 +988,16 @@ class Site < Sequel::Model
   end
 
   def actual_space_used
-    space = Dir.glob(File.join(files_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
-    space.nil? ? 0 : space
+    space = 0
+
+    files = Dir.glob File.join(files_path, '**', '*')
+
+    files.each do |file|
+      next if File.directory? file
+      space += File.size file
+    end
+
+    space
   end
 
   def total_space_used
@@ -1231,7 +1239,6 @@ class Site < Sequel::Model
   def store_files(files, opts={})
     results = []
     new_size = 0
-    html_uploaded = false
 
     if too_many_files?(files.length)
       results << false
@@ -1239,43 +1246,53 @@ class Site < Sequel::Model
     end
 
     files.each do |file|
-      html_uploaded = true if file[:filename].match HTML_REGEX
-
       existing_size = 0
+
       site_file = site_files_dataset.where(path: scrubbed_path(file[:filename])).first
+
       if site_file
         existing_size = site_file.size
       end
 
       res = store_file(file[:filename], file[:tempfile], file[:opts] || opts)
+
       if res == true
         new_size -= existing_size
         new_size += file[:tempfile].size
       end
+
       results << res
     end
 
-    if results.include? true && opts[:new_install] != true
-      if((files.select {|f| f[:filename] =~ /^\/?index.html$/}.length > 0 || site_changed == true))
-        index_changed = true
-      else
-        index_changed = false
+    if results.include? true
+
+      DB["update sites set space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?", self.id].first
+
+      if opts[:new_install] != true
+        if files.select {|f| f[:filename] =~ /^\/?index.html$/}.length > 0 || site_changed == true
+          index_changed = true
+        else
+          index_changed = false
+        end
+
+        index_changed = false if empty_index?
+
+        time = Time.now
+
+        sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1 where id=?",
+          index_changed,
+          time,
+          time,
+          self.id
+        ]
+        sql.first
+
+        ArchiveWorker.perform_in 24.hours, self.id
       end
 
-      index_changed = false if empty_index?
-
-      time = Time.now
-      sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1, space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?",
-        index_changed,
-        time,
-        time,
-        self.id
-      ]
-      sql.first
       reload
 
       #SiteChange.record self, relative_path unless opts[:new_install]
-      ArchiveWorker.perform_in 24.hours, self.id
     end
 
     results
@@ -1286,7 +1303,6 @@ class Site < Sequel::Model
     path = scrubbed_path path
     site_file = site_files_dataset.where(path: path).first
     site_file.destroy if site_file
-
     true
   end
 

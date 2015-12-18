@@ -30,19 +30,22 @@ describe 'site_files' do
     end
 
     it 'works' do
+      initial_space_used = @site.space_used
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
 
       PurgeCacheOrderWorker.jobs.clear
 
-      @site.reload.space_used.must_equal uploaded_file.size
+      @site.reload.space_used.must_equal initial_space_used + uploaded_file.size
+      @site.actual_space_used.must_equal @site.space_used
       file_path = @site.files_path 'test.jpg'
       File.exists?(file_path).must_equal true
       delete_file filename: 'test.jpg'
 
       File.exists?(file_path).must_equal false
       SiteFile[site_id: @site.id, path: 'test.jpg'].must_be_nil
-      @site.reload.space_used.must_equal 0
+      @site.reload.space_used.must_equal initial_space_used
+      @site.actual_space_used.must_equal @site.space_used
 
       PurgeCacheOrderWorker.jobs.length.must_equal 0
       DeleteCacheOrderWorker.jobs.length.must_equal 1
@@ -173,14 +176,20 @@ describe 'site_files' do
       username, pathname = dirname_purge['args']
       username.must_equal @site.username
       pathname.must_equal '/'
+
+      @site.space_used.must_equal @site.actual_space_used
+
+      (@site.space_used > 0).must_equal true
     end
 
     it 'provides the correct space used after overwriting an existing file' do
+      initial_space_used = @site.space_used
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
       second_uploaded_file = Rack::Test::UploadedFile.new('./tests/files/img/test.jpg', 'image/jpeg')
       upload 'files[]' => second_uploaded_file
-      @site.reload.space_used.must_equal second_uploaded_file.size
+      @site.reload.space_used.must_equal initial_space_used + second_uploaded_file.size
+      @site.space_used.must_equal @site.actual_space_used
     end
 
     it 'does not change title for subdir index.html' do
@@ -193,6 +202,7 @@ describe 'site_files' do
     end
 
     it 'succeeds with valid file' do
+      initial_space_used = @site.space_used
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
       last_response.body.must_match /successfully uploaded/i
@@ -204,7 +214,8 @@ describe 'site_files' do
 
       @site.reload
       @site.space_used.wont_equal 0
-      @site.space_used.must_equal uploaded_file.size
+      @site.space_used.must_equal initial_space_used + uploaded_file.size
+      @site.space_used.must_equal @site.actual_space_used
 
       ThumbnailWorker.jobs.length.must_equal 1
       ThumbnailWorker.drain
