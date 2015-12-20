@@ -459,8 +459,8 @@ class Site < Sequel::Model
       FileUtils.mv files_path, File.join(BANNED_SITES_ROOT, username)
     }
 
-    file_list.each do |path|
-      delete_cache path
+    site_files.each do |site_file|
+      delete_cache site_file.path
     end
   end
 

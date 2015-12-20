@@ -185,7 +185,7 @@ post '/settings/:username/change_name' do
   end
 
   old_host = @site.host
-  old_file_paths = @site.file_list.collect {|f| f[:path]}
+  old_site_file_paths = @site.site_files.collect {|site_file| site_file.path}
 
   @site.username = params[:name]
 
@@ -195,11 +195,11 @@ post '/settings/:username/change_name' do
       @site.move_files_from old_username
     }
 
-    old_file_paths.each do |file_path|
-      @site.delete_cache file_path
+    old_site_file_paths.each do |site_file_path|
+      @site.delete_cache site_file_path
     end
 
-    flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
+    flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it!</b>"
     redirect "/settings/#{@site.username}#username"
   else
     flash[:error] = @site.errors.first.last.first
