@@ -15,8 +15,11 @@ class Stat < Sequel::Model
     end
 
     def parse_logfiles(path)
+      total_site_stats = {}
+
       Dir["#{path}/*.log"].each do |log_path|
         site_logs = {}
+
         logfile = File.open log_path, 'r'
 
         while hit = logfile.gets
@@ -26,9 +29,13 @@ class Stat < Sequel::Model
 
           time, username, size, path, ip, referrer = hit_array
 
+          log_time = Time.parse time
+
           next if !referrer.nil? && referrer.match(/bot/i)
 
-          site_logs[username] = {
+          site_logs[log_time] = {} unless site_logs[log_time]
+
+          site_logs[log_time][username] = {
             hits: 0,
             views: 0,
             bandwidth: 0,
@@ -36,78 +43,111 @@ class Stat < Sequel::Model
             ips: [],
             referrers: {},
             paths: {}
-          } unless site_logs[username]
+          } unless site_logs[log_time][username]
 
-          site_logs[username][:hits] += 1
-          site_logs[username][:bandwidth] += size.to_i
+          total_site_stats[log_time] = {
+            hits: 0,
+            views: 0,
+            bandwidth: 0
+          } unless total_site_stats[log_time]
 
-          unless site_logs[username][:view_ips].include?(ip)
-            site_logs[username][:views] += 1
-            site_logs[username][:view_ips] << ip
+          site_logs[log_time][username][:hits] += 1
+          site_logs[log_time][username][:bandwidth] += size.to_i
+
+          total_site_stats[log_time][:hits] += 1
+          total_site_stats[log_time][:bandwidth] += size.to_i
+
+          unless site_logs[log_time][username][:view_ips].include?(ip)
+            site_logs[log_time][username][:views] += 1
+
+            total_site_stats[log_time][:views] += 1
+
+            site_logs[log_time][username][:view_ips] << ip
 
             if referrer != '-' && !referrer.nil?
-              site_logs[username][:referrers][referrer] ||= 0
-              site_logs[username][:referrers][referrer] += 1
+              site_logs[log_time][username][:referrers][referrer] ||= 0
+              site_logs[log_time][username][:referrers][referrer] += 1
             end
           end
 
-          site_logs[username][:paths][path] ||= 0
-          site_logs[username][:paths][path] += 1
+          site_logs[log_time][username][:paths][path] ||= 0
+          site_logs[log_time][username][:paths][path] += 1
         end
 
         logfile.close
 
-        current_time = Time.now.utc
-        current_day_string = current_time.to_date.to_s
-
-        Site.select(:id, :username).where(username: site_logs.keys).all.each do |site|
-          site_logs[site.username][:id] = site.id
-        end
-
         DB.transaction do
-          site_logs.each do |username, site_log|
-            DB['update sites set hits=hits+?, views=views+? where username=?',
-               site_log[:hits],
-               site_log[:views],
-               username
+          site_logs.each do |log_time, usernames|
+            Site.select(:id, :username).where(username: usernames.keys).all.each do |site|
+              site_logs[log_time][site.username][:id] = site.id
+            end
+
+            usernames.each do |username, site_log|
+              DB['update sites set hits=hits+?, views=views+? where username=?',
+                site_log[:hits],
+                site_log[:views],
+                username
               ].first
 
-            opts = {site_id: site_log[:id], created_at: current_day_string}
+              opts = {site_id: site_log[:id], created_at: log_time.to_date.to_s}
 
-            stat = Stat.select(:id).where(opts).first
-            DB[:stats].lock('EXCLUSIVE') { stat = Stat.create opts } if stat.nil?
+              stat = nil
 
-            DB[
-              'update stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where id=?',
-              site_log[:hits],
-              site_log[:views],
-              site_log[:bandwidth],
-              stat.id
-            ].first
+              DB[:stats].lock('EXCLUSIVE') {
+                stat = Stat.select(:id).where(opts).first
+                stat = Stat.create opts if stat.nil?
+              }
+
+              DB[
+                'update stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where id=?',
+                site_log[:hits],
+                site_log[:views],
+                site_log[:bandwidth],
+                stat.id
+              ].first
 
 =begin
-            site_log[:referrers].each do |referrer, views|
-              stat_referrer = StatReferrer.create_or_get site_log[:id], referrer
-              DB['update stat_referrers set views=views+? where site_id=?', views, site_log[:id]].first
-            end
+              site_log[:referrers].each do |referrer, views|
+                stat_referrer = StatReferrer.create_or_get site_log[:id], referrer
+                DB['update stat_referrers set views=views+? where site_id=?', views, site_log[:id]].first
+              end
 
-            site_log[:view_ips].each do |ip|
-              site_location = StatLocation.create_or_get site_log[:id], ip
-              next if site_location.nil?
-              DB['update stat_locations set views=views+1 where id=?', site_location.id].first
-            end
+              site_log[:view_ips].each do |ip|
+                site_location = StatLocation.create_or_get site_log[:id], ip
+                next if site_location.nil?
+                DB['update stat_locations set views=views+1 where id=?', site_location.id].first
+              end
 
-            site_log[:paths].each do |path, views|
-              site_path = StatPath.create_or_get site_log[:id], path
-              next if site_path.nil?
-              DB['update stat_paths set views=views+? where id=?', views, site_path.id].first
-            end
+              site_log[:paths].each do |path, views|
+                site_path = StatPath.create_or_get site_log[:id], path
+                next if site_path.nil?
+                DB['update stat_paths set views=views+? where id=?', views, site_path.id].first
+              end
 =end
+            end
           end
         end
 
         FileUtils.rm log_path
       end
+
+      total_site_stats.each do |time, stats|
+        opts = {created_at: time.to_date.to_s}
+
+        DB[:stats].lock('EXCLUSIVE') {
+          stat = DailySiteStat.select(:id).where(opts).first
+          stat = DailySiteStat.create opts if stat.nil?
+        }
+
+        DB[
+          'update daily_site_stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where created_at=?',
+          stats[:hits],
+          stats[:views],
+          stats[:bandwidth],
+          time.to_date
+        ].first
+      end
+
     end
   end
 end
