@@ -1,5 +1,5 @@
 def new_recaptcha_valid?
-  return session[:captcha_valid] = true if ENV['RACK_ENV'] == 'test'
+  return session[:captcha_valid] = true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
   resp = Net::HTTP.get URI(
     'https://www.google.com/recaptcha/api/siteverify?'+
     Rack::Utils.build_query(

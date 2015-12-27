@@ -99,7 +99,7 @@ describe Site do
         Fabricate :site, new_tags_string: 'gardening', views: Site::SUGGESTIONS_VIEWS_MIN
       }
 
-      site.suggestions.length.must_equal Site::SUGGESTIONS_LIMIT
+      site.suggestions.length.must_equal(Site::SUGGESTIONS_LIMIT - 5)
     end
   end
 end
