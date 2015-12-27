@@ -4,7 +4,7 @@ raise 'Forget it.' if ENV['RACK_ENV'] == 'production'
 require 'coveralls'
 require 'simplecov'
 
-SimpleCov::Formatter::MultiFormatter[
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
 ]
