@@ -329,5 +329,25 @@ describe 'site_files' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
       @site.reload.changed_count.must_equal 2
     end
+
+    describe 'classification' do
+      before do
+        $trainer.instance_variable_get('@db').redis.flushall
+      end
+
+      it 'trains files' do
+        upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/classifier/ham.html', 'text/html')
+        upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/classifier/spam.html', 'text/html')
+        upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/classifier/phishing.html', 'text/html')
+
+        @site.train 'ham.html'
+        @site.train 'spam.html', 'spam'
+        @site.train 'phishing.html', 'phishing'
+
+        @site.classify('ham.html').must_equal 'ham'
+        @site.classify('spam.html').must_equal 'spam'
+        @site.classify('phishing.html').must_equal 'phishing'
+      end
+    end
   end
 end

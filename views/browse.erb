@@ -75,7 +75,7 @@
 <% else %>
   <ul class="row website-Gallery content int-Gall">
     <% @sites.each_with_index do |site,i| %>
-      <li>
+      <li id="username_<%= site.username %>">
         <a href="<%= site.uri %>" class="neo-Screen-Shot" title="<%= site.title %>" onclick="surf(<%= ((@current_page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false">
           <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
             <img src="/img/placeholder.png" alt="<%= site.title %>" />
@@ -117,6 +117,20 @@
                 <%== csrf_token_input_html %>
                 <input type="hidden" name="username" value="<%= site.username %>">
                 <button>Ban</button>
+              </form>
+
+              <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
+                <%== csrf_token_input_html %>
+                <input type="hidden" name="username" value="<%= site.username %>">
+                <input type="hidden" name="classifier" value="spam">
+                <button>Spam</button>
+              </form>
+
+              <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
+                <%== csrf_token_input_html %>
+                <input type="hidden" name="username" value="<%= site.username %>">
+                <input type="hidden" name="classifier" value="phishing">
+                <button>Phishing</button>
               </form>
 
               <form action="/admin/mark_nsfw" target="_blank" method="POST" onsubmit="return confirm('Confirm NSFW marking of <%= site.username %>');">

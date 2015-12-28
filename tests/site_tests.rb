@@ -5,6 +5,15 @@ def app
 end
 
 describe Site do
+  describe 'banning' do
+    it 'still makes files available' do
+      site = Fabricate :site
+      site.ban!
+      File.exist?(site.current_files_path('index.html')).must_equal true
+      site.current_files_path('index.html').must_equal File.join(Site::BANNED_SITES_ROOT, site.username, 'index.html')
+    end
+  end
+
   describe 'directory create' do
     it 'handles wacky pathnames' do
       ['/derp', '/derp/'].each do |path|

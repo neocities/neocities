@@ -1,4 +1,9 @@
+require 'sanitize'
+require 'linnaeus'
+
 class SiteFile < Sequel::Model
+  CLASSIFIER_LIMIT = 1_000_000.freeze
+  CLASSIFIER_WORD_LIMIT = 25.freeze
   unrestrict_primary_key
   plugin :update_primary_key
   many_to_one :site

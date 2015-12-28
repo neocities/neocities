@@ -291,3 +291,14 @@ task :update_screenshots => [:environment] do
   }
 end
 =end
+
+desc 'train_classifier'
+task :train_classifier => [:environment] do
+  Site.select(:id, :username).where(is_banned: false, is_deleted: false).all.each do |site|
+    html_files = site.site_files_dataset.where(path: /\.html$/).all
+
+    html_files.each do |file|
+      site.train html_files.path
+    end
+  end
+end

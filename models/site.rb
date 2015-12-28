@@ -420,7 +420,7 @@ class Site < Sequel::Model
   end
 
   def get_file(path)
-    File.read files_path(path)
+    File.read current_files_path(path)
   end
 
   def before_destroy
@@ -930,6 +930,12 @@ class Site < Sequel::Model
     File.join TEMPLATE_ROOT, name
   end
 
+  def current_base_files_path(name=username)
+    raise 'username missing' if name.nil? || name.empty?
+    return File.join BANNED_SITES_ROOT, name if is_banned
+    base_files_path name
+  end
+
   def base_files_path(name=username)
     raise 'username missing' if name.nil? || name.empty?
     File.join SITE_FILES_ROOT, name
@@ -948,6 +954,10 @@ class Site < Sequel::Model
     end
 
     clean.join '/'
+  end
+
+  def current_files_path(path='')
+    File.join current_base_files_path, scrubbed_path(path)
   end
 
   def files_path(path='')
@@ -1233,6 +1243,45 @@ class Site < Sequel::Model
 
   def empty_index?
     !site_files_dataset.where(path: /^\/?index.html$/).where(sha1_hash: EMPTY_FILE_HASH).first.nil?
+  end
+
+  def classify(path)
+    return nil unless classification_allowed? path
+    $classifier.classify process_for_classification(path)
+  end
+
+  def classification_scores(path)
+    return nil unless classification_allowed? path
+    $classifier.classification_scores process_for_classification(path)
+  end
+
+  def train(path, category='ham')
+    return nil unless classification_allowed? path
+    $trainer.train(category, process_for_classification(path))
+    site_file = site_files_dataset.where(path: path).first
+    site_file.classifier = category
+    site_file.save_changes validate: false
+  end
+
+  def untrain(path, category='ham')
+    return nil unless classification_allowed? path
+    $trainer.untrain(category, process_for_classification(path))
+    site_file = site_files_dataset.where(path: path).first
+    site_file.classifier = category
+    site_file.save_changes validate: false
+  end
+
+  def classification_allowed?(path)
+    site_file = site_files_dataset.where(path: path).first
+    return false if site_file.is_directory
+    return false if site_file.size > SiteFile::CLASSIFIER_LIMIT
+    return false if !path.match(/\.html$/)
+    true
+  end
+
+  def process_for_classification(path)
+    sanitized = Sanitize.fragment get_file(path)
+    sanitized.gsub(/(http|https):\/\//, '').gsub(/[^\w\s]/, '').downcase.split.uniq.select{|v| v.length < SiteFile::CLASSIFIER_WORD_LIMIT}.join(' ')
   end
 
   # array of hashes: filename, tempfile, opts.

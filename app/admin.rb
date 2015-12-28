@@ -120,6 +120,11 @@ post '/admin/banhammer' do
 
   site = Site[username: params[:username]]
 
+  if !params[:classifier].empty?
+    site.untrain 'index.html'
+    site.train 'index.html', params[:classifier]
+  end
+
   if site.nil?
     flash[:error] = 'User not found'
     redirect '/admin'
