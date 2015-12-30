@@ -7,6 +7,20 @@
 
 <div class="content misc-page single-Col txt-Center" style="padding-top: 20px;">
 
+  <div>
+    <form action="/admin/banhammer" target="_blank" method="POST">
+      <%== csrf_token_input_html %>
+      <input type="hidden" name="username" value="<%= @site.username %>">
+      <p><input class="btn-Action" type="submit" value="Ban"></p>
+    </form>
+
+    <form action="/admin/mark_nsfw" method="POST">
+      <%== csrf_token_input_html %>
+      <input type="hidden" name="username" value="<%= @site.username %>">
+      <p><input class="btn-Action" type="submit" value="Mark NSFW"></p>
+    </form>
+  </div>
+
   <h3>Site Pages</h3>
 
   <table>
@@ -14,7 +28,7 @@
       <tr style="outline: thin solid black;">
         <td><img src="<%= @site.screenshot_url(site_file.path, '210x158') %>"></td>
         <td>
-          <p><strong><%= site_file.path %></strong></p>
+          <p><strong><a href="<%= @site.uri + '/' + site_file.path %>"><%= site_file.path %></a></strong></p>
           <% if !site_file.classifier.blank? %>
             <p>
               <% if site_file.classifier == 'ham' %>
