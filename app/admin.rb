@@ -14,6 +14,7 @@ end
 get '/admin/site/:username' do |username|
   require_admin
   @site = Site[username: username]
+  not_found if @site.nil?
   @title = "Site Inspector - #{@site.username}"
   erb :'admin/site'
 end
