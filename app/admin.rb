@@ -11,8 +11,24 @@ get '/admin/reports' do
   erb :'admin/reports'
 end
 
+get '/admin/site/:username' do |username|
+  require_admin
+  @site = Site[username: username]
+  erb :'admin/site'
+end
+
 post '/admin/reports' do
 
+end
+
+post '/admin/site_files/train' do
+  require_admin
+  site = Site[params[:site_id]]
+  site_file = site.site_files_dataset.where(path: params[:path]).first
+  not_found if site_file.nil?
+  site.untrain site_file.path
+  site.train site_file.path, params[:classifier]
+  'ok'
 end
 
 get '/admin/usage' do
