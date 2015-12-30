@@ -302,3 +302,19 @@ task :train_classifier => [:environment] do
     end
   end
 end
+
+desc 'train_spam'
+task :train_spam => [:environment] do
+  paths = File.read('./spam.txt')
+
+  paths.split("\n").each do |path|
+    username, site_file_path = path.match(/^([a-zA-Z0-9_\-]+)\/(.+)$/i).captures
+    site = Site[username: username]
+    next if site.nil?
+    site_file = site.site_files_dataset.where(path: site_file_path).first
+    next if site_file.nil?
+    site.train site_file_path, :spam
+    site.ban!
+    puts "Deleted #{site_file_path}, banned #{site.username}"
+  end
+end
