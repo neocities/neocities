@@ -105,7 +105,7 @@ class Site < Sequel::Model
     custom_ssl_certificates: true,
     no_file_restrictions: true,
     custom_domains: true,
-    maximum_site_files: 25000
+    maximum_site_files: 50000
   }
 
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
