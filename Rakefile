@@ -292,13 +292,16 @@ task :update_screenshots => [:environment] do
 end
 =end
 
-desc 'train_classifier'
-task :train_classifier => [:environment] do
+desc 'prime_classifier'
+task :prime_classifier => [:environment] do
   Site.select(:id, :username).where(is_banned: false, is_deleted: false).all.each do |site|
+    next if site.site_files_dataset.where(classifier: 'spam').count > 0
     html_files = site.site_files_dataset.where(path: /\.html$/).all
 
-    html_files.each do |file|
-      site.train html_files.path
+    html_files.each do |html_file|
+      print "training #{site.username}/#{html_file.path}..."
+      site.train html_file.path
+      print "done.\n"
     end
   end
 end
