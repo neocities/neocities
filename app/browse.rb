@@ -1,7 +1,7 @@
 get '/browse/?' do
-  @current_page = params[:current_page]
-  @current_page = @current_page.to_i
-  @current_page = 1 if @current_page == 0
+
+  @page = params[:page].to_i
+  @page = 1 if @page == 0
 
   params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
 
@@ -11,12 +11,14 @@ get '/browse/?' do
     site_dataset = browse_sites_dataset
   end
 
-  site_dataset = site_dataset.paginate @current_page, Site::BROWSE_PAGINATION_LENGTH
-  @page_count = site_dataset.page_count || 1
+  site_dataset = site_dataset.paginate @page, Site::BROWSE_PAGINATION_LENGTH
+  @pagination_dataset = site_dataset
   @sites = site_dataset.all
+
   if params[:tag]
     @title = "Sites tagged #{params[:tag]}"
   end
+
   erb :browse
 end
 

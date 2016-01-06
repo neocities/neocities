@@ -1,8 +1,8 @@
 get '/surf/?' do
-  @current_page = params[:current_page].to_i || 1
+  @page = params[:page].to_i || 1
   params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
   site_dataset = browse_sites_dataset
-  site_dataset = site_dataset.paginate @current_page, 1
+  site_dataset = site_dataset.paginate @page, 1
   @page_count = site_dataset.page_count || 1
   @site = site_dataset.first
   redirect "/browse?#{Rack::Utils.build_query params}" if @site.nil?

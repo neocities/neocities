@@ -1,10 +1,10 @@
 <script type="text/javascript">
-  function getPage(currentPage) {
-    document.location.href = '/browse?current_page='+currentPage+'&'+$('#search_criteria').serialize();
+  function getPage(page) {
+    document.location.href = '/browse?page='+page+'&'+$('#search_criteria').serialize();
   }
 
-  function surf(currentPage) {
-    document.location.href = '/surf?current_page='+currentPage+'&'+$('#search_criteria').serialize();
+  function surf(page) {
+    document.location.href = '/surf?page='+page+'&'+$('#search_criteria').serialize();
   }
 </script>
 
@@ -76,7 +76,7 @@
   <ul class="row website-Gallery content int-Gall">
     <% @sites.each_with_index do |site,i| %>
       <li id="username_<%= site.username %>">
-        <a href="<%= site.uri %>" class="neo-Screen-Shot" title="<%= site.title %>" onclick="surf(<%= ((@current_page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false">
+        <a href="<%= site.uri %>" class="neo-Screen-Shot" title="<%= site.title %>" onclick="surf(<%= ((@page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false">
           <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
             <img src="/img/placeholder.png" alt="<%= site.title %>" />
           </span>
@@ -147,25 +147,7 @@
 <% end %>
 
 <% if params[:sort_by] != 'random' %>
-  <% if @page_count > 1 %>
-    <div class="txt-Center content eps pagination">
-      <% if @current_page != 1 %>
-        <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="fa fa-arrow-left arrow"></i></a>&nbsp;
-      <% end %>
-
-      <% 1.upto(@page_count) do |num| %>
-        <% if num == @current_page %>
-          <%= num %>&nbsp;
-        <% else %>
-          <a href="#" onclick="getPage(<%= num %>); return false"><%= num %></a>&nbsp;
-        <% end %>
-      <% end %>
-
-      <% if @current_page != @page_count %>
-        <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="fa fa-arrow-right arrow"></i></a>
-      <% end %>
-    </div>
-  <% end %>
+  <%== erb :'_pagination', layout: false %>
 <% end %>
 
 <% unless is_education? %>

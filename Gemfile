@@ -34,6 +34,7 @@ gem 'base32'
 gem 'coveralls', require: false
 gem 'sanitize'
 gem 'linnaeus', git: 'https://github.com/neocities/linnaeus.git', branch: 'soften_redis_gemspec'
+gem 'will_paginate'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

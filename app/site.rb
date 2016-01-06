@@ -13,9 +13,9 @@ get '/site/:username/?' do |username|
 
   @title = site.title
 
-  @current_page = params[:current_page]
-  @current_page = @current_page.to_i
-  @current_page = 1 if @current_page == 0
+  @page = params[:page]
+  @page = @page.to_i
+  @page = 1 if @page == 0
 
   if params[:event_id]
     not_found unless params[:event_id].is_integer?
@@ -23,10 +23,11 @@ get '/site/:username/?' do |username|
     not_found if event.nil?
     events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
   else
-    events_dataset = site.latest_events(@current_page, 10)
+    events_dataset = site.latest_events(@page, 10)
   end
 
   @page_count = events_dataset.page_count || 1
+  @pagination_dataset = events_dataset
   @latest_events = events_dataset.all
 
   erb :'site', locals: {site: site, is_current_site: site == current_site}
