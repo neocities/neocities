@@ -6,7 +6,7 @@ require 'open3'
 
 class ScreenshotWorker
   SCREENSHOTS_PATH = Site::SCREENSHOTS_ROOT
-  HARD_TIMEOUT = 20.freeze
+  HARD_TIMEOUT = 30.freeze
   include Sidekiq::Worker
   sidekiq_options queue: :screenshots, retry: 3, backtrace: true
 
@@ -27,32 +27,20 @@ class ScreenshotWorker
         output: screenshot_output_path
       )
     rescue Cocaine::ExitStatusError => e
-      if e.message && e.message.match(/returned 124/)
-        puts "#{username}/#{path} is timing out, discontinuing"
-        site = Site[username: username]
-        site.is_crashing = true
-        site.save_changes validate: false
-        return true
-=begin
-        if site.email
-          EmailWorker.perform_async({
-            from: 'web@neocities.org',
-            to: site.email,
-            subject: "[NeoCities] The web page \"#{path}\" on your site (#{username}.neocities.org) is slow",
-            body: "Hi there! This is an automated email to inform you that we're having issues loading your site to take a "+
-                  "screenshot. It is possible that this is an error specific to our screenshot program, but it is much more "+
-                  "likely that your site is too slow to be used with browsers. We don't want Neocities sites crashing browsers, "+
-                  "so we're taking steps to inform you and see if you can resolve the issue. "+
-                  "We may have to de-list your web site from being viewable in our browse page if it is not resolved shortly. "+
-                  "We will review the site manually before taking this step, so don't worry if your site is fine and we made "+
-                  "a mistake."+
-                  "\n\nOur best,\n- Neocities"
-          })
-        end
-=end
-      else
-        raise
-      end
+      raise e
+
+      # We set is_crashing after retries now, but use this code to go back to instant:
+
+      #if e.message && e.message.match(/returned 124/)
+      #  puts "#{username}/#{path} is timing out, discontinuing"
+      #  site = Site[username: username]
+      #  site.is_crashing = true
+      #  site.save_changes validate: false
+      #  return true
+      #
+      #else
+      #  raise
+      #end
     end
 
     img_list = Magick::ImageList.new
@@ -81,5 +69,30 @@ class ScreenshotWorker
         self.quality = 90
       }
     end
+  end
+
+  sidekiq_retries_exhausted do |msg|
+    username, path = msg['args']
+    site = Site[username: username]
+    site.is_crashing = true
+    site.save_changes validate: false
+
+=begin
+        if site.email
+          EmailWorker.perform_async({
+            from: 'web@neocities.org',
+            to: site.email,
+            subject: "[NeoCities] The web page \"#{path}\" on your site (#{username}.neocities.org) is slow",
+            body: "Hi there! This is an automated email to inform you that we're having issues loading your site to take a "+
+                  "screenshot. It is possible that this is an error specific to our screenshot program, but it is much more "+
+                  "likely that your site is too slow to be used with browsers. We don't want Neocities sites crashing browsers, "+
+                  "so we're taking steps to inform you and see if you can resolve the issue. "+
+                  "We may have to de-list your web site from being viewable in our browse page if it is not resolved shortly. "+
+                  "We will review the site manually before taking this step, so don't worry if your site is fine and we made "+
+                  "a mistake."+
+                  "\n\nOur best,\n- Neocities"
+          })
+        end
+=end
   end
 end
