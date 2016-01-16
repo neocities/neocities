@@ -1,5 +1,4 @@
 require 'sanitize'
-require 'linnaeus'
 
 class SiteFile < Sequel::Model
   CLASSIFIER_LIMIT = 1_000_000.freeze

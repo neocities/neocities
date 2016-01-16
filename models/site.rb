@@ -1247,17 +1247,17 @@ class Site < Sequel::Model
 
   def classify(path)
     return nil unless classification_allowed? path
-    $classifier.classify process_for_classification(path)
+    #$classifier.classify process_for_classification(path)
   end
 
   def classification_scores(path)
     return nil unless classification_allowed? path
-    $classifier.classification_scores process_for_classification(path)
+    #$classifier.classification_scores process_for_classification(path)
   end
 
   def train(path, category='ham')
     return nil unless classification_allowed? path
-    $trainer.train(category, process_for_classification(path))
+    # $trainer.train(category, process_for_classification(path))
     site_file = site_files_dataset.where(path: path).first
     site_file.classifier = category
     site_file.save_changes validate: false
@@ -1265,7 +1265,7 @@ class Site < Sequel::Model
 
   def untrain(path, category='ham')
     return nil unless classification_allowed? path
-    $trainer.untrain(category, process_for_classification(path))
+    # $trainer.untrain(category, process_for_classification(path))
     site_file = site_files_dataset.where(path: path).first
     site_file.classifier = category
     site_file.save_changes validate: false

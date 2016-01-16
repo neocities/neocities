@@ -33,7 +33,6 @@ gem 'dnsruby'
 gem 'base32'
 gem 'coveralls', require: false
 gem 'sanitize'
-gem 'linnaeus', git: 'https://github.com/neocities/linnaeus.git', branch: 'soften_deps_and_perf'
 gem 'will_paginate'
 
 platform :mri, :rbx do

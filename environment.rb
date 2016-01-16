@@ -133,6 +133,3 @@ $country_codes = {}
 CSV.foreach("./files/country_codes.csv") do |row|
   $country_codes[row.last] = row.first
 end
-
-$classifier = Linnaeus::Classifier.new redis_db: 1
-$trainer = Linnaeus::Trainer.new redis_db: 1
