@@ -1,20 +1,10 @@
-def kickstarter_days_remaining
-  ending = Time.parse('Sat, Jul 25 2015 3:05 PM PDT')
-  today = Time.now
-
-  remaining = ending - today
-  return 0 if remaining < 0
-
-  ((ending - today) / 86400).to_i
-end
-
 def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
 end
 
 def require_login_ajax
   halt 'You are not logged in!' unless signed_in?
-  halt 'You are banned.' if current_site.is_banned? || parent_site.is_banned?
+  halt 'Please contact support.' if banned?
 end
 
 def csrf_safe?
@@ -31,11 +21,7 @@ end
 
 def require_login
   redirect '/' unless signed_in?
-  if session[:banned] || current_site.is_banned || parent_site.is_banned
-    signout
-    session[:banned] = true
-    redirect '/'
-  end
+  enforce_ban if banned?
 end
 
 def signed_in?
@@ -52,15 +38,18 @@ def parent_site
   current_site.parent? ? current_site : current_site.parent
 end
 
-def require_unbanned_ip
-  if session[:banned] || (is_banned_ip = Site.banned_ip?(request.ip))
-    signout
-    session[:banned] = request.ip if !session[:banned]
+def banned?(ip_check=false)
+  return true if session[:banned]
+  return true if current_site && (current_site.is_banned || parent_site.is_banned)
 
-    flash[:error] = 'Site creation has been banned due to a Terms of Service violation from your location. '+
-    'If you believe this to be in error, <a href="/contact">contact the site admin</a>.'
-    return {result: 'error'}.to_json
-  end
+  return true if ip_check && Site.banned_ip?(request.ip)
+  false
+end
+
+def enforce_ban
+  signout
+  session[:banned] = true
+  redirect '/'
 end
 
 def title

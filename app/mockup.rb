@@ -29,4 +29,9 @@ get '/stats_mockup' do
   require_login
   erb :'stats_mockup', locals: {site: current_site}
 end
+
+get '/tutorial_mockup_c1p2' do
+  require_login
+  erb :'tutorial_mockup_c1p2', locals: {site: current_site}
+end
 # :nocov:

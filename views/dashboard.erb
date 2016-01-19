@@ -74,7 +74,11 @@
     </div>
   <% end %>
 
-<div class="files">
+<div id="filesDisplay" class="files">
+  <script>
+    if(localStorage && localStorage.getItem('viewType') == 'list')
+      $('#filesDisplay').addClass('list-view')
+  </script>
   <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
     <div class="uploading">
         <p>Uploading, please wait...</p>
@@ -82,6 +86,10 @@
     </div>
   </div>
   <div class="header">
+    <div class="btn-group" role="group" aria-label="...">
+      <button type="button" class="btn btn-default iconview-button" title="Icon View" onclick="iconView()"><i class="fa fa-th"></i></button>
+      <button type="button" class="btn btn-default listview-button" title="List View" onclick="listView()"><i class="fa fa-list"></i></button>
+    </div>
     <div class="breadcrumbs">
       <% if params[:dir].nil? || params[:dir].empty? || params[:dir] == '/' %>
         Home
@@ -114,6 +122,7 @@
       <div class="upload-Boundary <%= @file_list.length <= 5 ? 'with-instruction' : '' %>">
         <% @file_list.each do |file| %>
           <div class="file filehover">
+            <!-- <input type="checkbox" name="" value="" /> -->
             <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '210x158') %>
               <div class="html-thumbnail html fileimagehover">
                 <img src="<%= current_site.screenshot_url(file[:path], '210x158') %>" alt="">
@@ -137,12 +146,19 @@
             <% end %>
 
             <a class="title">
-              <% if file[:name].length > 19 %>
-                <%= file[:name].slice(0..18) %>&hellip;
-              <% else %>
-                <%= file[:name] %>
-              <% end %>
+              <%= file[:name] %>
             </a>
+            <div class="column size">
+              <% if file[:size] %>
+                <%= file[:size].to_bytes_pretty %>
+              <% end %>
+            </div>
+            <div class="column updated">
+              <% if file[:updated_at] %>
+                <%= file[:updated_at].ago %>
+              <% end %>
+            </div>
+
             <div class="overlay">
               <% if file[:is_editable] %>
                 <a href="/site_files/text_editor<%= file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
@@ -315,4 +331,18 @@
   $('#createFile').on('shown', function () {
     $('#newFileInput').focus();
   })
+
+  function listView() {
+    if(localStorage)
+      localStorage.setItem('viewType', 'list')
+
+    $('#filesDisplay').addClass('list-view')
+  }
+
+  function iconView() {
+    if(localStorage)
+      localStorage.removeItem('viewType')
+
+    $('#filesDisplay').removeClass('list-view')
+  }
 </script>

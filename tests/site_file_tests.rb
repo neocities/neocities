@@ -24,16 +24,43 @@ describe 'site_files' do
   end
 
   describe 'delete' do
+    before do
+      DeleteCacheWorker.jobs.clear
+      DeleteCacheOrderWorker.jobs.clear
+    end
+
     it 'works' do
+      initial_space_used = @site.space_used
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
-      @site.reload.space_used.must_equal uploaded_file.size
+
+      PurgeCacheOrderWorker.jobs.clear
+
+      @site.reload.space_used.must_equal initial_space_used + uploaded_file.size
+      @site.actual_space_used.must_equal @site.space_used
       file_path = @site.files_path 'test.jpg'
       File.exists?(file_path).must_equal true
       delete_file filename: 'test.jpg'
+
       File.exists?(file_path).must_equal false
       SiteFile[site_id: @site.id, path: 'test.jpg'].must_be_nil
-      @site.reload.space_used.must_equal 0
+      @site.reload.space_used.must_equal initial_space_used
+      @site.actual_space_used.must_equal @site.space_used
+
+      PurgeCacheOrderWorker.jobs.length.must_equal 0
+      DeleteCacheOrderWorker.jobs.length.must_equal 1
+      args = DeleteCacheOrderWorker.jobs.first['args']
+      args[0].must_equal @site.username
+      args[1].must_equal '/test.jpg'
+    end
+
+    it 'flushes surf for index.html' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
+      upload 'files[]' => uploaded_file
+      delete_file filename: '/index.html'
+
+      DeleteCacheOrderWorker.jobs.length.must_equal 3
+      DeleteCacheOrderWorker.jobs.collect {|j| j['args'].last}.must_equal ['/index.html', '/?surf=1', '/']
     end
 
     it 'deletes a directory and all files in it' do
@@ -45,9 +72,36 @@ describe 'site_files' do
         'dir' => '',
         'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       )
+
+      space_used = @site.reload.space_used
       delete_file filename: 'test'
+
+      @site.reload.space_used.must_equal(space_used - File.size('./tests/files/test.jpg'))
+
+      @site.site_files.select {|f| f.path == 'test'}.length.must_equal 0
       @site.site_files.select {|f| f.path =~ /^test\//}.length.must_equal 0
-      @site.site_files.select {|f| f.path =~ /^test/}.length.must_equal 1
+      @site.site_files.select {|f| f.path =~ /^test.jpg/}.length.must_equal 1
+    end
+
+    it 'deletes records for nested directories' do
+      upload(
+        'dir' => 'derp/ing/tons',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+
+      expected_site_file_paths = ['derp', 'derp/ing', 'derp/ing/tons', 'derp/ing/tons/test.jpg']
+
+      expected_site_file_paths.each do |path|
+        @site.site_files.select {|f| f.path == path}.length.must_equal 1
+      end
+
+      delete_file filename: 'derp'
+
+      @site.reload
+
+      expected_site_file_paths.each do |path|
+        @site.site_files.select {|f| f.path == path}.length.must_equal 0
+      end
     end
 
     it 'goes back to deleting directory' do
@@ -107,25 +161,35 @@ describe 'site_files' do
       @site.title.must_equal 'Hello?'
 
       # Purge cache needs to flush / and index.html for either scenario.
-      PurgeCacheOrderWorker.jobs.length.must_equal 2
+      PurgeCacheOrderWorker.jobs.length.must_equal 3
       first_purge = PurgeCacheOrderWorker.jobs.first
+      surf_purge = PurgeCacheOrderWorker.jobs[1]
       dirname_purge = PurgeCacheOrderWorker.jobs.last
 
       username, pathname = first_purge['args']
       username.must_equal @site.username
       pathname.must_equal '/index.html'
+
+      surf_purge['args'].last.must_equal '/?surf=1'
+
       username, pathame = nil
       username, pathname = dirname_purge['args']
       username.must_equal @site.username
       pathname.must_equal '/'
+
+      @site.space_used.must_equal @site.actual_space_used
+
+      (@site.space_used > 0).must_equal true
     end
 
     it 'provides the correct space used after overwriting an existing file' do
+      initial_space_used = @site.space_used
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
       second_uploaded_file = Rack::Test::UploadedFile.new('./tests/files/img/test.jpg', 'image/jpeg')
       upload 'files[]' => second_uploaded_file
-      @site.reload.space_used.must_equal second_uploaded_file.size
+      @site.reload.space_used.must_equal initial_space_used + second_uploaded_file.size
+      @site.space_used.must_equal @site.actual_space_used
     end
 
     it 'does not change title for subdir index.html' do
@@ -138,6 +202,7 @@ describe 'site_files' do
     end
 
     it 'succeeds with valid file' do
+      initial_space_used = @site.space_used
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
       last_response.body.must_match /successfully uploaded/i
@@ -149,7 +214,8 @@ describe 'site_files' do
 
       @site.reload
       @site.space_used.wont_equal 0
-      @site.space_used.must_equal uploaded_file.size
+      @site.space_used.must_equal initial_space_used + uploaded_file.size
+      @site.space_used.must_equal @site.actual_space_used
 
       ThumbnailWorker.jobs.length.must_equal 1
       ThumbnailWorker.drain
@@ -158,7 +224,15 @@ describe 'site_files' do
         File.exists?(@site.thumbnail_path('test.jpg', resolution)).must_equal true
       end
 
-      @site.site_changed.must_equal true
+      @site.site_changed.must_equal false
+    end
+
+    it 'sets site changed to false if index is empty' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/blankindex/index.html', 'text/html')
+      upload 'files[]' => uploaded_file
+      last_response.body.must_match /successfully uploaded/i
+      @site.empty_index?.must_equal true
+      @site.site_changed.must_equal false
     end
 
     it 'fails with unsupported file' do
@@ -213,12 +287,30 @@ describe 'site_files' do
       ThumbnailWorker.jobs.length.must_equal 1
       ThumbnailWorker.drain
 
+      @site.site_files_dataset.where(path: 'derpie').count.must_equal 1
+      @site.site_files_dataset.where(path: 'derpie/derptest').count.must_equal 1
+      @site.site_files_dataset.where(path: 'derpie/derptest/test.jpg').count.must_equal 1
+
       Site::THUMBNAIL_RESOLUTIONS.each do |resolution|
         File.exists?(@site.thumbnail_path('derpie/derptest/test.jpg', resolution)).must_equal true
         @site.thumbnail_url('derpie/derptest/test.jpg', resolution).must_equal(
           File.join "#{Site::THUMBNAILS_URL_ROOT}", @site.username, "/derpie/derptest/test.jpg.#{resolution}.jpg"
         )
       end
+    end
+
+    it 'does not register site changing until root index.html is changed' do
+      upload(
+        'dir' => 'derpie/derptest',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      @site.reload.site_changed.must_equal false
+
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
+      @site.reload.site_changed.must_equal true
+
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/chunkfive.otf', 'application/vnd.ms-opentype')
+      @site.reload.site_changed.must_equal true
     end
 
     it 'does not store new file if hash matches' do
@@ -236,6 +328,28 @@ describe 'site_files' do
 
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
       @site.reload.changed_count.must_equal 2
+    end
+
+    describe 'classification' do
+      before do
+        puts "TODO FINISH CLASSIFIER"
+        #$trainer.instance_variable_get('@db').redis.flushall
+      end
+=begin
+      it 'trains files' do
+        upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/classifier/ham.html', 'text/html')
+        upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/classifier/spam.html', 'text/html')
+        upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/classifier/phishing.html', 'text/html')
+
+        @site.train 'ham.html'
+        @site.train 'spam.html', 'spam'
+        @site.train 'phishing.html', 'phishing'
+
+        @site.classify('ham.html').must_equal 'ham'
+        @site.classify('spam.html').must_equal 'spam'
+        @site.classify('phishing.html').must_equal 'phishing'
+      end
+=end
     end
   end
 end

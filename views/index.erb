@@ -57,26 +57,11 @@
 <div class="header-Outro">
 <div class="row header-Content content">
   <div class="col intro">
-    <h2 class="section-header">Create your own free web site. Unlimited creativity, zero ads.</h2>
+    <h2 class="section-header">Create your own free website.<br>Unlimited creativity, zero ads.</h2>
     <p class="intro-text">
-     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We provide free hosting and tools that allow anyone to make a web site. Only your imagination is required. Join us!
+     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We provide free web hosting and tools that allow anyone to make a website. Only your imagination is required. Join us!
     </p>
-    <div class="intro-List kickstarter">
-      <div class="col col-40">
-        <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev"><img src="/img/kickstarterthumbnail.jpg" style="width: 100%; float: left; margin-right: 20px; border: 3px solid white;margin-bottom: 1em"></a>
-      </div>
-      <div class="col col-60">
-        <div class="title">
-        <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">
-        SUPPORT OUR
-        <img src="/img/kickstarterlogo.png" style="width: 280px; display:block; margin: 11px 0px;">
-        <%= kickstarter_days_remaining %> DAYS LEFT
-        </a>
-        </div>
-        <p>We need your help to build an amazing HTML/CSS course into Neocities! <a href="https://www.kickstarter.com/projects/1262953102/neocities-30-an-interactive-html-css-course-for-ev">Learn More&nbsp;>></a></p>
-      </div>
-    </div>
-    <!--<ul class="intro-List">
+    <ul class="intro-List">
       <li class="intro-Social">
         <span class="intro-Icon"></span>
         <h3 class="delta">Share your web creation with the world</h3>
@@ -90,7 +75,7 @@
         <p class="base">
           We’ve made it easier to build your website and explore other sites. Neocities features an in-browser HTML editor, custom domain support, faster site loading, easy file uploading, RSS feeds, folder support, and much more.
       </li>
-    </ul>-->
+    </ul>
   </div>
 
   <div class="col signup-Area">
@@ -204,13 +189,13 @@
   <div class="col col-50"><div class="screenshot" style="background-image:url(/img/front-editor-screenshot.png)"></div></div>
   <div class="col col-50 text">
     <h3><i class="fa fa-edit"></i> HTML editor, right in your browser</h3>
-    <p>No tools needed. With our easy-to-use HTML editor, you're ready to start building your awesome web site right now.</p>
+    <p>No tools needed. With our easy-to-use HTML editor, you're ready to start building your awesome website right now.</p>
     <p>If you'd rather use your favorite desktop editor, no problem. Uploading files is as easy as drag-n-drop.</p>
   </div>
 </div>
 
 <div class="row content right">
-  <div class="col col-50"><div class="screenshot" style="background-image:url(/img/front-browse-screenshot.png);"></div></div>
+  <div class="col col-50"><div class="screenshot" style="background-image:url(/img/front-browse-screenshot.jpg);"></div></div>
   <div class="col col-50 text">
     <h3><i class="fa fa-globe"></i> It's time to bring back web surfing.</h3>
     <p>All Neocities sites are viewable in our <a href="/browse">website gallery</a>. And it's easy to browse sites with our optional surf bar.</p>
@@ -219,7 +204,7 @@
 </div>
 
 <div class="row content">
-  <div class="col col-50"><div class="screenshot" style="background-image:url(/img/front-follow-screenshot.png);"></div></div>
+  <div class="col col-50"><div class="screenshot" style="background-image:url(/img/front-follow-screenshot.jpg);"></div></div>
   <div class="col col-50 text">
     <h3><i class="fa fa-user-plus"></i> Follow your favorite Neocities sites</h3>
     <p>Keep track of all your favorite sites by following them. Any changes to the sites automatically show up in your news feed. You'll also see what sites they follow.</p>
@@ -256,7 +241,7 @@
   <div class="row">
     <div class="col col-50">
       <h3><i class="fa fa-wrench"></i>Developer tools</h3>
-      <p>We have an in-browser HTML editor, easy file uploading, WebDAV publishing, support for custom domains, RSS feeds for every site, powerful APIs for building developer applications, and much more!</p>
+      <p>Our fast static hosting comes with a great in-browser HTML editor, easy file uploading, RSS feeds for every site, <a href="/api">powerful APIs</a> for building developer applications, and much more! Upgrade to a <a href="/plan">supporter plan</a> to get WebDAV publishing and support for custom domains.</p>
     </div>
 
     <div class="col col-50">
@@ -288,7 +273,15 @@
 <% # erb :'plan/_pricing' %>
 
 <section class="section bottom-signup">
-  <h2>What are you waiting for? <a href="#new">Start building your web site now!</a></h2>
+  <h2>What are you waiting for? <a href="#new">Start building your website now!</a></h2>
+</section>
+
+<section class="section thankyou">
+  <div class="row">
+    <p>Sponsored by</p>
+    <a href="//www.discourse.org"><img src="/img/discourse-logo.png" alt="Discourse" style="width:233px;"></a>
+    <p>With special thanks to our <a href="/thankyou">Kickstarter backers</a></p>
+  </div>
 </section>
 </main>
 
@@ -324,7 +317,7 @@
             <p class="tiny">
               The latest news on Neocities can be found on our blog.
             </p>
-            <a href="/blog" title="Read about Neocities news and updates" class="action-Link">Read More</a>
+            <a href="//blog.neocities.org" title="Read about Neocities news and updates" class="action-Link">Read More</a>
           </div>
         </div>
       </div>

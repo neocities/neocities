@@ -41,7 +41,7 @@ end
 desc 'Update banned IPs list'
 task :update_blocked_ips => [:environment] do
   uri = URI.parse('http://www.stopforumspam.com/downloads/listed_ip_90.zip')
-  blocked_ips_zip = Tempfile.new('blockedipszip', Dir.tmpdir, 'wb')
+  blocked_ips_zip = Tempfile.new('blockedipszip', Dir.tmpdir)
   blocked_ips_zip.binmode
 
   Net::HTTP.start(uri.host, uri.port) do |http|
@@ -216,6 +216,73 @@ task :hash_ips => [:environment] do
   end
 end
 
+desc 'prime_site_files'
+task :prime_site_files => [:environment] do
+  Site.where(is_banned: false).where(is_deleted: false).select(:id, :username).all.each do |site|
+    Dir.glob(File.join(site.files_path, '**/*')).each do |file|
+      path = file.gsub(site.base_files_path, '').sub(/^\//, '')
+
+      site_file = site.site_files_dataset[path: path]
+
+      if site_file.nil?
+        mtime = File.mtime file
+
+        site_file_opts = {
+          path: path,
+          updated_at: mtime,
+          created_at: mtime
+        }
+
+        if File.directory? file
+          site_file_opts.merge! is_directory: true
+        else
+          site_file_opts.merge!(
+            size: File.size(file),
+            sha1_hash: Digest::SHA1.file(file).hexdigest
+          )
+        end
+
+        site.add_site_file site_file_opts
+      end
+    end
+  end
+end
+
+desc 'dedupe_follows'
+task :dedupe_follows => [:environment] do
+  follows = Follow.all
+  deduped_follows = Follow.all.uniq {|f| "#{f.site_id}_#{f.actioning_site_id}"}
+
+  follows.each do |follow|
+    unless deduped_follows.include?(follow)
+      puts "deleting dedupe: #{follow.inspect}"
+      follow.delete
+    end
+  end
+end
+
+desc 'flush_empty_index_sites'
+task :flush_empty_index_sites => [:environment] do
+  sites = Site.select(:id).all
+
+  counter = 0
+
+  sites.each do |site|
+    if site.empty_index?
+      counter += 1
+      site.site_changed = false
+      site.save_changes validate: false
+    end
+  end
+
+  puts "#{counter} sites set to not changed."
+end
+
+desc 'compute_scores'
+task :compute_scores => [:environment] do
+  Site.compute_scores
+end
+
 =begin
 desc 'Update screenshots'
 task :update_screenshots => [:environment] do
@@ -224,3 +291,33 @@ task :update_screenshots => [:environment] do
   }
 end
 =end
+
+desc 'prime_classifier'
+task :prime_classifier => [:environment] do
+  Site.select(:id, :username).where(is_banned: false, is_deleted: false).all.each do |site|
+    next if site.site_files_dataset.where(classifier: 'spam').count > 0
+    html_files = site.site_files_dataset.where(path: /\.html$/).all
+
+    html_files.each do |html_file|
+      print "training #{site.username}/#{html_file.path}..."
+      site.train html_file.path
+      print "done.\n"
+    end
+  end
+end
+
+desc 'train_spam'
+task :train_spam => [:environment] do
+  paths = File.read('./spam.txt')
+
+  paths.split("\n").each do |path|
+    username, site_file_path = path.match(/^([a-zA-Z0-9_\-]+)\/(.+)$/i).captures
+    site = Site[username: username]
+    next if site.nil?
+    site_file = site.site_files_dataset.where(path: site_file_path).first
+    next if site_file.nil?
+    site.train site_file_path, :spam
+    site.ban!
+    puts "Deleted #{site_file_path}, banned #{site.username}"
+  end
+end

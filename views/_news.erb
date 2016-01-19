@@ -126,26 +126,7 @@
 
 <% if params[:activity] != 'global' %>
   <div class="content">
-    <% if @page_count > 1 %>
-      <div class="txt-Center content eps pagination">
-        <% if @current_page != 1 %>
-          <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="fa fa-arrow-left arrow"></i></a>&nbsp;
-        <% end %>
-
-        <% 1.upto(@page_count) do |num| %>
-          <% if num == @current_page %>
-            <%= num %>&nbsp;
-          <% else %>
-            <a href="#" onclick="getPage(<%= num %>); return false"><%= num %></a>&nbsp;
-          <% end %>
-
-        <% end %>
-
-        <% if @current_page != @page_count %>
-          <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="fa fa-arrow-right arrow"></i></a>
-        <% end %>
-      </div>
-    <% end %>
+    <%== erb :_pagination, layout: false %>
   </div>
 <% end %>
 

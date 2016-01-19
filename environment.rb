@@ -11,6 +11,8 @@ require 'logger'
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
+require 'tilt/erubis'
+
 Dir['./ext/**/*.rb'].each {|f| require f}
 
 # :nocov:
@@ -30,6 +32,8 @@ raise 'hash_ip_salt is required' unless $config['ip_hash_salt']
 
 DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $config['database_pool']
 DB.extension :pagination
+
+require 'will_paginate/sequel'
 
 # :nocov:
 =begin
@@ -61,6 +65,7 @@ end
 # :nocov:
 if ENV['RACK_ENV'] == 'development'
   # Run async jobs immediately in development.
+=begin
   module Sidekiq
     module Worker
       module ClassMethods
@@ -72,6 +77,7 @@ if ENV['RACK_ENV'] == 'development'
       end
     end
   end
+=end
 end
 # :nocov:
 

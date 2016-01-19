@@ -1,0 +1,73 @@
+// ----------------------------------------------------------------
+//		Project Specific: Tutorial
+// ----------------------------------------------------------------
+
+.tutorial {
+  p {
+    font-size: 1em;
+  }
+  .interact {
+    textarea.editor {
+      height: 350px!important;
+      width: 100%;
+      background-color: #1D1F21;
+      color: white;
+      font: 16px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+      margin-bottom: 0;
+      border: 0;
+    }
+    h3 {
+      margin-top: 10px;
+    }
+    .preview {
+      height: 300px;
+      width: 100%;
+      background-color: gray;
+    }
+    .btn {
+      float: right;
+    }
+    .error {
+      background: #93771b;
+      color: #fff;
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+  }
+  .lesson {
+    h1, .subtitle {
+      color: #5e95a1;
+    }
+    .subtitle {
+      font-size: 14px;
+      margin-top: 0;
+      text-align: left;
+    }
+    .comic {
+      position: relative;
+      background-repeat: no-repeat;
+    }
+    .dialogue {
+      width: 180px;
+      position: absolute;
+      text-align: center;
+      
+      &:nth-child(1) {
+        left: 30px;
+        top: 30px;
+      }
+      &:nth-child(2) {
+        left: 250px;
+        top: 30px;
+      }
+      &:nth-child(3) {
+        left: 30px;
+        top: 250px;
+      }
+      &:nth-child(4) {
+        left: 250px;
+        top: 250px;
+      }
+    }
+  }
+}

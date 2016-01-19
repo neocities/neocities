@@ -9,7 +9,8 @@
 
   <div class="row">
     <div class="col col-100">
-      <a href="/admin/reports">Site Reports</a>
+      <a href="/admin/reports">Site Reports</a><br>
+      <a href="/admin/usage">Site Bandwidth Usage</a>
     </div>
   </div>
 
@@ -28,6 +29,13 @@
         <%== csrf_token_input_html %>
         <p>Site Name:</p>
         <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
+        <div class="select-Container" style="display: block; width: 100px; float: none; margin: 0 auto;">
+          <select name="classifier" class="input-Select">
+            <option value=""></option>
+            <option value="spam">Spam</option>
+            <option value="phishing">Phishing</option>
+          </select>
+        </div>
         <p><input class="btn-Action" type="submit" value="Ban"></p>
       </form>
     </div>

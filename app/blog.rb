@@ -1,22 +1,7 @@
-require 'net/http'
-require 'uri'
-
 get '/blog/?' do
-  expires 60, :public, :must_revalidate
-  return Net::HTTP.get_response(URI('http://blog.neocities.org')).body
+  redirect 'https://blog.neocities.org', 301
 end
 
 get '/blog/:article' do |article|
-  expires 60, :public, :must_revalidate
-
-  attempted = false
-
-  begin
-    return Net::HTTP.get_response(URI("http://blog.neocities.org/#{article}.html")).body
-  rescue => e
-    raise e if attempted
-    attempted = true
-    article = article.match(/^[a-zA-Z0-9-]+/).to_s
-    retry
-  end
+  redirect "https://blog.neocities.org/#{article}.html", 301
 end

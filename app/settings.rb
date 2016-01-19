@@ -185,7 +185,7 @@ post '/settings/:username/change_name' do
   end
 
   old_host = @site.host
-  old_file_paths = @site.file_list.collect {|f| f[:path]}
+  old_site_file_paths = @site.site_files.collect {|site_file| site_file.path}
 
   @site.username = params[:name]
 
@@ -195,11 +195,11 @@ post '/settings/:username/change_name' do
       @site.move_files_from old_username
     }
 
-    old_file_paths.each do |file_path|
-      @site.purge_cache file_path
+    old_site_file_paths.each do |site_file_path|
+      @site.delete_cache site_file_path
     end
 
-    flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
+    flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it!</b>"
     redirect "/settings/#{@site.username}#username"
   else
     flash[:error] = @site.errors.first.last.first
@@ -210,6 +210,8 @@ end
 post '/settings/:username/change_nsfw' do
   require_login
   require_ownership_for_settings
+
+  redirect "/settings/#{@site.username}" if @site.admin_nsfw == true
 
   @site.is_nsfw = params[:is_nsfw]
   @site.save_changes validate: false
@@ -260,7 +262,7 @@ end
 
 post '/settings/change_email' do
   require_login
-  
+
   if params[:email] == parent_site.email
     flash[:error] = 'You are already using this email address for this account.'
     redirect '/settings#email'
@@ -331,4 +333,30 @@ get '/settings/unsubscribe_email/?' do
     @message = 'There was an error unsubscribing your email address. Please contact support.'
   end
   erb :'settings/account/unsubscribe'
+end
+
+post '/settings/update_card' do
+  require_login
+
+  customer = Stripe::Customer.retrieve current_site.stripe_customer_id
+
+  old_card_ids = customer.sources.collect {|s| s.id}
+
+  begin
+    customer.sources.create source: params[:stripe_token]
+  rescue Stripe::InvalidRequestError => e
+    if  e.message.match /cannot use a.+token more than once/
+      flash[:error] = 'Card is already being used.'
+      redirect '/settings#billing'
+    else
+      raise e
+    end
+  end
+
+  old_card_ids.each do |card_id|
+    customer.sources.retrieve(card_id).delete
+  end
+
+  flash[:success] = 'Card information updated.'
+  redirect '/settings#billing'
 end

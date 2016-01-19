@@ -207,6 +207,10 @@ get '/site_files/allowed_types' do
   erb :'site_files/allowed_types'
 end
 
+get '/site_files/hotlinking' do
+  erb :'site_files/hotlinking'
+end
+
 get '/site_files/mount_info' do
   erb :'site_files/mount_info'
 end

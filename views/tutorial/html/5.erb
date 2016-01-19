@@ -1,0 +1,41 @@
+<div class="comic" style="height: 600px; background-image: url(/img/tutorial/ch1pg5.png); margin-top: 3em; background-size: 476px;">
+  <div class="dialogue">
+    You're writing HTML! You're doing it! Everything you need to know is just another tag!
+  </div>
+  <div class="dialogue" style="top: -20px; width: 320px">
+    <p>For example, links look like this:</p>
+
+    <p><strong>&lt;a href="http://neocities.org"&gt;Check out Neocities!&lt;/a&gt;</strong></p>
+
+    <p>Add a link to your favorite site to the end of the paragraph, right before the &lt;/p&gt; closing tag!</p>
+  </div>
+</div>
+
+<div class="welcome">
+  <h4>Nesting</h4>
+  <p>Tags always need to be nested properly, like Russian dolls. So this is okay:
+<pre>
+<p>Welcome! <a>Link!</a></p>
+
+But this isn't!
+
+<p>Welcome! <a>Link!</p></a>
+</pre>
+</p>
+</div>
+
+<script>
+  function checkHomework() {
+    var html = editor.getValue()
+    /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
+    var match = '<html.+>.+<body>.+<h1>.+</h1>.+<p>.+<a.+href=".+">.+</a>[^.+]?</p>.+</body>.+</html>'
+    var re = new XRegExp(match, 'gis')
+
+    if(html.match(re) === null) {
+      notok("That's not right! Try again.")
+    } else {
+      sessionStorage.setItem('tutorialHtml', html)
+      ok('Great, you did it!', '/tutorial/html/6')
+    }
+  }
+</script>

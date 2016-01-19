@@ -320,6 +320,12 @@ describe 'delete' do
     someone_elses_site.is_deleted.must_equal false
   end
 
+  it 'should not show NSFW tab for admin NSFW flag' do
+    owned_site = Fabricate :site, parent_site_id: @site.id, admin_nsfw: true
+    visit "/settings/#{owned_site.username}"
+    page.body.wont_match /18\+/
+  end
+
   it 'should succeed if you own the site' do
     owned_site = Fabricate :site, parent_site_id: @site.id
     visit "/settings/#{owned_site.username}#delete"

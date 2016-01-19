@@ -11,6 +11,65 @@ get '/admin/reports' do
   erb :'admin/reports'
 end
 
+get '/admin/site/:username' do |username|
+  require_admin
+  @site = Site[username: username]
+  not_found if @site.nil?
+  @title = "Site Inspector - #{@site.username}"
+  erb :'admin/site'
+end
+
+post '/admin/reports' do
+
+end
+
+post '/admin/site_files/train' do
+  require_admin
+  site = Site[params[:site_id]]
+  site_file = site.site_files_dataset.where(path: params[:path]).first
+  not_found if site_file.nil?
+  site.untrain site_file.path
+  site.train site_file.path, params[:classifier]
+  'ok'
+end
+
+get '/admin/usage' do
+  require_admin
+  today = Date.today
+  current_month = Date.new today.year, today.month, 1
+
+  @monthly_stats = []
+
+  month = current_month
+
+  until month.year == 2015 && month.month == 1 do
+    stats = DB[
+      'select sum(views) as views, sum(hits) as hits, sum(bandwidth) as bandwidth from stats where created_at >= ? and created_at < ?',
+      month,
+      month.next_month].first
+
+    stats.keys.each do |key|
+      stats[key] ||= 0
+    end
+
+    stats.collect {|s| s == 0}.uniq
+
+    if stats[:views] != 0 && stats[:hits] != 0 && stats[:bandwidth] != 0
+      popular_sites = DB[
+        'select sum(bandwidth) as bandwidth,username from stats left join sites on sites.id=stats.site_id where stats.created_at >= ? and stats.created_at < ? group by username order by bandwidth desc limit 50',
+        month,
+        month.next_month
+      ].all
+
+      @monthly_stats.push stats.merge(date: month).merge(popular_sites: popular_sites)
+    end
+
+    month = month.prev_month
+  end
+
+  erb :'admin/usage'
+end
+
 get '/admin/email' do
   require_admin
   erb :'admin/email'
@@ -79,6 +138,11 @@ post '/admin/banhammer' do
 
   site = Site[username: params[:username]]
 
+  if !params[:classifier].empty?
+    site.untrain 'index.html'
+    site.train 'index.html', params[:classifier]
+  end
+
   if site.nil?
     flash[:error] = 'User not found'
     redirect '/admin'
@@ -105,6 +169,7 @@ post '/admin/mark_nsfw' do
   end
 
   site.is_nsfw = true
+  site.admin_nsfw = true
   site.save_changes validate: false
 
   flash[:success] = 'MISSION ACCOMPLISHED'

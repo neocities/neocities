@@ -9,9 +9,19 @@ describe 'signup' do
 
   def fill_in_valid
     @site = Fabricate.attributes_for(:site)
-    fill_in 'username', with: @site[:username]
-    fill_in 'password', with: @site[:password]
-    fill_in 'email',    with: @site[:email]
+
+    time = Time.now
+    begin
+      fill_in 'username', with: @site[:username]
+      fill_in 'password', with: @site[:password]
+      fill_in 'email',    with: @site[:email]
+    rescue Capybara::ElementNotFound
+      puts "Waiting on fill_in #{Time.now - time} seconds"
+      raise if Time.now - time > 30
+      visit_signup
+      sleep 0.5
+      retry
+    end
   end
 
   def click_signup_button
@@ -35,12 +45,14 @@ describe 'signup' do
 
   after do
     Capybara.default_driver = :rack_test
+    BlockedIp.where(ip: '127.0.0.1').delete
+    DB[:sites].where(is_banned: true).delete
   end
 
   it 'succeeds with valid data' do
     fill_in_valid
     click_signup_button
-    site_created?.must_equal true
+    site_created?
 
     index_file_path = File.join Site::SITE_FILES_ROOT, @site[:username], 'index.html'
     File.exist?(index_file_path).must_equal true
@@ -52,6 +64,27 @@ describe 'signup' do
     site.is_education.must_equal false
 
     site.ip.must_equal Site.hash_ip('127.0.0.1')
+  end
+
+  it 'fails if site with same ip has been banned' do
+    @banned_site = Fabricate :site
+    @banned_site.is_banned = true
+    @banned_site.save_changes
+
+    fill_in_valid
+    click_signup_button
+    Site[username: @site[:username]].must_be_nil
+    current_path.must_equal '/'
+    page.wont_have_content 'Welcome to Neocities'
+  end
+
+  it 'fails if IP is banned from blocked ips list' do
+    DB[:blocked_ips].insert(ip: '127.0.0.1', created_at: Time.now)
+    fill_in_valid
+    click_signup_button
+    Site[username: @site[:username]].must_be_nil
+    current_path.must_equal '/'
+    page.wont_have_content 'Welcome to Neocities'
   end
 
   it 'fails to create for existing site' do

@@ -1,0 +1,130 @@
+<script src="/js/highlight.pack.js"></script>
+<link rel="stylesheet" href="/css/highlight/styles/sunburst.css">
+<script>hljs.initHighlightingOnLoad()</script>
+
+<section class="section tutorial">
+  <div class="row">
+    <% if request.path =~ /\/html\/10?/ %>
+    <div class="col col-100 lesson">
+    <% else %>
+    <div class="col col-60 lesson">
+    <% end %>
+      <h1><%= @section.upcase %> Tutorial</h1>
+      <h2 class="subtitle">Page <%= @page %>/10</h2>
+
+      <%== erb "tutorial/#{@section}/#{@page}".to_sym, layout: false %>
+    </div>
+
+    <% if request.path =~ /\/html\/10?/ %>
+    <% else %>
+
+    <div class="col col-40 interact">
+      <% if request.path =~ /\/html\/9/ %>
+      <a href="/tutorial/html/10" class="btn btn-action">Next</a>
+      <% else %>
+      <input id="submit" class="btn btn-action" type="submit" value="Save">
+      <input id="reset" class="btn btn-action" type="submit" value="Reset">
+      <% end %>
+      <h3>HTML</h3>
+
+      <div id="editor" class="editor"><%== encoding_fix default_tutorial_html %></div>
+
+      <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+
+      <script>
+        $(document).ready(function() {
+          editor = ace.edit("editor")
+          editor.setTheme('ace/theme/tomorrow_night')
+          editor.getSession().setMode("ace/mode/html")
+          editor.getSession().setTabSize(2)
+          editor.getSession().setUseWrapMode(true)
+          editor.setFontSize(14)
+          editor.setShowPrintMargin(false)
+          editor.setOptions({
+            maxLines: Infinity,
+            autoScrollEditorIntoView: true
+          })
+
+          // Disable autocomplete
+          editor.setBehavioursEnabled(false)
+
+          editor.on('change', function(obj) {
+            $('.error').css('display', 'none')
+            refreshIframe()
+          })
+
+          editor.commands.addCommand({
+            name: 'saveCommand',
+            bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+            exec: function(editor) {
+              $('#submit').click()
+            }
+          })
+        })
+      </script>
+
+      <div class="error" style="display: none; margin-top: 0">
+        <i class="fa fa-exclamation-triangle"></i> Try again: make sure you change Hello World to something else.
+      </div>
+
+      <h3>Site Preview</h3>
+      <iframe class="preview" style="background: white"></iframe>
+      </div>
+    </div>
+
+    <% end %>
+
+  </div>
+</section>
+
+<script type="text/javascript">
+  var infoObj = $('.error')
+
+  function notok(msg) {
+    displayInfo('<i class="fa fa-exclamation-triangle"></i> ' + msg, {
+      background: '#93771B'
+    })
+  }
+
+  function ok(msg, path) {
+    displayInfo(msg, {
+      background: '#88d128'
+    })
+
+    setTimeout(function() {
+      window.location.href = path
+    }, 1000)
+  }
+
+  function displayInfo(html, cssOpts) {
+    infoObj.fadeIn('slow')
+    infoObj.css(cssOpts)
+    infoObj.html(html)
+  }
+
+  $('.tutorial #submit').on('click', function() {
+    var result = checkHomework()
+    if(result == true) {
+      window.location.href = '/tutorial/<%= @section %>/<%= @page.to_i+1 %>'
+    }
+  })
+
+  $('.tutorial #reset').on('click', function() {
+    var editor = $('#editor')
+    editor.val(editor.text())
+  })
+
+  var tutorialHtml = sessionStorage.getItem('tutorialHtml')
+  if(tutorialHtml)
+    $('#editor').text(tutorialHtml)
+
+  function refreshIframe() {
+    $('.tutorial iframe').contents().find('html').html(editor.getValue())
+  }
+
+  $(function() {
+    refreshIframe()
+  })
+
+</script>
+<script src="/js/xregexp-min.js"></script>

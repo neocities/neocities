@@ -1,20 +1,4 @@
-*.gem
-*.rbc
-.bundle
 .config
-coverage
-InstalledFiles
-lib/bundler/man
-pkg
-rdoc
-spec/reports
-test/tmp
-test/version_tmp
-tmp
-# YARD artifacts
-.yardoc
-_yardoc
-doc/
 tests/coverage
 config.yml
 .DS_Store
@@ -30,8 +14,7 @@ files/map.txt
 .sass-cache/*
 files/sslsites.zip
 .tm_properties
-./black_box.rb
 .vagrant
 public/banned_sites
 public/deleted_sites
-tests/stat_logs/*
+Gemfile.lock

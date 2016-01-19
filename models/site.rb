@@ -33,11 +33,11 @@ class Site < Sequel::Model
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp
+    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
-    html htm txt js css md manifest
+    html htm txt js css md manifest less
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
@@ -74,6 +74,8 @@ class Site < Sequel::Model
     /PHP\.Hide/
   ]
 
+  EMPTY_FILE_HASH = Digest::SHA1.hexdigest ''
+
   PHISHING_FORM_REGEX = /www.formbuddy.com\/cgi-bin\/form.pl/i
   SPAM_MATCH_REGEX = ENV['RACK_ENV'] == 'test' ? /pillz/ : /#{$config['spam_smart_filter'].join('|')}/i
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
@@ -103,7 +105,7 @@ class Site < Sequel::Model
     custom_ssl_certificates: true,
     no_file_restrictions: true,
     custom_domains: true,
-    maximum_site_files: 25000
+    maximum_site_files: 50000
   }
 
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
@@ -115,7 +117,7 @@ class Site < Sequel::Model
     custom_ssl_certificates: false,
     no_file_restrictions: false,
     custom_domains: false,
-    maximum_site_files: 1000
+    maximum_site_files: 2000
   )
 
   def self.newsletter_sites
@@ -294,6 +296,7 @@ class Site < Sequel::Model
     end
 
     def banned_ip?(ip)
+      return false if ENV['RACK_ENV'] == 'production' && ip == '127.0.0.1'
       return true if Site.where(is_banned: true).
         where(ip: hash_ip(ip)).
         where(['updated_at > ?', Time.now-BANNED_TIME]).
@@ -318,7 +321,7 @@ class Site < Sequel::Model
   end
 
   def is_following?(site)
-    followings_dataset.select(:id).filter(site_id: site.id).first ? true : false
+    followings_dataset.select(:follows__id).filter(site_id: site.id).first ? true : false
   end
 
   def toggle_follow(site)
@@ -417,7 +420,7 @@ class Site < Sequel::Model
   end
 
   def get_file(path)
-    File.read files_path(path)
+    File.read current_files_path(path)
   end
 
   def before_destroy
@@ -456,8 +459,8 @@ class Site < Sequel::Model
       FileUtils.mv files_path, File.join(BANNED_SITES_ROOT, username)
     }
 
-    file_list.each do |path|
-      purge_cache path
+    site_files.each do |site_file|
+      delete_cache site_file.path
     end
   end
 
@@ -465,6 +468,16 @@ class Site < Sequel::Model
     DB.transaction {
       account_sites.all {|site| site.ban! }
     }
+  end
+
+  # Who this site follows
+  def followings_dataset
+    super.select_all(:follows).inner_join(:sites, :id=>:site_id).exclude(:sites__is_deleted => true).exclude(:sites__is_banned => true)
+  end
+
+  # Who this site is following
+  def follows_dataset
+    super.select_all(:follows).inner_join(:sites, :id=>:actioning_site_id).exclude(:sites__is_deleted => true).exclude(:sites__is_banned => true)
   end
 
 =begin
@@ -485,6 +498,7 @@ class Site < Sequel::Model
 =end
 
   def commenting_allowed?
+    return false if owner.commenting_banned == true
     return true if owner.commenting_allowed
 
     if owner.supporter?
@@ -579,9 +593,29 @@ class Site < Sequel::Model
     # We gotta flush the dirname too if it's an index file.
     if relative_path != '' && relative_path.match(/\/$|index\.html?$/i)
       PurgeCacheOrderWorker.perform_async username, relative_path
-      PurgeCacheOrderWorker.perform_async username, Pathname(relative_path).dirname.to_s
+
+      purge_file_path = Pathname(relative_path).dirname.to_s
+
+      PurgeCacheOrderWorker.perform_async username, '/?surf=1' if purge_file_path == '/'
+      PurgeCacheOrderWorker.perform_async username, purge_file_path
     else
       PurgeCacheOrderWorker.perform_async username, relative_path
+    end
+  end
+
+  # TODO DRY this up
+
+  def delete_cache(path)
+    relative_path = path.gsub base_files_path, ''
+
+    DeleteCacheOrderWorker.perform_async username, relative_path
+
+    # We gotta flush the dirname too if it's an index file.
+    if relative_path != '' && relative_path.match(/\/$|index\.html?$/i)
+      purge_file_path = Pathname(relative_path).dirname.to_s
+
+      DeleteCacheOrderWorker.perform_async username, '/?surf=1' if purge_file_path == '/'
+      DeleteCacheOrderWorker.perform_async username, purge_file_path
     end
   end
 
@@ -635,6 +669,32 @@ class Site < Sequel::Model
     relative_path = files_path path
     if Dir.exists?(relative_path) || File.exist?(relative_path)
       return 'Directory (or file) already exists.'
+    end
+
+    path_dirs = path.to_s.split('/').select {|p| ![nil, '.', ''].include?(p) }
+
+    path_site_file = ''
+
+    until path_dirs.empty?
+      if path_site_file == ''
+        path_site_file += path_dirs.shift
+      else
+        path_site_file += '/' + path_dirs.shift
+      end
+
+      raise ArgumentError, 'directory name cannot be empty' if path_site_file == ''
+
+      site_file = SiteFile.where(site_id: self.id, path: path_site_file).first
+
+      if site_file.nil?
+        SiteFile.create(
+          site_id: self.id,
+          path: path_site_file,
+          is_directory: true,
+          created_at: Time.now,
+          updated_at: Time.now
+        )
+      end
     end
 
     FileUtils.mkdir_p relative_path
@@ -870,6 +930,12 @@ class Site < Sequel::Model
     File.join TEMPLATE_ROOT, name
   end
 
+  def current_base_files_path(name=username)
+    raise 'username missing' if name.nil? || name.empty?
+    return File.join BANNED_SITES_ROOT, name if is_banned
+    base_files_path name
+  end
+
   def base_files_path(name=username)
     raise 'username missing' if name.nil? || name.empty?
     File.join SITE_FILES_ROOT, name
@@ -880,7 +946,7 @@ class Site < Sequel::Model
     path ||= ''
     clean = []
 
-    parts = path.split '/'
+    parts = path.to_s.split '/'
 
     parts.each do |part|
       next if part.empty? || part == '.'
@@ -888,6 +954,10 @@ class Site < Sequel::Model
     end
 
     clean.join '/'
+  end
+
+  def current_files_path(path='')
+    File.join current_base_files_path, scrubbed_path(path)
   end
 
   def files_path(path='')
@@ -904,9 +974,17 @@ class Site < Sequel::Model
         is_root_index: file_path == "#{base_files_path}/index.html"
       }
 
+      site_file = site_files_dataset.where(path: file_path.gsub(base_files_path, '').sub(/^\//, '')).first
+
+      if site_file
+        file[:size] = site_file.size unless file[:is_directory]
+        file[:updated_at] = site_file.updated_at
+      end
+
       file[:is_html] = !(file[:ext].match HTML_REGEX).nil?
       file[:is_image] = !(file[:ext].match IMAGE_REGEX).nil?
       file[:is_editable] = !(file[:ext].match EDITABLE_FILE_EXT).nil?
+
       file
     end
 
@@ -920,8 +998,16 @@ class Site < Sequel::Model
   end
 
   def actual_space_used
-    space = Dir.glob(File.join(files_path, '*')).collect {|p| File.size(p)}.inject {|sum,x| sum += x}
-    space.nil? ? 0 : space
+    space = 0
+
+    files = Dir.glob File.join(files_path, '**', '*')
+
+    files.each do |file|
+      next if File.directory? file
+      space += File.size file
+    end
+
+    space
   end
 
   def total_space_used
@@ -936,7 +1022,11 @@ class Site < Sequel::Model
   end
 
   def maximum_space
-    PLAN_FEATURES[(parent? ? self : parent).plan_type.to_sym][:space]
+    plan_space = PLAN_FEATURES[(parent? ? self : parent).plan_type.to_sym][:space]
+
+    return custom_max_space if custom_max_space > plan_space
+
+    plan_space
   end
 
   def space_percentage_used
@@ -954,6 +1044,10 @@ class Site < Sequel::Model
 
   def plan_name
     PLAN_FEATURES[plan_type.to_sym][:name]
+  end
+
+  def stripe_paying_supporter?
+    stripe_customer_id && !plan_ended && values[:plan_type].match(/free|special/).nil?
   end
 
   def unconverted_legacy_supporter?
@@ -1028,13 +1122,70 @@ class Site < Sequel::Model
     end
   end
 
+  def self.compute_scores
+    select(:id, :username, :created_at, :updated_at, :views, :featured_at, :changed_count, :api_calls).exclude(is_banned: true).exclude(is_crashing: true).exclude(is_nsfw: true).exclude(updated_at: nil).where(site_changed: true).all.each do |s|
+      s.score = s.compute_score
+      s.save_changes validate: false
+    end
+  end
+
+  SCORE_GRAVITY = 1.8
+
+  def compute_score
+    points = 0
+    points += follows_dataset.count * 30
+    points += profile_comments_dataset.count * 1
+    points += views / 1000
+    points += 20 if !featured_at.nil?
+
+    # penalties
+    points = 0 if changed_count < 2
+    points = 0 if api_calls && api_calls > 1000
+
+    (points / ((Time.now - updated_at) / 7.days)**SCORE_GRAVITY).round(4)
+  end
+
+=begin
+  def compute_score
+    score = 0
+    score += (Time.now - created_at) / 1.day
+    score -= ((Time.now - updated_at) / 1.day) * 2
+    score += 500 if (updated_at > 1.week.ago)
+    score -= 1000 if
+    follow_count = follows_dataset.count
+    score -= 1000 if follow_count == 0
+    score += follow_count * 100
+    score += profile_comments_dataset.count * 5
+    score += profile_commentings_dataset.count
+    score.to_i
+  end
+=end
+
+  def self.browse_dataset
+    dataset.where is_deleted: false, is_banned: false, is_crashing: false, site_changed: true
+  end
+
   def suggestions(limit=SUGGESTIONS_LIMIT, offset=0)
     suggestions_dataset = Site.exclude(id: id).exclude(is_banned: true).exclude(is_nsfw: true).order(:views.desc, :updated_at.desc)
     suggestions = suggestions_dataset.where(tags: tags).limit(limit, offset).all
 
     return suggestions if suggestions.length == limit
 
-    suggestions += suggestions_dataset.where("views >= #{SUGGESTIONS_VIEWS_MIN}").limit(limit-suggestions.length).order(Sequel.lit('RANDOM()')).all
+    # Old.
+    #suggestions += suggestions_dataset.where("views >= #{SUGGESTIONS_VIEWS_MIN}").limit(limit-suggestions.length).order(Sequel.lit('RANDOM()')).all
+
+    # New:
+
+    site_dataset = self.class.browse_dataset.association_left_join :follows
+    site_dataset.select_all! :sites
+    site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
+    site_dataset.group! :sites__id
+    site_dataset.order! :follow_count.desc, :updated_at.desc
+    site_dataset.where! "views >= #{SUGGESTIONS_VIEWS_MIN}"
+    site_dataset.limit! limit-suggestions.length
+    #site_dataset.order! Sequel.lit('RANDOM()')
+
+    suggestions += site_dataset.all
   end
 
   def screenshot_path(path, resolution)
@@ -1090,11 +1241,53 @@ class Site < Sequel::Model
     end
   end
 
+  def empty_index?
+    !site_files_dataset.where(path: /^\/?index.html$/).where(sha1_hash: EMPTY_FILE_HASH).first.nil?
+  end
+
+  def classify(path)
+    return nil unless classification_allowed? path
+    #$classifier.classify process_for_classification(path)
+  end
+
+  def classification_scores(path)
+    return nil unless classification_allowed? path
+    #$classifier.classification_scores process_for_classification(path)
+  end
+
+  def train(path, category='ham')
+    return nil unless classification_allowed? path
+    # $trainer.train(category, process_for_classification(path))
+    site_file = site_files_dataset.where(path: path).first
+    site_file.classifier = category
+    site_file.save_changes validate: false
+  end
+
+  def untrain(path, category='ham')
+    return nil unless classification_allowed? path
+    # $trainer.untrain(category, process_for_classification(path))
+    site_file = site_files_dataset.where(path: path).first
+    site_file.classifier = category
+    site_file.save_changes validate: false
+  end
+
+  def classification_allowed?(path)
+    site_file = site_files_dataset.where(path: path).first
+    return false if site_file.is_directory
+    return false if site_file.size > SiteFile::CLASSIFIER_LIMIT
+    return false if !path.match(/\.html$/)
+    true
+  end
+
+  def process_for_classification(path)
+    sanitized = Sanitize.fragment get_file(path)
+    sanitized.gsub(/(http|https):\/\//, '').gsub(/[^\w\s]/, '').downcase.split.uniq.select{|v| v.length < SiteFile::CLASSIFIER_WORD_LIMIT}.join(' ')
+  end
+
   # array of hashes: filename, tempfile, opts.
   def store_files(files, opts={})
     results = []
     new_size = 0
-    html_uploaded = false
 
     if too_many_files?(files.length)
       results << false
@@ -1102,35 +1295,53 @@ class Site < Sequel::Model
     end
 
     files.each do |file|
-      html_uploaded = true if file[:filename].match HTML_REGEX
-
       existing_size = 0
+
       site_file = site_files_dataset.where(path: scrubbed_path(file[:filename])).first
+
       if site_file
         existing_size = site_file.size
       end
 
       res = store_file(file[:filename], file[:tempfile], file[:opts] || opts)
+
       if res == true
         new_size -= existing_size
         new_size += file[:tempfile].size
       end
+
       results << res
     end
 
-    if results.include? true && opts[:new_install] != true
-      time = Time.now
-      sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1, space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?",
-        true,
-        time,
-        time,
-        self.id
-      ]
-      sql.first
+    if results.include? true
+
+      DB["update sites set space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?", self.id].first
+
+      if opts[:new_install] != true
+        if files.select {|f| f[:filename] =~ /^\/?index.html$/}.length > 0 || site_changed == true
+          index_changed = true
+        else
+          index_changed = false
+        end
+
+        index_changed = false if empty_index?
+
+        time = Time.now
+
+        sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1 where id=?",
+          index_changed,
+          time,
+          time,
+          self.id
+        ]
+        sql.first
+
+        ArchiveWorker.perform_in 24.hours, self.id
+      end
+
       reload
 
       #SiteChange.record self, relative_path unless opts[:new_install]
-      ArchiveWorker.perform_async self.id
     end
 
     results
@@ -1138,36 +1349,9 @@ class Site < Sequel::Model
 
   def delete_file(path)
     return false if files_path(path) == files_path
-    begin
-      FileUtils.rm files_path(path)
-    rescue Errno::EISDIR
-      site_files.each do |site_file|
-        if site_file.path.match /^#{path}\//
-          site_file.destroy
-        end
-      end
-      FileUtils.remove_dir files_path(path), true
-    rescue Errno::ENOENT
-    end
-
-    purge_cache path
-
-    ext = File.extname(path).gsub(/^./, '')
-
-    screenshots_delete(path) if ext.match HTML_REGEX
-    thumbnails_delete(path) if ext.match IMAGE_REGEX
-
-    path = path[1..path.length] if path[0] == '/'
-
-    DB.transaction do
-      site_file = site_files_dataset.where(path: path).first
-      if site_file
-        DB['update sites set space_used=space_used-? where id=?', site_file.size, self.id].first
-        site_file.delete
-      end
-      SiteChangeFile.filter(site_id: self.id, filename: path).delete
-    end
-
+    path = scrubbed_path path
+    site_file = site_files_dataset.where(path: path).first
+    site_file.destroy if site_file
     true
   end
 
@@ -1186,6 +1370,15 @@ class Site < Sequel::Model
       return false
     end
 
+    if pathname.extname.match HTML_REGEX
+      # SPAM and phishing checking code goes here
+    end
+
+    relative_path_dir = Pathname(relative_path).dirname
+    create_directory relative_path_dir unless relative_path_dir == '.'
+
+    uploaded_size = uploaded.size
+
     if relative_path == 'index.html'
       begin
         new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
@@ -1197,18 +1390,6 @@ class Site < Sequel::Model
         end
       end
     end
-
-    if pathname.extname.match HTML_REGEX
-      # SPAM and phishing checking code goes here
-    end
-
-    dirname = pathname.dirname.to_s
-
-    if !File.exists? dirname
-      FileUtils.mkdir_p dirname
-    end
-
-    uploaded_size = uploaded.size
 
     FileUtils.cp uploaded.path, path
     File.chmod 0640, path
@@ -1227,11 +1408,11 @@ class Site < Sequel::Model
     purge_cache path
 
     if pathname.extname.match HTML_REGEX
-      ScreenshotWorker.perform_async values[:username], relative_path
+      ScreenshotWorker.perform_in 1.minute, values[:username], relative_path
     elsif pathname.extname.match IMAGE_REGEX
       ThumbnailWorker.perform_async values[:username], relative_path
     end
+
     true
   end
-
 end
