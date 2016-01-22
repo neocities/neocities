@@ -123,6 +123,7 @@ GEM
       mini_portile (~> 0.6.0)
     nokogumbo (1.4.7)
       nokogiri
+    paypal-recurring (1.1.0)
     pg (0.18.3)
     poltergeist (1.7.0)
       capybara (~> 2.1)
@@ -246,6 +247,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  addressable
   ago
   base32
   bcrypt
@@ -270,6 +272,7 @@ DEPENDENCIES
   minitest
   minitest-reporters
   mocha
+  paypal-recurring
   pg
   poltergeist
   posix-spawn
