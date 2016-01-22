@@ -193,6 +193,7 @@ get '/plan/paypal/cancel' do
   ppr = PayPal::Recurring.new profile_id: parent_site.paypal_profile_id
   ppr.cancel
 
+  parent_site.plan_type = nil
   parent_site.paypal_active = false
   parent_site.paypal_profile_id = nil
   parent_site.paypal_token = nil
