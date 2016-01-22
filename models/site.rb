@@ -1061,6 +1061,7 @@ class Site < Sequel::Model
 
   # Note: Change Stat#prune! if you change this business logic.
   def plan_type
+    return 'supporter' if owner.values[:paypal_active] == true
     return 'free' if owner.values[:plan_type].nil?
     return 'supporter' if owner.values[:plan_type].match /^plan_/
     return 'supporter' if owner.values[:plan_type] == 'special'

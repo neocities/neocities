@@ -105,6 +105,10 @@ def plan_pricing_button(plan_type)
       button_title = parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'
     end
 
+    if button_title == 'Change' && parent_site && parent_site.paypal_active
+      return %{<a href="/plan/paypal/cancel" onclick="return confirm('This will end your supporter plan.')" class="btn-Action">Change</a>}
+    end
+
     %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="card = new Skeuocard($('#skeuocard')); return false" class="btn-Action planPricingButton">#{button_title}</a>}
   end
 end
