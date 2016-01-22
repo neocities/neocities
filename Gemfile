@@ -12,7 +12,6 @@ gem 'rmagick',            require: nil
 gem 'sidekiq'
 gem 'ago'
 gem 'mail'
-gem 'google-api-client',  require: 'google/api_client'
 gem 'tilt'
 gem 'erubis'
 gem 'stripe', '1.15.0' #, source: 'https://code.stripe.com/'

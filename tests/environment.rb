@@ -4,7 +4,7 @@ raise 'Forget it.' if ENV['RACK_ENV'] == 'production'
 require 'coveralls'
 require 'simplecov'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
 ]
@@ -34,9 +34,6 @@ WebMock.disable_net_connect! allow_localhost: true
 Sinatra::Application.configure do |app|
   app.use RackSessionAccess::Middleware
 end
-
-require 'capybara/poltergeist'
-require 'rack_session_access/capybara'
 
 Site.bcrypt_cost = BCrypt::Engine::MIN_COST
 
