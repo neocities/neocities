@@ -79,7 +79,7 @@
           <%== plan_pricing_button :supporter %>
         <% end %>
         <ul>
-          <li><strong><%= (Site::PLAN_FEATURES[:supporter][:space] / (10**6)).to_comma_separated %> MB</strong> storage</li>
+          <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %> MB</strong> storage</li>
           <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_space_pretty %></strong> bandwidth</li>
         </ul>
         <ul>
