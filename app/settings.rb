@@ -179,7 +179,7 @@ post '/settings/:username/change_name' do
     redirect "/settings/#{@site.username}#username"
   end
 
-  if old_username == params[:name]
+  if old_username.downcase == params[:name].downcase
     flash[:error] = 'You already have this name.'
     redirect "/settings/#{@site.username}#username"
   end

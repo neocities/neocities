@@ -200,29 +200,44 @@ describe 'site/settings' do
   end
 =end
 
-  describe 'change username' do
+  describe 'changing username' do
     include Capybara::DSL
 
     before do
       Capybara.reset_sessions!
       @site = Fabricate :site
       page.set_rack_session id: @site.id
+      visit "/settings/#{@site[:username]}#username"
     end
 
-    it 'does not allow bad usernames' do
-      visit "/settings/#{@site[:username]}#username"
+    after do
+      Site[username: @site[:username]].wont_equal nil
+    end
+
+    it 'fails for blank username' do
       fill_in 'name', with: ''
       click_button 'Change Name'
+      page.must_have_content /cannot be blank/i
+      Site[username: ''].must_equal nil
+    end
+
+    it 'fails for subdir periods' do
       fill_in 'name', with: '../hack'
       click_button 'Change Name'
-      fill_in 'name', with: 'derp../hack'
-      click_button 'Change Name'
-      ## TODO fix this without screwing up legacy sites
-      #fill_in 'name', with: '-'
-      #click_button 'Change Name'
       page.must_have_content /Usernames can only contain/i
-      Site[username: @site[:username]].wont_equal nil
-      Site[username: ''].must_equal nil
+      Site[username: '../hack'].must_equal nil
+    end
+
+    it 'fails for same username' do
+      fill_in 'name', with: @site.username
+      click_button 'Change Name'
+      page.must_have_content /You already have this name/
+    end
+
+    it 'fails for same username with DiFfErEnT CaSiNg' do
+      fill_in 'name', with: @site.username.upcase
+      click_button 'Change Name'
+      page.must_have_content /You already have this name/
     end
   end
 end
