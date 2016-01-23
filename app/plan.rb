@@ -166,7 +166,7 @@ get '/plan/paypal/return' do
     period:      :monthly,
     reference:   current_site.id.to_s,
     payer_id:    params[:PayerID],
-    start_at:    Time.now,
+    start_at:    1.month.from_now,
     failed:      3,
     outstanding: :next_billing
   ))
