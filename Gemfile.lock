@@ -136,6 +136,8 @@ GEM
       rack (>= 1.0.0)
     rake (10.5.0)
     redis (3.2.2)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
@@ -262,6 +264,7 @@ DEPENDENCIES
   rack_session_access
   rake
   redis
+  redis-namespace
   rest-client
   rmagick
   ruby-debug

@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'sinatra'
 gem 'redis'
+gem 'redis-namespace'
 gem 'sequel', '4.8.0'
 gem 'bcrypt'
 gem 'sinatra-flash',      require: 'sinatra/flash'

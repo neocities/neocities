@@ -1,4 +1,5 @@
 require 'sidekiq/api'
+require 'redis-namespace'
 
 class ArchiveWorker
   include Sidekiq::Worker
@@ -13,7 +14,7 @@ class ArchiveWorker
       return
     end
 
-    queue = Sidekiq::Queues[self.class.sidekiq_options_hash['queue']]
+    queue = Sidekiq::Queue.new self.class.sidekiq_options_hash['queue']
     logger.info "JOB ID: #{jid} #{site_id.inspect}"
     queue.each do |job|
       if job.args == [site_id] && job.jid != jid
