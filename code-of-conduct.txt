@@ -1,0 +1,9 @@
+These guidelines apply to Neocities contributor communications, such 
+as mailing lists, IRC, submitted patches, commit comments, etc.
+
+* Language and actions must be free of personal attacks, harassment, 
+  discrimination, and NSFW content.
+
+Instances of unacceptable behavior can be reported by contacting the 
+project team at abuse@neocities.org. All complaints will be 
+investigated and reporter confidentiality will be maintained.
