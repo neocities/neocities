@@ -1,5 +1,5 @@
 These guidelines apply to Neocities contributor communications, such 
-as mailing lists, IRC, submitted patches, commit comments, etc.
+as mailing lists, submitted patches, commit comments, IRC, etc.
 
 * Language and actions must be free of personal attacks, harassment, 
   discrimination, and NSFW content.
