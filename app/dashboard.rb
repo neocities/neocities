@@ -1,6 +1,12 @@
 get '/dashboard' do
   require_login
   dashboard_init
+
+  unless current_site.dashboard_accessed
+    current_site.dashboard_accessed = true
+    current_site.save_changes validate: false
+  end
+
   erb :'dashboard'
 end
 
