@@ -2116,7 +2116,7 @@ table#latest-visitors {
   text-align: center;
   color: #4F7E89;
   padding: 6.5em 8% 7em;
-      
+
   a {
     color: #4F7E89;
     text-decoration: underline;
@@ -2126,6 +2126,8 @@ table#latest-visitors {
   }
   p {
     font-size: 1em;
+    margin-bottom: .5em;
+    margin-top: .5em;
   }
   p:first-child {
     font-size: 120%;
@@ -2136,7 +2138,7 @@ ul.thankyou {
   list-style: none;
   margin-top: 1.5em;
   clear: both;
-  
+
   li {
     display: inline-block;
     width: 32%;
