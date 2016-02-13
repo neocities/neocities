@@ -5,6 +5,31 @@ get '/api' do
   erb :'api'
 end
 
+get '/api/list' do
+  require_api_credentials
+
+  files = []
+
+  if params[:path].nil? || params[:path].empty?
+    file_list = current_site.site_files
+  else
+    file_list = current_site.file_list params[:path]
+  end
+
+  file_list.each do |file|
+    new_file = {}
+    new_file[:path] = file[:path]
+    new_file[:is_directory] = file[:is_directory]
+    new_file[:size] = file[:size] unless file[:is_directory]
+    new_file[:updated_at] = file[:updated_at].rfc2822
+    files << new_file
+  end
+
+  files.each {|f| f[:path].sub!(/^\//, '')}
+
+  api_success files: files
+end
+
 post '/api/upload' do
   require_api_credentials
 

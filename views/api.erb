@@ -83,7 +83,7 @@ api.upload([
   <code>
     curl -d "filenames[]=img1.jpg" -d "filenames[]=img2.jpg" \<br> https://YOURUSER:YOURPASS@neocities.org/api/delete
   </code>
-  
+
   <h6>Using Node.js</h6>
   <pre>
 var NeoCities = require('neocities')
@@ -92,6 +92,59 @@ var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
 api.delete(['img1.jpg', 'img2.jpg'], function(resp) {
   console.log(resp)
 })</pre>
+  <h2>GET /api/list</h2>
+  <p>
+    This call provides a list of files for your site. If you pass no arguments, it will return a list of all files. If you provide a <strong>path</strong> argument, it will return a list of files for the path. Dates conform to <strong>RFC2822</strong>.
+  </p>
+  <h3>Examples</h3>
+  <h6>Using cURL</h6>
+  <pre>
+$ curl https://USER:PASS@neocities.org/api/list
+{
+  "result": "success",
+  "files": [
+    {
+      "path": "index.html",
+      "is_directory": false,
+      "size": 1023,
+      "updated_at": "Sat, 13 Feb 2016 03:04:00 -0000"
+    },
+    {
+      "path": "not_found.html",
+      "is_directory": false,
+      "size": 271,
+      "updated_at": "Sat, 13 Feb 2016 03:04:00 -0000"
+    },
+    {
+      "path": "images",
+      "is_directory": true,
+      "updated_at": "Sat, 13 Feb 2016 03:04:00 -0000"
+    },
+    {
+      "path": "images/cat.png",
+      "is_directory": false,
+      "size": 16793,
+      "updated_at": "Sat, 13 Feb 2016 03:04:00 -0000"
+    }
+  ]
+}
+</pre>
+
+<pre>
+$ curl "https://USER:PASS@neocities.org/api/list?path=images"
+{
+  "result": "success",
+  "files": [
+    {
+      "path": "images/cat.png",
+      "is_directory": false,
+      "size": 16793,
+      "updated_at": "Sat, 13 Feb 2016 03:04:00 -0000"
+    }
+  ]
+}
+</pre>
+
   <h2>GET /api/info</h2>
   <p>
     This call lets you retreive information about a web site. This call does not require site authorization if you provide a <strong>sitename</strong> argument. Note that the sitename is the same as a username. If you provide auth credentials, you will receive the info for the auth user's site. Dates conform to <strong>RFC2822</strong> format, and there are helpers for parsing it into a time object for most programming languages.
