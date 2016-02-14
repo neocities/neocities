@@ -641,6 +641,12 @@ class Site < Sequel::Model
     output_array.last.split(' ')[1]
   end
 
+  def purge_old_archives
+    archives_dataset.order(:updated_at).offset(Archive::MAXIMUM_ARCHIVES_PER_SITE).all.each do |archive|
+      archive.destroy
+    end
+  end
+
   def archive!
     #if ENV["RACK_ENV"] == 'test'
     #  ipfs_hash = "QmcKi2ae3uGb1kBg1yBpsuwoVqfmcByNdMiZ2pukxyLWD8"
