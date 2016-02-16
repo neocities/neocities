@@ -624,6 +624,11 @@ class Site < Sequel::Model
 
   def add_to_ipfs
     # Not ideal. An SoA version is in progress.
+
+    if archives_dataset.count > Archive::MAXIMUM_ARCHIVES_PER_SITE
+      archives_dataset.order(:updated_at).first.destroy
+    end
+
     if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
       rbox = Rye::Box.new $config['ipfs_ssh_host'], :user => $config['ipfs_ssh_user']
       begin
