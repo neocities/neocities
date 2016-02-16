@@ -27,6 +27,8 @@ class Archive < Sequel::Model
       begin
         response = rbox.execute "ipfs pin rm #{ipfs_hash}"
         output_array = response
+      rescue => e
+        return true if e.message =~ /indirect pins cannot be removed directly/
       ensure
         rbox.disconnect
       end
