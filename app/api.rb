@@ -102,7 +102,6 @@ end
 get '/api/info' do
   if params[:sitename]
     site = Site[username: params[:sitename]]
-
     api_error 400, 'site_not_found', "could not find site #{params[:sitename]}" if site.nil? || site.is_banned
     api_success api_info_for(site)
   else

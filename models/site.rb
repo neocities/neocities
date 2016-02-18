@@ -812,6 +812,14 @@ class Site < Sequel::Model
 #    super
 #  end
 
+  def domain=(domain)
+    super SimpleIDN.to_ascii(domain)
+  end
+
+  def domain
+    SimpleIDN.to_unicode values[:domain]
+  end
+
   def validate
     super
 
@@ -864,13 +872,8 @@ class Site < Sequel::Model
     end
 
     if !values[:domain].nil? && !values[:domain].empty?
-
       if values[:domain] =~ /neocities\.org/ || values[:domain] =~ /neocitiesops\.net/
         errors.add :domain, "Domain is already being used.. by Neocities."
-      end
-
-      if !(values[:domain] =~ /^[a-zA-Z0-9.-]+\.[a-zA-Z0-9]+$/i) || values[:domain].length > 90
-        errors.add :domain, "Domain provided is not valid. Must take the form of domain.com"
       end
 
       site = Site[domain: values[:domain]]

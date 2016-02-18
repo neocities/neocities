@@ -225,6 +225,16 @@ post '/settings/:username/custom_domain' do
 
   @site.domain = params[:domain]
 
+  begin
+    Socket.gethostbyname @site.values[:domain]
+  rescue SocketError => e
+    if e.message =~ /name or service not known/i
+      flash[:error] = 'Domain needs to be valid and already registered.'
+      redirect "/settings/#{@site.username}#custom_domain"
+    end
+    raise e
+  end
+
   if @site.valid?
     @site.save_changes
     flash[:success] = 'The domain has been successfully updated.'

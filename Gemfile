@@ -36,6 +36,7 @@ gem 'base32'
 gem 'coveralls', require: false
 gem 'sanitize'
 gem 'will_paginate'
+gem 'simpleidn'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
