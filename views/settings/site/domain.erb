@@ -1,0 +1,12 @@
+<h2>Create a domain name</h2>
+<h3 class="subtitle">Register a domain name for your Neocities site!</h3>
+
+<p>
+  Neocities now allows you to create a domain name for your site directly through Neocities. Instead of being at <%= current_site.username %>.neocities.org, your site would be accessible via your full domain name (example.com). You get one free domain per Neocities account.
+</p>
+
+<% if parent_site.supporter? %>
+  <a href="/domain/new">Register your domain name now</a>
+<% else %>
+  <strong>Getting a domain name requires a Supporter account. <a href="/plan">Upgrade now</a>.</strong>
+<% end %>
