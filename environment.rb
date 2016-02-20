@@ -140,3 +140,7 @@ $country_codes = {}
 CSV.foreach("./files/country_codes.csv") do |row|
   $country_codes[row.last] = row.first
 end
+
+gandi_opts = {}
+gandi_opts[:env] = :test unless ENV['RACK_ENV'] == 'production'
+$gandi = Gandi::Session.new $config['gandi_api_key'], gandi_opts

@@ -24,6 +24,7 @@
       <div class="tabbable" style="margin-top: 20px"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs">
           <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
+          <li><a href="#domain" data-toggle="tab">Domain Name</a></li>
           <li><a href="#custom_domain" data-toggle="tab">Custom Domain</a></li>
           <li><a href="#username" data-toggle="tab">Change Site (User) Name</a></li>
 
@@ -36,6 +37,9 @@
         <div class="tab-content">
           <div class="tab-pane active" id="profile">
             <%== erb :'settings/site/profile' %>
+          </div>
+          <div class="tab-pane" id="domain">
+            <%== erb :'settings/site/domain' %>
           </div>
           <div class="tab-pane" id="custom_domain">
             <%== erb :'settings/site/custom_domain' %>

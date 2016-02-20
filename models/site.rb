@@ -843,6 +843,10 @@ class Site < Sequel::Model
       errors.add :email, 'An email address is required.'
     end
 
+    if parent? && values[:email] =~ /@neocities.org/
+      errors.add :email, 'Cannot use this email address.'
+    end
+
     # Check for existing email if new or changing email.
     if new? || @original_email
       email_check = self.class.select(:id).filter(email: values[:email])
