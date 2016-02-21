@@ -3,6 +3,7 @@ tests/coverage
 config.yml
 .DS_Store
 public/css/neo.css
+public/css/neo.css.map
 public/site_thumbnails
 public/sites
 public/site_screenshots
