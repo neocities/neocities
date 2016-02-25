@@ -31,7 +31,6 @@ gem 'paypal-recurring', require: 'paypal/recurring'
 gem 'geoip'
 gem 'io-extra', require: 'io/extra'
 gem 'rye'
-gem 'dnsruby'
 gem 'base32'
 gem 'coveralls', require: false
 gem 'sanitize'

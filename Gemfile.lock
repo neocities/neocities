@@ -50,7 +50,6 @@ GEM
       nokogiri (>= 1.4.2)
       rack (>= 1.1.0)
       uuidtools (~> 2.1.1)
-    dnsruby (1.59.1)
     docile (1.1.5)
     domain_name (0.5.20160216)
       unf (>= 0.0.5, < 1.0.0)
@@ -240,7 +239,6 @@ DEPENDENCIES
   cocaine
   coveralls
   dav4rack
-  dnsruby
   erubis
   fabrication
   faker
