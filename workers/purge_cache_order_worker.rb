@@ -7,8 +7,6 @@ class PurgeCacheOrderWorker
     180
   end
 
-  RESOLVER = Dnsruby::Resolver.new
-
   def perform(username, path)
     if ENV['RACK_ENV'] == 'test'
       proxy_ips = ['10.0.0.1', '10.0.0.2']
