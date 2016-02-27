@@ -180,6 +180,9 @@ get %r{\/site_files\/text_editor\/(.+)} do
     flash[:error] = 'Cannot edit a directory.'
     redirect '/dashboard'
   end
+
+  @title = "Editing #{@filename}"
+
   erb :'site_files/text_editor'
 end
 
