@@ -412,10 +412,10 @@ class Site < Sequel::Model
     FileUtils.cp template_file_path('style.css'), tmpfile.path
     files << {filename: 'style.css', tempfile: tmpfile}
 
-    tmpfile = Tempfile.new 'cat.png'
+    tmpfile = Tempfile.new 'neocities.png'
     tmpfile.close
-    FileUtils.cp template_file_path('cat.png'), tmpfile.path
-    files << {filename: 'cat.png', tempfile: tmpfile}
+    FileUtils.cp template_file_path('neocities.png'), tmpfile.path
+    files << {filename: 'neocities.png', tempfile: tmpfile}
 
     store_files files, new_install: true
   end
