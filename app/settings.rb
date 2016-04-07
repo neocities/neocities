@@ -248,7 +248,7 @@ end
 post '/settings/change_password' do
   require_login
 
-  if !Site.valid_login?(parent_site.username, params[:current_password])
+  if !current_site.password_reset_confirmed && !Site.valid_login?(parent_site.username, params[:current_password])
     flash[:error] = 'Your provided password does not match the current one.'
     redirect "/settings#password"
   end
@@ -259,6 +259,9 @@ post '/settings/change_password' do
   if params[:new_password] != params[:new_password_confirm]
     parent_site.errors.add :password, 'New passwords do not match.'
   end
+
+  parent_site.password_reset_token = nil
+  parent_site.password_reset_confirmed = false
 
   if parent_site.errors.empty?
     parent_site.save_changes

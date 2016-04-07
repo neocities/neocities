@@ -1,39 +1,43 @@
 get '/password_reset' do
+  redirect '/' if signed_in?
   erb :'password_reset'
 end
 
 post '/send_password_reset' do
+  if params[:email].blank?
+    flash[:error] = 'You must enter a valid email address.'
+    redirect '/password_reset'
+  end
+
   sites = Site.filter(email: params[:email]).all
 
   if sites.length > 0
     token = SecureRandom.uuid.gsub('-', '')
     sites.each do |site|
+      next unless site.parent?
       site.update password_reset_token: token
-    end
 
-    body = <<-EOT
-Hello! This is the Neocities cat, and I have received a password reset request for your e-mail address. Purrrr.
+      body = <<-EOT
+Hello! This is the Neocities cat, and I have received a password reset request for your e-mail address.
 
-Go to this URL to reset your password: http://neocities.org/password_reset_confirm?token=#{token}
+Go to this URL to reset your password: http://neocities.org/password_reset_confirm?username=#{Rack::Utils.escape(site.username)}&token=#{token}
 
-After clicking on this link, your password for all the sites registered to this email address will be changed to this token.
-
-Token: #{token}
-
-If you didn't request this reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
+If you didn't request this password reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
 
 Meow,
 the Neocities Cat
     EOT
 
-    body.strip!
+      body.strip!
 
-    EmailWorker.perform_async({
-      from: 'web@neocities.org',
-      to: params[:email],
-      subject: '[Neocities] Password Reset',
-      body: body
-    })
+      EmailWorker.perform_async({
+        from: 'web@neocities.org',
+        to: params[:email],
+        subject: '[Neocities] Password Reset',
+        body: body
+      })
+
+    end
   end
 
   flash[:success] = 'If your email was valid (and used by a site), the Neocities Cat will send an e-mail to your account with password reset instructions.'
@@ -42,29 +46,22 @@ end
 
 get '/password_reset_confirm' do
   if params[:token].nil? || params[:token].strip.empty?
-    flash[:error] = 'Could not find a site with this token.'
+    flash[:error] = 'Token cannot be empty.'
     redirect '/'
   end
 
-  reset_site = Site[password_reset_token: params[:token]]
+  reset_site = Site.where(username: params[:username], password_reset_token: params[:token]).first
 
   if reset_site.nil?
-    flash[:error] = 'Could not find a site with this token.'
+    flash[:error] = 'Could not find a site with this username and token.'
     redirect '/'
   end
 
-  sites = Site.filter(email: reset_site.email).all
+  reset_site.password_reset_token = nil
+  reset_site.password_reset_confirmed = true
+  reset_site.save_changes
 
-  if sites.length > 0
-    sites.each do |site|
-      site.password = reset_site.password_reset_token
-      site.save_changes
-    end
+  session[:id] = reset_site.id
 
-    flash[:success] = 'Your password for all sites with your email address has been changed to the token sent in your e-mail. Please login and change your password as soon as possible.'
-  else
-    flash[:error] = 'Could not find a site with this token.'
-  end
-
-  redirect '/'
+  redirect '/settings#password'
 end
