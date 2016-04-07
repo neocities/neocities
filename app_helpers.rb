@@ -112,3 +112,7 @@ def plan_pricing_button(plan_type)
     %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="card = new Skeuocard($('#skeuocard')); return false" class="btn-Action planPricingButton">#{button_title}</a>}
   end
 end
+
+def dont_browser_cache
+  @dont_browser_cache = true
+end

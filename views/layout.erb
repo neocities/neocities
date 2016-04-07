@@ -23,6 +23,12 @@
     <meta name="MobileOptimized"  content="320">
     <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1">
 
+    <% if @dont_browser_cache %>
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta http-equiv="Expires" content="0">
+    <% end %>
+
     <!--[if lt IE 9]>
       <script type="text/javascript" src="/js/html5.min.js"></script>
     <![endif]-->

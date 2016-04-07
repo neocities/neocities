@@ -160,6 +160,8 @@ end
 
 get %r{\/site_files\/text_editor\/(.+)} do
   require_login
+  dont_browser_cache
+
   @filename = params[:captures].first
   extname = File.extname @filename
   @ace_mode = case extname
