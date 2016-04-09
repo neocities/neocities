@@ -68,6 +68,7 @@ end
 
 group :development do
   gem 'shotgun', require: nil
+  gem 'certified'
 end
 
 group :test do
