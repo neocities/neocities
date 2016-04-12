@@ -63,4 +63,41 @@ describe '/' do
       end
     end
   end
+
+  describe 'username lookup' do
+    before do
+      @site = Fabricate :site
+      Capybara.reset_sessions!
+      EmailWorker.jobs.clear
+
+      visit '/signin'
+      click_link 'I forgot my username.'
+    end
+
+    it 'works for valid email' do
+      page.current_url.must_match /\/forgot_username$/
+      fill_in :email, with: @site.email
+      click_button 'Find username'
+      URI.parse(page.current_url).path.must_equal '/'
+      page.must_have_content 'If your email was valid, the Neocities Cat will send an e-mail with your username in it'
+      email_args = EmailWorker.jobs.first['args'].first
+      email_args['to'].must_equal @site.email
+      email_args['subject'].must_match /username lookup/i
+      email_args['body'].must_match /your username is #{@site.username}/i
+    end
+
+    it 'fails silently for unknown email' do
+      fill_in :email, with: 'N-O-P-E@example.com'
+      click_button 'Find username'
+      URI.parse(page.current_url).path.must_equal '/'
+      page.must_have_content 'If your email was valid, the Neocities Cat will send an e-mail with your username in it'
+      EmailWorker.jobs.length.must_equal 0
+    end
+
+    it 'fails for no input' do
+      click_button 'Find username'
+      URI.parse(page.current_url).path.must_equal '/forgot_username'
+      page.must_have_content 'Cannot use an empty email address'
+    end
+  end
 end

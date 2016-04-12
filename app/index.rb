@@ -82,3 +82,42 @@ end
 get '/thankyou' do
   erb :'thankyou'
 end
+
+get '/forgot_username' do
+  erb :'forgot_username'
+end
+
+post '/forgot_username' do
+  if params[:email].blank?
+    flash[:error] = 'Cannot use an empty email address!'
+    redirect '/forgot_username'
+  end
+
+  sites = Site.where(email: params[:email]).all
+
+  sites.each do |site|
+    body = <<-EOT
+Hello! This is the Neocities cat, and I have received a username lookup request using this email address.
+
+Your username is #{site.username}
+
+If you didn't request this, you can ignore it. Or hide under a bed. Or take a nap. Your call.
+
+Meow,
+the Neocities Cat
+    EOT
+
+    body.strip!
+
+    EmailWorker.perform_async({
+      from: 'web@neocities.org',
+      to: params[:email],
+      subject: '[Neocities] Username lookup',
+      body: body
+    })
+
+  end
+
+  flash[:success] = 'If your email was valid, the Neocities Cat will send an e-mail with your username in it.'
+  redirect '/'
+end

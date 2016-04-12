@@ -1,0 +1,31 @@
+<div class="header-Outro">
+  <div class="row content single-Col txt-Center">
+  <h1>Forgot Username</h1>
+  <h3 class="subtitle"></h3>
+  </div>
+</div>
+
+<div class="content txt-Center single-Col misc-page">
+  <% if flash.keys.length > 0 %>
+    <div class="alert alert-block">
+      <p>
+        <% flash.keys.select {|s| s == :error}.each do |key| %>
+          <%= flash[key] %>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
+
+  <p>If you forgot your sitename (AKA username), you can have it emailed to you here.</p>
+
+  <p>Keep in mind that we cannot help you locate your sitename without a valid email address, and we don't disclose whether an email address exists in our system. This is for security and privacy reasons.</p>
+
+  <form method="POST" action="/forgot_username" class="content">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <fieldset>
+      <label for="email">Enter your email</label>
+      <input name="email" type="text" placeholder="email@address.com" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= flash[:email] %>" style="width: 290px">
+    </fieldset>
+    <input class="btn-Action" type="submit" value="Find username">
+  </form>
+</div>
