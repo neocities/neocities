@@ -16,7 +16,7 @@
       margin-bottom: 0;
       border: 0;
     }
-    h3 {
+    h3.editor-heading {
       margin-top: 10px;
     }
     .preview {
@@ -51,7 +51,7 @@
       width: 180px;
       position: absolute;
       text-align: center;
-      
+
       &:nth-child(1) {
         left: 30px;
         top: 30px;
