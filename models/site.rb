@@ -1052,7 +1052,7 @@ class Site < Sequel::Model
     ((total_space_used.to_f / maximum_space) * 100).round(1)
   end
 
-  # Note: Change Stat#prune! if you change this business logic.
+  # Note: Change Stat#prune! and the nginx map compiler if you change this business logic.
   def supporter?
     owner.plan_type != 'free'
   end
@@ -1078,7 +1078,7 @@ class Site < Sequel::Model
     !values[:plan_type].match(/plan_/).nil?
   end
 
-  # Note: Change Stat#prune! if you change this business logic.
+  # Note: Change Stat#prune! and the nginx map compiler if you change this business logic.
   def plan_type
     return 'supporter' if owner.values[:paypal_active] == true
     return 'free' if owner.values[:plan_type].nil?
