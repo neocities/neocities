@@ -74,8 +74,6 @@ task :compile_nginx_mapfiles => [:environment] do
   end
 
   File.open('./files/supporter-map.txt', 'w') do |file|
-    file.write "hostnames;\n"
-    file.write "default 0;\n"
     Site.select(:username, :domain).exclude(plan_type: 'free').exclude(plan_type: nil).all.each do |parent_site|
       sites = [parent_site] + parent_site.children
       sites.each do |site|
