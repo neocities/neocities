@@ -297,6 +297,3 @@ DEPENDENCIES
   webmock
   will_paginate
   zipruby
-
-BUNDLED WITH
-   1.11.2
