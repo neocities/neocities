@@ -35,46 +35,28 @@
 
   function checkHomework() {
     var html = editor.getValue()
-    var match = '<html>.+</html>'
 
-    var re = new XRegExp(match, 'gis')
-
-    if(html.match(re) === null) {
-      notok("You're missing the HTML element tag! Your web site must begin with <html> and end with </html>.")
+    if(!html.tutorialMatches('<html>.+</html>')) {
+      notok("You're missing the HTML element tag! Your web site must begin with &lt;html&gt; and end with &lt;/html&gt;.")
       return
     }
-/*
-    var match = '<html.+>.+<body></body>.+</html>'
 
-    var re = new XRegExp(match, 'gis')
-
-    if(html.match(re) === null) {
-      notok("You need to add some text inside the &lt;body&gt;&lt;/body&gt;.")
-      return
-    }
-*/
-    var match = 'Hello World'
-
-    var re = new XRegExp(match, 'gis')
-
-    if(html.match(re) !== null) {
+    if(html.tutorialMatches('Hello World!')) {
       notok("Hint: Try changing \"Hello World\" to something else.")
+      return
+    }
+
+    if(!html.tutorialMatches('<html>.+<body>.+</body>.+</html>')) {
+      notok('Missing the &lt;body&gt; and/or the &lt;/body&gt; tag.')
+      return
+    }
+
+    if(html.match(/<body>[\s\n]+<\/body>/) !== null) {
+      notok('Need to add text between the &lt;body&gt; and the &lt;/body&gt; tags.')
       return
     }
 
     sessionStorage.setItem('tutorialHtml', html)
     ok('Great, you did it!', '/tutorial/html/3')
-/*
-    var match = '<html.+>.+<body>.+</body>.+</html>'
-
-    var re = new XRegExp(match, 'gis')
-
-    if(html.match(re) === null) {
-      notok("That's not right! Try again.")
-    } else {
-      sessionStorage.setItem('tutorialHtml', html)
-      ok('Great, you did it!', '/tutorial/html/3')
-    }
-*/
   }
 </script>

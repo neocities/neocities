@@ -80,6 +80,18 @@
 <script type="text/javascript">
   var infoObj = $('.error')
 
+  String.prototype.tutorialMatches = function(regex, opts) {
+    if(!opts)
+      var opts = 'gis'
+
+    var result = this.match(new XRegExp(regex, opts))
+
+    if(result == null)
+      return false
+
+    return true
+  }
+
   function notok(msg) {
     displayInfo('<i class="fa fa-exclamation-triangle"></i> ' + msg, {
       background: '#93771B'
