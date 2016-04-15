@@ -65,11 +65,23 @@ task :update_blocked_ips => [:environment] do
   end
 end
 
-desc 'Compile domain map for nginx'
-task :compile_domain_map => [:environment] do
+desc 'Compile nginx mapfiles'
+task :compile_nginx_mapfiles => [:environment] do
   File.open('./files/map.txt', 'w') do |file|
-    Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.collect do |site|
+    Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.each do |site|
       file.write ".#{site.values[:domain]} #{site.username};\n"
+    end
+  end
+
+  File.open('./files/supporter-map.txt', 'w') do |file|
+    Site.select(:username, :domain).exclude(plan_type: 'free').exclude(plan_type: nil).all.each do |parent_site|
+      sites = [parent_site] + parent_site.children
+      sites.each do |site|
+        file.write "#{site.username}.neocities.org 1;\n"
+        unless site.host.match(/\.neocities\.org$/)
+          file.write ".#{site.values[:domain]} 1;\n"
+        end
+      end
     end
   end
 end
