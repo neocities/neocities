@@ -27,14 +27,25 @@
     var html = editor.getValue()
 
     /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
-    var match = '<html.+>.+<body>.+<img.+src="/cat.png">.+</body>.+</html>'
-    var re = new XRegExp(match, 'gis')
 
-    if(html.match(re) === null) {
-      notok("That's not right! Try again.")
-    } else {
-      sessionStorage.setItem('tutorialHtml', html)
-      ok('Great, you did it!', '/tutorial/html/7')
+    var img = preview().find('img')
+
+    if(img.length == 0) {
+      notok("I couldn't find the &lt;img src=\"/cat.png\"&gt; tag, try again!")
+      return
     }
+
+    if(img.attr('src') === undefined) {
+      notok("There's no src=\"/cat.png\" in the &lt;img&gt; tag, try adding that.")
+      return
+    }
+
+    if(img.attr('src') == '' || img.attr('src').match(/\s+/)) {
+      notok("The src attribute in the &lt;img&gt; tag can't be empty, try it like this: src=\"/cat.png\"")
+      return
+    }
+
+    sessionStorage.setItem('tutorialHtml', html)
+    ok('Great, you did it!', '/tutorial/html/7')
   }
 </script>
