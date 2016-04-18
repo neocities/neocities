@@ -5,19 +5,26 @@
   <div class="dialogue" style="top: -30px; width: 320px">
     <p>For example, a link to another site looks like this:</p>
 
-    <p><pre><code class="html">&lt;a href="//neocities.org"&gt;Check out Neocities!&lt;/a&gt;</code></pre></p>
+    <p><pre><code class="html">&lt;a href="http://neocities.org"&gt;
+Check out Neocities!&lt;/a&gt;</code></pre></p>
 
     <p>Add a link to your favorite site to<br> the end of the paragraph, right<br> before the &lt;/p&gt; closing tag!</p>
   </div>
 </div>
 
 <div class="welcome">
-  <h4>Nesting</h4>
-  <p>Tags always need to be nested properly, like Russian dolls. So this is okay:</p>
-  <pre><code class="html"><%= erb '<p>Welcome! <a href="//neocities.org">Link!</a></p>', layout: false %></code></pre>
+  <h4>Link tags</h4>
+  <pre><code class="html"><%= erb '<a href="http://my-favorite-site.com">Click me!</a>', layout: false %></code></pre>
+  <p>The 'a' in a link tag stands for 'anchor'.</p>
+  <p>The 'href' is short for 'hypertext reference' - it's a way to reference another hypertext document, like your favorite website!</p>
+  <br>
 
-  <p>But this is not correct:</p>
-  <pre><code class="html"><%= erb '<p>Welcome! <a href="//neocities.org">Link!</p></a>', layout: false %></code></pre>
+  <h4>Nesting</h4>
+  <p>Tags always need to be nested properly, like Russian dolls. Note that both '<strong>a</strong>' tags are inside the '<strong>p</strong>' tags:</p>
+  <pre><code class="html"><%= erb '<p>Welcome! <a href="http://neocities.org">Link!</a></p>', layout: false %></code></pre>
+
+  <p>This code is incorrectly nested:</p>
+  <pre><code class="html"><%= erb '<p>Welcome! <a href="http://neocities.org">Link!</p></a>', layout: false %></code></pre>
 </div>
 
 <script>
