@@ -53,19 +53,18 @@
   <h3>Examples</h3>
   <h6>Using cURL</h6>
   <p>Upload a single local file (<strong>local.html</strong>), which will be named <strong>hello.html</strong> on your site:</p>
-  <code>$ curl -F hello.html=@local.html https://USER:PASS@neocities.org/api/upload</code>
+  <pre><code class="bash">$ curl -F "hello.html=@local.html" "https://USER:PASS@neocities.org/api/upload"</code></pre>
 
   <h6>Using Node.js</h6>
   <p>This example uses the <a href="https://github.com/neocities/neocities-node" target="_blank">neocities</a> module. You can install it by running <strong>npm install neocities --global</strong> in your terminal.</p>
-  <pre>
-var NeoCities = require('neocities')
-var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
+  <pre><code class="javascript">var neocities = require('neocities')
+var api = new neocities('YOURUSERNAME', 'YOURPASSWORD')
 
 api.upload([
   {name: 'hello.html', path: './local.html'}
 ], function(resp) {
   console.log(resp)
-})</pre>
+})</code></pre>
 
   <h2>POST /api/delete</h2>
   <p>
@@ -80,26 +79,22 @@ api.upload([
   <p>
     Delete <strong>img1.jpg</strong> and <strong>img2.jpg</strong> from your site:
   </p>
-  <code>
-    curl -d "filenames[]=img1.jpg" -d "filenames[]=img2.jpg" \<br> https://YOURUSER:YOURPASS@neocities.org/api/delete
-  </code>
+  <pre><code class="bash">curl -d "filenames[]=img1.jpg" -d "filenames[]=img2.jpg" \<br>"https://YOURUSER:YOURPASS@neocities.org/api/delete"</code></pre>
 
   <h6>Using Node.js</h6>
-  <pre>
-var NeoCities = require('neocities')
-var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
+  <pre><code class="javascript">var neocities = require('neocities')
+var api = new neocities('YOURUSERNAME', 'YOURPASSWORD')
 
 api.delete(['img1.jpg', 'img2.jpg'], function(resp) {
   console.log(resp)
-})</pre>
+})</code></pre>
   <h2>GET /api/list</h2>
   <p>
     This call provides a list of files for your site. If you pass no arguments, it will return a list of all files. If you provide a <strong>path</strong> argument, it will return a list of files for the path. Dates conform to <strong>RFC2822</strong>.
   </p>
   <h3>Examples</h3>
   <h6>Using cURL</h6>
-  <pre>
-$ curl https://USER:PASS@neocities.org/api/list
+  <pre><code class="bash">$ curl "https://USER:PASS@neocities.org/api/list"
 {
   "result": "success",
   "files": [
@@ -128,10 +123,9 @@ $ curl https://USER:PASS@neocities.org/api/list
     }
   ]
 }
-</pre>
+</code></pre>
 
-<pre>
-$ curl "https://USER:PASS@neocities.org/api/list?path=images"
+<pre><code class="bash">$ curl "https://USER:PASS@neocities.org/api/list?path=images"
 {
   "result": "success",
   "files": [
@@ -143,7 +137,7 @@ $ curl "https://USER:PASS@neocities.org/api/list?path=images"
     }
   ]
 }
-</pre>
+</code></pre>
 
   <h2>GET /api/info</h2>
   <p>
@@ -151,8 +145,7 @@ $ curl "https://USER:PASS@neocities.org/api/list?path=images"
   </p>
   <h3>Examples</h3>
   <h6>Using cURL</h6>
-  <pre>
-$ curl https://neocities.org/api/info?sitename=youpi
+  <pre><code class="bash">$ curl "https://neocities.org/api/info?sitename=youpi"
 {
   "result": "success",
   "info": {
@@ -163,31 +156,27 @@ $ curl https://neocities.org/api/info?sitename=youpi
     "domain": null,
     "tags": []
   }
-}</pre>
+}</code></pre>
   <p>Getting your own site's info:</p>
-  <code>
-    $ curl https://YOURUSER:YOURPASS@neocities.org/api/info
-  </code>
+  <pre><code class="bash">$ curl "https://YOURUSER:YOURPASS@neocities.org/api/info"</code></pre>
   <h6>Using Node.js</h6>
   <p>Your site:</p>
-  <pre>
-var NeoCities = require('neocities')
-var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
+  <pre><code class="javascript">var neocities = require('neocities')
+var api = new neocities('YOURUSERNAME', 'YOURPASSWORD')
 
 api.info(function(resp) {
   console.log(resp)
-})</pre>
+})</code></pre>
 
   <p>
     Getting data for a different site - such as the <a href="http://madamfrp.neocities.org" target="_blank">Madam FRP Manual</a>:
   </p>
-  <pre>
-var NeoCities = require('neocities')
-var api = new NeoCities('YOURUSERNAME', 'YOURPASSWORD')
+  <pre><code class="javascript">var neocities = require('neocities')
+var api = new neocities('YOURUSERNAME', 'YOURPASSWORD')
 
 api.info('madamfrp', function(resp) {
   console.log(resp)
-})</pre>
+})</code></pre>
   <h2>Need something the API doesn't provide?</h2>
   <p>If the API does not supply something you need, <a href="/contact">contact us</a> and we will try to add it!
 </div>
