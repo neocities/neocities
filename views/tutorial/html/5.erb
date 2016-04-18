@@ -2,10 +2,10 @@
   <div class="dialogue" style="left:20px">
     You're writing HTML! You're doing it! Everything you need to know is just another tag!
   </div>
-  <div class="dialogue" style="top: -20px; width: 320px">
+  <div class="dialogue" style="top: -30px; width: 320px">
     <p>For example, a link to another site looks like this:</p>
 
-    <p><strong>&lt;a href="//neocities.org"&gt;Check out Neocities!&lt;/a&gt;</strong></p>
+    <p><pre><code class="html">&lt;a href="//neocities.org"&gt;Check out Neocities!&lt;/a&gt;</code></pre></p>
 
     <p>Add a link to your favorite site to<br> the end of the paragraph, right<br> before the &lt;/p&gt; closing tag!</p>
   </div>
@@ -13,14 +13,11 @@
 
 <div class="welcome">
   <h4>Nesting</h4>
-  <p>
-    Tags always need to be nested properly, like Russian dolls. So this is okay:
-    <pre><code class="html"><%= erb '<p>Welcome! <a href="//neocities.org">Link!</a></p>', layout: false %></code></pre>
+  <p>Tags always need to be nested properly, like Russian dolls. So this is okay:</p>
+  <pre><code class="html"><%= erb '<p>Welcome! <a href="//neocities.org">Link!</a></p>', layout: false %></code></pre>
 
-    But this is not correct:
-
-    <pre><code class="html"><%= erb '<p>Welcome! <a href="//neocities.org">Link!</p></a>', layout: false %></code></pre>
-  </p>
+  <p>But this is not correct:</p>
+  <pre><code class="html"><%= erb '<p>Welcome! <a href="//neocities.org">Link!</p></a>', layout: false %></code></pre>
 </div>
 
 <script>

@@ -68,6 +68,24 @@
         left: 250px;
         top: 250px;
       }
+      pre, code {
+        padding: 0;
+        margin: 0;
+        background: none;
+        color: #666;
+        border: none;
+        display: block;
+        font-size: 100%;
+      }
+      pre {
+        padding-top: .1em;
+      }
+    }
+  }
+  .welcome {
+    pre, code {
+      background: #16414c;
+      font-size: 100%;
     }
   }
 }
