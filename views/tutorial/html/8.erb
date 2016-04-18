@@ -10,16 +10,16 @@
 
 <div class="welcome">
   <h4>Tags so far</h4>
-  <p>Headings: <h1>Title of the page!</h1>
-    <h2>Less important title</h2></p>
+  <p>Headings: <pre><code class="html"><%= erb "<h1>Title of the page!</h1>\n<h2>Less important title</h2>", layout: false %></pre></code></p>
 
-  <p>Paragraphs: <p>Hello!</p></p>
+  <p>Paragraphs: <pre><code class="html"><%= erb "<p>Hello! This is a paragraph.</p>", layout: false %></code></pre></p>
 
-  <p>Links: <a href="http://wikipedia.org">Click here!</a></p>
+  <p>Links: <pre><code class="html"><%= erb "<a href=\"http://wikipedia.org\">Click here!</a>", layout: false %></code></pre></p>
 
-  <p>Images: <img src="hello.png"></p>
+  <p>Images: <pre><code class="html"><%= erb "<img src=\"myimage.jpg\">", layout: false %></code></pre></p>
 
   <p>Lists</p>
+  <pre><code class="html"><%= erb "<ul>\n  <li>First item</li>\n  <li>Second item</li>\n  <li>Third item</li>\n</ul>", layout: false %></code></pre>
 </div>
 
 <script>

@@ -7,7 +7,7 @@
     Let's make your name a heading by putting the <strong>h1 tag</strong> around it. This helps to visually separate content on your site.
   </div>
   <div class="dialogue" style="left: 330px; top: 120px; width: 250px">
-    Try using an h1 tag by changing the text to something like this: <strong><span id="answer"></span></strong>
+    Try using an h1 tag by changing the text to something like this:<strong><span id="answer"></span></strong>
     and click save.
   </div>
 </div>
@@ -16,20 +16,11 @@
   <h4>Heading Tags</h4>
   <p>Here are all the heading tags, for all your needs—from the most important to the least!</p>
 
-  <pre>
-    <code class="html">
-      &lt;h1&gt;Really important heading!&lt;/h1&gt;
-      &lt;h2&gt;Secondary heading&lt;/h2&gt;
-      &lt;h3&gt;Tertiary heading&lt;/h3&gt;
-      &lt;h4&gt;Other heading&lt;/h4&gt;
-      &lt;h5&gt;Minor heading&lt;/h5&gt;
-      &lt;h6&gt;Very minor heading&lt;/h6&gt;
-    </code>
-  </pre>
+  <pre><code class="html"><%= erb :'tutorial/html/code_examples/3', layout: false %></code></pre>
 </div>
 
 <script>
-  $('#answer').text(answer)
+  $('#answer').text('<h1>'+sessionStorage.getItem('name')+'\'s Web Site</h1>')
 
   function checkHomework() {
     var html = editor.getValue()

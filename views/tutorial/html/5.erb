@@ -13,26 +13,19 @@
 
 <div class="welcome">
   <h4>Nesting</h4>
-  <p>Tags always need to be nested properly, like Russian dolls. So this is okay:
-<pre>
-&lt;p&gt;Welcome! &lt;a href="//neocities.org"&gt;Link!&lt;/a&gt;&lt;/p&gt;
-</pre>
+  <p>
+    Tags always need to be nested properly, like Russian dolls. So this is okay:
+    <pre><code class="html"><%= erb '<p>Welcome! <a href="//neocities.org">Link!</a></p>', layout: false %></code></pre>
 
-But this is not correct:
+    But this is not correct:
 
-<pre>
-&lt;p&gt;Welcome! &lt;a href="//neocities.org"&gt;Link!&lt;/p&gt;&lt;/a&gt;
-</pre>
-</p>
+    <pre><code class="html"><%= erb '<p>Welcome! <a href="//neocities.org">Link!</p></a>', layout: false %></code></pre>
+  </p>
 </div>
 
 <script>
   function checkHomework() {
     var html = editor.getValue()
-    /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
-    var match = '<html.+>.+<body>.+<h1>.+</h1>.+<p>.+<a.+href=".+">.+</a>[^.+]?</p>.+</body>.+</html>'
-    var re = new XRegExp(match, 'gis')
-
     var p = preview().find('p')
 
     if(p.length == 0) {
@@ -57,7 +50,7 @@ But this is not correct:
       return
     }
 
-    if(a.text() == '' || a.text().match(/\s+/)) {
+    if(a.text() == '') {
       notok('You need to add a name for your link, which is the text between the &lt;a&gt; tag, and the closing tag &lt;/a&gt;')
       return
     }

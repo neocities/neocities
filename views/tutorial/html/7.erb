@@ -20,13 +20,7 @@
 <div class="welcome">
   <h4>Lists</h4>
   <p>You can make an ordered (numbered) list like so:</p>
-  <div style="text-align: left; font-weight: bold">
-&lt;ol&gt;<br>
-&nbsp;&nbsp;&lt;li&gt;First item&lt;/li&gt;<br>
-&nbsp;&nbsp;&lt;li&gt;Second item&lt;/li&gt;<br>
-&nbsp;&nbsp;&lt;li&gt;Third item&lt;/li&gt;<br>
-&lt;/ol&gt;
-  </div>
+  <pre><code class="html"><%= erb :'tutorial/html/code_examples/7_1', layout: false %></code></pre>
 </div>
 
 <script>
@@ -47,7 +41,7 @@
 
     var liText = ul.find('li').first().text()
 
-    if(liText == '' || liText.match(/\s+/)) {
+    if(liText == '') {
       notok("I don't see any text in the <strong>li</strong>. Try using it like this: <strong>&lt;li&gt;Yarn&lt;/li&gt;</strong>")
       return
     }
