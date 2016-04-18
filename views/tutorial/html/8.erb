@@ -1,7 +1,10 @@
 <div class="comic" style="height: 530px; background-image: url(/img/tutorial/ch1pg8.png); background-size: 489px; margin-top:1em">
   <div class="dialogue" style="top: 50px; left: 0; width: 380px">
-    Now add a link to one of your list items. If nested properly, it should look something like this:
-<br><strong>&lt;li&gt;&lt;a href="http://yarn.com"&gt;Yarn&lt;/a&gt;&lt;/li&gt;</strong>
+    Now add a link to one of your list items. If nested properly, it should look similar to this:
+    <br>
+    <div class="txt-Left">
+      <strong>&lt;li&gt;<br>&nbsp;&nbsp;&lt;a href="http://yarn.com"&gt;Yarn&lt;/a&gt;<br>&lt;/li&gt;</strong>
+    </div>
   </div>
 </div>
 
@@ -23,15 +26,23 @@
   function checkHomework() {
     var html = editor.getValue()
 
-    /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
-    var match = '<html.+>.+<body>.+<ul>.+<li><a.+href=".+">.+</a></li>.+</ul>.+</body>.+</html>'
-    var re = new XRegExp(match, 'gis')
-
-    if(html.match(re) === null) {
-      notok("That's not right! Try again.")
-    } else {
-      sessionStorage.setItem('tutorialHtml', html)
-      ok('Great, you did it!', '/tutorial/html/9')
+    var a = preview().find('li a')
+    if(a.length == 0) {
+      notok("I don't see a link in your &lt;li&gt;&lt;/li&gt;, try adding one.")
+      return
     }
+
+    if(a.attr('href') === undefined || a.attr('href') == '') {
+      notok('You need to add an <strong>href</strong> to your <strong>a</strong> tag, like: <strong>href="//neocities.org"</strong>')
+      return
+    }
+
+    if(a.text() == '' || a.text().match(/\s+/)) {
+      notok('You need to add a name for your link, which is the text between the &lt;a&gt; tag, and the closing tag &lt;/a&gt;')
+      return
+    }
+
+    sessionStorage.setItem('tutorialHtml', html)
+    ok('Great, you did it!', '/tutorial/html/9')
   }
 </script>
