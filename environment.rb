@@ -62,6 +62,9 @@ Sidekiq.configure_client do |config|
   config.redis = sidekiq_redis_config
 end
 
+$redis = Redis.new
+$redis_cache = Redis::Namespace.new :cache, redis: $redis
+
 # :nocov:
 if ENV['RACK_ENV'] == 'development'
   # Run async jobs immediately in development.
