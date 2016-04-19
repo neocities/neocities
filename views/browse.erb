@@ -153,10 +153,11 @@
 <% unless is_education? %>
 <div class="row content misc">
   <h3>Popular Tags</h3>
-  <p>
-  <% Tag.popular_names(100).each do |tag| %>
-    <a href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
-  <% end %>
+  <p class="tagcloud">
+    <% Tag.popular_names(100).each_with_index do |tag,i| %>
+      <% i = (((i+1).to_f/100) * 10).to_i %>
+      <a class="tag<%= i %>" href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
+    <% end %>
   </p>
 </div>
 <div class="row content misc">
