@@ -4,7 +4,7 @@
     It'll be saved as <strong>index.html</strong>, which is the first web page people see when they visit your site.
   </div>
   <div class="dialogue" style="left: 283px;top: 190px; width:160px">
-    You can can find and edit index.html by visitng your <a href="/dashboard">Neocities dashboard</a>.
+    You can can find and edit index.html by visiting your <a href="/dashboard">Neocities dashboard</a>.
   </div>
   <div class="dialogue" style="left: 280px;top: 580px">
     <!-- A cheat sheet of all the tags you've learned can be found in the tutorial section. -->
@@ -12,7 +12,32 @@
 </div>
 
 <script>
-  function checkHomework(editor) {
-    alert('check homework here')
-  }
+  $(document).ready(function() {
+    $('#editor').css('display', 'none')
+    $('.editor-heading').css('display', 'none')
+    $('h3 #sitePreview').css('display', 'none')
+
+    $('#saveToSite').on('click', function() {
+      $.ajax({
+        url: '/site_files/save/index.html?csrf_token=<%= Rack::Utils.escape csrf_token %>',
+        data: sessionStorage.getItem('tutorialHtml'),
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        error: function(jqXHR, textStatus, errorThrown) {
+          alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
+        },
+        success: function(response){
+          if(response == 'ok') {
+            window.location = '/tutorial/html/10'
+          } else {
+            alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
+          }
+        }
+      })
+
+      return false
+    })
+
+  })
 </script>

@@ -16,7 +16,7 @@
 
     <div class="col col-40 interact">
       <% if request.path =~ /\/html\/9/ %>
-      <a href="/tutorial/html/10" class="btn btn-Action">Save to <%= current_site.username %>.neocities.org</a>
+      <a href="#" id="saveToSite" class="btn btn-Action">Save new index.html to <%= current_site.username %>.neocities.org</a>
       <a href="/tutorial/html/10" class="btn cancel" style="margin-right: 7px">Don't Save</a>
       <% else %>
       <input id="submit" class="btn btn-Action" type="submit" value="Save">
@@ -26,46 +26,44 @@
 
       <div id="editor" class="editor"><%== encoding_fix default_tutorial_html %></div>
 
-      <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 
-      <script>
-        $(document).ready(function() {
-          editor = ace.edit("editor")
-          editor.setTheme('ace/theme/tomorrow_night')
-          editor.getSession().setMode("ace/mode/html")
-          editor.getSession().setTabSize(2)
-          editor.getSession().setUseWrapMode(true)
-          editor.setFontSize(14)
-          editor.setShowPrintMargin(false)
-          editor.setOptions({
-            maxLines: Infinity,
-            autoScrollEditorIntoView: true
+        <script>
+          $(document).ready(function() {
+            editor = ace.edit("editor")
+            editor.setTheme('ace/theme/tomorrow_night')
+            editor.getSession().setMode("ace/mode/html")
+            editor.getSession().setTabSize(2)
+            editor.getSession().setUseWrapMode(true)
+            editor.setFontSize(14)
+            editor.setShowPrintMargin(false)
+            editor.setOptions({
+              maxLines: Infinity,
+              autoScrollEditorIntoView: true
+            })
+
+            // Disable autocomplete
+            editor.setBehavioursEnabled(false)
+
+            editor.on('change', function(obj) {
+              $('.error').css('display', 'none')
+              refreshIframe()
+            })
+
+            editor.commands.addCommand({
+              name: 'saveCommand',
+              bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+              exec: function(editor) {
+                $('#submit').click()
+              }
+            })
           })
+        </script>
 
-          // Disable autocomplete
-          editor.setBehavioursEnabled(false)
+        <div class="error" style="display: none; margin-top: 0"></div>
 
-          editor.on('change', function(obj) {
-            $('.error').css('display', 'none')
-            refreshIframe()
-          })
-
-          editor.commands.addCommand({
-            name: 'saveCommand',
-            bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-            exec: function(editor) {
-              $('#submit').click()
-            }
-          })
-        })
-      </script>
-
-      <div class="error" style="display: none; margin-top: 0">
-        <i class="fa fa-exclamation-triangle"></i> Try again: make sure you change Hello World to something else.
-      </div>
-
-      <h3>Site Preview</h3>
-      <iframe class="preview" style="background: white"></iframe>
+        <h3 id="sitePreview">Site Preview</h3>
+        <iframe class="preview" style="background: white"></iframe>
       </div>
     </div>
 
@@ -128,7 +126,8 @@
     $('#editor').text(tutorialHtml)
 
   function refreshIframe() {
-    $('.tutorial iframe').contents().find('html').html(editor.getValue())
+    if(typeof editor !== 'undefined')
+      $('.tutorial iframe').contents().find('html').html(editor.getValue())
   }
 
   $(function() {
