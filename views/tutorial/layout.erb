@@ -16,8 +16,8 @@
 
     <div class="col col-40 interact">
       <% if request.path =~ /\/html\/9/ %>
-      <a href="#" id="saveToSite" class="btn btn-Action">Save new index.html to <%= current_site.username %>.neocities.org</a>
-      <a href="/tutorial/html/10" class="btn cancel" style="margin-right: 7px">Don't Save</a>
+      <a href="#" id="saveToSite" class="btn btn-Action float-Left" style="margin-right: 7px">Save new index.html to <%= current_site.username %>.neocities.org</a>
+      <a href="/tutorial/html/10" class="btn cancel float-Left">Don't Save</a>
       <% else %>
       <input id="submit" class="btn btn-Action" type="submit" value="Save">
       <input id="reset" class="btn cancel" style="margin-right: 7px" type="submit" value="Reset">
