@@ -120,7 +120,7 @@
     if(unsavedChanges == false)
       return
     $.ajax({
-      url: '/site_files/save/<%= Rack::Utils.escape @filename %>?csrf_token=<%= Rack::Utils.escape csrf_token %>',
+      url: '/site_files/save/<%= @filename %>?csrf_token=<%= Rack::Utils.escape csrf_token %>',
       data: editor.getValue(),
       processData: false,
       contentType: false,
