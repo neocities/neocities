@@ -135,7 +135,7 @@ end
 post '/site_files/delete' do
   require_login
   current_site.delete_file params[:filename]
-  flash[:success] = "Deleted #{params[:filename]}."
+  flash[:success] = "Deleted #{params[:filename]}. Please note it can take up to 30 minutes for deleted files to stop being viewable on your site."
 
   dirname = Pathname(params[:filename]).dirname
   dir_query = dirname.nil? || dirname.to_s == '.' ? '' : "?dir=#{Rack::Utils.escape dirname}"
