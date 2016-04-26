@@ -191,6 +191,14 @@ post '/admin/feature' do
   redirect '/admin'
 end
 
+get '/admin/masquerade/:username' do
+  require_admin
+  site = Site[username: params[:username]]
+  not_found if site.nil?
+  session[:id] = site.id
+  redirect '/'
+end
+
 def require_admin
   redirect '/' unless signed_in? && current_site.is_admin
 end
