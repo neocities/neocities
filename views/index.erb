@@ -59,21 +59,22 @@
   <div class="col intro">
     <h2 class="section-header">Create your own free website.<br>Unlimited creativity, zero ads.</h2>
     <p class="intro-text">
-     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We provide free web hosting and tools that allow anyone to make a website. Only your imagination is required. Join us!
+     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We offer free web hosting and tools that allow anyone to make a website. Join us!
     </p>
     <ul class="intro-List">
+      <li class="intro-Tools">
+        <span class="intro-Icon"></span>
+        <h3 class="delta">Learn how to make a website from scratch</h3>
+        <p class="base">
+          Never coded before? Our fun interactive tutorial will show you the ropes! Join Penelope the cat in crafting your own personal spot on the web. We make it easy with our built-in HTML editor and simple file uploading.
+      </li>
+
       <li class="intro-Social">
         <span class="intro-Icon"></span>
         <h3 class="delta">Share your web creation with the world</h3>
         <p class="base">
-          Follow your favorite Neocities sites to keep up with all their latest updates. Discover new websites related to your interests using tags, comment on them, and share them.
+          Follow your favorite Neocities sites to keep up with all their latest updates. Discover new websites related to your interests using tags. Post comments and share your faves.
         </p>
-      </li>
-      <li class="intro-Tools">
-        <span class="intro-Icon"></span>
-        <h3 class="delta">Powerful new features to help you build</h3>
-        <p class="base">
-          We’ve made it easier to build your website and explore other sites. Neocities features an in-browser HTML editor, custom domain support, faster site loading, easy file uploading, RSS feeds, folder support, and much more.
       </li>
     </ul>
   </div>
@@ -101,7 +102,7 @@
           <h2 class="gamma">Sign up for free</h2>
           <hr />
           <div class="siteCreateInputs">
-            <label for="create-Input">User Name</label>
+            <label for="create-Input">Username</label>
             <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" style="position:absolute; top:-2000px; left:-2000px;" />
             <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" style="position:absolute; top:-2000px; left:-2000px;" />
             <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
@@ -241,7 +242,7 @@
   <div class="row">
     <div class="col col-50">
       <h3><i class="fa fa-wrench"></i>Developer tools</h3>
-      <p>Our fast static hosting comes with a great in-browser HTML editor, easy file uploading, RSS feeds for every site, <a href="/api">powerful APIs</a> for building developer applications, and much more! Upgrade to a <a href="/plan">supporter plan</a> to get WebDAV publishing and support for custom domains.</p>
+      <p>Our fast static hosting comes with a great in-browser HTML editor, easy file uploading, RSS feeds for every site, <a href="/api">powerful APIs</a> for building developer applications, and much more! Upgrade to a <a href="/plan">supporter plan</a> to get support for custom domains and WebDAV publishing.</p>
     </div>
 
     <div class="col col-50">
