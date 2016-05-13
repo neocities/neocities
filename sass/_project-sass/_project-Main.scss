@@ -2149,6 +2149,25 @@ pre, code {
   background: #1d1f21;
   color: #FFFFFF;
 }
+.welcoming-cat {
+  width: 200px;
+  float: right;
+  margin-top: -40px;
+}
+.section.tutorial-welcome {
+  padding: 80px 18%;
+
+  .option {
+    margin: 3.5em 0;
+  }
+  h3 {
+    margin-top: 0em;
+    font-size: 1.3em;
+  }
+  p {
+    font-size: 1.1em;
+  }
+}
 
 .tagcloud .tag10 { font-size: 0.6em; font-weight: 90; }
 .tagcloud .tag9 { font-size: 0.7em; font-weight: 100; }

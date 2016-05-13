@@ -17,6 +17,7 @@
     <div class="col col-40 interact">
       <% if request.path =~ /\/html\/9/ %>
       <div style="float: left">
+        <p>Saving your tutorial work will replace anything currently in your <a href="<%= current_site.uri %>/index.html">index.html</a>. If you've modified it before, make sure there isn't anything valuable there before you proceed!</p>
         <a href="/tutorial/html/10" class="btn cancel float-Left">Don't Save</a>
         <a href="#" id="saveToSite" class="btn btn-Action float-Left" style="margin-right: 7px">Save to <%= current_site.username %>.neocities.org</a>
       </div>
