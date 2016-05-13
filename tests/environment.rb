@@ -3,6 +3,7 @@ raise 'Forget it.' if ENV['RACK_ENV'] == 'production'
 
 require 'coveralls'
 require 'simplecov'
+require 'mock_redis'
 
 SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,
