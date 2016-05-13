@@ -2,7 +2,9 @@ Hello <%= site.username %>,
 
 Please confirm your email address for Neocities!
 
-You can confirm your email address using the link below:
+Your email confirmation code is: <%= site.email_confirmation_token %>
+
+You can also confirm your email address using the link below:
 
 https://neocities.org/site/<%= site.username %>/confirm_email/<%= site.email_confirmation_token %>
 

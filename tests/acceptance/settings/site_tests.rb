@@ -345,13 +345,11 @@ describe 'delete' do
     owned_site = Fabricate :site, parent_site_id: @site.id
     visit "/settings/#{owned_site.username}#delete"
     fill_in 'confirm_username', with: owned_site.username
-    fill_in 'deleted_reason', with: 'got bored with it'
     click_button 'Delete Site'
 
     @site.reload
     owned_site.reload
     owned_site.is_deleted.must_equal true
-    owned_site.deleted_reason.must_equal 'got bored with it'
     @site.is_deleted.must_equal false
 
     page.current_path.must_equal "/settings"

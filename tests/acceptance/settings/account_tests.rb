@@ -16,7 +16,14 @@ describe 'site/settings' do
       @new_email = "#{SecureRandom.uuid.gsub('-', '')}@example.com"
       fill_in 'email', with: @new_email
       click_button 'Change Email'
-      page.must_have_content /successfully changed email/i
+
+      page.must_have_content /enter the confirmation code here/
+
+      fill_in 'token', with: @site.reload.email_confirmation_token
+      click_button 'Confirm Email'
+
+      page.must_have_content /Email address changed/i
+
       @site.reload
       @site.email.must_equal @new_email
       EmailWorker.jobs.length.must_equal 1

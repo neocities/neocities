@@ -54,6 +54,12 @@ describe 'signup' do
     click_signup_button
     site_created?
 
+    click_link 'Continue'
+    page.must_have_content /almost ready!/
+    fill_in 'token', with: Site[username: @site[:username]].email_confirmation_token
+    click_button 'Confirm Email'
+    page.must_have_content /Thanks for joining the Neocities community/
+
     index_file_path = File.join Site::SITE_FILES_ROOT, @site[:username], 'index.html'
     File.exist?(index_file_path).must_equal true
 
