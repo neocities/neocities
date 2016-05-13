@@ -62,7 +62,12 @@ Sidekiq.configure_client do |config|
   config.redis = sidekiq_redis_config
 end
 
-$redis = Redis.new
+if ENV['RACK_ENV'] == 'test'
+  $redis = MockRedis.new
+else
+  $redis = Redis.new
+end
+
 $redis_cache = Redis::Namespace.new :cache, redis: $redis
 
 # :nocov:

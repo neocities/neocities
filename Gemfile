@@ -88,6 +88,7 @@ group :test do
   gem 'webmock',               require: nil
   gem 'stripe-ruby-mock', '2.0.1',      require: 'stripe_mock'
   gem 'timecop'
+  gem 'mock_redis'
 
   platform :mri, :rbx do
     gem 'simplecov',        require: nil

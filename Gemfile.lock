@@ -101,6 +101,7 @@ GEM
       ruby-progressbar
     mocha (1.1.0)
       metaclass (~> 0.0.1)
+    mock_redis (0.16.1)
     msgpack (0.7.5)
     multi_json (1.11.2)
     net-scp (1.2.1)
@@ -260,6 +261,7 @@ DEPENDENCIES
   minitest
   minitest-reporters
   mocha
+  mock_redis
   msgpack
   paypal-recurring
   pg
@@ -301,4 +303,4 @@ DEPENDENCIES
   zipruby
 
 BUNDLED WITH
-   1.11.2
+   1.12.1

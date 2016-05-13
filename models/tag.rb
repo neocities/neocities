@@ -23,7 +23,7 @@ class Tag < Sequel::Model
   end
 
   def self.popular_names(limit=10)
-    cache = $redis_cache.get :tag_popular_names
+    cache = $redis_cache['tag_popular_names']
     if cache.nil?
       res = DB["select tags.name,count(*) as c from sites_tags inner join tags on tags.id=sites_tags.tag_id where tags.name != '' and tags.is_nsfw='f' group by tags.name having count(*) > 1 order by c desc LIMIT ?", limit].all
       $redis_cache.set :tag_popular_names, res.to_msgpack
