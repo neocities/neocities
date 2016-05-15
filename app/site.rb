@@ -232,7 +232,7 @@ post '/site/:username/confirm_email' do
       redirect '/settings#email'
     end
 
-    redirect '/'
+    redirect '/tutorial'
   else
     flash[:error] = 'You must enter a valid token.'
     redirect "/site/#{current_site.username}/confirm_email"

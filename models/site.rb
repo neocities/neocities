@@ -121,7 +121,7 @@ class Site < Sequel::Model
     maximum_site_files: 2000
   )
 
-  EMAIL_VALIDATION_CUTOFF_DATE = Time.now - 1
+  EMAIL_VALIDATION_CUTOFF_DATE = Time.parse('May 16, 2016')
 
   def self.newsletter_sites
      Site.select(:email).

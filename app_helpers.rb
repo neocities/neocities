@@ -125,5 +125,7 @@ def dont_browser_cache
 end
 
 def email_not_validated?
-  current_site && current_site.parent? && !current_site.is_education && !current_site.email_confirmed && !current_site.supporter? && Site::EMAIL_VALIDATION_CUTOFF_DATE < Time.now
+  return false if current_site && current_site.created_at < Site::EMAIL_VALIDATION_CUTOFF_DATE
+
+  current_site && current_site.parent? && !current_site.is_education && !current_site.email_confirmed && !current_site.supporter?
 end
