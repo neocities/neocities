@@ -72,12 +72,19 @@ def encoding_fix(file)
 end
 
 def send_confirmation_email(site=current_site)
+  if site.email_confirmation_count > Site::MAXIMUM_EMAIL_CONFIRMATIONS
+    flash[:error] = 'You sent too many email confirmation requests, cannot continue.'
+    redirect request.referrer
+  end
+
+  DB['UPDATE sites set email_confirmation_count=email_confirmation_count+1 WHERE id=?', site.id].first
+
   EmailWorker.perform_async({
     from: 'web@neocities.org',
     reply_to: 'contact@neocities.org',
     to: site.email,
     subject: "[Neocities] Confirm your email address",
-    body: Tilt.new('./views/templates/email_confirm.erb', pretty: true).render(self, site: site)
+    body: Tilt.new('./views/templates/email/confirm.erb', pretty: true).render(self, site: site)
   })
 end
 
@@ -115,4 +122,10 @@ end
 
 def dont_browser_cache
   @dont_browser_cache = true
+end
+
+def email_not_validated?
+  return false if current_site && current_site.created_at < Site::EMAIL_VALIDATION_CUTOFF_DATE
+
+  current_site && current_site.parent? && !current_site.is_education && !current_site.email_confirmed && !current_site.supporter?
 end

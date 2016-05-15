@@ -280,9 +280,15 @@ end
 post '/settings/change_email' do
   require_login
 
+  if params[:from_confirm]
+    redirect_url = "/site/#{parent_site.username}/confirm_email"
+  else
+    redirect_url = '/settings#email'
+  end
+
   if params[:email] == parent_site.email
     flash[:error] = 'You are already using this email address for this account.'
-    redirect '/settings#email'
+    redirect redirect_url
   end
 
   parent_site.email = params[:email]
@@ -292,12 +298,17 @@ post '/settings/change_email' do
   if parent_site.valid?
     parent_site.save_changes
     send_confirmation_email
-    flash[:success] = 'Successfully changed email. We have sent a confirmation email, please use it to confirm your email address.'
-    redirect '/settings#email'
+    if !parent_site.supporter?
+      session[:fromsettings] = true
+      redirect "/site/#{parent_site.email}/confirm_email"
+    else
+      flash[:success] = 'Email address changed.'
+      redirect '/settings#email'
+    end
   end
 
   flash[:error] = parent_site.errors.first.last.first
-  redirect '/settings#email'
+  redirect redirect_url
 end
 
 post '/settings/change_email_notification' do

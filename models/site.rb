@@ -121,6 +121,8 @@ class Site < Sequel::Model
     maximum_site_files: 2000
   )
 
+  EMAIL_VALIDATION_CUTOFF_DATE = Time.parse('May 16, 2016')
+
   def self.newsletter_sites
      Site.select(:email).
        exclude(email: 'nil').exclude(is_banned: true).
@@ -159,6 +161,8 @@ class Site < Sequel::Model
   else
     EMAIL_BLAST_MAXIMUM_PER_DAY = 1000
   end
+
+  MAXIMUM_EMAIL_CONFIRMATIONS = 20
 
   many_to_many :tags
 

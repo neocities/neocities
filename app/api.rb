@@ -138,6 +138,7 @@ end
 def require_api_credentials
   if !request.env['HTTP_AUTHORIZATION'].nil?
     init_api_credentials
+    api_error(403, 'email_not_validated', 'you need to validate your email address before using the API') if email_not_validated?
   else
     api_error_invalid_auth
   end

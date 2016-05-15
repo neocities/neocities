@@ -15,5 +15,13 @@
     <a href="/tutorials">Learn</a>
   </li>
   <li>
-    <a href="/plan">Support Us<i class="fa fa-heart"><i class="fa fa-heart"></i></i></a>
+    <a href="/plan">
+      <% if signed_in? %>
+        <% unless current_site.supporter? %>
+          Upgrade to Supporter<i class="fa fa-heart"><i class="fa fa-heart"></i></i>
+        <% end %>
+      <% else %>
+        Support Us<i class="fa fa-heart"><i class="fa fa-heart"></i></i>
+      <% end %>
+    </a>
   </li>

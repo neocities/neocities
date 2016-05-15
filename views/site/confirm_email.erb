@@ -1,0 +1,51 @@
+<section class="section plans welcome">
+  <h2>Check your Email</h2>
+  <div class="txt-Center"><img src="/img/fatcat.png" width="70px"></div>
+  <h3 class="subtitle">
+    <% if !@fromsettings %>
+      You're almost ready!<br>
+    <% end %>
+
+    We sent an email to <strong><%= current_site.email %></strong> to make sure it's correct.<br>Please check your email, enter the confirmation code here, and you're all set.
+  </h3>
+
+  <div class="row">
+    <div class="col col-100 txt-Center" style="margin-top: 10px;">
+
+        <% if flash[:success] %>
+          <div class="alert alert-block alert-success" style="margin-top: 20px">
+            <%== flash[:success] %>
+          </div>
+        <% end %>
+
+        <% if flash[:error] %>
+          <div class="alert alert-block alert-error" style="margin-top: 20px">
+            <%== flash[:error] %>
+          </div>
+        <% end %>
+
+      <form method="POST" action="/site/<%= current_site.username %>/confirm_email" class="content">
+        <%== csrf_token_input_html %>
+        <fieldset>
+          <label for="token">Email Confirmation Token</label>
+          <input name="token" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" value="<%= flash[:token] %>" style="width: 290px">
+        </fieldset>
+        <input class="btn-Action" type="submit" value="Confirm Email">
+      </form>
+
+      <h2 style="margin-top: 30px">Wrong email?</h2>
+      <h3 class="subtitle">If you entered the wrong email address by mistake:</h3>
+
+      <form method="POST" action="/settings/change_email" class="content">
+        <%== csrf_token_input_html %>
+        <input type="hidden" name="from_confirm" value="1">
+        <fieldset>
+          <input name="email" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" value="<%= current_site.email %>" style="width: 290px">
+        </fieldset>
+        <input class="btn-Action" type="submit" value="Update Email Address">
+      </form>
+
+    </div>
+  </div>
+
+</section>

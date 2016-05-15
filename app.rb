@@ -28,7 +28,9 @@ before do
     @api = true
     content_type :json
   elsif request.path.match /^\/webhooks\//
-    # Skips the CSRF check for stripe web hooks
+    # Skips the CSRF/validation check for stripe web hooks
+  elsif email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/signout|^\/welcome|^\/plan/)
+    redirect "/site/#{current_site.username}/confirm_email"
   else
     content_type :html, 'charset' => 'utf-8'
     redirect '/' if request.post? && !csrf_safe?
