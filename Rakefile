@@ -38,6 +38,13 @@ task :parse_logs => [:environment] do
   Stat.parse_logfiles $config['logs_path']
 end
 
+desc 'Update disposable email blacklist'
+task :update_disposable_email_blacklist => [:environment] do
+  uri = URI.parse('https://raw.githubusercontent.com/martenson/disposable-email-domains/master/disposable_email_blacklist.conf')
+
+  File.write(Site::DISPOSABLE_EMAIL_BLACKLIST_PATH, Net::HTTP.get(uri))
+end
+
 desc 'Update banned IPs list'
 task :update_blocked_ips => [:environment] do
   uri = URI.parse('http://www.stopforumspam.com/downloads/listed_ip_90.zip')

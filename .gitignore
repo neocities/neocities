@@ -18,3 +18,4 @@ files/sslsites.zip
 .vagrant
 public/banned_sites
 public/deleted_sites
+files/disposable_email_blacklist.conf

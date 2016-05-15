@@ -122,6 +122,7 @@ class Site < Sequel::Model
   )
 
   EMAIL_VALIDATION_CUTOFF_DATE = Time.parse('May 16, 2016')
+  DISPOSABLE_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_blacklist.conf')
 
   def self.newsletter_sites
      Site.select(:email).
@@ -540,6 +541,21 @@ class Site < Sequel::Model
     !username.empty? && username.match(/^[a-zA-Z0-9_\-]+$/i)
   end
 
+  def self.disposable_email?(email)
+    return false unless File.exist?(DISPOSABLE_EMAIL_BLACKLIST_PATH)
+    return false if email.blank?
+
+    email.strip!
+
+    disposable_email_domains = File.readlines DISPOSABLE_EMAIL_BLACKLIST_PATH
+
+    disposable_email_domains.each do |disposable_email_domain|
+      return true if email.match disposable_email_domain.strip
+    end
+
+    false
+  end
+
   def okay_to_upload?(uploaded_file)
     return true if [:supporter].include?(plan_type.to_sym)
     return false if self.class.possible_phishing?(uploaded_file)
@@ -851,6 +867,10 @@ class Site < Sequel::Model
 
     if parent? && values[:email] =~ /@neocities.org/
       errors.add :email, 'Cannot use this email address.'
+    end
+
+    if parent? && new? && self.class.disposable_email?(values[:email])
+      errors.add :email, 'Cannot use a disposable email address.'
     end
 
     # Check for existing email if new or changing email.
