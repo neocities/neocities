@@ -72,6 +72,17 @@ task :update_blocked_ips => [:environment] do
   end
 end
 
+desc 'parse tor exits'
+task :parse_tor_exits => [:environment] do
+  exit_ips = Net::HTTP.get(URI.parse('https://check.torproject.org/exit-addresses'))
+
+  exit_ips.split("\n").collect {|line|
+    line.match(/ExitAddress (\d+\.\d+\.\d+\.\d+)/)&.captures&.first
+  }.compact
+
+  # ^^ Array of ip addresses of known exit nodes
+end
+
 desc 'Compile nginx mapfiles'
 task :compile_nginx_mapfiles => [:environment] do
   File.open('./files/map.txt', 'w') do |file|
