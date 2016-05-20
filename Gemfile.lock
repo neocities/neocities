@@ -34,7 +34,7 @@ GEM
     cocaine (0.5.8)
       climate_control (>= 0.0.3, < 1.0)
     coderay (1.1.1)
-    concurrent-ruby (1.0.1)
+    concurrent-ruby (1.0.2)
     connection_pool (2.2.0)
     coveralls (0.8.13)
       json (~> 1.8)
@@ -172,7 +172,7 @@ GEM
       sequel (>= 4.0.0)
     shotgun (0.9.1)
       rack (>= 1.0)
-    sidekiq (4.1.1)
+    sidekiq (4.1.2)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
       redis (~> 3.2, >= 3.2.1)
@@ -287,7 +287,7 @@ DEPENDENCIES
   sequel (= 4.8.0)
   sequel_pg
   shotgun
-  sidekiq
+  sidekiq (~> 4.1.2)
   simplecov
   simpleidn
   sinatra

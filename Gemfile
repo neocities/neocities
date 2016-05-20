@@ -10,7 +10,7 @@ gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
 gem 'puma',               require: nil
 gem 'rack-recaptcha',     require: 'rack/recaptcha'
 gem 'rmagick',            require: nil
-gem 'sidekiq'
+gem 'sidekiq', '~> 4.1.2'
 gem 'ago'
 gem 'mail'
 gem 'tilt'
