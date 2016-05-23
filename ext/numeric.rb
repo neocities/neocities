@@ -31,7 +31,7 @@ class Numeric
   end
 
   def to_comma_separated
-    self.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
+    self.to_i.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
   end
 
   def format_large_number
