@@ -58,7 +58,8 @@ describe 'signup' do
     page.must_have_content /almost ready!/
     fill_in 'token', with: Site[username: @site[:username]].email_confirmation_token
     click_button 'Confirm Email'
-    page.must_have_content /Thanks for joining the Neocities community/
+    current_path.must_equal '/tutorial'
+    page.must_have_content /Let's Get Started/
 
     index_file_path = File.join Site::SITE_FILES_ROOT, @site[:username], 'index.html'
     File.exist?(index_file_path).must_equal true

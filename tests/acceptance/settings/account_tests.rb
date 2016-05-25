@@ -6,14 +6,14 @@ describe 'site/settings' do
 
     before do
       EmailWorker.jobs.clear
-      @email = "#{SecureRandom.uuid.gsub('-', '')}@example.com"
+      @email = "#{SecureRandom.uuid.gsub('-', '')}@exampleedsdfdsf.com"
       @site = Fabricate :site, email: @email
       page.set_rack_session id: @site.id
       visit '/settings'
     end
 
     it 'should change email' do
-      @new_email = "#{SecureRandom.uuid.gsub('-', '')}@example.com"
+      @new_email = "#{SecureRandom.uuid.gsub('-', '')}@exampleedsdfdsf.com"
       fill_in 'email', with: @new_email
       click_button 'Change Email'
 
@@ -45,7 +45,7 @@ describe 'site/settings' do
     end
 
     it 'should fail for existing email' do
-      @existing_email = "#{SecureRandom.uuid.gsub('-', '')}@example.com"
+      @existing_email = "#{SecureRandom.uuid.gsub('-', '')}@exampleedsdfdsf.com"
       @existing_site = Fabricate :site, email: @existing_email
 
       fill_in 'email', with: @existing_email
@@ -77,7 +77,7 @@ describe 'site/settings' do
     include Capybara::DSL
 
     before do
-      @email = "#{SecureRandom.uuid.gsub('-', '')}@example.com"
+      @email = "#{SecureRandom.uuid.gsub('-', '')}@exampleedsdfdsf.com"
       @site = Fabricate :site, email: @email
       EmailWorker.jobs.clear
       Mail::TestMailer.deliveries.clear
