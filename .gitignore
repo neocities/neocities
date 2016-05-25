@@ -11,6 +11,8 @@ public/site_screenshots_test
 public/site_thumbnails_test
 *.swp
 files/map.txt
+files/supporter-map.txt
+files/maps
 .sass-cache
 .sass-cache/*
 files/sslsites.zip
