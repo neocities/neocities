@@ -86,6 +86,7 @@ end
 desc 'Compile nginx mapfiles'
 task :compile_nginx_mapfiles => [:environment] do
   FileUtils.mkdir_p './files/maps'
+
   File.open('./files/maps/domains.txt', 'w') do |file|
     Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.each do |site|
       file.write ".#{site.values[:domain]} #{site.username};\n"
@@ -104,9 +105,9 @@ task :compile_nginx_mapfiles => [:environment] do
     end
   end
 
-  # Legacy for existing system
-  FileUtils.cp './files/maps/domains.txt', './files/map.txt'
-  FileUtils.cp './files/maps/supporters.txt', './files/supporter-map.txt'
+  File.open('./files/maps/sandboxed.txt', 'w') do |file|
+    usernames = DB["select username from sites where created_at > ? and (plan_type is null or plan_type='free')", 1.week.ago].all.collect {|s| s[:username]}.each {|username| file.write "#{username}\n"}
+  end
 end
 
 desc 'Produce SSL config package for proxy'
