@@ -1,5 +1,5 @@
 get '/browse/?' do
-
+  @surfmode = false
   @page = params[:page].to_i
   @page = 1 if @page == 0
 
