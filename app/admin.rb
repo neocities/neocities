@@ -42,11 +42,9 @@ get '/admin/usage' do
 
   month = current_month
 
-  until month.year == 2015 && month.month == 1 do
-    stats = DB[
-      'select sum(views) as views, sum(hits) as hits, sum(bandwidth) as bandwidth from stats where created_at >= ? and created_at < ?',
-      month,
-      month.next_month].first
+  until month.year == 2016 && month.month == 2 do
+
+    stats = DB["select sum(views) as views, sum(hits) as hits,sum(bandwidth) as bandwidth from daily_site_stats where created_at::text LIKE '#{month.year}-#{month.strftime('%m')}-%'"].first
 
     stats.keys.each do |key|
       stats[key] ||= 0
