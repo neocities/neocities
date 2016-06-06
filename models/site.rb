@@ -1382,7 +1382,7 @@ class Site < Sequel::Model
         ]
         sql.first
 
-        ArchiveWorker.perform_in 24.hours, self.id
+        ArchiveWorker.perform_in Archive::ARCHIVE_WAIT_TIME, self.id
       end
 
       reload
