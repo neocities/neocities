@@ -5,7 +5,7 @@ class Archive < Sequel::Model
   set_primary_key [:site_id, :ipfs_hash]
   unrestrict_primary_key
   MAXIMUM_ARCHIVES_PER_SITE = 100
-  ARCHIVE_WAIT_TIME = 5.seconds
+  ARCHIVE_WAIT_TIME = 1.hour
 
   def before_destroy
     unpin
