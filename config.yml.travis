@@ -11,3 +11,5 @@ paypal_api_username: derp
 paypal_api_password: ing
 paypal_api_signature: tonz
 logs_path: "/tmp/neocitiestestlogs"
+letsencrypt_key: ./tests/files/letsencrypt.key
+letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/

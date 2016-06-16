@@ -39,6 +39,7 @@ gem 'simpleidn'
 gem 'gandi'
 gem 'hoe', '3.14.2', require: nil
 gem 'msgpack'
+gem 'acme-client'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

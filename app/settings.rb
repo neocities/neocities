@@ -66,6 +66,7 @@ post '/settings/:username/profile' do
   redirect "/settings/#{@site.username}#profile"
 end
 
+=begin
 post '/settings/:username/ssl' do
   require_login
   require_ownership_for_settings
@@ -167,6 +168,7 @@ post '/settings/:username/ssl' do
   flash[:success] = 'Updated SSL key/certificate.'
   redirect "/settings/#{@site.username}#custom_domain"
 end
+=end
 
 post '/settings/:username/change_name' do
   require_login
@@ -241,6 +243,7 @@ post '/settings/:username/custom_domain' do
 
   if @site.valid?
     @site.save_changes
+    RequestSSLAuthWorker.perform_async @site.id
     flash[:success] = 'The domain has been successfully updated.'
     redirect "/settings/#{@site.username}#custom_domain"
   else
