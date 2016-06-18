@@ -1,8 +1,8 @@
-class RequestSSLAuthWorker
+class LetsEncryptWorker
   class NotAuthorizedYetError < StandardError; end
   class VerificationTimeoutError < StandardError; end
   include Sidekiq::Worker
-  sidekiq_options queue: :request_ssl_auth_worker, retry: 100, backtrace: true
+  sidekiq_options queue: :lets_encrypt_worker, retry: 100, backtrace: true
 
   sidekiq_retry_in do |count|
     180

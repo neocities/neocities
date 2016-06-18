@@ -243,7 +243,7 @@ post '/settings/:username/custom_domain' do
 
   if @site.valid?
     @site.save_changes
-    RequestSSLAuthWorker.perform_async @site.id
+    LetsEncryptWorker.perform_async @site.id
     flash[:success] = 'The domain has been successfully updated.'
     redirect "/settings/#{@site.username}#custom_domain"
   else
