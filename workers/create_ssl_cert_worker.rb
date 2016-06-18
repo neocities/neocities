@@ -1,6 +1,6 @@
 class CreateSSLCertWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :create_ssl_auth_worker, retry: 100, backtrace: true
+  sidekiq_options queue: :create_ssl_cert_worker, retry: 100, backtrace: true
 
   sidekiq_retry_in do |count|
     180
