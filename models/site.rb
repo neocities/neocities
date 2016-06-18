@@ -1330,28 +1330,6 @@ class Site < Sequel::Model
     sanitized.gsub(/(http|https):\/\//, '').gsub(/[^\w\s]/, '').downcase.split.uniq.select{|v| v.length < SiteFile::CLASSIFIER_WORD_LIMIT}.join(' ')
   end
 
-  def request_ssl_authorization
-    auth = $letsencrypt.authorize domain: domain
-    challenge = auth.http01
-    FileUtils.mkdir_p File.join(base_files_path, File.dirname(challenge.filename))
-
-    File.write File.join(base_files_path, challenge.filename), challenge.file_content
-
-    challenge.request_verification
-
-    challenge
-  end
-
-  # request_ssl_authorization must be run first!
-  def obtain_ssl_certificate
-    csr = Acme::Client::CertificateRequest.new names: [domain, "www.#{domain}"]
-    certificate = $letsencrypt.new_certificate csr
-    self.ssl_key = certificate.request.private_key.to_pem
-    self.ssl_cert = certificate.fullchain_to_pem
-    save_changes
-    FileUtils.rm_rf File.join(base_files_path, '.well-known')
-  end
-
   # array of hashes: filename, tempfile, opts.
   def store_files(files, opts={})
     results = []
