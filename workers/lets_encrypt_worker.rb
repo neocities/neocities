@@ -9,6 +9,16 @@ class LetsEncryptWorker
   end
 
   def perform(site_id)
+
+    # Dispose of dupes
+
+    queue = Sidekiq::Queue.new self.class.sidekiq_options_hash['queue']
+    queue.each do |job|
+      if job.args == [site_id] && job.jid != jid
+        job.delete
+      end
+    end
+
     letsencrypt = Acme::Client.new(
       private_key: OpenSSL::PKey::RSA.new(File.read($config['letsencrypt_key'])),
       endpoint: $config['letsencrypt_endpoint']
@@ -32,8 +42,8 @@ class LetsEncryptWorker
     attempts = 0
 
     begin
-      raise VerificationTimeoutError if attempts == 5
-      raise NotAuthorizedYet if challenge.verify_status != 'valid'
+      raise VerificationTimeoutError if attempts == 30
+      raise NotAuthorizedYetError if challenge.verify_status != 'valid'
     rescue NotAuthorizedYet
       sleep 5
       attempts += 1
