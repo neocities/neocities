@@ -8,6 +8,7 @@ class RequestSSLAuthWorker
 
   def perform(site_id)
     site = Site[site_id]
+    return if site.domain.blank?
     challenge = site.request_ssl_authorization
 
     CreateSSLCertWorker.perform_in 5.seconds, site_id, challenge.to_h.to_json
