@@ -39,7 +39,14 @@ gem 'simpleidn'
 gem 'gandi'
 gem 'hoe', '3.14.2', require: nil
 gem 'msgpack'
-gem 'acme-client'
+gem 'json-jwt', {
+  git: 'https://github.com/neocities/json-jwt.git',
+  branch: 'drop_activesupport'
+}
+gem 'acme-client', {
+  git: 'https://github.com/jhass/acme-client.git',
+  branch: 'no_activesupport'
+}
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
