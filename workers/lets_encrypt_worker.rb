@@ -8,10 +8,15 @@ class LetsEncryptWorker
     180
   end
 
+  def letsencrypt
+    Acme::Client.new(
+      private_key: OpenSSL::PKey::RSA.new(File.read($config['letsencrypt_key'])),
+      endpoint: $config['letsencrypt_endpoint']
+    )
+  end
+
   def perform(site_id)
-
     # Dispose of dupes
-
     queue = Sidekiq::Queue.new self.class.sidekiq_options_hash['queue']
     queue.each do |job|
       if job.args == [site_id] && job.jid != jid
@@ -19,38 +24,34 @@ class LetsEncryptWorker
       end
     end
 
-    letsencrypt = Acme::Client.new(
-      private_key: OpenSSL::PKey::RSA.new(File.read($config['letsencrypt_key'])),
-      endpoint: $config['letsencrypt_endpoint']
-    )
-
     site = Site[site_id]
-
     return if site.domain.blank? || site.is_deleted || site.is_banned
 
-    auth = letsencrypt.authorize domain: site.domain
+    domains = [site.domain, "www.#{site.domain}"]
 
-    challenge = auth.http01
+    domains.each_with_index do |domain, index|
+      auth = letsencrypt.authorize domain: site.domain
+      challenge = auth.http01
 
-    FileUtils.mkdir_p File.join(site.base_files_path, File.dirname(challenge.filename))
-    File.write File.join(site.base_files_path, challenge.filename), challenge.file_content
+      FileUtils.mkdir_p File.join(site.base_files_path, File.dirname(challenge.filename)) if index == 0
+      File.write File.join(site.base_files_path, challenge.filename), challenge.file_content
 
-    challenge.request_verification
+      challenge.request_verification
 
-    sleep 1
+      sleep 1
+      attempts = 0
 
-    attempts = 0
-
-    begin
-      raise VerificationTimeoutError if attempts == 30
-      raise NotAuthorizedYetError if challenge.verify_status != 'valid'
-    rescue NotAuthorizedYet
-      sleep 5
-      attempts += 1
-      retry
+      begin
+        raise VerificationTimeoutError if attempts == 30
+        raise NotAuthorizedYetError if challenge.verify_status != 'valid'
+      rescue NotAuthorizedYet
+        sleep 5
+        attempts += 1
+        retry
+      end
     end
 
-    csr = Acme::Client::CertificateRequest.new names: [site.domain, "www.#{site.domain}"]
+    csr = Acme::Client::CertificateRequest.new names: domains
     certificate = letsencrypt.new_certificate csr
     site.ssl_key = certificate.request.private_key.to_pem
     site.ssl_cert = certificate.fullchain_to_pem
