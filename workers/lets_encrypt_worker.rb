@@ -43,7 +43,7 @@ class LetsEncryptWorker
 
       begin
         puts "WAITING FOR #{domain} VALIDATION"
-        raise VerificationTimeoutError if attempts == 30
+        raise VerificationTimeoutError if attempts == 5
         raise NotAuthorizedYetError if challenge.verify_status != 'valid'
       rescue NotAuthorizedYetError
         sleep 5
@@ -60,5 +60,8 @@ class LetsEncryptWorker
     site.ssl_cert = certificate.fullchain_to_pem
     site.save_changes validate: false
     FileUtils.rm_rf File.join(site.base_files_path, '.well-known')
+
+    # Refresh the cert periodically, current expire time is 90 days
+    LetsEncryptWorker.perform_in 60.days, site.id
   end
 end
