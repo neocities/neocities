@@ -108,6 +108,24 @@ task :compile_nginx_mapfiles => [:environment] do
   File.open('./files/maps/sandboxed.txt', 'w') do |file|
     usernames = DB["select username from sites where created_at > ? and (plan_type is null or plan_type='free')", 1.week.ago].all.collect {|s| s[:username]}.each {|username| file.write "#{username} 1;\n"}
   end
+
+  # Compile letsencrypt ssl keys
+  sites = DB[%{select username,ssl_key,ssl_cert,domain from sites where ssl_cert is not null and ssl_key is not null and (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't'}].all
+
+  ssl_path = './files/maps/ssl'
+
+  FileUtils.mkdir_p ssl_path
+
+  sites.each do |site|
+    [site[:domain], "www.#{site[:domain]}"].each do |domain|
+      key = OpenSSL::PKey::RSA.new site[:ssl_key]
+      crt = OpenSSL::X509::Certificate.new site[:ssl_cert]
+
+      File.open(File.join(ssl_path, "#{domain}.key"), 'wb') {|f| f.write key.to_der}
+      File.open(File.join(ssl_path, "#{domain}.crt"), 'wb') {|f| f.write crt.to_der}
+    end
+  end
+
 end
 
 desc 'Produce SSL config package for proxy'
