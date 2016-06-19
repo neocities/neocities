@@ -30,7 +30,7 @@ class LetsEncryptWorker
     domains = [site.domain, "www.#{site.domain}"]
 
     domains.each_with_index do |domain, index|
-      auth = letsencrypt.authorize domain: site.domain
+      auth = letsencrypt.authorize domain: domain
       challenge = auth.http01
 
       FileUtils.mkdir_p File.join(site.base_files_path, File.dirname(challenge.filename)) if index == 0
@@ -42,13 +42,16 @@ class LetsEncryptWorker
       attempts = 0
 
       begin
+        puts "WAITING FOR #{domain} VALIDATION"
         raise VerificationTimeoutError if attempts == 30
         raise NotAuthorizedYetError if challenge.verify_status != 'valid'
-      rescue NotAuthorizedYet
+      rescue NotAuthorizedYetError
         sleep 5
         attempts += 1
         retry
       end
+
+      puts "DONE!"
     end
 
     csr = Acme::Client::CertificateRequest.new names: domains
