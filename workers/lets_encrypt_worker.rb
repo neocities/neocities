@@ -2,10 +2,10 @@ class LetsEncryptWorker
   class NotAuthorizedYetError < StandardError; end
   class VerificationTimeoutError < StandardError; end
   include Sidekiq::Worker
-  sidekiq_options queue: :lets_encrypt_worker, retry: 100, backtrace: true
+  sidekiq_options queue: :lets_encrypt_worker, retry: 5, backtrace: true
 
   sidekiq_retry_in do |count|
-    180
+    1.hour.to_i
   end
 
   def letsencrypt
@@ -43,14 +43,16 @@ class LetsEncryptWorker
 
       begin
         puts "WAITING FOR #{domain} VALIDATION"
-        raise VerificationTimeoutError if attempts == 5
+
+        raise VerificationTimeoutError if attempts == 60
         raise NotAuthorizedYetError if challenge.verify_status != 'valid'
       rescue NotAuthorizedYetError
-        sleep 5
+        sleep 20
         attempts += 1
         retry
+      ensure
+        clean_wellknown_turds site
       end
-
       puts "DONE!"
     end
 
@@ -59,9 +61,17 @@ class LetsEncryptWorker
     site.ssl_key = certificate.request.private_key.to_pem
     site.ssl_cert = certificate.fullchain_to_pem
     site.save_changes validate: false
-    FileUtils.rm_rf File.join(site.base_files_path, '.well-known')
+    clean_wellknown_turds site
 
     # Refresh the cert periodically, current expire time is 90 days
     LetsEncryptWorker.perform_in 60.days, site.id
+  end
+
+  def clean_wellknown_turds(site)
+    wellknown_path = File.join(site.base_files_path, '.well-known')
+
+    if File.exist?(wellknown_path)
+      FileUtils.rm_rf wellknown_path
+    end
   end
 end
