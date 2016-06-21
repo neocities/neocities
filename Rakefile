@@ -380,3 +380,17 @@ task :train_spam => [:environment] do
     puts "Deleted #{site_file_path}, banned #{site.username}"
   end
 end
+
+desc 'regenerate_ssl_certs'
+task :regenerate_ssl_certs => [:environment] do
+  sites = DB[%{select username,ssl_key,ssl_cert,domain from sites where (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't'}].all
+
+  seconds = 2
+
+  site.seach do |site|
+    LetsEncryptWorker.perform_in seconds, site[:id]
+    seconds += 10
+  end
+
+  puts "#{sites.length.to_s} records are primed"
+end
