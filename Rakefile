@@ -118,11 +118,16 @@ task :compile_nginx_mapfiles => [:environment] do
 
   sites.each do |site|
     [site[:domain], "www.#{site[:domain]}"].each do |domain|
-      key = OpenSSL::PKey::RSA.new site[:ssl_key]
-      crt = OpenSSL::X509::Certificate.new site[:ssl_cert]
+      begin
+        key = OpenSSL::PKey::RSA.new site[:ssl_key]
+        crt = OpenSSL::X509::Certificate.new site[:ssl_cert]
+      rescue => e
+        puts "SSL ERROR: #{e.class} #{e.inspect}"
+        next
+      end
 
       File.open(File.join(ssl_path, "#{domain}.key"), 'wb') {|f| f.write key.to_der}
-      File.open(File.join(ssl_path, "#{domain}.crt"), 'wb') {|f| f.write crt.to_der}
+      File.open(File.join(ssl_path, "#{domain}.crt"), 'wb') {|f| f.write site[:ssl_cert]}
     end
   end
 
