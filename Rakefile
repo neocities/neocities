@@ -383,11 +383,11 @@ end
 
 desc 'regenerate_ssl_certs'
 task :regenerate_ssl_certs => [:environment] do
-  sites = DB[%{select username,ssl_key,ssl_cert,domain from sites where (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't'}].all
+  sites = DB[%{select id from sites where ((domain is not null or domain != '') and is_banned != 't' and is_deleted != 't' and plan_type is not null and plan_type != 'free') or parent_site_id is not null}].all
 
   seconds = 2
 
-  site.seach do |site|
+  sites.each do |site|
     LetsEncryptWorker.perform_in seconds, site[:id]
     seconds += 10
   end
