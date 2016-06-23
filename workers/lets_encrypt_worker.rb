@@ -1,6 +1,7 @@
 class LetsEncryptWorker
   class NotAuthorizedYetError < StandardError; end
   class VerificationTimeoutError < StandardError; end
+  class VerifyNotFoundWithDomain < StandardError; end
   include Sidekiq::Worker
   sidekiq_options queue: :lets_encrypt_worker, retry: 100, backtrace: true
 
@@ -36,9 +37,18 @@ class LetsEncryptWorker
       FileUtils.mkdir_p File.join(site.base_files_path, File.dirname(challenge.filename)) if index == 0
       File.write File.join(site.base_files_path, challenge.filename), challenge.file_content
 
+      # Ensure that both domains work before sending request. Let's Encrypt has a low
+      # pending request limit, and it takes one week (!) to flush out.
+      sleep 2
+      challenge_url = "#{domain}/#{challenge.filename}"
+      ["http://#{challenge_url}", "http://www.#{challenge_url}"].each do |url|
+        res = HTTP.follow.get(url)
+        raise VerifyNotFoundWithDomain unless res.status == 200
+      end
+
       challenge.request_verification
 
-      sleep 1
+      sleep 60
       attempts = 0
 
       begin

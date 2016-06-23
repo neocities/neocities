@@ -97,8 +97,15 @@ GEM
     hiredis (0.6.1)
     hoe (3.14.2)
       rake (>= 0.8, < 11.0)
+    http (2.0.1)
+      addressable (~> 2.3)
+      http-cookie (~> 1.0)
+      http-form_data (~> 1.0.1)
+      http_parser.rb (~> 0.6.0)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
+    http-form_data (1.0.1)
+    http_parser.rb (0.6.0)
     i18n (0.7.0)
     io-extra (1.2.8)
     jimson-temp (0.9.5)
@@ -280,6 +287,7 @@ DEPENDENCIES
   geoip
   hiredis
   hoe (= 3.14.2)
+  http
   io-extra
   jdbc-postgres
   jruby-openssl
