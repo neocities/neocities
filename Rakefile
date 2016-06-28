@@ -383,7 +383,7 @@ end
 
 desc 'regenerate_ssl_certs'
 task :regenerate_ssl_certs => [:environment] do
-  sites = DB[%{select id from sites where ((domain is not null or domain != '') and is_banned != 't' and is_deleted != 't' and plan_type is not null and plan_type != 'free') or parent_site_id is not null}].all
+  sites = DB[%{select id from sites where (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't'}].all
 
   seconds = 2
 
@@ -393,4 +393,13 @@ task :regenerate_ssl_certs => [:environment] do
   end
 
   puts "#{sites.length.to_s} records are primed"
+end
+
+desc 'renew_ssl_certs'
+task :renew_ssl_certs => [:environment] do
+  delay = 0
+  DB[%{select id from sites where (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't' and (cert_updated_at is null or cert_updated_at < ?)}, 60.days.ago].all.each do |site|
+    LetsEncryptWorker.perform_in delay.seconds, site[:id]
+    delay += 10
+  end
 end
