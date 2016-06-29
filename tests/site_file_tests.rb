@@ -63,6 +63,12 @@ describe 'site_files' do
       DeleteCacheOrderWorker.jobs.collect {|j| j['args'].last}.must_equal ['/index.html', '/?surf=1', '/']
     end
 
+    it 'property deletes directories with regexp special chars in them' do
+      upload 'dir' => '8)', 'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      delete_file filename: '8)'
+      @site.reload.site_files.select {|f| f.path =~ /#{Regexp.quote '8)'}/}.length.must_equal 0
+    end
+
     it 'deletes a directory and all files in it' do
       upload(
         'dir' => 'test',

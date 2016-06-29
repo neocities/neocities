@@ -9,14 +9,14 @@ class SiteFile < Sequel::Model
 
   def before_destroy
     if is_directory
-      site.site_files_dataset.where(path: /^#{path}\//, is_directory: true).all.each do |site_file|
+      site.site_files_dataset.where(path: /^#{Regexp.quote path}\//, is_directory: true).all.each do |site_file|
         begin
           site_file.destroy
         rescue Sequel::NoExistingObject
         end
       end
 
-      site.site_files_dataset.where(path: /^#{path}\//, is_directory: false).all.each do |site_file|
+      site.site_files_dataset.where(path: /^#{Regexp.quote path}\//, is_directory: false).all.each do |site_file|
         site_file.destroy
       end
 
@@ -50,4 +50,3 @@ class SiteFile < Sequel::Model
     SiteChangeFile.filter(site_id: site_id, filename: path).delete
   end
 end
-
