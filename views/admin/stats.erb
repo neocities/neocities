@@ -1,0 +1,60 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+  <h1>Neocities Site Statistics</h1>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <article>
+    <table class="table">
+      <tr>
+        <td><strong>Hits</strong> (sites hosted on Neocities)</td>
+        <td><strong><%= @stats[:total_hosted_site_hits].to_comma_separated %></strong></td>
+      </tr>
+      <tr>
+        <td><strong>Unique Views</strong> (sites hosted on Neocities)</td>
+        <td><strong><%= @stats[:total_hosted_site_views].to_comma_separated %></strong></td>
+      </tr>
+      <tr>
+        <td><strong>Sites</strong></td>
+        <td><strong><%= @stats[:total_sites].to_comma_separated %></strong></td>
+      </tr>
+      <tr>
+        <td><strong>Site Updates</strong></td>
+        <td><strong><%= @stats[:total_site_changes].to_comma_separated %></strong></td>
+      </tr>
+    </table>
+
+    <h2>Monthly Statistics</h2>
+    <table class="table">
+      <tr>
+        <th>Year</th>
+        <th>Month</th>
+        <th>Sites Created</th>
+        <th>Change</th>
+        <th>Total</th>
+        <th>Supporters</th>
+      </tr>
+      <% @stats[:monthly_stats].each_with_index do |stat,i| %>
+        <tr>
+          <td><%= stat[:date].year %></td>
+          <td>
+            <%= stat[:date].strftime('%B') %>
+            <% if Time.now.month == stat[:date].month && Time.now.year == stat[:date].year %>
+              <small>current</small>
+            <% end %></td>
+          <td><%= stat[:sites_created] %></td>
+          <td>
+            <% if i != 0 && i != @stats[:monthly_stats].length-1 %>
+              <%= (((stat[:sites_created].to_f - @stats[:monthly_stats][i-1][:sites_created]) / @stats[:monthly_stats][i-1][:sites_created]) * 100).round(2) %>%
+            <% end %>
+          </td>
+          <td>
+            <%= stat[:total_from_start] %></td>
+          </td>
+          <td><%= stat[:supporters] %></td>
+        </tr>
+      <% end %>
+    </table>
+  </article>
+</div>
