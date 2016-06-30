@@ -69,6 +69,16 @@ describe 'site_files' do
       @site.reload.site_files.select {|f| f.path =~ /#{Regexp.quote '8)'}/}.length.must_equal 0
     end
 
+    it 'deletes with escaped apostrophe' do
+      upload(
+        'dir' => "test'ing",
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      @site.reload.site_files.select {|s| s.path == "test'ing"}.length.must_equal 1
+      delete_file filename: "test'ing"
+      @site.reload.site_files.select {|s| s.path == "test'ing"}.length.must_equal 0
+    end
+
     it 'deletes a directory and all files in it' do
       upload(
         'dir' => 'test',

@@ -48,6 +48,7 @@ gem 'acme-client', {
   branch: 'no_activesupport'
 }
 gem 'http'
+gem 'htmlentities'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
