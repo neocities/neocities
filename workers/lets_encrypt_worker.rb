@@ -11,7 +11,7 @@ class LetsEncryptWorker
   end
 
   # If you need to clear scheduled jobs:
-  # Sidekiq::ScheduledSet.new.select {|s| JSON.parse(s.value)['class'] == 'LetsEncryptWorker'}.length
+  # Sidekiq::ScheduledSet.new.select {|s| JSON.parse(s.value)['class'] == 'LetsEncryptWorker'}.each {|j| j.delete}
 
   def letsencrypt
     Acme::Client.new(
