@@ -225,6 +225,7 @@ post '/settings/:username/custom_domain' do
   require_login
   require_ownership_for_settings
 
+  original_domain = @site.domain
   @site.domain = params[:domain]
 
   begin
@@ -243,7 +244,11 @@ post '/settings/:username/custom_domain' do
 
   if @site.valid?
     @site.save_changes
-    LetsEncryptWorker.perform_async @site.id
+
+    if @site.domain != original_domain
+      LetsEncryptWorker.perform_async @site.id
+    end
+
     flash[:success] = 'The domain has been successfully updated.'
     redirect "/settings/#{@site.username}#custom_domain"
   else
