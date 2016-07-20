@@ -210,48 +210,43 @@ post '/admin/email' do
   redirect '/'
 end
 
-post '/admin/banip' do
-  require_admin
-  site = Site[username: params[:username]]
-
-  if site.nil?
-    flash[:error] = 'User not found'
-    redirect '/admin'
-  end
-
-  if site.ip.nil? || site.ip.empty?
-    flash[:error] = 'IP is blank, cannot continue'
-    redirect '/admin'
-  end
-  sites = Site.filter(ip: site.ip, is_banned: false).all
-  sites.each {|s| s.ban!}
-  flash[:error] = "#{sites.length} sites have been banned."
-  redirect '/admin'
-end
-
 post '/admin/banhammer' do
   require_admin
 
-  site = Site[username: params[:username]]
-
-  if !params[:classifier].empty?
-    site.untrain 'index.html'
-    site.train 'index.html', params[:classifier]
-  end
-
-  if site.nil?
-    flash[:error] = 'User not found'
+  if params[:usernames].empty?
+    flash[:error] = 'no usernames provided'
     redirect '/admin'
   end
 
-  if site.is_banned
-    flash[:error] = 'User is already banned'
-    redirect '/admin'
+  usernames = params[:usernames].split("\n").collect {|u| u.strip}
+
+  deleted_count = 0
+  ip_deleted_count = 0
+
+  usernames.each do |username|
+    next if username == ''
+    site = Site[username: username]
+    next if site.nil? || site.is_banned
+
+    if !params[:classifier].empty?
+      site.untrain 'index.html'
+      site.train 'index.html', params[:classifier]
+    end
+
+    site.ban!
+    deleted_count += 1
+
+    if !params[:ban_using_ips].empty? && !site.ip.empty?
+      sites = Site.filter(ip: site.ip, is_banned: false).all
+      sites.each do |s|
+        next if usernames.include?(s.username)
+        s.ban!
+      end
+      ip_deleted_count += 1
+    end
   end
 
-  site.ban!
-
-  flash[:success] = 'MISSION ACCOMPLISHED'
+  flash[:success] = "#{ip_deleted_count + deleted_count} sites have been banned, including #{ip_deleted_count} matching IPs."
   redirect '/admin'
 end
 

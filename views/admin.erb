@@ -27,8 +27,8 @@
       <h2>Ban Site</h2>
       <form action="/admin/banhammer" method="POST">
         <%== csrf_token_input_html %>
-        <p>Site Name:</p>
-        <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
+        <p>Site Username(s):</p>
+        <textarea name="usernames" cols="10" rows="5" autocapitalize="off" autocorrect="off"></textarea>
         <div class="select-Container" style="display: block; width: 100px; float: none; margin: 0 auto;">
           <select name="classifier" class="input-Select">
             <option value=""></option>
@@ -36,6 +36,7 @@
             <option value="phishing">Phishing</option>
           </select>
         </div>
+        <p>Ban sites with same IP <input type="checkbox" name="ban_using_ips" value="1"></p>
         <p><input class="btn-Action" type="submit" value="Ban"></p>
       </form>
     </div>
@@ -54,17 +55,6 @@
 
   <div class="row">
     <div class="col col-50">
-      <h2>Ban by IP</h2>
-      <form action="/admin/banip" method="POST">
-        <%== csrf_token_input_html %>
-        <p>All sites with this IP address will be removed.</p>
-        <p>Site Name:</p>
-        <p><input type="text" name="username" placeholder="edwardsnowden" autocapitalize="off" autocorrect="off"></p>
-        <p><input class="btn-Action" type="submit" value="Ban"></p>
-      </form>
-    </div>
-
-    <div class="col col-50">
       <h2>Upgrade to Supporter</h2>
       <form id="upgradeToSupporter" action="/plan/update" method="POST">
         <input type="hidden" name="plan_type" value="special">
@@ -75,9 +65,7 @@
         <p><input class="btn-Action" type="submit" value="Upgrade to Supporter"></p>
       </form>
     </div>
-  </div>
 
-  <div class="row">
     <div class="col col-50">
       <h2>Feature Site</h2>
       <form id="featureSite" action="/admin/feature" method="POST">

@@ -455,7 +455,7 @@ class Site < Sequel::Model
 
     DB.transaction {
       self.is_banned = true
-      self.updated_at = Time.now
+      self.banned_at = Time.now
       save(validate: false)
 
       if !Dir.exist? BANNED_SITES_ROOT
