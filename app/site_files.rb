@@ -152,11 +152,12 @@ get '/site_files/:username.zip' do |username|
   send_file zipfile_path
 end
 
-get '/site_files/download/:filename' do |filename|
+get %r{\/site_files\/download\/(.+)} do
   require_login
-  content_type 'application/octet-stream'
+  not_found if params[:captures].nil? || params[:captures].length != 1
+  filename = params[:captures].first
   attachment filename
-  current_site.get_file filename
+  send_file current_site.current_files_path(filename)
 end
 
 get %r{\/site_files\/text_editor\/(.+)} do
@@ -174,13 +175,15 @@ get %r{\/site_files\/text_editor\/(.+)} do
       nil
   end
 
-  begin
-    @file_data = current_site.get_file @filename
-  rescue Errno::ENOENT
-    flash[:error] = 'We could not find the requested file.'
-    redirect '/dashboard'
-  rescue Errno::EISDIR
+  file_path = current_site.current_files_path @filename
+
+  if File.directory? file_path
     flash[:error] = 'Cannot edit a directory.'
+    redirect '/dashboard'
+  end
+
+  if !File.exist?(file_path)
+    flash[:error] = 'We could not find the requested file.'
     redirect '/dashboard'
   end
 
