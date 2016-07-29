@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'sinatra'
 gem 'redis'
+gem 'redis-namespace'
 gem 'sequel', '4.8.0'
 gem 'bcrypt'
 gem 'sinatra-flash',      require: 'sinatra/flash'
@@ -9,14 +10,13 @@ gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
 gem 'puma',               require: nil
 gem 'rack-recaptcha',     require: 'rack/recaptcha'
 gem 'rmagick',            require: nil
-gem 'sidekiq'
+gem 'sidekiq', '~> 4.1.2'
 gem 'ago'
 gem 'mail'
-gem 'google-api-client',  require: 'google/api_client'
 gem 'tilt'
 gem 'erubis'
-gem 'stripe' #, source: 'https://code.stripe.com/'
-gem 'screencap'
+gem 'stripe', '1.15.0' #, source: 'https://code.stripe.com/'
+#gem 'screencap', '~> 0.1.4'
 gem 'cocaine'
 gem 'zipruby'
 gem 'sass', require: nil
@@ -25,18 +25,37 @@ gem 'filesize'
 gem 'thread'
 gem 'scrypt'
 gem 'rack-cache'
-gem 'rest-client'
+gem 'rest-client', require: 'rest_client'
+gem 'addressable', require: 'addressable/uri'
+gem 'paypal-recurring', require: 'paypal/recurring'
 gem 'geoip'
 gem 'io-extra', require: 'io/extra'
 gem 'rye'
-gem 'dnsruby'
+gem 'base32'
+gem 'coveralls', require: false
+gem 'sanitize'
+gem 'will_paginate'
+gem 'simpleidn'
+gem 'gandi'
+gem 'hoe', '3.14.2', require: nil
+gem 'msgpack'
+gem 'json-jwt', {
+  git: 'https://github.com/neocities/json-jwt.git',
+  branch: 'drop_activesupport'
+}
+gem 'acme-client', {
+  git: 'https://github.com/jhass/acme-client.git',
+  branch: 'no_activesupport'
+}
+gem 'http'
+gem 'htmlentities'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic
   gem 'pg'
   gem 'sequel_pg', require: nil
   gem 'hiredis'
-  gem 'rainbows',  require: nil
+  gem 'posix-spawn'
 
   group :development, :test do
     gem 'pry'
@@ -61,6 +80,7 @@ end
 
 group :development do
   gem 'shotgun', require: nil
+  gem 'certified'
 end
 
 group :test do
@@ -73,10 +93,12 @@ group :test do
   gem 'rake',                  require: nil
   gem 'poltergeist'
   gem 'capybara_minitest_spec'
+  gem 'capybara', '2.6.2',     require: nil
   gem 'rack_session_access',   require: nil
   gem 'webmock',               require: nil
-  gem 'stripe-ruby-mock',      '~> 2.0.1', require: 'stripe_mock'
+  gem 'stripe-ruby-mock', '2.0.1',      require: 'stripe_mock'
   gem 'timecop'
+  gem 'mock_redis'
 
   platform :mri, :rbx do
     gem 'simplecov',        require: nil

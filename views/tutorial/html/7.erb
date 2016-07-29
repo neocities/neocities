@@ -1,0 +1,53 @@
+<div class="comic" style="height: 550px; background-image: url(/img/tutorial/ch1pg7.png); background-size: 515px;margin-top:7em">
+  <div class="dialogue" style="left: 0;top:-70px;">
+    Now maybe your website needs a list. Here's how an unordered list looks:
+    <pre style="text-align:left;"><code class="html">&lt;ul&gt;
+  &lt;li&gt;websites&lt;/li&gt;
+  &lt;li&gt;yarn&lt;/li&gt;
+  &lt;li&gt;catnip&lt;/li&gt;
+&lt;/ul&gt;
+    </code></pre>
+  </div>
+  <div class="dialogue" style="left: 300px; top: -10px;">
+    First, add a list to your page, but replace my favorite activities with your own!
+  </div>
+  <div class="dialogue" style="left: 400px; top: 90px;">
+    Second, put an h2 header above the list with some kind of title, like "Interests."
+  </div>
+</div>
+
+<div class="welcome">
+  <h4>Lists</h4>
+  <p>You can make an ordered (numbered) list like so:</p>
+  <pre><code class="html"><%= erb :'tutorial/html/code_examples/7_1', layout: false %></code></pre>
+</div>
+
+<script>
+  function checkHomework() {
+    var html = editor.getValue()
+
+    if(!html.match(new XRegExp('<ul>.+</ul>', 'gis'))) {
+      notok("I don't see the &lt;ul&gt; and &lt;/ul&gt; tag!")
+      return
+    }
+
+    var ul = preview().find('ul')
+
+    if(ul.find('li').length == 0) {
+      notok("Okay, I see the <strong>ul</strong>, but no <strong>li</strong>. Try adding a list item to it: &lt;li&gt;Yarn&lt;/li&gt;")
+      return
+    }
+
+    var liText = ul.find('li').first().text()
+
+    if(liText == '') {
+      notok("I don't see any text in the <strong>li</strong>. Try using it like this: <strong>&lt;li&gt;Yarn&lt;/li&gt;</strong>")
+      return
+    }
+
+    if(ul.find('li'))
+
+    sessionStorage.setItem('tutorialHtml', html)
+    ok('Awesome list!', '/tutorial/html/8')
+  }
+</script>

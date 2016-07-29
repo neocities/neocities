@@ -8,13 +8,42 @@
     <form method="POST" action="/settings/<%= @site.username %>/delete">
       <%== csrf_token_input_html %>
       <p>
-        <strong style="color: red;">WARNING:</strong> This will delete your site <strong><%= @site.username %> (<%= @site.host %>)</strong>. There is no undo! Be very sure you want to do this.
+        <strong style="color: red; font-size: 30pt">WARNING</strong>
+        <ul style="text-align: left">
+          <li>
+            This will delete your site <strong><%= @site.username %> (<%= @site.host %>)</strong>.
+          </li>
+
+          <li>
+            If you just want to rename your site, use the <strong>Change Site (User) Name</strong> tab instead.
+          </li>
+
+          <% if @site.parent? %>
+            <li>
+              <strong style="color: red;">You will not be able to use your email address to register a new Neocities account after deleting this one.</strong>
+            </li>
+          <% end %>
+
+          <li>
+            <strong style="color: red;">You will not be able to create a site again with this same username.</strong>
+          </li>
+
+          <li>
+            We can't reverse any of this via our contact form for security reasons.
+          </li>
+
+          <li>
+            There is no undo! Be very sure you want to do this.
+          </li>
+        </ul>
       </p>
 
-      <p>
-        <label for="deleted_reason">We're sorry to see you go, but no worries, we're understanding. What's the reason you're deleting your site? We'd love to know so we can make sure we're doing a good job, and improve Neocities in the future. You can <a href="https://neocities.org/contact">contact us</a> too, if you'd like to see if it's something we can fix first.</label>
-         <textarea name="deleted_reason"></textarea>
-      </p>
+      <% if @site.parent? %>
+        <p>
+          <label for="deleted_reason">We're sorry to see you go, but no worries, we're understanding. What's the reason you're deleting your site? We'd love to know so we can make sure we're doing a good job, and improve Neocities in the future. You can <a href="https://neocities.org/contact">contact us</a> too, if you'd like to see if it's something we can fix first.</label>
+           <textarea name="deleted_reason"></textarea>
+        </p>
+      <% end %>
 
       <p>
         <label for="confirm_username">Enter your user/site name to confirm deletion:</label>

@@ -11,6 +11,8 @@ require 'logger'
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
+require 'tilt/erubis'
+
 Dir['./ext/**/*.rb'].each {|f| require f}
 
 # :nocov:
@@ -30,6 +32,8 @@ raise 'hash_ip_salt is required' unless $config['ip_hash_salt']
 
 DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $config['database_pool']
 DB.extension :pagination
+
+require 'will_paginate/sequel'
 
 # :nocov:
 =begin
@@ -57,6 +61,14 @@ Sidekiq.configure_client do |config|
   config.logger = nil
   config.redis = sidekiq_redis_config
 end
+
+if ENV['RACK_ENV'] == 'test'
+  $redis = MockRedis.new
+else
+  $redis = Redis.new
+end
+
+$redis_cache = Redis::Namespace.new :cache, redis: $redis
 
 # :nocov:
 if ENV['RACK_ENV'] == 'development'
@@ -122,6 +134,13 @@ if ENV['RACK_ENV'] != 'development'
   Sass::Plugin.options[:full_exception] = false
 end
 
+PayPal::Recurring.configure do |config|
+  config.sandbox = false
+  config.username = $config['paypal_api_username']
+  config.password = $config['paypal_api_password']
+  config.signature = $config['paypal_api_signature']
+end
+
 require 'csv'
 
 $country_codes = {}
@@ -129,3 +148,7 @@ $country_codes = {}
 CSV.foreach("./files/country_codes.csv") do |row|
   $country_codes[row.last] = row.first
 end
+
+gandi_opts = {}
+gandi_opts[:env] = :test unless ENV['RACK_ENV'] == 'production'
+$gandi = Gandi::Session.new $config['gandi_api_key'], gandi_opts

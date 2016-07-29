@@ -1,0 +1,51 @@
+<div class="comic" style="height: 600px; background-image: url(/img/tutorial/ch1pg6.png); background-size: 650px">
+  <div class="dialogue" style="top: 115px; left: 20px; width: 240px">
+    Nice job! Links are great for sharing other sites or navigating to other pages on your site.
+    <br>
+    Now let's add an image.
+  </div>
+  <div class="dialogue" style="top: 20px; left: 360px">
+    Your Neocities web directory already includes a portrait of me called <strong>cat.png</strong>.
+  </div>
+  <div class="dialogue" style="top: 145px; left: 390px; width:200px">
+    Add it to your page like so: <pre><code class="html">&lt;img src="/cat.png"&gt;</code></pre>
+  </div>
+  <div class="dialogue" style="top: 230px; left: 420px">
+    That's it! No closing tag needed for images.
+  </div>
+</div>
+
+<div class="welcome">
+  <h4>Links and Images</h4>
+  <p>If the page or image you're referring to is already in your Neocities web directory, you can call it by its filename: for example, <strong>index.html</strong> or <strong>cat.png</strong>.</p>
+
+  <p>Otherwise, use full URLs like this: <strong>http://neocities.org/img/heartcat.png</strong></p>
+</div>
+
+<script>
+  function checkHomework() {
+    var html = editor.getValue()
+
+    /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
+
+    var img = preview().find('img')
+
+    if(img.length == 0) {
+      notok("I couldn't find the &lt;img src=\"/cat.png\"&gt; tag, try again!")
+      return
+    }
+
+    if(img.attr('src') === undefined) {
+      notok("There's no src=\"/cat.png\" in the &lt;img&gt; tag, try adding that.")
+      return
+    }
+
+    if(img.attr('src') == '' || img.attr('src').match(/\s+/)) {
+      notok("The src attribute in the &lt;img&gt; tag can't be empty, try it like this: src=\"/cat.png\"")
+      return
+    }
+
+    sessionStorage.setItem('tutorialHtml', html)
+    ok('Great, you did it!', '/tutorial/html/7')
+  }
+</script>

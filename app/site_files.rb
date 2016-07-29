@@ -134,10 +134,11 @@ end
 
 post '/site_files/delete' do
   require_login
-  current_site.delete_file params[:filename]
-  flash[:success] = "Deleted #{params[:filename]}."
+  path = HTMLEntities.new.decode params[:filename]
+  current_site.delete_file path
+  flash[:success] = "Deleted #{params[:filename]}. Please note it can take up to 30 minutes for deleted files to stop being viewable on your site."
 
-  dirname = Pathname(params[:filename]).dirname
+  dirname = Pathname(path).dirname
   dir_query = dirname.nil? || dirname.to_s == '.' ? '' : "?dir=#{Rack::Utils.escape dirname}"
 
   redirect "/dashboard#{dir_query}"
@@ -151,15 +152,18 @@ get '/site_files/:username.zip' do |username|
   send_file zipfile_path
 end
 
-get '/site_files/download/:filename' do |filename|
+get %r{\/site_files\/download\/(.+)} do
   require_login
-  content_type 'application/octet-stream'
+  not_found if params[:captures].nil? || params[:captures].length != 1
+  filename = params[:captures].first
   attachment filename
-  current_site.get_file filename
+  send_file current_site.current_files_path(filename)
 end
 
 get %r{\/site_files\/text_editor\/(.+)} do
   require_login
+  dont_browser_cache
+
   @filename = params[:captures].first
   extname = File.extname @filename
   @ace_mode = case extname
@@ -171,15 +175,20 @@ get %r{\/site_files\/text_editor\/(.+)} do
       nil
   end
 
-  begin
-    @file_data = current_site.get_file @filename
-  rescue Errno::ENOENT
-    flash[:error] = 'We could not find the requested file.'
-    redirect '/dashboard'
-  rescue Errno::EISDIR
+  file_path = current_site.current_files_path @filename
+
+  if File.directory? file_path
     flash[:error] = 'Cannot edit a directory.'
     redirect '/dashboard'
   end
+
+  if !File.exist?(file_path)
+    flash[:error] = 'We could not find the requested file.'
+    redirect '/dashboard'
+  end
+
+  @title = "Editing #{@filename}"
+
   erb :'site_files/text_editor'
 end
 
@@ -205,6 +214,10 @@ end
 
 get '/site_files/allowed_types' do
   erb :'site_files/allowed_types'
+end
+
+get '/site_files/hotlinking' do
+  erb :'site_files/hotlinking'
 end
 
 get '/site_files/mount_info' do

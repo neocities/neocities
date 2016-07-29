@@ -13,6 +13,12 @@ describe 'dashboard' do
         page.set_rack_session id: @site.id
       end
 
+      it 'records a dashboard access' do
+        @site.reload.dashboard_accessed.must_equal false
+        visit '/dashboard'
+        @site.reload.dashboard_accessed.must_equal true
+      end
+
       it 'creates a base directory' do
         visit '/dashboard'
         click_link 'New Folder'

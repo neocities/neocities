@@ -1,13 +1,3 @@
-def kickstarter_days_remaining
-  ending = Time.parse('Sat, Jul 25 2015 3:05 PM PDT')
-  today = Time.now
-
-  remaining = ending - today
-  return 0 if remaining < 0
-
-  ((ending - today) / 86400).to_i
-end
-
 def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
 end
@@ -82,12 +72,19 @@ def encoding_fix(file)
 end
 
 def send_confirmation_email(site=current_site)
+  if site.email_confirmation_count > Site::MAXIMUM_EMAIL_CONFIRMATIONS
+    flash[:error] = 'You sent too many email confirmation requests, cannot continue.'
+    redirect request.referrer
+  end
+
+  DB['UPDATE sites set email_confirmation_count=email_confirmation_count+1 WHERE id=?', site.id].first
+
   EmailWorker.perform_async({
     from: 'web@neocities.org',
     reply_to: 'contact@neocities.org',
     to: site.email,
     subject: "[Neocities] Confirm your email address",
-    body: Tilt.new('./views/templates/email_confirm.erb', pretty: true).render(self, site: site)
+    body: Tilt.new('./views/templates/email/confirm.erb', pretty: true).render(self, site: site)
   })
 end
 
@@ -115,6 +112,20 @@ def plan_pricing_button(plan_type)
       button_title = parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'
     end
 
+    if button_title == 'Change' && parent_site && parent_site.paypal_active
+      return %{<a href="/plan/paypal/cancel" onclick="return confirm('This will end your supporter plan.')" class="btn-Action">Change</a>}
+    end
+
     %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="card = new Skeuocard($('#skeuocard')); return false" class="btn-Action planPricingButton">#{button_title}</a>}
   end
+end
+
+def dont_browser_cache
+  @dont_browser_cache = true
+end
+
+def email_not_validated?
+  return false if current_site && current_site.created_at < Site::EMAIL_VALIDATION_CUTOFF_DATE
+
+  current_site && current_site.parent? && !current_site.is_education && !current_site.email_confirmed && !current_site.supporter?
 end

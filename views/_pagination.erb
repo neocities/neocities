@@ -1,0 +1,5 @@
+<% if @pagination_dataset.total_pages > 1 %>
+  <div class="txt-Center eps pagination">
+    <%== will_paginate @pagination_dataset, previous_label: '', next_label: '<i class="fa fa-arrow-right arrow"></i>' %>
+  </div>
+<% end %>

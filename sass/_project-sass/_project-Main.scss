@@ -187,7 +187,7 @@
 
   @media (max-device-width:480px), screen and (max-width:800px) {
     width: 100%;
-    height: 300px;
+    height: 200px;
   }
 }
 .interior .header-Outro .screenshot.dashboard {
@@ -256,16 +256,16 @@
   width: 100%;
   position: relative;
   margin-top: 7px;
-  
+
   .column, input[type='checkbox'] {
     display: none;
   }
-  
+
   .btn-group {
     float: left;
     margin-right: 15px;
     margin-left: -3px;
-    
+
     >.btn+.btn {
       margin-left: 0px;
       border-left: 1px solid rgba(0, 0, 0, 0.1);
@@ -276,9 +276,6 @@
       background: #77ABB8;
       @include box-shadow(0 0 5px rgba(0, 0, 0, 0.2));
 
-      &:hover {
-        background: #83B3C0;
-      }
       &:focus, &.active {
         outline: 0;
         background: #4F727B;
@@ -323,11 +320,11 @@
 }
 .files .actions {
   float: right;
-  
+
   @media (max-device-width:480px), screen and (max-width:800px) {
     float: left;
     margin-top: 7px;
-    
+
     .fa {
       display: none;
     }
@@ -525,7 +522,7 @@
 }
 @mixin dashboard-list-view {
   padding: 0;
-  
+
   .upload-Boundary {
     padding: 0;
     border: 0;
@@ -535,20 +532,20 @@
     padding: 10px 20px;
     margin: 0;
     width: 100%;
-    
+
     &:nth-child(even) {
       background: #EFE8DC;
     }
     .title {
       margin: 0;
-      margin-left: 7px;
+      margin-left: 9px;
       margin-top: 2px;
       float: left;
       font-size: 14px;
       text-align: left;
       width: 30%;
       text-overflow: ellipsis;
-      
+
       @media (max-device-width:480px), screen and (max-width:800px) {
         width: 33%;
       }
@@ -562,14 +559,13 @@
   }
   .html-thumbnail, .misc-icon {
     margin: 0;
-    margin-left: 4px;
     float: left;
     width: 23px;
     height: 23px;
     background-size: 23px;
     padding: 0;
     font-size: 8px;
-    
+
     img {
       max-width: 23px;
       max-height: 23px;
@@ -590,7 +586,7 @@
     background-color: transparent;
     display: block;
     width: 94%;
-    
+
     a {
       color: #e93250;
       display: inline;
@@ -599,7 +595,7 @@
     .link-overlay {
       width: 30%;
     }
-    
+
     @media (max-device-width:480px), screen and (max-width:800px) {
       width: 84%;
     }
@@ -613,7 +609,7 @@
     font-size: 13px;
     display: block;
     padding-top: 4px;
-    
+
     @media (max-device-width:480px), screen and (max-width:800px) {
       display: none;
     }
@@ -756,10 +752,9 @@
     }
   }
   @media (max-device-width:480px), screen and (max-width:800px) {
-    width: 10em!important;
-    float: right;
-    padding: 0 0 18px 0;
-    margin-top: -77px;
+    position: absolute;
+    top: 46px;
+    right: -8px;
   }
 }
 .interior .header-Outro.with-columns .col-66 {
@@ -820,6 +815,7 @@
 
   @media (max-device-width:480px), screen and (max-width:800px) {
     width: 60%;
+    height: 160px;
   }
 }
 .site-portrait {
@@ -958,7 +954,7 @@ a.tag:hover {
   position: relative;
   width: 100%;
   float: left;
-  
+
   .text {
     float: left;
     margin-top: .45em;
@@ -984,17 +980,17 @@ a.tag:hover {
   padding: 0;
   margin-left: 0;
   margin-right: 17px;
-  
+
   .html-thumbnail {
     width: 102px;
   }
   &:first-child .html-thumbnail.html {
-    width: 322px;
-    height: 100px;
+    width: 540px;
+    height: 405px;
   }
   &:first-child .html-thumbnail.html img {
-    width: 322px;
-    height: 200px;
+    width: 540px;
+    height: 405px;
   }
 }
 .news-item .file .image-container {
@@ -1020,6 +1016,7 @@ a.tag:hover {
 .news-item .comments .actions, .news-item .comments p {
   margin-left: 47px;
 }
+
 .news-item .comments p {
   margin-bottom: .4em;
   margin-top: .15em;
@@ -1867,7 +1864,7 @@ a.tag:hover {
 
   padding-top: 0;
   background: #4F7E89;
-  padding-bottom: 7em;
+  padding-bottom: 5em;
 
   a {
     color: white;
@@ -2137,43 +2134,71 @@ table#latest-visitors {
     width: 100%;
   }
 }
-.intro-List.kickstarter .col {
-  padding-top: 1em;
-  padding-bottom: .8em;
-  margin-left: 0;
-  
-  &:first-child{
-    padding-left: 2px; 
+.section.thankyou {
+  text-align: center;
+  color: #4F7E89;
+  padding: 6.5em 8% 7em;
+
+  a {
+    color: #4F7E89;
+    text-decoration: underline;
   }
-  
-  .title {
-    margin-top: 1%;
-  }
-  .title a {
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
+  img {
+    margin-bottom: 1em;
   }
   p {
-    margin-top: 15px;
+    font-size: 1em;
+    margin-bottom: .5em;
+    margin-top: .5em;
   }
-}
-.welcome.kickstarter {
-  background: #daeea5 url(/img/tutorialthumbnail.png) no-repeat;
-  background-position:  right center;
-  background-size: auto 100%;
-  padding: 15px 100px 4px 23px;
-  margin-bottom: 13px;
-  font-size: 95%;
-  @media (max-device-width:480px), screen and (max-width:800px) {
-    background-size: 32%;
-    background-position: right top;
-  }
-  
-  h4 {
+  p:first-child {
+    font-size: 120%;
     margin-bottom: .2em;
-    a {
-      color: #2c3e50!important;
-    }
   }
 }
+ul.thankyou {
+  list-style: none;
+  margin-top: 1.5em;
+  clear: both;
+
+  li {
+    display: inline-block;
+    width: 32%;
+  }
+}
+
+pre, code {
+  background: #1d1f21;
+  color: #FFFFFF;
+}
+.welcoming-cat {
+  width: 200px;
+  float: right;
+  margin-top: -40px;
+}
+.section.tutorial-welcome {
+  padding: 80px 18%;
+
+  .option {
+    margin: 3.5em 0;
+  }
+  h3 {
+    margin-top: 0em;
+    font-size: 1.3em;
+  }
+  p {
+    font-size: 1.1em;
+  }
+}
+
+.tagcloud .tag10 { font-size: 0.6em; font-weight: 90; }
+.tagcloud .tag9 { font-size: 0.7em; font-weight: 100; }
+.tagcloud .tag8 { font-size: 0.8em; font-weight: 200; }
+.tagcloud .tag7 { font-size: 0.9em; font-weight: 300; }
+.tagcloud .tag6 { font-size: 1.0em; font-weight: 400; }
+.tagcloud .tag5 { font-size: 1.2em; font-weight: 500; }
+.tagcloud .tag4 { font-size: 1.4em; font-weight: 600; }
+.tagcloud .tag3 { font-size: 1.6em; font-weight: 700; }
+.tagcloud .tag2 { font-size: 1.8em; font-weight: 800; }
+.tagcloud .tag1 { font-size: 2.2em; font-weight: 900; }
+.tagcloud .tag0 { font-size: 2.5em; font-weight: 900; }

@@ -15,7 +15,7 @@
       </p>
     </div>
   <% end %>
-  
+
   <form method="POST" action="/signin" class="content">
     <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
     <fieldset>
@@ -32,6 +32,8 @@
     <a href="/#new" title="Sign me up!">I don't have an account yet.</a>
   </p>
   <p>
-    <a href="/password_reset" title="What did I huh?">I forgot my password.</a>
+    <a href="/password_reset" title="You should use a password manager like LastPass, it will change your life.">I forgot my password.</a>
   </p>
+  <p>
+    <a href="/forgot_username" title="Seriously?">I forgot my username.</a>
 </div>

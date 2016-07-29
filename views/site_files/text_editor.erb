@@ -76,7 +76,7 @@
       </div>
       <a id="saveButton" class="btn-Action" href="#" onclick="saveTextFile(false); return false" style="opacity: 0.5"><span class="hide-on-mobile"><i class="fa fa-save"></i></span>Save</a>
       <span class="hide-on-mobile">
-        <a class="btn-Action" href="<%= current_site.uri %>/<%= @filename %>" target="_blank">View</a>
+        <a class="btn-Action" href="<%= current_site.uri %>/<%= @filename == 'index.html' ? '' : @filename %>" target="_blank">View</a>
         <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'>Share</a>
       </span>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
@@ -92,7 +92,7 @@
 
 <div class="row editor">
   <div class="col col-100">
-    <div id="editor"><%==encoding_fix(@file_data) %></div>
+    <div id="editor"><h3>Loading...</h3></div>
   </div>
 </div>
 
@@ -120,7 +120,7 @@
     if(unsavedChanges == false)
       return
     $.ajax({
-      url: '/site_files/save/<%= Rack::Utils.escape @filename %>?csrf_token=<%= Rack::Utils.escape csrf_token %>',
+      url: "/site_files/save/<%= Addressable::URI.encode @filename %>?csrf_token=<%= Rack::Utils.escape csrf_token %>",
       data: editor.getValue(),
       processData: false,
       contentType: false,
@@ -154,44 +154,43 @@
 
   var editor = {}
 
-  $(document).ready(function() {
-    editor = ace.edit("editor")
-    setTheme()
-    <% if @ace_mode %>
-      editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
-    <% end %>
-    editor.getSession().setTabSize(2)
-    editor.getSession().setUseWrapMode(true)
-    editor.setFontSize(14)
-    editor.setShowPrintMargin(false)
-    editor.setOptions({
-      maxLines: Infinity,
-      autoScrollEditorIntoView: true
+  $.get('/site_files/download/<%= @filename %>', function(resp) {
+    $(document).ready(function() {
+      $.get('/site_files/download/<%= @filename %>', function(resp) {
+        editor = ace.edit("editor")
+        setTheme()
+        <% if @ace_mode %>
+          editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
+        <% end %>
+        editor.getSession().setTabSize(2)
+        editor.getSession().setUseWrapMode(true)
+        editor.setFontSize(14)
+        editor.setShowPrintMargin(false)
+        editor.setOptions({
+          maxLines: Infinity,
+          autoScrollEditorIntoView: true
+        })
+
+        // Disable autocomplete
+        editor.setBehavioursEnabled(false)
+
+        editor.setValue(resp, -1)
+
+        editor.on('change', function(obj) {
+          $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
+          unsavedChanges = true
+        })
+
+        editor.commands.addCommand({
+            name: 'saveCommand',
+            bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+            exec: function(editor) {
+              saveTextFile(false)
+            }
+        })
+      })
     })
-
-    editor.on('change', function(obj) {
-      $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
-      unsavedChanges = true
-    })
   })
-
-  $().ready(function() {
-    KeyboardJS.on('ctrl + s', function(event, keysPressed, keyComboString) {
-      saveTextFile(false)
-      event.preventDefault()
-      return false
-    });
-  })
-
-/*
-  $(window).keypress(function(event) {
-    if(event.ctrlKey == true && event.key == 's') {
-      saveTextFile(false)
-      event.preventDefault()
-      return false
-    }
-  })
-*/
 
   window.onbeforeunload = function() {
     if(unsavedChanges == true)

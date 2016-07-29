@@ -13,9 +13,9 @@ get '/site/:username/?' do |username|
 
   @title = site.title
 
-  @current_page = params[:current_page]
-  @current_page = @current_page.to_i
-  @current_page = 1 if @current_page == 0
+  @page = params[:page]
+  @page = @page.to_i
+  @page = 1 if @page == 0
 
   if params[:event_id]
     not_found unless params[:event_id].is_integer?
@@ -23,10 +23,11 @@ get '/site/:username/?' do |username|
     not_found if event.nil?
     events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
   else
-    events_dataset = site.latest_events(@current_page, 10)
+    events_dataset = site.latest_events(@page, 10)
   end
 
   @page_count = events_dataset.page_count || 1
+  @pagination_dataset = events_dataset
   @latest_events = events_dataset.all
 
   erb :'site', locals: {site: site, is_current_site: site == current_site}
@@ -161,7 +162,6 @@ post '/site/create_directory' do
   require_login
 
   path = "#{params[:dir] || ''}/#{params[:name]}"
-
   result = current_site.create_directory path
 
   if result != true
@@ -172,14 +172,70 @@ post '/site/create_directory' do
 end
 
 get '/site/:username/confirm_email/:token' do
+  if current_site && current_site.email_confirmed
+    return erb(:'site_email_confirmed')
+  end
+
   site = Site[username: params[:username]]
-  if !site.nil? && site.email_confirmation_token == params[:token]
+
+  if site.nil?
+    return erb(:'site_email_not_confirmed')
+  end
+
+  if site.email_confirmed
+    return erb(:'site_email_confirmed')
+  end
+
+  if site.email_confirmation_token == params[:token]
+    site.email_confirmation_token = nil
+    site.email_confirmation_count = 0
     site.email_confirmed = true
     site.save_changes
 
     erb :'site_email_confirmed'
   else
     erb :'site_email_not_confirmed'
+  end
+end
+
+get '/site/:username/confirm_email' do
+  require_login
+  @fromsettings = session[:fromsettings]
+  redirect '/' if current_site.username != params[:username] || !current_site.parent? || current_site.email_confirmed
+  erb :'site/confirm_email'
+end
+
+post '/site/:username/confirm_email' do
+  require_login
+
+  redirect '/' if current_site.username != params[:username] || !current_site.parent? || current_site.email_confirmed
+
+  # Update email, resend token
+  if params[:email]
+    send_confirmation_email @site
+  end
+
+  if params[:token].blank?
+    flash[:error] = 'You must enter a valid token.'
+    redirect "/site/#{current_site.username}/confirm_email"
+  end
+
+  if current_site.email_confirmation_token == params[:token]
+    current_site.email_confirmation_token = nil
+    current_site.email_confirmation_count = 0
+    current_site.email_confirmed = true
+    current_site.save_changes
+
+    if session[:fromsettings]
+      session[:fromsettings] = nil
+      flash[:success] = 'Email address changed.'
+      redirect '/settings#email'
+    end
+
+    redirect '/tutorial'
+  else
+    flash[:error] = 'You must enter a valid token.'
+    redirect "/site/#{current_site.username}/confirm_email"
   end
 end
 

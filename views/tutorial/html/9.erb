@@ -1,0 +1,44 @@
+<div class="comic" style="margin-top: 5em; height: 650px; background-image: url(/img/tutorial/ch1pg9.png); background-size: 481px">
+  <div class="dialogue" style="top: -23px; left: 10px; width: 230px">
+    Great work! You can save everything you've coded so far to your <a href="<%= current_site.uri %>">Neocities site</a> to continue working on it.
+    It'll be saved as <strong>index.html</strong>, which is the first web page people see when they visit your site.
+  </div>
+  <div class="dialogue" style="left: 283px;top: 190px; width:160px">
+    You can can find and edit index.html by visiting your <a href="/dashboard">Neocities dashboard</a>.
+  </div>
+  <div class="dialogue" style="left: 280px;top: 580px">
+    <!-- A cheat sheet of all the tags you've learned can be found in the tutorial section. -->
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#editor').css('display', 'none')
+    $('.editor-heading').css('display', 'none')
+    $('h3#sitePreview').css('display', 'none')
+    $('.preview').css('margin-top', '20px')
+
+    $('#saveToSite').on('click', function() {
+      $.ajax({
+        url: '/site_files/save/index.html?csrf_token=<%= Rack::Utils.escape csrf_token %>',
+        data: sessionStorage.getItem('tutorialHtml'),
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        error: function(jqXHR, textStatus, errorThrown) {
+          alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
+        },
+        success: function(response){
+          if(response == 'ok') {
+            window.location = '/tutorial/html/10'
+          } else {
+            alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
+          }
+        }
+      })
+
+      return false
+    })
+
+  })
+</script>

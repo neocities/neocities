@@ -1,24 +1,16 @@
-def stripe_get_site_from_event(event)
-  customer_id = event['data']['object']['customer']
-  customer = Stripe::Customer.retrieve customer_id
+post '/webhooks/paypal' do
+  EmailWorker.perform_async({
+    from: 'web@neocities.org',
+    to: 'errors@neocities.org',
+    subject: "[Neocities Paypal Webhook] Received a Webhook from Paypal",
+    body: params.inspect,
+    no_footer: true
+  })
 
-  # Some old accounts only have a username for the desc
-  desc_split = customer.description.split(' - ')
-
-  if desc_split.length == 1
-    site_where = {username: desc_split.first}
-  end
-
-  if desc_split.last.to_i == 0
-    site_where = {username: desc_split.first}
-  else
-    site_where = {id: desc_split.last}
-  end
-
-  Site.where(site_where).first
+  'ok'
 end
 
-post '/stripe_webhook' do
+post '/webhooks/stripe' do
   event = JSON.parse request.body.read
   if event['type'] == 'customer.created'
     username  = event['data']['object']['description'].split(' - ').first
@@ -59,4 +51,24 @@ post '/stripe_webhook' do
   end
 
   'ok'
+end
+
+def stripe_get_site_from_event(event)
+  customer_id = event['data']['object']['customer']
+  customer = Stripe::Customer.retrieve customer_id
+
+  # Some old accounts only have a username for the desc
+  desc_split = customer.description.split(' - ')
+
+  if desc_split.length == 1
+    site_where = {username: desc_split.first}
+  end
+
+  if desc_split.last.to_i == 0
+    site_where = {username: desc_split.first}
+  else
+    site_where = {id: desc_split.last}
+  end
+
+  Site.where(site_where).first
 end

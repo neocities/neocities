@@ -1,10 +1,18 @@
 ENV['RACK_ENV'] = 'test'
 raise 'Forget it.' if ENV['RACK_ENV'] == 'production'
 
+require 'coveralls'
 require 'simplecov'
+require 'mock_redis'
+
+SimpleCov.formatters = [
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
 SimpleCov.coverage_dir File.join('tests', 'coverage')
 SimpleCov.start do
   add_filter "/migrations/"
+  add_filter "/tests/"
 end
 
 SimpleCov.command_name 'minitest'
@@ -27,9 +35,6 @@ WebMock.disable_net_connect! allow_localhost: true
 Sinatra::Application.configure do |app|
   app.use RackSessionAccess::Middleware
 end
-
-require 'capybara/poltergeist'
-require 'rack_session_access/capybara'
 
 Site.bcrypt_cost = BCrypt::Engine::MIN_COST
 

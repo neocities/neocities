@@ -35,9 +35,32 @@ describe 'stats' do
     end
 
     Stat.parse_logfiles STAT_LOGS_PATH
+
     @site.stats.first.bandwidth.must_equal 612917*2
     #@site.stat_referrers.first.url.must_equal 'http://derp.com'
     #@site.stat_locations.first.city_name.must_equal 'Menlo Park'
+  end
+
+  it 'takes accout for log hit time' do
+    @site = Fabricate :site
+    File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
+      file.write "2015-05-01T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
+      file.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
+    end
+
+    Stat.parse_logfiles STAT_LOGS_PATH
+
+    @site.stats.length.must_equal 2
+
+    [Date.new(2015, 5, 2), Date.new(2015, 5, 1)].each do |date|
+      stats = @site.stats.select {|stat| stat.created_at == date}
+      stats.length.must_equal 1
+      stat = stats.first
+      stat.hits.must_equal 1
+      stat.views.must_equal 1
+      stat.bandwidth.must_equal 612917
+    end
+
   end
 
   it 'deals with spaces in referrer' do
@@ -103,6 +126,7 @@ describe 'stats' do
   end
 
   it 'parses logfile' do
+    DB[:daily_site_stats].delete
     Stat.parse_logfiles STAT_LOGS_PATH
 
     @site_one.reload
@@ -149,5 +173,14 @@ describe 'stats' do
     #stat_paths.last.name.must_equal '/derp.html'
 
     # [geoip.city('67.180.75.140'), geoip.city('172.56.16.152')]
+
+    # Saves to daily_site_stats
+
+    DailySiteStat.count.must_equal 1
+    d = DailySiteStat.first
+    d.created_at.must_equal Date.new(@time.year, @time.month, @time.day)
+    d.hits.must_equal 7
+    d.views.must_equal 5
+    d.bandwidth.must_equal 35000
   end
 end

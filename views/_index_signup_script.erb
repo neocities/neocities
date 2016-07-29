@@ -28,7 +28,7 @@
     })
   })
 
-  $('input[type=text],input[type=password]').on('change focusout', function(obj) {
+  $('input[type=text],input[type=password],input[type=email]').on('change focusout', function(obj) {
     $.post('/create_validate', {field: obj.target.name, value: obj.target.value, is_education: $('input[name=is_education]')[0].value, csrf_token: '<%= csrf_token %>'}, function(res) {
       if(res.result == 'ok') {
         return $(obj.target).tooltip('hide')

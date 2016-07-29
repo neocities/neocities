@@ -16,7 +16,10 @@ post '/tags/remove' do
 
   if params[:tags].is_a?(Array)
     DB.transaction {
-      params[:tags].each {|tag| current_site.remove_tag Tag[name: tag]}
+      params[:tags].each do |tag|
+        tag_to_remove = current_site.tags.select {|t| t.name == tag}.first
+        current_site.remove_tag(tag_to_remove) if tag_to_remove
+      end
     }
   end
 

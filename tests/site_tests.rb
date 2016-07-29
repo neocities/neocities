@@ -5,6 +5,38 @@ def app
 end
 
 describe Site do
+  describe 'banning' do
+    it 'still makes files available' do
+      site = Fabricate :site
+      site.ban!
+      File.exist?(site.current_files_path('index.html')).must_equal true
+      site.current_files_path('index.html').must_equal File.join(Site::BANNED_SITES_ROOT, site.username, 'index.html')
+    end
+  end
+
+  describe 'directory create' do
+    it 'handles wacky pathnames' do
+      ['/derp', '/derp/'].each do |path|
+        site = Fabricate :site
+        site_file_count = site.site_files_dataset.count
+        site.create_directory path
+        site.site_files.select {|s| s.path == '' || s.path == '.'}.length.must_equal 0
+        site.site_files.select {|s| s.path == path.gsub('/', '')}.first.wont_be_nil
+        site.site_files_dataset.count.must_equal site_file_count+1
+      end
+    end
+  end
+
+  describe 'custom_max_space' do
+    it 'should use the custom max space if it is more' do
+      site = Fabricate :site
+      site.maximum_space.must_equal Site::PLAN_FEATURES[:free][:space]
+      site.custom_max_space = 10**9
+      site.save_changes
+      site.maximum_space.must_equal 10**9
+    end
+  end
+
   describe 'can_email' do
     it 'should fail if send_emails is false' do
       site = Fabricate :site
@@ -76,7 +108,7 @@ describe Site do
         Fabricate :site, new_tags_string: 'gardening', views: Site::SUGGESTIONS_VIEWS_MIN
       }
 
-      site.suggestions.length.must_equal Site::SUGGESTIONS_LIMIT
+      site.suggestions.length.must_equal(Site::SUGGESTIONS_LIMIT - 5)
     end
   end
 end

@@ -5,7 +5,8 @@
 </div>
 
 <div class="content" style="background: white">
-  <form method="POST" action="/admin/report">
+  <form method="POST" action="/admin/reports">
+    <%== csrf_token_input_html %>
     <table class="table">
       <tr>
         <th>Site</th>

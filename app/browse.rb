@@ -1,7 +1,7 @@
 get '/browse/?' do
-  @current_page = params[:current_page]
-  @current_page = @current_page.to_i
-  @current_page = 1 if @current_page == 0
+  @surfmode = false
+  @page = params[:page].to_i
+  @page = 1 if @page == 0
 
   params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
 
@@ -11,12 +11,14 @@ get '/browse/?' do
     site_dataset = browse_sites_dataset
   end
 
-  site_dataset = site_dataset.paginate @current_page, Site::BROWSE_PAGINATION_LENGTH
-  @page_count = site_dataset.page_count || 1
+  site_dataset = site_dataset.paginate @page, Site::BROWSE_PAGINATION_LENGTH
+  @pagination_dataset = site_dataset
   @sites = site_dataset.all
+
   if params[:tag]
     @title = "Sites tagged #{params[:tag]}"
   end
+
   erb :browse
 end
 
@@ -28,9 +30,12 @@ def education_sites_dataset
 end
 
 def browse_sites_dataset
-  site_dataset = Site.filter(is_deleted: false, is_banned: false, is_crashing: false).filter(site_changed: true)
+
+  site_dataset = Site.browse_dataset
 
   if current_site
+    site_dataset.or! sites__id: current_site.id
+
     if !current_site.blocking_site_ids.empty?
       site_dataset.where!(Sequel.~(Sequel.qualify(:sites, :id) => current_site.blocking_site_ids))
     end
@@ -43,6 +48,9 @@ def browse_sites_dataset
   end
 
   case params[:sort_by]
+    when 'special_sauce'
+      site_dataset.exclude! score: nil
+      site_dataset.order! :score.desc
     when 'followers'
       site_dataset = site_dataset.association_left_join :follows
       site_dataset.select_all! :sites
@@ -75,16 +83,12 @@ def browse_sites_dataset
       params[:sort_by] = 'last_updated'
       site_dataset.order!(:site_updated_at.desc, :views.desc)
     else
-      if params[:tag]
-        params[:sort_by] = 'views'
-        site_dataset.order!(:views.desc, :site_updated_at.desc)
-      else
-        site_dataset = site_dataset.association_left_join :follows
-        site_dataset.select_all! :sites
-        site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
-        site_dataset.group! :sites__id
-        site_dataset.order! :follow_count.desc, :updated_at.desc
-      end
+      params[:sort_by] = 'followers'
+      site_dataset = site_dataset.association_left_join :follows
+      site_dataset.select_all! :sites
+      site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
+      site_dataset.group! :sites__id
+      site_dataset.order! :follow_count.desc, :views.desc, :updated_at.desc
   end
 
   site_dataset.where! ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]

@@ -9,9 +9,19 @@ describe 'signup' do
 
   def fill_in_valid
     @site = Fabricate.attributes_for(:site)
-    fill_in 'username', with: @site[:username]
-    fill_in 'password', with: @site[:password]
-    fill_in 'email',    with: @site[:email]
+
+    time = Time.now
+    begin
+      fill_in 'username', with: @site[:username]
+      fill_in 'password', with: @site[:password]
+      fill_in 'email',    with: @site[:email]
+    rescue Capybara::ElementNotFound
+      puts "Waiting on fill_in #{Time.now - time} seconds"
+      raise if Time.now - time > 30
+      visit_signup
+      sleep 0.5
+      retry
+    end
   end
 
   def click_signup_button
@@ -43,6 +53,13 @@ describe 'signup' do
     fill_in_valid
     click_signup_button
     site_created?
+
+    click_link 'Continue'
+    page.must_have_content /almost ready!/
+    fill_in 'token', with: Site[username: @site[:username]].email_confirmation_token
+    click_button 'Confirm Email'
+    current_path.must_equal '/tutorial'
+    page.must_have_content /Let's Get Started/
 
     index_file_path = File.join Site::SITE_FILES_ROOT, @site[:username], 'index.html'
     File.exist?(index_file_path).must_equal true

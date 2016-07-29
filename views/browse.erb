@@ -1,10 +1,10 @@
 <script type="text/javascript">
-  function getPage(currentPage) {
-    document.location.href = '/browse?current_page='+currentPage+'&'+$('#search_criteria').serialize();
+  function getPage(page) {
+    document.location.href = '/browse?page='+page+'&'+$('#search_criteria').serialize();
   }
 
-  function surf(currentPage) {
-    document.location.href = '/surf?current_page='+currentPage+'&'+$('#search_criteria').serialize();
+  function surf(page) {
+    document.location.href = '/surf?page='+page+'&'+$('#search_criteria').serialize();
   }
 </script>
 
@@ -14,7 +14,7 @@
       <% if params[:tag] %>
         <h1><a href="/browse">Websites</a> > <%= params[:tag] %></h1>
       <% else %>
-        <h1>Websites on Neocities</h1>
+        <h1>Sites on Neocities</h1>
       <% end %>
     </div>
 
@@ -26,6 +26,7 @@
             <div class="select-Container">
               <select name="sort_by" id="sort_by" class="input-Select">
                 <option value="followers" <%= params[:sort_by] == 'followers' ? 'selected' : '' %>>Most Followed</option>
+                <option value="special_sauce" <%= params[:sort_by] == 'special_sauce' ? 'selected' : '' %>>Special Sauce (alpha)</option>
                 <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
                 <option value="supporters" <%= params[:sort_by] == 'supporters' ? 'selected' : '' %>>Neocities Supporters</option>
                 <option value="featured" <%= params[:sort_by] == 'featured' ? 'selected' : '' %>>Featured</option>
@@ -49,10 +50,14 @@
       <div class="col col-50 filter">
         <form method="GET" action="browse">
         <fieldset class="grouping">
-        <% unless is_education? || params[:sort_by] == 'followers' %>
+        <% unless is_education? %>
           <label class="text-Label" for="tag"><span class="hide-on-mobile">Filter by </span>Tag:</label>
           <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
           <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Filter">
+        <% else %>
+          <% if params[:tag] %>
+            <input name="tag" type="hidden" value="<%= params[:tag] %>">
+          <% end %>
         <% end %>
         </fieldset>
       </div>
@@ -70,8 +75,16 @@
 <% else %>
   <ul class="row website-Gallery content int-Gall">
     <% @sites.each_with_index do |site,i| %>
-      <li>
-        <a href="<%= site.uri %>" class="neo-Screen-Shot" title="<%= site.title %>" onclick="surf(<%= ((@current_page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false">
+      <li id="username_<%= site.username %>">
+        <a href="<%= site.uri %>"
+           class="neo-Screen-Shot"
+           title="<%= site.title %>"
+           <% if @surfmode %>
+             onclick="surf(<%= ((@page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false"
+           <% else %>
+             href="<%= site.uri %>"
+           <% end %>
+        >
           <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
             <img src="/img/placeholder.png" alt="<%= site.title %>" />
           </span>
@@ -114,6 +127,20 @@
                 <button>Ban</button>
               </form>
 
+              <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
+                <%== csrf_token_input_html %>
+                <input type="hidden" name="username" value="<%= site.username %>">
+                <input type="hidden" name="classifier" value="spam">
+                <button>Spam</button>
+              </form>
+
+              <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
+                <%== csrf_token_input_html %>
+                <input type="hidden" name="username" value="<%= site.username %>">
+                <input type="hidden" name="classifier" value="phishing">
+                <button>Phishing</button>
+              </form>
+
               <form action="/admin/mark_nsfw" target="_blank" method="POST" onsubmit="return confirm('Confirm NSFW marking of <%= site.username %>');">
                 <%== csrf_token_input_html %>
                 <input type="hidden" name="username" value="<%= site.username %>">
@@ -128,34 +155,17 @@
 <% end %>
 
 <% if params[:sort_by] != 'random' %>
-  <% if @page_count > 1 %>
-    <div class="txt-Center content eps pagination">
-      <% if @current_page != 1 %>
-        <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="fa fa-arrow-left arrow"></i></a>&nbsp;
-      <% end %>
-
-      <% 1.upto(@page_count) do |num| %>
-        <% if num == @current_page %>
-          <%= num %>&nbsp;
-        <% else %>
-          <a href="#" onclick="getPage(<%= num %>); return false"><%= num %></a>&nbsp;
-        <% end %>
-      <% end %>
-
-      <% if @current_page != @page_count %>
-        <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="fa fa-arrow-right arrow"></i></a>
-      <% end %>
-    </div>
-  <% end %>
+  <%== erb :'_pagination', layout: false %>
 <% end %>
 
 <% unless is_education? %>
 <div class="row content misc">
   <h3>Popular Tags</h3>
-  <p>
-  <% Tag.popular_names(100).each do |tag| %>
-    <a href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
-  <% end %>
+  <p class="tagcloud">
+    <% Tag.popular_names(100).each_with_index do |tag,i| %>
+      <% i = (((i+1).to_f/100) * 10).to_i %>
+      <a class="tag<%= i %>" href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
+    <% end %>
   </p>
 </div>
 <div class="row content misc">

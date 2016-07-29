@@ -14,6 +14,46 @@ def create_site(opts={})
   @pass = site_attr[:password]
 end
 
+describe 'api list' do
+  it 'returns all files without path' do
+    create_site
+    basic_authorize @user, @pass
+    get '/api/list'
+
+    res[:result].must_equal 'success'
+    res[:files].length.must_equal @site.site_files.length
+
+    res[:files].each do |file|
+      site_file = @site.site_files.select {|s| s[:path] == file[:path]}.first
+      site_file[:is_directory].must_equal file[:is_directory]
+      site_file[:size].must_equal file[:size]
+      site_file[:updated_at].rfc2822.must_equal file[:updated_at]
+    end
+  end
+
+  it 'shows empty array for missing path' do
+    create_site
+    basic_authorize @user, @pass
+    get '/api/list', path: '/fail'
+    res[:result].must_equal 'success'
+    res[:files].must_equal []
+  end
+
+  it 'shows files in path' do
+    create_site
+    tempfile = Tempfile.new
+    tempfile.write('meep html')
+    @site.store_files [{filename: '/derp/test.html', tempfile: tempfile}]
+    basic_authorize @user, @pass
+    get '/api/list', path: '/derp'
+    res[:result].must_equal 'success'
+    res[:files].length.must_equal 1
+    file = res[:files].first
+    file[:path].must_equal 'derp/test.html'
+    file[:updated_at].must_equal @site.site_files.select {|s| s.path == 'derp/test.html'}.first.updated_at.rfc2822
+  end
+end
+
 describe 'api info' do
   it 'fails for no input' do
     get '/api/info'
@@ -36,6 +76,7 @@ describe 'api info' do
   it 'succeeds for valid sitename' do
     create_site
     @site.update hits: 31337, domain: 'derp.com', new_tags_string: 'derpie, man'
+    @site.add_archive ipfs_hash: 'QmXGTaGWTT1uUtfSb2sBAvArMEVLK4rQEcQg5bv7wwdzwU'
     get '/api/info', sitename: @user
     res[:result].must_equal 'success'
     res[:info][:sitename].must_equal @site.username
@@ -44,7 +85,14 @@ describe 'api info' do
     res[:info][:last_updated].must_equal nil
     res[:info][:domain].must_equal 'derp.com'
     res[:info][:tags].must_equal ['derpie', 'man']
+    res[:info][:latest_ipfs_hash].must_equal 'QmXGTaGWTT1uUtfSb2sBAvArMEVLK4rQEcQg5bv7wwdzwU'
     @site.reload.api_calls.must_equal 0
+  end
+
+  it 'shows latest ipfs hash as nil when not present' do
+    create_site
+    get '/api/info', sitename: @user
+    res[:info][:latest_ipfs_hash].must_equal nil
   end
 
   it 'fails for bad auth' do

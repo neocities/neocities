@@ -27,6 +27,9 @@
           <li><a href="#sites" data-toggle="tab">Sites</a></li>
           <li><a href="#password" data-toggle="tab">Password</a></li>
           <li><a href="#email" data-toggle="tab">Email</a></li>
+          <% if current_site.stripe_paying_supporter? %>
+            <li><a href="#billing" data-toggle="tab">Billing</a></li>
+          <% end %>
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="plan">
@@ -41,6 +44,11 @@
           <div class="tab-pane" id="email">
             <%== erb :'settings/account/email' %>
           </div>
+          <% if current_site.stripe_paying_supporter? %>
+            <div class="tab-pane" id="billing">
+              <%== erb :'settings/account/billing' %>
+            </div>
+          <% end %>
         </div>
       </div>
     </section>

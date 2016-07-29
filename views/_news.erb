@@ -12,7 +12,7 @@
 
 <% events.each do |event| %>
   <% if event.profile_comment_id %>
-    <div class="news-item comment for-me" id="event_<%= event.id %>">
+    <div class="news-item comment" id="event_<%= event.id %>">
       <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment, event: event} %>
   <% elsif event.follow_id %>
     <div class="news-item follow">
@@ -43,22 +43,23 @@
       </span>
     </div>
   <% elsif event.site_change_id %>
+    <% site_change_filenames = event.site_change.site_change_filenames %>
     <div class="news-item update">
       <div class="title">
         <div class="icon"></div>
         <div class="text">
           <% event_site = event.site_dataset.select(:id, :username, :title, :domain).first %>
           <% if current_site && event_site.id == current_site.id %>
-            Your site was updated.
+            You updated your site.
           <% else %>
-            <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(45) %></a> has been updated.
+            <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(45) %></a> was updated.
           <% end %>
         </div>
         <span class="date">
           <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
         </span>
       </div>
-      <% site_change_filenames = event.site_change.site_change_filenames %>
+
       <% unless site_change_filenames.empty? %>
         <div class="content">
           <div class="files">
@@ -67,15 +68,23 @@
                 <div class="html-thumbnail <%= site_change_file_display_class f %>">
                   <a href="http://<%= event_site.host %><%= f == 'index.html' ? '' : "/#{f}" %>">
                     <% if site_change_file_display_class(f) == 'html' %>
-                      <img src="<%= event_site.screenshot_url(f, '210x158') %>">
+                      <img src="<%= event_site.screenshot_url(f, '540x405') %>">
                     <% elsif site_change_file_display_class(f) == 'image' %>
-                      <span class="image-container"><img src="<%= event_site.thumbnail_url(f, '210x158') %>"></span>
+                      <!-- <span class="image-container"><img src="<%= event_site.thumbnail_url(f, '210x158') %>"></span> -->
                     <% elsif site_change_file_display_class(f) == 'misc' %>
+                      <!--
                       <span class="misc-icon">
                         <%= File.extname(f).sub('.', '') %>
                       </span>
+                      -->
                     <% end %>
-                    <span class="title" title="<%= f %>"><%= File.basename f %></span>
+                      <span class="title" title="<%= f %>">
+                        <% if f == 'index.html' %>
+                          <%= event_site.title %>
+                        <% else %>
+                          <%= f %>
+                        <% end %>
+                      </span>
                   </a>
                 </div>
               </div>
@@ -130,26 +139,7 @@
 
 <% if params[:activity] != 'global' %>
   <div class="content">
-    <% if @page_count > 1 %>
-      <div class="txt-Center content eps pagination">
-        <% if @current_page != 1 %>
-          <a href="#" onclick="getPage(<%= @current_page - 1 %>); return false"><i class="fa fa-arrow-left arrow"></i></a>&nbsp;
-        <% end %>
-
-        <% 1.upto(@page_count) do |num| %>
-          <% if num == @current_page %>
-            <%= num %>&nbsp;
-          <% else %>
-            <a href="#" onclick="getPage(<%= num %>); return false"><%= num %></a>&nbsp;
-          <% end %>
-
-        <% end %>
-
-        <% if @current_page != @page_count %>
-          <a href="#" onclick="getPage(<%= @current_page + 1 %>); return false"><i class="fa fa-arrow-right arrow"></i></a>
-        <% end %>
-      </div>
-    <% end %>
+    <%== erb :_pagination, layout: false %>
   </div>
 <% end %>
 

@@ -1,0 +1,35 @@
+<div class="comic" style="height: 500px; background-image: url(/img/tutorial/ch1pg3.png); background-size: 483px;">
+  <div class="dialogue" style="left: 50px; top: 30px;">
+    Great work! Let's move on to writing your first tag.
+    <!-- Check out your site at <a href="">victoria.neocities.org</a>. -->
+  </div>
+  <div class="dialogue" style="left: 300px; top: 0px; width: 250px">
+    Let's make your name a heading by putting the <strong>h1 tag</strong> around it. This helps to visually separate content on your site.
+  </div>
+  <div class="dialogue" style="left: 330px; top: 100px; width: 250px">
+    Try using an h1 tag by changing the text to something like this: <pre><code class="html"><span id="answer"></span></code></pre>
+    and click save.
+  </div>
+</div>
+
+<div class="welcome">
+  <h4>Heading Tags</h4>
+  <p>Here are all the heading tags, for all your needs—from the most important to the least!</p>
+
+  <pre><code class="html"><%= erb :'tutorial/html/code_examples/3', layout: false %></code></pre>
+</div>
+
+<script>
+  $('#answer').text('<h1>'+sessionStorage.getItem('name')+'\'s Website</h1>')
+
+  function checkHomework() {
+    var html = editor.getValue()
+
+    if(!html.match(/<h1>\S.+<\/h1>/)) {
+      notok("That doesn't look like a header! Try again.")
+    } else {
+      sessionStorage.setItem('tutorialHtml', html)
+      ok('Nice header!', '/tutorial/html/4')
+    }
+  }
+</script>

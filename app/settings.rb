@@ -66,6 +66,7 @@ post '/settings/:username/profile' do
   redirect "/settings/#{@site.username}#profile"
 end
 
+=begin
 post '/settings/:username/ssl' do
   require_login
   require_ownership_for_settings
@@ -167,6 +168,7 @@ post '/settings/:username/ssl' do
   flash[:success] = 'Updated SSL key/certificate.'
   redirect "/settings/#{@site.username}#custom_domain"
 end
+=end
 
 post '/settings/:username/change_name' do
   require_login
@@ -179,13 +181,13 @@ post '/settings/:username/change_name' do
     redirect "/settings/#{@site.username}#username"
   end
 
-  if old_username == params[:name]
+  if old_username.downcase == params[:name].downcase
     flash[:error] = 'You already have this name.'
     redirect "/settings/#{@site.username}#username"
   end
 
   old_host = @site.host
-  old_file_paths = @site.file_list.collect {|f| f[:path]}
+  old_site_file_paths = @site.site_files.collect {|site_file| site_file.path}
 
   @site.username = params[:name]
 
@@ -195,11 +197,11 @@ post '/settings/:username/change_name' do
       @site.move_files_from old_username
     }
 
-    old_file_paths.each do |file_path|
-      @site.purge_cache file_path
+    old_site_file_paths.each do |site_file_path|
+      @site.delete_cache site_file_path
     end
 
-    flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it</b>."
+    flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it!</b>"
     redirect "/settings/#{@site.username}#username"
   else
     flash[:error] = @site.errors.first.last.first
@@ -211,6 +213,8 @@ post '/settings/:username/change_nsfw' do
   require_login
   require_ownership_for_settings
 
+  redirect "/settings/#{@site.username}" if @site.admin_nsfw == true
+
   @site.is_nsfw = params[:is_nsfw]
   @site.save_changes validate: false
   flash[:success] = @site.is_nsfw ? 'Marked 18+' : 'Unmarked 18+'
@@ -221,10 +225,30 @@ post '/settings/:username/custom_domain' do
   require_login
   require_ownership_for_settings
 
+  original_domain = @site.domain
   @site.domain = params[:domain]
+
+  begin
+    Socket.gethostbyname @site.values[:domain]
+  rescue SocketError => e
+    if e.message =~ /name or service not known/i
+      flash[:error] = 'Domain needs to be valid and already registered.'
+      redirect "/settings/#{@site.username}#custom_domain"
+    elsif e.message =~ /No address associated with hostname/i
+      flash[:error] = "The domain isn't setup to use Neocities yet, cannot add. Please make the A and CNAME record changes where you registered your domain."
+      redirect "/settings/#{@site.username}#custom_domain"
+    end
+
+    raise e
+  end
 
   if @site.valid?
     @site.save_changes
+
+    if @site.domain != original_domain
+      LetsEncryptWorker.perform_async @site.id
+    end
+
     flash[:success] = 'The domain has been successfully updated.'
     redirect "/settings/#{@site.username}#custom_domain"
   else
@@ -236,7 +260,7 @@ end
 post '/settings/change_password' do
   require_login
 
-  if !Site.valid_login?(parent_site.username, params[:current_password])
+  if !current_site.password_reset_confirmed && !Site.valid_login?(parent_site.username, params[:current_password])
     flash[:error] = 'Your provided password does not match the current one.'
     redirect "/settings#password"
   end
@@ -247,6 +271,9 @@ post '/settings/change_password' do
   if params[:new_password] != params[:new_password_confirm]
     parent_site.errors.add :password, 'New passwords do not match.'
   end
+
+  parent_site.password_reset_token = nil
+  parent_site.password_reset_confirmed = false
 
   if parent_site.errors.empty?
     parent_site.save_changes
@@ -260,10 +287,16 @@ end
 
 post '/settings/change_email' do
   require_login
-  
+
+  if params[:from_confirm]
+    redirect_url = "/site/#{parent_site.username}/confirm_email"
+  else
+    redirect_url = '/settings#email'
+  end
+
   if params[:email] == parent_site.email
     flash[:error] = 'You are already using this email address for this account.'
-    redirect '/settings#email'
+    redirect redirect_url
   end
 
   parent_site.email = params[:email]
@@ -273,12 +306,17 @@ post '/settings/change_email' do
   if parent_site.valid?
     parent_site.save_changes
     send_confirmation_email
-    flash[:success] = 'Successfully changed email. We have sent a confirmation email, please use it to confirm your email address.'
-    redirect '/settings#email'
+    if !parent_site.supporter?
+      session[:fromsettings] = true
+      redirect "/site/#{parent_site.email}/confirm_email"
+    else
+      flash[:success] = 'Email address changed.'
+      redirect '/settings#email'
+    end
   end
 
   flash[:error] = parent_site.errors.first.last.first
-  redirect '/settings#email'
+  redirect redirect_url
 end
 
 post '/settings/change_email_notification' do
@@ -331,4 +369,30 @@ get '/settings/unsubscribe_email/?' do
     @message = 'There was an error unsubscribing your email address. Please contact support.'
   end
   erb :'settings/account/unsubscribe'
+end
+
+post '/settings/update_card' do
+  require_login
+
+  customer = Stripe::Customer.retrieve current_site.stripe_customer_id
+
+  old_card_ids = customer.sources.collect {|s| s.id}
+
+  begin
+    customer.sources.create source: params[:stripe_token]
+  rescue Stripe::InvalidRequestError => e
+    if  e.message.match /cannot use a.+token more than once/
+      flash[:error] = 'Card is already being used.'
+      redirect '/settings#billing'
+    else
+      raise e
+    end
+  end
+
+  old_card_ids.each do |card_id|
+    customer.sources.retrieve(card_id).delete
+  end
+
+  flash[:success] = 'Card information updated.'
+  redirect '/settings#billing'
 end

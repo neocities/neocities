@@ -1,7 +1,3 @@
-<%
-
-%>
-
 <section class="section plans">
   <% if request.path.match /\/welcome/ %>
     <div class="txt-Center"><img src="/img/heartcat.png"></div>
@@ -89,7 +85,7 @@
         <ul>
           <li>Lots of Web Space</li>
           <li>No File Upload Type Restrictions</li>
-          <li>Unlimited Site Creation</li>
+          <li>Multiple Site Creation</li>
           <li>Custom Domains (yoursite.com)</li>
           <li>Remote Filesystem Support</li>
           <li>Custom SSL Certs (coming soon!)</li>
@@ -118,10 +114,10 @@
             <strong>It helps your site.</strong> Funding helps us make your site faster globally, and provide more features.
           </li>
           <li>
-            <strong>It helps us build.</strong> It supports our goal to work on Neocities full-time, without worrying about bills.
+            <strong>It helps us build.</strong> It supports our goal to work on improving Neocities full-time, without worrying about bills.
           </li>
           <li>
-            <strong>It helps the web.</strong> The web needs more independent, creative sites.
+            <strong>It helps the web.</strong> The web needs more independent, creative web sites.
           </li>
           <li>
             <strong>It's Open Source.</strong> Neocities is an <a href="http://www.opencompany.org">Open Company</a>, our site is <a href="https://github.com/neocities">completely open source</a>, and we share code with the community.
@@ -218,7 +214,7 @@
 
         <% unless params[:stripe_token] || (current_site && parent_site.stripe_customer_id) %>
           <p>
-            <strong>Don't have a Credit/Debit Card?</strong> We support Bitcoin and Paypal! <a href="/plan/alternate">Click here</a> for more information.
+            <strong>Don't have a Credit/Debit Card?</strong> We also support <a href="/plan/paypal">Paypal</a> and <a href="/plan/bitcoin">Bitcoin</a>.
           </p>
         <% end %>
     </div>

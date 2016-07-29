@@ -16,13 +16,13 @@
           <div class="interval">per month</div>
 
           <ul class="main-features">
-            <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %></strong> <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">storage</span></li>
-            <li><strong><%= Site::PLAN_FEATURES[:free][:bandwidth].to_space_pretty %></strong> <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
+            <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %></strong> <span data-original-title="How much space you have to upload files. The more space, the bigger your site can be.">storage</span></li>
+            <li><strong><%= Site::PLAN_FEATURES[:free][:bandwidth].to_space_pretty %></strong> <span data-original-title="How much traffic can visit your site. This is a soft limit. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
           </ul>
         </div>
       </div>
       <div class="row content txt-Center">
-        <a href="/" class="btn-Action">Continue</a>
+        <a href="/tutorial" class="btn-Action">Continue</a>
       </div>
     </div>
 
@@ -41,14 +41,14 @@
           <% end %>
 
           <ul class="main-features">
-            <li><strong><%= (Site::PLAN_FEATURES[:supporter][:space] / (10**6)).to_comma_separated %> MB</strong> <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">storage</span></li>
-            <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></strong> <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we’re very flexible.">bandwidth</span></li>
+            <li><strong><%= (Site::PLAN_FEATURES[:supporter][:space] / (10**6)).to_comma_separated %> MB</strong> <span data-original-title="Much more disk space, so you can build a much bigger web site.">storage</span></li>
+            <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></strong> <span data-original-title="Tons of bandwidth to serve your site, powered by our high-quality network of servers. This is a soft limit. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
           </ul>
 
           <ul>
-            <li><span data-original-title="No whitelists—you can upload anything you want (no copyrighted content, trojans, or w4r3z, please).">No File Upload Type Restrictions</span></li>
+            <li><span data-original-title="Free plans don't allow uploading music, video, compressed, and executable files to prevent piracy. With a supporter plan, you can upload anything you want.">No File Upload Type Restrictions</span></li>
             <li><span data-original-title="Make as many sites as you want with one account, and easily switch between them.">Unlimited Site Creation</span></li>
-            <li><span data-original-title="Add your domain name (yoursite.com) to your site!">Full Domain Support</span></li>
+            <li><span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domain Support</span></li>
             <li><span data-original-title="With WebDAV, you can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">Remote Filesystem Support</span></li>
           </ul>
         </div>
@@ -96,7 +96,7 @@
         <a href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">
           Upgrade for $<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo
         </a>
-        or pay with <a href="/plan/alternate/">PayPal</a> or <a href="/plan/alternate/">Bitcoin</a>
+        or pay with <a href="/plan/paypal">PayPal</a> or <a href="/plan/bitcoin">Bitcoin</a>
       </div>
     </div>
   </div>

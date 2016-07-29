@@ -38,10 +38,17 @@ task :parse_logs => [:environment] do
   Stat.parse_logfiles $config['logs_path']
 end
 
+desc 'Update disposable email blacklist'
+task :update_disposable_email_blacklist => [:environment] do
+  uri = URI.parse('https://raw.githubusercontent.com/martenson/disposable-email-domains/master/disposable_email_blacklist.conf')
+
+  File.write(Site::DISPOSABLE_EMAIL_BLACKLIST_PATH, Net::HTTP.get(uri))
+end
+
 desc 'Update banned IPs list'
 task :update_blocked_ips => [:environment] do
   uri = URI.parse('http://www.stopforumspam.com/downloads/listed_ip_90.zip')
-  blocked_ips_zip = Tempfile.new('blockedipszip', Dir.tmpdir, 'wb')
+  blocked_ips_zip = Tempfile.new('blockedipszip', Dir.tmpdir)
   blocked_ips_zip.binmode
 
   Net::HTTP.start(uri.host, uri.port) do |http|
@@ -65,13 +72,65 @@ task :update_blocked_ips => [:environment] do
   end
 end
 
-desc 'Compile domain map for nginx'
-task :compile_domain_map => [:environment] do
-  File.open('./files/map.txt', 'w') do |file|
-    Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.collect do |site|
-      file.write ".#{site.domain} #{site.username};\n"
+desc 'parse tor exits'
+task :parse_tor_exits => [:environment] do
+  exit_ips = Net::HTTP.get(URI.parse('https://check.torproject.org/exit-addresses'))
+
+  exit_ips.split("\n").collect {|line|
+    line.match(/ExitAddress (\d+\.\d+\.\d+\.\d+)/)&.captures&.first
+  }.compact
+
+  # ^^ Array of ip addresses of known exit nodes
+end
+
+desc 'Compile nginx mapfiles'
+task :compile_nginx_mapfiles => [:environment] do
+  FileUtils.mkdir_p './files/maps'
+
+  File.open('./files/maps/domains.txt', 'w') do |file|
+    Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.each do |site|
+      file.write ".#{site.values[:domain]} #{site.username};\n"
     end
   end
+
+  File.open('./files/maps/supporters.txt', 'w') do |file|
+    Site.select(:username, :domain).exclude(plan_type: 'free').exclude(plan_type: nil).all.each do |parent_site|
+      sites = [parent_site] + parent_site.children
+      sites.each do |site|
+        file.write "#{site.username}.neocities.org 1;\n"
+        unless site.host.match(/\.neocities\.org$/)
+          file.write ".#{site.values[:domain]} 1;\n"
+        end
+      end
+    end
+  end
+
+  File.open('./files/maps/sandboxed.txt', 'w') do |file|
+    usernames = DB["select username from sites where created_at > ? and (plan_type is null or plan_type='free')", 1.week.ago].all.collect {|s| s[:username]}.each {|username| file.write "#{username} 1;\n"}
+  end
+
+  # Compile letsencrypt ssl keys
+  sites = DB[%{select username,ssl_key,ssl_cert,domain from sites where ssl_cert is not null and ssl_key is not null and (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't'}].all
+
+  ssl_path = './files/maps/ssl'
+
+  FileUtils.mkdir_p ssl_path
+
+  sites.each do |site|
+    [site[:domain], "www.#{site[:domain]}"].each do |domain|
+      begin
+        key = OpenSSL::PKey::RSA.new site[:ssl_key]
+        crt = OpenSSL::X509::Certificate.new site[:ssl_cert]
+      rescue => e
+        puts "SSL ERROR: #{e.class} #{e.inspect}"
+        next
+      end
+
+      File.open(File.join(ssl_path, "#{domain}.key"), 'wb') {|f| f.write key.to_der}
+      File.open(File.join(ssl_path, "#{domain}.crt"), 'wb') {|f| f.write site[:ssl_cert]}
+    end
+  end
+
 end
 
 desc 'Produce SSL config package for proxy'
@@ -216,6 +275,73 @@ task :hash_ips => [:environment] do
   end
 end
 
+desc 'prime_site_files'
+task :prime_site_files => [:environment] do
+  Site.where(is_banned: false).where(is_deleted: false).select(:id, :username).all.each do |site|
+    Dir.glob(File.join(site.files_path, '**/*')).each do |file|
+      path = file.gsub(site.base_files_path, '').sub(/^\//, '')
+
+      site_file = site.site_files_dataset[path: path]
+
+      if site_file.nil?
+        mtime = File.mtime file
+
+        site_file_opts = {
+          path: path,
+          updated_at: mtime,
+          created_at: mtime
+        }
+
+        if File.directory? file
+          site_file_opts.merge! is_directory: true
+        else
+          site_file_opts.merge!(
+            size: File.size(file),
+            sha1_hash: Digest::SHA1.file(file).hexdigest
+          )
+        end
+
+        site.add_site_file site_file_opts
+      end
+    end
+  end
+end
+
+desc 'dedupe_follows'
+task :dedupe_follows => [:environment] do
+  follows = Follow.all
+  deduped_follows = Follow.all.uniq {|f| "#{f.site_id}_#{f.actioning_site_id}"}
+
+  follows.each do |follow|
+    unless deduped_follows.include?(follow)
+      puts "deleting dedupe: #{follow.inspect}"
+      follow.delete
+    end
+  end
+end
+
+desc 'flush_empty_index_sites'
+task :flush_empty_index_sites => [:environment] do
+  sites = Site.select(:id).all
+
+  counter = 0
+
+  sites.each do |site|
+    if site.empty_index?
+      counter += 1
+      site.site_changed = false
+      site.save_changes validate: false
+    end
+  end
+
+  puts "#{counter} sites set to not changed."
+end
+
+desc 'compute_scores'
+task :compute_scores => [:environment] do
+  Site.compute_scores
+end
+
 =begin
 desc 'Update screenshots'
 task :update_screenshots => [:environment] do
@@ -224,3 +350,56 @@ task :update_screenshots => [:environment] do
   }
 end
 =end
+
+desc 'prime_classifier'
+task :prime_classifier => [:environment] do
+  Site.select(:id, :username).where(is_banned: false, is_deleted: false).all.each do |site|
+    next if site.site_files_dataset.where(classifier: 'spam').count > 0
+    html_files = site.site_files_dataset.where(path: /\.html$/).all
+
+    html_files.each do |html_file|
+      print "training #{site.username}/#{html_file.path}..."
+      site.train html_file.path
+      print "done.\n"
+    end
+  end
+end
+
+desc 'train_spam'
+task :train_spam => [:environment] do
+  paths = File.read('./spam.txt')
+
+  paths.split("\n").each do |path|
+    username, site_file_path = path.match(/^([a-zA-Z0-9_\-]+)\/(.+)$/i).captures
+    site = Site[username: username]
+    next if site.nil?
+    site_file = site.site_files_dataset.where(path: site_file_path).first
+    next if site_file.nil?
+    site.train site_file_path, :spam
+    site.ban!
+    puts "Deleted #{site_file_path}, banned #{site.username}"
+  end
+end
+
+desc 'regenerate_ssl_certs'
+task :regenerate_ssl_certs => [:environment] do
+  sites = DB[%{select id from sites where (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't'}].all
+
+  seconds = 2
+
+  sites.each do |site|
+    LetsEncryptWorker.perform_in seconds, site[:id]
+    seconds += 10
+  end
+
+  puts "#{sites.length.to_s} records are primed"
+end
+
+desc 'renew_ssl_certs'
+task :renew_ssl_certs => [:environment] do
+  delay = 0
+  DB[%{select id from sites where (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't' and (cert_updated_at is null or cert_updated_at < ?)}, 60.days.ago].all.each do |site|
+    LetsEncryptWorker.perform_in delay.seconds, site[:id]
+    delay += 10
+  end
+end

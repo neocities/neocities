@@ -200,29 +200,44 @@ describe 'site/settings' do
   end
 =end
 
-  describe 'change username' do
+  describe 'changing username' do
     include Capybara::DSL
 
     before do
       Capybara.reset_sessions!
       @site = Fabricate :site
       page.set_rack_session id: @site.id
+      visit "/settings/#{@site[:username]}#username"
     end
 
-    it 'does not allow bad usernames' do
-      visit "/settings/#{@site[:username]}#username"
+    after do
+      Site[username: @site[:username]].wont_equal nil
+    end
+
+    it 'fails for blank username' do
       fill_in 'name', with: ''
       click_button 'Change Name'
+      page.must_have_content /cannot be blank/i
+      Site[username: ''].must_equal nil
+    end
+
+    it 'fails for subdir periods' do
       fill_in 'name', with: '../hack'
       click_button 'Change Name'
-      fill_in 'name', with: 'derp../hack'
-      click_button 'Change Name'
-      ## TODO fix this without screwing up legacy sites
-      #fill_in 'name', with: '-'
-      #click_button 'Change Name'
       page.must_have_content /Usernames can only contain/i
-      Site[username: @site[:username]].wont_equal nil
-      Site[username: ''].must_equal nil
+      Site[username: '../hack'].must_equal nil
+    end
+
+    it 'fails for same username' do
+      fill_in 'name', with: @site.username
+      click_button 'Change Name'
+      page.must_have_content /You already have this name/
+    end
+
+    it 'fails for same username with DiFfErEnT CaSiNg' do
+      fill_in 'name', with: @site.username.upcase
+      click_button 'Change Name'
+      page.must_have_content /You already have this name/
     end
   end
 end
@@ -320,17 +335,21 @@ describe 'delete' do
     someone_elses_site.is_deleted.must_equal false
   end
 
+  it 'should not show NSFW tab for admin NSFW flag' do
+    owned_site = Fabricate :site, parent_site_id: @site.id, admin_nsfw: true
+    visit "/settings/#{owned_site.username}"
+    page.body.wont_match /18\+/
+  end
+
   it 'should succeed if you own the site' do
     owned_site = Fabricate :site, parent_site_id: @site.id
     visit "/settings/#{owned_site.username}#delete"
     fill_in 'confirm_username', with: owned_site.username
-    fill_in 'deleted_reason', with: 'got bored with it'
     click_button 'Delete Site'
 
     @site.reload
     owned_site.reload
     owned_site.is_deleted.must_equal true
-    owned_site.deleted_reason.must_equal 'got bored with it'
     @site.is_deleted.must_equal false
 
     page.current_path.must_equal "/settings"

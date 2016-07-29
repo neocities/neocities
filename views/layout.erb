@@ -4,8 +4,8 @@
     <title><%= title %></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta itemprop="name"           content="Neocities.org">
-    <meta itemprop="description"    content="Create your own free home page, and do whatever you want with it.">
-    <meta name="description"        content="Neocities is the new Geocities. Create your own free home page, and do whatever you want with it.">
+    <meta itemprop="description"    content="Free web hosting and tools that allow anyone to create a website. Join our community today!">
+    <meta name="description"        content="Free web hosting and tools that allow anyone to create a website. Join our community today!">
     <meta name="keywords"           content="free website, html, css, learn to code, free hosting, build a website, create a web page">
     <meta property="og:title"       content="Neocities">
     <meta property="og:site_name"   content="Neocities | neocities.org">
@@ -23,6 +23,12 @@
     <meta name="MobileOptimized"  content="320">
     <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1">
 
+    <% if @dont_browser_cache %>
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta http-equiv="Expires" content="0">
+    <% end %>
+
     <!--[if lt IE 9]>
       <script type="text/javascript" src="/js/html5.min.js"></script>
     <![endif]-->
@@ -32,6 +38,10 @@
     </script>
 
     <script src="/js/jquery-1.11.0.min.js"></script>
+
+    <script src="/js/highlight.pack.js"></script>
+    <link rel="stylesheet" href="/css/highlight/styles/tomorrow-night.css">
+    <script>hljs.initHighlightingOnLoad()</script>
   </head>
 
   <body class="interior">
@@ -47,7 +57,6 @@
     <script src="/js/nav.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/typeahead.bundle.js"></script>
-    <script src="/js/keyboard.js"></script>
 
     <script>
       $("a#like").tooltip({html: true})

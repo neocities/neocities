@@ -168,8 +168,8 @@
   </head>
   <body>
   <script type="text/javascript">
-    function getPage(currentPage) {
-      document.location.href = '/surf?current_page='+currentPage+'&'+$('#search_criteria').serialize()
+    function getPage(page) {
+      document.location.href = '/surf?page='+page+'&'+$('#search_criteria').serialize()
     }
 
     function backToBrowse() {
@@ -180,9 +180,9 @@
   <div id="top-bar">
     <ul class="browse-actions">
       <li>
-        <a href="/browse" onclick="backToBrowse(<%= @current_page %>); return false">Neocities</a>
+        <a href="/browse" onclick="backToBrowse(<%= @page %>); return false">Neocities</a>
       </li>
-      <% if @current_page %>
+      <% if @page %>
         <li>
           <form id="search_criteria" onsubmit="getPage(1); return false">
             <input type="hidden" name="sort_by" value="<%= params[:sort_by] %>">
@@ -191,15 +191,15 @@
           </form>
         </li>
         <li>
-          <% if @current_page > 1 %>
-            <a href="" onclick="getPage(<%= @current_page - 1 %>); return false">
+          <% if @page > 1 %>
+            <a href="" onclick="getPage(<%= @page - 1 %>); return false">
               <i class="fa fa-caret-left"></i> Prev
             </a>
           <% end %>
         </li>
         <li>
-          <% if @current_page != @page_count %>
-            <a href="" onclick="getPage(<%= @current_page + 1 %>); return false">Next <i class="fa fa-caret-right"></i></a>
+          <% if @page != @page_count %>
+            <a href="" onclick="getPage(<%= @page + 1 %>); return false">Next <i class="fa fa-caret-right"></i></a>
           <% end %>
         </li>
       <% end %>

@@ -1,0 +1,62 @@
+<div class="comic" style="height: 608px; width:320px; background-image: url(/img/tutorial/ch1pg2.png); background-size: 320px; float: left;">
+  <div class="dialogue" style="left: 25px; top: 40px; width: 250px">
+    <p>All you need to build your first site is a computer language called <strong>HTML</strong>.</p><p>HTML is made of tags - there's usually an opening tag and a closing tag, with content between them.</p>
+  </div>
+</div>
+<div class="comic" style="width: 289px;
+  height: 588px;
+  background-image: url(/img/tutorial/ch1pg2_2.png);
+  background-size: 289px;
+  position: absolute;
+  right: -46px;
+  top: 10px;
+  z-index: 1000;">
+  <div class="dialogue" style="left: -40px; top: 50px; width: 250px">
+    And here's some HTML, right in this box! Let's make a change. Replace <strong>Hello World</strong> with a name for your site like <strong><span id="studentName"></span>'s Website</strong>, and click save!
+  </div>
+  <div class="dialogue" style="left: -10px; top: 350px;">
+    <p>You'll see the results here.</p>
+    <p>Make sure to check the green boxes below for important bonus info!</p>
+  </div>
+</div>
+
+<div class="welcome" style="clear: both">
+  <h4>Welcome to HTML!</h4>
+  <p>HTML stands for <strong>H</strong>yper<strong>T</strong>ext <strong>M</strong>arkup <strong>L</strong>anguage.
+    Hypertext refers to text that has links, and markup refers to the tags.</p>
+
+  <p>Don't worry if anything seems confusing - you'll get the hang of it soon! <!-- If you ever get stuck, click the Help link below. --></p>
+</div>
+
+<script>
+  var storedName = sessionStorage.getItem('name')
+  var answer = storedName+ "'s Website"
+  $('#studentName').text(storedName)
+
+  function checkHomework() {
+    var html = editor.getValue()
+
+    if(!html.tutorialMatches('<html>.+</html>')) {
+      notok("You're missing the HTML element tag! Your web site must begin with &lt;html&gt; and end with &lt;/html&gt;.")
+      return
+    }
+
+    if(html.tutorialMatches('Hello World!')) {
+      notok("Hint: Try changing \"Hello World\" to something else.")
+      return
+    }
+
+    if(!html.tutorialMatches('<html>.+<body>.+</body>.+</html>')) {
+      notok('Missing the &lt;body&gt; and/or the &lt;/body&gt; tag.')
+      return
+    }
+
+    if(html.match(/<body>[\s\n]+<\/body>/) !== null) {
+      notok('Need to add text between the &lt;body&gt; and the &lt;/body&gt; tags.')
+      return
+    }
+
+    sessionStorage.setItem('tutorialHtml', html)
+    ok('Great, you did it!', '/tutorial/html/3')
+  }
+</script>

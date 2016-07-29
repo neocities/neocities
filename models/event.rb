@@ -8,7 +8,7 @@ class Event < Sequel::Model
   many_to_one :site_change
   many_to_one :profile_comment
   one_to_many :likes
-  one_to_many :comments
+  one_to_many :comments, order: :created_at
   many_to_one :site
   many_to_one :actioning_site, key: :actioning_site_id, class: :Site
 
