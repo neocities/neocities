@@ -121,6 +121,9 @@ def plan_pricing_button(plan_type)
 end
 
 def dont_browser_cache
+  headers['Cache-Control'] = 'private, no-store, max-age=0, no-cache, must-revalidate, post-check=0, pre-check=0'
+  headers['Pragma'] = 'no-cache'
+  headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
   @dont_browser_cache = true
 end
 

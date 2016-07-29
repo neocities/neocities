@@ -154,6 +154,7 @@ end
 
 get %r{\/site_files\/download\/(.+)} do
   require_login
+  dont_browser_cache
   not_found if params[:captures].nil? || params[:captures].length != 1
   filename = params[:captures].first
   attachment filename
