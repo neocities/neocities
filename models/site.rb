@@ -550,7 +550,7 @@ class Site < Sequel::Model
     disposable_email_domains = File.readlines DISPOSABLE_EMAIL_BLACKLIST_PATH
 
     disposable_email_domains.each do |disposable_email_domain|
-      return true if email.match disposable_email_domain.strip
+      return true if email.match /@#{disposable_email_domain.strip}$/i
     end
 
     false
