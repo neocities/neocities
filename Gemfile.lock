@@ -182,6 +182,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    rinku (2.0.0)
     rmagick (2.15.4)
     ruby-progressbar (1.7.5)
     rye (0.9.13)
@@ -318,6 +319,7 @@ DEPENDENCIES
   redis
   redis-namespace
   rest-client
+  rinku
   rmagick
   ruby-debug
   rye

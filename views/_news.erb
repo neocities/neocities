@@ -110,7 +110,7 @@
             <span class="date">
               <a href="/site/<%= comment_event_site.username %>?event_id=<%= event.id %>"><%= comment.created_at.ago %></a>
             </span>
-            <p><%= comment.message %></p>
+            <p><%== sanitize_comment comment.message %></p>
           </div>
           <div class="actions">
             <% comment_likes_count = comment.comment_likes_dataset.count %>

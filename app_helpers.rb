@@ -132,3 +132,7 @@ def email_not_validated?
 
   current_site && current_site.parent? && !current_site.is_education && !current_site.email_confirmed && !current_site.supporter?
 end
+
+def sanitize_comment(text)
+  Rinku.auto_link Sanitize.fragment(text), :all, 'target="_blank" rel="nofollow"'
+end
