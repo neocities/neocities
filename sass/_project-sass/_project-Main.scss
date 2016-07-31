@@ -175,6 +175,9 @@
     margin: 0 auto;
   }
 }
+.signup-Area label#domain-name {
+  display: hidden;
+}
 .interior .header-Outro .screenshot {
   width: 357px;
   height: 212px;
@@ -928,6 +931,9 @@ a.tag:hover {
     background-position: 0px 0px;
     background-repeat: no-repeat;
   }
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    display: none;
+  }
 }
 .news-item.comment .icon {
   background: #DAEEA5;
@@ -1251,6 +1257,14 @@ a.tag:hover {
   height: 24px;
   background-size: 99px;
   display: inline-block;
+
+  @media (max-device-width:480px), screen and (max-width:800px){
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
 }
 .title-with-badge {
   float: left;

@@ -118,6 +118,7 @@
   h3 {
     margin-bottom: 0px;
     font-size: 1.7em;
+    line-height: 120%;
   }
 
   p {
@@ -202,6 +203,9 @@
     display: inline;
     vertical-align: 8px;
     color: #C2CFD4;
+    @media (max-device-width:480px), screen and (max-width:800px) {
+      font-size: 10pt;
+    }
   }
 
   .input-Area{
