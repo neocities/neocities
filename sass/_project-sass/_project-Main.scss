@@ -1318,7 +1318,8 @@ a.tag:hover {
     font-size: .9em;
   }
   .row {
-    margin: 5.5em 10%;
+    /* margin: 5.5em 10%; */
+    margin: 5.5em auto;
     padding: 0;
 
     @media (max-device-width:480px), screen and (max-width:800px){
@@ -1425,7 +1426,7 @@ a.tag:hover {
     text-align: left;
   }
   h2 {
-    margin-left: 20px;
+    text-align: center;
   }
   p {
     font-size: 1em;

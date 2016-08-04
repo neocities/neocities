@@ -13,10 +13,6 @@
   border-bottom: 0;
 }
 
-.row.header-Content.content {
-    padding-bottom: 31px;
-}
-
 .header-Content.content{
 	@media(max-device-width:480px), screen and (max-width:800px){
     padding: 14px 5% 20px 5%;
@@ -155,6 +151,13 @@
 
 .signup-Area {
   min-height:100px;
+}
+
+#createSiteForm {
+  position:relative;
+  @media (max-device-width:480px), screen and (max-width:800px){
+    margin-top: 30px;
+  }
 }
 
 .header-Outro .signup-Form{
