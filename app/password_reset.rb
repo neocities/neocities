@@ -15,7 +15,8 @@ post '/send_password_reset' do
     token = SecureRandom.uuid.gsub('-', '')
     sites.each do |site|
       next unless site.parent?
-      site.update password_reset_token: token
+      site.password_reset_token = token
+      site.save_changes validate: false
 
       body = <<-EOT
 Hello! This is the Neocities cat, and I have received a password reset request for your e-mail address.
