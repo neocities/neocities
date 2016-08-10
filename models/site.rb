@@ -78,7 +78,6 @@ class Site < Sequel::Model
   EMPTY_FILE_HASH = Digest::SHA1.hexdigest ''
 
   PHISHING_FORM_REGEX = /www.formbuddy.com\/cgi-bin\/form.pl/i
-  SPAM_MATCH_REGEX = ENV['RACK_ENV'] == 'test' ? /pillz/ : /#{$config['spam_smart_filter'].join('|')}/i
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
   EDITABLE_FILE_EXT = /#{VALID_EDITABLE_EXTENSIONS.join('|')}/i
   BANNED_TIME = 2592000 # 30 days in seconds

@@ -1,9 +1,9 @@
 development:
-  database: 'postgres://neocities@localhost/neocities'
+  database: 'postgres://localhost/neocities'
   database_pool: 1
   session_secret: "SECRET GOES HERE"
-  recaptcha_public_key: "ENTER PUBLIC KEY HERE"
-  recaptcha_private_key: "ENTER PRIVATE KEY HERE"
+  recaptcha_public_key: "6LdSMScTAAAAAADhP4IDb5s_EN1qMmvNmrUXReE-"
+  recaptcha_private_key: "6LdSMScTAAAAAIZAvP_W9d8fMsVT3iBX5wCwGvqV"
   sidekiq_user: "ENTER USER HERE"
   sidekiq_pass: "ENTER PASS HERE"
   stripe_publishable_key: "ENTER KEY HERE"
@@ -18,7 +18,7 @@ development:
   letsencrypt_key: ./tests/files/letsencrypt.key
   letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
 test:
-  database: 'postgres://neocities@localhost/neocities_test'
+  database: 'postgres://localhost/neocities_test'
   database_pool: 1
   session_secret: "SECRET GOES HERE"
   recaptcha_public_key: "ENTER PUBLIC KEY HERE"

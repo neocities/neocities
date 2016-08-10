@@ -18,7 +18,7 @@ vagrant up --provision
 ```
 vagrant ssh
 cd /vagrant
-bundle exec rackup
+bundle exec rackup -o 0.0.0.0
 ```
 
 Now you can access the running site from your browser: http://127.0.0.1:9292

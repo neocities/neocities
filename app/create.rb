@@ -84,6 +84,7 @@ post '/create' do
     return {result: 'error'}.to_json
   end
 
+  @site.email_confirmed = true if self.class.development?
   @site.save
 
   session[:captcha_valid] = nil
