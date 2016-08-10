@@ -336,6 +336,8 @@ class Site < Sequel::Model
       follow.delete
       false
     else
+      return false if site.id == self.id # Do not follow yourself
+
       DB.transaction do
         follow = add_following site_id: site.id
         Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
