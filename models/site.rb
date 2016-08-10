@@ -386,16 +386,9 @@ class Site < Sequel::Model
   def save(validate={})
     DB.transaction do
       is_new = new?
-      install_custom_domain if !domain.nil? && !domain.empty?
       result = super(validate)
       install_new_files if is_new
       result
-    end
-  end
-
-  def install_custom_domain
-    File.open(File.join(DIR_ROOT, 'domains', "#{username}.conf"), 'w') do |file|
-      file.write render_template('domain.erb')
     end
   end
 
