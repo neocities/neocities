@@ -123,20 +123,20 @@
             <div class="admin">
               <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
                 <%== csrf_token_input_html %>
-                <input type="hidden" name="username" value="<%= site.username %>">
+                <input type="hidden" name="usernames" value="<%= site.username %>">
                 <button>Ban</button>
               </form>
 
               <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
                 <%== csrf_token_input_html %>
-                <input type="hidden" name="username" value="<%= site.username %>">
+                <input type="hidden" name="usernames" value="<%= site.username %>">
                 <input type="hidden" name="classifier" value="spam">
                 <button>Spam</button>
               </form>
 
               <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
                 <%== csrf_token_input_html %>
-                <input type="hidden" name="username" value="<%= site.username %>">
+                <input type="hidden" name="usernames" value="<%= site.username %>">
                 <input type="hidden" name="classifier" value="phishing">
                 <button>Phishing</button>
               </form>
