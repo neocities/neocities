@@ -39,14 +39,7 @@ gem 'simpleidn'
 gem 'gandi'
 gem 'hoe', '3.14.2', require: nil
 gem 'msgpack'
-gem 'json-jwt', {
-  git: 'https://github.com/neocities/json-jwt.git',
-  branch: 'drop_activesupport'
-}
-gem 'acme-client', {
-  git: 'https://github.com/jhass/acme-client.git',
-  branch: 'no_activesupport'
-}
+gem 'acme-client'
 gem 'http'
 gem 'htmlentities'
 gem 'rinku'
