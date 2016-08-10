@@ -335,7 +335,7 @@ class Site < Sequel::Model
       site.events_dataset.filter(follow_id: follow.id).delete
       follow.delete
       false
-    else
+    elsif self.id != site.id
       DB.transaction do
         follow = add_following site_id: site.id
         Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
@@ -343,6 +343,7 @@ class Site < Sequel::Model
 
       true
     end
+    false
   end
 
   def tip_amount
