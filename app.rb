@@ -7,6 +7,7 @@ use Rack::Session::Cookie, key:          'neocities',
                            secret:       $config['session_secret']
 
 use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $config['recaptcha_private_key']
+use Rack::TempfileReaper
 helpers Rack::Recaptcha::Helpers
 
 helpers do
