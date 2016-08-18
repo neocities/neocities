@@ -41,6 +41,8 @@ class ScreenshotWorker
       #else
       #  raise
       #end
+    ensure
+      screenshot.unlink
     end
 
     img_list = Magick::ImageList.new
@@ -51,6 +53,7 @@ class ScreenshotWorker
 
     img_list.new_image(img_list.first.columns, img_list.first.rows) { self.background_color = "white" }
     img = img_list.reverse.flatten_images
+    img_list.destroy!
 
     user_screenshots_path = File.join SCREENSHOTS_PATH, username
     screenshot_path = File.join user_screenshots_path, File.dirname(path)
@@ -68,7 +71,14 @@ class ScreenshotWorker
       new_img.write(File.join(user_screenshots_path, "#{path}.#{res}.jpg")) {
         self.quality = 90
       }
+      new_img.destroy!
     end
+
+    img.destroy!
+
+    GC.start full_mark: true, immediate_sweep: true
+
+    true
   end
 
   sidekiq_retries_exhausted do |msg|
