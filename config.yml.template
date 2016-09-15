@@ -17,6 +17,9 @@ development:
   paypal_api_signature: tonz
   letsencrypt_key: ./tests/files/letsencrypt.key
   letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
+  proxy_ips:
+    - 10.0.0.1
+    - 10.0.0.2
 test:
   database: 'postgres://localhost/neocities_test'
   database_pool: 1
@@ -35,3 +38,6 @@ test:
   paypal_api_signature: tonz
   letsencrypt_key: ./tests/files/letsencrypt.key
   letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
+  proxy_ips:
+    - 10.0.0.1
+    - 10.0.0.2
