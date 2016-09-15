@@ -8,12 +8,8 @@ class DeleteCacheOrderWorker
   end
 
   def perform(username, path)
-    if ENV['RACK_ENV'] == 'test'
-      proxy_ips = ['10.0.0.1', '10.0.0.2']
-    else
-      #proxy_ips = Resolv.getaddresses($config['cache_purge_ips_uri'])
-      proxy_ips = Resolv.getaddresses($config['cache_purge_ips_uri']).keep_if {|r| !r.match(/:/)}
-    end
+    #proxy_ips = Resolv.getaddresses($config['cache_purge_ips_uri']).keep_if {|r| !r.match(/:/)}
+    proxy_ips = $config['proxy_ips']
 
     proxy_ips.each do |proxy_ip|
       DeleteCacheWorker.perform_async proxy_ip, username, path

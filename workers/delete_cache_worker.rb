@@ -8,7 +8,7 @@ require 'open-uri'
 class DeleteCacheWorker
   HTTP_TIMEOUT = 5
   include Sidekiq::Worker
-  sidekiq_options queue: :deletecache, retry: 1000, backtrace: false, average_scheduled_poll_interval: 1
+  sidekiq_options queue: :deletecache, retry: 3, backtrace: false, average_scheduled_poll_interval: 1
 
   sidekiq_retry_in do |count|
     return 10 if count < 10

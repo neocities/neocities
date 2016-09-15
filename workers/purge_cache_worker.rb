@@ -3,7 +3,7 @@ require 'open-uri'
 class PurgeCacheWorker
   HTTP_TIMEOUT = 5
   include Sidekiq::Worker
-  sidekiq_options queue: :purgecache, retry: 1000, backtrace: false, average_scheduled_poll_interval: 1
+  sidekiq_options queue: :purgecache, retry: 3, backtrace: false, average_scheduled_poll_interval: 1
 
   sidekiq_retry_in do |count|
     return 10 if count < 10
