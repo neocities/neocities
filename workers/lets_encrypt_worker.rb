@@ -4,7 +4,7 @@ class LetsEncryptWorker
   class InvalidAuthError < StandardError; end
   class VerifyNotFoundWithDomain < StandardError; end
   include Sidekiq::Worker
-  sidekiq_options queue: :lets_encrypt_worker, retry: 5, backtrace: true
+  sidekiq_options queue: :lets_encrypt_worker, retry: 1, backtrace: true
 
   sidekiq_retry_in do |count|
     1.hour.to_i
@@ -50,8 +50,8 @@ class LetsEncryptWorker
         FileUtils.mkdir_p File.join(site.base_files_path, challenge_base_path)
         File.write File.join(testfile_fs_path, testfile_name), testfile_key
       rescue => e
-        puts "ERROR WRITING TO WELLKNOWN FILE, SKIPPING #{domain}: #{e.inspect}"
-        next
+        puts "ERROR WRITING TO WELLKNOWN FILE, FAILING ON THIS SITE: #{site.username} #{domain}: #{e.inspect}"
+        return
       end
 
       # Ensure that both domains work before sending request. Let's Encrypt has a low
@@ -78,9 +78,11 @@ class LetsEncryptWorker
       begin
         auth = letsencrypt.authorize domain: domain
         challenge = auth.http01
-      rescue Acme::Client::Error::Malformed
-        puts "international domains not supported yet, quitting"
-        return
+      rescue Acme::Client::Error => e
+        if e =~ /Internationalized domain names.+not yet supported/
+          @international_domain = true
+          puts "This is an internationalized domain, and so is not yet supported."
+        end
       end
 
       begin
@@ -88,7 +90,7 @@ class LetsEncryptWorker
         File.write File.join(site.base_files_path, challenge.filename), challenge.file_content
       rescue => e
         put "FAILED TO WRITE CHALLENGE: #{site.domain} #{challenge.filename}"
-        # A verification needs to be made anyways, otherwise 300 of them will jam up the system for a week
+        # A verification needs to be attempted anyways, otherwise 300 of them will jam up the system for a week
       end
 
       challenge.request_verification
@@ -121,7 +123,35 @@ class LetsEncryptWorker
     end
 
     if verified_domains.empty?
-      puts "no verified domains, skipping"
+      if @international_domain
+        puts "still waiting on IDN support, ignoring failure for now"
+        clean_wellknown_turds site
+        return
+      end
+
+      puts "no verified domains, skipping cert setup, reporting invalid domain"
+
+      # This is a bit of an inappropriate shared responsibility,
+      # but since were here, it looks like the domain is dead, so let's
+      # try again a few times, but then pull the domain out of our system
+      # if it looks like it's gone completely.
+
+      if site.domain_fail_count < 60
+        site.domain_fail_count += 1
+        site.save_changes validate: false
+      else
+        old_domain = site.domain
+        site.domain = nil
+        site.domain_fail_count = 0
+        site.save validate: false
+
+        site.send_email(
+          subject: "[Neocities] Your domain has stopped working",
+          body: Tilt.new('./views/templates/email/domain_fail.erb', pretty: true).render(self, site: site, domain: old_domain)
+        )
+      end
+
+      clean_wellknown_turds site
       return
     end
 
