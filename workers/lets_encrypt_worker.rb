@@ -78,18 +78,26 @@ class LetsEncryptWorker
       begin
         auth = letsencrypt.authorize domain: domain
         challenge = auth.http01
-      rescue Acme::Client::Error => e
-        if e =~ /Internationalized domain names.+not yet supported/
+      rescue => e
+        if e.message =~ /Internationalized domain names.+not yet supported/
           @international_domain = true
-          puts "This is an internationalized domain, and so is not yet supported."
+          puts "This is an internationalized domain, and so is not yet supported. Skipping to next"
+          next
+        else
+          raise e
         end
+      end
+
+      if challenge.nil?
+        puts "challenge object is nil, going to next domain"
+        next
       end
 
       begin
         FileUtils.mkdir_p File.join(site.base_files_path, File.dirname(challenge.filename))
         File.write File.join(site.base_files_path, challenge.filename), challenge.file_content
       rescue => e
-        put "FAILED TO WRITE CHALLENGE: #{site.domain} #{challenge.filename}"
+        puts "FAILED TO WRITE CHALLENGE: #{site.domain} #{challenge.filename}"
         # A verification needs to be attempted anyways, otherwise 300 of them will jam up the system for a week
       end
 
