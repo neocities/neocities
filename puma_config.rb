@@ -21,7 +21,7 @@ daemonize
 pidfile '/var/run/neocities/neocities.pid'
 stdout_redirect '/var/log/neocities/neocities.log', '/var/log/neocities/neocities-errors.log', true
 quiet
-workers processor_count
+workers 4
 worker_timeout 600
 preload_app!
 on_worker_boot { DB.disconnect }

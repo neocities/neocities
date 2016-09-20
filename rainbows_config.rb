@@ -21,7 +21,7 @@ Rainbows! do
 
   client_max_body_size 100*1024*1024 # 100 Megabytes
 
-  worker_processes processor_count
+  worker_processes 4
   worker_connections 32
   timeout 600 # 10 minutes
 
