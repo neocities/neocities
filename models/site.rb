@@ -1446,7 +1446,7 @@ class Site < Sequel::Model
     purge_cache path
 
     if pathname.extname.match HTML_REGEX
-      ScreenshotWorker.perform_in 1.minute, values[:username], relative_path
+      ScreenshotWorker.perform_in 30.seconds, values[:username], relative_path
     elsif pathname.extname.match IMAGE_REGEX
       ThumbnailWorker.perform_async values[:username], relative_path
     end
