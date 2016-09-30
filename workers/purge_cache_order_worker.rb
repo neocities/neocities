@@ -11,6 +11,8 @@ class PurgeCacheOrderWorker
     proxy_ips = $config['proxy_ips']
     #proxy_ips = Resolv.getaddresses($config['cache_purge_ips_uri']).keep_if {|r| !r.match(/:/)}
 
+    return if proxy_ips.nil? || proxy_ips.empty?
+
     proxy_ips.each do |proxy_ip|
       PurgeCacheWorker.perform_async proxy_ip, username, path
     end

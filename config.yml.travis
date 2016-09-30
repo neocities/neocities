@@ -14,5 +14,5 @@ logs_path: "/tmp/neocitiestestlogs"
 letsencrypt_key: ./tests/files/letsencrypt.key
 letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
 proxy_ips:
-  - 127.0.0.1
-  - 127.0.0.2
+  - 10.0.0.1
+  - 10.0.0.2
