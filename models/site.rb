@@ -211,7 +211,7 @@ class Site < Sequel::Model
   end
 
   def other_sites_dataset
-    account_sites_dataset.exclude(id: self.id)
+    account_sites_dataset.exclude(id: self.id).exclude(is_deleted: true)
   end
 
   def other_sites
