@@ -164,6 +164,8 @@ class Site < Sequel::Model
 
   MAXIMUM_EMAIL_CONFIRMATIONS = 20
 
+  MAX_COMMENTS_PER_DAY = 10
+
   many_to_many :tags
 
   one_to_many :profile_comments
@@ -503,6 +505,8 @@ class Site < Sequel::Model
       set commenting_allowed: true
       save_changes validate: false
       return true
+    else
+      return false if owner.commenting_too_much?
     end
 
     if (account_sites_events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT || (created_at < Date.new(2014, 12, 25).to_time && changed_count >= COMMENTING_ALLOWED_UPDATED_COUNT )) &&
@@ -512,6 +516,14 @@ class Site < Sequel::Model
       return true
     end
 
+    false
+  end
+
+  def commenting_too_much?
+    recent_comments = Comment.where(actioning_site_id: owner.id).where{created_at > 24.hours.ago}.count
+    recent_profile_comments = owner.profile_commentings_dataset.where{created_at > 24.hours.ago}.count
+
+    return true if (recent_comments + recent_profile_comments) > MAX_COMMENTS_PER_DAY
     false
   end
 
