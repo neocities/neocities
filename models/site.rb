@@ -164,7 +164,7 @@ class Site < Sequel::Model
 
   MAXIMUM_EMAIL_CONFIRMATIONS = 20
 
-  MAX_COMMENTS_PER_DAY = 10
+  MAX_COMMENTS_PER_DAY = 5
 
   many_to_many :tags
 
