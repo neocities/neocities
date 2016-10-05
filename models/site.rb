@@ -31,6 +31,7 @@ class Site < Sequel::Model
     audio/midi
     text/cache-manifest
     application/rss+xml
+    application/x-elc
   }
 
   VALID_EXTENSIONS = %w{
