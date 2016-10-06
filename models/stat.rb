@@ -17,6 +17,8 @@ class Stat < Sequel::Model
     def parse_logfiles(path)
       total_site_stats = {}
 
+      cache_control_ip = Resolv::DNS.new.getaddress('neocities.org')
+
       Dir["#{path}/*.log"].each do |log_path|
         site_logs = {}
 
@@ -29,6 +31,8 @@ class Stat < Sequel::Model
             raise ArgumentError, hit.inspect if hit_array.length > 6
 
             time, username, size, path, ip, referrer = hit_array
+
+            next if ip == cache_control_ip
 
             log_time = Time.parse time
 
