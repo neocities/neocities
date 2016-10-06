@@ -22,56 +22,63 @@ class Stat < Sequel::Model
 
         logfile = File.open log_path, 'r'
 
-        while hit = logfile.gets
-          hit_array = hit.strip.split "\t"
+        begin
+          while hit = logfile.gets
+            hit_array = hit.strip.split "\t"
 
-          raise ArgumentError, hit.inspect if hit_array.length > 6
+            raise ArgumentError, hit.inspect if hit_array.length > 6
 
-          time, username, size, path, ip, referrer = hit_array
+            time, username, size, path, ip, referrer = hit_array
 
-          log_time = Time.parse time
+            log_time = Time.parse time
 
-          next if !referrer.nil? && referrer.match(/bot/i)
+            next if !referrer.nil? && referrer.match(/bot/i)
 
-          site_logs[log_time] = {} unless site_logs[log_time]
+            site_logs[log_time] = {} unless site_logs[log_time]
 
-          site_logs[log_time][username] = {
-            hits: 0,
-            views: 0,
-            bandwidth: 0,
-            view_ips: [],
-            ips: [],
-            referrers: {},
-            paths: {}
-          } unless site_logs[log_time][username]
+            site_logs[log_time][username] = {
+              hits: 0,
+              views: 0,
+              bandwidth: 0,
+              view_ips: [],
+              ips: [],
+              referrers: {},
+              paths: {}
+            } unless site_logs[log_time][username]
 
-          total_site_stats[log_time] = {
-            hits: 0,
-            views: 0,
-            bandwidth: 0
-          } unless total_site_stats[log_time]
+            total_site_stats[log_time] = {
+              hits: 0,
+              views: 0,
+              bandwidth: 0
+            } unless total_site_stats[log_time]
 
-          site_logs[log_time][username][:hits] += 1
-          site_logs[log_time][username][:bandwidth] += size.to_i
+            site_logs[log_time][username][:hits] += 1
+            site_logs[log_time][username][:bandwidth] += size.to_i
 
-          total_site_stats[log_time][:hits] += 1
-          total_site_stats[log_time][:bandwidth] += size.to_i
+            total_site_stats[log_time][:hits] += 1
+            total_site_stats[log_time][:bandwidth] += size.to_i
 
-          unless site_logs[log_time][username][:view_ips].include?(ip)
-            site_logs[log_time][username][:views] += 1
+            unless site_logs[log_time][username][:view_ips].include?(ip)
+              site_logs[log_time][username][:views] += 1
 
-            total_site_stats[log_time][:views] += 1
+              total_site_stats[log_time][:views] += 1
 
-            site_logs[log_time][username][:view_ips] << ip
+              site_logs[log_time][username][:view_ips] << ip
 
-            if referrer != '-' && !referrer.nil?
-              site_logs[log_time][username][:referrers][referrer] ||= 0
-              site_logs[log_time][username][:referrers][referrer] += 1
+              if referrer != '-' && !referrer.nil?
+                site_logs[log_time][username][:referrers][referrer] ||= 0
+                site_logs[log_time][username][:referrers][referrer] += 1
+              end
             end
-          end
 
-          site_logs[log_time][username][:paths][path] ||= 0
-          site_logs[log_time][username][:paths][path] += 1
+            site_logs[log_time][username][:paths][path] ||= 0
+            site_logs[log_time][username][:paths][path] += 1
+          end
+        rescue => e
+          puts "Log parse exception: #{e.inspect}"
+          logfile.close
+          FileUtils.mv log_path, log_path.gsub('.log', '.brokenlog')
+          next
         end
 
         logfile.close
