@@ -84,6 +84,11 @@ post '/create' do
     return {result: 'error'}.to_json
   end
 
+  if Site.disposable_mx_record?(@site.email)
+    flash[:error] = 'Cannot use a disposable email address.'
+    return {result: 'error'}.to_json
+  end
+
   @site.email_confirmed = true if self.class.development?
   @site.save
 
