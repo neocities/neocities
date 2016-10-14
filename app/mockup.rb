@@ -1,37 +1,37 @@
 # :nocov:
-get '/home_mockup' do
-  erb :'home_mockup'
+get '/mockup/home' do
+  erb :'mockup/home'
 end
 
-get '/edit_mockup' do
-  erb :'edit_mockup'
+get '/mockup/edit' do
+  erb :'mockup/edit'
 end
 
-get '/profile_mockup' do
+get '/mockup/profile' do
   require_login
-  erb :'profile_mockup', locals: {site: current_site}
+  erb :'mockup/profile', locals: {site: current_site}
 end
 
-get '/browse_mockup' do
-  erb :'browse_mockup'
+get '/mockup/browse' do
+  erb :'mockup/browse'
 end
 
-get '/tips_mockup' do
-  erb :'tips_mockup'
+get '/mockup/tips' do
+  erb :'mockup/tips'
 end
 
-get '/welcome_mockup' do
+get '/mockup/welcome' do
   require_login
-  erb :'welcome_mockup', locals: {site: current_site}
+  erb :'mockup/welcome', locals: {site: current_site}
 end
 
-get '/stats_mockup' do
+get '/mockup/stats' do
   require_login
-  erb :'stats_mockup', locals: {site: current_site}
+  erb :'mockup/stats', locals: {site: current_site}
 end
 
-get '/tutorial_mockup_c1p2' do
+get '/mockup/tutorial-c1p2' do
   require_login
-  erb :'tutorial_mockup_c1p2', locals: {site: current_site}
+  erb :'mockup/tutorial-c1p2', locals: {site: current_site}
 end
 # :nocov:
