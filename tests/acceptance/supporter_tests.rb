@@ -1,6 +1,6 @@
 require_relative './environment.rb'
 
-describe '/plan' do
+describe '/supporter' do
   include Capybara::DSL
 
   before do
@@ -24,16 +24,16 @@ describe '/plan' do
   end
 
   it 'should work for fresh signup' do
-    visit '/plan'
+    visit '/supporter'
     fill_in 'Card Number', with: '4242424242424242'
     fill_in 'Expiration Month', with: '01'
     fill_in 'Expiration Year', with: Date.today.next_year
     fill_in 'Cardholder\'s Name', with: 'Penelope'
     fill_in 'Card Validation Code', with: '123'
     find('#stripe_token').set @stripe_helper.generate_card_token
-    find('#upgradePlanType').set 'supporter'
-    click_button 'Upgrade'
-    page.current_path.must_equal '/plan/thanks'
+    #find('#upgradePlanType').set 'supporter'
+    click_link 'Upgrade for'
+    page.current_path.must_equal '/supporter/thanks'
     page.body.must_match /You now have the Supporter plan./
     @site.reload
     @site.stripe_customer_id.wont_be_nil

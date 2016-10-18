@@ -4,22 +4,9 @@
     <th class="feature-column"></th>
     <th>
       <h3>Free</h3>
-      <% if request.path != '/welcome' %>
-        <p>$<%= Site::PLAN_FEATURES[:free][:price] %>/mo</p>
-        <%== plan_pricing_button :free %>
-      <% end %>
     </th>
     <th class="professional">
       <h3>Supporter</h3>
-      <% if request.path != '/welcome' %>
-        <% if parent_site && parent_site.legacy_supporter? %>
-          <p>$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site.values[:plan_type].to_sym] %>/mo</p>
-          <div class="current-plan">Current Plan</div>
-        <% else %>
-          <p>$<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo</p>
-          <%== plan_pricing_button :supporter %>
-        <% end %>
-      <% end %>
     </th>
   </tr>
   <tr>

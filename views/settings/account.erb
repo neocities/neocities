@@ -23,20 +23,21 @@
       </div>
       <div class="tabbable" style="margin-top: 20px"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#plan" data-toggle="tab">Plan</a></li>
-          <li><a href="#sites" data-toggle="tab">Sites</a></li>
-          <li><a href="#password" data-toggle="tab">Password</a></li>
-          <li><a href="#email" data-toggle="tab">Email</a></li>
+
+          <li class="active"><a href="#sites" data-toggle="tab">Manage Sites</a></li>
+          <li><a href="#supporter" data-toggle="tab">Supporter Info</a></li>
+          <li><a href="#password" data-toggle="tab">Change Password</a></li>
+          <li><a href="#email" data-toggle="tab">Change Email</a></li>
           <% if current_site.stripe_paying_supporter? %>
-            <li><a href="#billing" data-toggle="tab">Billing</a></li>
+            <li><a href="#billing" data-toggle="tab">Change Card</a></li>
           <% end %>
         </ul>
         <div class="tab-content">
-          <div class="tab-pane active" id="plan">
-            <%== erb :'settings/account/plan' %>
-          </div>
-          <div class="tab-pane" id="sites">
+          <div class="tab-pane active" id="sites">
             <%== erb :'settings/account/sites' %>
+          </div>
+          <div class="tab-pane" id="supporter">
+            <%== erb :'settings/account/supporter' %>
           </div>
           <div class="tab-pane" id="password">
             <%== erb :'settings/account/password' %>

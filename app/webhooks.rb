@@ -40,6 +40,7 @@ post '/webhooks/stripe' do
     site = stripe_get_site_from_event event
     site.stripe_subscription_id = nil
     site.plan_type = nil
+    site.plan_ended = true
     site.save_changes validate: false
 
     EmailWorker.perform_async({

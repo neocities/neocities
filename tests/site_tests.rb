@@ -10,7 +10,7 @@ describe Site do
       site = Fabricate :site
       site.ban!
       File.exist?(site.current_files_path('index.html')).must_equal true
-      site.current_files_path('index.html').must_equal File.join(Site::BANNED_SITES_ROOT, site.username, 'index.html')
+      site.current_files_path('index.html').must_equal File.join(Site::DELETED_SITES_ROOT, site.username, 'index.html')
     end
   end
 

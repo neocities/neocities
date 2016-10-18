@@ -1,105 +1,128 @@
 <section class="section plans welcome">
-  <h2>Welcome to Neocities, <%= current_site.username %>!</h2>
+  <% if flash.keys.length > 0 %>
+    <div class="alert alert-block txt-Center">
+      <% flash.keys.each do |key| %>
+        <%== flash[key] %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if request.path == '/welcome' %>
+    <h2>Welcome to Neocities, <%= current_site.username %>!</h2>
+  <% elsif parent_site.supporter? %>
+    <div class="txt-Center" style="margin-bottom: 20px"><img src="/img/heartcat.png"></div>
+    <h2>Thank you for being a supporter!</h2>
+  <% else %>
+    <h2>Become a Supporter</h2>
+  <% end %>
   <h3 class="subtitle">
-    <strong>Neocities will never put advertising on your site.</strong> Instead, Neocities is powered by <strong>you</strong>.
-    Help us bring back creative personal websites by becoming a supporter.
+    <strong>Neocities will never put advertising on your site.</strong> Instead, Neocities is powered by <strong>you</strong>.<br>
+    <% if !parent_site.supporter? %>
+      Help us bring back creative web sites by becoming a supporter.
+    <% end %>
   </h3>
 
-  <div class="plan-overview">
-    <div class="col free">
-      <div class="row content">
-        <div class="col col-100">
-          <h3>Free</h3>
-          <div class="plan-image free">
-          </div>
-          <div class="price">$<%= Site::PLAN_FEATURES[:free][:price] %></div>
-          <div class="interval">per month</div>
+  <% if !parent_site.supporter? %>
 
-          <ul class="main-features">
-            <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %></strong> <span data-original-title="How much space you have to upload files. The more space, the bigger your site can be.">storage</span></li>
-            <li><strong><%= Site::PLAN_FEATURES[:free][:bandwidth].to_space_pretty %></strong> <span data-original-title="How much traffic can visit your site. This is a soft limit. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
-          </ul>
-        </div>
-      </div>
-      <div class="row content txt-Center">
-        <a href="/tutorial" class="btn-Action">Continue</a>
-      </div>
-    </div>
-
-    <div class="col supporter">
-      <div class="row content">
-        <div class="col col-33">
-          <h3>Supporter</h3>
-          <div class="plan-image supporter">
-          </div>
-          <% if parent_site && parent_site.legacy_supporter? %>
-            <div class="price">$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site[:plan_type].to_sym] %></div>
-            <div class="interval">per month, billed annually</div>
-          <% else %>
-            <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
+    <div class="plan-overview">
+      <div class="col free">
+        <div class="row content">
+          <div class="col col-100">
+            <h3>Free</h3>
+            <div class="plan-image free">
+            </div>
+            <div class="price">$<%= Site::PLAN_FEATURES[:free][:price] %></div>
             <div class="interval">per month</div>
-          <% end %>
 
-          <ul class="main-features">
-            <li><strong><%= (Site::PLAN_FEATURES[:supporter][:space] / (10**6)).to_comma_separated %> MB</strong> <span data-original-title="Much more disk space, so you can build a much bigger web site.">storage</span></li>
-            <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></strong> <span data-original-title="Tons of bandwidth to serve your site, powered by our high-quality network of servers. This is a soft limit. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
-          </ul>
-
-          <ul>
-            <li><span data-original-title="Free plans don't allow uploading music, video, compressed, and executable files to prevent piracy. With a supporter plan, you can upload anything you want.">No File Upload Type Restrictions</span></li>
-            <li><span data-original-title="Make as many sites as you want with one account, and easily switch between them.">Unlimited Site Creation</span></li>
-            <li><span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domain Support</span></li>
-            <li><span data-original-title="With WebDAV, you can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">Remote Filesystem Support</span></li>
-          </ul>
-        </div>
-
-        <div class="col col-66">
-          <p class="instructions">Just enter your card info, and you're done:</p>
-          <div>
-            <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
-            <form id="upgradeForm" method="POST" action="/plan/update">
-              <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-              <input type="hidden" value="supporter" name="plan_type">
-              <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
-
-              <div class="credit-card-input no-js" id="skeuocard" style="margin-left: auto; margin-right: auto; margin-bottom: 20px">
-                <p class="no-support-warning"></p>
-                <label for="cc_type">Card Type</label>
-                <select name="cc_type">
-                  <option value="">...</option>
-                  <option value="visa">Visa</option>
-                  <option value="discover">Discover</option>
-                  <option value="mastercard">MasterCard</option>
-                  <option value="maestro">Maestro</option>
-                  <option value="jcb">JCB</option>
-                  <option value="unionpay">China UnionPay</option>
-                  <option value="amex">American Express</option>
-                  <option value="dinersclubintl">Diners Club</option>
-                </select>
-                <label for="cc_number">Card Number</label>
-                <input type="text" name="cc_number" id="cc_number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" size="19">
-                <label for="cc_exp_month">Expiration Month</label>
-                <input type="text" name="cc_exp_month" id="cc_exp_month" placeholder="00">
-                <label for="cc_exp_year">Expiration Year</label>
-                <input type="text" name="cc_exp_year" id="cc_exp_year" placeholder="00">
-                <label for="cc_name">Cardholder's Name</label>
-                <input type="text" name="cc_name" id="cc_name" placeholder="John Doe">
-                <label for="cc_cvc">Card Validation Code</label>
-                <input type="text" name="cc_cvc" id="cc_cvc" placeholder="123" maxlength="3" size="3">
-              </div>
-            </form>
+            <ul class="main-features">
+              <li><strong><%= Site::PLAN_FEATURES[:free][:space].to_space_pretty %></strong> <span data-original-title="How much space you have to upload files. The more space, the bigger your site can be.">storage</span></li>
+              <li><strong><%= Site::PLAN_FEATURES[:free][:bandwidth].to_space_pretty %></strong> <span data-original-title="How much traffic can visit your site. This is a soft limit. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
+            </ul>
           </div>
         </div>
+        <div class="row content txt-Center">
+          <% if request.path == '/welcome' %>
+            <a href="/tutorial" class="btn-Action">Continue</a>
+          <% end %>
+        </div>
       </div>
 
-      <div class="row content txt-Center">
-        <a href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">
-          Upgrade for $<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo
-        </a>
-        or pay with <a href="/plan/paypal">PayPal</a> or <a href="/plan/bitcoin">Bitcoin</a>
+      <div class="col supporter">
+        <div class="row content">
+          <div class="col col-33">
+            <h3>Supporter</h3>
+            <div class="plan-image supporter">
+            </div>
+            <% if parent_site && parent_site.legacy_supporter? %>
+              <div class="price">$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site[:plan_type].to_sym] %></div>
+              <div class="interval">per month, billed annually</div>
+            <% else %>
+              <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
+              <div class="interval">per month</div>
+            <% end %>
+
+            <ul class="main-features">
+              <li><strong><%= (Site::PLAN_FEATURES[:supporter][:space] / (10**6)).to_comma_separated %> MB</strong> <span data-original-title="Much more disk space, so you can build a much bigger web site.">storage</span></li>
+              <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></strong> <span data-original-title="Tons of bandwidth to serve your site, powered by our high-quality network of servers. This is a soft limit. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
+            </ul>
+
+            <ul>
+              <li><span data-original-title="Free plans don't allow uploading music, video, compressed, and executable files to prevent piracy. With a supporter plan, you can upload anything you want.">No File Upload Type Restrictions</span></li>
+              <li><span data-original-title="Make as many sites as you want with one account, and easily switch between them.">Unlimited Site Creation</span></li>
+              <li><span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domain Support</span></li>
+              <li><span data-original-title="With WebDAV, you can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">Remote Filesystem Support</span></li>
+            </ul>
+          </div>
+
+          <div class="col col-66">
+            <p class="instructions">Just enter your card info, and you're done:</p>
+            <div>
+              <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
+              <form id="upgradeForm" method="POST" action="/supporter/update">
+                <%== csrf_token_input_html %>
+                <input type="hidden" value="supporter" name="plan_type">
+                <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
+
+                <div class="credit-card-input no-js" id="skeuocard" style="margin-left: auto; margin-right: auto; margin-bottom: 20px">
+                  <p class="no-support-warning"></p>
+                  <label for="cc_type">Card Type</label>
+                  <select name="cc_type">
+                    <option value="">...</option>
+                    <option value="visa">Visa</option>
+                    <option value="discover">Discover</option>
+                    <option value="mastercard">MasterCard</option>
+                    <option value="maestro">Maestro</option>
+                    <option value="jcb">JCB</option>
+                    <option value="unionpay">China UnionPay</option>
+                    <option value="amex">American Express</option>
+                    <option value="dinersclubintl">Diners Club</option>
+                  </select>
+                  <label for="cc_number">Card Number</label>
+                  <input type="text" name="cc_number" id="cc_number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" size="19">
+                  <label for="cc_exp_month">Expiration Month</label>
+                  <input type="text" name="cc_exp_month" id="cc_exp_month" placeholder="00">
+                  <label for="cc_exp_year">Expiration Year</label>
+                  <input type="text" name="cc_exp_year" id="cc_exp_year" placeholder="00">
+                  <label for="cc_name">Cardholder's Name</label>
+                  <input type="text" name="cc_name" id="cc_name" placeholder="John Doe">
+                  <label for="cc_cvc">Card Validation Code</label>
+                  <input type="text" name="cc_cvc" id="cc_cvc" placeholder="123" maxlength="3" size="3">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="row content txt-Center">
+          <a id="upgradeLink" href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">
+            Upgrade for $<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo
+          </a>
+          or pay with <a href="/supporter/paypal">PayPal</a> or <a href="/supporter/bitcoin">Bitcoin</a>
+        </div>
       </div>
     </div>
-  </div>
+
+  <% end %>
 
   <div class="row">
     <div class="col col-50">
@@ -110,9 +133,7 @@
 
     <div class="col col-50">
       <h3><i class="fa fa-lock"></i> Risk-free and secure</h3>
-      <p>You can downgrade back to a free account at any time on the Support Us page. If you do, we’ll refund the amount you didn’t use.</p>
-
-      <p>We use Stripe and PayPal for payments, and never store your credit card information directly. </p>
+      <p>You can downgrade back to a free account at any time. If you do, we’ll refund the amount you didn’t use. We use Stripe and PayPal for payments, and never store your credit card information directly.</p>
     </div>
   </div>
 
@@ -120,25 +141,25 @@
     <div class="col col-50">
       <h3><i class="fa fa-globe"></i> Making a better web</h3>
       <p>
-        When you become a supporter, you are directly helping our quest to bring back the creative, independent web. With your help we’ll be able to work on Neocities full-time to continue improving the site and adding more features.
+        When you become a supporter, you are directly helping our quest to bring back the creative, independent web. With your help, we'll be able to continue improving the site and adding more features.
       </p>
     </div>
 
     <div class="col col-50">
       <h3><i class="fa fa-university"></i> Giving back</h3>
       <p>
-        Neocities is used by educators all over the world to teach thousands of students how to program. And as an <a href="http://www.opencompany.org">Open Company</a>, our site is <a href="https://github.com/neocities">completely open source</a> and we share all our code with the community.
+        Neocities is used by educators all over the world to teach thousands of students how to program and create web sites.
       </p>
     </div>
   </div>
 </section>
 
 <section class="section" style="padding-top: 0;">
-  <%== erb :'plan/_compare', layout: false %>
+  <%== erb :'supporter/_compare', layout: false %>
 </section>
 
 
-<%== erb :'plan/_signupcode', layout: false %>
+<%== erb :'supporter/_signupcode', layout: false %>
 <script>
   $(function() {
     $('ul span').tooltip({

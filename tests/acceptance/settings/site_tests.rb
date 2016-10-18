@@ -312,12 +312,10 @@ describe 'delete' do
     fill_in 'deleted_reason', with: 'derp'
     click_button 'Delete Site'
 
-    subscription = Stripe::Customer.retrieve(@site.stripe_customer_id).subscriptions.first
-
-    subscription.plan.id.must_equal 'free'
+    Stripe::Customer.retrieve(@site.stripe_customer_id).subscriptions.count.must_equal 0
     @site.reload
+    @site.stripe_subscription_id.must_equal nil
     @site.is_deleted.must_equal true
-    @site.plan_type.must_equal 'free'
   end
 
   it 'should fail unless owned by current user' do

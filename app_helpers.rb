@@ -88,38 +88,6 @@ def send_confirmation_email(site=current_site)
   })
 end
 
-def plan_pricing_button(plan_type)
-  plan_type = plan_type.to_s
-
-  if !parent_site
-    %{<a href="/#new" class="btn-Action">Sign Up</a>}
-  elsif parent_site && parent_site.plan_type == plan_type
-    if request.path.match /\/welcome/
-      %{<a href="/" class="btn-Action">Get Started</a>}
-    else
-      %{<div class="current-plan">Current Plan</div>}
-    end
-  else
-    #if plan_type == 'supporter'
-    #  plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]*12}, once per year"
-    #else
-      plan_price = "$#{Site::PLAN_FEATURES[plan_type.to_sym][:price]}, monthly"
-    #end
-
-    if request.path.match /\/welcome/
-      button_title = 'Get Started'
-    else
-      button_title = parent_site.plan_type == 'free' ? 'Upgrade' : 'Change'
-    end
-
-    if button_title == 'Change' && parent_site && parent_site.paypal_active
-      return %{<a href="/plan/paypal/cancel" onclick="return confirm('This will end your supporter plan.')" class="btn-Action">Change</a>}
-    end
-
-    %{<a data-plan_name="#{Site::PLAN_FEATURES[plan_type.to_sym][:name]}" data-plan_type="#{plan_type}" data-plan_price="#{plan_price}" onclick="card = new Skeuocard($('#skeuocard')); return false" class="btn-Action planPricingButton">#{button_title}</a>}
-  end
-end
-
 def dont_browser_cache
   headers['Cache-Control'] = 'private, no-store, max-age=0, no-cache, must-revalidate, post-check=0, pre-check=0'
   headers['Pragma'] = 'no-cache'

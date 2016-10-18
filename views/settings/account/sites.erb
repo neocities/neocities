@@ -1,15 +1,15 @@
 <h2>Your Sites</h2>
 
 <table class="table">
-  <% current_site.account_sites_dataset.each do |site| %>
+  <% current_site.account_sites_dataset.each_with_index do |site,i| %>
     <tr>
-      <td>
+      <td <% if i == 0 %>style="border-top: 0px"<% end %>>
         <a href="//<%= site.host %>" target="_blank"><%= site.username %></a>
         <% if site.parent? %>
           <strong>(parent account)</strong>
         <% end %>
       </td>
-      <td>
+      <td <% if i == 0 %>style="border-top: 0px"<% end %>>
         <a href="/settings/<%= site.username %>">Settings</a>
       </td>
     </tr>
@@ -23,7 +23,7 @@
 
   <form action="/settings/create_child" method="POST">
     <%== csrf_token_input_html %>
-    
+
     <p>Site Name:</p>
     <input name="username" type="text">
 
@@ -32,5 +32,5 @@
     </div>
   </form>
 <% else %>
-  <p>Multiple site creation is only available for supporter accounts. <a href="/plan">Upgrade now</a>!</p>
+  <p>Multiple site creation is only available for supporter accounts. <a href="/supporter">Upgrade now</a>!</p>
 <% end %>

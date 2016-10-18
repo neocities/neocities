@@ -1,0 +1,34 @@
+<h2>Neocities Supporter</h2>
+<% if current_site.supporter? && !current_site.plan_ended %>
+  <p class="tiny">You currently have the <strong>Supporter Plan (<%= current_site.maximum_space.to_space_pretty %>)</strong>. Thank you! We love you.
+  </p>
+
+  <% if parent_site.paying_supporter? %>
+    <a class="btn-Action" href="/supporter" style="margin-bottom: 20px">Supporter Info</a>
+    <small><a href="#" onclick="$('#endSupporterConfirm').modal()" style="font-size: 8pt">End Supporter Membership</a></small>
+  <% end %>
+<% else %>
+  <p class="tiny">
+    You currently have the <strong>Free Plan (<%= current_site.maximum_space.to_space_pretty %>)</strong>.<br>Want to get more space and help Neocities? Become a supporter!
+  </p>
+  <a class="btn-Action" href="/supporter">Supporter Info</a>
+<% end %>
+
+<div class="modal hide fade" id="endSupporterConfirm" tabindex="-1" role="dialog" aria-labelledby="endSupporterConfirmLabel" aria-hidden="true">
+  <form method="POST" action="/supporter/end">
+    <%== csrf_token_input_html %>
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <input type="hidden" value=" free" name="plan_type">
+    <div class="modal-header">
+      <h3 id="endSupporterConfirmLabel">End Supporter Membership</h3>
+    </div>
+    <div class="modal-body">
+      <font style="color: red; font-weight: bold">Warning:</font><br>If you do this, it will end your supporter membership. You will no longer be billed. Your account will revert to a "free" account, and supporter features will no longer be available. Are you sure you want to do this?<br><br>
+    </div>
+    <div class="modal-footer">
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">No, cancel</button>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <button type="submit" class="btn-Action">Yes, end supporter membership</button>
+    </div>
+  </form>
+</div>

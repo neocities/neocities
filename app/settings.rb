@@ -32,15 +32,6 @@ post '/settings/:username/delete' do
     redirect "/settings/#{@site.username}#delete"
   end
 
-  if @site.parent? && @site.stripe_customer_id
-    customer = Stripe::Customer.retrieve @site.stripe_customer_id
-    subscription = customer.subscriptions.retrieve @site.stripe_subscription_id
-    subscription.plan = 'free'
-    subscription.save
-    @site.plan_type = 'free'
-    @site.save_changes validate: false
-  end
-
   @site.deleted_reason = params[:deleted_reason]
   @site.save validate: false
   @site.destroy

@@ -426,6 +426,8 @@ class Site < Sequel::Model
 
   def before_destroy
     DB.transaction {
+      owner.end_supporter_membership! if parent?
+
       if !Dir.exist? DELETED_SITES_ROOT
         FileUtils.mkdir DELETED_SITES_ROOT
       end
@@ -447,18 +449,10 @@ class Site < Sequel::Model
     end
 
     return if is_banned == true
-
-    DB.transaction {
-      self.is_banned = true
-      self.banned_at = Time.now
-      save(validate: false)
-
-      if !Dir.exist? BANNED_SITES_ROOT
-        FileUtils.mkdir BANNED_SITES_ROOT
-      end
-
-      FileUtils.mv files_path, File.join(BANNED_SITES_ROOT, username)
-    }
+    self.is_banned = true
+    self.banned_at = Time.now
+    save validate: false
+    destroy
 
     site_files.each do |site_file|
       delete_cache site_file.path
@@ -999,7 +993,7 @@ class Site < Sequel::Model
 
   def current_base_files_path(name=username)
     raise 'username missing' if name.nil? || name.empty?
-    return File.join BANNED_SITES_ROOT, name if is_banned
+    return File.join DELETED_SITES_ROOT, name if is_deleted
     base_files_path name
   end
 
@@ -1114,7 +1108,43 @@ class Site < Sequel::Model
   end
 
   def stripe_paying_supporter?
-    stripe_customer_id && !plan_ended && values[:plan_type].match(/free|special/).nil?
+    owner.stripe_customer_id && !owner.plan_ended && owner.values[:plan_type] && owner.values[:plan_type].match(/free|special/).nil?
+  end
+
+  def paypal_paying_supporter?
+    owner.paypal_active && owner.paypal_profile_id
+  end
+
+  def paying_supporter?
+    return true if stripe_paying_supporter? || owner.values[:paypal_active] == true
+  end
+
+  def end_supporter_membership!
+    owner.end_supporter_membership! unless parent?
+
+    if stripe_paying_supporter?
+      customer = Stripe::Customer.retrieve stripe_customer_id
+      subscription = customer.subscriptions.retrieve stripe_subscription_id
+      subscription.delete
+
+      self.plan_type = nil
+      self.stripe_subscription_id = nil
+      self.plan_ended = true
+    elsif paypal_paying_supporter?
+      ppr = PayPal::Recurring.new profile_id: paypal_profile_id
+      ppr.cancel
+
+      self.plan_type = nil
+      self.paypal_active = false
+      self.paypal_profile_id = nil
+      self.paypal_token = nil
+      self.plan_ended = true
+    else
+      return false
+    end
+
+    save_changes validate: false
+    true
   end
 
   def unconverted_legacy_supporter?

@@ -20,18 +20,20 @@
     First, you need to add an "A record" to point your root domain (sometimes shown with an @ symbol) (catsknitting.com) to the following IP address:
   </p>
 
-  <p><code>54.68.34.66</code></p>
+  <p><code>198.51.233.1</code></p>
 
-  <h3>Step 2</h3>
+  <h3>Step 2 (optional)</h3>
 
   <p>
-    Next, you need to add a CNAME record which points <strong>www.catsknitting.com</strong> to <strong>proxy.neocitiesops.net</strong>.
+    Now you need to add an "AAAA record" that also points to your root domain. This is for IPv6 support. Use this address for the AAAA record:
   </p>
+
+  <p><code>2620:2:6000::bad:dab:cafe</code></p>
 
   <h3>Step 3</h3>
 
   <p>
-    Add the domain name to the box below (just the <strong>catsknitting.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes:
+    Add the domain name to the box below (just the <strong>catsknitting.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes!
   </p>
 
   <form method="POST" action="/settings/<%= @site.username %>/custom_domain">
@@ -41,44 +43,5 @@
     <input class="btn-Action" type="submit" value="Update Domain">
   </form>
 <% else %>
-  <strong>Custom domains require a Supporter account. <a href="/plan">Upgrade now</a>.</strong>
+  <strong>Custom domains require a Supporter account. <a href="/supporter">Upgrade now</a>.</strong>
 <% end %>
-
-<h2>Add SSL Certificate</h2>
-<p>
-  This allows you to add an SSL key and certificate for your domain, enabling encryption for your site (https). It can take up to 5-30 minutes for the changes to go live, so please be patient. All files must be in PEM format. If your certificate is not bundled with the root and intermediate certificates, ask your certificate provider for help on how to do that.
-</p>
-
-<p><strong>We're wrapping up the finishing touches on SSL certs, it's not quite ready yet. Check back shortly!</strong></p>
-
-<!--
-
-<% if @site.domain.nil? || @site.domain.empty? %>
-  <p><strong>Cannot upload SSL certificate until domain is added.</strong></p>
-<% else %>
-
-  <form method="POST" action="/settings/<%= @site.username %>/ssl" enctype="multipart/form-data">
-    <%== csrf_token_input_html %>
-
-    <p>
-      <strong>
-        Status: <%= @site.ssl_installed? ? 'Installed' : 'Inactive' %>
-      </strong>
-    </p>
-
-    <p>
-      SSL Key (yourdomain.com.key):
-      <input name="key" type="file">
-    </p>
-
-    <p>
-      Bundled Certificates (yourdomain.com-bundle.crt):
-      <input name="cert" type="file">
-    </p>
-
-    <input class="btn-Action" type="submit" value="Upload SSL Key and Certificate">
-
-  </form>
-<% end %>
-
--->

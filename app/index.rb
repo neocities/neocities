@@ -41,7 +41,7 @@ end
 
 get '/welcome' do
   require_login
-  redirect '/' if current_site.plan_type != 'free'
+  redirect '/' if current_site.supporter?
   erb :'welcome', locals: {site: current_site}
 end
 
