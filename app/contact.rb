@@ -16,12 +16,27 @@ post '/contact' do
   if !@errors.empty?
     erb :'contact'
   else
+    body = params[:body]
+
+    if current_site
+      body = "current username: #{current_site.username}\n\n" + body
+      if parent_site != current_site
+        body = "parent username: #{parent_site.username}\n\n" + body
+      end
+    end
+
+    if current_site.supporter?
+      subject = "[Neocities Supporter Contact]: #{params[:subject]}"
+    else
+      subject = "[Neocities Contact]: #{params[:subject]}"
+    end
+
     EmailWorker.perform_async({
       from: 'web@neocities.org',
       reply_to: params[:email],
       to: 'contact@neocities.org',
-      subject: "[Neocities Contact]: #{params[:subject]}",
-      body: params[:body],
+      subject: subject,
+      body: body,
       no_footer: true
     })
 
