@@ -159,9 +159,10 @@ get '/supporter/paypal/return' do
   current_site.paypal_profile_id = paypal_response.profile_id
   current_site.paypal_active = true
   current_site.plan_type = 'supporter'
+  current_site.plan_ended = false
   current_site.save_changes validate: false
 
-  redirect '/supporter/thanks-paypal'
+  redirect '/supporter/thanks'
 end
 
 def paypal_recurring_hash
