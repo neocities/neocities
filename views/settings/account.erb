@@ -31,6 +31,9 @@
           <% if current_site.stripe_paying_supporter? %>
             <li><a href="#billing" data-toggle="tab">Change Card</a></li>
           <% end %>
+          <% if parent_site == current_site && parent_site.children_dataset.count == 0 %>
+            <li><a href="#delete" data-toggle="tab">Delete Account</a></li>
+          <% end %>
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="sites">
@@ -48,6 +51,11 @@
           <% if current_site.stripe_paying_supporter? %>
             <div class="tab-pane" id="billing">
               <%== erb :'settings/account/billing' %>
+            </div>
+          <% end %>
+          <% if parent_site == current_site && parent_site.children_dataset.count == 0 %>
+            <div class="tab-pane" id="delete">
+              <%== erb :'settings/site/delete' %>
             </div>
           <% end %>
         </div>
