@@ -5,18 +5,6 @@ describe DeleteCacheWorker do
     @test_ip = '10.0.0.1'
   end
 
-  it 'throws exception without 200 or 404 http status' do
-    stub_request(:get, "http://#{@test_ip}/:cache/purge/test.jpg").
-      with(headers: {'Host' => 'kyledrake.neocities.org'})
-      .to_return(status: 503)
-
-    worker = DeleteCacheWorker.new
-
-    proc {
-      worker.perform @test_ip, 'kyledrake', '/test.jpg'
-    }.must_raise RestClient::ServiceUnavailable
-  end
-
   it 'handles 404 without exception' do
     stub_request(:get, "http://#{@test_ip}/:cache/purge/test.jpg").
       with(headers: {'Host' => 'kyledrake.neocities.org'})
