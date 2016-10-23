@@ -22,17 +22,14 @@ class PurgeCacheWorker
     retry_encoded = false
 
     begin
-      RestClient::Request.execute method: :head, url: url, timeout: HTTP_TIMEOUT, headers: {
-        host: URI::encode("#{username}.neocities.org"),
-        cache_purge: '1'
-      }
+      HTTP.timeout(read: 10, write: 10, connect: 2).
+        headers(host: URI::encode("#{username}.neocities.org"), cache_purge: '1').
+        head(url)
     rescue URI::InvalidURIError
       raise if retry_encoded == true
       url = URI.encode url
       retry_encoded = true
       retry
-    rescue RestClient::ResourceNotFound
-    rescue RestClient::Forbidden
     end
   end
 end

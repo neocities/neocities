@@ -23,12 +23,9 @@ class DeleteCacheWorker
       "http://#{proxy_ip}/:cache/purge#{path}",
       Addressable::URI::CharacterClasses::QUERY
     )
-    begin
-      RestClient::Request.execute method: :get, url: url, timeout: HTTP_TIMEOUT, headers: {
-        host: URI::encode("#{username}.neocities.org")
-      }
-    rescue RestClient::ResourceNotFound
-    rescue RestClient::Forbidden
-    end
+
+    HTTP.timeout(read: 10, write: 10, connect: 2).
+      headers(host: URI::encode("#{username}.neocities.org")).
+      get(url)
   end
 end

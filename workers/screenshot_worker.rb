@@ -83,9 +83,10 @@ class ScreenshotWorker
 
   sidekiq_retries_exhausted do |msg|
     username, path = msg['args']
-    site = Site[username: username]
-    site.is_crashing = true
-    site.save_changes validate: false
+    # This breaks too much so we're disabling it.
+    #site = Site[username: username]
+    #site.is_crashing = true
+    #site.save_changes validate: false
 
 =begin
         if site.email
