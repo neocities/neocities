@@ -14,6 +14,15 @@ def create_site(opts={})
   @pass = site_attr[:password]
 end
 
+describe 'api not found' do
+  it 'returns json for missing route' do
+    get '/api/sdlfkjsdlfjds'
+    last_response.status.must_equal 404
+    res[:result].must_equal 'error'
+    res[:error_type].must_equal 'not_found'
+  end
+end
+
 describe 'api list' do
   it 'returns all files without path' do
     create_site

@@ -39,6 +39,7 @@ before do
 end
 
 not_found do
+  api_not_found if @api
   @title = 'Not Found'
   erb :'not_found'
 end
