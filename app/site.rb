@@ -134,7 +134,7 @@ post '/site/:username/comment' do |username|
      site.is_blocking?(current_site) ||
      current_site.is_blocking?(site) ||
      current_site.commenting_allowed? == false)
-    redirect "/site/#{username}"
+    redirect request.referrer
   end
 
   site.add_profile_comment(
@@ -142,7 +142,7 @@ post '/site/:username/comment' do |username|
     message: params[:message]
   )
 
-  redirect "/site/#{username}"
+  redirect request.referrer
 end
 
 get '/site/:username/tip' do |username|

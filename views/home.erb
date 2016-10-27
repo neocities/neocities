@@ -36,6 +36,9 @@
               Below are some website suggestions for you. For more, <a href="/browse">check out all the sites on Neocities</a>!
             </p>
           </div>
+        <% else %>
+          <%== erb :'site/_profile_comments', locals: {site: site} %>
+          <div style="margin-bottom: 15px"></div>
         <% end %>
 
         <% if !@events.empty? %>

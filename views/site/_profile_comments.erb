@@ -1,0 +1,27 @@
+<% if current_site && site.profile_comments_enabled %>
+  <div class="post-comment">
+    <form method="POST" action="/site/<%= site.username %>/comment">
+      <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+      <input name="message"
+             type="text"
+             placeholder="Post a message..."
+             autocomplete="off"
+             maxlength="<%= Site::MAX_COMMENT_SIZE %>"
+             <% unless current_site.commenting_allowed? %>disabled<% end %>
+      >
+      <button class="btn-Action"
+              <% unless current_site.commenting_allowed? %>disabled<% end %>
+      >Post</button>
+    </form>
+
+    <% unless current_site.commenting_allowed? %>
+        <p class="comment-policy">
+            <% if current_site.commenting_too_much? %>
+              To prevent spam, we have a <%= Site::MAX_COMMENTS_PER_DAY %> comment per day limit. Please try commenting again tomorrow!
+            <% else %>
+              To prevent spam, you cannot comment until you have updated your site <strong><%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %> times</strong> (on <%= Site::COMMENTING_ALLOWED_UPDATED_COUNT %> separate days), and your account is one week old. While waiting, now is a great time to <a href="/dashboard">start building your awesome site!</a>
+            <% end %>
+        </p>
+    <% end %>
+  </div>
+<% end %>
