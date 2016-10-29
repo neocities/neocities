@@ -9,7 +9,7 @@
 
   <% if request.path == '/welcome' %>
     <h2>Welcome to Neocities, <%= current_site.username %>!</h2>
-  <% elsif parent_site.supporter? %>
+  <% elsif parent_site && parent_site.supporter? %>
     <div class="txt-Center" style="margin-bottom: 20px"><img src="/img/heartcat.png"></div>
     <h2>Thank you for being a supporter!</h2>
   <% else %>
