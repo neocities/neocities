@@ -17,12 +17,12 @@
   <% end %>
   <h3 class="subtitle">
     <strong>Neocities will never put advertising on your site.</strong> Instead, Neocities is powered by <strong>you</strong>.<br>
-    <% if !parent_site.supporter? %>
+    <% if !parent_site || !parent_site.supporter? %>
       Help us bring back creative web sites by becoming a supporter.
     <% end %>
   </h3>
 
-  <% if !parent_site.supporter? %>
+  <% if !parent_site || !parent_site.supporter? %>
 
     <div class="plan-overview">
       <div class="col free">
