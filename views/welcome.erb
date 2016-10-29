@@ -22,7 +22,7 @@
     <% end %>
   </h3>
 
-  <% if !parent_site || !parent_site.supporter? %>
+  <% if signed_in? && !parent_site.supporter? %>
 
     <div class="plan-overview">
       <div class="col free">
