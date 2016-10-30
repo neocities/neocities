@@ -106,7 +106,7 @@ task :compile_nginx_mapfiles => [:environment] do
   end
 
   File.open('./files/maps/sandboxed.txt', 'w') do |file|
-    usernames = DB["select username from sites where created_at > ? and (plan_type is null or plan_type='free')", 1.week.ago].all.collect {|s| s[:username]}.each {|username| file.write "#{username} 1;\n"}
+    usernames = DB["select username from sites where created_at > ? and parent_site_id is null and (plan_type is null or plan_type='free')", 1.week.ago].all.collect {|s| s[:username]}.each {|username| file.write "#{username} 1;\n"}
   end
 
   # Compile letsencrypt ssl keys
