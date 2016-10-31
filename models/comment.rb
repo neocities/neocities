@@ -4,6 +4,8 @@ class Comment < Sequel::Model
   many_to_one :actioning_site, class: :Site
   one_to_many :comment_likes
 
+  dataset.exclude! is_deleted: true
+
   def liking_site_titles
     comment_likes_dataset.select(:id, :actioning_site_id).all.collect do |comment_like|
       comment_like.actioning_site_dataset.select(:username,:domain,:title).first.title
