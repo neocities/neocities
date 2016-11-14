@@ -30,7 +30,7 @@ describe 'signup' do
   it 'succeeds with valid data' do
     fill_in_valid
     click_button 'Create My Site'
-    page.must_have_content /Welcome to your new site/
+    page.must_have_content /Let's Get Started/
 
     index_file_path = File.join Site::SITE_FILES_ROOT, @site[:username], 'index.html'
     File.exist?(index_file_path).must_equal true

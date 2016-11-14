@@ -7,7 +7,7 @@
       if(errors.length == 0) {
         $.post('/create', $('#createSiteForm').serialize(), function(res) {
           if($('input[name=is_education]').val() == 'true') {
-            window.location.href = '/dashboard'
+            window.location.href = '/tutorial'
           } else {
             window.location.href = '/welcome'
           }
