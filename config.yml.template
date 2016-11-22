@@ -20,6 +20,8 @@ development:
   proxy_ips:
     - 10.0.0.1
     - 10.0.0.2
+  education_tag_whitelist:
+    - mrteacher
 test:
   database: 'postgres://localhost/neocities_test'
   database_pool: 1
@@ -41,3 +43,5 @@ test:
   proxy_ips:
     - 10.0.0.1
     - 10.0.0.2
+  education_tag_whitelist:
+    - mrteacher

@@ -16,3 +16,5 @@ letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
 proxy_ips:
   - 10.0.0.1
   - 10.0.0.2
+education_tag_whitelist:
+  - mrteacher
