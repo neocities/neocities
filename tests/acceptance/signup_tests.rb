@@ -9,19 +9,9 @@ describe 'signup' do
 
   def fill_in_valid
     @site = Fabricate.attributes_for(:site)
-
-    time = Time.now
-    begin
-      fill_in 'username', with: @site[:username]
-      fill_in 'password', with: @site[:password]
-      fill_in 'email',    with: @site[:email]
-    rescue Capybara::ElementNotFound
-      puts "Waiting on fill_in #{Time.now - time} seconds"
-      raise if Time.now - time > 30
-      visit_signup
-      sleep 0.5
-      retry
-    end
+    fill_in 'username', with: @site[:username]
+    fill_in 'password', with: @site[:password]
+    fill_in 'email',    with: @site[:email]
   end
 
   def click_signup_button

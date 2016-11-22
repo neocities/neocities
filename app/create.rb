@@ -1,5 +1,7 @@
 def new_recaptcha_valid?
+  return true if session[:captcha_valid] == true
   return session[:captcha_valid] = true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
+  return false unless params[:'g-recaptcha-response']
   resp = Net::HTTP.get URI(
     'https://www.google.com/recaptcha/api/siteverify?'+
     Rack::Utils.build_query(
@@ -84,6 +86,7 @@ post '/create' do
   if education_whitelisted?
     @site.email_confirmed = true
   else
+    new_recaptcha_valid?
     if session[:captcha_valid] != true
       flash[:error] = 'The captcha was not valid, please try again.'
       return {result: 'error'}.to_json

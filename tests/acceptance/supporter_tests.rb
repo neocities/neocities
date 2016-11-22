@@ -1,9 +1,16 @@
 require_relative './environment.rb'
 
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, js_errors: false)
+end
+
 describe '/supporter' do
   include Capybara::DSL
 
   before do
+    Capybara.default_driver = :poltergeist
+    Capybara.reset_sessions!
+
     @site = Fabricate :site
     @stripe_helper = StripeMock.create_test_helper
     StripeMock.start
@@ -17,6 +24,7 @@ describe '/supporter' do
 
   after do
     StripeMock.stop
+    Capybara.default_driver = :rack_test
   end
 
   it 'should work for paypal' do
@@ -25,16 +33,15 @@ describe '/supporter' do
 
   it 'should work for fresh signup' do
     visit '/supporter'
-    fill_in 'Card Number', with: '4242424242424242'
-    fill_in 'Expiration Month', with: '01'
-    fill_in 'Expiration Year', with: Date.today.next_year
-    fill_in 'Cardholder\'s Name', with: 'Penelope'
-    fill_in 'Card Validation Code', with: '123'
-    find('#stripe_token').set @stripe_helper.generate_card_token
-    #find('#upgradePlanType').set 'supporter'
-    click_link 'Upgrade for'
+    find('#cc_number', visible: false).set '4242424242424242'
+    find('#cc_exp_month', visible: false).set '01'
+    find('#cc_exp_year', visible: false).set Date.today.next_year.year.to_s[2..3]
+    find('#cc_name', visible: false).set 'Penelope'
+    find('#cc_cvc', visible: false).set '123'
+    find('#stripe_token', visible: false).set @stripe_helper.generate_card_token
+    click_link 'Upgrade for $5/mo'
     page.current_path.must_equal '/supporter/thanks'
-    page.body.must_match /You now have the Supporter plan./
+    page.body.must_match /You have become a Neocities Supporter/
     @site.reload
     @site.stripe_customer_id.wont_be_nil
     @site.stripe_subscription_id.wont_be_nil

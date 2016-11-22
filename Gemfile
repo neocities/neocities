@@ -87,7 +87,7 @@ group :test do
   gem 'rake',                  require: nil
   gem 'poltergeist'
   gem 'capybara_minitest_spec'
-  gem 'capybara', '2.6.2',     require: nil
+  gem 'capybara', '2.10.1',     require: nil
   gem 'rack_session_access',   require: nil
   gem 'webmock',               require: nil
   gem 'stripe-ruby-mock', '2.0.1',      require: 'stripe_mock'

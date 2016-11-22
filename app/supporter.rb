@@ -14,7 +14,6 @@ end
 
 post '/supporter/update' do
   require_login
-
   plan_type = 'supporter'
 
   if is_special_upgrade
