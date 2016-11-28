@@ -124,6 +124,8 @@ class Site < Sequel::Model
   EMAIL_VALIDATION_CUTOFF_DATE = Time.parse('May 16, 2016')
   DISPOSABLE_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_blacklist.conf')
 
+  BLOCK_JERK_THRESHOLD = 3
+
   def self.newsletter_sites
      Site.select(:email).
        exclude(email: 'nil').exclude(is_banned: true).
@@ -520,6 +522,10 @@ class Site < Sequel::Model
 
     return true if (recent_comments + recent_profile_comments) > MAX_COMMENTS_PER_DAY
     false
+  end
+
+  def is_a_jerk?
+    blocks_dataset.count >= BLOCK_JERK_THRESHOLD
   end
 
   def blocking_site_ids
@@ -1468,8 +1474,8 @@ class Site < Sequel::Model
       return false
     end
 
-    if pathname.extname.match HTML_REGEX
-      # SPAM and phishing checking code goes here
+    if pathname.extname.match(HTML_REGEX) && defined?(BlackBox)
+      BlackBox.tos_violation_check self, uploaded
     end
 
     relative_path_dir = Pathname(relative_path).dirname

@@ -24,3 +24,4 @@ files/disposable_email_blacklist.conf
 files/letsencrypt.key
 files/tor.txt
 .bundle
+ext/black_box.rb

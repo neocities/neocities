@@ -13,9 +13,10 @@ post '/event/:event_id/comment' do |event_id|
 
   site = event.site
 
-  if site.is_blocking?(current_site) ||
+  if(site.is_blocking?(current_site) ||
      site.profile_comments_enabled == false ||
-     current_site.commenting_allowed? == false
+     current_site.commenting_allowed? == false ||
+     (current_site.is_a_jerk? && event.site_id != current_site.id && !site.is_following?(current_site)))
     return {result: 'error'}.to_json
   end
 

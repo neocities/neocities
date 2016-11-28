@@ -129,11 +129,12 @@ post '/site/:username/comment' do |username|
 
   site = Site[username: username]
 
-  if(site.profile_comments_enabled == false ||
+  if site.profile_comments_enabled == false ||
      params[:message].empty? ||
      site.is_blocking?(current_site) ||
      current_site.is_blocking?(site) ||
-     current_site.commenting_allowed? == false)
+     current_site.commenting_allowed? == false ||
+     (current_site.is_a_jerk? && site.id != current_site.id && !site.is_following?(current_site))
     redirect request.referrer
   end
 
