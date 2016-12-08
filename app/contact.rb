@@ -25,7 +25,7 @@ post '/contact' do
       end
     end
 
-    if current_site.supporter?
+    if current_site && current_site.supporter?
       subject = "[Neocities Supporter Contact]: #{params[:subject]}"
     else
       subject = "[Neocities Contact]: #{params[:subject]}"
