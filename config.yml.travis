@@ -1,5 +1,6 @@
 database: 'postgres://postgres@localhost/travis_ci_test'
 database_pool: 1
+redis_url: redis://localhost
 session_secret: 's3cr3t'
 recaptcha_public_key: '1234'
 recaptcha_private_key: '5678'
