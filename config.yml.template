@@ -1,6 +1,7 @@
 development:
   database: 'postgres://localhost/neocities'
   database_pool: 1
+  redis_url: "redis://localhost"
   session_secret: "SECRET GOES HERE"
   recaptcha_public_key: "6LdSMScTAAAAAADhP4IDb5s_EN1qMmvNmrUXReE-"
   recaptcha_private_key: "6LdSMScTAAAAAIZAvP_W9d8fMsVT3iBX5wCwGvqV"

@@ -65,7 +65,7 @@ end
 if ENV['RACK_ENV'] == 'test'
   $redis = MockRedis.new
 else
-  $redis = Redis.new
+  $redis = Redis.new url: $config['redis_url']
 end
 
 $redis_cache = Redis::Namespace.new :cache, redis: $redis
