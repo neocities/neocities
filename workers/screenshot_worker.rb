@@ -7,49 +7,22 @@ require 'open3'
 class ScreenshotWorker
   SCREENSHOTS_PATH = Site::SCREENSHOTS_ROOT
   HARD_TIMEOUT = 30.freeze
+  PAGE_WAIT_TIME = 5.freeze # 3D/VR sites take a bit to render after loading usually.
   include Sidekiq::Worker
   sidekiq_options queue: :screenshots, retry: 3, backtrace: true
 
   def perform(username, path)
     path = "/#{path}" unless path[0] == '/'
-    screenshot = Tempfile.new 'neocities_screenshot'
-    screenshot.close
-    screenshot_output_path = screenshot.path+'.png'
 
-    line = Cocaine::CommandLine.new(
-      "timeout #{HARD_TIMEOUT} phantomjs #{File.join DIR_ROOT, 'files', 'phantomjs_screenshot.js'}", ":url :output",
-      expected_outcodes: [0]
+    uri = Addressable::URI.parse $config['screenshots_url']
+    api_user, api_password = uri.user, uri.password
+    uri = "#{uri.scheme}://#{uri.host}:#{uri.port}" + '?' + Rack::Utils.build_query(
+      url: Site.select(:username,:domain).where(username: username).first.uri + path,
+      wait_time: PAGE_WAIT_TIME
     )
 
-    begin
-      output = line.run(
-        url: "http://#{username}.neocities.org#{path}",
-        output: screenshot_output_path
-      )
-    rescue Cocaine::ExitStatusError => e
-      raise e
-
-      # We set is_crashing after retries now, but use this code to go back to instant:
-
-      #if e.message && e.message.match(/returned 124/)
-      #  puts "#{username}/#{path} is timing out, discontinuing"
-      #  site = Site[username: username]
-      #  site.is_crashing = true
-      #  site.save_changes validate: false
-      #  return true
-      #
-      #else
-      #  raise
-      #end
-    ensure
-      screenshot.unlink
-    end
-
     img_list = Magick::ImageList.new
-    img_list.from_blob File.read(screenshot_output_path)
-
-    screenshot.unlink
-    File.unlink screenshot_output_path
+    img_list.from_blob HTTP.basic_auth(user: api_user, pass: api_password).get(uri).to_s
 
     img_list.new_image(img_list.first.columns, img_list.first.rows) { self.background_color = "white" }
     img = img_list.reverse.flatten_images

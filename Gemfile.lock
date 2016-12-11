@@ -1,3 +1,14 @@
+GIT
+  remote: https://github.com/planio-gmbh/dav4rack.git
+  revision: e68dcf97399a116878a1a68b5c879f5cb05c40cb
+  branch: redmine-storage
+  specs:
+    dav4rack (0.3.0)
+      nokogiri (>= 1.4.2)
+      ox (>= 2.1.0)
+      rack (>= 1.1.0)
+      uuidtools (~> 2.1.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -49,10 +60,6 @@ GEM
       safe_yaml (~> 1.0.0)
     crass (1.0.2)
     dante (0.2.0)
-    dav4rack (0.3.0)
-      nokogiri (>= 1.4.2)
-      rack (>= 1.1.0)
-      uuidtools (~> 2.1.1)
     docile (1.1.5)
     domain_name (0.5.20160826)
       unf (>= 0.0.5, < 1.0.0)
@@ -126,6 +133,7 @@ GEM
       mini_portile2 (~> 2.1.0)
     nokogumbo (1.4.7)
       nokogiri
+    ox (2.4.6)
     paypal-recurring (1.1.0)
     pg (0.18.4)
     poltergeist (1.11.0)
@@ -258,7 +266,7 @@ DEPENDENCIES
   certified
   cocaine
   coveralls
-  dav4rack
+  dav4rack!
   erubis
   fabrication
   faker

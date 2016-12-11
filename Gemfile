@@ -20,7 +20,7 @@ gem 'stripe', '1.15.0' #, source: 'https://code.stripe.com/'
 gem 'cocaine'
 gem 'zipruby'
 gem 'sass', require: nil
-gem 'dav4rack'
+gem 'dav4rack', git: 'https://github.com/planio-gmbh/dav4rack.git', branch: 'redmine-storage'
 gem 'filesize'
 gem 'thread'
 gem 'scrypt'

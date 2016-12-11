@@ -22,6 +22,7 @@ development:
     - 10.0.0.2
   education_tag_whitelist:
     - mrteacher
+  screenshots_url: http://screenshots:derp@127.0.0.1:12345
 test:
   database: 'postgres://localhost/neocities_test'
   database_pool: 1
