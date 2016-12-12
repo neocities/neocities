@@ -12,6 +12,27 @@ class ScreenshotWorker
   sidekiq_options queue: :screenshots, retry: 3, backtrace: true
 
   def perform(username, path)
+
+    queue = Sidekiq::Queue.new self.class.sidekiq_options_hash['queue']
+    logger.info "JOB ID: #{jid} #{username} #{path}"
+    queue.each do |job|
+      if job.args == [username, path] && job.jid != jid
+        logger.info "DELETING #{job.jid} for #{username} #{path}"
+        job.delete
+      end
+    end
+
+    scheduled_jobs = Sidekiq::ScheduledSet.new.select do |scheduled_job|
+       scheduled_job.klass == 'ScreenshotWorker' &&
+       scheduled_job.args[0] == username &&
+       scheduled_job.args[1] == path
+    end
+
+    scheduled_jobs.each do |scheduled_job|
+      logger.info "DELETING scheduled job #{scheduled_job.jid} for #{username} #{path}"
+      scheduled_job.delete
+    end
+
     path = "/#{path}" unless path[0] == '/'
 
     uri = Addressable::URI.parse $config['screenshots_url']
