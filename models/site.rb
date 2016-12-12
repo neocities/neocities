@@ -463,7 +463,7 @@ class Site < Sequel::Model
 
   def ban_all_sites_on_account!
     DB.transaction {
-      account_sites.all {|site| site.ban! }
+      account_sites.each {|site| site.ban! }
     }
   end
 
