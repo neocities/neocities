@@ -16,6 +16,7 @@ def processor_count
   end
 end
 
+threads 1, 1
 environment 'production'
 daemonize
 pidfile '/var/run/neocities/neocities.pid'
