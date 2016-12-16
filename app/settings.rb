@@ -115,6 +115,12 @@ post '/settings/:username/custom_domain' do
   original_domain = @site.domain
   @site.domain = params[:domain]
 
+  if params[:domain] =~ /^www\..+$/i
+    flash[:error] = 'Cannot begin with www - please only enter the domain name.'
+    redirect "/settings/#{@site.username}/#custom_domain"
+
+  end
+
   begin
     Socket.gethostbyname @site.values[:domain]
   rescue SocketError => e
