@@ -24,6 +24,42 @@ end
 
 set :protection, :frame_options => "ALLOW-FROM #{$config['surf_iframe_source']}"
 
+GEOCITIES_NEIGHBORHOODS = %w{
+  area51
+  athens
+  augusta
+  baja
+  bourbonstreet
+  capecanaveral
+  capitolhill
+  collegepark
+  colosseum
+  enchantedforest
+  hollywood
+  motorcity
+  napavalley
+  nashville
+  petsburgh
+  pipeline
+  rainforest
+  researchtriangle
+  siliconvalley
+  soho
+  sunsetstrip
+  timessquare
+  televisioncity
+  tokyo
+  vienna
+  yosemite
+}.freeze
+
+def redirect_to_internet_archive_for_geocities_sites
+  match = request.path.match /^\/(\w+)\/.+$/i
+  if match && GEOCITIES_NEIGHBORHOODS.include?(match.captures.first.downcase)
+    redirect "https://wayback.archive.org/http://geocities.com/#{request.path}"
+  end
+end
+
 before do
   if request.path.match /^\/api\//i
     @api = true
@@ -40,6 +76,7 @@ end
 
 not_found do
   api_not_found if @api
+  redirect_to_internet_archive_for_geocities_sites
   @title = 'Not Found'
   erb :'not_found'
 end
