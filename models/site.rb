@@ -112,7 +112,7 @@ class Site < Sequel::Model
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
     name: 'Free',
     space: Filesize.from('100MB').to_i,
-    bandwidth: Filesize.from('50GB').to_i,
+    bandwidth: Filesize.from('200GB').to_i,
     price: 0,
     unlimited_site_creation: false,
     custom_ssl_certificates: false,
