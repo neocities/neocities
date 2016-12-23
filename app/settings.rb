@@ -128,11 +128,11 @@ post '/settings/:username/custom_domain' do
       flash[:error] = 'Domain needs to be valid and already registered.'
       redirect "/settings/#{@site.username}#custom_domain"
     elsif e.message =~ /No address associated with hostname/i
-      flash[:error] = "The domain isn't setup to use Neocities yet, cannot add. Please make the A and CNAME record changes where you registered your domain."
-      redirect "/settings/#{@site.username}#custom_domain"
+      #flash[:error] = "The domain isn't setup to use Neocities yet, cannot add. Please make the A and CNAME record changes where you registered your domain."
+      #redirect "/settings/#{@site.username}#custom_domain"
+    else
+      raise e
     end
-
-    raise e
   end
 
   if @site.valid?
