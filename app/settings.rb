@@ -142,7 +142,7 @@ post '/settings/:username/custom_domain' do
       LetsEncryptWorker.perform_async @site.id
     end
 
-    flash[:success] = 'The domain has been successfully updated.'
+    flash[:success] = 'The domain has been successfully updated! Make sure your configuration with the domain registrar is correct. It could take a while for the changes to take effect (15-40 minutes), please be patient.'
     redirect "/settings/#{@site.username}#custom_domain"
   else
     flash[:error] = @site.errors.first.last.first
