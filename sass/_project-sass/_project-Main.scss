@@ -2227,3 +2227,11 @@ pre, code {
 .tagcloud .tag2 { font-size: 1.8em; font-weight: 800; }
 .tagcloud .tag1 { font-size: 2.2em; font-weight: 900; }
 .tagcloud .tag0 { font-size: 2.5em; font-weight: 900; }
+
+#tipButton {
+  @extend .btn-Action;
+  background: -webkit-linear-gradient(top, #229954, #145A32);
+  &:hover, &:active {
+    @include linear-gradient(top, #0E6655, #0B5345);
+  }
+}
