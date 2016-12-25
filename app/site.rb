@@ -148,6 +148,7 @@ end
 
 get '/site/:username/tip' do |username|
   @site = Site[username: username]
+  redirect request.referrer unless @site.tipping_enabled?
   @title = "Tip #{@site.title}"
   erb :'tip'
 end

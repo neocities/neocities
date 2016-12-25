@@ -910,6 +910,14 @@ class Site < Sequel::Model
       errors.add :email, 'A valid email address is required.'
     end
 
+    if !values[:tipping_paypal].blank? && (values[:tipping_paypal] =~ EMAIL_SANITY_REGEX).nil?
+      errors.add :tipping_paypal, 'A valid PayPal tipping email address is required.'
+    end
+
+    if !values[:tipping_bitcoin].blank? && !BitcoinValidator.valid_address?(values[:tipping_bitcoin])
+      errors.add :tipping_bitcoin, 'Bitcoin tipping address is not valid.'
+    end
+
     # Check for existing user
     user = self.class.select(:id, :username).filter(username: values[:username]).first
 

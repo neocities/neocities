@@ -1,0 +1,28 @@
+<h2>Site Tipping</h2>
+
+<p>
+  This adds a "Send a Tip" button to your site profile, allowing people to send tips to you for your site. This will send users to PayPal to send money to your account. If you have a Bitcoin address, you can add that too.
+</p>
+
+<div>
+  <form method="POST" action="/settings/<%= current_site.username %>/tipping">
+    <%== csrf_token_input_html %>
+    <fieldset>
+      <input name="site[tipping_enabled]" type="hidden" value="false">
+        <p style="font-size: 11pt">
+        Enable Site Tipping: <input name="site[tipping_enabled]" type="checkbox" value="true"
+          <% if current_site.tipping_enabled == true %>checked<% end %>
+        >
+      </p>
+
+      <label for="site[tipping_paypal]">PayPal email address:</label>
+      <input name="site[tipping_paypal]" type="text" placeholder="" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= current_site.tipping_paypal %>" style="width: 400px">
+
+      <label for="site[tipping_bitcoin]">Bitcoin address:</label>
+      <input name="site[tipping_bitcoin]" type="text" placeholder="" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= current_site.tipping_bitcoin %>" style="width: 400px">
+
+    </fieldset>
+
+    <input class="btn-Action" type="submit" value="Update">
+  </form>
+</div>

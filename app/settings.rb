@@ -96,6 +96,24 @@ post '/settings/:username/change_name' do
   end
 end
 
+post '/settings/:username/tipping' do
+  require_login
+  require_ownership_for_settings
+
+  current_site.tipping_enabled = params[:site][:tipping_enabled]
+  current_site.tipping_paypal = params[:site][:tipping_paypal]
+  current_site.tipping_bitcoin = params[:site][:tipping_bitcoin]
+
+  if current_site.valid?
+    current_site.save_changes
+    flash[:success] = "Tip settings have been updated."
+  else
+    flash[:error] = current_site.errors.first.last.first
+  end
+
+  redirect "/settings/#{current_site.username}#tipping"
+end
+
 post '/settings/:username/change_nsfw' do
   require_login
   require_ownership_for_settings

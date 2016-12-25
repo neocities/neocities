@@ -1,0 +1,17 @@
+<% unless site.tipping_paypal.blank? %>
+  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin-bottom: 0px">
+    <input type="hidden" name="cmd" value="_donations">
+    <input type="hidden" name="business" value="<%= site.tipping_paypal %>">
+    <input type="hidden" name="lc" value="US">
+    <input type="hidden" name="item_name" value="Site Donation for <%= site.title %>">
+    <input type="hidden" name="no_note" value="0">
+    <input type="hidden" name="currency_code" value="USD">
+    <input type="hidden" name="bn" value="PP-DonationsBF:btn_donateCC_LG.gif:NonHostedGuest">
+    <a href="#" onclick="parentNode.submit()">Credit Card</a>
+    <br>
+    <a href="#" onclick="parentNode.submit()">PayPal</a>
+  </form>
+<% end %>
+<% unless site.tipping_bitcoin.blank? %>
+  <a href="bitcoin:<%= site.tipping_bitcoin %>?message=<%= Rack::Utils.escape "Site donation for #{site.title}" %>">Bitcoin</a>
+<% end %>
