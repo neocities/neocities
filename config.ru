@@ -76,5 +76,6 @@ map '/sidekiq' do
     username == $config['sidekiq_user'] && password == $config['sidekiq_pass']
   end
 
+  Sidekiq::Web.set 'session_secret', $config['session_secret']
   run Sidekiq::Web
 end
