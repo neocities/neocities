@@ -208,7 +208,7 @@ class Site < Sequel::Model
   one_to_many :archives
 
   def account_sites_dataset
-    Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id})).order(:parent_site_id.desc, :username)
+    Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id})).order(:parent_site_id.desc, :username).exclude(is_deleted: true)
   end
 
   def account_sites
