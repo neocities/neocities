@@ -1,6 +1,6 @@
 <h2>Delete Site</h2>
 <div>
-  <% if @site.parent? && @site.children_dataset.where(is_deleted: false, is_deleted: false).count > 0 %>
+  <% if @site.parent? && @site.children_dataset.where(is_deleted: false).count > 0 %>
     <p>
       You cannot delete the parent site without deleting the children sites first.
     </p>
