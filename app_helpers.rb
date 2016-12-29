@@ -22,6 +22,7 @@ end
 def require_login
   redirect '/' unless signed_in?
   enforce_ban if banned?
+  signout if deleted?
 end
 
 def signed_in?
@@ -36,6 +37,11 @@ end
 def parent_site
   return nil if current_site.nil?
   current_site.parent? ? current_site : current_site.parent
+end
+
+def deleted?
+  return true if current_site && current_site.is_deleted
+  false
 end
 
 def banned?(ip_check=false)
