@@ -62,10 +62,15 @@ class ScreenshotWorker
       else
         new_img = img.scale width, height
       end
-      new_img.write(File.join(user_screenshots_path, "#{path}.#{res}.jpg")) {
+
+      full_screenshot_path = File.join(user_screenshots_path, "#{path}.#{res}.jpg")
+
+      new_img.write(full_screenshot_path) {
         self.quality = 90
       }
+
       new_img.destroy!
+      $image_optim.optimize_image! full_screenshot_path
     end
 
     img.destroy!

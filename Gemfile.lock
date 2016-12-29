@@ -65,6 +65,7 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     drydock (0.6.9)
     erubis (2.7.0)
+    exifr (1.2.5)
     fabrication (2.15.0)
     faker (1.6.3)
       i18n (~> 0.5)
@@ -75,6 +76,7 @@ GEM
       ffi (>= 1.0.0)
       rake
     filesize (0.1.1)
+    fspath (3.0.1)
     gandi (2.1.3)
       hashie
     geoip (1.6.1)
@@ -95,6 +97,17 @@ GEM
     http-form_data (1.0.1)
     http_parser.rb (0.6.0)
     i18n (0.7.0)
+    image_optim (0.24.1)
+      exifr (~> 1.2, >= 1.2.2)
+      fspath (~> 3.0)
+      image_size (~> 1.5)
+      in_threads (~> 1.3)
+      progress (~> 3.0, >= 3.0.1)
+    image_optim_pack (0.3.0.20161206)
+      fspath (>= 2.1, < 4)
+      image_optim (~> 0.19)
+    image_size (1.5.0)
+    in_threads (1.3.1)
     io-extra (1.2.8)
     jimson-temp (0.9.5)
       blankslate (>= 3.1.2)
@@ -141,6 +154,7 @@ GEM
       cliver (~> 0.3.1)
       websocket-driver (>= 0.2.0)
     posix-spawn (0.3.11)
+    progress (3.2.2)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -277,6 +291,8 @@ DEPENDENCIES
   hoe (= 3.14.2)
   htmlentities
   http
+  image_optim
+  image_optim_pack
   io-extra
   jdbc-postgres
   jruby-openssl

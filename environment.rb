@@ -152,3 +152,5 @@ end
 gandi_opts = {}
 gandi_opts[:env] = :test # unless ENV['RACK_ENV'] == 'production'
 $gandi = Gandi::Session.new $config['gandi_api_key'], gandi_opts
+
+$image_optim = ImageOptim.new pngout: false, svgo: false

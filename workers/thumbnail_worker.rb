@@ -26,9 +26,12 @@ class ThumbnailWorker
 
       save_ext = format.match(Site::LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
 
-      resimg.write(File.join(user_thumbnails_path, "#{path}.#{res}.#{save_ext}")) {
-        self.quality = 90
+      full_thumbnail_path = File.join(user_thumbnails_path, "#{path}.#{res}.#{save_ext}")
+
+      resimg.write(full_thumbnail_path) {
+        self.quality = 75
       }
+      $image_optim.optimize_image! full_thumbnail_path
     end
   end
 end
