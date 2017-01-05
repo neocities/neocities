@@ -76,6 +76,7 @@ map '/sidekiq' do
     username == $config['sidekiq_user'] && password == $config['sidekiq_pass']
   end
 
-  Sidekiq::Web.set 'session_secret', $config['session_secret']
+  use Rack::Session::Cookie, key: 'sidekiq.session', secret: $config['session_secret']
+  use Rack::Protection::AuthenticityToken
   run Sidekiq::Web
 end

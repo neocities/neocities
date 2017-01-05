@@ -24,7 +24,7 @@ class DeleteCacheWorker
       Addressable::URI::CharacterClasses::QUERY
     )
 
-    HTTP.timeout(read: 10, write: 10, connect: 2).
+    HTTP.follow.timeout(read: 10, write: 10, connect: 2).
       headers(host: URI::encode("#{username}.neocities.org")).
       get(url)
   end

@@ -22,7 +22,7 @@ class PurgeCacheWorker
     retry_encoded = false
 
     begin
-      HTTP.timeout(read: 10, write: 10, connect: 2).
+      HTTP.follow.timeout(read: 10, write: 10, connect: 2).
         headers(host: URI::encode("#{username}.neocities.org"), cache_purge: '1').
         head(url)
     rescue URI::InvalidURIError
