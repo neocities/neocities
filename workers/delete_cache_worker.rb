@@ -20,11 +20,11 @@ class DeleteCacheWorker
     path = '/' + path if path[0] != '/'
 
     url = Addressable::URI.encode_component(
-      "http://#{proxy_ip}/:cache/purge#{path}",
+      "https://#{proxy_ip}/:cache/purge#{path}",
       Addressable::URI::CharacterClasses::QUERY
     )
 
-    HTTP.follow.timeout(read: 10, write: 10, connect: 2).
+    HTTP.timeout(read: 10, write: 10, connect: 2).
       headers(host: URI::encode("#{username}.neocities.org")).
       get(url)
   end

@@ -1201,7 +1201,7 @@ class Site < Sequel::Model
 
   def default_schema
     # Switch-over for when SSL defaulting is ready
-    'http'
+    'https'
   end
 
   def uri

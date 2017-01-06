@@ -15,14 +15,14 @@ class PurgeCacheWorker
     path = '/' + path if path[0] != '/'
 
     url = Addressable::URI.encode_component(
-      "http://#{proxy_ip}#{path}",
+      "https://#{proxy_ip}#{path}",
       Addressable::URI::CharacterClasses::QUERY
     )
 
     retry_encoded = false
 
     begin
-      HTTP.follow.timeout(read: 10, write: 10, connect: 2).
+      HTTP.timeout(read: 10, write: 10, connect: 2).
         headers(host: URI::encode("#{username}.neocities.org"), cache_purge: '1').
         head(url)
     rescue URI::InvalidURIError
