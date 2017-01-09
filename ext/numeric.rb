@@ -35,6 +35,7 @@ class Numeric
   end
 
   def format_large_number
+    return self.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
     if self > 9999
       if self > 999999999
         unit_char = 'B' #billion
