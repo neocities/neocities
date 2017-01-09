@@ -8,7 +8,16 @@ get '/activity' do
     global_dataset.where! Sequel.qualify(:events, :id) => params[:event_id]
   end
 
-  events = global_dataset.all
+  initial_events = global_dataset.all
+  events = []
+
+  initial_events.each do |event|
+    site = Site.select(:id).where(id: event.site_id).first
+    actioning_site = Site.select(:id).where(id: event.actioning_site_id).first
+
+    events.push(event) if !site.is_a_jerk? && !actioning_site.is_a_jerk? && actioning_site.follows_dataset.count > 2
+  end
+
   site_change_events = Event.global_site_changes_dataset.limit(100).all
 
   @events = []
