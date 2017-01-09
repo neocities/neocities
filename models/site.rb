@@ -1506,7 +1506,7 @@ class Site < Sequel::Model
     FileUtils.cp uploaded.path, path
     File.chmod 0640, path
 
-    SiteChange.record self, relative_path unless opts[:new_install]
+    SiteChange.record self, relative_path if !opts[:new_install] && File.extname(relative_path).match(HTML_REGEX)
 
     site_file ||= SiteFile.new site_id: self.id, path: relative_path
 
