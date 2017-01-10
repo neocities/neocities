@@ -4,7 +4,10 @@ require './app_helpers.rb'
 use Rack::Session::Cookie, key:          'neocities',
                            path:         '/',
                            expire_after: 31556926, # one year in seconds
-                           secret:       $config['session_secret']
+                           secret:       $config['session_secret'],
+                           httponly: true,
+                           same_site: true,
+                           secure: ENV['RACK_ENV'] == 'production'
 
 use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $config['recaptcha_private_key']
 use Rack::TempfileReaper
