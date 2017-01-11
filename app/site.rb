@@ -257,7 +257,7 @@ post '/site/:username/report' do |username|
     redirect request.referer if current_site.id == site.id
     report.reporting_site_id = current_site.id
   else
-    report.ip = Site.hash_ip request.ip
+    report.ip = request.ip
   end
 
   report.save

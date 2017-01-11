@@ -236,13 +236,23 @@ post '/admin/banhammer' do
     site.ban!
     deleted_count += 1
 
-    if !params[:ban_using_ips].empty? && !site.ip.empty?
+    if !params[:ban_using_ips].empty? && IPAddress.valid?(site.ip)
       sites = Site.filter(ip: site.ip, is_banned: false).all
       sites.each do |s|
         next if usernames.include?(s.username)
         s.ban!
       end
       ip_deleted_count += 1
+    end
+
+    if params[:classifier] == 'spam' || params[:classifier] == 'phishing'
+      next unless IPAddress.valid?(site.ip)
+      StopForumSpamWorker.perform_async(
+        username: site.username,
+        email: site.email,
+        ip: site.ip,
+        evidence: "#{params[:classifier]}\n#{site.screenshot_url(Site::SCREENSHOT_RESOLUTIONS.first)}"
+      )
     end
   end
 

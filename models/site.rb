@@ -296,25 +296,25 @@ class Site < Sequel::Model
     end
 
     def ip_create_limit?(ip)
-      hashed_ip = hash_ip ip
-      Site.where('created_at > ?', Date.today.to_time).where(ip: hashed_ip).count > IP_CREATE_LIMIT ||
-      Site.where(ip: hashed_ip).count > TOTAL_IP_CREATE_LIMIT
-    end
-
-    def hash_ip(ip)
-      SCrypt::Engine.hash_secret ip, $config['ip_hash_salt']
+      Site.where('created_at > ?', Date.today.to_time).where(ip: ip).count > IP_CREATE_LIMIT ||
+      Site.where(ip: ip).count > TOTAL_IP_CREATE_LIMIT
     end
 
     def banned_ip?(ip)
       return false if ENV['RACK_ENV'] == 'production' && ip == '127.0.0.1'
+      return false if ip.blank?
       return true if Site.where(is_banned: true).
-        where(ip: hash_ip(ip)).
+        where(Sequel.or(ip: ip, ip: hash_ip(ip))).
         where(['updated_at > ?', Time.now-BANNED_TIME]).
         first
 
       return true if BlockedIp[ip]
 
       false
+    end
+
+    def hash_ip(ip)
+      SCrypt::Engine.hash_secret ip, $config['ip_hash_salt']
     end
 
     def ssl_sites
@@ -324,10 +324,6 @@ class Site < Sequel::Model
       exclude(ssl_cert: nil).
       all
     end
-  end
-
-  def ip=(ip)
-    super self.class.hash_ip(ip)
   end
 
   def is_following?(site)

@@ -45,6 +45,7 @@ gem 'htmlentities'
 gem 'rinku'
 gem 'image_optim'
 gem 'image_optim_pack'
+gem 'ipaddress'
 
 platform :mri, :rbx do
   gem 'magic' # sudo apt-get install file, For OSX: brew install libmagic

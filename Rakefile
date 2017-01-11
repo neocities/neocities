@@ -266,15 +266,6 @@ task :prime_site_updated_at => [:environment] do
   end
 end
 
-desc 'hash_ips'
-task :hash_ips => [:environment] do
-  Site.select(:id,:ip).order(:id).all.each do |s|
-    next if s.ip.nil? || s.ip.match(/#{$config['ip_hash_salt']}/)
-    s.ip = s.ip
-    s.save_changes validate: false
-  end
-end
-
 desc 'prime_site_files'
 task :prime_site_files => [:environment] do
   Site.where(is_banned: false).where(is_deleted: false).select(:id, :username).all.each do |site|

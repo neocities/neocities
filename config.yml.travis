@@ -19,3 +19,4 @@ proxy_ips:
   - 10.0.0.2
 education_tag_whitelist:
   - mrteacher
+stop_forum_spam_api_key: testkey

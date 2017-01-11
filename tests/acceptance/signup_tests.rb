@@ -60,7 +60,7 @@ describe 'signup' do
     site.site_updated_at.must_equal nil
     site.is_education.must_equal false
 
-    site.ip.must_equal Site.hash_ip('127.0.0.1')
+    site.ip.must_equal '127.0.0.1'
   end
 
   it 'fails if site with same ip has been banned' do
