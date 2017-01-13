@@ -251,7 +251,7 @@ post '/admin/banhammer' do
         username: site.username,
         email: site.email,
         ip: site.ip,
-        evidence: "#{params[:classifier]}\n#{site.screenshot_url(Site::SCREENSHOT_RESOLUTIONS.first)}"
+        evidence: "#{params[:classifier]}\nhttps://neocities.org#{site.screenshot_url('index.html', Site::SCREENSHOT_RESOLUTIONS.first)}"
       )
     end
   end
