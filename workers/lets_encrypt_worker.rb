@@ -4,10 +4,10 @@ class LetsEncryptWorker
   class InvalidAuthError < StandardError; end
   class VerifyNotFoundWithDomain < StandardError; end
   include Sidekiq::Worker
-  sidekiq_options queue: :lets_encrypt_worker, retry: 1, backtrace: true
+  sidekiq_options queue: :lets_encrypt_worker, retry: 10, backtrace: true
 
   sidekiq_retry_in do |count|
-    1.hour.to_i
+    5.minutes.to_i * count
   end
 
   # If you need to clear scheduled jobs:
@@ -131,7 +131,7 @@ class LetsEncryptWorker
       end
     end
 
-    if verified_domains.empty?
+    if verified_domains.empty? || (site.created_at >= 2017 && !verified_domains.include?(domain_raw))
       if @international_domain
         puts "still waiting on IDN support, ignoring failure for now"
         clean_wellknown_turds site
@@ -161,6 +161,10 @@ class LetsEncryptWorker
       end
 
       clean_wellknown_turds site
+
+      if site.domain_fail_count > 0
+        LetsEncryptWorker.perform_in((5.minutes * site.domain_fail_count), site.id)
+      end
       return
     end
 
