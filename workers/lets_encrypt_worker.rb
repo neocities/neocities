@@ -131,7 +131,7 @@ class LetsEncryptWorker
       end
     end
 
-    if verified_domains.empty? || (site.created_at >= 2017 && !verified_domains.include?(domain_raw))
+    if verified_domains.empty? || (site.created_at.year >= 2017 && !verified_domains.include?(domain_raw))
       if @international_domain
         puts "still waiting on IDN support, ignoring failure for now"
         clean_wellknown_turds site
