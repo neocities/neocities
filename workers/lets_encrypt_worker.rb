@@ -62,8 +62,9 @@ class LetsEncryptWorker
       puts "testing #{challenge_url}"
 
       begin
-        res = HTTP.timeout(:global, write: 5, connect: 10, read: 10).follow.get(challenge_url)
-      rescue
+        res = HTTP.timeout(:global, write: 5, connect: 10, read: 10).get(challenge_url)
+      rescue => e
+        puts e.inspect
         puts "error with #{challenge_url}"
         next
       end
@@ -130,7 +131,7 @@ class LetsEncryptWorker
       end
     end
 
-    if verified_domains.empty? || (site.created_at >= 2017 && !verified_domains.include?(domain_raw))
+    if verified_domains.empty? || (site.created_at.year >= 2017 && !verified_domains.include?(domain_raw))
       if @international_domain
         puts "still waiting on IDN support, ignoring failure for now"
         clean_wellknown_turds site
