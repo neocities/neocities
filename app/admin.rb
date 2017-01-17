@@ -250,8 +250,7 @@ post '/admin/banhammer' do
       StopForumSpamWorker.perform_async(
         username: site.username,
         email: site.email,
-        ip: site.ip,
-        evidence: "#{params[:classifier]}\nhttps://neocities.org#{site.screenshot_url('index.html', Site::SCREENSHOT_RESOLUTIONS.first)}"
+        ip: site.ip
       )
     end
   end
