@@ -59,21 +59,21 @@
   <div class="col intro">
     <h2 class="section-header">Create your own free website.<br>Unlimited creativity, zero ads.</h2>
     <p class="intro-text">
-     Neocities is a community of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> sites</a> that are bringing back the lost individual creativity of the web. We offer free web hosting and tools that allow anyone to make a website. Join us!
+     Neocities is a social network of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> web sites</a> that are bringing back the lost individual creativity of the web. We offer free web hosting and tools that allow you to create your own web site. Join us!
     </p>
     <ul class="intro-List">
       <li class="intro-Tools">
         <span class="intro-Icon"></span>
-        <h3 class="delta">Learn how to make a website from scratch</h3>
+        <h3 class="delta">Powerful features to help you build</h3>
         <p class="base">
-          Never coded before? Our fun interactive tutorial will show you the ropes! Join Penelope the cat in crafting your own personal spot on the web. We make it easy with our built-in HTML editor and simple file uploading.
+          We’ve made it easy to build your web site and explore other sites. Neocities features an in-browser HTML editor, custom domain support, fast site performance, easy file uploading, RSS feeds, folder support, and so much more.
       </li>
 
       <li class="intro-Social">
         <span class="intro-Icon"></span>
         <h3 class="delta">Share your web creation with the world</h3>
         <p class="base">
-          Follow your favorite Neocities sites to keep up with all their latest updates. Discover new websites related to your interests using tags. Post comments and share your faves.
+          It's your web site, your vision. Make it as normal or crazy as you want. You're the artist, you're in control.
         </p>
       </li>
     </ul>
@@ -198,7 +198,7 @@
 <div class="row content right">
   <div class="col col-50"><div class="screenshot" style="background-image:url(/img/front-browse-screenshot.jpg);"></div></div>
   <div class="col col-50 text">
-    <h3><i class="fa fa-globe"></i> It's time to bring back web surfing.</h3>
+    <h3><i class="fa fa-globe"></i> Welcome back, web surfing</h3>
     <p>All Neocities sites are viewable in our <a href="/browse">website gallery</a>. And it's easy to browse sites with our optional surf bar.</p>
     <p>Using tags (our version of Web Rings) you can easily discover new sites related to your interests.</p>
   </div>
@@ -232,22 +232,21 @@
       </p>
     </div>
 
-
     <div class="col col-50">
       <h3><i class="fa fa-tachometer"></i>More space, speed, and security</h3>
-      <p>Neocities now uses distributed, globally-cached web servers in datacenters all over the world to serve your site. Whether it’s your personal home page or a busy professional site, your site loads fast. And if you need more space, <a href="/supporter">we've got you covered</a>. We also provide Snowden-grade SSL cryptography on all sites, preventing snoops from seeing what you browse.</p>
+      <p>Neocities now uses distributed, globally-cached web servers in datacenters all over the world to serve your site. Whether it’s your personal home page or a busy professional site, your site loads fast. We also force 100% strong SSL on all sites, preventing snoops from seeing what you browse.</p>
     </div>
   </div>
 
   <div class="row">
     <div class="col col-50">
       <h3><i class="fa fa-wrench"></i>Developer tools</h3>
-      <p>Our fast static hosting comes with a great in-browser HTML editor, easy file uploading, RSS feeds for every site, <a href="/api">powerful APIs</a> for building developer applications, and much more! Upgrade to a <a href="/supporter">supporter plan</a> to get support for custom domains and WebDAV publishing.</p>
+      <p>Our fast static hosting comes with a great in-browser HTML editor, easy file uploading, RSS feeds for every site, <a href="/api">APIs</a> for building developer applications, and much more!
     </div>
 
     <div class="col col-50">
-      <h3><i class="fa fa-university"></i>Open Company</h3>
-      <p>Neocities is a member of the <a href="http://www.opencompany.org/" target="_blank">Open Company Initative</a>, working to help improve trustability in tech companies. We <a href="https://github.com/neocities" target="_blank">publish</a> the code that powers the site for inspection, and strive for openness in our company's operations. We want to win your trust—not lock you in.</p>
+      <h3><i class="fa fa-university"></i>Open Source</h3>
+      <p>We <a href="https://github.com/neocities" target="_blank">publish</a> the code that powers the site for inspection. We want to win your trust—not lock you in.</p>
     </div>
 
 
@@ -277,15 +276,16 @@
   <h2>What are you waiting for? <a href="#new">Start building your website now!</a></h2>
 </section>
 
+<!--
 <section class="section thankyou">
   <div class="row">
     <p>Sponsored by</p>
-    <a href="//www.discourse.org"><img src="/img/discourse-logo.png" alt="Discourse" style="width:233px;"></a>
-    <p>With special thanks to our <a href="/thankyou">Kickstarter backers</a></p>
-    <p>Interested in sponsoring us? <a href="mailto:sponsorships@neocities.org">Let's get in touch!</a></p>
+    <h2>Your Company Name Here</h2>
+    <p>Interested in sponsoring Neocities? <a href="mailto:sponsorships@neocities.org">Let's get in touch.</a></p>
   </div>
 </section>
 </main>
+-->
 
 <footer class="footer-Base" role="contentinfo">
   <div class="footer-Intro">
@@ -315,11 +315,17 @@
         <div class="col col-33">
           <div class="f-Col f-Col-3 clearfix">
             <span class="footer-icon"></span>
-            <h2 class="delta">Latest News</h2>
+            <h2 class="delta">From Our Blog</h2>
+            <!--
             <p class="tiny">
+              <a href="#">Neocities now has SSL Sites</a><br>
               The latest news on Neocities can be found on our blog.
             </p>
-            <a href="//blog.neocities.org" title="Read about Neocities news and updates" class="action-Link">Read More</a>
+          -->
+            <p class="tiny">
+              <%== @blog_feed_html %>
+            </p>
+            <a href="//blog.neocities.org" title="Read about Neocities news and updates" class="action-Link">Read More Posts</a>
           </div>
         </div>
       </div>

@@ -31,9 +31,27 @@ get '/?' do
   end
 
   if SimpleCache.expired?(:sites_count)
-    @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 600 # 10 Minutes
+    @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 10.minutes
   else
     @sites_count = SimpleCache.get :sites_count
+  end
+
+  if SimpleCache.expired?(:blog_feed_html)
+    @blog_feed_html = ''
+
+    begin
+      xml = HTTP.timeout(read: 2, write: 2, connect: 2).get('https://blog.neocities.org/feed.xml').to_s
+      feed = Feedjira::Feed.parse xml
+      feed.entries[0..2].each do |entry|
+        @blog_feed_html += %{<a href="#{entry.url}">#{entry.title.split('.').first}</a> <span style="float: right">#{entry.published.strftime('%b %-d, %Y')}</span><br>}
+      end
+    rescue
+      @blog_feed_html = 'The latest news on Neocities can be found on our blog.'
+    end
+
+    @blog_feed_html = SimpleCache.store :blog_feed_html, @blog_feed_html, 8.hours
+  else
+    @blog_feed_html = SimpleCache.get :blog_feed_html
   end
 
   erb :index, layout: :index_layout
