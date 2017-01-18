@@ -32,7 +32,7 @@ post '/site_files/create' do
   name = current_site.scrubbed_path name
 
   if current_site.file_exists?(name)
-    flash[:error] = %{Web page "#{name}" already exists! Choose another name.}
+    flash[:error] = %{Web page "#{Rack::Utils.escape_html name}" already exists! Choose another name.}
     redirect redirect_uri
   end
 
@@ -67,7 +67,9 @@ post '/site_files/create' do
     site_file.save
   end
 
-  flash[:success] = %{#{name} was created! <a style="color: #FFFFFF; text-decoration: underline" href="/site_files/text_editor/#{name}">Click here to edit it</a>.}
+  escaped_name = Rack::Utils.escape_html name
+
+  flash[:success] = %{#{escaped_name} was created! <a style="color: #FFFFFF; text-decoration: underline" href="/site_files/text_editor/#{escaped_name}">Click here to edit it</a>.}
 
   redirect redirect_uri
 end

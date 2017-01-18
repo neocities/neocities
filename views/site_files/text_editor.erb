@@ -154,40 +154,38 @@
 
   var editor = {}
 
-  $.get('/site_files/download/<%= @filename %>', function(resp) {
-    $(document).ready(function() {
-      $.get('/site_files/download/<%= @filename %>', function(resp) {
-        editor = ace.edit("editor")
-        setTheme()
-        <% if @ace_mode %>
-          editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
-        <% end %>
-        editor.getSession().setTabSize(2)
-        editor.getSession().setUseWrapMode(true)
-        editor.setFontSize(14)
-        editor.setShowPrintMargin(false)
-        editor.setOptions({
-          maxLines: Infinity,
-          autoScrollEditorIntoView: true
-        })
+  $(document).ready(function() {
+    $.get("/site_files/download/<%= Addressable::URI.parse(@filename).normalized_path.to_s %>", function(resp) {
+      editor = ace.edit("editor")
+      setTheme()
+      <% if @ace_mode %>
+        editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
+      <% end %>
+      editor.getSession().setTabSize(2)
+      editor.getSession().setUseWrapMode(true)
+      editor.setFontSize(14)
+      editor.setShowPrintMargin(false)
+      editor.setOptions({
+        maxLines: Infinity,
+        autoScrollEditorIntoView: true
+      })
 
-        // Disable autocomplete
-        editor.setBehavioursEnabled(false)
+      // Disable autocomplete
+      editor.setBehavioursEnabled(false)
 
-        editor.setValue(resp, -1)
+      editor.setValue(resp, -1)
 
-        editor.on('change', function(obj) {
-          $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
-          unsavedChanges = true
-        })
+      editor.on('change', function(obj) {
+        $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
+        unsavedChanges = true
+      })
 
-        editor.commands.addCommand({
-            name: 'saveCommand',
-            bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-            exec: function(editor) {
-              saveTextFile(false)
-            }
-        })
+      editor.commands.addCommand({
+          name: 'saveCommand',
+          bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+          exec: function(editor) {
+            saveTextFile(false)
+          }
       })
     })
   })

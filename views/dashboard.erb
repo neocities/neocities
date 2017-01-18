@@ -122,7 +122,6 @@
       <div class="upload-Boundary <%= @file_list.length <= 5 ? 'with-instruction' : '' %>">
         <% @file_list.each do |file| %>
           <div class="file filehover">
-            <!-- <input type="checkbox" name="" value="" /> -->
             <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '210x158') %>
               <div class="html-thumbnail html fileimagehover">
                 <img src="<%= current_site.screenshot_url(file[:path], '210x158') %>" alt="">
@@ -160,6 +159,7 @@
             </div>
 
             <div class="overlay">
+              <div id="<%= Digest::SHA256.hexdigest file[:path] %>" style="display: none"><%= file[:path] %></div>
               <% if file[:is_editable] %>
                 <a href="/site_files/text_editor<%= file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
               <% end %>
@@ -167,7 +167,7 @@
                 <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
               <% end %>
               <% if !file[:is_root_index] %>
-                <a href="#" onclick="confirmFileDelete('<%== file[:path].gsub("'", '&apos;') %>')"><i class="fa fa-trash" title="Delete"></i> Delete</a>
+                <a href="#" onclick="confirmFileDelete($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-trash" title="Delete"></i> Delete</a>
               <% end %>
               <% if file[:is_directory] %>
               <a class="link-overlay" href="?dir=<%= Rack::Utils.escape file[:path] %>" title="View <%= file[:path] %>"></a>
@@ -262,7 +262,7 @@
 <script>
 
   function confirmFileDelete(name) {
-    $('#deleteFileName').html(name.replace('/',''));
+    $('#deleteFileName').text(name.replace('/',''));
     $('#deleteConfirmModal').modal();
   }
 
@@ -305,7 +305,7 @@
         if(file.status == 'error' && file.name.match(/.+\..+/) == null && errorMessage == 'Server responded with 0 code.') {
           alert('Recursive directory upload is only supported by the Chrome web browser.')
         } else {
-          location.href = '/dashboard<%= @dir ? "?dir=#{@dir}" : "" %>'
+          location.href = '/dashboard<%= @dir ? "?dir=#{Rack::Utils.escape @dir}" : "" %>'
         }
       })
 
