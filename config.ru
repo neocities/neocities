@@ -29,7 +29,8 @@ map '/webdav' do
         return [507, {}, ['']]
       end
 
-      if Site.valid_file_type?(filename: path, tempfile: tmpfile)
+      # if Site.valid_file_type?(filename: path, tempfile: tmpfile)
+      if site.okay_to_upload? filename: path, tempfile: tmpfile
         site.store_files [{filename: path, tempfile: tmpfile}]
         return [201, {}, ['']]
       else
