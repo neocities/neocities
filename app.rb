@@ -6,7 +6,7 @@ use Rack::Session::Cookie, key:          'neocities',
                            expire_after: 31556926, # one year in seconds
                            secret:       $config['session_secret'],
                            httponly: true,
-                           same_site: true,
+                           same_site: :lax,
                            secure: ENV['RACK_ENV'] == 'production'
 
 use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $config['recaptcha_private_key']
@@ -25,7 +25,7 @@ helpers do
   end
 end
 
-set :protection, :frame_options => "ALLOW-FROM #{$config['surf_iframe_source']}"
+set :protection, :frame_options => "DENY"
 
 GEOCITIES_NEIGHBORHOODS = %w{
   area51
