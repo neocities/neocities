@@ -3,8 +3,8 @@ development:
   database_pool: 1
   redis_url: "redis://localhost"
   session_secret: "SECRET GOES HERE"
-  recaptcha_public_key: "6LdSMScTAAAAAADhP4IDb5s_EN1qMmvNmrUXReE-"
-  recaptcha_private_key: "6LdSMScTAAAAAIZAvP_W9d8fMsVT3iBX5wCwGvqV"
+  recaptcha_public_key: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+  recaptcha_private_key: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
   sidekiq_user: "ENTER USER HERE"
   sidekiq_pass: "ENTER PASS HERE"
   stripe_publishable_key: "ENTER KEY HERE"
