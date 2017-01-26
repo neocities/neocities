@@ -116,7 +116,7 @@ post '/site_files/upload' do
       file_upload_response "#{file[:filename]} is too large, upload cancelled."
     end
     if !current_site.okay_to_upload? file
-      file_upload_response %{#{file[:filename]}: file type (or content in file) is only supported by <a href="/supporter">supporter accounts</a>. <a href="/site_files/allowed_types">Why We Do This</a>}
+      file_upload_response %{#{Rack::Utils.escape_html file[:filename]}: file type (or content in file) is only supported by <a href="/supporter">supporter accounts</a>. <a href="/site_files/allowed_types">Why We Do This</a>}
     end
   end
 
