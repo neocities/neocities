@@ -51,7 +51,6 @@ describe '/' do
         ['Donate', 'donate'],
         ['API', 'api'],
         ['Terms', 'terms'],
-        ['Privacy', 'privacy'],
         ['Press', 'press']
       ]
 

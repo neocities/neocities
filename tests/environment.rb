@@ -31,6 +31,13 @@ require 'webmock/minitest'
 require 'sidekiq/testing'
 
 WebMock.disable_net_connect! allow_localhost: true
+WebMock.enable!
+
+WebMock.globally_stub_request do |request|
+  if request.uri.to_s == 'https://blog.neocities.org:443/feed.xml'
+    return {status: 200, body: File.read(File.join('tests', 'files', 'blogfeed.xml'))}
+  end
+end
 
 Sinatra::Application.configure do |app|
   app.use RackSessionAccess::Middleware
