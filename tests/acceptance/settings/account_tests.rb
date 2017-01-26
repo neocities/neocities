@@ -13,6 +13,8 @@ describe 'site/settings' do
     end
 
     it 'should change email' do
+      @site.password_reset_token = 'shouldgoaway'
+      @site.save
       @new_email = "#{SecureRandom.uuid.gsub('-', '')}@exampleedsdfdsf.com"
       fill_in 'email', with: @new_email
       click_button 'Change Email'
@@ -26,6 +28,7 @@ describe 'site/settings' do
 
       @site.reload
       @site.email.must_equal @new_email
+      @site.password_reset_token.must_equal nil
       EmailWorker.jobs.length.must_equal 1
       args = EmailWorker.jobs.first['args'].first
       args['to'].must_equal @new_email
