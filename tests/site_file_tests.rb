@@ -217,6 +217,14 @@ describe 'site_files' do
       @site.reload.title.must_equal title
     end
 
+    it 'purges cache for /subdir/' do # (not /subdir which is just a redirect to /subdir/)
+      upload(
+        'dir' => 'subdir',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
+      )
+      PurgeCacheOrderWorker.jobs.select {|j| j['args'].last == '/subdir/'}.length.must_equal 1
+    end
+
     it 'succeeds with valid file' do
       initial_space_used = @site.space_used
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')

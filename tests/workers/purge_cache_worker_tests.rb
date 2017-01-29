@@ -6,7 +6,7 @@ describe PurgeCacheWorker do
   end
 
   it 'handles 404 without exception' do
-    stub_request(:head, "http://#{@test_ip}/test.jpg").
+    stub_request(:head, "https://#{@test_ip}/test.jpg").
       with(headers: {'Host' => 'kyledrake.neocities.org', 'Cache-Purge' => '1'})
       .to_return(status: 404)
 
@@ -15,23 +15,23 @@ describe PurgeCacheWorker do
   end
 
   it 'sends a purge request' do
-    stub_request(:head, "http://#{@test_ip}/test.jpg").
+    stub_request(:head, "https://#{@test_ip}/test.jpg").
       with(headers: {'Host' => 'kyledrake.neocities.org', 'Cache-Purge' => '1'})
       .to_return(status: 200)
 
     worker = PurgeCacheWorker.new
     worker.perform @test_ip, 'kyledrake', '/test.jpg'
 
-    assert_requested :head, "http://#{@test_ip}/test.jpg"
+    assert_requested :head, "https://#{@test_ip}/test.jpg"
   end
 
   it 'handles spaces correctly' do
-    stub_request(:head, "http://#{@test_ip}/te st.jpg").
+    stub_request(:head, "https://#{@test_ip}/te st.jpg").
       with(headers: {'Host' => 'kyledrake.neocities.org', 'Cache-Purge' => '1'})
       .to_return(status: 200)
 
     url = Addressable::URI.encode_component(
-      "http://#{@test_ip}/te st.jpg",
+      "https://#{@test_ip}/te st.jpg",
       Addressable::URI::CharacterClasses::QUERY
     )
 
@@ -42,7 +42,7 @@ describe PurgeCacheWorker do
   end
 
   it 'works without forward slash' do
-    stub_request(:head, "http://#{@test_ip}/test.jpg").
+    stub_request(:head, "https://#{@test_ip}/test.jpg").
       with(headers: {'Host' => 'kyledrake.neocities.org', 'Cache-Purge' => '1'})
       .to_return(status: 200)
 

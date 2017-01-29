@@ -634,6 +634,7 @@ class Site < Sequel::Model
       PurgeCacheOrderWorker.perform_async username, relative_path
 
       purge_file_path = Pathname(relative_path).dirname.to_s
+      purge_file_path += '/' if purge_file_path != '/'
 
       PurgeCacheOrderWorker.perform_async username, '/?surf=1' if purge_file_path == '/'
       PurgeCacheOrderWorker.perform_async username, purge_file_path
