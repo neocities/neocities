@@ -32,10 +32,11 @@ class Site < Sequel::Model
     text/cache-manifest
     application/rss+xml
     application/x-elc
+    image/webp
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss
+    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
