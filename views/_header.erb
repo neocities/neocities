@@ -63,7 +63,10 @@
               <li><a href="/admin">Admin</a></li>
             <% end %>
 
-            <li><a href="/signout">Sign Out</a></li>
+            <li><a href="#" onclick="$('#signoutForm').submit()">Sign Out</a></li>
+            <form id="signoutForm" method="POST" action="/signout" style="display: none">
+              <%== csrf_token_input_html %>
+            </form>
           </ul>
         </li>
 

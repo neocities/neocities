@@ -40,7 +40,7 @@ get '/signin/:username' do
   redirect request.referrer
 end
 
-get '/signout' do
+post '/signout' do
   require_login
   signout
   redirect '/'
