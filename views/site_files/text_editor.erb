@@ -120,16 +120,20 @@
     if(unsavedChanges == false)
       return
     $.ajax({
-      url: "/site_files/save/<%= Addressable::URI.encode @filename %>?csrf_token=<%= Rack::Utils.escape csrf_token %>",
+      url: "/site_files/upload?csrf_token=<%= Rack::Utils.escape csrf_token %>&filename=<%= Rack::Utils.escape @filename %>",
       data: editor.getValue(),
       processData: false,
       contentType: false,
       type: 'POST',
       error: function(jqXHR, textStatus, errorThrown) {
-        alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
+        $('#saveButton').tooltip('show')
+        $('#editorUpdates span').text('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
+        $('#editorUpdates').fadeIn()
+        $('#editorUpdates').removeClass('hidden')
       },
-      success: function(response){
-        if(response == 'ok') {
+      success: function(response, textStatus, xhr){
+        console.log(xhr.status)
+        if(xhr.status == 200) {
           unsavedChanges = false
           if(quit === true) {
             window.location = '/dashboard'

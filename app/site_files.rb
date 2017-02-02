@@ -75,22 +75,33 @@ post '/site_files/create' do
 end
 
 def file_upload_response(error=nil)
-  http_error_code = 406
   flash[:error] = error if error
 
   if params[:from_button]
     query_string = params[:dir] ? "?"+Rack::Utils.build_query(dir: params[:dir]) : ''
     redirect "/dashboard#{query_string}"
   else
-    halt http_error_code, error if error
+    halt 406, error if error
     halt 200, 'File(s) successfully uploaded.'
   end
 end
 
 post '/site_files/upload' do
-  require_login
+  if params[:filename]
+    require_login_ajax
+    tempfile = Tempfile.new 'neocities_saving_file'
+
+    input = request.body.read
+    tempfile.set_encoding input.encoding
+    tempfile.write input
+    tempfile.close
+
+    params[:files] = [{filename: params[:filename], tempfile: tempfile}]
+  else
+    require_login
+  end
+
   @errors = []
-  http_error_code = 406
 
   if params[:files].nil?
     file_upload_response "Uploaded files were not seen by the server, cancelled. We don't know what's causing this yet. Please contact us so we can help fix it. Thanks!"
@@ -123,11 +134,11 @@ post '/site_files/upload' do
   uploaded_size = params[:files].collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
 
   if current_site.file_size_too_large? uploaded_size
-    file_upload_response "File(s) do not fit in your available space, upload cancelled."
+    file_upload_response "File(s) do not fit in your available free space, upload cancelled."
   end
 
   if current_site.too_many_files? params[:files].length
-    file_upload_response "Too many files, cannot upload"
+    file_upload_response "Your site has exceeded the maximum number of files, please delete some files first."
   end
 
   results = current_site.store_files params[:files]
@@ -193,26 +204,6 @@ get %r{\/site_files\/text_editor\/(.+)} do
   @title = "Editing #{@filename}"
 
   erb :'site_files/text_editor'
-end
-
-post %r{\/site_files\/save\/(.+)} do
-  require_login_ajax
-  filename = params[:captures].first
-
-  tempfile = Tempfile.new 'neocities_saving_file'
-
-  input = request.body.read
-  tempfile.set_encoding input.encoding
-  tempfile.write input
-  tempfile.close
-
-  if current_site.file_size_too_large? tempfile.size
-    halt 'File is too large to fit in your space, it has NOT been saved. You will need to reduce the size or upgrade to a new plan.'
-  end
-
-  current_site.store_files [{filename: filename, tempfile: tempfile}]
-
-  'ok'
 end
 
 get '/site_files/allowed_types' do
