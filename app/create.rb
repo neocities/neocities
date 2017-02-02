@@ -1,6 +1,5 @@
 def new_recaptcha_valid?
-  return true if session[:captcha_valid] == true
-  return session[:captcha_valid] = true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
+  return true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
   return false unless params[:'g-recaptcha-response']
   resp = Net::HTTP.get URI(
     'https://www.google.com/recaptcha/api/siteverify?'+
@@ -11,7 +10,6 @@ def new_recaptcha_valid?
   )
 
   if JSON.parse(resp)['success'] == true
-    session[:captcha_valid] = true
     true
   else
     false
@@ -32,9 +30,7 @@ post '/create_validate_all' do
   site = Site.new fields
 
   if site.valid?
-    return [].to_json if education_whitelisted?
-
-    return [].to_json if new_recaptcha_valid?
+    return [].to_json if education_whitelisted? || params[:'g-recaptcha-response']
     return [['captcha', 'Please complete the captcha.']].to_json
   end
 
@@ -86,14 +82,13 @@ post '/create' do
   if education_whitelisted?
     @site.email_confirmed = true
   else
-    new_recaptcha_valid?
-    if session[:captcha_valid] != true
+    if !new_recaptcha_valid?
       flash[:error] = 'The captcha was not valid, please try again.'
       return {result: 'error'}.to_json
     end
 
     if !@site.valid? || Site.ip_create_limit?(request.ip)
-      flash[:error] = 'There was an unknown error, please try again.'
+      flash[:error] = 'Your IP address has created too many sites, please try again later or contact support.'
       return {result: 'error'}.to_json
     end
 
@@ -105,8 +100,6 @@ post '/create' do
 
   @site.email_confirmed = true if self.class.development?
   @site.save
-
-  session[:captcha_valid] = nil
 
   unless education_whitelisted?
     @site.send_email(
