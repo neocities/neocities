@@ -188,6 +188,12 @@ post '/settings/change_password' do
 
   if parent_site.errors.empty?
     parent_site.save_changes
+
+    parent_site.send_email(
+      subject: "[Neocities] Your password has been changed",
+      body: Tilt.new('./views/templates/email/password_changed.erb', pretty: true).render(self)
+    )
+
     flash[:success] = 'Successfully changed password.'
     redirect "/settings#password"
   else
@@ -210,6 +216,7 @@ post '/settings/change_email' do
     redirect redirect_url
   end
 
+  previous_email = parent_site.email
   parent_site.email = params[:email]
   parent_site.email_confirmation_token = SecureRandom.hex 3
   parent_site.email_confirmed = false
@@ -218,6 +225,12 @@ post '/settings/change_email' do
   if parent_site.valid?
     parent_site.save_changes
     send_confirmation_email
+
+    parent_site.send_email(
+      subject: "[Neocities] Your email address has been changed",
+      body: Tilt.new('./views/templates/email/email_changed.erb', pretty: true).render(self, site: parent_site, previous_email: previous_email)
+    )
+
     if !parent_site.supporter?
       session[:fromsettings] = true
       redirect "/site/#{parent_site.email}/confirm_email"

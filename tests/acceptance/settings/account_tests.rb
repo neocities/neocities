@@ -13,6 +13,7 @@ describe 'site/settings' do
     end
 
     it 'should change email' do
+      original_email = @site.email
       @site.password_reset_token = 'shouldgoaway'
       @site.save
       @new_email = "#{SecureRandom.uuid.gsub('-', '')}@exampleedsdfdsf.com"
@@ -29,12 +30,18 @@ describe 'site/settings' do
       @site.reload
       @site.email.must_equal @new_email
       @site.password_reset_token.must_equal nil
-      EmailWorker.jobs.length.must_equal 1
-      args = EmailWorker.jobs.first['args'].first
+
+      EmailWorker.jobs.length.must_equal 2
+
+      args = EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /confirm your email address/i}.first['args'].first
       args['to'].must_equal @new_email
       args['subject'].must_match /confirm your email address/i
       args['body'].must_match /hello #{@site.username}/i
       args['body'].must_match /#{@site.email_confirmation_token}/
+
+      args = EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /your email address.+changed/i}.first['args'].first
+      args['body'].must_match /previous email.+#{original_email}/
+      args['body'].must_match /new email.+#{@site.email}/
     end
 
     it 'should fail for invalid email address' do
@@ -123,6 +130,7 @@ describe 'site/settings' do
     include Capybara::DSL
 
     before do
+      EmailWorker.jobs.clear
       @site = Fabricate :site, password: 'derpie'
       page.set_rack_session id: @site.id
       visit '/settings'
@@ -138,6 +146,8 @@ describe 'site/settings' do
       @site.reload
       @site.valid_password?('derpie').must_equal false
       @site.valid_password?('derpie2').must_equal true
+
+      EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /password has been changed/i}.length.must_equal 1
     end
 
     it 'should not change for invalid current password' do
@@ -150,6 +160,8 @@ describe 'site/settings' do
       @site.reload
       @site.valid_password?('derpie').must_equal true
       @site.valid_password?('derpie2').must_equal false
+
+      EmailWorker.jobs.length.must_equal 0
     end
   end
 end
