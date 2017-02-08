@@ -1,0 +1,18 @@
+<% if @tip.actioning_site %>
+You have received a <%= @tip.amount_string %> tip from <%= @tip.actioning_site.username %> (<%= @tip.actioning_site.uri %>)!
+<% else %>
+You have received a <%= @tip.amount_string %> tip!
+<% end %> It has been deposited into your Paypal account (<%= @tip.paypal_receiver_email %>).
+
+You can see the tip on your site profile at https://neocities.org/site/<%= @tip.site.username %>
+
+Neocities doesn't take a cut of the tips sent to sites. Almost all of the donation (minus any transaction fees) will go directly to you.
+
+<% if @tip.site.supporter? %>
+Lastly, thank you very much for being a supporter! You help makes this possible.
+<% else %>
+We fund Neocities through supporter accounts. If you're feeling tipsy yourself, consider signing up to be a Neocities supporter: https://neocities.org/supporter
+<% end %>
+
+Cheers!
+The Neocities Team

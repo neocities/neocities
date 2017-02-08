@@ -1,0 +1,18 @@
+You are awesome! You just sent a <%= @tip.amount_string %> tip to <%= @tip.site.username %> (<%= @tip.site.uri %>)!
+
+Neocities doesn't take a cut of the tips sent to sites. Almost all of your donation (minus any transaction fees) will go directly to the site itself!
+
+You can see the tip on your site profile at https://neocities.org/site/<%= @tip.site.username %>
+
+When you tip sites on Neocities, you help them to continue to build awesome stuff. On behalf of all the great sites on Neocities, thank you!
+
+If you're feeling tipsy, there's a lot of other great sites on Neocities! Check them all out at https://neocities.org/browse.
+
+<% if @tip.actioning_site && @tip.actioning_site.supporter? %>
+Lastly, thank you very much for being a supporter! You help makes this possible.
+<% else %>
+Also, we fund Neocities through supporter accounts. Consider signing up to be a Neocities supporter! https://neocities.org/supporter
+<% end %>
+
+Cheers!
+The Neocities Team
