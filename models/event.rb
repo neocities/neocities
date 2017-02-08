@@ -3,7 +3,7 @@ class Event < Sequel::Model
 
   many_to_one :site
   many_to_one :follow
-  one_to_one  :tip
+  many_to_one  :tip
   one_to_one  :tag
   many_to_one :site_change
   many_to_one :profile_comment

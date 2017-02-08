@@ -146,13 +146,6 @@ post '/site/:username/comment' do |username|
   redirect request.referrer
 end
 
-get '/site/:username/tip' do |username|
-  @site = Site[username: username]
-  redirect request.referrer unless @site.tipping_enabled?
-  @title = "Tip #{@site.title}"
-  erb :'tip'
-end
-
 post '/site/:site_id/toggle_follow' do |site_id|
   require_login
   content_type :json

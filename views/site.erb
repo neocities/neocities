@@ -31,7 +31,7 @@
         <% follows_count = site.follows_dataset.count %>
         <div class="stat"><strong><%= follows_count.format_large_number %></strong> <span>follower<%= follows_count == 1 ? '' : 's' %></span></div>
         <div class="stat"><strong><%= site.changed_count.format_large_number %></strong> <span>update<%= site.changed_count == 1 ? '' : 's' %></span></div>
-        <!-- <div class="stat"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div> -->
+        <div class="stat"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div>
       </div>
       <div class="actions">
         <% if current_site == site %>

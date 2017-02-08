@@ -145,6 +145,11 @@ GEM
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     mock_redis (0.16.1)
+    monetize (1.6.0)
+      money (~> 6.8)
+    money (6.8.1)
+      i18n (>= 0.6.4, <= 0.7.0)
+      sixarm_ruby_unaccent (>= 1.1.1, < 2)
     msgpack (0.7.5)
     multi_json (1.12.1)
     multipart-post (2.0.0)
@@ -238,6 +243,7 @@ GEM
       sinatra (>= 1.0.0)
     sinatra-xsendfile (0.4.2)
       sinatra (>= 0.9.1)
+    sixarm_ruby_unaccent (1.1.1)
     slop (3.6.0)
     storable (0.8.9)
     stripe (1.15.0)
@@ -317,6 +323,7 @@ DEPENDENCIES
   minitest-reporters
   mocha
   mock_redis
+  monetize
   msgpack
   paypal-recurring
   pg

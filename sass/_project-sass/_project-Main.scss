@@ -951,8 +951,11 @@ a.tag:hover {
 .news-item.update .icon {
   background: #E93250;
 }
+.news-item.tip .title .text .headline, .news-item.tip .title .text .headline a, .news-item.tip .date a {
+  color: #229954!important;
+}
 .news-item.tip .icon {
-  background: #FFCC00;
+  background: #229954;
 }
 .news-item.follow .icon {
   background: #3399CC;

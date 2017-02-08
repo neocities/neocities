@@ -15,7 +15,16 @@ get '/activity' do
     site = Site.select(:id).where(id: event.site_id).first
     actioning_site = Site.select(:id).where(id: event.actioning_site_id).first
 
-    events.push(event) if !site.is_a_jerk? && !actioning_site.is_a_jerk? && actioning_site.follows_dataset.count > 1
+    disclude_event = false
+    disclude_event = true if site.is_a_jerk?
+
+    if event.tip_id
+      disclude_event = true if actioning_site && actioning_site.is_a_jerk?
+    else
+      disclude_event = true if actioning_site && (actioning_site.is_a_jerk? || actioning_site.follows_dataset.count < 2)
+    end
+
+    events.push(event) unless disclude_event
   end
 
   initial_site_change_events = Event.global_site_changes_dataset.limit(100).all
