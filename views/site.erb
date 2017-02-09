@@ -107,53 +107,17 @@
 
     <% if site != current_site %>
       <div class="report">
-        <a href="#report" data-toggle="modal">Report</a>
         <% if signed_in? %>
-          |
           <% if current_site && current_site.is_blocking?(site) %>
             <a href="#">Unblock</a>
           <% else %>
-            <a href="#block" data-toggle="modal">Block</a>
+            <a href="#block" data-toggle="modal">Block Site</a>
           <% end %>
         <% end %>
       </div>
     <% end %>
   </div>
 </div></div>
-</div>
-
-<div class="modal hide fade" id="report" tabindex="-1" role="dialog" aria-labelledby="reportLabel" aria-hidden="true">
-  <form method="POST" action="/site/<%= site.username %>/report">
-    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-    <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-      <h3 id="reportLabel">Report Site</h3>
-    </div>
-    <div class="modal-body">
-      <p>
-        What is the reason you are reporting this site?
-        <select name="type" class="input-Area">
-          <option value="spam">Site is spamming</option>
-          <option value="phishing">Site is being used for a phishing attack</option>
-          <option value="abusive">Site is abusive or threatening</option>
-          <option value="harassment">Site is harassing other sites</option>
-          <option value="content">Site contains inappropriate/illegal content</option>
-          <option value="other">Other</option>
-        </select>
-      </p>
-      <p>Please describe the problem:</p>
-      <textarea name="comments" type="text" style="width: 400px; margin-bottom: 20px;"></textarea>
-
-      <p>Please fill out the captcha so we know you're not a robot:</p>
-      <div class="recaptcha" style="margin-bottom: 20px">
-        <%== recaptcha_tag :challenge, ssl: request.ssl? %>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button type="submit" class="btn-Action">Report</button>
-    </div>
-  </form>
 </div>
 
 <div class="modal hide fade" id="block" tabindex="-1" role="dialog" aria-labelledby="blockLabel" aria-hidden="true">

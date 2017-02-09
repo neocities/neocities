@@ -234,39 +234,6 @@ post '/site/:username/confirm_email' do
   end
 end
 
-post '/site/:username/report' do |username|
-  site = Site[username: username]
-
-  redirect request.referer if site.nil?
-
-  if !recaptcha_valid?
-    flash[:error] = 'Captcha was not filled out (or was filled out incorrectly)'
-    redirect request.referer
-  end
-
-  report = Report.new site_id: site.id, type: params[:type], comments: params[:comments]
-
-  if current_site
-    redirect request.referer if current_site.id == site.id
-    report.reporting_site_id = current_site.id
-  else
-    report.ip = request.ip
-  end
-
-  report.save
-
-  EmailWorker.perform_async({
-    from: 'web@neocities.org',
-    to: 'report@neocities.org',
-    subject: "[Neocities Report] #{site.username} has been reported for #{report.type}",
-    body: "Reported by #{report.reporting_site_id ? report.reporting_site.username : report.ip}: #{report.comments}"
-  })
-
-  flash[:success] = "Thank you for the report, we will look into it."
-
-  redirect request.referer
-end
-
 post '/site/:username/block' do |username|
   require_login
   site = Site[username: username]
