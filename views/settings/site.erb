@@ -27,9 +27,7 @@
           <!-- <li><a href="#domain" data-toggle="tab">Domain Name</a></li> -->
           <li><a href="#custom_domain" data-toggle="tab">Custom Domain</a></li>
           <li><a href="#username" data-toggle="tab">Change Site (User) Name</a></li>
-          <% if current_site.supporter? %>
-            <li><a href="#tipping" data-toggle="tab">Tipping</a></li>
-          <% end %>
+          <li><a href="#tipping" data-toggle="tab">Tipping</a></li>
 
           <% if @site.admin_nsfw != true %>
             <li><a href="#nsfw" data-toggle="tab">18+</a></li>
