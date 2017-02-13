@@ -82,6 +82,14 @@ def browse_sites_dataset
       site_dataset.where!{views > 100}
       params[:sort_by] = 'last_updated'
       site_dataset.order!(:site_updated_at.desc, :views.desc)
+    when 'tipping_enabled'
+      site_dataset.where! tipping_enabled: true
+      site_dataset = site_dataset.association_left_join :follows
+      site_dataset.select_all! :sites
+      site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
+      site_dataset.where!{views > 10_000}
+      site_dataset.group! :sites__id
+      site_dataset.order! :follow_count.desc, :views.desc, :updated_at.desc
     else
       params[:sort_by] = 'followers'
       site_dataset = site_dataset.association_left_join :follows
