@@ -129,6 +129,12 @@ post '/site/:username/comment' do |username|
 
   site = Site[username: username]
 
+  last_comment = site.profile_comments_dataset.order(:created_at.desc).first
+
+  if last_comment && last_comment.message == params[:message] && last_comment.created_at > 2.hours.ago
+    redirect request.referer
+  end
+
   if site.profile_comments_enabled == false ||
      params[:message].empty? ||
      site.is_blocking?(current_site) ||
