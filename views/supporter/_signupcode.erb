@@ -13,10 +13,6 @@
 
     var signupform = $(event.target)
 
-    <% if current_site && parent_site.stripe_subscription_id && !request.path.match(/\/settings/) %>
-      return true
-    <% end %>
-
     var planError = $('#plan_error')
     planError.css('display', 'none')
     signupform.find(':submit').prop('disabled', true)
@@ -27,7 +23,6 @@
       exp_month: $('[name="cc_exp_month"]').val(),
       exp_year: $('[name="cc_exp_year"]').val()
     }, function(status, response) {
-      console.log(response)
       if(response.error) {
         planError.text(response.error.message)
         planError.css('display', 'block')
