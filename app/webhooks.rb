@@ -107,7 +107,7 @@ end
 
 def stripe_get_site_from_event(event)
   customer_id = event['data']['object']['customer']
-  return 'ok' if customer_id.nil? # Likely a fraudulent card report
+  halt 'ok' if customer_id.nil? # Likely a fraudulent card report
   customer = Stripe::Customer.retrieve customer_id
 
   # Some old accounts only have a username for the desc
