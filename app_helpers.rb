@@ -20,7 +20,7 @@ def is_education?
 end
 
 def require_login
-  redirect '/' unless signed_in?
+  redirect '/' unless signed_in? && current_site
   enforce_ban if banned?
   signout if deleted?
 end
