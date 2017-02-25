@@ -81,6 +81,7 @@ def browse_sites_dataset
     when 'last_updated'
       site_dataset.where!{views > 100}
       params[:sort_by] = 'last_updated'
+      site_dataset.exclude!(site_updated_at: nil)
       site_dataset.order!(:site_updated_at.desc, :views.desc)
     when 'tipping_enabled'
       site_dataset.where! tipping_enabled: true
