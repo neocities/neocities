@@ -56,7 +56,7 @@
 
         <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: site} %>'><i class="fa fa-share-alt"></i> <span>Share</span></a>
 
-        <% if site.tipping_enabled && (!site.tipping_paypal.blank? || !site.tipping_bitcoin.blank?) %>
+        <% if site.tipping_enabled? %>
           <a href="#" id="tipButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'site/_tip', layout: false, locals: {site: site} %>'><i class="fa fa-usd"></i> <span>Send a Tip</span></a>
         <% end %>
       </div>

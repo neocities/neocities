@@ -1356,6 +1356,10 @@ class Site < Sequel::Model
     !site_files_dataset.where(path: /^\/?index.html$/).where(sha1_hash: EMPTY_FILE_HASH).first.nil?
   end
 
+  def tipping_enabled?
+    tipping_enabled && (!tipping_paypal.blank? || !tipping_bitcoin.blank?)
+  end
+
   def classify(path)
     return nil unless classification_allowed? path
     #$classifier.classify process_for_classification(path)

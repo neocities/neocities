@@ -85,6 +85,7 @@ def browse_sites_dataset
       site_dataset.order!(:site_updated_at.desc, :views.desc)
     when 'tipping_enabled'
       site_dataset.where! tipping_enabled: true
+      site_dataset.where!("(tipping_paypal is not null and tipping_paypal != '') or (tipping_bitcoin is not null and tipping_bitcoin != '')")
       site_dataset = site_dataset.association_left_join :follows
       site_dataset.select_all! :sites
       site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
