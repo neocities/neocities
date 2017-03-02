@@ -64,13 +64,16 @@ class ScreenshotWorker
       end
 
       full_screenshot_path = File.join(user_screenshots_path, "#{path}.#{res}.jpg")
+      tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
 
-      new_img.write(full_screenshot_path) {
-        self.quality = 90
-      }
-
-      new_img.destroy!
-      $image_optim.optimize_image! full_screenshot_path
+      begin
+        new_img.write(tmpfile_path) { self.quality = 90 }
+        new_img.destroy!
+        $image_optim.optimize_image! tmpfile_path
+        File.open(full_screenshot_path, 'wb') {|file| file.write File.read(tmpfile_path)}
+      ensure
+        FileUtils.rm tmpfile_path
+      end
     end
 
     img.destroy!
@@ -106,3 +109,4 @@ class ScreenshotWorker
 =end
   end
 end
+
