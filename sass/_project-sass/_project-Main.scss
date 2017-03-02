@@ -2238,3 +2238,8 @@ pre, code {
     @include linear-gradient(top, #0E6655, #0B5345);
   }
 }
+
+.ace_search {
+  position: fixed!important;
+  top: 105px!important;
+}
