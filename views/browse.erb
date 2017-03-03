@@ -82,8 +82,6 @@
            title="<%= site.title %>"
            <% if @surfmode %>
              onclick="surf(<%= ((@page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false"
-           <% else %>
-             href="<%= site.uri %>"
            <% end %>
         >
           <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
@@ -91,7 +89,12 @@
           </span>
         </a>
         <div class="title">
-          <a href="<%= site.uri %>" title="<%= site.title %>" onclick="surf(<%= i+1 %>); return false"><%= site.title.shorten(30) %></a>
+          <a href="<%= site.uri %>"
+             title="<%= site.title %>"
+             <% if @surfmode %>
+               onclick="surf(<%= ((@page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false"
+             <% end %>
+          ><%= site.title.shorten(30) %></a>
         </div>
         <div class="site-info">
           <div class="username">
