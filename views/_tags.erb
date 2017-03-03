@@ -9,13 +9,15 @@
 
     <% if is_current_site %>
       <div class="clear">
-        <a href="#addTag" data-toggle="modal">Add</a>
+        <% if is_current_site && current_site.tags_dataset.count < Site::MAXIMUM_TAGS %>
+          <a href="#addTag" data-toggle="modal">Add</a>
+        <% end %>
         &nbsp;&nbsp;&nbsp;
         <a href="#removeTag" data-toggle="modal">Remove</a>
       </div>
     <% end %>
   <% end %>
-<% end %> 
+<% end %>
 
 <div class="modal hide fade" id="addTag" tabindex="-1" role="dialog" aria-labelledby="addTagLabel" aria-hidden="true">
   <form method="POST" action="/tags/add">

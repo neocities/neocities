@@ -128,6 +128,8 @@ class Site < Sequel::Model
 
   BLOCK_JERK_THRESHOLD = 3
 
+  MAXIMUM_TAGS = 5
+
   def self.newsletter_sites
      Site.select(:email).
        exclude(email: 'nil').exclude(is_banned: true).
@@ -962,8 +964,8 @@ class Site < Sequel::Model
         end
       end
 
-      if ((new? ? 0 : tags_dataset.count) + new_tags.length > 5)
-        errors.add :new_tags_string, 'Cannot have more than 5 tags for your site.'
+      if ((new? ? 0 : tags_dataset.count) + new_tags.length > MAXIMUM_TAGS)
+        errors.add :new_tags_string, "Cannot have more than #{MAXIMUM_TAGS} tags for your site."
       end
 
       new_tags.each do |tag|
