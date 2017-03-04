@@ -1,0 +1,15 @@
+<% if @error %>
+  <div class="alert alert-block alert-error">
+    <p><%== @error %></p>
+  </div>
+<% end %>
+
+<% if flash.keys.length > 0 %>
+  <div class="alert alert-block alert-<%= flash.keys.first %> <%= opts[:centered] ? 'txt-Center' : '' %>">
+    <p>
+      <% flash.keys.each do |key| %>
+        <%== flash[key] %>
+      <% end %>
+    </p>
+  </div>
+<% end %>
