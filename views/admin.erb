@@ -14,13 +14,7 @@
     </div>
   </div>
 
-  <% if flash.keys.length > 0 %>
-    <div class="alert alert-error alert-block">
-      <% flash.keys.each do |key| %>
-        <%== flash[key] %>
-      <% end %>
-    </div>
-  <% end %>
+  <%== flash_display %>
 
   <div class="row">
     <div class="col col-50">

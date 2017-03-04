@@ -1,11 +1,5 @@
 <section class="section plans welcome">
-  <% if flash.keys.length > 0 %>
-    <div class="alert alert-block txt-Center">
-      <% flash.keys.each do |key| %>
-        <%== flash[key] %>
-      <% end %>
-    </div>
-  <% end %>
+  <%== flash_display centered: true %>
 
   <% if request.path == '/welcome' %>
     <h2>Welcome to Neocities, <%= current_site.username %>!</h2>

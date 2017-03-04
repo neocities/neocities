@@ -6,15 +6,7 @@
 </div>
 
 <div class="content txt-Center single-Col misc-page">
-  <% if flash.keys.length > 0 %>
-    <div class="alert alert-block">
-      <p>
-        <% flash.keys.select {|s| s == :error}.each do |key| %>
-          <%= flash[key] %>
-        <% end %>
-      </p>
-    </div>
-  <% end %>
+  <%== flash_display %>
 
   <form method="POST" action="/signin" class="content">
     <input name="csrf_token" type="hidden" value="<%= csrf_token %>">

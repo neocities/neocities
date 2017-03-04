@@ -32,13 +32,7 @@
           </ul>
         </nav>
 
-        <% if flash.keys.length > 0 %>
-          <div class="alert alert-block txt-Center">
-            <% flash.keys.each do |key| %>
-              <%== flash[key] %>
-            <% end %>
-          </div>
-        <% end %>
+        <%== flash_display centered: true %>
 
 <div class="int-Logo hp-Logo">
 <a href="/" title="back to home">

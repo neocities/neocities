@@ -110,3 +110,7 @@ end
 def sanitize_comment(text)
   Rinku.auto_link Sanitize.fragment(text), :all, 'target="_blank" rel="nofollow"'
 end
+
+def flash_display(opts={})
+  erb :'_flash', layout: false, locals: {opts: opts}
+end

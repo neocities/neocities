@@ -6,15 +6,7 @@
 </div>
 
 <div class="content txt-Center single-Col misc-page">
-  <% if flash.keys.length > 0 %>
-    <div class="alert alert-block">
-      <p>
-        <% flash.keys.select {|s| s == :error}.each do |key| %>
-          <%= flash[key] %>
-        <% end %>
-      </p>
-    </div>
-  <% end %>
+  <%== flash_display %>
 
   <p>If you forgot your sitename (AKA username), you can have it emailed to you here.</p>
 
