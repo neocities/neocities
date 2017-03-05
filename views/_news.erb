@@ -18,8 +18,8 @@
 
     <div class="news-item tip">
       <div class="title">
-        <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id).first %>
-        <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id).first %>
+        <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
+        <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
         <% tip = event.tip %>
 
         <div class="icon">
@@ -60,8 +60,8 @@
   <% elsif event.follow_id %>
     <div class="news-item follow">
       <div class="title">
-      <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id).first %>
-      <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id).first %>
+      <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
+      <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
 
       <div class="icon"><a href="/site/<%= actioning_site.username %>" title="<%= actioning_site.username %>" class="avatar" style="background-image: url(<%= actioning_site.screenshot_url 'index.html', '50x50' %>);"></a></div>
 
@@ -91,7 +91,7 @@
       <div class="title">
         <div class="icon"></div>
         <div class="text">
-          <% event_site = event.site_dataset.select(:id, :username, :title, :domain).first %>
+          <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :plan_type).first %>
           <% if current_site && event_site.id == current_site.id %>
             You updated your site.
           <% else %>
@@ -145,8 +145,8 @@
     <div class="content">
       <div class="comments">
         <% event.comments.each do |comment| %>
-          <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id).first %>
-          <% comment_event_site = comment.event.site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id).first %>
+          <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
+          <% comment_event_site = comment.event.site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <div class="comment" id="comment_<%= comment.id %>">
             <a href="/site/<%= comment_actioning_site.username %>"><img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>"></a>
             <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><i class="fa fa-user"><% if comment_actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= comment_actioning_site.username %></a>
