@@ -62,7 +62,7 @@ class LetsEncryptWorker
       puts "testing #{challenge_url}"
 
       begin
-        res = HTTP.timeout(:global, write: 5, connect: 10, read: 10).get(challenge_url)
+        res = HTTP.timeout(:global, write: 5, connect: 10, read: 10).follow.get(challenge_url)
       rescue => e
         puts e.inspect
         puts "error with #{challenge_url}"
