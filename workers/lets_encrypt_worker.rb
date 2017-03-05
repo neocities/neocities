@@ -188,6 +188,7 @@ class LetsEncryptWorker
     site.ssl_key = certificate.request.private_key.to_pem
     site.ssl_cert = certificate.fullchain_to_pem
     site.cert_updated_at = Time.now
+    site.domain_fail_count = 0
     site.save_changes validate: false
 
     # Refresh the cert periodically, current expire time is 90 days
