@@ -1,3 +1,5 @@
+require 'resolv'
+
 class Stat < Sequel::Model
   FREE_RETAINMENT_DAYS = 30
 
