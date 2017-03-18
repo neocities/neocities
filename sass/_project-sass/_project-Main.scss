@@ -961,7 +961,6 @@ a.tag:hover {
   background: #3399CC;
 }
 .news-item .title {
-  margin-bottom: .4em;
   position: relative;
   width: 100%;
   float: left;
@@ -1053,6 +1052,11 @@ a.tag:hover {
 }
 .news-item .actions, .news-item.comment .content {
   margin-left: 61px;
+}
+.news-item.comment .content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  margin-bottom: 10px;
 }
 .news-item.comment .comments .actions {
   margin-left: 47px;
