@@ -31,7 +31,7 @@ class ThumbnailWorker
       resimg.write(full_thumbnail_path) {
         self.quality = 75
       }
-      $image_optim.optimize_image! full_thumbnail_path
+      #$image_optim.optimize_image! full_thumbnail_path
     end
   end
 end
