@@ -12,6 +12,7 @@ Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
 require 'tilt/erubis'
+require 'active_support/core_ext/integer/time'
 
 Dir['./ext/**/*.rb'].each {|f| require f}
 

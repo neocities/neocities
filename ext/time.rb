@@ -1,7 +1,9 @@
 class Time
-  alias_method :ago_original, :ago
-
   def ago
-   ago_original.downcase.gsub('right now, this very moment.', 'just now')
+    self.ago_in_words
+  end
+
+  def from_now
+    self.from_now_in_words
   end
 end

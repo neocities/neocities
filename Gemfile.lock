@@ -14,24 +14,22 @@ GEM
   specs:
     acme-client (0.4.0)
       faraday (~> 0.9, >= 0.9.1)
-    activesupport (4.2.6)
+    activesupport (5.0.2)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     addressable (2.5.0)
       public_suffix (~> 2.0, >= 2.0.2)
-    ago (0.1.5)
     annoy (0.5.6)
       highline (>= 1.5.0)
     ansi (1.5.0)
     base32 (0.3.2)
     bcrypt (3.1.11)
     blankslate (3.1.3)
-    builder (3.2.2)
+    builder (3.2.3)
     byebug (8.2.4)
-    capybara (2.10.1)
+    capybara (2.13.0)
       addressable
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
@@ -48,14 +46,14 @@ GEM
     cocaine (0.5.8)
       climate_control (>= 0.0.3, < 1.0)
     coderay (1.1.1)
-    concurrent-ruby (1.0.2)
+    concurrent-ruby (1.0.5)
     connection_pool (2.2.0)
-    coveralls (0.8.13)
-      json (~> 1.8)
-      simplecov (~> 0.11.0)
+    coveralls (0.8.19)
+      json (>= 1.8, < 3)
+      simplecov (~> 0.12.0)
       term-ansicolor (~> 1.3)
       thor (~> 0.19.1)
-      tins (~> 1.6.0)
+      tins (~> 1.6)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.2)
@@ -83,12 +81,12 @@ GEM
       ffi (>= 1.0.0)
       rake
     filesize (0.1.1)
-    fspath (3.0.1)
-    gandi (2.1.3)
+    fspath (3.0.3)
+    gandi (3.3.27)
       hashie
     geoip (1.6.1)
-    hashdiff (0.3.0)
-    hashie (3.4.3)
+    hashdiff (0.3.2)
+    hashie (3.5.5)
     highline (1.7.8)
     hiredis (0.6.1)
     hoe (3.14.2)
@@ -122,7 +120,7 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.4)
       rest-client (~> 1.0)
-    json (1.8.3)
+    json (1.8.6)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     m (1.4.2)
@@ -136,7 +134,7 @@ GEM
     method_source (0.8.2)
     mime-types (2.99.3)
     mini_portile2 (2.1.0)
-    minitest (5.8.4)
+    minitest (5.10.1)
     minitest-reporters (1.1.8)
       ansi
       builder
@@ -150,25 +148,24 @@ GEM
     money (6.8.1)
       i18n (>= 0.6.4, <= 0.7.0)
       sixarm_ruby_unaccent (>= 1.1.1, < 2)
-    msgpack (0.7.5)
+    msgpack (1.1.0)
     multi_json (1.12.1)
     multipart-post (2.0.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (3.1.1)
     netrc (0.11.0)
-    nokogiri (1.6.8.1)
+    nokogiri (1.7.0.1)
       mini_portile2 (~> 2.1.0)
     nokogumbo (1.4.7)
       nokogiri
     ox (2.4.6)
     paypal-recurring (1.1.0)
-    pg (0.18.4)
+    pg (0.20.0)
     poltergeist (1.11.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       websocket-driver (>= 0.2.0)
-    posix-spawn (0.3.11)
     progress (3.2.2)
     pry (0.10.3)
       coderay (~> 1.1.0)
@@ -177,7 +174,7 @@ GEM
     pry-byebug (3.3.0)
       byebug (~> 8.0)
       pry (~> 0.10)
-    public_suffix (2.0.4)
+    public_suffix (2.0.5)
     puma (3.4.0)
     rack (1.6.5)
     rack-cache (1.6.1)
@@ -192,7 +189,7 @@ GEM
       builder (>= 2.0.0)
       rack (>= 1.0.0)
     rake (10.5.0)
-    redis (3.2.2)
+    redis (3.3.3)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
     rest-client (1.8.0)
@@ -219,8 +216,8 @@ GEM
     scrypt (2.1.1)
       ffi-compiler (>= 0.0.2)
       rake
-    sequel (4.8.0)
-    sequel_pg (1.6.16)
+    sequel (4.44.0)
+    sequel_pg (1.6.17)
       pg (>= 0.8.0)
       sequel (>= 4.0.0)
     shotgun (0.9.1)
@@ -229,13 +226,13 @@ GEM
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
       redis (~> 3.2, >= 3.2.1)
-    simplecov (0.11.2)
+    simplecov (0.12.0)
       docile (~> 1.1.0)
-      json (~> 1.8)
+      json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
     simpleidn (0.0.6)
-    sinatra (1.4.7)
+    sinatra (1.4.8)
       rack (~> 1.5)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
@@ -257,21 +254,21 @@ GEM
     sysinfo (0.8.1)
       drydock
       storable
-    term-ansicolor (1.3.2)
+    term-ansicolor (1.4.0)
       tins (~> 1.0)
-    thor (0.19.1)
+    thor (0.19.4)
     thread (0.2.2)
-    thread_safe (0.3.5)
-    tilt (2.0.2)
+    thread_safe (0.3.6)
+    tilt (2.0.6)
     timecop (0.8.1)
-    tins (1.6.0)
+    tins (1.13.2)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
     uuidtools (2.1.5)
-    webmock (2.1.0)
+    webmock (2.3.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
@@ -279,6 +276,7 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
     will_paginate (3.1.0)
+    xmlrpc (0.3.0)
     xpath (2.0.0)
       nokogiri (~> 1.3)
     zipruby (0.3.6)
@@ -288,11 +286,11 @@ PLATFORMS
 
 DEPENDENCIES
   acme-client
+  activesupport
   addressable
-  ago
   base32
   bcrypt
-  capybara (= 2.10.1)
+  capybara
   capybara_minitest_spec
   certified
   cocaine
@@ -313,9 +311,6 @@ DEPENDENCIES
   image_optim_pack
   io-extra
   ipaddress
-  jdbc-postgres
-  jruby-openssl
-  json
   m
   magic
   mail
@@ -328,7 +323,6 @@ DEPENDENCIES
   paypal-recurring
   pg
   poltergeist
-  posix-spawn
   pry
   pry-byebug
   puma
@@ -342,12 +336,11 @@ DEPENDENCIES
   rest-client
   rinku
   rmagick
-  ruby-debug
   rye
   sanitize
   sass
   scrypt
-  sequel (= 4.8.0)
+  sequel
   sequel_pg
   shotgun
   sidekiq (~> 4.1.2)
@@ -363,7 +356,8 @@ DEPENDENCIES
   timecop
   webmock
   will_paginate
+  xmlrpc
   zipruby
 
 BUNDLED WITH
-   1.13.7
+   1.14.6

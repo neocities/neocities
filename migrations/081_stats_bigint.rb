@@ -1,8 +1,8 @@
 Sequel.migration do
   up {
     alter_table(:stats) do
-      set_column_type :hits, Bignum
-      set_column_type :views, Bignum
+      set_column_type :hits, :bigint
+      set_column_type :views, :bigint
     end
   }
 
