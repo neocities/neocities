@@ -35,7 +35,6 @@ class Archive < Sequel::Model
       end
     else
       line = Cocaine::CommandLine.new('ipfs', 'pin rm :ipfs_hash')
-      binding.pry
       response = line.run ipfs_hash: ipfs_hash
       output_array = response.to_s.split("\n")
     end
