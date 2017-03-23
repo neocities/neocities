@@ -38,7 +38,7 @@ describe 'signup' do
     site = Site[username: @site[:username]]
     site.site_files.length.must_equal 4
     site.site_changed.must_equal false
-    site.site_updated_at.must_equal nil
+    site.site_updated_at.must_be_nil
     site.is_education.must_equal true
     site.tags.length.must_equal 1
     site.tags.first.name.must_equal @class_tag

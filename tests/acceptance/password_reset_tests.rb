@@ -83,7 +83,7 @@ describe '/password_reset' do
     page.must_have_content 'Successfully changed password'
     Site.valid_login?(@site.username, 'n3wp4s$').must_equal true
     page.get_rack_session['id'].must_equal @site.id
-    @site.reload.password_reset_token.must_equal nil
+    @site.reload.password_reset_token.must_be_nil
     @site.password_reset_confirmed.must_equal false
   end
 

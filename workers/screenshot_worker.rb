@@ -49,7 +49,7 @@ class ScreenshotWorker
     img = img_list.reverse.flatten_images
     img_list.destroy!
 
-    user_screenshots_path = File.join SCREENSHOTS_PATH, username
+    user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
     screenshot_path = File.join user_screenshots_path, File.dirname(path)
 
     FileUtils.mkdir_p screenshot_path unless Dir.exists?(screenshot_path)
@@ -109,4 +109,3 @@ class ScreenshotWorker
 =end
   end
 end
-

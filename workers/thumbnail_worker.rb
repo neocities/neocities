@@ -6,17 +6,19 @@ class ThumbnailWorker
   sidekiq_options queue: :thumbnails, retry: 3, backtrace: true
 
   def perform(username, path)
+    site = Site[username: username]
+
     img_list = Magick::ImageList.new
 
     begin
-      img_list.from_blob File.read(File.join(Site::SITE_FILES_ROOT, username, path))
+      img_list.from_blob File.read(site.files_path(path))
     rescue Errno::ENOENT => e # Not found, skip
       return
     end
 
     img = img_list.first
 
-    user_thumbnails_path = File.join THUMBNAILS_PATH, username
+    user_thumbnails_path = site.base_thumbnails_path
     FileUtils.mkdir_p user_thumbnails_path
     FileUtils.mkdir_p File.join(user_thumbnails_path, File.dirname(path))
 

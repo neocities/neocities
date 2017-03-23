@@ -2,6 +2,7 @@ require 'tilt'
 require 'rss'
 require 'nokogiri'
 require 'pathname'
+require 'zlib'
 
 class Site < Sequel::Model
   include Sequel::ParanoidDelete
@@ -436,7 +437,8 @@ class Site < Sequel::Model
         FileUtils.mkdir DELETED_SITES_ROOT
       end
 
-      FileUtils.mv files_path, File.join(DELETED_SITES_ROOT, username)
+      FileUtils.mkdir_p File.join(DELETED_SITES_ROOT, self.class.sharding_dir(username))
+      FileUtils.mv files_path, File.join(DELETED_SITES_ROOT, self.class.sharding_dir(username), '/')
       remove_all_tags
       #remove_all_events
       #Event.where(actioning_site_id: id).destroy
@@ -784,6 +786,7 @@ class Site < Sequel::Model
   end
 
   def move_files_from(oldusername)
+    FileUtils.mkdir_p self.class.sharding_base_path(username)
     FileUtils.mv base_files_path(oldusername), base_files_path
   end
 
@@ -1010,13 +1013,22 @@ class Site < Sequel::Model
 
   def current_base_files_path(name=username)
     raise 'username missing' if name.nil? || name.empty?
-    return File.join DELETED_SITES_ROOT, name if is_deleted
+    return File.join DELETED_SITES_ROOT, self.class.sharding_dir(name), name if is_deleted
     base_files_path name
   end
 
   def base_files_path(name=username)
     raise 'username missing' if name.nil? || name.empty?
-    File.join SITE_FILES_ROOT, name
+    File.join SITE_FILES_ROOT, self.class.sharding_dir(name), name
+  end
+
+  def self.sharding_base_path(name)
+    File.join SITE_FILES_ROOT, sharding_dir(name)
+  end
+
+  def self.sharding_dir(name)
+    chksum = Zlib::crc32(name).to_s
+    File.join(chksum[0..1], chksum[2..3])
   end
 
   # https://practicingruby.com/articles/implementing-an-http-file-server?u=dc2ab0f9bb
@@ -1304,7 +1316,7 @@ class Site < Sequel::Model
   end
 
   def screenshot_path(path, resolution)
-    File.join(SCREENSHOTS_ROOT, values[:username], "#{path}.#{resolution}.jpg")
+    File.join(SCREENSHOTS_ROOT, self.class.sharding_dir(values[:username]), values[:username], "#{path}.#{resolution}.jpg")
   end
 
   def screenshot_exists?(path, resolution)
@@ -1315,9 +1327,13 @@ class Site < Sequel::Model
     "#{SCREENSHOTS_URL_ROOT}/#{values[:username]}/#{path}.#{resolution}.jpg"
   end
 
+  def base_thumbnails_path
+    File.join THUMBNAILS_ROOT, self.class.sharding_dir(values[:username]), values[:username]
+  end
+
   def thumbnail_path(path, resolution)
     ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    File.join THUMBNAILS_ROOT, values[:username], "#{path}.#{resolution}.#{ext}"
+    File.join base_thumbnails_path, "#{path}.#{resolution}.#{ext}"
   end
 
   def thumbnail_exists?(path, resolution)

@@ -61,7 +61,7 @@ describe 'tipping' do
     post '/webhooks/paypal/tipping_notify', paypal_hash
 
     @site.tips.length.must_equal 1
-    @site.tips.first.actioning_site_id.must_equal nil
+    @site.tips.first.actioning_site_id.must_be_nil
   end
 end
 

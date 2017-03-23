@@ -51,13 +51,13 @@ describe 'signup' do
     current_path.must_equal '/tutorial'
     page.must_have_content /Let's Get Started/
 
-    index_file_path = File.join Site::SITE_FILES_ROOT, @site[:username], 'index.html'
+    index_file_path = File.join Site::SITE_FILES_ROOT, Site.sharding_dir(@site[:username]), @site[:username], 'index.html'
     File.exist?(index_file_path).must_equal true
 
     site = Site[username: @site[:username]]
     site.site_files.length.must_equal 4
     site.site_changed.must_equal false
-    site.site_updated_at.must_equal nil
+    site.site_updated_at.must_be_nil
     site.is_education.must_equal false
 
     site.ip.must_equal '127.0.0.1'

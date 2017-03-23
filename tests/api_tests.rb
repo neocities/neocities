@@ -91,7 +91,7 @@ describe 'api info' do
     res[:info][:sitename].must_equal @site.username
     res[:info][:hits].must_equal 31337
     res[:info][:created_at].must_equal @site.created_at.rfc2822
-    res[:info][:last_updated].must_equal nil
+    res[:info][:last_updated].must_be_nil
     res[:info][:domain].must_equal 'derp.com'
     res[:info][:tags].must_equal ['derpie', 'man']
     res[:info][:latest_ipfs_hash].must_equal 'QmXGTaGWTT1uUtfSb2sBAvArMEVLK4rQEcQg5bv7wwdzwU'
@@ -101,7 +101,7 @@ describe 'api info' do
   it 'shows latest ipfs hash as nil when not present' do
     create_site
     get '/api/info', sitename: @user
-    res[:info][:latest_ipfs_hash].must_equal nil
+    res[:info][:latest_ipfs_hash].must_be_nil
   end
 
   it 'fails for bad auth' do
@@ -237,7 +237,7 @@ describe 'api upload' do
       '../lol.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
     }
     res[:result].must_equal 'success'
-    File.exist?(File.join(Site::SITE_FILES_ROOT, @site.username, 'lol.jpg')).must_equal true
+    File.exist?(File.join(Site::SITE_FILES_ROOT, Site.sharding_dir(@site.username), @site.username, 'lol.jpg')).must_equal true
     @site.reload.api_calls.must_equal 1
   end
 
@@ -248,7 +248,7 @@ describe 'api upload' do
       '/lol.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
     }
     res[:result].must_equal 'success'
-    File.exist?(File.join(Site::SITE_FILES_ROOT, @site.username, 'lol.jpg')).must_equal true
+    File.exist?(File.join(Site::SITE_FILES_ROOT, Site.sharding_dir(@site.username), @site.username, 'lol.jpg')).must_equal true
   end
 
   it 'fails for missing file name' do

@@ -103,103 +103,6 @@ describe 'site/settings' do
     end
   end
 
-=begin
-  describe 'ssl' do
-    include Capybara::DSL
-
-    before do
-      @domain = SecureRandom.uuid.gsub('-', '')+'.com'
-      @site = Fabricate :site, domain: @domain
-      page.set_rack_session id: @site.id
-    end
-
-    it 'fails without domain set' do
-      @site = Fabricate :site
-      page.set_rack_session id: @site.id
-      visit "/settings/#{@site.username}#custom_domain"
-      page.must_have_content /Cannot upload SSL certificate until domain is added/i
-    end
-
-    it 'fails with expired key' do
-      @ssl = generate_ssl_certs domain: @domain, expired: true
-      visit "/settings/#{@site.username}#custom_domain"
-      attach_file 'key', @ssl[:key_path]
-      attach_file 'cert', @ssl[:combined_cert_path]
-      click_button 'Upload SSL Key and Certificate'
-      page.must_have_content /ssl certificate has expired/i
-    end
-
-    it 'works with valid key and unified cert' do
-      @ssl = generate_ssl_certs domain: @domain
-      visit "/settings/#{@site.username}#custom_domain"
-      key = File.read @ssl[:key_path]
-      combined_cert = File.read @ssl[:combined_cert_path]
-      page.must_have_content /status: inactive/i
-      attach_file 'key', @ssl[:key_path]
-      attach_file 'cert', @ssl[:combined_cert_path]
-      click_button 'Upload SSL Key and Certificate'
-      page.current_path.must_equal "/settings/#{@site.username}"
-      page.must_have_content /Updated SSL/
-      page.must_have_content /status: installed/i
-      @site.reload
-      @site.ssl_key.must_equal key
-      @site.ssl_cert.must_equal combined_cert
-    end
-
-    it 'fails with no uploads' do
-      visit "/settings/#{@site.username}#custom_domain"
-      click_button 'Upload SSL Key and Certificate'
-      page.current_path.must_equal "/settings/#{@site.username}"
-      page.must_have_content /ssl key.+certificate.+required/i
-      @site.reload
-      @site.ssl_key.must_equal nil
-      @site.ssl_cert.must_equal nil
-    end
-
-    it 'fails gracefully with encrypted key' do
-      @ssl = generate_ssl_certs domain: @domain
-      visit "/settings/#{@site.username}#custom_domain"
-      attach_file 'key', './tests/files/ssl/derpie.com-encrypted.key'
-      attach_file 'cert', @ssl[:cert_path]
-      click_button 'Upload SSL Key and Certificate'
-      page.current_path.must_equal "/settings/#{@site.username}"
-      page.must_have_content /could not process ssl key/i
-    end
-
-    it 'fails with junk key' do
-      @ssl = generate_ssl_certs domain: @domain
-      visit "/settings/#{@site.username}#custom_domain"
-      attach_file 'key', './tests/files/index.html'
-      attach_file 'cert', @ssl[:cert_path]
-      click_button 'Upload SSL Key and Certificate'
-      page.current_path.must_equal "/settings/#{@site.username}"
-      page.must_have_content /could not process ssl key/i
-    end
-
-    it 'fails with junk cert' do
-      @ssl = generate_ssl_certs domain: @domain
-      visit "/settings/#{@site.username}#custom_domain"
-      attach_file 'key', @ssl[:key_path]
-      attach_file 'cert', './tests/files/index.html'
-      click_button 'Upload SSL Key and Certificate'
-      page.current_path.must_equal "/settings/#{@site.username}"
-      page.must_have_content /could not process ssl certificate/i
-    end
-
-    if ENV['TRAVIS'] != 'true'
-      it 'fails with bad cert chain' do
-        @ssl = generate_ssl_certs domain: @domain
-        visit "/settings/#{@site.username}#custom_domain"
-        attach_file 'key', @ssl[:key_path]
-        attach_file 'cert', @ssl[:bad_combined_cert_path]
-        click_button 'Upload SSL Key and Certificate'
-        page.current_path.must_equal "/settings/#{@site.username}"
-        page.must_have_content /there is something wrong with your certificate/i
-      end
-    end
-  end
-=end
-
   describe 'changing username' do
     include Capybara::DSL
 
@@ -218,14 +121,14 @@ describe 'site/settings' do
       fill_in 'name', with: ''
       click_button 'Change Name'
       page.must_have_content /cannot be blank/i
-      Site[username: ''].must_equal nil
+      Site[username: ''].must_be_nil
     end
 
     it 'fails for subdir periods' do
       fill_in 'name', with: '../hack'
       click_button 'Change Name'
       page.must_have_content /Usernames can only contain/i
-      Site[username: '../hack'].must_equal nil
+      Site[username: '../hack'].must_be_nil
     end
 
     it 'fails for same username' do
@@ -279,7 +182,7 @@ describe 'delete' do
     File.exist?(@site.files_path('./index.html')).must_equal false
     Dir.exist?(@site.files_path).must_equal false
 
-    path = File.join Site::DELETED_SITES_ROOT, @site.username
+    path = File.join Site::DELETED_SITES_ROOT, Site.sharding_dir(@site.username), @site.username
     Dir.exist?(path).must_equal true
     File.exist?(File.join(path, 'index.html')).must_equal true
 
@@ -314,7 +217,7 @@ describe 'delete' do
 
     Stripe::Customer.retrieve(@site.stripe_customer_id).subscriptions.count.must_equal 0
     @site.reload
-    @site.stripe_subscription_id.must_equal nil
+    @site.stripe_subscription_id.must_be_nil
     @site.is_deleted.must_equal true
   end
 

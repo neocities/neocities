@@ -29,7 +29,7 @@ describe 'site/settings' do
 
       @site.reload
       @site.email.must_equal @new_email
-      @site.password_reset_token.must_equal nil
+      @site.password_reset_token.must_be_nil
 
       EmailWorker.jobs.length.must_equal 2
 

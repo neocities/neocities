@@ -407,3 +407,21 @@ task :purge_tmp_turds => [:environment] do
     Dir.glob("/tmp/#{target}").select {|filename| File::Stat.new(filename).ctime < (Time.now - 3600)}.each {|filename| FileUtils.rm(filename)}
   end
 end
+
+desc 'shard_migration'
+task :shard_migration => [:environment] do
+  #Site.exclude(is_deleted: true).exclude(is_banned: true).select(:username).each do |site|
+  #  FileUtils.mkdir_p File.join('public', 'testsites', site.username)
+  #end
+  #exit
+  Dir.chdir('./public/testsites')
+  Dir.glob('*').each do |dir|
+    sharding_dir = Site.sharding_dir(dir)
+    FileUtils.mkdir_p File.join('..', 'newtestsites', sharding_dir)
+    FileUtils.mv dir, File.join('..', 'newtestsites', sharding_dir)
+  end
+  sleep 1
+  FileUtils.rmdir './public/testsites'
+  sleep 1
+  FileUtils.mv './public/newtestsites', './public/testsites'
+end
