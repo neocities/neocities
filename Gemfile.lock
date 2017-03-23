@@ -65,6 +65,7 @@ GEM
     erubis (2.7.0)
     exifr (1.2.5)
     fabrication (2.15.0)
+    facter (2.4.6)
     faker (1.6.3)
       i18n (~> 0.5)
     faraday (0.9.2)
@@ -298,6 +299,7 @@ DEPENDENCIES
   dav4rack!
   erubis
   fabrication
+  facter
   faker
   feedjira
   filesize
