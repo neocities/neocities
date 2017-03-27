@@ -1324,7 +1324,7 @@ class Site < Sequel::Model
   end
 
   def screenshot_url(path, resolution)
-    "#{SCREENSHOTS_URL_ROOT}/#{values[:username]}/#{path}.#{resolution}.jpg"
+    "#{SCREENSHOTS_URL_ROOT}/#{self.class.sharding_dir(values[:username])}/#{values[:username]}/#{path}.#{resolution}.jpg"
   end
 
   def base_thumbnails_path
@@ -1346,7 +1346,7 @@ class Site < Sequel::Model
 
   def thumbnail_url(path, resolution)
     ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    "#{THUMBNAILS_URL_ROOT}/#{values[:username]}/#{path}.#{resolution}.#{ext}"
+    "#{THUMBNAILS_URL_ROOT}/#{self.class.sharding_dir(values[:username])}/#{values[:username]}/#{path}.#{resolution}.#{ext}"
   end
 
   def ssl_installed?
