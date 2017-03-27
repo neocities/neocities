@@ -102,26 +102,26 @@ class Site < Sequel::Model
 
   PLAN_FEATURES[:supporter] = {
     name: 'Supporter',
-    space: Filesize.from('10GB').to_i,
+    space: Filesize.from('20GB').to_i,
     bandwidth: Filesize.from('2TB').to_i,
     price: 5,
     unlimited_site_creation: true,
     custom_ssl_certificates: true,
     no_file_restrictions: true,
     custom_domains: true,
-    maximum_site_files: 50000
+    maximum_site_files: 100_000
   }
 
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
     name: 'Free',
-    space: Filesize.from('100MB').to_i,
+    space: Filesize.from('1GB').to_i,
     bandwidth: Filesize.from('200GB').to_i,
     price: 0,
     unlimited_site_creation: false,
     custom_ssl_certificates: false,
     no_file_restrictions: false,
     custom_domains: false,
-    maximum_site_files: 5000
+    maximum_site_files: 15_000
   )
 
   EMAIL_VALIDATION_CUTOFF_DATE = Time.parse('May 16, 2016')
