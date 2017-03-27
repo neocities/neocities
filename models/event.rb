@@ -22,6 +22,7 @@ class Event < Sequel::Model
       join_table(:inner, :sites, id: :site_id).
       exclude(Sequel.qualify(:sites, :is_deleted) => true).
       exclude(Sequel.qualify(:events, :is_deleted) => true).
+      exclude(Sequel.qualify(:sites, :is_nsfw) => true).
       exclude(is_banned: true)
   end
 
