@@ -17,12 +17,14 @@ class Event < Sequel::Model
   GLOBAL_VIEWS_SITE_CHANGE_MINIMUM = 1000
 
   def self.news_feed_default_dataset
+    excluded_actioning_site_ids = DB[%{select distinct(actioning_site_id) from events join sites on actioning_site_id=sites.id where sites.is_banned='t' or sites.is_nsfw='t' or sites.is_deleted='t'}].all.collect {|r| r[:actioning_site_id]}
+
     select_all(:events).
       order(:created_at.desc).
       join_table(:inner, :sites, id: :site_id).
       exclude(Sequel.qualify(:sites, :is_deleted) => true).
       exclude(Sequel.qualify(:events, :is_deleted) => true).
-      exclude(Sequel.qualify(:sites, :is_nsfw) => true).
+      where("actioning_site_id is null or actioning_site_id not in ?", excluded_actioning_site_ids).
       exclude(is_banned: true)
   end
 
