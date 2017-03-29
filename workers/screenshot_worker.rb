@@ -1,7 +1,5 @@
 require 'rmagick'
-require 'timeout'
 require 'securerandom'
-require 'thread'
 require 'open3'
 
 class ScreenshotWorker
