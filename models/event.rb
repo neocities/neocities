@@ -19,13 +19,18 @@ class Event < Sequel::Model
   def self.news_feed_default_dataset
     excluded_actioning_site_ids = DB[%{select distinct(actioning_site_id) from events join sites on actioning_site_id=sites.id where sites.is_banned='t' or sites.is_nsfw='t' or sites.is_deleted='t'}].all.collect {|r| r[:actioning_site_id]}
 
-    select_all(:events).
+    ds = select_all(:events).
       order(:created_at.desc).
       join_table(:inner, :sites, id: :site_id).
       exclude(Sequel.qualify(:sites, :is_deleted) => true).
       exclude(Sequel.qualify(:events, :is_deleted) => true).
-      where("actioning_site_id is null or actioning_site_id not in ?", excluded_actioning_site_ids).
       exclude(is_banned: true)
+
+    unless excluded_actioning_site_ids.empty?
+      ds.where!("actioning_site_id is null or actioning_site_id not in ?", excluded_actioning_site_ids)
+    end
+
+    ds
   end
 
   def self.global_dataset(current_page=1, limit=DEFAULT_GLOBAL_LIMIT)
