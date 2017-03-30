@@ -52,7 +52,7 @@ gem 'pg'
 gem 'sequel_pg', require: nil
 gem 'hiredis'
 gem 'activesupport'
-gem 'facter'
+gem 'facter', require: nil
 
 group :development, :test do
   gem 'pry'
