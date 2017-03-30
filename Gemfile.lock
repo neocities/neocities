@@ -263,7 +263,7 @@ GEM
     tilt (2.0.6)
     timecop (0.8.1)
     tins (1.13.2)
-    tzinfo (1.2.2)
+    tzinfo (1.2.3)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
