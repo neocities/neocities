@@ -217,6 +217,8 @@ describe 'api upload' do
     res[:error_type].must_equal 'missing_files'
   end
 
+=begin
+  # Getting too slow to run this test
   it 'fails with too many files' do
     create_site
     basic_authorize @user, @pass
@@ -229,6 +231,7 @@ describe 'api upload' do
     }
     res[:error_type].must_equal 'too_many_files'
   end
+=end
 
   it 'resists directory traversal attack' do
     create_site
