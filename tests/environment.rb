@@ -63,3 +63,10 @@ I18n.enforce_available_locales = true
 Mail.defaults do
   delivery_method :test
 end
+
+# Clean up junk from tests
+[Site::SITE_FILES_ROOT, Site::SCREENSHOTS_ROOT, Site::THUMBNAILS_ROOT].each do |p|
+  FileUtils.mkdir_p p
+  FileUtils.rm_rf File.join(p, '*')
+  File.write File.join(p, '.gitignore'), '*'
+end
