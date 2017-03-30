@@ -318,7 +318,7 @@ describe 'site_files' do
       Site::THUMBNAIL_RESOLUTIONS.each do |resolution|
         File.exists?(@site.thumbnail_path('derpie/derptest/test.jpg', resolution)).must_equal true
         @site.thumbnail_url('derpie/derptest/test.jpg', resolution).must_equal(
-          File.join "#{Site::THUMBNAILS_URL_ROOT}", @site.username, "/derpie/derptest/test.jpg.#{resolution}.jpg"
+          File.join "#{Site::THUMBNAILS_URL_ROOT}", Site.sharding_dir(@site.username), @site.username, "/derpie/derptest/test.jpg.#{resolution}.jpg"
         )
       end
     end
