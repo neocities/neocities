@@ -7,7 +7,7 @@
 <% if flash.keys.length > 0 %>
   <div class="alert alert-block alert-<%= flash.keys.first %> <%= opts[:centered] ? 'txt-Center' : '' %>">
     <p>
-      <% flash.keys.each do |key| %>
+      <% flash.keys.select {|k| [:success, :error, :errors].include?(k)}.each do |key| %>
         <%== flash[key] %>
       <% end %>
     </p>
