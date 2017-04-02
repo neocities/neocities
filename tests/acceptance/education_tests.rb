@@ -9,7 +9,7 @@ describe 'signup' do
 
   def fill_in_valid
     @site = Fabricate.attributes_for(:site)
-    @class_tag = SecureRandom.uuid.gsub('-', '')[0..Tag::NAME_LENGTH_MAX-1]
+    @class_tag = "mrteacher" # SecureRandom.uuid.gsub('-', '')[0..Tag::NAME_LENGTH_MAX-1]
     fill_in 'username',        with: @site[:username]
     fill_in 'password',        with: @site[:password]
     fill_in 'email',           with: @site[:email]
@@ -27,12 +27,19 @@ describe 'signup' do
     Capybara.default_driver = :rack_test
   end
 
+  it 'fails for unwhitelisted tag' do
+    fill_in_valid
+    fill_in 'new_tags_string', with: 'nope'
+    click_button 'Create My Site'
+    page.wont_have_content /Let's Get Started/
+  end
+
   it 'succeeds with valid data' do
     fill_in_valid
     click_button 'Create My Site'
     page.must_have_content /Let's Get Started/
 
-    index_file_path = File.join Site::SITE_FILES_ROOT, @site[:username], 'index.html'
+    index_file_path = File.join Site::SITE_FILES_ROOT, Site.sharding_dir(@site[:username]), @site[:username], 'index.html'
     File.exist?(index_file_path).must_equal true
 
     site = Site[username: @site[:username]]

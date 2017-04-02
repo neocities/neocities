@@ -1,5 +1,5 @@
 require_relative '../environment.rb'
-
+=begin
 describe DeleteCacheWorker do
   before do
     @test_ip = '10.0.0.1'
@@ -50,3 +50,4 @@ describe DeleteCacheWorker do
     worker.perform @test_ip, 'kyledrake', 'test.jpg'
   end
 end
+=end
