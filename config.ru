@@ -13,25 +13,24 @@ end
 
 map '/webdav' do
   use Rack::Auth::Basic do |username, password|
-    Site.valid_login? username, password
+    @site = Site.get_site_from_login username, password
+    @site ? true : false
   end
 
   run lambda {|env|
-    site = Site[username: env['REMOTE_USER']]
-
     if env['REQUEST_METHOD'] == 'PUT'
       path = env['PATH_INFO']
       tmpfile = Tempfile.new 'davfile', encoding: 'binary'
       tmpfile.write env['rack.input'].read
       tmpfile.close
 
-      if site.file_size_too_large? tmpfile.size
+      if @site.file_size_too_large? tmpfile.size
         return [507, {}, ['']]
       end
 
       # if Site.valid_file_type?(filename: path, tempfile: tmpfile)
-      if site.okay_to_upload? filename: path, tempfile: tmpfile
-        site.store_files [{filename: path, tempfile: tmpfile}]
+      if @site.okay_to_upload? filename: path, tempfile: tmpfile
+        @site.store_files [{filename: path, tempfile: tmpfile}]
         return [201, {}, ['']]
       else
         return [415, {}, ['']]
@@ -39,7 +38,7 @@ map '/webdav' do
     end
 
     if env['REQUEST_METHOD'] == 'MKCOL'
-      site.create_directory env['PATH_INFO']
+      @site.create_directory env['PATH_INFO']
       return [201, {}, ['']]
     end
 
@@ -52,20 +51,20 @@ map '/webdav' do
       FileUtils.cp site.files_path(env['PATH_INFO']), tmpfile.path
 
       DB.transaction do
-        site.store_files [{filename: destination, tempfile: tmpfile}]
-        site.delete_file env['PATH_INFO']
+        @site.store_files [{filename: destination, tempfile: tmpfile}]
+        @site.delete_file env['PATH_INFO']
       end
 
       return [201, {}, ['']]
     end
 
     if env['REQUEST_METHOD'] == 'DELETE'
-      site.delete_file env['PATH_INFO']
+      @site.delete_file env['PATH_INFO']
       return [201, {}, ['']]
     end
 
     res = DAV4Rack::Handler.new(
-      root: Site.select(:username).where(username: env['REMOTE_USER']).first.files_path,
+      root: @site.files_path,
       root_uri_path: '/webdav'
     ).call(env)
   }

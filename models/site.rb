@@ -275,11 +275,16 @@ class Site < Sequel::Model
     end
 
     def valid_login?(username_or_email, plaintext)
+      get_site_from_login(username_or_email, plaintext) ? true : false
+    end
+
+    def get_site_from_login(username_or_email, plaintext)
       site = get_with_identifier username_or_email
 
       return false if site.nil?
       return false if site.is_deleted
-      site.valid_password? plaintext
+      return false if site.is_banned
+      site.valid_password?(plaintext) ? site : nil
     end
 
     def bcrypt_cost
@@ -371,14 +376,14 @@ class Site < Sequel::Model
   end
 
   def valid_password?(plaintext)
-    valid = BCrypt::Password.new(owner.values[:password]) == plaintext
+    is_valid_password = BCrypt::Password.new(owner.values[:password]) == plaintext
 
-    if !valid?
+    unless is_valid_password
       return false if values[:password].nil?
-      valid = BCrypt::Password.new(values[:password]) == plaintext
+      is_valid_password = BCrypt::Password.new(values[:password]) == plaintext
     end
 
-    valid
+    is_valid_password
   end
 
   def password=(plaintext)
