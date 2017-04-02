@@ -136,9 +136,10 @@ module Ago
 
           # If the argument passed into ago() is a symbol, focus the ago statement
           # down to the level specified in the symbol
+          puts focus.class.inspect
           if focus.class == Symbol
             break if u == focus || u == :second
-          elsif focus.class == Fixnum
+          elsif focus.class == Integer
             if focus == 0 || u == :second
               break
             else
