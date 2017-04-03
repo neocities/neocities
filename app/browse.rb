@@ -52,10 +52,6 @@ def browse_sites_dataset
       site_dataset.exclude! score: nil
       site_dataset.order! :score.desc
     when 'followers'
-      site_dataset = site_dataset.association_left_join :follows
-      site_dataset.select_all! :sites
-      site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
-      site_dataset.group! :sites__id
       site_dataset.order! :follow_count.desc, :updated_at.desc
     when 'supporters'
       site_dataset.exclude! plan_type: nil
@@ -86,18 +82,12 @@ def browse_sites_dataset
     when 'tipping_enabled'
       site_dataset.where! tipping_enabled: true
       site_dataset.where!("(tipping_paypal is not null and tipping_paypal != '') or (tipping_bitcoin is not null and tipping_bitcoin != '')")
-      site_dataset = site_dataset.association_left_join :follows
-      site_dataset.select_all! :sites
-      site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
       site_dataset.where!{views > 10_000}
       site_dataset.group! :sites__id
       site_dataset.order! :follow_count.desc, :views.desc, :updated_at.desc
     else
       params[:sort_by] = 'followers'
-      site_dataset = site_dataset.association_left_join :follows
       site_dataset.select_all! :sites
-      site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
-      site_dataset.group! :sites__id
       site_dataset.order! :follow_count.desc, :views.desc, :updated_at.desc
   end
 

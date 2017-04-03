@@ -342,15 +342,19 @@ class Site < Sequel::Model
 
   def toggle_follow(site)
     if is_following? site
-      follow = followings_dataset.filter(site_id: site.id).first
-      site.events_dataset.filter(follow_id: follow.id).delete
-      follow.delete
+      DB.transaction do
+        follow = followings_dataset.filter(site_id: site.id).first
+        site.events_dataset.filter(follow_id: follow.id).delete
+        follow.delete
+        DB['update sites set follow_count=follow_count-1 where id=?', site.id].first
+      end
       false
     else
       return false if site.id == self.id # Do not follow yourself
 
       DB.transaction do
         follow = add_following site_id: site.id
+        DB['update sites set follow_count=follow_count+1 where id=?', site.id].first
         Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
       end
 
@@ -1265,7 +1269,7 @@ class Site < Sequel::Model
 
   def compute_score
     points = 0
-    points += follows_dataset.count * 30
+    points += follow_count * 30
     points += profile_comments_dataset.count * 1
     points += views / 1000
     points += 20 if !featured_at.nil?
@@ -1284,7 +1288,6 @@ class Site < Sequel::Model
     score -= ((Time.now - updated_at) / 1.day) * 2
     score += 500 if (updated_at > 1.week.ago)
     score -= 1000 if
-    follow_count = follows_dataset.count
     score -= 1000 if follow_count == 0
     score += follow_count * 100
     score += profile_comments_dataset.count * 5
@@ -1308,10 +1311,8 @@ class Site < Sequel::Model
 
     # New:
 
-    site_dataset = self.class.browse_dataset.association_left_join :follows
+    site_dataset = self.class.browse_dataset
     site_dataset.select_all! :sites
-    site_dataset.select_append! Sequel.lit("count(follows.site_id) AS follow_count")
-    site_dataset.group! :sites__id
     site_dataset.order! :follow_count.desc, :updated_at.desc
     site_dataset.where! "views >= #{SUGGESTIONS_VIEWS_MIN}"
     site_dataset.limit! limit-suggestions.length
@@ -1329,7 +1330,9 @@ class Site < Sequel::Model
   end
 
   def screenshot_url(path, resolution)
-    "#{SCREENSHOTS_URL_ROOT}/#{self.class.sharding_dir(values[:username])}/#{values[:username]}/#{path}.#{resolution}.jpg"
+    out = ''
+    out = 'https://neocities.org/' if ENV['RACK_ENV'] == 'development'
+    out+"#{SCREENSHOTS_URL_ROOT}/#{self.class.sharding_dir(values[:username])}/#{values[:username]}/#{path}.#{resolution}.jpg"
   end
 
   def base_thumbnails_path

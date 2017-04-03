@@ -425,3 +425,13 @@ task :shard_migration => [:environment] do
   sleep 1
   FileUtils.mv './public/newtestsites', './public/testsites'
 end
+
+desc 'prime_follow_count'
+task :prime_follow_count => [:environment] do
+  DB['update sites set follow_count=0'].first
+  Site.select(:id,:username).all.each do |site|
+    count = site.follows_dataset.count
+    next if count == 0
+    DB['update sites set follow_count=? where id=?', count, site.id].first
+  end
+end
