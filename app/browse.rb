@@ -15,6 +15,14 @@ get '/browse/?' do
   @pagination_dataset = site_dataset
   @sites = site_dataset.all
 
+  site_ids = @sites.collect {|s| s[:id]}
+  tags = DB['select site_id,name from tags join sites_tags on tags.id=sites_tags.tag_id where site_id IN ?', site_ids].all
+
+  @site_tags = {}
+  site_ids.each do |site_id|
+    @site_tags[site_id] = tags.select {|t| t[:site_id] == site_id}.collect {|t| t[:name]}
+  end
+
   if params[:tag]
     @title = "Sites tagged #{params[:tag]}"
   end

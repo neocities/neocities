@@ -116,10 +116,10 @@
             </a>
           </div>
           <div class="site-tags">
-            <% if site.tags.count > 0 %>
+            <% if @site_tags[site.id].length > 0 %>
               <i class="fa fa-tag"></i>
-              <% site.tags.each_with_index do |tag, index| %>
-                <a class="" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a><% if index != site.tags.length - 1 %>,<% end %>
+              <% @site_tags[site.id].each_with_index do |tag, index| %>
+                <a class="" href="/browse?tag=<%= Rack::Utils.escape tag %>"><%= tag %></a><% if index != @site_tags[site.id].length - 1 %>,<% end %>
               <% end %>
             <% end %>
           </div>
