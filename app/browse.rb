@@ -87,7 +87,6 @@ def browse_sites_dataset
       site_dataset.order! :follow_count.desc, :views.desc, :updated_at.desc
     else
       params[:sort_by] = 'followers'
-      site_dataset.select_all! :sites
       site_dataset.order! :follow_count.desc, :views.desc, :updated_at.desc
   end
 

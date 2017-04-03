@@ -1297,7 +1297,8 @@ class Site < Sequel::Model
 =end
 
   def self.browse_dataset
-    dataset.where is_deleted: false, is_banned: false, is_crashing: false, site_changed: true
+    dataset.select(:id,:username,:hits,:views,:created_at,:plan_type,:parent_site_id,:domain,:score,:title).
+      where(is_deleted: false, is_banned: false, is_crashing: false, site_changed: true)
   end
 
   def suggestions(limit=SUGGESTIONS_LIMIT, offset=0)
