@@ -777,12 +777,10 @@ class Site < Sequel::Model
 
     Zip::Archive.open(tmpfile.path, Zip::CREATE) do |ar|
       ar.add_dir(zip_name)
-    end
 
-    Dir.glob("#{base_files_path}/**/*").each do |path|
-      relative_path = path.gsub(base_files_path+'/', '')
-
-      Zip::Archive.open(tmpfile.path, Zip::CREATE) do |ar|
+      Dir.glob("#{base_files_path}/**/*").each do |path|
+        relative_path = path.gsub(base_files_path+'/', '')
+        puts "adding #{relative_path}"
         if File.directory?(path)
           ar.add_dir(zip_name+'/'+relative_path)
         else
