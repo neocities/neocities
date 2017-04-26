@@ -25,3 +25,4 @@ files/letsencrypt.key
 files/tor.txt
 .bundle
 ext/black_box.rb
+files/trumpplan.txt

@@ -112,6 +112,14 @@ class Site < Sequel::Model
     maximum_site_files: 100_000
   }
 
+  PLAN_FEATURES[:trumpplan] = PLAN_FEATURES[:supporter].merge(
+    name: 'Trump Plan',
+    price: 100,
+    space: Filesize.from('2MB').to_i,
+    no_file_restrictions: false,
+    bandwidth: Filesize.from('604800KB').to_i
+  )
+
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
     name: 'Free',
     space: Filesize.from('1GB').to_i,

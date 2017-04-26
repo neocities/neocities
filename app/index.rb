@@ -54,10 +54,41 @@ get '/?' do
     @blog_feed_html = SimpleCache.get :blog_feed_html
   end
 
+  if params[:trumpplan]
+    flash[:is_trump_plan] = true
+  end
+
   erb :index, layout: :index_layout
 end
 
+def trump_plan_eligible?
+  trumpplan_path = File.join 'files', 'trumpplan.txt'
+
+  ranges = []
+
+  if File.exist? trumpplan_path
+    File.readlines(trumpplan_path).each do |range|
+      ranges << IPAddress.parse(range.strip)
+    end
+
+    parsed_ip = IPAddress.parse(request.ip)
+
+    matched_ip = false
+    ranges.each do |range|
+      if range.include? parsed_ip
+        matched_ip =  true
+      end
+    end
+    return matched_ip
+  end
+  false
+end
+
 get '/welcome' do
+  if params[:trumpplan] || flash[:is_trump_plan] || trump_plan_eligible?
+    @is_trump_plan = true
+  end
+
   require_login
   redirect '/' if current_site.supporter?
   erb :'welcome', locals: {site: current_site}
