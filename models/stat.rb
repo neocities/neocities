@@ -89,13 +89,13 @@ class Stat < Sequel::Model
 
         logfile.close
 
-        DB.transaction do
-          site_logs.each do |log_time, usernames|
-            Site.select(:id, :username).where(username: usernames.keys).all.each do |site|
-              site_logs[log_time][site.username][:id] = site.id
-            end
+        site_logs.each do |log_time, usernames|
+          Site.select(:id, :username).where(username: usernames.keys).all.each do |site|
+            site_logs[log_time][site.username][:id] = site.id
+          end
 
-            usernames.each do |username, site_log|
+          usernames.each do |username, site_log|
+            DB.transaction do
               DB['update sites set hits=hits+?, views=views+? where username=?',
                 site_log[:hits],
                 site_log[:views],
@@ -118,25 +118,6 @@ class Stat < Sequel::Model
                 site_log[:bandwidth],
                 stat.id
               ].first
-
-=begin
-              site_log[:referrers].each do |referrer, views|
-                stat_referrer = StatReferrer.create_or_get site_log[:id], referrer
-                DB['update stat_referrers set views=views+? where site_id=?', views, site_log[:id]].first
-              end
-
-              site_log[:view_ips].each do |ip|
-                site_location = StatLocation.create_or_get site_log[:id], ip
-                next if site_location.nil?
-                DB['update stat_locations set views=views+1 where id=?', site_location.id].first
-              end
-
-              site_log[:paths].each do |path, views|
-                site_path = StatPath.create_or_get site_log[:id], path
-                next if site_path.nil?
-                DB['update stat_paths set views=views+? where id=?', views, site_path.id].first
-              end
-=end
             end
           end
         end
@@ -295,3 +276,4 @@ end
     end
   end
 =end
+
