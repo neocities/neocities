@@ -4,7 +4,7 @@
       <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
       <input name="message"
              type="text"
-             placeholder="Post a message..."
+             placeholder="<% if current_site == site %>Post a message...<% else %>Post a message... (be nice!)<% end %>"
              autocomplete="off"
              maxlength="<%= Site::MAX_COMMENT_SIZE %>"
              <% unless current_site.commenting_allowed? %>disabled<% end %>

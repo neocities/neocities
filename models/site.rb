@@ -135,7 +135,7 @@ class Site < Sequel::Model
   EMAIL_VALIDATION_CUTOFF_DATE = Time.parse('May 16, 2016')
   DISPOSABLE_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_blacklist.conf')
 
-  BLOCK_JERK_THRESHOLD = 3
+  BLOCK_JERK_THRESHOLD = 2
 
   MAXIMUM_TAGS = 5
 
