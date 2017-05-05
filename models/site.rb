@@ -912,7 +912,7 @@ class Site < Sequel::Model
       errors.add :email, 'Cannot use this email address.'
     end
 
-    if parent? && new? && self.class.disposable_email?(values[:email])
+    if parent? && (values[:created_at].nil? || values[:created_at] > 1.week.ago) && self.class.disposable_email?(values[:email])
       errors.add :email, 'Cannot use a disposable email address.'
     end
 

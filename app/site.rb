@@ -173,6 +173,8 @@ post '/site/create_directory' do
 end
 
 get '/site/:username/confirm_email/:token' do
+  @title = 'Confirm email'
+
   if current_site && current_site.email_confirmed
     return erb(:'site_email_confirmed')
   end
@@ -201,6 +203,7 @@ end
 
 get '/site/:username/confirm_email' do
   require_login
+  @title = 'Confirm your Email Address'
   @fromsettings = session[:fromsettings]
   redirect '/' if current_site.username != params[:username] || !current_site.parent? || current_site.email_confirmed
   erb :'site/confirm_email'
