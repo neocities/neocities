@@ -67,11 +67,12 @@ def trump_plan_eligible?
   ranges = []
 
   if File.exist? trumpplan_path
+    parsed_ip = IPAddress.parse request.ip
+    return false if parsed_ip.ipv6? # NOT EXCLUSIVE ENOUGH
+
     File.readlines(trumpplan_path).each do |range|
       ranges << IPAddress.parse(range.strip)
     end
-
-    parsed_ip = IPAddress.parse(request.ip)
 
     matched_ip = false
     ranges.each do |range|
