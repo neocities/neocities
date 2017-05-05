@@ -65,7 +65,7 @@ class ScreenshotWorker
       tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
 
       begin
-        new_img.write(tmpfile_path) { self.quality = 90 }
+        new_img.write(tmpfile_path) { self.quality = 92 }
         new_img.destroy!
         $image_optim.optimize_image! tmpfile_path
         File.open(full_screenshot_path, 'wb') {|file| file.write File.read(tmpfile_path)}
