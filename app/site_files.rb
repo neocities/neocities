@@ -59,11 +59,10 @@ post '/site_files/create' do
 
     site_file ||= SiteFile.new site_id: current_site.id, path: name
 
-    site_file.set_all(
-      size: 0,
-      sha1_hash: Digest::SHA1.hexdigest(''),
-      updated_at: Time.now
-    )
+    site_file.size = 0
+    site_file.set size: 0
+    site_file.set sha1_hash: Digest::SHA1.hexdigest('')
+    site_file.set updated_at: Time.now
     site_file.save
   end
 

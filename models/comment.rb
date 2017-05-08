@@ -4,7 +4,13 @@ class Comment < Sequel::Model
   many_to_one :actioning_site, class: :Site
   one_to_many :comment_likes
 
-  dataset.exclude! is_deleted: true
+  def dataset
+    if @_is_deleted_filter_set.nil?
+      @dataset = @dataset.filter is_deleted: false
+      @_is_deleted_filter_set = true
+    end
+    super
+  end
 
   def liking_site_titles
     comment_likes_dataset.select(:id, :actioning_site_id).all.collect do |comment_like|

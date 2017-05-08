@@ -33,6 +33,8 @@ raise 'hash_ip_salt is required' unless $config['ip_hash_salt']
 
 DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $config['database_pool']
 DB.extension :pagination
+DB.extension :auto_literal_strings
+Sequel.split_symbols = true
 
 require 'will_paginate/sequel'
 

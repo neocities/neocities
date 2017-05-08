@@ -919,7 +919,7 @@ class Site < Sequel::Model
     # Check for existing email if new or changing email.
     if new? || @original_email
       email_check = self.class.select(:id).filter(email: values[:email])
-      email_check.exclude!(id: self.id) unless new?
+      email_check = email_check.exclude(id: self.id) unless new?
       email_check = email_check.first
 
       if parent? && email_check && email_check.id != self.id
@@ -1313,19 +1313,13 @@ class Site < Sequel::Model
 
     return suggestions if suggestions.length == limit
 
-    # Old.
-    #suggestions += suggestions_dataset.where("views >= #{SUGGESTIONS_VIEWS_MIN}").limit(limit-suggestions.length).order(Sequel.lit('RANDOM()')).all
+    ds = self.class.browse_dataset
+    ds = ds.select_all :sites
+    ds = ds.order :follow_count.desc, :updated_at.desc
+    ds = ds.where Sequel.lit("views >= #{SUGGESTIONS_VIEWS_MIN}")
+    ds = ds.limit limit - suggestions.length
 
-    # New:
-
-    site_dataset = self.class.browse_dataset
-    site_dataset.select_all! :sites
-    site_dataset.order! :follow_count.desc, :updated_at.desc
-    site_dataset.where! "views >= #{SUGGESTIONS_VIEWS_MIN}"
-    site_dataset.limit! limit-suggestions.length
-    #site_dataset.order! Sequel.lit('RANDOM()')
-
-    suggestions += site_dataset.all
+    suggestions += ds.all
   end
 
   def screenshot_path(path, resolution)
@@ -1548,11 +1542,9 @@ class Site < Sequel::Model
 
     site_file ||= SiteFile.new site_id: self.id, path: relative_path
 
-    site_file.set_all(
-      size: uploaded_size,
-      sha1_hash: uploaded_sha1,
-      updated_at: Time.now
-    )
+    site_file.set size: uploaded_size
+    site_file.set sha1_hash: uploaded_sha1
+    site_file.set updated_at: Time.now
     site_file.save
 
     purge_cache path
