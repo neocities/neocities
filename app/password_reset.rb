@@ -21,7 +21,7 @@ post '/send_password_reset' do
       body = <<-EOT
 Hello! This is the Neocities cat, and I have received a password reset request for your e-mail address.
 
-Go to this URL to reset your password: http://neocities.org/password_reset_confirm?username=#{Rack::Utils.escape(site.username)}&token=#{token}
+Go to this URL to reset your password: https://neocities.org/password_reset_confirm?username=#{Rack::Utils.escape(site.username)}&token=#{token}
 
 If you didn't request this password reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
 
