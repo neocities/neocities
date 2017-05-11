@@ -158,7 +158,7 @@
               <% if file[:is_directory] %>
               <a class="link-overlay" href="?dir=<%= Rack::Utils.escape file[:path] %>" title="View <%= file[:path] %>"></a>
               <% else %>
-              <a class="link-overlay" href="http://<%= current_site.username %>.neocities.org<%= file[:path] == '/index.html' ? '/' : file[:path] %>" title="View <%= file[:path] == '/index.html' ? 'your site' : file[:path] %>" target="_blank"></a>
+              <a class="link-overlay" href="https://<%= current_site.username %>.neocities.org<%= file[:path] == '/index.html' ? '/' : file[:path] %>" title="View <%= file[:path] == '/index.html' ? 'your site' : file[:path] %>" target="_blank"></a>
               <% end %>
             </div>
           </div>

@@ -109,7 +109,7 @@
             <% site_change_filenames.each do |f| %>
               <div class="file">
                 <div class="html-thumbnail <%= site_change_file_display_class f %>">
-                  <a href="http://<%= event_site.host %><%= f == 'index.html' ? '' : "/#{f}" %>">
+                  <a href="https://<%= event_site.host %><%= f == 'index.html' ? '' : "/#{f}" %>">
                     <% if site_change_file_display_class(f) == 'html' %>
                       <img src="<%= event_site.screenshot_url(f, '540x405') %>">
                     <% elsif site_change_file_display_class(f) == 'image' %>
