@@ -288,11 +288,8 @@ class Site < Sequel::Model
 
     def get_site_from_login(username_or_email, plaintext)
       site = get_with_identifier username_or_email
-
-      return false if site.nil?
-      return false if site.is_deleted
-      return false if site.is_banned
-      site.valid_password?(plaintext) ? site : nil
+      return nil if site.nil? || site.is_deleted || site.is_banned || !site.valid_password?(plaintext)
+      site
     end
 
     def bcrypt_cost
@@ -1503,6 +1500,11 @@ class Site < Sequel::Model
     site_file = site_files_dataset.where(path: path).first
     site_file.destroy if site_file
     true
+  end
+
+  def generate_api_key!
+    self.api_key = SecureRandom.hex(16)
+    save_changes validate: false
   end
 
   private

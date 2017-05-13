@@ -148,24 +148,31 @@ def init_api_credentials
   auth = request.env['HTTP_AUTHORIZATION']
 
   begin
-    user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
+    if bearer_match = auth.match(/^Bearer (.+)/)
+      api_key = bearer_match.captures.first
+      api_error_invalid_auth if api_key.nil? || api_key.empty?
+    else
+      user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
+    end
   rescue
     api_error_invalid_auth
   end
 
-  if Site.valid_login? user, pass
-    site = Site[username: user]
-
-    if site.nil? || site.is_banned
-      api_error_invalid_auth
-    end
-
-    DB['update sites set api_calls=api_calls+1 where id=?', site.id].first
-
-    session[:id] = site.id
+  if defined?(api_key) && !api_key.blank?
+    site = Site[api_key: api_key]
+  elsif defined?(user) && defined?(pass)
+    site = Site.get_site_from_login user, pass
   else
     api_error_invalid_auth
   end
+
+  if site.nil? || site.is_banned || site.is_deleted
+    api_error_invalid_auth
+  end
+
+  DB['update sites set api_calls=api_calls+1 where id=?', site.id].first
+
+  session[:id] = site.id
 end
 
 def api_success(message_or_obj)

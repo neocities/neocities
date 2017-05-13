@@ -1,0 +1,19 @@
+<h2>API Key</h2>
+
+<p>
+  An API Key can be used with the <a href="https://neocities.org/api">Neocities API</a> to allow for changes to your site without requiring login credentials. <strong>This API key allows full write access to your site. Keep it secret, keep it safe.</strong>
+</p>
+
+<% if @site.api_key %>
+  <p>Your API key:<br><strong><%= @site.api_key %></strong></p>
+
+  <p>
+    If you need to regenerate the key for some reason, you can do that below.
+    Keep in mind that this will make the old key no longer function.
+  </p>
+
+  <%== erb :'settings/site/_api_key_form', layout: false %>
+<% else %>
+  <p>You haven't yet generated an API key, click the button to create one:</p>
+  <%== erb :'settings/site/_api_key_form', layout: false %>
+<% end %>

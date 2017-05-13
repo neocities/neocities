@@ -1,0 +1,4 @@
+<form method="POST" action="/settings/<%= @site.username %>/generate_api_key">
+  <%== csrf_token_input_html %>
+  <input class="btn-Action" type="submit" value="Generate API Key">
+</form>

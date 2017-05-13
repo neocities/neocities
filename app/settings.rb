@@ -168,6 +168,17 @@ post '/settings/:username/custom_domain' do
   end
 end
 
+post '/settings/:username/generate_api_key' do
+  require_login
+  require_ownership_for_settings
+  is_new = current_site.api_key.nil?
+  current_site.generate_api_key!
+
+  msg = is_new ? "New API key has been generated." : "API key has been regenerated."
+  flash[:success] = msg
+  redirect "/settings/#{current_site.username}#api_key"
+end
+
 post '/settings/change_password' do
   require_login
 
