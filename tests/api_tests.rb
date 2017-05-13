@@ -197,6 +197,31 @@ describe 'api delete' do
   end
 end
 
+describe 'api key' do
+  it 'generates new key with valid login' do
+    create_site
+    basic_authorize @user, @pass
+    get '/api/key'
+    res[:result].must_equal 'success'
+    res[:api_key].must_equal @site.reload.api_key
+  end
+
+  it 'returns existing key' do
+    create_site
+    @site.generate_api_key!
+    basic_authorize @user, @pass
+    get '/api/key'
+    res[:api_key].must_equal @site.api_key
+  end
+
+  it 'fails for bad login' do
+    create_site
+    basic_authorize 'zero', 'cool'
+    get '/api/key'
+    res[:error_type].must_equal 'invalid_auth'
+  end
+end
+
 describe 'api upload' do
   it 'fails with no auth' do
     post '/api/upload'

@@ -110,6 +110,12 @@ get '/api/info' do
   end
 end
 
+get '/api/key' do
+  require_api_credentials
+  current_site.generate_api_key! if current_site.api_key.blank?
+  api_success api_key: current_site.api_key
+end
+
 def api_info_for(site)
   {
     info: {
