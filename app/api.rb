@@ -202,7 +202,7 @@ def api_error(status, error_type, message)
 end
 
 def api_error_invalid_auth
-  api_error 403, 'invalid_auth', 'invalid credentials - please check your username and password'
+  api_error 403, 'invalid_auth', 'invalid credentials - please check your username and password (or your api key)'
 end
 
 def api_not_found

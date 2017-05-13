@@ -177,6 +177,29 @@ var api = new neocities('YOURUSERNAME', 'YOURPASSWORD')
 api.info('madamfrp', function(resp) {
   console.log(resp)
 })</code></pre>
+
+
+
+<h2>GET /api/key</h2>
+<p>
+  Returns an API key that you can use for the API instead of login credentials.
+  It will automatically generate a new API key if one doesn't exist yet for your site.
+</p>
+<h3>Examples</h3>
+<h6>Using cURL</h6>
+<pre><code class="bash">$ curl "https://USER:PASS@neocities.org/api/key"
+{
+  "result": "success",
+  "api_key": "da77c3530c30593663bf7b797323e48c"
+}</code></pre>
+
+  <p>Using the api key for requests:</p>
+
+  <pre><code class="bash">$ curl -H "Authorization: Bearer da77c3530c30593663bf7b797323e48c" \
+https://neocities.org/api/info</code></pre>
+
   <h2>Need something the API doesn't provide?</h2>
-  <p>If the API does not supply something you need, <a href="/contact">contact us</a> and we will try to add it!
+  <p>
+    If the API does not supply something you need, <a href="/contact">contact us</a> and we will try to add it!
+  </p>
 </div>
