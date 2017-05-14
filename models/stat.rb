@@ -19,7 +19,7 @@ class Stat < Sequel::Model
     def parse_logfiles(path)
       total_site_stats = {}
 
-      cache_control_ip = Resolv::DNS.new.getaddress('neocities.org')
+      cache_control_ip = $config['cache_control_ip']
 
       Dir["#{path}/*.log"].each do |log_path|
         site_logs = {}
@@ -276,4 +276,3 @@ end
     end
   end
 =end
-

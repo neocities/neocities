@@ -50,3 +50,4 @@ test:
     - mrteacher
   stop_forum_spam_api_key: testkey
   screenshots_url: http://screenshots:derp@screenshotssite.com
+  cache_control_ip: 1.2.3.4
