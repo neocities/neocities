@@ -1,7 +1,7 @@
 <div class="header-Outro">
   <div class="row content single-Col">
   <h1>Mount your site</h1>
-  <h3 class="subtitle">Now you can access your Neocities site as a drive on your computer!</h3>
+  <h3 class="subtitle">Access your Neocities site as a drive on your computer</h3>
   </div>
 </div>
 
@@ -10,7 +10,7 @@
     <h1>About</h1>
 
     <p>
-      Neocities now supports <strong>WebDAV</strong>, which allows you to mount your Neocities share on your computer. Now you can access and change your files on your own computer's file manager!
+      Neocities supports <strong>WebDAV</strong>, which allows you to mount your Neocities share on your computer.
     </p>
 
     <% if current_site.nil? %>
@@ -22,20 +22,24 @@
         This feature requires a supporter account. <a href="/supporter">Click here</a> to become a supporter.
       </p>
     <% else %>
-      <h2>Instructions for Windows 7</h2>
+      <h2>Instructions for Windows</h2>
 
       <p>
-        <a href="http://www.onemetric.com.au/Documentation/Mounting-A-WebDAV-Share-Windows-7">Use these instructions</a>, except use this URL to connect: <strong>https://neocities.org/webdav</strong>
-        <br>
-        Enter your login info when requested.
-      </p>
+        Unfortunately, the WebDAV that comes with Windows file manager has issues with SSL,
+        and the problem has not yet been fixed. We recommend using a client like <a href="https://cyberduck.io">Cyberduck</a> with Windows, which is free and has
+        WebDAV support. You can also try <a href="https://mountainduck.io/">Mountain Duck</a>
+        which will allow you to mount your Neocities site as a hard drive on your computer.
 
       <h2>Instructions for OSX</h2>
 
       <p>
-      <a href="http://support.apple.com/kb/ph3857">Use these instructions</a>, and use this URL to connect: <strong>https://neocities.org/webdav</strong>
-      <br>
-      Enter login info when requested.
+        <a href="http://support.apple.com/kb/ph3857">Use these instructions</a>, and use this URL to connect: <strong>https://neocities.org/webdav</strong>
+        <br>
+        Enter login info when requested.
+      </p>
+
+      <p>
+        You can also try out <a href="https://cyberduck.io">Cyberduck</a> or <a href="https://mountainduck.io/">Mountain Duck</a> if you run into any issues.
       </p>
 
       <h2>Instructions for Linux (Ubuntu)</h2>
