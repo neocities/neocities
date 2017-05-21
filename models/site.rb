@@ -1512,6 +1512,12 @@ class Site < Sequel::Model
     save_changes validate: false
   end
 
+  def sha1_hash_match?(path, sha1_hash)
+    relative_path = scrubbed_path path
+    site_file = site_files_dataset.where(path: relative_path, sha1_hash: sha1_hash).first
+    !site_file.nil?
+  end
+
   private
 
   def store_file(path, uploaded, opts={})

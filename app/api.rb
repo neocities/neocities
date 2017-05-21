@@ -5,6 +5,22 @@ get '/api' do
   erb :'api'
 end
 
+post '/api/upload_hash' do
+  require_api_credentials
+
+  res = {}
+
+  if params[:files].blank? || !params[:files].is_a?(Hash)
+    api_error 400, 'no_file_hashes_provided', 'no file hashes provided'
+  end
+
+  params[:files].each do |k,v|
+    res[k] = current_site.sha1_hash_match? k, v
+  end
+
+  api_success files: res
+end
+
 get '/api/list' do
   require_api_credentials
 
