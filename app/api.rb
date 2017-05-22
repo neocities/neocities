@@ -7,17 +7,11 @@ end
 
 post '/api/upload_hash' do
   require_api_credentials
-
   res = {}
-
-  if params[:files].blank? || !params[:files].is_a?(Hash)
-    api_error 400, 'no_file_hashes_provided', 'no file hashes provided'
-  end
-
-  params[:files].each do |k,v|
+  files = []
+  params.each do |k,v|
     res[k] = current_site.sha1_hash_match? k, v
   end
-
   api_success files: res
 end
 
@@ -101,7 +95,7 @@ post '/api/delete' do
       api_error 400, 'missing_files', "#{path} was not found on your site, canceled deleting"
     end
 
-    if path == 'index.html'
+    if path == 'index.html' || path == '/index.html'
       api_error 400, 'cannot_delete_index', 'you cannot delete your index.html file, canceled deleting'
     end
 

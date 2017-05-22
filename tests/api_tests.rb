@@ -233,25 +233,11 @@ describe 'api upload hash' do
       'test2.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
     }
 
-    post '/api/upload_hash', "files[test.jpg]" => test_hash, "files[test2.jpg]" => Digest::SHA1.hexdigest('herpderp')
+    post '/api/upload_hash', "test.jpg" => test_hash, "test2.jpg" => Digest::SHA1.hexdigest('herpderp')
 
     res[:result].must_equal 'success'
     res[:files][:'test.jpg'].must_equal true
     res[:files][:'test2.jpg'].must_equal false
-  end
-
-  it 'throws error for missing data' do
-    create_site
-    basic_authorize @user, @pass
-    post '/api/upload_hash'
-    res[:error_type].must_equal 'no_file_hashes_provided'
-  end
-
-  it 'throws errors for weird data' do
-    create_site
-    basic_authorize @user, @pass
-    post '/api/upload_hash', 'files[]' => 'DUMPSTER FIRE'
-    res[:error_type].must_equal 'no_file_hashes_provided'
   end
 end
 
