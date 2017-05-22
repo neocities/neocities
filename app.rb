@@ -77,6 +77,12 @@ before do
   end
 end
 
+after do
+  if @api
+    request.session_options[:skip] = true
+  end
+end
+
 #after do
   #response.headers['Content-Security-Policy'] = %{block-all-mixed-content; default-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://www.google.com/recaptcha/ https://js.stripe.com; script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: }
 #end
