@@ -138,29 +138,8 @@ class Site < Sequel::Model
 
   BLOCK_JERK_THRESHOLD = 2
   MAXIMUM_TAGS = 5
-  MAX_USERNAME_LENGTH = 25.freeze
-  MAX_USERNAME_LENGTH_CUTOFF = Time.parse('May 22, 2017')
-
-  def self.newsletter_sites
-     Site.select(:email).
-       exclude(email: 'nil').exclude(is_banned: true).
-       where{updated_at > EMAIL_BLAST_MAXIMUM_AGE}.
-       where{changed_count > 0}.
-       order(:updated_at.desc).
-       all
-  end
-
-  def too_many_files?(file_count=0)
-    (site_files_dataset.count + file_count) > plan_feature(:maximum_site_files)
-  end
-
-  def plan_feature(key)
-    PLAN_FEATURES[plan_type.to_sym][key.to_sym]
-  end
-
-  def custom_domain_available?
-    owner.plan_feature(:custom_domains) == true || !domain.nil?
-  end
+  MAX_USERNAME_LENGTH = 30.freeze
+  MAX_USERNAME_LENGTH_CUTOFF = Time.parse('May 23, 2017')
 
   LEGACY_SUPPORTER_PRICES = {
     plan_one: 1,
@@ -171,7 +150,6 @@ class Site < Sequel::Model
   }
 
   BROWSE_PAGINATION_LENGTH = 100
-
   EMAIL_BLAST_MAXIMUM_AGE = 6.months.ago
 
   if ENV['RACK_ENV'] == 'test'
@@ -181,7 +159,6 @@ class Site < Sequel::Model
   end
 
   MAXIMUM_EMAIL_CONFIRMATIONS = 20
-
   MAX_COMMENTS_PER_DAY = 5
 
   many_to_many :tags
@@ -221,6 +198,27 @@ class Site < Sequel::Model
   one_to_many :stat_paths
 
   one_to_many :archives
+
+  def self.newsletter_sites
+     Site.select(:email).
+       exclude(email: 'nil').exclude(is_banned: true).
+       where{updated_at > EMAIL_BLAST_MAXIMUM_AGE}.
+       where{changed_count > 0}.
+       order(:updated_at.desc).
+       all
+  end
+
+  def too_many_files?(file_count=0)
+    (site_files_dataset.count + file_count) > plan_feature(:maximum_site_files)
+  end
+
+  def plan_feature(key)
+    PLAN_FEATURES[plan_type.to_sym][key.to_sym]
+  end
+
+  def custom_domain_available?
+    owner.plan_feature(:custom_domains) == true || !domain.nil?
+  end
 
   def account_sites_dataset
     Site.where(Sequel.|({id: owner.id}, {parent_site_id: owner.id})).order(:parent_site_id.desc, :username).exclude(is_deleted: true)
