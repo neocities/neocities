@@ -263,7 +263,7 @@ describe 'api upload' do
 
   it 'succeeds with valid api key' do
     create_site
-    @site.api_key.must_equal nil
+    @site.api_key.must_be_nil
     @site.generate_api_key!
     @site.reload.api_key.wont_equal nil
     header 'Authorization', "Bearer #{@site.api_key}"
