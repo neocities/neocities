@@ -138,8 +138,7 @@ class Site < Sequel::Model
 
   BLOCK_JERK_THRESHOLD = 2
   MAXIMUM_TAGS = 5
-  MAX_USERNAME_LENGTH = 30.freeze
-  MAX_USERNAME_LENGTH_CUTOFF = Time.parse('May 23, 2017')
+  MAX_USERNAME_LENGTH = 32.freeze
 
   LEGACY_SUPPORTER_PRICES = {
     plan_one: 1,
@@ -564,10 +563,6 @@ class Site < Sequel::Model
     !username.empty? && username.match(/^[a-zA-Z0-9_\-]+$/i)
   end
 
-  def username_too_long?
-    (new? || (created_at && created_at > MAX_USERNAME_LENGTH_CUTOFF)) && values[:username].length > MAX_USERNAME_LENGTH
-  end
-
   def self.disposable_email_domains
     File.readlines(DISPOSABLE_EMAIL_BLACKLIST_PATH).collect {|d| d.strip}
   end
@@ -893,18 +888,14 @@ class Site < Sequel::Model
       errors.add :username, 'Usernames can only contain letters, numbers, underscores and hyphens.'
     end
 
-    if username_too_long?
-      errors.add :username, "Username length cannot be greater than #{MAX_USERNAME_LENGTH} characters."
-    end
-
-    if new? && !values[:username].nil? && !values[:username].empty?
+    if !values[:username].blank?
       # TODO regex fails for usernames <= 2 chars, tempfix for now.
       if new? && values[:username].nil? || (values[:username].length > 2 && !values[:username].match(VALID_HOSTNAME))
         errors.add :username, 'A valid user/site name is required.'
       end
 
-      if values[:username].length > 32
-        errors.add :username, 'User/site name cannot exceed 32 characters.'
+      if values[:username].length > MAX_USERNAME_LENGTH
+        errors.add :username, "User/site name cannot exceed #{MAX_USERNAME_LENGTH} characters."
       end
     end
 
