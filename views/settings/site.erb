@@ -29,6 +29,8 @@
           <li><a href="#username" data-toggle="tab">Change Site (User) Name</a></li>
           <li><a href="#tipping" data-toggle="tab">Tipping</a></li>
 
+          <li><a href="#api_key" data-toggle="tab">API Key</a></li>
+
           <% if @site.admin_nsfw != true %>
             <li><a href="#nsfw" data-toggle="tab">18+</a></li>
           <% end %>
@@ -53,7 +55,9 @@
           <div class="tab-pane" id="tipping">
             <%== erb :'settings/site/tipping' %>
           </div>
-
+          <div class="tab-pane" id="api_key">
+            <%== erb :'settings/site/api_key' %>
+          </div>
           <% if @site.admin_nsfw != true %>
             <div class="tab-pane" id="nsfw">
               <%== erb :'settings/site/nsfw' %>

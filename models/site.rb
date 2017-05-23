@@ -70,6 +70,7 @@ class Site < Sequel::Model
   THUMBNAIL_RESOLUTIONS  = ['210x158']
 
   MAX_FILE_SIZE = 10**8 # 100 MB
+  MAX_SITE_DOWNLOAD_SIZE = 2_000_000_000 # 2GB
 
   CLAMAV_THREAT_MATCHES = [
     /^VBS/,
@@ -288,11 +289,8 @@ class Site < Sequel::Model
 
     def get_site_from_login(username_or_email, plaintext)
       site = get_with_identifier username_or_email
-
-      return false if site.nil?
-      return false if site.is_deleted
-      return false if site.is_banned
-      site.valid_password?(plaintext) ? site : nil
+      return nil if site.nil? || site.is_deleted || site.is_banned || !site.valid_password?(plaintext)
+      site
     end
 
     def bcrypt_cost
@@ -1138,6 +1136,10 @@ class Site < Sequel::Model
     ((total_space_used.to_f / maximum_space) * 100).round(1)
   end
 
+  def too_big_to_download?
+    space_used > MAX_SITE_DOWNLOAD_SIZE
+  end
+
   # Note: Change Stat#prune! and the nginx map compiler if you change this business logic.
   def supporter?
     owner.plan_type != 'free'
@@ -1497,6 +1499,17 @@ class Site < Sequel::Model
     site_file = site_files_dataset.where(path: path).first
     site_file.destroy if site_file
     true
+  end
+
+  def generate_api_key!
+    self.api_key = SecureRandom.hex(16)
+    save_changes validate: false
+  end
+
+  def sha1_hash_match?(path, sha1_hash)
+    relative_path = scrubbed_path path
+    site_file = site_files_dataset.where(path: relative_path, sha1_hash: sha1_hash).first
+    !site_file.nil?
   end
 
   private

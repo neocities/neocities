@@ -197,6 +197,50 @@ describe 'api delete' do
   end
 end
 
+describe 'api key' do
+  it 'generates new key with valid login' do
+    create_site
+    basic_authorize @user, @pass
+    get '/api/key'
+    res[:result].must_equal 'success'
+    res[:api_key].must_equal @site.reload.api_key
+  end
+
+  it 'returns existing key' do
+    create_site
+    @site.generate_api_key!
+    basic_authorize @user, @pass
+    get '/api/key'
+    res[:api_key].must_equal @site.api_key
+  end
+
+  it 'fails for bad login' do
+    create_site
+    basic_authorize 'zero', 'cool'
+    get '/api/key'
+    res[:error_type].must_equal 'invalid_auth'
+  end
+end
+
+describe 'api upload hash' do
+  it 'succeeds' do
+    create_site
+    basic_authorize @user, @pass
+    test_hash = Digest::SHA1.file('./tests/files/test.jpg').hexdigest
+
+    post '/api/upload', {
+      'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg'),
+      'test2.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    }
+
+    post '/api/upload_hash', "test.jpg" => test_hash, "test2.jpg" => Digest::SHA1.hexdigest('herpderp')
+
+    res[:result].must_equal 'success'
+    res[:files][:'test.jpg'].must_equal true
+    res[:files][:'test2.jpg'].must_equal false
+  end
+end
+
 describe 'api upload' do
   it 'fails with no auth' do
     post '/api/upload'
@@ -215,6 +259,26 @@ describe 'api upload' do
     basic_authorize @user, @pass
     post '/api/upload'
     res[:error_type].must_equal 'missing_files'
+  end
+
+  it 'succeeds with valid api key' do
+    create_site
+    @site.api_key.must_equal nil
+    @site.generate_api_key!
+    @site.reload.api_key.wont_equal nil
+    header 'Authorization', "Bearer #{@site.api_key}"
+    post '/api/upload', 'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    res[:result].must_equal 'success'
+    site_file_exists?('test.jpg').must_equal true
+  end
+
+  it 'fails with bad api key' do
+    create_site
+    @site.generate_api_key!
+    header 'Authorization', "Bearer zerocool"
+    post '/api/upload', 'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    res[:result].must_equal 'error'
+    res[:error_type].must_equal 'invalid_auth'
   end
 
 =begin

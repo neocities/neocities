@@ -5,6 +5,16 @@ get '/api' do
   erb :'api'
 end
 
+post '/api/upload_hash' do
+  require_api_credentials
+  res = {}
+  files = []
+  params.each do |k,v|
+    res[k] = current_site.sha1_hash_match? k, v
+  end
+  api_success files: res
+end
+
 get '/api/list' do
   require_api_credentials
 
@@ -85,7 +95,7 @@ post '/api/delete' do
       api_error 400, 'missing_files', "#{path} was not found on your site, canceled deleting"
     end
 
-    if path == 'index.html'
+    if path == 'index.html' || path == '/index.html'
       api_error 400, 'cannot_delete_index', 'you cannot delete your index.html file, canceled deleting'
     end
 
@@ -108,6 +118,12 @@ get '/api/info' do
     init_api_credentials
     api_success api_info_for(current_site)
   end
+end
+
+get '/api/key' do
+  require_api_credentials
+  current_site.generate_api_key! if current_site.api_key.blank?
+  api_success api_key: current_site.api_key
 end
 
 def api_info_for(site)
@@ -148,24 +164,31 @@ def init_api_credentials
   auth = request.env['HTTP_AUTHORIZATION']
 
   begin
-    user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
+    if bearer_match = auth.match(/^Bearer (.+)/)
+      api_key = bearer_match.captures.first
+      api_error_invalid_auth if api_key.nil? || api_key.empty?
+    else
+      user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
+    end
   rescue
     api_error_invalid_auth
   end
 
-  if Site.valid_login? user, pass
-    site = Site[username: user]
-
-    if site.nil? || site.is_banned
-      api_error_invalid_auth
-    end
-
-    DB['update sites set api_calls=api_calls+1 where id=?', site.id].first
-
-    session[:id] = site.id
+  if defined?(api_key) && !api_key.blank?
+    site = Site[api_key: api_key]
+  elsif defined?(user) && defined?(pass)
+    site = Site.get_site_from_login user, pass
   else
     api_error_invalid_auth
   end
+
+  if site.nil? || site.is_banned || site.is_deleted
+    api_error_invalid_auth
+  end
+
+  DB['update sites set api_calls=api_calls+1 where id=?', site.id].first
+
+  session[:id] = site.id
 end
 
 def api_success(message_or_obj)
@@ -189,7 +212,7 @@ def api_error(status, error_type, message)
 end
 
 def api_error_invalid_auth
-  api_error 403, 'invalid_auth', 'invalid credentials - please check your username and password'
+  api_error 403, 'invalid_auth', 'invalid credentials - please check your username and password (or your api key)'
 end
 
 def api_not_found
