@@ -133,6 +133,10 @@ get '/thankyou' do
   erb :'thankyou'
 end
 
+get '/cli' do
+  erb :'cli'
+end
+
 get '/forgot_username' do
   erb :'forgot_username'
 end

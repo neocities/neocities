@@ -1,0 +1,59 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+  <h1>The Neocities CLI</h1>
+  <h2 class="subtitle">Manage your site using a shell terminal</h2>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <article role="article">
+    <p>Neocities has a CLI for power users that want to upload sites using a command line.</p>
+
+    <h2>Features</h2>
+
+    <ul>
+      <li><strong>Push support</strong> - uploads an entire directory. Great for static site generators.
+      <li><strong>HTTP persistence</strong> - the CLI reuses a single HTTP connection, improving performance.
+      <li><strong>Check before upload</strong> - checks if the file data matches before uploading.
+      <li><strong>Gitignore parsing</strong> - automatically skips files in root gitignore file for git repositories.
+    </ul>
+
+    <h2>Install Instructions</h2>
+
+    <p>If you're using a newer version of OSX or already have <a href="https://www.ruby-lang.org/">Ruby</a> installed, just run this command to install:</p>
+
+    <code>gem install neocities</code>
+
+    <p>If you get a permission error, you may need to run the command as superuser:</p>
+
+    <code>sudo gem install neocities</code>
+
+    <p>After installation, just run the command to get started:</p>
+
+    <pre>$ neocities
+
+|\---/|
+| o_o |   Neocities
+ \_-_/
+
+Subcommands:
+  push        Recursively upload a local directory to your site
+  upload      Upload individual files to your Neocities site
+  delete      Delete files from your Neocities site
+  list        List files from your Neocities site
+  info        Information and stats for your site
+  logout      Remove the site api key from the config</pre>
+
+    <h2>Windows</h2>
+
+    <p>If you're using Windows, you can install ruby with something like the <a href="https://rubyinstaller.org/">Ruby Installer</a>, and then run the above command.</p>
+
+    <h2>Linux / BSD</h2>
+
+    <p>Most Linux / BSD distributions come with Ruby packages. For example, with Ubuntu:</p>
+
+    <code>sudo apt-get install ruby-full</code>
+
+    A full list of available install options for ruby is <a href="https://www.ruby-lang.org/en/documentation/installation/">here</a>.
+  </article>
+</div>
