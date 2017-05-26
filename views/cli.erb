@@ -55,5 +55,23 @@ Subcommands:
     <code>sudo apt-get install ruby-full</code>
 
     A full list of available install options for ruby is <a href="https://www.ruby-lang.org/en/documentation/installation/">here</a>.
+
+    <a id="githooks"></a>
+    <h2>Git Hooks</h2>
+
+    <p>
+      If you want to create a git hook to automatically upload your site to Neocities when you run "git push", you can
+      run this command in the root directory of your git repo:
+    </p>
+
+    <pre>printf '#!/bin/sh\nneocities push .' >.git/hooks/pre-push && \
+chmod u+x .git/hooks/pre-push</pre>
+
+    <p>If the files you're pushing are in a subdirectory of the root git repo, replace the "." with the subdirectory. For example, with Jekyll (which typically uses <strong>_site</strong>):</p>
+
+    <pre>printf '#!/bin/sh\nneocities push _site' >.git/hooks/pre-push && \
+chmod u+x .git/hooks/pre-push</pre>
+
+    <p>Note: You will need to be logged in for the git hook to work, so run "neocities push" on the directory you want to upload before installing this hook. This will be fixed in a later version of the CLI.</p>
   </article>
 </div>
