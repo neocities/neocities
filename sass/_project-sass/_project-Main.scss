@@ -915,6 +915,10 @@ a.tag:hover {
   float: left;
   clear: both;
   margin-left: 61px;
+
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    margin-left: 0px;
+  }
 }
 .news-item .icon {
   width: 49px;
@@ -1045,9 +1049,17 @@ a.tag:hover {
 .news-item .content {
   padding: 0;
   margin-left: 61px;
+
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    margin-left: 0px;
+  }
 }
 .news-item .actions, .news-item.comment .content {
   margin-left: 61px;
+
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    margin-left: 0px;
+  }
 }
 .news-item.comment .content {
   word-wrap: break-word;
@@ -1101,6 +1113,7 @@ a.tag:hover {
 }
 .interior .header-Outro .profile-info {
   @media (max-device-width:480px), screen and (max-width:800px) {
+    margin-top: 70px;
     text-align: center;
     padding: 10px 0 15px 0;
   }
@@ -1113,7 +1126,6 @@ a.tag:hover {
   a:first-of-type {
     margin-left: 0;
   }
-
 }
 .interior .header-Outro .stats {
   margin-bottom: 1.3em;
@@ -1128,6 +1140,12 @@ a.tag:hover {
     text-align: center;
   }
 }
+.interior .header-Outro .stats .tips {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    display: none;
+  }
+}
+
 .interior .header-Outro .stats strong {
   font-size: 1.5em;
   font-weight: normal;

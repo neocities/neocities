@@ -30,7 +30,7 @@
         <div class="stat"><strong><%= site.views.format_large_number %></strong> <span>view<%= site.views == 1 ? '' : 's' %></span></div>
         <div class="stat"><strong><%= site.follow_count.format_large_number %></strong> <span>follower<%= site.follow_count == 1 ? '' : 's' %></span></div>
         <div class="stat"><strong><%= site.changed_count.format_large_number %></strong> <span>update<%= site.changed_count == 1 ? '' : 's' %></span></div>
-        <div class="stat"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div>
+        <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div>
       </div>
       <div class="actions">
         <% if current_site == site %>
