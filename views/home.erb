@@ -12,7 +12,10 @@
     </div>
     <div class="col col-32">
       <h3>Your Site</h3>
-      <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i>Edit Site</a>
+      <a href="/dashboard" class="btn-Action edit">
+        <span class="fa fa-edit" aria-hidden="true"></span>
+        Edit Site
+      </a>
     </div>
   </div>
 </div>
@@ -50,29 +53,37 @@
           <ul class="row website-Gallery content int-Gall suggestions">
           <% @suggestions.each do |suggested_site| %>
             <li>
-              <a href="<%= suggested_site.uri %>" class="neo-Screen-Shot" title="<%= suggested_site.title %>">
+              <a href="<%= suggested_site.uri %>" class="neo-Screen-Shot">
                 <span class="img-Holder" style="background:url(<%= suggested_site.screenshot_url('index.html', '540x405') %>) no-repeat;">
-                  <img src="/img/placeholder.png" alt="<%= suggested_site.title %>" />
+                  <img src="/img/placeholder.png" alt="<%= suggested_site.title %> screen shot" />
                 </span>
               </a>
               <div class="title">
-                <a href="<%= suggested_site.uri %>" title="<%= suggested_site.title %>"><%= suggested_site.title.shorten(30) %></a>
+                <a href="<%= suggested_site.uri %>">
+                  <%= suggested_site.title.shorten(30) %>
+                </a>
               </div>
               <div class="site-info">
                 <div class="username">
+                  <span class="invis">User:</span>
                   <a href="/site/<%= suggested_site.username %>" title="Profile">
-                    <i class="fa fa-user"></i><%= suggested_site.username %>
+                    <span aria-hidden="true" class="fa fa-user"></span>
+                    <%= suggested_site.username %>
                   </a>
                 </div>
                 <div class="site-stats">
                   <a href="/site/<%= suggested_site.username %>">
-                    <span class="show-on-mobile"><i class="fa fa-eye"></i></span>
-                    <%= suggested_site.views.format_large_number %><span class="hide-on-mobile">&nbsp;view<%= suggested_site.views == 1 ? '' : 's' %></span>
+                    <span class="show-on-mobile">
+                      <span aria-hidden="true" class="fa fa-eye"></span>
+                    </span>
+                    <%= suggested_site.views.format_large_number %>
+                    <span class="hide-on-mobile"> view<%= suggested_site.views == 1 ? '' : 's' %></span>
                   </a>
                 </div>
                 <div class="site-tags">
                   <% if suggested_site.tags.count > 0 %>
-                    <i class="fa fa-tag"></i>
+                    <span class="invis">Tags:</span>
+                    <span aria-hidden="true" class="fa fa-tag"></span>
                     <% suggested_site.tags.each_with_index do |tag, index| %>
                       <a class="" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a><% if index != suggested_site.tags.length - 1 %>,<% end %>
                     <% end %>
@@ -82,19 +93,30 @@
             </li>
           <% end %>
         </ul>
-        <p class="view-all-sites"><a href="/browse">View all sites <i class="fa fa-angle-double-right"></i></a></p>
+        <p class="view-all-sites">
+          <a href="/browse">
+            View all sites
+            <span aria-hidden="true" class="fa fa-angle-double-right"></span>
+          </a>
+        </p>
         <% end %>
       </div>
 
       <div class="col col-33">
         <div class="news-site-info">
-          <p class="site-url"><a href="<%= current_site.uri %>" target="_blank"><%= site.title %></a></p>
+          <p class="site-url">
+            <a href="<%= current_site.uri %>" target="_blank">
+              <%= site.title %>
+            </a>
+          </p>
           <div class="stats">
             <div class="col col-50">
               <% if site.updated_at %>
                 Last updated<br><strong><%= site.updated_at.ago %></strong>
               <% else %>
-                Your new website!<br><strong><a href="/dashboard"><i class="fa fa-edit" title="Edit"></i> Start Building</a></strong>
+                Your new website!
+                <br>
+                <strong><a href="/dashboard"><span class="fa fa-edit" aria-hidden="true"></span> Start Building</a></strong>
               <% end %>
             </div>
             <div class="col col-50">
@@ -104,11 +126,19 @@
           </div>
         </div>
 
-        <a href="<%= site.uri %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
+        <a href="<%= site.uri %>" class="large-portrait" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);">
+          <span class="invis">
+            Visit your website
+          </span>
+        </a>
 
         <div class="news-profile-button">
-          <a href="/site/<%= site.username %>" class="btn-Action"><i class="fa fa-user"></i> Profile</a>
-          <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'><i class="fa fa-share-alt"></i> Share</a>
+          <a href="/site/<%= site.username %>" class="btn-Action">
+            <span class="fa fa-user" aria-hidden="true"></span> Profile
+          </a>
+          <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'>
+            <span aria-hidden="true" class="fa fa-share-alt"></span> Share
+          </a>
         </div>
 
         <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>
