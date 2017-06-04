@@ -13,15 +13,15 @@
     <td class="feature-column">
       <span data-original-title="How much disk space you can use for your site. More space means you can upload more files.">Storage</span>
     </td>
-    <td><%= Site::PLAN_FEATURES[:free][:space].to_bytes_pretty %></td>
-    <td><%= (Site::PLAN_FEATURES[:supporter][:space] / (10**6)).to_comma_separated %> MB</td>
+    <td><%= Site::PLAN_FEATURES[:free][:space].to_gigabytes_pretty %></td>
+    <td><%= (Site::PLAN_FEATURES[:supporter][:space]).to_gigabytes_pretty %></td>
   </tr>
   <tr>
     <td class="feature-column">
       <span data-original-title="How much content you can serve in one month. Don’t worry—these are soft limits. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">Bandwidth</span>
     </td>
-    <td><%= Site::PLAN_FEATURES[:free][:bandwidth].to_bytes_pretty %></td>
-    <td><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></td>
+    <td><%= Site::PLAN_FEATURES[:free][:bandwidth].to_gigabytes_pretty %></td>
+    <td><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_gigabytes_pretty %></td>
   </tr>
   <tr>
     <td class="feature-column">
@@ -156,7 +156,27 @@
     <td></td>
     <td><i class="fa fa-check"></i></td>
   </tr>
+
+  <tr>
+    <td class="feature-column">
+      <span data-original-title="How much more it would cost for the same thing with Amazon Web Services.">Cost Savings vs AWS *</span>
+    </td>
+    <td style="color: #FF0000">$37.50/mo</td>
+    <td style="color: #FF0000">$482.84/mo</td>
+  </tr>
+
+  <tr>
+    <td class="feature-column">
+      <span data-original-title="How much more it would cost for the same thing with Google Cloud Services.">Cost Savings vs GCS *</span>
+    </td>
+    <td style="color: #FF0000">$16.03/mo</td>
+    <td style="color: #FF0000">$155.00/mo</td>
+  </tr>
 </table>
+
+<p style="margin-top: 20px">
+  * AWS and GCS price estimates only include storage and CDN bandwidth, it does not include cost of HTTP requests or cache purging/reloading. Actual costs would be much higher.
+</p>
 
 <script>
   $(function() {
