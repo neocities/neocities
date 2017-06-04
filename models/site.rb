@@ -287,7 +287,7 @@ class Site < Sequel::Model
 
     def get_site_from_login(username_or_email, plaintext)
       site = get_with_identifier username_or_email
-      return nil if site.nil? || site.is_deleted || site.is_banned || !site.valid_password?(plaintext)
+      return nil if site.nil? || site.is_banned || !site.valid_password?(plaintext)
       site
     end
 
@@ -445,17 +445,24 @@ class Site < Sequel::Model
   def before_destroy
     DB.transaction {
       owner.end_supporter_membership! if parent?
-
-      if !Dir.exist? DELETED_SITES_ROOT
-        FileUtils.mkdir DELETED_SITES_ROOT
-      end
-
       FileUtils.mkdir_p File.join(DELETED_SITES_ROOT, self.class.sharding_dir(username))
-      FileUtils.mv files_path, File.join(DELETED_SITES_ROOT, self.class.sharding_dir(username), '/')
+      FileUtils.mv files_path, deleted_files_path
       remove_all_tags
       #remove_all_events
       #Event.where(actioning_site_id: id).destroy
     }
+  end
+
+  def undelete!
+    return false unless Dir.exist? deleted_files_path
+    FileUtils.mkdir_p File.join(SITE_FILES_ROOT, self.class.sharding_dir(username))
+
+    DB.transaction {
+      FileUtils.mv deleted_files_path, files_path
+      self.is_deleted = false
+      save_changes
+    }
+    true
   end
 
   def is_banned?
@@ -1033,6 +1040,11 @@ class Site < Sequel::Model
     File.join SITE_FILES_ROOT, self.class.sharding_dir(name), name
   end
 
+  def base_deleted_files_path(name=username)
+    raise 'username missing' if name.nil? || name.empty?
+    File.join DELETED_SITES_ROOT, self.class.sharding_dir(name), name
+  end
+
   def self.sharding_base_path(name)
     File.join SITE_FILES_ROOT, sharding_dir(name)
   end
@@ -1063,6 +1075,10 @@ class Site < Sequel::Model
 
   def files_path(path='')
     File.join base_files_path, scrubbed_path(path)
+  end
+
+  def deleted_files_path(path='')
+    File.join base_deleted_files_path, scrubbed_path(path)
   end
 
   def file_list(path='')

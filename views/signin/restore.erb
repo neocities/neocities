@@ -1,0 +1,21 @@
+<div class="header-Outro">
+  <div class="row content single-Col txt-Center">
+  <h1>Restore Site</h1>
+  <h3 class="subtitle"></h3>
+  </div>
+</div>
+
+<div class="content txt-Center single-Col misc-page">
+  <%== flash_display %>
+
+  <h3>Your site was deleted.</h3>
+
+  <p>Would you like to restore your site?<br><br><strong><%= @site.username %>.neocities.org</strong></p>
+
+  <form method="POST" action="/signin/restore" class="content">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <input class="btn-Action" type="submit" value="Restore Site">
+  </form>
+  <br>
+  <a href="/">No, please keep this site deleted.</a>
+</div>

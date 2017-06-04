@@ -1,7 +1,7 @@
 get '/signin/?' do
   dashboard_if_signed_in
   @title = 'Sign In'
-  erb :'signin'
+  erb :'signin/index'
 end
 
 post '/signin' do
@@ -16,6 +16,11 @@ post '/signin' do
       redirect '/signin'
     end
 
+    if site.is_deleted
+      session[:deleted_site_id] = site.id
+      redirect '/signin/restore'
+    end
+
     session[:id] = site.id
     redirect '/'
   else
@@ -23,6 +28,33 @@ post '/signin' do
     flash[:username] = params[:username]
     redirect '/signin'
   end
+end
+
+get '/signin/restore' do
+  redirect '/' unless session[:deleted_site_id]
+  @site = Site[session[:deleted_site_id]]
+  redirect '/' if @site.nil?
+  erb :'signin/restore'
+end
+
+get '/signin/cancel_restore' do
+  session[:deleted_site_id] = nil
+  flash[:success] = 'Site restore was cancelled.'
+  redirect '/'
+end
+
+post '/signin/restore' do
+  redirect '/' unless session[:deleted_site_id]
+  @site = Site[session[:deleted_site_id]]
+  session[:deleted_site_id] = nil
+
+  if @site.undelete!
+    session[:id] = @site.id
+  else
+    flash[:error] = "Sorry, we cannot restore this account."
+  end
+
+  redirect '/'
 end
 
 get '/signin/:username' do

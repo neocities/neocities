@@ -13,6 +13,23 @@ describe 'signin' do
     Capybara.reset_sessions!
   end
 
+  it 'restores a deleted site' do
+    pass = SecureRandom.hex
+    @site = Fabricate :site, password: pass
+    @site.destroy
+    Dir.exist?(@site.files_path).must_equal false
+    Dir.exist?(@site.deleted_files_path).must_equal true
+    visit '/signin'
+    fill_in 'username', with: @site.username
+    fill_in 'password', with: pass
+    click_button 'Sign In'
+    page.must_have_content 'Restore Site'
+    click_button 'Restore Site'
+    Dir.exist?(@site.deleted_files_path).must_equal false
+    Dir.exist?(@site.files_path).must_equal true
+    @site.reload.is_deleted.must_equal false
+  end
+
   it 'fails for invalid signin' do
     visit '/'
     click_link 'Sign In'
