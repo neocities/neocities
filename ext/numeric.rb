@@ -30,6 +30,14 @@ class Numeric
     "#{computed} #{unit}"
   end
 
+  def to_gigabytes_pretty
+    self.to_gigabytes.to_s + ' GB'
+  end
+
+  def to_gigabytes
+    self / (1000**3)
+  end
+
   def to_comma_separated
     self.to_i.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
   end
