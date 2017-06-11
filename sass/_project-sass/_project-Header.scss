@@ -299,6 +299,8 @@
 
 		&:hover{
       background:#528995; text-decoration:underline;
+      /*
+        Prettier with outline, but has issues with zoom levels...
       >.fa-heart {
         color: rgba(255, 255, 255, 1);
         >.fa-heart {
@@ -309,6 +311,10 @@
           font-size: 5pt;
           display: inline;
         }
+      }
+      */
+      >.fa-heart {
+        color: $c-Brand-1;
       }
     }
 		&.selected, &:active{background:#528995; text-decoration:underline}
