@@ -64,7 +64,6 @@ def meta_robots(newtag=nil)
   end
 
   @_meta_robots
-  tag = newtag || @_meta_robots
 end
 
 def title
