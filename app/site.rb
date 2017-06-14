@@ -30,6 +30,8 @@ get '/site/:username/?' do |username|
   @pagination_dataset = events_dataset
   @latest_events = events_dataset.all
 
+  meta_robots 'noindex, follow'
+
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 

@@ -58,6 +58,15 @@ def enforce_ban
   redirect '/'
 end
 
+def meta_robots(newtag=nil)
+  if newtag
+    @_meta_robots = newtag
+  end
+
+  @_meta_robots
+  tag = newtag || @_meta_robots
+end
+
 def title
   out = "Neocities"
   return out                  if request.path == '/'
