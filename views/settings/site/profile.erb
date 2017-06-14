@@ -6,9 +6,15 @@
       <input name="site[profile_comments_enabled]" type="hidden" value="true">
       <input name="site[profile_comments_enabled]" type="checkbox" value="false"
         <% if @site.profile_comments_enabled == false %>checked<% end %>
-      > Turn off profile comments
+      > Disable Site Profile Comments
     </p>
 
+    <p>
+      <input name="site[profile_enabled]" type="hidden" value="true">
+      <input name="site[profile_enabled]" type="checkbox" value="false"
+        <% if @site.profile_enabled == false %>checked<% end %>
+      > Disable Site Profile
+    </p>
     <input class="btn-Action" type="submit" value="Update Site Profile Settings">
   </form>
 </div>

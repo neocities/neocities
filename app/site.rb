@@ -11,6 +11,8 @@ get '/site/:username/?' do |username|
 
   redirect '/' if site.is_education
 
+  redirect site.uri unless site.profile_enabled
+
   @title = site.title
 
   @page = params[:page]

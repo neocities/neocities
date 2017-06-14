@@ -51,7 +51,8 @@ post '/settings/:username/profile' do
   require_ownership_for_settings
 
   @site.update(
-    profile_comments_enabled: params[:site][:profile_comments_enabled]
+    profile_comments_enabled: params[:site][:profile_comments_enabled],
+    profile_enabled: params[:site][:profile_enabled]
   )
   flash[:success] = 'Profile settings changed.'
   redirect "/settings/#{@site.username}#profile"
