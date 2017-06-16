@@ -98,26 +98,25 @@
         </div>
         <div class="site-info">
           <div class="username">
-            <a href="/site/<%= site.username %>" title="Profile">
+            <a href="/site/<%= site.username %>" title="Site Profile">
               <i class="fa fa-user"><% if site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= site.username %>
             </a>
           </div>
           <div class="site-stats hide-on-mobile">
-            <a href="/site/<%= site.username %>">
-              <span class="show-on-mobile">
+            <a href="/site/<%= site.username %>" title="<% if params[:sort_by] == 'hits' %>Hits<% else %>Visitors<% end %>">
+              <span>
                 <i class="fa fa-eye"></i>
               </span>
               <% if params[:sort_by] == 'hits' %>
-                <%= site.hits.format_large_number %><span class="hide-on-mobile">&nbsp;hit<%= site.hits == 1 ? '' : 's' %></span>
+                <%= site.hits.format_large_number %>
               <% else %>
-                <%= site.views.format_large_number %><span class="hide-on-mobile">&nbsp;view<%= site.views == 1 ? '' : 's' %></span>
+                <%= site.views.format_large_number %>
               <% end %>
-
             </a>
           </div>
           <div class="site-tags">
             <% if @site_tags[site.id].length > 0 %>
-              <i class="fa fa-tag"></i>
+              <i class="fa fa-tag" title="Tags"></i>
               <% @site_tags[site.id].each_with_index do |tag, index| %>
                 <a class="" href="/browse?tag=<%= Rack::Utils.escape tag %>"><%= tag %></a><% if index != @site_tags[site.id].length - 1 %>,<% end %>
               <% end %>
