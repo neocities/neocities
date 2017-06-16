@@ -5,8 +5,10 @@ get '/activity' do
   global_dataset = Event.global_dataset
 
   if params[:event_id]
-    global_dataset.where! Sequel.qualify(:events, :id) => params[:event_id]
+    global_dataset = global_dataset.where Sequel.qualify(:events, :id) => params[:event_id]
   end
+
+=begin
 
   initial_events = global_dataset.all
   events = []
@@ -45,6 +47,26 @@ get '/activity' do
       end
     end
     @events << event
+  end
+
+=end
+
+
+  if SimpleCache.expired?(:activity_event_ids)
+
+    initial_events = Event.global_site_changes_dataset.limit(1000).all
+    @events = []
+    initial_events.each do |event|
+      event_site = event.site
+      next if @events.select {|e| e.site_id == event.site_id}.count >= 1
+      next if event_site.is_a_jerk?
+      next unless event_site.follows_dataset.count > 1
+      @events.push event
+    end
+
+    SimpleCache.store :activity_event_ids, @events.collect {|e| e.id}, 60.minutes
+  else
+    @events = Event.where(id: SimpleCache.get(:activity_event_ids)).order(:created_at.desc).all
   end
 
   erb :'activity'

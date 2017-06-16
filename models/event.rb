@@ -14,7 +14,7 @@ class Event < Sequel::Model
 
   DEFAULT_GLOBAL_LIMIT = 300
   GLOBAL_VIEWS_MINIMUM = 5
-  GLOBAL_VIEWS_SITE_CHANGE_MINIMUM = 1000
+  GLOBAL_VIEWS_SITE_CHANGE_MINIMUM = 3_000
 
   def self.news_feed_default_dataset
     if SimpleCache.expired?(:excluded_actioning_site_ids)
