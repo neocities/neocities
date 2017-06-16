@@ -54,7 +54,7 @@ get '/activity' do
 
   if SimpleCache.expired?(:activity_event_ids)
 
-    initial_events = Event.global_site_changes_dataset.limit(1000).all
+    initial_events = Event.global_site_changes_dataset.limit(500).all
     @events = []
     initial_events.each do |event|
       event_site = event.site
