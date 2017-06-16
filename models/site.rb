@@ -699,7 +699,7 @@ class Site < Sequel::Model
     if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
       rbox = Rye::Box.new $config['ipfs_ssh_host'], :user => $config['ipfs_ssh_user']
       begin
-        response = rbox.ipfs "sites/#{self.username.gsub(/\/|\.\./, '')}"
+        response = rbox.ipfs "sites/#{self.class.sharding_dir self.username}#{self.username.gsub(/\/|\.\./, '')}"
         output_array = response
       ensure
         rbox.disconnect
