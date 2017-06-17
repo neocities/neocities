@@ -732,7 +732,12 @@ class Site < Sequel::Model
       archive.updated_at = Time.now
       archive.save_changes
     else
-      add_archive ipfs_hash: ipfs_hash, updated_at: Time.now
+      begin
+        add_archive ipfs_hash: ipfs_hash, updated_at: Time.now
+      rescue Sequel::UniqueConstraintViolation
+        # Record already exists, update timestamp
+        archives_dataset.where(ipfs_hash: ipfs_hash).first.update updated_at: Time.now
+      end
     end
   end
 
