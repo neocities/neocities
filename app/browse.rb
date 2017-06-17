@@ -94,6 +94,7 @@ def browse_sites_dataset
       ds = ds.order :follow_count.desc, :views.desc, :updated_at.desc
     else
       params[:sort_by] = 'followers'
+      ds = ds.where{views > 10_000}
       ds = ds.order :follow_count.desc, :views.desc, :updated_at.desc
   end
 
