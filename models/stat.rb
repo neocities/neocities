@@ -19,7 +19,7 @@ class Stat < Sequel::Model
     def parse_logfiles(path)
       total_site_stats = {}
 
-      cache_control_ip = $config['cache_control_ip']
+      cache_control_ips = $config['cache_control_ips']
 
       Dir["#{path}/*.log"].each do |log_path|
         site_logs = {}
@@ -34,7 +34,7 @@ class Stat < Sequel::Model
 
             time, username, size, path, ip, referrer = hit_array
 
-            next if ip == cache_control_ip
+            next if cache_control_ips.include?(ip)
 
             log_time = Time.parse time
 
