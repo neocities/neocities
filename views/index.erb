@@ -242,8 +242,22 @@
       <h3><i class="fa fa-university"></i>Open Source</h3>
       <p>We <a href="https://github.com/neocities" target="_blank">publish</a> the code that powers the site for inspection. We want to win your trust—not lock you in.</p>
     </div>
+  </div>
 
-
+  <div class="col col-100">
+    <div class="row stats">
+      <div class="col col-33">
+        <h2><%= @total_hits_count.to_comma_separated %></h2>
+        <h3 style="text-align: center">Site Hits</h3>
+      </div>
+      <div class="col col-33">
+        <h2><%= @total_views_count.to_comma_separated %></h2>
+        <h3 style="text-align: center">Site Visitors</h3>
+      </div>
+      <div class="col col-33">
+        <h2><%= @changed_count.to_comma_separated %></h2>
+        <h3 style="text-align: center">Site Updates</h3>
+      </div>
   </div>
 
   <div class="col col-100">

@@ -31,9 +31,27 @@ get '/?' do
   end
 
   if SimpleCache.expired?(:sites_count)
-    @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 10.minutes
+    @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 4.hours
   else
     @sites_count = SimpleCache.get :sites_count
+  end
+
+  if SimpleCache.expired?(:total_hits_count)
+    @total_hits_count = SimpleCache.store :total_hits_count, DB['SELECT SUM(hits) AS hits FROM SITES'].first[:hits], 4.hours
+  else
+    @total_hits_count = SimpleCache.get :total_hits_count
+  end
+
+  if SimpleCache.expired?(:total_views_count)
+    @total_views_count = SimpleCache.store :total_views_count, DB['SELECT SUM(views) AS views FROM SITES'].first[:views], 4.hours
+  else
+    @total_views_count = SimpleCache.get :total_views_count
+  end
+
+  if SimpleCache.expired?(:changed_count)
+    @changed_count = SimpleCache.store :changed_count, DB['SELECT SUM(changed_count) AS changed_count FROM SITES'].first[:changed_count], 4.hours
+  else
+    @changed_count = SimpleCache.get :changed_count
   end
 
   if SimpleCache.expired?(:blog_feed_html)

@@ -1469,6 +1469,7 @@ a.tag:hover {
     margin-bottom: 0;
   }
 }
+
 .section.support {
   padding-bottom: 100px;
   p {
@@ -1505,6 +1506,25 @@ a.tag:hover {
 }
 .section.features p, .section.features h3 {
   text-align: left;
+}
+.section .stats {
+  padding-top: 10px;
+  padding-bottom: 30px;
+}
+.section .stats h2 {
+  font-weight: bold;
+  font-size: 3em;
+  padding-bottom: 0px;
+  letter-spacing: 2px;
+  font-family: sans-serif;
+  margin-bottom: 0px;
+  @media (max-device-width:480px), screen and (max-width:1200px){
+    margin-top: 20px;
+    font-size: 1.8em;
+  }
+}
+.section .stats h3 {
+  margin: 0;
 }
 .section .press {
   display: inline-block;
