@@ -73,6 +73,12 @@ end
 
 $redis_cache = Redis::Namespace.new :cache, redis: $redis
 
+if ENV['RACK_ENV'] == 'test'
+  $redis_proxy = MockRedis.new
+else
+  $redis_proxy = Redis.new url: $config['redis_proxy']
+end
+
 # :nocov:
 if ENV['RACK_ENV'] == 'development'
   # Run async jobs immediately in development.

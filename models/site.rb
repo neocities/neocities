@@ -827,6 +827,7 @@ class Site < Sequel::Model
   end
 
   def after_save
+    store_ssl_in_redis_proxy if @_ssl_changed
     save_tags
     super
   end
@@ -1380,7 +1381,24 @@ class Site < Sequel::Model
   end
 
   def ssl_installed?
-    ssl_key && ssl_cert
+    domain && ssl_key && ssl_cert
+  end
+
+  def ssl_key=(val)
+    @_ssl_changed = true
+    values[:ssl_key] = val
+  end
+
+  def ssl_cert=(val)
+    @_ssl_changed = true
+    values[:ssl_cert] = val
+  end
+
+  def store_ssl_in_redis_proxy
+    return false unless ssl_installed?
+    $redis_proxy.hset "ssl-#{domain}", 'crt', OpenSSL::X509::Certificate.new(ssl_cert).to_der
+    $redis_proxy.hset "ssl-#{domain}", 'key', OpenSSL::PKey::RSA.new(ssl_key).to_der
+    true
   end
 
   def to_rss
