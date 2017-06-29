@@ -1385,8 +1385,8 @@ class Site < Sequel::Model
 
   def store_ssl_in_redis_proxy
     return false unless ssl_installed?
-    $redis_proxy.hset "ssl-#{domain}", 'crt', OpenSSL::X509::Certificate.new(ssl_cert).to_der
-    $redis_proxy.hset "ssl-#{domain}", 'key', OpenSSL::PKey::RSA.new(ssl_key).to_der
+    $redis_proxy.hset "ssl-#{values[:domain]}", 'crt', OpenSSL::X509::Certificate.new(ssl_cert).to_der
+    $redis_proxy.hset "ssl-#{values[:domain]}", 'key', OpenSSL::PKey::RSA.new(ssl_key).to_der
     true
   end
 
