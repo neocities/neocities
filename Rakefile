@@ -435,3 +435,15 @@ task :prime_follow_count => [:environment] do
     DB['update sites set follow_count=? where id=?', count, site.id].first
   end
 end
+
+desc 'prime_redis_proxy_ssl'
+task :prime_redis_proxy_ssl => [:environment] do
+  site_ids = DB[%{
+    select id from sites where domain is not null and ssl_cert is not null and ssl_key is not null
+    and is_deleted != ? and is_banned != ?
+  }, true, true].all.collect {|site_id| site_id[:id]}
+
+  site_ids.each do |site_id|
+    Site[site_id].store_ssl_in_redis_proxy
+  end
+end
