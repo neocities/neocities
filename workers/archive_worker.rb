@@ -9,7 +9,7 @@ class ArchiveWorker
     return if site.nil? || site.is_banned? || site.is_deleted
 
     if site.site_files_dataset.count > 1000
-      logger.info 'skipping #{site_id} (#{site.username}) due to > 1000 files'
+      logger.info "skipping #{site_id} (#{site.username}) due to > 1000 files"
       return
     end
 
@@ -31,6 +31,8 @@ class ArchiveWorker
       logger.info "DELETING scheduled job #{scheduled_job.jid} for site_id #{site_id}"
       scheduled_job.delete
     end
+
+    logger.info "ARCHIVING: #{site.username}"
 
     site.archive!
   end
