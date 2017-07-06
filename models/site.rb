@@ -1260,10 +1260,14 @@ class Site < Sequel::Model
   end
 
   def title
-    if values[:title].nil? || values[:title].empty?
-      !domain.nil? && !domain.empty? ? domain : "#{username}.neocities.org"
-    else
-      values[:title]
+    begin
+      if values[:title].blank? || values[:title].strip.empty?
+        !domain.nil? && !domain.empty? ? domain : host
+      else
+        values[:title]
+      end
+    rescue
+      host
     end
   end
 
