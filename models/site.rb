@@ -372,6 +372,7 @@ class Site < Sequel::Model
   end
 
   def username=(val)
+    @redis_proxy_change = true
     super val.downcase
   end
 
@@ -827,6 +828,7 @@ class Site < Sequel::Model
   end
 
   def after_save
+    update_redis_proxy_record if @redis_proxy_change
     save_tags
     super
   end
@@ -885,7 +887,42 @@ class Site < Sequel::Model
 #    super
 #  end
 
+  def ssl_installed?
+    !domain.blank? && !ssl_key.blank? && !ssl_cert.blank?
+  end
+
+  def update_redis_proxy_record
+    if ssl_installed?
+      $redis_proxy.mapped_hmset("d-#{values[:domain]}",
+        username: username,
+        ssl_cert: ssl_cert,
+        ssl_key: ssl_key
+      )
+    end
+
+    $redis_proxy.del "d-#{@old_domain}" if @old_domain
+    true
+  end
+
+  def delete_redis_proxy_record
+    if !domain.blank?
+      $redis_proxy.del "d-#{domain}"
+    end
+  end
+
+  def ssl_key=(val)
+    @redis_proxy_change = true
+    super val
+  end
+
+  def ssl_cert=(val)
+    @redis_proxy_change = true
+    super val
+  end
+
   def domain=(domain)
+    @old_domain = self.domain unless self.domain.blank?
+    @redis_proxy_change = true
     super SimpleIDN.to_ascii(domain)
   end
 
@@ -1377,17 +1414,6 @@ class Site < Sequel::Model
   def thumbnail_url(path, resolution)
     ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
     "#{THUMBNAILS_URL_ROOT}/#{self.class.sharding_dir(values[:username])}/#{values[:username]}/#{path}.#{resolution}.#{ext}"
-  end
-
-  def ssl_installed?
-    domain && ssl_key && ssl_cert
-  end
-
-  def store_ssl_in_redis_proxy
-    return false unless ssl_installed?
-    $redis_proxy.hset "ssl-#{values[:domain]}", 'crt', OpenSSL::X509::Certificate.new(ssl_cert).to_der
-    $redis_proxy.hset "ssl-#{values[:domain]}", 'key', OpenSSL::PKey::RSA.new(ssl_key).to_der
-    true
   end
 
   def to_rss

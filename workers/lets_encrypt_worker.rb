@@ -190,7 +190,6 @@ class LetsEncryptWorker
     site.cert_updated_at = Time.now
     site.domain_fail_count = 0
     site.save_changes validate: false
-    site.store_ssl_in_redis_proxy
 
     # Refresh the cert periodically, current expire time is 90 days
     # We're going for a cron task for this now, so this is commented out.
