@@ -310,17 +310,12 @@ class Site < Sequel::Model
       return false if ENV['RACK_ENV'] == 'production' && ip == '127.0.0.1'
       return false if ip.blank?
       return true if Site.where(is_banned: true).
-        where(ip: [ip, hash_ip(ip)]).
         where(['updated_at > ?', Time.now-BANNED_TIME]).
         first
 
       return true if BlockedIp[ip]
 
       false
-    end
-
-    def hash_ip(ip)
-      SCrypt::Engine.hash_secret ip, $config['ip_hash_salt']
     end
 
     def ssl_sites

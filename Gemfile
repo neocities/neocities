@@ -21,7 +21,6 @@ gem 'sass', require: nil
 gem 'dav4rack', git: 'https://github.com/planio-gmbh/dav4rack.git', branch: 'redmine-storage'
 gem 'filesize'
 gem 'thread'
-gem 'scrypt'
 gem 'rack-cache'
 gem 'rest-client', require: 'rest_client'
 gem 'addressable', require: 'addressable/uri'
