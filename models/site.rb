@@ -103,8 +103,8 @@ class Site < Sequel::Model
 
   PLAN_FEATURES[:supporter] = {
     name: 'Supporter',
-    space: Filesize.from('20GB').to_i,
-    bandwidth: Filesize.from('2TB').to_i,
+    space: Filesize.from('50GB'),
+    bandwidth: Filesize.from('3TB'),
     price: 5,
     unlimited_site_creation: true,
     custom_ssl_certificates: true,
@@ -115,8 +115,8 @@ class Site < Sequel::Model
 
   PLAN_FEATURES[:free] = PLAN_FEATURES[:supporter].merge(
     name: 'Free',
-    space: Filesize.from('1GB').to_i,
-    bandwidth: Filesize.from('200GB').to_i,
+    space: Filesize.from('1GB'),
+    bandwidth: Filesize.from('200GB'),
     price: 0,
     unlimited_site_creation: false,
     custom_ssl_certificates: false,
@@ -789,7 +789,6 @@ class Site < Sequel::Model
 
       Dir.glob("#{base_files_path}/**/*").each do |path|
         relative_path = path.gsub(base_files_path+'/', '')
-        puts "adding #{relative_path}"
         if File.directory?(path)
           ar.add_dir(zip_name+'/'+relative_path)
         else
@@ -1173,7 +1172,7 @@ class Site < Sequel::Model
   end
 
   def maximum_space
-    plan_space = PLAN_FEATURES[(parent? ? self : parent).plan_type.to_sym][:space]
+    plan_space = PLAN_FEATURES[(parent? ? self : parent).plan_type.to_sym][:space].to_i
 
     return custom_max_space if custom_max_space > plan_space
 

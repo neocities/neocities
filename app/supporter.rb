@@ -79,8 +79,8 @@ post '/supporter/update' do
         self, {
           username:   site.username,
           plan_name:  Site::PLAN_FEATURES[params[:plan_type].to_sym][:name],
-          plan_space: Site::PLAN_FEATURES[params[:plan_type].to_sym][:space].to_space_pretty,
-          plan_bw:    Site::PLAN_FEATURES[params[:plan_type].to_sym][:bandwidth].to_space_pretty
+          plan_space: Site::PLAN_FEATURES[params[:plan_type].to_sym][:space].pretty,
+          plan_bw:    Site::PLAN_FEATURES[params[:plan_type].to_sym][:bandwidth].pretty
       })
     )
   end
