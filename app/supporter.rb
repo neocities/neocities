@@ -15,11 +15,7 @@ end
 post '/supporter/update' do
   require_login
 
-  if params[:plan_type] == 'trumpplan'
-    plan_type = 'trumpplan'
-  else
-    plan_type = 'supporter'
-  end
+  plan_type = 'supporter'
 
   if is_special_upgrade
     require_admin

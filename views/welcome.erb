@@ -35,42 +35,45 @@
         </div>
         <div class="row content txt-Center">
           <% if request.path == '/welcome' %>
-            <% if @is_trump_plan %>
-              <b>Sorry!</b><br><small style="text-align: left">Not available for Trump Hotel / FCC / US Senate / White House guests.<br><br>Thank you for opposing Net Neutrality, it was suppressing our freedom to do this.</small>
-            <% else %>
-              <a href="/tutorial" class="btn-Action">Continue</a>
-            <% end %>
+            <a href="/tutorial" class="btn-Action">Continue</a>
           <% end %>
         </div>
       </div>
 
-      <% if @is_trump_plan %>
       <div class="col supporter">
         <div class="row content">
           <div class="col col-33">
-            <img src="/img/trumpplan.png" width="200px;">
-            <br>
-            <p>Trump Hotel / FCC / US Senate / White House guests: Introducing this exclusive offer just for you! Bathe in the luxury of a superior quality web site hosting experience that has been tailor-made by the finest artisans for the choicest tastes of your demanding lifestyle.</p>
-            <div class="plan-image supporter" style="background-image: url(/img/fatcat.png);">
+            <h3>Supporter</h3>
+            <div class="plan-image supporter">
             </div>
-            <div class="price" style="color: green">$100</div>
-            <div class="interval">per month</div>
+            <% if parent_site && parent_site.legacy_supporter? %>
+              <div class="price">$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site[:plan_type].to_sym] %></div>
+              <div class="interval">per month, billed annually</div>
+            <% else %>
+              <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
+              <div class="interval">per month</div>
+            <% end %>
 
             <ul class="main-features">
-              <li><strong>2 MB</strong> <span data-original-title="Your internet bill after Net Neutrality is gutted is going to be big, folks. Really big.">storage bigness</span></li>
-              <li><strong>604,800 KB</strong> <span data-original-title="The exact amount of bandwidth a 56K modem can download at theoretical perfect speeds in one day. The extra cost creates jobs!">ultra-premium bandwidth</span></li>
-              <li><strong>INCLUDED </strong> <span data-original-title="Be the talk of Upper East Side with this exclusive badge showing how wealthy you are!">"Fat Cat" Site Profile Badge</span> <small><strong><a href="/img/fatcatbadgeexample.png">(sample)</a></strong></small></li>
-              <li><strong>INCLUDED</strong> <span data-original-title="The finest of 18th century late-baroque faux-luxury and other miscellaneous Veblen Goods">tacky gold-plated Rococo garbage</span></li>
+              <li><strong><%= (Site::PLAN_FEATURES[:supporter][:space] / (10**6)).to_comma_separated %> MB</strong> <span data-original-title="Much more disk space, so you can build a much bigger web site.">storage</span></li>
+              <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></strong> <span data-original-title="Tons of bandwidth to serve your site, powered by our high-quality network of servers. This is a soft limit. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
+            </ul>
+
+            <ul>
+              <li><span data-original-title="Free plans don't allow uploading music, video, compressed, and executable files to prevent piracy. With a supporter plan, you can upload anything you want.">No File Upload Type Restrictions</span></li>
+              <li><span data-original-title="Make as many sites as you want with one account, and easily switch between them.">Unlimited Site Creation</span></li>
+              <li><span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domain Support</span></li>
+              <li><span data-original-title="With WebDAV, you can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">Remote Filesystem Support</span></li>
             </ul>
           </div>
 
           <div class="col col-66">
-            <p class="instructions">Just enter your credit card info to upgrade to the pinnacle of luxury:</p>
+            <p class="instructions">Just enter your card info, and you're done:</p>
             <div>
               <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
               <form id="upgradeForm" method="POST" action="/supporter/update">
                 <%== csrf_token_input_html %>
-                <input type="hidden" value="trumpplan" name="plan_type">
+                <input type="hidden" value="supporter" name="plan_type">
                 <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
 
                 <div class="credit-card-input no-js" id="skeuocard" style="margin-left: auto; margin-right: auto; margin-bottom: 20px">
@@ -105,86 +108,11 @@
 
         <div class="row content txt-Center">
           <a id="upgradeLink" href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">
-            Begin the lifestyle you've always dreamed of for only $100
-          </a><br>
-          or pay with <a href="/supporter/bitcoin">E-Gold</a>
+            Upgrade for $<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo
+          </a>
+          or pay with <a href="/supporter/paypal">PayPal</a> or <a href="/supporter/bitcoin">Bitcoin</a>
         </div>
       </div>
-      <% else %>
-        <div class="col supporter">
-          <div class="row content">
-            <div class="col col-33">
-              <h3>Supporter</h3>
-              <div class="plan-image supporter">
-              </div>
-              <% if parent_site && parent_site.legacy_supporter? %>
-                <div class="price">$<%= Site::LEGACY_SUPPORTER_PRICES[parent_site[:plan_type].to_sym] %></div>
-                <div class="interval">per month, billed annually</div>
-              <% else %>
-                <div class="price">$<%= Site::PLAN_FEATURES[:supporter][:price] %></div>
-                <div class="interval">per month</div>
-              <% end %>
-
-              <ul class="main-features">
-                <li><strong><%= (Site::PLAN_FEATURES[:supporter][:space] / (10**6)).to_comma_separated %> MB</strong> <span data-original-title="Much more disk space, so you can build a much bigger web site.">storage</span></li>
-                <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_bytes_pretty %></strong> <span data-original-title="Tons of bandwidth to serve your site, powered by our high-quality network of servers. This is a soft limit. Temporary surges are fine, we won't take your site down automatically, and we're very flexible.">bandwidth</span></li>
-              </ul>
-
-              <ul>
-                <li><span data-original-title="Free plans don't allow uploading music, video, compressed, and executable files to prevent piracy. With a supporter plan, you can upload anything you want.">No File Upload Type Restrictions</span></li>
-                <li><span data-original-title="Make as many sites as you want with one account, and easily switch between them.">Unlimited Site Creation</span></li>
-                <li><span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domain Support</span></li>
-                <li><span data-original-title="With WebDAV, you can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">Remote Filesystem Support</span></li>
-              </ul>
-            </div>
-
-            <div class="col col-66">
-              <p class="instructions">Just enter your card info, and you're done:</p>
-              <div>
-                <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
-                <form id="upgradeForm" method="POST" action="/supporter/update">
-                  <%== csrf_token_input_html %>
-                  <input type="hidden" value="supporter" name="plan_type">
-                  <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
-
-                  <div class="credit-card-input no-js" id="skeuocard" style="margin-left: auto; margin-right: auto; margin-bottom: 20px">
-                    <p class="no-support-warning"></p>
-                    <label for="cc_type">Card Type</label>
-                    <select name="cc_type">
-                      <option value="">...</option>
-                      <option value="visa">Visa</option>
-                      <option value="discover">Discover</option>
-                      <option value="mastercard">MasterCard</option>
-                      <option value="maestro">Maestro</option>
-                      <option value="jcb">JCB</option>
-                      <option value="unionpay">China UnionPay</option>
-                      <option value="amex">American Express</option>
-                      <option value="dinersclubintl">Diners Club</option>
-                    </select>
-                    <label for="cc_number">Card Number</label>
-                    <input type="text" name="cc_number" id="cc_number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" size="19">
-                    <label for="cc_exp_month">Expiration Month</label>
-                    <input type="text" name="cc_exp_month" id="cc_exp_month" placeholder="00">
-                    <label for="cc_exp_year">Expiration Year</label>
-                    <input type="text" name="cc_exp_year" id="cc_exp_year" placeholder="00">
-                    <label for="cc_name">Cardholder's Name</label>
-                    <input type="text" name="cc_name" id="cc_name" placeholder="John Doe">
-                    <label for="cc_cvc">Card Validation Code</label>
-                    <input type="text" name="cc_cvc" id="cc_cvc" placeholder="123" maxlength="3" size="3">
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          <div class="row content txt-Center">
-            <a id="upgradeLink" href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">
-              Upgrade for $<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo
-            </a>
-            or pay with <a href="/supporter/paypal">PayPal</a> or <a href="/supporter/bitcoin">Bitcoin</a>
-          </div>
-        </div>
-      <% end %>
     </div>
 
   <% end %>
@@ -219,12 +147,9 @@
   </div>
 </section>
 
-<% unless @is_trump_plan %>
 <section class="section" style="padding-top: 0;">
   <%== erb :'supporter/_compare', layout: false %>
 </section>
-
-<% end %>
 
 <%== erb :'supporter/_signupcode', layout: false %>
 <script>
