@@ -1,4 +1,4 @@
-# :nocov:
+=begin
 get '/mockup/home' do
   erb :'mockup/home'
 end
@@ -34,4 +34,4 @@ get '/mockup/tutorial-c1p2' do
   require_login
   erb :'mockup/tutorial-c1p2', locals: {site: current_site}
 end
-# :nocov:
+=end
