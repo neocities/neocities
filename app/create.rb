@@ -30,7 +30,7 @@ post '/create_validate_all' do
   site = Site.new fields
 
   if site.valid?
-    return [].to_json if education_whitelisted? || params[:'g-recaptcha-response']
+    return [].to_json if education_whitelisted? || params[:'g-recaptcha-response'] || self.class.test?
     return [['captcha', 'Please complete the captcha.']].to_json
   end
 
