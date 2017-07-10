@@ -1,4 +1,5 @@
 get '/surf/?' do
+  not_found # 404 for now
   @page = params[:page].to_i || 1
   params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
   site_dataset = browse_sites_dataset
@@ -11,6 +12,7 @@ get '/surf/?' do
 end
 
 get '/surf/:username' do |username|
+  not_found # 404 for now
   @site = Site.select(:id, :username, :title, :domain, :views, :stripe_customer_id).where(username: username).first
   not_found if @site.nil?
   @title = @site.title
