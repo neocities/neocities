@@ -780,17 +780,22 @@ class Site < Sequel::Model
     tmpfile = Tempfile.new 'neocities-site-zip'
     tmpfile.close
 
-    Zip::Archive.open(tmpfile.path, Zip::CREATE) do |ar|
-      ar.add_dir(zip_name)
+    begin
+      Zip::Archive.open(tmpfile.path, Zip::CREATE) do |ar|
+        ar.add_dir(zip_name)
 
-      Dir.glob("#{base_files_path}/**/*").each do |path|
-        relative_path = path.gsub(base_files_path+'/', '')
-        if File.directory?(path)
-          ar.add_dir(zip_name+'/'+relative_path)
-        else
-          ar.add_file(zip_name+'/'+relative_path, path) # add_file(<entry name>, <source path>)
+        Dir.glob("#{base_files_path}/**/*").each do |path|
+          relative_path = path.gsub(base_files_path+'/', '')
+          if File.directory?(path)
+            ar.add_dir(zip_name+'/'+relative_path)
+          else
+            ar.add_file(zip_name+'/'+relative_path, path) # add_file(<entry name>, <source path>)
+          end
         end
       end
+    rescue => e
+      tmpfile.unlink
+      raise e
     end
 
     tmpfile.path
