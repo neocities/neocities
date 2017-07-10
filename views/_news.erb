@@ -15,13 +15,11 @@
     <div class="news-item comment" id="event_<%= event.id %>">
       <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment, event: event} %>
   <% elsif event.tip_id %>
-
+    <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
+    <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
+    <% tip = event.tip %>
     <div class="news-item tip">
       <div class="title">
-        <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
-        <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
-        <% tip = event.tip %>
-
         <div class="icon">
           <% if actioning_site %>
           <a href="/site/<%= actioning_site.username %>" title="<%= actioning_site.username %>" class="avatar" style="background-image: url(<%= actioning_site.screenshot_url 'index.html', '50x50' %>);"></a>
@@ -58,10 +56,11 @@
       </div>
 
   <% elsif event.follow_id %>
+    <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
+    <% next if actioning_site.nil? %>
+    <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
     <div class="news-item follow">
       <div class="title">
-      <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
-      <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
 
       <div class="icon"><a href="/site/<%= actioning_site.username %>" title="<%= actioning_site.username %>" class="avatar" style="background-image: url(<%= actioning_site.screenshot_url 'index.html', '50x50' %>);"></a></div>
 
