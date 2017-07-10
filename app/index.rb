@@ -42,17 +42,23 @@ get '/?' do
     @total_hits_count = SimpleCache.get :total_hits_count
   end
 
+  @total_hits_count ||= 0
+
   if SimpleCache.expired?(:total_views_count)
     @total_views_count = SimpleCache.store :total_views_count, DB['SELECT SUM(views) AS views FROM SITES'].first[:views], 4.hours
   else
     @total_views_count = SimpleCache.get :total_views_count
   end
 
+  @total_views_count ||= 0
+
   if SimpleCache.expired?(:changed_count)
     @changed_count = SimpleCache.store :changed_count, DB['SELECT SUM(changed_count) AS changed_count FROM SITES'].first[:changed_count], 4.hours
   else
     @changed_count = SimpleCache.get :changed_count
   end
+
+  @changed_count ||= 0
 
   if SimpleCache.expired?(:blog_feed_html)
     @blog_feed_html = ''
