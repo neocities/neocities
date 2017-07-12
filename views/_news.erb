@@ -140,10 +140,10 @@
     <%== erb :'_news_actions', layout: false, locals: {event: event} %>
   <% end %>
 
-  <% if event.comments_dataset.count > 0 %>
+  <% if event.undeleted_comments_count > 0 %>
     <div class="content">
       <div class="comments">
-        <% event.comments.each do |comment| %>
+        <% event.undeleted_comments.each do |comment| %>
           <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <% comment_event_site = comment.event.site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <div class="comment" id="comment_<%= comment.id %>">

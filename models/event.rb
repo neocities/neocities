@@ -3,7 +3,7 @@ class Event < Sequel::Model
 
   many_to_one :site
   many_to_one :follow
-  many_to_one  :tip
+  many_to_one :tip
   one_to_one  :tag
   many_to_one :site_change
   many_to_one :profile_comment
@@ -15,6 +15,14 @@ class Event < Sequel::Model
   DEFAULT_GLOBAL_LIMIT = 300
   GLOBAL_VIEWS_MINIMUM = 5
   GLOBAL_VIEWS_SITE_CHANGE_MINIMUM = 3_000
+
+  def undeleted_comments_count
+    comments_dataset.exclude(is_deleted: true).count
+  end
+
+  def undeleted_comments
+    comments_dataset.exclude(is_deleted: true).order(:created_at).all
+  end
 
   def self.news_feed_default_dataset
     if SimpleCache.expired?(:excluded_actioning_site_ids)
@@ -32,7 +40,7 @@ class Event < Sequel::Model
       exclude(is_banned: true)
 
     unless excluded_actioning_site_ids.empty?
-      ds.where!("actioning_site_id is null or actioning_site_id not in ?", excluded_actioning_site_ids)
+      return ds.where("actioning_site_id is null or actioning_site_id not in ?", excluded_actioning_site_ids)
     end
 
     ds
