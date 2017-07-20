@@ -37,7 +37,7 @@
           <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i> Edit Site</a>
         <% end %>
 
-        <% if current_site && current_site.id == site.id && site.latest_archive %>
+        <% if site.latest_archive && !site.archiving_disabled %>
           <a href="/site/<%= site.username %>/archives" class="btn-Action edit"><i class="fa fa-history" title="Archives"></i> Archives</a>
         <% end %>
 
@@ -45,12 +45,10 @@
           <% is_following = current_site.is_following?(site) %>
 
           <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>'); return false" class="btn-Action <%= is_following ? 'is-following' : '' %>">
-              <span class="unfollow"><i class="fa fa-times"></i>Unfollow</span>
-              <span class="following"><i class="fa fa-check"></i>Following</span>
-              <span class="follow"><i class="fa fa-plus"></i>Follow</span>
+            <span class="unfollow"><i class="fa fa-times"></i>Unfollow</span>
+            <span class="following"><i class="fa fa-check"></i>Following</span>
+            <span class="follow"><i class="fa fa-plus"></i>Follow</span>
           </a>
-
-          <!-- <a href="#" class="btn-Action tip"><span>Tip</span></a> -->
         <% end %>
 
         <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: site} %>'><i class="fa fa-share-alt"></i> <span>Share</span></a>

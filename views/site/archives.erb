@@ -1,6 +1,6 @@
 <div class="header-Outro">
   <div class="row content single-Col">
-  <h1>Permanent Web Archives</h1>
+  <h1>IPFS Archives</h1>
   </div>
 </div>
 
@@ -23,10 +23,10 @@
       </table>
 
       <p>
-        This is a very early, experimental preview release of a new technology! We're still figuring things out. We may stop hosting archives without notice. <a href="/permanent-web">Learn how you can host your own copies of these archives</a>.
+        This is a preview release of a new technology. We're still figuring things out, and may stop hosting archives without notice. <a href="/permanent-web">Learn how you can host your own copies of these archives</a>.
       </p>
       <p>
-        Archives are captured once every 24 hours, so if you don't see your latest changes, check back later.
+        Archives are captured once every <%= Archive::ARCHIVE_WAIT_TIME / 60 %> minutes, so if you don't see your latest changes, check back later.
       </p>
       <p>
         The URLs are using <a href="https://github.com/neocities/hshca">hshca</a>, a standard for using cryptographic hashes with subdomains.

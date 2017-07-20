@@ -1,20 +1,37 @@
-<h2>Site Profile</h2>
+<h2>General Settings</h2>
+
 <div>
   <form method="POST" action="/settings/<%= @site.username %>/profile">
     <%== csrf_token_input_html %>
-    <p>
-      <input name="site[profile_comments_enabled]" type="hidden" value="true">
-      <input name="site[profile_comments_enabled]" type="checkbox" value="false"
-        <% if @site.profile_comments_enabled == false %>checked<% end %>
-      > Disable Site Profile Comments
-    </p>
 
-    <p>
-      <input name="site[profile_enabled]" type="hidden" value="true">
-      <input name="site[profile_enabled]" type="checkbox" value="false"
-        <% if @site.profile_enabled == false %>checked<% end %>
-      > Disable Site Profile
-    </p>
-    <input class="btn-Action" type="submit" value="Update Site Profile Settings">
+    <h3>Site Profile</h3>
+
+    <div style="text-align: center">
+      <div style="display: inline-block; text-align: left; margin-bottom: 10px">
+        <input name="site[profile_comments_enabled]" type="hidden" value="true">
+        <input name="site[profile_comments_enabled]" type="checkbox" value="false"
+          <% if @site.profile_comments_enabled == false %>checked<% end %>
+        > Disable Site Profile Comments
+        <br>
+
+        <input name="site[profile_enabled]" type="hidden" value="true">
+        <input name="site[profile_enabled]" type="checkbox" value="false"
+          <% if @site.profile_enabled == false %>checked<% end %>
+        > Disable Site Profile
+        <br>
+      </div>
+
+      <h3>IPFS Archiving</h3>
+
+      <div style="display: inline-block; text-align: left; margin-bottom: 10px">
+        <input name="site[archiving_disabled]" type="hidden" value="false">
+        <input name="site[archiving_disabled]" type="checkbox" value="true"
+          <% if @site.archiving_disabled == true %>checked<% end %>
+        > Disable IPFS Archiving
+      </div>
+    </div>
+
+    <input class="btn-Action" type="submit" value="Update Settings">
+
   </form>
 </div>

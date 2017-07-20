@@ -38,11 +38,9 @@ get '/site/:username/?' do |username|
 end
 
 get '/site/:username/archives' do
-  require_login
   @site = Site[username: params[:username]]
   @title = "Site archives for #{@site.title}"
-  not_found if @site.nil?
-  redirect request.referrer unless current_site.id == @site.id
+  not_found if @site.nil? || @site.archiving_disabled
 
   @archives = @site.archives_dataset.limit(300).order(:updated_at.desc).all
 

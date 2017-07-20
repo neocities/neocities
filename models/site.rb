@@ -1530,7 +1530,9 @@ class Site < Sequel::Model
         ]
         sql.first
 
-        ArchiveWorker.perform_in Archive::ARCHIVE_WAIT_TIME, self.id
+        unless archiving_disabled
+          ArchiveWorker.perform_in Archive::ARCHIVE_WAIT_TIME, self.id
+        end
       end
 
       reload
