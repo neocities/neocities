@@ -40,6 +40,7 @@ end
 get '/site/:username/archives' do
   require_login
   @site = Site[username: params[:username]]
+  @title = "Site archives for #{@site.title}"
   not_found if @site.nil?
   redirect request.referrer unless current_site.id == @site.id
 
