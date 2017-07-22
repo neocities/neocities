@@ -151,6 +151,7 @@ class Site < Sequel::Model
 
   MAXIMUM_EMAIL_CONFIRMATIONS = 20
   MAX_COMMENTS_PER_DAY = 5
+  SANDBOX_TIME = 2.days
 
   many_to_many :tags
 
@@ -361,6 +362,7 @@ class Site < Sequel::Model
 
   def username=(val)
     @redis_proxy_change = true
+    @old_username = self.username
     super val.downcase
   end
 
@@ -883,23 +885,40 @@ class Site < Sequel::Model
     !domain.blank? && !ssl_key.blank? && !ssl_cert.blank?
   end
 
-  def update_redis_proxy_record
-    if ssl_installed?
-      $redis_proxy.mapped_hmset("d-#{values[:domain]}",
-        username: username,
-        ssl_cert: ssl_cert,
-        ssl_key: ssl_key
-      )
-    end
 
-    $redis_proxy.del "d-#{@old_domain}" if @old_domain
-    true
+
+  def sandboxed?
+    plan_type == 'free' && created_at > SANDBOX_TIME.ago
   end
 
-  def delete_redis_proxy_record
-    if !domain.blank?
-      $redis_proxy.del "d-#{domain}"
+  def update_redis_proxy_record
+    user_record = {}
+    domain_record = {}
+
+    if values[:domain]
+      domain_record[:username] = username
+
+      if ssl_installed?
+        domain_record[:ssl_cert] = ssl_cert
+        domain_record[:ssl_key]  = ssl_key
+      end
     end
+
+    user_record[:is_sandboxed] = '1' if sandboxed?
+    user_record[:is_supporter] = '1' if supporter?
+
+    unless user_record.empty?
+      user_record[:domain] = values[:domain]
+      $redis_proxy.mapped_hmset "u-#{username}", user_record
+      $redis_proxy.del "u-#{@old_username}" if @old_username
+    end
+
+    unless domain_record.empty?
+      $redis_proxy.mapped_hmset "d-#{values[:domain]}", domain_record
+      $redis_proxy.del "d-#{@old_domain}" if @old_domain
+    end
+
+    true
   end
 
   def ssl_key=(val)
@@ -913,7 +932,7 @@ class Site < Sequel::Model
   end
 
   def domain=(domain)
-    @old_domain = self.domain unless self.domain.blank?
+    @old_domain = values[:domain] unless values[:domain].blank?
     @redis_proxy_change = true
     super SimpleIDN.to_ascii(domain)
   end
@@ -1257,6 +1276,11 @@ class Site < Sequel::Model
     return 'supporter' if owner.values[:plan_type].match /^plan_/
     return 'supporter' if owner.values[:plan_type] == 'special'
     owner.values[:plan_type]
+  end
+
+  def plan_type=(val)
+    @redis_proxy_change = true
+    super val
   end
 
   def latest_events(current_page=1, limit=10)
