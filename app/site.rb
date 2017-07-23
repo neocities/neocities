@@ -39,11 +39,9 @@ end
 
 get '/site/:username/archives' do
   @site = Site[username: params[:username]]
-  @title = "Site archives for #{@site.title}"
   not_found if @site.nil? || @site.archiving_disabled
-
+  @title = "Site archives for #{@site.title}"
   @archives = @site.archives_dataset.limit(300).order(:updated_at.desc).all
-
   erb :'site/archives'
 end
 
