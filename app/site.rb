@@ -93,11 +93,11 @@ get '/site/:username/stats' do
       if params[:days]
         stats_dataset.limit! params[:days]
       else
-        stats_dataset.limit! 7
+        stats_dataset = stats_dataset.limit 7
       end
     end
   else
-    stats_dataset.limit! 7
+    stats_dataset = stats_dataset.limit 7
   end
 
   @stats[:stat_days] = stats_dataset.all.reverse
