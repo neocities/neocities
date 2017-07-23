@@ -15,7 +15,7 @@ class PurgeCacheWorker
     path = '/' + path if path[0] != '/'
 
     $redis_proxy.publish 'proxy', {cmd: 'purge', path: "#{username}#{path}"}.to_msgpack
-
+=begin
     url = Addressable::URI.encode_component(
       "https://#{proxy_ip}#{path}",
       Addressable::URI::CharacterClasses::QUERY
@@ -37,5 +37,6 @@ class PurgeCacheWorker
       retry_encoded = true
       retry
     end
+=end
   end
 end
