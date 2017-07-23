@@ -14,6 +14,8 @@ class PurgeCacheWorker
     # Must always have a forward slash
     path = '/' + path if path[0] != '/'
 
+    $redis_proxy.publish 'proxy', {cmd: 'purge', key: "#{username}#{path}"}.to_msgpack
+
     url = Addressable::URI.encode_component(
       "https://#{proxy_ip}#{path}",
       Addressable::URI::CharacterClasses::QUERY
