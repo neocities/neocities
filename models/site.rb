@@ -915,7 +915,9 @@ class Site < Sequel::Model
 
     unless domain_record.empty?
       $redis_proxy.mapped_hmset "d-#{values[:domain]}", domain_record
+      $redis_proxy.mapped_hmset "d-www.#{values[:domain]}", domain_record
       $redis_proxy.del "d-#{@old_domain}" if @old_domain
+      $redis_proxy.del "d-www.#{@old_domain}" if @old_domain
     end
 
     true
