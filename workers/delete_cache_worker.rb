@@ -16,18 +16,6 @@ class DeleteCacheWorker
   end
 
   def perform(proxy_ip, username, path)
-    # DOES NOTHING RIGHT NOW SO WE JUST RETURN
-    return
-    # Must always have a forward slash
-    path = '/' + path if path[0] != '/'
-
-    url = Addressable::URI.encode_component(
-      "http://#{proxy_ip}/:cache/purge#{path}",
-      Addressable::URI::CharacterClasses::QUERY
-    )
-
-    HTTP.follow.timeout(read: 10, write: 10, connect: 2).
-      headers(host: URI::encode("#{username}.neocities.org")).
-      get(url)
+    $redis_proxy.publish 'proxy', {cmd: 'purge', path: "#{username}#{path}"}.to_msgpack
   end
 end
