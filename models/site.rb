@@ -730,6 +730,14 @@ class Site < Sequel::Model
         archives_dataset.where(ipfs_hash: ipfs_hash).first.update updated_at: Time.now
       end
     end
+
+    add_redis_proxy_dnslink
+  end
+
+  def add_redis_proxy_dnslink
+    if host =~ /(.+)\.neocities\.org/ && latest_archive
+      $redis_proxy.hset "dns-#{host}", 'TXT', "dnslink=/ipfs/#{latest_archive.ipfs_hash}"
+    end
   end
 
   def latest_archive
