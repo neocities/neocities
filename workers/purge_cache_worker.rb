@@ -10,7 +10,7 @@ class PurgeCacheWorker
     60
   end
 
-  def perform(proxy_ip, username, path)
+  def perform(username, path)
     # Must always have a forward slash
     path = '/' + path if path[0] != '/'
 
