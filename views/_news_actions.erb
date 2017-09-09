@@ -9,13 +9,7 @@
   <% end %>
   <% if current_site %>
     <% if event.site.profile_comments_enabled && current_site.commenting_allowed? %>
-      <a id="reply" href="#" onclick="Template.renderComment(<%= event.id %>); return false">
-        <% if event.profile_comment_id %>
-          Reply
-        <% else %>
-          Comment
-        <% end %>
-      </a>
+      <a id="reply" href="#" onclick="Template.renderComment(<%= event.id %>); return false"><% if event.profile_comment_id %>Reply<% else %>Comment<% end %></a>
     <% end %>
     <% if event.profile_comment_id && event.created_by?(current_site) %>
         <a id="editLink" href="#" onclick="ProfileComment.displayEditor('<%= event.id %>'); return false">Edit</a>
