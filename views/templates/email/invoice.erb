@@ -1,0 +1,13 @@
+Neocities Invoice
+
+For: Neocities Supporter Account
+
+Date: <%= date.strftime("%D") %>
+
+Billing Period: <%= period_start.strftime("%D") %> - <%= period_end.strftime("%D") %>
+
+Amount: <%= Money.new(amount, "USD").format %>
+
+You have been successfully charged. Thank you for being a Neocities supporter!
+
+- The Neocities Team
