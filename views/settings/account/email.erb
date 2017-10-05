@@ -25,6 +25,18 @@
     >
   </p>
 
+  <% if current_site.owner.stripe_paying_supporter? %>
+    <p>
+      Receive Invoice Receipts:
+      <input name="email_invoice" type="hidden" value="false">
+      <input name="email_invoice" type="checkbox" value="true"
+        <% if current_site.owner.email_invoice %>
+          checked
+        <% end %>
+      >
+    </p>
+  <% end %>
+
   <p>
     Receive Comment Emails:
     <input name="send_comment_emails" type="hidden" value="false">

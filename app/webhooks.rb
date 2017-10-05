@@ -102,6 +102,29 @@ post '/webhooks/stripe' do
     })
   end
 
+  if event['type'] == 'invoice.payment_succeeded'
+    site = stripe_get_site_from_event event
+
+    if site.email_invoice && site.stripe_paying_supporter?
+      invoice_obj = event['data']['object']
+
+      EmailWorker.perform_async({
+        from:    'web@neocities.org',
+        to:      site.email,
+        subject: "[Neocities] Invoice",
+        body:    Tilt.new('./views/templates/email/invoice.erb', pretty: true).render(
+          self,
+          site: site,
+          amount: invoice_obj['amount_due'],
+          period_start: Time.at(invoice_obj['period_start']),
+          period_end: Time.at(invoice_obj['period_end']),
+          date: Time.at(invoice_obj['date'])
+        )
+      })
+    end
+  end
+
+
   'ok'
 end
 

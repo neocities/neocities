@@ -265,6 +265,7 @@ post '/settings/change_email_notification' do
   owner.send_emails = params[:send_emails]
   owner.send_comment_emails = params[:send_comment_emails]
   owner.send_follow_emails = params[:send_follow_emails]
+  owner.email_invoice = params[:email_invoice]
   owner.save_changes validate: false
   flash[:success] = 'Email notification settings have been updated.'
   redirect '/settings#email'
