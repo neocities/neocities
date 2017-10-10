@@ -39,6 +39,7 @@ end
 
 def browse_sites_dataset
   ds = Site.browse_dataset
+  ds = ds.where is_education: false
 
   if current_site
     ds = ds.or sites__id: current_site.id
