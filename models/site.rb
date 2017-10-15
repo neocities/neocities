@@ -668,7 +668,7 @@ class Site < Sequel::Model
     purge_cache path
   end
 
-  Rye::Cmd.add_command :ipfs, nil, 'add', :r
+  Rye::Cmd.add_command :ipfs, nil, 'add', :r, :Q
 
   def add_to_ipfs
     # Not ideal. An SoA version is in progress.
@@ -681,17 +681,15 @@ class Site < Sequel::Model
       rbox = Rye::Box.new $config['ipfs_ssh_host'], :user => $config['ipfs_ssh_user']
       begin
         response = rbox.ipfs "sites/#{self.class.sharding_dir self.username}/#{self.username.gsub(/\/|\.\./, '')}"
-        output_array = response
       ensure
         rbox.disconnect
       end
     else
-      line = Cocaine::CommandLine.new('ipfs', 'add -r :path')
+      line = Cocaine::CommandLine.new('ipfs', 'add -r -Q :path')
       response = line.run path: files_path
-      output_array = response.to_s.split("\n")
     end
 
-    output_array.last.split(' ')[1]
+    response.first
   end
 
   def purge_old_archives
