@@ -35,10 +35,11 @@ class Site < Sequel::Model
     application/x-elc
     image/webp
     image/x-xcf
+    application/epub+zip
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp xcf
+    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp xcf epub glTF
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
