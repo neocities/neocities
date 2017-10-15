@@ -18,15 +18,14 @@ describe 'site_files' do
   before do
     @site = Fabricate :site
     ThumbnailWorker.jobs.clear
-    PurgeCacheOrderWorker.jobs.clear
+    PurgeCacheWorker.jobs.clear
     PurgeCacheWorker.jobs.clear
     ScreenshotWorker.jobs.clear
   end
 
   describe 'delete' do
     before do
-      DeleteCacheWorker.jobs.clear
-      DeleteCacheOrderWorker.jobs.clear
+      PurgeCacheWorker.jobs.clear
     end
 
     it 'works' do
@@ -34,7 +33,7 @@ describe 'site_files' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
 
-      PurgeCacheOrderWorker.jobs.clear
+      PurgeCacheWorker.jobs.clear
 
       @site.reload.space_used.must_equal initial_space_used + uploaded_file.size
       @site.actual_space_used.must_equal @site.space_used
@@ -47,20 +46,9 @@ describe 'site_files' do
       @site.reload.space_used.must_equal initial_space_used
       @site.actual_space_used.must_equal @site.space_used
 
-      PurgeCacheOrderWorker.jobs.length.must_equal 0
-      DeleteCacheOrderWorker.jobs.length.must_equal 1
-      args = DeleteCacheOrderWorker.jobs.first['args']
+      args = PurgeCacheWorker.jobs.first['args']
       args[0].must_equal @site.username
       args[1].must_equal '/test.jpg'
-    end
-
-    it 'flushes surf for index.html' do
-      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
-      upload 'files[]' => uploaded_file
-      delete_file filename: '/index.html'
-
-      DeleteCacheOrderWorker.jobs.length.must_equal 3
-      DeleteCacheOrderWorker.jobs.collect {|j| j['args'].last}.must_equal ['/index.html', '/?surf=1', '/']
     end
 
     it 'property deletes directories with regexp special chars in them' do
@@ -177,10 +165,10 @@ describe 'site_files' do
       @site.title.must_equal 'Hello?'
 
       # Purge cache needs to flush / and index.html for either scenario.
-      PurgeCacheOrderWorker.jobs.length.must_equal 3
-      first_purge = PurgeCacheOrderWorker.jobs.first
-      surf_purge = PurgeCacheOrderWorker.jobs[1]
-      dirname_purge = PurgeCacheOrderWorker.jobs.last
+      PurgeCacheWorker.jobs.length.must_equal 3
+      first_purge = PurgeCacheWorker.jobs.first
+      surf_purge = PurgeCacheWorker.jobs[1]
+      dirname_purge = PurgeCacheWorker.jobs.last
 
       username, pathname = first_purge['args']
       username.must_equal @site.username
@@ -222,7 +210,7 @@ describe 'site_files' do
         'dir' => 'subdir',
         'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
       )
-      PurgeCacheOrderWorker.jobs.select {|j| j['args'].last == '/subdir/'}.length.must_equal 1
+      PurgeCacheWorker.jobs.select {|j| j['args'].last == '/subdir/'}.length.must_equal 1
     end
 
     it 'succeeds with valid file' do
@@ -232,7 +220,7 @@ describe 'site_files' do
       last_response.body.must_match /successfully uploaded/i
       File.exists?(@site.files_path('test.jpg')).must_equal true
 
-      username, path = PurgeCacheOrderWorker.jobs.first['args']
+      username, path = PurgeCacheWorker.jobs.first['args']
       username.must_equal @site.username
       path.must_equal '/test.jpg'
 
@@ -295,18 +283,10 @@ describe 'site_files' do
       last_response.body.must_match /successfully uploaded/i
       File.exists?(@site.files_path('derpie/derptest/test.jpg')).must_equal true
 
-      PurgeCacheOrderWorker.jobs.length.must_equal 1
-      username, path = PurgeCacheOrderWorker.jobs.first['args']
-      path.must_equal '/derpie/derptest/test.jpg'
-
-      PurgeCacheOrderWorker.drain
-
-      PurgeCacheWorker.jobs.length.must_equal 2
-      ip, username, path = PurgeCacheWorker.jobs.first['args']
-      ip.must_equal '10.0.0.1'
+      PurgeCacheWorker.jobs.length.must_equal 1
+      username, path = PurgeCacheWorker.jobs.first['args']
       username.must_equal @site.username
       path.must_equal '/derpie/derptest/test.jpg'
-      PurgeCacheWorker.jobs.last['args'].first.must_equal '10.0.0.2'
 
       ThumbnailWorker.jobs.length.must_equal 1
       ThumbnailWorker.drain
