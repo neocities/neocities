@@ -1,17 +1,17 @@
 <h2>Custom Domain</h2>
 
 <p>
-  Adding a custom domain allows you to have a domain name attached to your web site. So if you had a domain like <strong>catsknitting.com</strong>, you could have it point to your Neocities site. If you don't have the domain yet, you will have to purchase a domain name from a registrar like <a href="http://www.namecheap.com/?aff=87835" target="_blank">Namecheap</a> first.
+  Adding a custom domain allows you to have a domain name attached to your web site. So if you had a domain like <strong>yourdomain.com</strong>, you could have it point to your Neocities site. If you don't have the domain yet, you will have to purchase a domain name from a registrar like <a href="http://www.namecheap.com/?aff=87835" target="_blank">Namecheap</a> first.
 </p>
 
 <% if current_site.custom_domain_available? %>
   <p>
-    We will be using <strong>catsknitting.com</strong> for the examples below.
+    We will be using <strong>yourdomain.com</strong> for the examples below, but you should replace it with your own domain name.
   </p>
 
   <h3>Step 1</h3>
   <p>
-    First, you need to add an "A record" to point your root domain (sometimes shown with an @ symbol) (catsknitting.com) to the following IP address:
+    First, you need to add an "A record" to point your root domain (sometimes shown with an @ symbol) (yourdomain.com) to the following IP address:
   </p>
 
   <p><code>198.51.233.1</code></p>
@@ -19,20 +19,34 @@
   <h3>Step 2 (optional)</h3>
 
   <p>
-    Now you need to add an "AAAA record" that also points to your root domain. This is for IPv6 support. Use this address for the AAAA record:
+    Next, you can add an "AAAA record" that also points to your root domain. This isn't strictly required, but provides IPv6 support which helps future proof your site. Use this address for the AAAA record:
   </p>
 
   <p><code>2620:2:6000::bad:dab:cafe</code></p>
 
-  <h3>Step 3</h3>
+  <h3>Step 3 (optional)</h3>
 
   <p>
-    Add the domain name to the box below (just the <strong>catsknitting.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes!
+    If you would like to have a <strong>www</strong> for your domain, create a CNAME record pointing <strong>www</strong> to <strong>yourdomain.com</strong>:
+  </p>
+
+  <p><code>www CNAME yourdomain.com</code></p>
+
+  <p>Note that any requests to <strong>www.yourdomain.com</strong> will automatically be redirected to yourdomain.com</strong>.</p>
+
+  <h3>Step 4</h3>
+
+  <p>Wait about 5 minutes for the namserver changes to update. Sometimes it can take a short while for your domain provider to update their records.</p>
+
+  <h3>Step 5</h3>
+
+  <p>
+    Finally, add your domain name to the box below (just the <strong>yourdomain.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes! We will automatically create SSL certs for your domain.
   </p>
 
   <form method="POST" action="/settings/<%= @site.username %>/custom_domain">
     <%== csrf_token_input_html %>
-    <input name="domain" type="text" placeholder="catsknitting.com" value="<%= @site.domain %>">
+    <input name="domain" type="text" placeholder="yourdomain.com" value="<%= @site.domain %>">
     <br>
     <input class="btn-Action" type="submit" value="Update Domain">
   </form>
