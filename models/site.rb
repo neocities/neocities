@@ -438,7 +438,13 @@ class Site < Sequel::Model
     DB.transaction {
       owner.end_supporter_membership! if parent?
       FileUtils.mkdir_p File.join(DELETED_SITES_ROOT, self.class.sharding_dir(username))
-      FileUtils.mv files_path, deleted_files_path
+
+      begin
+        FileUtils.mv files_path, deleted_files_path
+      rescue Errno::ENOENT => e
+        # Must have been removed already?
+      end
+
       remove_all_tags
       #remove_all_events
       #Event.where(actioning_site_id: id).destroy
