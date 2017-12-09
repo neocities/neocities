@@ -140,6 +140,20 @@ describe 'signup' do
     page.must_have_content /email.+exists/
   end
 
+  it 'fails with existing email even if case sensitive' do
+    email = Fabricate.attributes_for(:site)[:email]
+    fill_in_valid
+    fill_in 'email', with: email
+    click_signup_button
+    site_created?.must_equal true
+    Capybara.reset_sessions!
+    visit_signup
+    fill_in_valid
+    fill_in 'email', with: email.upcase
+    click_signup_button
+    page.must_have_content /email.+exists/
+  end
+
   it 'succeeds with no tags' do
     fill_in_valid
     fill_in 'new_tags_string', with: ''

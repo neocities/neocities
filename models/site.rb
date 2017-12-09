@@ -295,12 +295,21 @@ class Site < Sequel::Model
 
     def get_with_identifier(username_or_email)
       if username_or_email =~ /@/
-        site = self.where(email: username_or_email).where(parent_site_id: nil).first
+        site = get_with_email username_or_email
       else
-        site = self[username: username_or_email]
+        site = self[username: username_or_email.downcase]
       end
       return nil if site.nil? || site.is_banned || site.owner.is_banned
       site
+    end
+
+    def get_recovery_sites_with_email(email)
+      self.where('lower(email) = ?', email.downcase).all
+    end
+
+    def get_with_email(email)
+      query = self.where(parent_site_id: nil)
+      query.where(email: email).first || query.where('lower(email) = ?', email.downcase).first
     end
 
     def ip_create_limit?(ip)
@@ -844,7 +853,7 @@ class Site < Sequel::Model
 
   def email=(email)
     @original_email = values[:email] unless new?
-    super
+    super(email.nil? ? nil : email.downcase)
   end
 
   def can_email?(col=nil)
@@ -972,12 +981,12 @@ class Site < Sequel::Model
 
     # Check for existing email if new or changing email.
     if new? || @original_email
-      email_check = self.class.select(:id).filter(email: values[:email])
+      email_check = self.class.select(:id).filter('lower(email)=?', values[:email])
       email_check = email_check.exclude(id: self.id) unless new?
       email_check = email_check.first
 
       if parent? && email_check && email_check.id != self.id
-        errors.add :email, 'This email address already exists on Neocities, please use your existing account instead of creating a new one.'
+        errors.add :email, 'This email address already exists on Neocities.'
       end
     end
 

@@ -139,7 +139,7 @@ post '/forgot_username' do
     redirect '/forgot_username'
   end
 
-  sites = Site.where(email: params[:email]).all
+  sites = Site.get_recovery_sites_with_email params[:email]
 
   sites.each do |site|
     body = <<-EOT

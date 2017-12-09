@@ -60,12 +60,34 @@ describe 'signin' do
     page.must_have_content 'Your Feed'
   end
 
+  it 'signs in with invalid case username' do
+    pass = SecureRandom.hex
+    @site = Fabricate :site, password: pass
+    visit '/'
+    click_link 'Sign In'
+    fill_in 'username', with: @site.username.upcase
+    fill_in 'password', with: pass
+    click_button 'Sign In'
+    page.must_have_content 'Your Feed'
+  end
+
   it 'signs in with email' do
     pass = SecureRandom.hex
     @site = Fabricate :site, password: pass
     visit '/'
     click_link 'Sign In'
     fill_in 'username', with: @site.email
+    fill_in 'password', with: pass
+    click_button 'Sign In'
+    page.must_have_content 'Your Feed'
+  end
+
+  it 'signs in with invalid case email' do
+    pass = SecureRandom.hex
+    @site = Fabricate :site, password: pass
+    visit '/'
+    click_link 'Sign In'
+    fill_in 'username', with: @site.email.upcase
     fill_in 'password', with: pass
     click_button 'Sign In'
     page.must_have_content 'Your Feed'

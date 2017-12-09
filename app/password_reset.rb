@@ -9,7 +9,7 @@ post '/send_password_reset' do
     redirect '/password_reset'
   end
 
-  sites = Site.filter(email: params[:email]).all
+  sites = Site.get_recovery_sites_with_email params[:email]
 
   if sites.length > 0
     token = SecureRandom.uuid.gsub('-', '')
