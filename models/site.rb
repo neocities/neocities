@@ -445,6 +445,8 @@ class Site < Sequel::Model
 
   def before_destroy
     DB.transaction {
+      self.domain = nil
+      self.save_changes validate: false
       owner.end_supporter_membership! if parent?
       FileUtils.mkdir_p File.join(DELETED_SITES_ROOT, self.class.sharding_dir(username))
 
@@ -458,6 +460,10 @@ class Site < Sequel::Model
       #remove_all_events
       #Event.where(actioning_site_id: id).destroy
     }
+  end
+
+  def after_destroy
+    update_redis_proxy_record
   end
 
   def undelete!
@@ -921,15 +927,17 @@ class Site < Sequel::Model
     unless user_record.empty?
       user_record[:domain] = values[:domain]
       $redis_proxy.mapped_hmset "u-#{username}", user_record
-      $redis_proxy.del "u-#{@old_username}" if @old_username
     end
 
     unless domain_record.empty?
       $redis_proxy.mapped_hmset "d-#{values[:domain]}", domain_record
       $redis_proxy.mapped_hmset "d-www.#{values[:domain]}", domain_record
-      $redis_proxy.del "d-#{@old_domain}" if @old_domain
-      $redis_proxy.del "d-www.#{@old_domain}" if @old_domain
     end
+
+    $redis_proxy.del "u-#{@old_username}" if @old_username
+    $redis_proxy.del "d-#{@old_domain}" if @old_domain
+    $redis_proxy.del "d-www.#{@old_domain}" if @old_domain
+    $redis_proxy.del "u-#{username}" if is_deleted
 
     true
   end
