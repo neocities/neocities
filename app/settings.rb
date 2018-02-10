@@ -138,7 +138,6 @@ post '/settings/:username/custom_domain' do
   if params[:domain] =~ /^www\..+$/i
     flash[:error] = 'Cannot begin with www - please only enter the domain name.'
     redirect "/settings/#{@site.username}/#custom_domain"
-
   end
 
   begin
@@ -160,6 +159,8 @@ post '/settings/:username/custom_domain' do
 
     if @site.domain != original_domain
       LetsEncryptWorker.perform_async @site.id
+      # Sometimes the www record isn't ready for some reason, so try a delay to fix that.
+      LetsEncryptWorker.perform_in 40.minutes, @site.id
     end
 
     flash[:success] = 'The domain has been successfully updated! Make sure your configuration with the domain registrar is correct. It could take a while for the changes to take effect (15-40 minutes), please be patient.'
