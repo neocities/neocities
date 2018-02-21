@@ -40,7 +40,7 @@ post '/contact' do
       no_footer: true
     })
 
-    flash[:success] = 'Your contact has been sent.'
+    flash[:success] = 'Your contact message has been sent.'
     redirect '/'
   end
 end

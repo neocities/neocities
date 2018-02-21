@@ -1,8 +1,4 @@
-<script>
-  var RecaptchaOptions = {
-    theme : 'clean'
-  };
-</script>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 
 <div class="header-Outro">
   <div class="row content single-Col">
@@ -51,8 +47,9 @@
       <textarea name="body" id="your_comments" class="col-80" rows="10"><%= params[:body] %></textarea>
 
       <label>Fill out the captcha so we know you’re not a robot:</label>
-      <div class="recaptcha">
-        <%== recaptcha_tag :challenge, ssl: request.ssl? %>
+      <div id="captcha-input" class="g-recaptcha"
+           data-sitekey="<%= $config['recaptcha_public_key'] %>"
+           data-theme="light" data-placement="left" data-trigger="manual">
       </div>
 
       <input class="btn-Action" type="submit" value="Send">

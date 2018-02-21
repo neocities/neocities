@@ -1,21 +1,3 @@
-def new_recaptcha_valid?
-  return true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
-  return false unless params[:'g-recaptcha-response']
-  resp = Net::HTTP.get URI(
-    'https://www.google.com/recaptcha/api/siteverify?'+
-    Rack::Utils.build_query(
-      secret: $config['recaptcha_private_key'],
-      response: params[:'g-recaptcha-response']
-    )
-  )
-
-  if JSON.parse(resp)['success'] == true
-    true
-  else
-    false
-  end
-end
-
 CREATE_MATCH_REGEX = /^username$|^password$|^email$|^new_tags_string$|^is_education$/
 
 def education_whitelisted?
@@ -82,7 +64,7 @@ post '/create' do
   if education_whitelisted?
     @site.email_confirmed = true
   else
-    if !new_recaptcha_valid?
+    if !recaptcha_valid?
       flash[:error] = 'The captcha was not valid, please try again.'
       return {result: 'error'}.to_json
     end

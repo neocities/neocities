@@ -9,9 +9,7 @@ use Rack::Session::Cookie, key:          'neocities',
                            same_site: :lax,
                            secure: ENV['RACK_ENV'] == 'production'
 
-use Rack::Recaptcha, public_key: $config['recaptcha_public_key'], private_key: $config['recaptcha_private_key']
 use Rack::TempfileReaper
-helpers Rack::Recaptcha::Helpers
 
 helpers do
   def site_change_file_display_class(filename)

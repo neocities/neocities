@@ -180,8 +180,6 @@ GEM
       rack (>= 0.4)
     rack-protection (2.0.0)
       rack
-    rack-recaptcha (0.6.6)
-      json
     rack-test (0.8.2)
       rack (>= 1.0, < 3)
     rack_session_access (0.1.1)
@@ -331,7 +329,6 @@ DEPENDENCIES
   pry-byebug
   puma
   rack-cache
-  rack-recaptcha
   rack-test
   rack_session_access
   rake
@@ -363,4 +360,4 @@ DEPENDENCIES
   zipruby
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
