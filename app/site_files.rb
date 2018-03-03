@@ -85,9 +85,14 @@ def file_upload_response(error=nil)
   end
 end
 
+def require_login_file_upload_ajax
+  file_upload_response 'You are not signed in!' unless signed_in?
+  file_upload_response 'Please contact support.' if banned?
+end
+
 post '/site_files/upload' do
   if params[:filename]
-    require_login_ajax
+    require_login_file_upload_ajax
     tempfile = Tempfile.new 'neocities_saving_file'
 
     input = request.body.read
@@ -104,6 +109,13 @@ post '/site_files/upload' do
 
   if params[:files].nil?
     file_upload_response "Uploaded files were not seen by the server, cancelled. We don't know what's causing this yet. Please contact us so we can help fix it. Thanks!"
+  end
+
+  # For migration from original design.. some pages out there won't have the site_id param yet for a while.
+  site = params[:site_id].nil? ? current_site : Site[params[:site_id]]
+
+  unless site.owned_by?(current_site)
+    file_upload_response 'You do not have permission to save this file. Did you sign in as a different user?'
   end
 
   params[:files].each_with_index do |file,i|
@@ -125,22 +137,22 @@ post '/site_files/upload' do
     if current_site.file_size_too_large? file[:tempfile].size
       file_upload_response "#{file[:filename]} is too large, upload cancelled."
     end
-    if !current_site.okay_to_upload? file
+    if !site.okay_to_upload? file
       file_upload_response %{#{Rack::Utils.escape_html file[:filename]}: file type (or content in file) is only supported by <a href="/supporter">supporter accounts</a>. <a href="/site_files/allowed_types">Why We Do This</a>}
     end
   end
 
   uploaded_size = params[:files].collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
 
-  if current_site.file_size_too_large? uploaded_size
+  if site.file_size_too_large? uploaded_size
     file_upload_response "File(s) do not fit in your available free space, upload cancelled."
   end
 
-  if current_site.too_many_files? params[:files].length
+  if site.too_many_files? params[:files].length
     file_upload_response "Your site has exceeded the maximum number of files, please delete some files first."
   end
 
-  results = current_site.store_files params[:files]
+  results = site.store_files params[:files]
   file_upload_response
 end
 

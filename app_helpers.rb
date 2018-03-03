@@ -2,11 +2,6 @@ def dashboard_if_signed_in
   redirect '/dashboard' if signed_in?
 end
 
-def require_login_ajax
-  halt 'You are not logged in!' unless signed_in?
-  halt 'Please contact support.' if banned?
-end
-
 def csrf_safe?
   csrf_token == params[:csrf_token] || csrf_token == request.env['HTTP_X_CSRF_TOKEN']
 end
