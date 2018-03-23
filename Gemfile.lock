@@ -71,7 +71,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
-    feedjira (2.1.2)
+    feedjira (2.1.4)
       faraday (>= 0.9)
       faraday_middleware (>= 0.9)
       loofah (>= 2.0)
@@ -119,7 +119,7 @@ GEM
       rack (>= 1.4.5)
       rest-client (>= 1.6.7)
     json (1.8.6)
-    loofah (2.1.1)
+    loofah (2.2.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     m (1.5.1)
@@ -155,9 +155,9 @@ GEM
       net-ssh (>= 2.6.5)
     net-ssh (4.2.0)
     netrc (0.11.0)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
-    nokogumbo (1.4.13)
+    nokogumbo (1.5.0)
       nokogiri
     ox (2.8.2)
     paypal-recurring (1.1.0)
@@ -207,10 +207,10 @@ GEM
       net-ssh (>= 2.0.13)
       sysinfo (>= 0.8.1)
     safe_yaml (1.0.4)
-    sanitize (4.5.0)
+    sanitize (4.6.4)
       crass (~> 1.0.2)
       nokogiri (>= 1.4.4)
-      nokogumbo (~> 1.4.1)
+      nokogumbo (~> 1.4)
     sass (3.5.3)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -301,7 +301,7 @@ DEPENDENCIES
   fabrication
   facter
   faker
-  feedjira
+  feedjira (= 2.1.4)
   filesize
   gandi
   geoip
