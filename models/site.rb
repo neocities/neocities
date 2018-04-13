@@ -966,7 +966,7 @@ class Site < Sequel::Model
     super
 
     if !self.class.valid_username?(values[:username])
-      errors.add :username, 'Usernames can only contain letters, numbers, underscores and hyphens.'
+      errors.add :username, 'Usernames can only contain letters, numbers, and hyphens.'
     end
 
     if !values[:username].blank?
