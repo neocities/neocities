@@ -136,12 +136,24 @@
         </div>
         -->
 
-        <h2>Total Visitors <small>last 7 days</small></h2>
+        <h2>
+          Total Visitors
+          <small>
+            <% if params[:days].blank? %>
+              last <%= @default_stat_points %> days
+            <% elsif params[:days] == 'sincethebigbang' %>
+              all time
+            <% else %>
+              last <%= params[:days] %> days
+            <% end %>
+          </small>
+        </h2>
 
         <% if current_site && current_site.id == @site.id %>
 
           <% if current_site.supporter? %>
             <ul class="nav h-Nav">
+              <li><a href="?days=7">7 days</a></li>
               <li><a href="?days=30">30 days</a></li>
               <li><a href="?days=90">90 days</a></li>
               <li><a href="?days=365">1 year</a></li>
@@ -153,6 +165,12 @@
         <% end %>
 
         <canvas id="myChart" style="width:100%;height:300px;display:block"></canvas>
+
+        <div class="row">
+          <div class="col col-50">
+            <p><a href="?days=<%= params[:days] %>&format=csv">Export as CSV File</a></p>
+          </div>
+        </div>
 
         <!--
         <div class="row">
@@ -305,7 +323,7 @@
 
     //chart.js
     var data = {
-      labels: <%== @stats[:stat_days].collect {|s| s.created_at.strftime("%b %-d")}.to_json %>,
+      labels: <%== @stats[:stat_days].collect {|s| s.created_at.strftime("%b %-d, %Y")}.to_json %>,
       datasets: [
         {
           label: "Hits",

@@ -45,7 +45,9 @@ get '/site/:username/archives' do
   erb :'site/archives'
 end
 
+MAX_STAT_POINTS = 30
 get '/site/:username/stats' do
+  @default_stat_points = 7
   @site = Site[username: params[:username]]
   not_found if @site.nil?
 
@@ -88,17 +90,38 @@ get '/site/:username/stats' do
 
   if @site.supporter?
     unless params[:days].to_s == 'sincethebigbang'
-      if params[:days]
-        stats_dataset.limit! params[:days]
+      if params[:days] && params[:days].to_i != 0
+        stats_dataset = stats_dataset.limit params[:days]
       else
-        stats_dataset = stats_dataset.limit 7
+        params[:days] = @default_stat_points
+        stats_dataset = stats_dataset.limit @default_stat_points
       end
     end
   else
-    stats_dataset = stats_dataset.limit 7
+    stats_dataset = stats_dataset.limit @default_stat_points
   end
 
-  @stats[:stat_days] = stats_dataset.all.reverse
+  stats = stats_dataset.all.reverse
+
+  if params[:format] == 'csv'
+    content_type 'application/csv'
+    attachment "#{current_site.username}-stats.csv"
+
+    return CSV.generate do |csv|
+      csv << ['day', 'hits', 'views', 'comments', 'follows', 'site_updates', 'bandwidth']
+      stats.each do |s|
+        csv << [s[:created_at].to_s, s[:hits], s[:views], s[:comments], s[:follows], s[:site_updates], s[:bandwidth]]
+      end
+    end
+  end
+
+  if stats.length > MAX_STAT_POINTS
+    puts stats.length
+    stats = stats.select.with_index {|a, i| (i % (stats.length / MAX_STAT_POINTS.to_f).round) == 0}
+    puts stats.length
+  end
+
+  @stats[:stat_days] = stats
   @multi_tooltip_template = "<%= datasetLabel %> - <%= value %>"
 
   erb :'site/stats', locals: {site: @site}
