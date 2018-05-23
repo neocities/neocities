@@ -166,11 +166,13 @@
 
         <canvas id="myChart" style="width:100%;height:300px;display:block"></canvas>
 
+        <% if @site == current_site %>
         <div class="row">
           <div class="col col-50">
             <p><a href="?days=<%= params[:days] %>&format=csv">Export as CSV File</a></p>
           </div>
         </div>
+        <% end %>
 
         <!--
         <div class="row">

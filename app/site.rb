@@ -103,7 +103,7 @@ get '/site/:username/stats' do
 
   stats = stats_dataset.all.reverse
 
-  if params[:format] == 'csv'
+  if current_site && @site.owned_by?(current_site) && params[:format] == 'csv'
     content_type 'application/csv'
     attachment "#{current_site.username}-stats.csv"
 
