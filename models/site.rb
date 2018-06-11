@@ -128,6 +128,7 @@ class Site < Sequel::Model
 
   EMAIL_VALIDATION_CUTOFF_DATE = Time.parse('May 16, 2016')
   DISPOSABLE_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_blacklist.conf')
+  BANNED_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'banned_email_blacklist.conf')
 
   BLOCK_JERK_THRESHOLD = 2
   MAXIMUM_TAGS = 5
@@ -587,6 +588,10 @@ class Site < Sequel::Model
     File.readlines(DISPOSABLE_EMAIL_BLACKLIST_PATH).collect {|d| d.strip}
   end
 
+  def self.banned_email_domains
+    File.readlines(BANNED_EMAIL_BLACKLIST_PATH).collect {|d| d.strip}
+  end
+
   def self.disposable_mx_record?(email)
     email_domain = email.match(/@(.+)/).captures.first
 
@@ -610,6 +615,19 @@ class Site < Sequel::Model
 
     disposable_email_domains.each do |disposable_email_domain|
       return true if email.match /@#{disposable_email_domain}$/i
+    end
+
+    false
+  end
+
+  def self.banned_email?(email)
+    return false unless File.exist?(BANNED_EMAIL_BLACKLIST_PATH)
+    return false if email.blank?
+
+    email.strip!
+
+    banned_email_domains.each do |banned_email_domain|
+      return true if email.match /@#{banned_email_domain}$/i
     end
 
     false
@@ -991,6 +1009,10 @@ class Site < Sequel::Model
 
     if parent? && (values[:created_at].nil? || values[:created_at] > 1.week.ago) && self.class.disposable_email?(values[:email])
       errors.add :email, 'Cannot use a disposable email address.'
+    end
+
+    if parent? && (values[:created_at].nil? || values[:created_at] > 1.week.ago) && self.class.banned_email?(values[:email])
+      errors.add :email, 'Registration from this domain is banned due to abuse.'
     end
 
     # Check for existing email if new or changing email.
