@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'sinatra', '2.0.1'
+gem 'sinatra', '2.0.3'
 gem 'redis'
 gem 'redis-namespace'
 gem 'sequel'
