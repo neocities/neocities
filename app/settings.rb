@@ -314,7 +314,7 @@ end
 post '/settings/update_card' do
   require_login
 
-  customer = Stripe::Customer.retrieve current_site.stripe_customer_id
+  customer = Stripe::Customer.retrieve parent_site.stripe_customer_id
 
   old_card_ids = customer.sources.collect {|s| s.id}
 
