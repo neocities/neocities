@@ -54,12 +54,11 @@ post '/supporter/update' do
         plan: plan_type
       )
 
-      site.update(
-        stripe_customer_id: customer.id,
-        stripe_subscription_id: customer.subscriptions.first.id,
-        plan_ended: false,
-        plan_type: plan_type
-      )
+      site.stripe_customer_id = customer.id
+      site.stripe_subscription_id = customer.subscriptions.first.id
+      site.plan_ended = false
+      site.plan_type = plan_type
+      site.save_changes validate: false
     end
   end
 
