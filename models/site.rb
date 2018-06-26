@@ -627,7 +627,7 @@ class Site < Sequel::Model
     email.strip!
 
     banned_email_domains.each do |banned_email_domain|
-      return true if email.match /@#{banned_email_domain}$/i
+      return true if email.match /@*#{banned_email_domain}$/i
     end
 
     false
