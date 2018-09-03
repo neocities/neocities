@@ -11,8 +11,11 @@ post '/webhooks/paypal' do
 end
 
 def valid_paypal_webhook_source?
-  # https://www.paypal-knowledge.com/infocenter/index?page=content&widgetview=true&id=FAQ1465&viewlocale=en_US&direct=en
-  return true if ['127.0.0.1', '173.0.81.1', '173.0.81.33', '66.211.170.66'].include?(request.ip)
+  # https://www.paypal.com/us/smarthelp/article/what-are-the-ip-addresses-for-live-paypal-servers-ts1056
+  request_ip = IPAddress::IPv4.new request.ip
+  ['127.0.0.1', '66.211.170.66', '173.0.81.0/24'].each do |ip|
+    return true if IPAddress::IPv4.new(ip).include? request_ip
+  end
   false
 end
 
