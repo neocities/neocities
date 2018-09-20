@@ -1,4 +1,5 @@
 require 'resolv'
+require 'zlib'
 
 class Stat < Sequel::Model
   FREE_RETAINMENT_DAYS = 30
@@ -21,10 +22,11 @@ class Stat < Sequel::Model
 
       cache_control_ips = $config['cache_control_ips']
 
-      Dir["#{path}/*.log"].each do |log_path|
+      Dir["#{path}/*.log.gz"].each do |log_path|
         site_logs = {}
 
-        logfile = File.open log_path, 'r'
+        gzfile = File.open log_path, 'r'
+        logfile = Zlib::GzipReader.new gzfile
 
         begin
           while hit = logfile.gets
