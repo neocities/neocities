@@ -13,7 +13,7 @@ gem 'sidekiq', '~> 4.1.2'
 gem 'mail'
 gem 'tilt'
 gem 'erubis'
-gem 'stripe', '1.15.0' #, source: 'https://code.stripe.com/'
+gem 'stripe', '4.2.0', source: 'https://code.stripe.com/'
 gem 'cocaine'
 gem 'zipruby'
 gem 'sass', require: nil
@@ -75,7 +75,7 @@ group :test do
   gem 'capybara', require: nil #, '2.10.1',     require: nil
   gem 'rack_session_access',   require: nil
   gem 'webmock',               require: nil
-  gem 'stripe-ruby-mock', '2.0.1',      require: 'stripe_mock'
+  gem 'stripe-ruby-mock', '2.5.6',      require: 'stripe_mock'
   gem 'timecop'
   gem 'mock_redis'
   gem 'simplecov',        require: nil
