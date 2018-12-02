@@ -1,7 +1,7 @@
 require_relative './environment.rb'
 
 STAT_LOGS_PATH = 'tests/stat_logs'
-STAT_LOGS_DIR_MATCH = "#{STAT_LOGS_PATH}/*.log"
+STAT_LOGS_DIR_MATCH = "#{STAT_LOGS_PATH}/*.log.gz"
 
 describe 'stats' do
   before do
@@ -22,16 +22,17 @@ describe 'stats' do
       "#{@time_iso8601}\t#{@site_two.username}\t5000\t/derp.html\t127.0.0.2\thttps://example.com"
     ]
 
-    File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
-      file.write log.join("\n")
+    Zlib::GzipWriter.open("tests/stat_logs/#{SecureRandom.uuid}.log.gz") do |gz|
+      gz.write log.join("\n")
     end
   end
 
   it 'deals with spaces in paths' do
     @site = Fabricate :site
-    File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
-      file.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
-      file.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
+
+    Zlib::GzipWriter.open("tests/stat_logs/#{SecureRandom.uuid}.log.gz") do |gz|
+      gz.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
+      gz.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
     end
 
     Stat.parse_logfiles STAT_LOGS_PATH
@@ -43,9 +44,10 @@ describe 'stats' do
 
   it 'takes accout for log hit time' do
     @site = Fabricate :site
-    File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
-      file.write "2015-05-01T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
-      file.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
+
+    Zlib::GzipWriter.open("tests/stat_logs/#{SecureRandom.uuid}.log.gz") do |gz|
+      gz.write "2015-05-01T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
+      gz.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com\n"
     end
 
     Stat.parse_logfiles STAT_LOGS_PATH
@@ -65,8 +67,9 @@ describe 'stats' do
 
   it 'deals with spaces in referrer' do
     @site = Fabricate :site
-    File.open("tests/stat_logs/#{SecureRandom.uuid}.log", 'w') do |file|
-      file.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com?q=what the lump\n"
+
+    Zlib::GzipWriter.open("tests/stat_logs/#{SecureRandom.uuid}.log.gz") do |gz|
+      gz.write "2015-05-02T21:16:35+00:00\t#{@site.username}\t612917\t/images/derpie space.png\t67.180.75.140\thttp://derp.com?q=what the lump\n"
     end
 
     Stat.parse_logfiles STAT_LOGS_PATH
