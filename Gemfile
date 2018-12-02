@@ -13,7 +13,7 @@ gem 'sidekiq', '~> 4.1.2'
 gem 'mail'
 gem 'tilt'
 gem 'erubis'
-gem 'stripe', '4.2.0', source: 'https://code.stripe.com/'
+gem 'stripe', '4.2.0' #, source: 'https://code.stripe.com/'
 gem 'cocaine'
 gem 'zipruby'
 gem 'sass', require: nil
