@@ -667,7 +667,7 @@ class Site < Sequel::Model
     return true if ENV['TRAVIS'] == 'true'
 
     File.chmod 0666, uploaded_file[:tempfile].path
-    line = Cocaine::CommandLine.new(
+    line = Terrapin::CommandLine.new(
       "clamdscan", "-i --remove=no --no-summary --stdout :path",
       expected_outcodes: [0, 1]
     )
@@ -724,11 +724,11 @@ class Site < Sequel::Model
         rbox.disconnect
       end
     else
-      line = Cocaine::CommandLine.new('ipfs', 'add -r -Q :path')
+      line = Terrapin::CommandLine.new('ipfs', 'add -r -Q :path')
       response = line.run path: files_path
     end
 
-    response.first
+    response.strip
   end
 
   def purge_old_archives

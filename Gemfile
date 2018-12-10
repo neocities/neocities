@@ -14,7 +14,7 @@ gem 'mail'
 gem 'tilt'
 gem 'erubis'
 gem 'stripe', '4.2.0' #, source: 'https://code.stripe.com/'
-gem 'cocaine'
+gem 'terrapin'
 gem 'zipruby'
 gem 'sass', require: nil
 gem 'dav4rack', git: 'https://github.com/planio-gmbh/dav4rack.git', branch: 'redmine-storage'
