@@ -64,7 +64,7 @@ get '/?' do
     @blog_feed_html = ''
 
     begin
-      xml = HTTP.timeout(read: 2, write: 2, connect: 2).get('https://blog.neocities.org/feed.xml').to_s
+      xml = HTTP.timeout(global: 2).get('https://blog.neocities.org/feed.xml').to_s
       feed = Feedjira::Feed.parse xml
       feed.entries[0..2].each do |entry|
         @blog_feed_html += %{<a href="#{entry.url}">#{entry.title.split('.').first}</a> <span style="float: right">#{entry.published.strftime('%b %-d, %Y')}</span><br>}
