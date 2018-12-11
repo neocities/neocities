@@ -35,7 +35,7 @@ gem 'simpleidn'
 gem 'gandi'
 gem 'hoe', '3.14.2', require: nil
 gem 'msgpack'
-gem 'acme-client'
+gem 'acme-client', '0.6.3'
 gem 'http'
 gem 'htmlentities'
 gem 'rinku'
