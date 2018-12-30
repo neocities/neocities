@@ -1453,7 +1453,7 @@ class Site < Sequel::Model
 
   def screenshot_url(path, resolution)
     out = ''
-    out = 'https://neocities.org/' if ENV['RACK_ENV'] == 'development'
+    out = 'https://neocities.org' if ENV['RACK_ENV'] == 'development'
     out+"#{SCREENSHOTS_URL_ROOT}/#{self.class.sharding_dir(values[:username])}/#{values[:username]}/#{path}.#{resolution}.jpg"
   end
 
