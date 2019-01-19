@@ -49,7 +49,7 @@ desc 'Update banned IPs list'
 task :update_blocked_ips => [:environment] do
 
   IO.copy_stream(
-    open('http://www.stopforumspam.com/downloads/listed_ip_90.zip'),
+    open('https://www.stopforumspam.com/downloads/listed_ip_90.zip'),
     '/tmp/listed_ip_90.zip'
   )
 
