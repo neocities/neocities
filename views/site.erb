@@ -37,7 +37,7 @@
           <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i> Edit Site</a>
         <% end %>
 
-        <% if site.latest_archive && !site.archiving_disabled && false %>
+        <% if site.latest_archive && site.ipfs_archiving_enabled %>
           <a href="/site/<%= site.username %>/archives" class="btn-Action edit"><i class="fa fa-history" title="Archives"></i> Archives</a>
         <% end %>
 
