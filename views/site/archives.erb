@@ -11,7 +11,7 @@
     <% else %>
       <table class="table">
         <tr>
-          <th>IPFS Hash <small style="display: inline"><a href="/permanent-web">(what is this?)</a></small></th>
+          <th>IPFS CID <small style="display: inline"><a href="/permanent-web">(what is this?)</a></small></th>
           <th>Archived Time</th>
         </tr>
         <% @archives.each do |archive| %>
@@ -27,9 +27,6 @@
       </p>
       <p>
         Archives are captured once every <%= Archive::ARCHIVE_WAIT_TIME / 60 %> minutes, so if you don't see your latest changes, check back later.
-      </p>
-      <p>
-        The URLs are using <a href="https://github.com/neocities/hshca">hshca</a>, a standard for using cryptographic hashes with subdomains.
       </p>
     <% end %>
   </article>

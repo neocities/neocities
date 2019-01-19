@@ -5,19 +5,11 @@ class Archive < Sequel::Model
   set_primary_key [:site_id, :ipfs_hash]
   unrestrict_primary_key
   MAXIMUM_ARCHIVES_PER_SITE = 100
-  ARCHIVE_WAIT_TIME = 10.minutes
+  ARCHIVE_WAIT_TIME = 1.minute
 
   def before_destroy
     unpin
     super
-  end
-
-  def self.base58_to_hshca(base58)
-    Base32.encode(Base58.base58_to_bytestring(base58)).gsub('=', '').downcase
-  end
-
-  def hshca_hash
-    self.class.base58_to_hshca ipfs_hash
   end
 
   def unpin
@@ -41,6 +33,6 @@ class Archive < Sequel::Model
   end
 
   def url
-    "http://#{hshca_hash}.ipfs.neocitiesops.net"
+    "https://#{ipfs_hash}.ipfs.neocitiesops.net"
   end
 end

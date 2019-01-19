@@ -53,7 +53,7 @@ post '/settings/:username/profile' do
   @site.update(
     profile_comments_enabled: params[:site][:profile_comments_enabled],
     profile_enabled: params[:site][:profile_enabled],
-    archiving_disabled: params[:site][:archiving_disabled]
+    ipfs_archiving_enabled: params[:site][:ipfs_archiving_enabled]
   )
   flash[:success] = 'Profile settings changed.'
   redirect "/settings/#{@site.username}#profile"

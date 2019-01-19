@@ -24,10 +24,10 @@
       <h3>IPFS Archiving</h3>
 
       <div style="display: inline-block; text-align: left; margin-bottom: 10px">
-        <input name="site[archiving_disabled]" type="hidden" value="false">
-        <input name="site[archiving_disabled]" type="checkbox" value="true"
-          <% if @site.archiving_disabled == true %>checked<% end %>
-        > Disable IPFS Archiving
+        <input name="site[ipfs_archiving_enabled]" type="hidden" value="false">
+        <input name="site[ipfs_archiving_enabled]" type="checkbox" value="true"
+          <% if @site.ipfs_archiving_enabled == true %>checked<% end %>
+        > Enable IPFS Archiving
       </div>
     </div>
 

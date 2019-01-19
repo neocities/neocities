@@ -707,7 +707,7 @@ class Site < Sequel::Model
     purge_cache path
   end
 
-  Rye::Cmd.add_command :ipfs, nil, 'add', :r, :Q
+  Rye::Cmd.add_command :ipfs
 
   def add_to_ipfs
     # Not ideal. An SoA version is in progress.
@@ -717,18 +717,21 @@ class Site < Sequel::Model
     end
 
     if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
-      rbox = Rye::Box.new $config['ipfs_ssh_host'], :user => $config['ipfs_ssh_user']
+      rbox = Rye::Box.new $config['ipfs_ssh_host'], user: $config['ipfs_ssh_user']
       begin
-        response = rbox.ipfs "sites/#{self.class.sharding_dir self.username}/#{self.username.gsub(/\/|\.\./, '')}"
+        cidv0    = rbox.ipfs(:add, :r, :Q, "sites/#{self.class.sharding_dir self.username}/#{self.username.gsub(/\/|\.\./, '')}").first
+        cidv1b32 = rbox.ipfs(:cid, :base32, cidv0).first
       ensure
         rbox.disconnect
       end
     else
       line = Terrapin::CommandLine.new('ipfs', 'add -r -Q :path')
-      response = line.run path: files_path
+      response = line.run(path: files_path).strip
+      line = Terrapin::CommandLine.new('ipfs', 'cid base32 :hash')
+      cidv1b32 = line.run(hash: response).strip
     end
 
-    response.strip
+    cidv1b32
   end
 
   def purge_old_archives
@@ -738,11 +741,6 @@ class Site < Sequel::Model
   end
 
   def archive!
-    #if ENV["RACK_ENV"] == 'test'
-    #  ipfs_hash = "QmcKi2ae3uGb1kBg1yBpsuwoVqfmcByNdMiZ2pukxyLWD8"
-    #else
-    #end
-
     ipfs_hash = add_to_ipfs
 
     archive = archives_dataset.where(ipfs_hash: ipfs_hash).first
@@ -1597,7 +1595,7 @@ class Site < Sequel::Model
         ]
         sql.first
 
-        unless archiving_disabled
+        if ipfs_archiving_enabled
           ArchiveWorker.perform_in Archive::ARCHIVE_WAIT_TIME, self.id
         end
       end
