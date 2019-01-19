@@ -197,7 +197,7 @@ describe 'delete' do
     @stripe_helper.create_plan id: 'free', amount: 0
 
     customer = Stripe::Customer.create(
-      card: @stripe_helper.generate_card_token
+      source: @stripe_helper.generate_card_token
     )
 
     subscription = customer.subscriptions.create plan: 'supporter'
