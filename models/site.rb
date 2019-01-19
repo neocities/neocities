@@ -1595,7 +1595,7 @@ class Site < Sequel::Model
         ]
         sql.first
 
-        if ipfs_archiving_enabled
+        if ipfs_archiving_enabled == true
           ArchiveWorker.perform_in Archive::ARCHIVE_WAIT_TIME, self.id
         end
       end
