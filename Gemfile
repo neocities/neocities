@@ -64,20 +64,20 @@ end
 
 group :test do
   gem 'faker'
-  gem 'fabrication',           require: 'fabrication'
+  gem 'fabrication',                    require: 'fabrication'
   gem 'minitest'
-  gem 'minitest-reporters',    require: 'minitest/reporters'
-  gem 'rack-test',             require: 'rack/test'
-  gem 'mocha',                 require: nil
-  gem 'rake',                  require: nil
+  gem 'minitest-reporters',             require: 'minitest/reporters'
+  gem 'rack-test',                      require: 'rack/test'
+  gem 'mocha',                          require: nil
+  gem 'rake',                           require: nil
   gem 'poltergeist'
   gem 'capybara_minitest_spec'
-  gem 'capybara', require: nil #, '2.10.1',     require: nil
-  gem 'rack_session_access',   require: nil
-  gem 'webmock',               require: nil
+  gem 'capybara',                       require: nil #, '2.10.1',     require: nil
+  gem 'rack_session_access',            require: nil
+  gem 'webmock', '3.5.1',               require: nil
   gem 'stripe-ruby-mock', '2.5.6',      require: 'stripe_mock'
   gem 'timecop'
   gem 'mock_redis'
-  gem 'simplecov',        require: nil
+  gem 'simplecov',                      require: nil
   gem 'm'
 end
