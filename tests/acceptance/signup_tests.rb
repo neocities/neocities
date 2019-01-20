@@ -9,6 +9,7 @@ describe 'signup' do
 
   def fill_in_valid
     @site = Fabricate.attributes_for(:site)
+    page.must_have_content 'Sign up for free'
     fill_in 'username', with: @site[:username]
     fill_in 'password', with: @site[:password]
     fill_in 'email',    with: @site[:email]
