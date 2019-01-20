@@ -48,7 +48,7 @@ post '/supporter/update' do
       site.save_changes validate: false
     else
       customer = Stripe::Customer.create(
-        card: params[:stripe_token],
+        source: params[:stripe_token],
         description: "#{site.username} - #{site.id}",
         email: site.email,
         plan: plan_type
