@@ -124,6 +124,10 @@
           </div>
           <% if signed_in? && current_site.is_admin %>
             <div class="admin">
+              <button onclick="banSite('<%= site.username.gsub('\'', '') %>', '', this); ">Ban</button>
+              <button onclick="banSite('<%= site.username.gsub('\'', '') %>', 'spam', this)">Spam</button>
+              <button onclick="banSite('<%= site.username.gsub('\'', '') %>', 'phishing', this)">Phishing</button>
+<!--
               <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
                 <%== csrf_token_input_html %>
                 <input type="hidden" name="usernames" value="<%= site.username %>">
@@ -143,7 +147,7 @@
                 <input type="hidden" name="classifier" value="phishing">
                 <button>Phishing</button>
               </form>
-
+-->
               <form action="/admin/mark_nsfw" target="_blank" method="POST" onsubmit="return confirm('Confirm NSFW marking of <%= site.username %>');">
                 <%== csrf_token_input_html %>
                 <input type="hidden" name="username" value="<%= site.username %>">
@@ -192,5 +196,19 @@
 
     window.location = 'https://duckduckgo.com/?q='+encodeURI(finalSearchQuery)
     return false
+  }
+</script>
+
+
+<script>
+  function banSite(usernames, classifier, el) {
+    $.post('/admin/banhammer', {
+      usernames: usernames,
+      classifier: classifier,
+      csrf_token: '<%= csrf_token %>'
+    }, function(data) {
+      $(el).css('color', '#3eff00')
+    })
+    return false;
   }
 </script>
