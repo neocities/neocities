@@ -399,7 +399,7 @@ end
 
 desc 'purge_tmp_turds'
 task :purge_tmp_turds => [:environment] do
-  ['neocities_screenshot*', 'RackMultipart*', 'neocities_saving_file*', 'newinstall-*', '*.dmp', 'davfile*'].each do |target|
+  ['neocities_screenshot*', 'RackMultipart*', 'neocities_saving_file*', 'newinstall-*', '*.dmp', 'davfile*', 'magick*', '*.scan', '*.jpg'].each do |target|
     Dir.glob("/tmp/#{target}").select {|filename| File::Stat.new(filename).ctime < (Time.now - 3600)}.each {|filename| FileUtils.rm(filename)}
   end
 end
