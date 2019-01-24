@@ -37,6 +37,7 @@ describe 'api list' do
       site_file[:is_directory].must_equal file[:is_directory]
       site_file[:size].must_equal file[:size]
       site_file[:updated_at].rfc2822.must_equal file[:updated_at]
+      site_file[:sha1_hash].must_equal file[:sha1_hash]
     end
   end
 
