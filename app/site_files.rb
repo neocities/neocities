@@ -1,5 +1,6 @@
 get '/site_files/new_page' do
   require_login
+  @title = 'New Page'
   erb :'site_files/new_page'
 end
 
@@ -218,13 +219,16 @@ get %r{\/site_files\/text_editor\/(.+)} do
 end
 
 get '/site_files/allowed_types' do
+  @title = 'Allowed File Types'
   erb :'site_files/allowed_types'
 end
 
 get '/site_files/hotlinking' do
+  @title = 'Hotlinking Information'
   erb :'site_files/hotlinking'
 end
 
 get '/site_files/mount_info' do
+  @title = 'Site Mount Information'
   erb :'site_files/mount_info'
 end

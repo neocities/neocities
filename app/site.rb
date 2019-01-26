@@ -135,6 +135,7 @@ post '/site/:username/set_editor_theme' do
 end
 
 get '/site/:username/follows' do |username|
+  @title = "Sites #{username} follows"
   @site = Site[username: username]
   not_found if @site.nil?
   @sites = @site.followings.collect {|f| f.site}
@@ -142,6 +143,7 @@ get '/site/:username/follows' do |username|
 end
 
 get '/site/:username/followers' do |username|
+  @title = "Sites that follow #{username}"
   @site = Site[username: username]
   not_found if @site.nil?
   @sites = @site.follows.collect {|f| f.actioning_site}

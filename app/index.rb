@@ -84,6 +84,7 @@ end
 get '/welcome' do
   require_login
   redirect '/' if current_site.supporter?
+  @title = 'Welcome!'
   erb :'welcome', locals: {site: current_site}
 end
 
@@ -118,18 +119,26 @@ get '/legal/?' do
 end
 
 get '/permanent-web' do
-  erb :'permanent_web'
+  redirect '/distributed-web'
+end
+
+get '/distributed-web' do
+  @title = 'The Distributed Web'
+  erb :'distributed_web'
 end
 
 get '/thankyou' do
+  @title = 'Thank you!'
   erb :'thankyou'
 end
 
 get '/cli' do
+  @title = 'Command Line Interface'
   erb :'cli'
 end
 
 get '/forgot_username' do
+  @title = 'Forgot Username'
   erb :'forgot_username'
 end
 

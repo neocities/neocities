@@ -34,6 +34,7 @@ get '/signin/restore' do
   redirect '/' unless session[:deleted_site_id]
   @site = Site[session[:deleted_site_id]]
   redirect '/' if @site.nil?
+  @title = 'Restore Deleted Site'
   erb :'signin/restore'
 end
 

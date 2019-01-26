@@ -1,4 +1,5 @@
 get '/password_reset' do
+  @title = 'Password Reset'
   redirect '/' if signed_in?
   erb :'password_reset'
 end
@@ -46,6 +47,8 @@ the Neocities Cat
 end
 
 get '/password_reset_confirm' do
+  @title = 'Password Reset Confirm'
+
   if params[:token].nil? || params[:token].strip.empty?
     flash[:error] = 'Token cannot be empty.'
     redirect '/'

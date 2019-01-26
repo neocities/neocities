@@ -1,4 +1,5 @@
 get '/dmca' do
+  @title = 'DMCA'
   erb :'dmca'
 end
 
@@ -8,6 +9,7 @@ get '/dmca/contact_info' do
 end
 
 post '/dmca/contact' do
+  @title = 'DMCA'
   @errors = []
 
   if params[:email].empty? || params[:subject].empty? || params[:urls].empty? || params[:body].empty?

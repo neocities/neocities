@@ -27,5 +27,11 @@
     <p>
       <code>$ ipfs pin add -r THE_IPFS_CID_FOR_YOUR_SITE</code>
     </p>
+
+    <% if signed_in? %>
+      <p>
+        IPFS archiving is not enabled by default for all sites. If you would like to enable IPFS for your site, please visit your site's <a href="/settings/<%= current_site.username %>">settings</a> and enable it.
+      </p>
+    <% end %>
   </article>
 </div>

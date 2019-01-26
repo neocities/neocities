@@ -20,6 +20,7 @@ get '/settings/:username/?' do |username|
   pass if Site.select(:id).where(username: username).first.nil?
   require_login
   require_ownership_for_settings
+  @title = "Site settings for #{username}"
   erb :'settings/site'
 end
 
