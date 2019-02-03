@@ -649,6 +649,14 @@ class Site < Sequel::Model
     false
   end
 
+  def self.valid_file_mime_type_and_ext?(mime_type, extname)
+    unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/ || mime_type =~ /inode\/x-empty/) &&
+           Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
+      return false
+    end
+    true
+  end
+
   def self.valid_file_type?(uploaded_file)
     mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
     extname = File.extname uploaded_file[:filename]
@@ -658,10 +666,7 @@ class Site < Sequel::Model
     #  extname = uploaded_file[:filename]
     #end
 
-    unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/ || mime_type =~ /inode\/x-empty/) &&
-           Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
-      return false
-    end
+    return false unless valid_file_mime_type_and_ext?(mime_type, extname)
 
     # clamdscan doesn't work on travis for testing
     return true if ENV['TRAVIS'] == 'true'

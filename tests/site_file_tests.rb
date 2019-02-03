@@ -23,6 +23,91 @@ describe 'site_files' do
     ScreenshotWorker.jobs.clear
   end
 
+  describe 'rename' do
+    before do
+      PurgeCacheWorker.jobs.clear
+    end
+
+    it 'renames in same path' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
+
+      @site.site_files.last.path.must_equal 'test.jpg'
+      @site.site_files.last.rename('derp.jpg')
+      @site.site_files.last.path.must_equal('derp.jpg')
+      PurgeCacheWorker.jobs.first['args'].last.must_equal '/test.jpg'
+      File.exist?(@site.files_path('derp.jpg')).must_equal true
+    end
+
+    it 'fails for bad extension change' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
+
+      @site.site_files.last.path.must_equal 'test.jpg'
+      res = @site.site_files.last.rename('dasharezone.exe')
+      res.must_equal [false, 'unsupported file type']
+      @site.site_files.last.path.must_equal('test.jpg')
+    end
+
+
+    it 'works for directory' do
+      @site.create_directory 'dirone'
+      @site.site_files.last.path.must_equal 'dirone'
+      @site.site_files.last.is_directory.must_equal true
+      res = @site.site_files.last.rename('dasharezone')
+      res.must_equal [true, nil]
+      @site.site_files.last.path.must_equal('dasharezone')
+      @site.site_files.last.is_directory.must_equal true
+
+      PurgeCacheWorker.jobs.first['args'].last.must_equal 'dirone'
+      PurgeCacheWorker.jobs.last['args'].last.must_equal 'dasharezone'
+    end
+
+    it 'changes path of files and dirs within directory when changed' do
+      upload(
+        'dir' => 'test',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      upload(
+        'dir' => 'test',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'image/jpeg')
+      )
+
+      @site.site_files.select {|s| s.path == 'test'}.first.rename('test2')
+      @site.site_files.select {|sf| sf.path =~ /test2\/index.html/}.length.must_equal 1
+      @site.site_files.select {|sf| sf.path =~ /test2\/test.jpg/}.length.must_equal 1
+      @site.site_files.select {|sf| sf.path =~ /test\/test.jpg/}.length.must_equal 0
+
+      PurgeCacheWorker.jobs.collect {|p| p['args'].last}.must_equal ["/test/test.jpg", "/test/index.html", "/test/", "test", "test2", "test/test.jpg", "test2/test.jpg", "test/index.html", "test/", "test2/index.html", "test2/"]
+    end
+
+    it 'doesnt wipe out existing file' do
+      upload(
+        'dir' => 'test',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      upload(
+        'dir' => 'test',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'image/jpeg')
+      )
+
+      res = @site.site_files.last.rename('test/test.jpg')
+      res.must_equal [false, 'file already exists']
+    end
+
+    it 'doesnt wipe out existing dir' do
+      @site.create_directory 'dirone'
+      @site.create_directory 'dirtwo'
+      res = @site.site_files.last.rename 'dirone'
+      res.must_equal [false, 'directory already exists']
+    end
+
+    it 'refuses to move index.html' do
+      res = @site.site_files.select {|sf| sf.path == 'index.html'}.first.rename('notindex.html')
+      res.must_equal [false, 'cannot rename or move root index.html']
+    end
+  end
+
   describe 'delete' do
     before do
       PurgeCacheWorker.jobs.clear

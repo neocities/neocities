@@ -241,6 +241,40 @@ describe 'api upload hash' do
   end
 end
 
+describe 'api rename' do
+  before do
+    create_site
+    basic_authorize @user, @pass
+    post '/api/upload', {
+      'testdir/test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+    }
+  end
+
+  it 'succeeds' do
+    post '/api/rename', path: 'testdir/test.jpg', new_path: 'testdir/test2.jpg'
+    res[:result].must_equal 'success'
+  end
+
+  it 'fails to overwrite index file' do
+    post '/api/rename', path: 'testdir/test.jpg', new_path: 'index.html'
+    res[:result].must_equal 'error'
+    res[:error_type].must_equal 'rename_error'
+    res[:message].must_equal 'file already exists'
+  end
+
+  it 'fails to overwrite existing file' do
+    post '/api/rename', path: 'testdir/test.jpg', new_path: 'not_found.html'
+    res[:result].must_equal 'error'
+    res[:error_type].must_equal 'rename_error'
+  end
+
+  it 'succeeds with directory' do
+    @site.create_directory 'derpiedir'
+    post '/api/rename', path: 'derpiedir', new_path: 'notderpiedir'
+    res[:result].must_equal 'success'
+  end
+end
+
 describe 'api upload' do
   it 'fails with no auth' do
     post '/api/upload'

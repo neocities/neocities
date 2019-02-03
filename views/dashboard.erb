@@ -153,6 +153,7 @@
                 <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
               <% end %>
               <% if !file[:is_root_index] %>
+                <a href="#" onclick="confirmFileRename($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-edit" title="Rename"></i> Rename</a>
                 <a href="#" onclick="confirmFileDelete($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-trash" title="Delete"></i> Delete</a>
               <% end %>
               <% if file[:is_directory] %>
@@ -185,6 +186,28 @@
           <button class="btn-Action btn-danger" type="button" onclick="fileDelete()"><i class="fa fa-trash" title="Delete"></i>Delete</button>
         </div>
       </div>
+
+      <div class="modal hide fade" id="renameModal" tabindex="-1" role="dialog" aria-labelledby="renameModalLabel" aria-hidden="true">
+        <form method="post" action="/site_files/rename">
+          <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+          <input type="hidden" value="<%= @dir %>" name="dir">
+          <input type="hidden" id="renamePathInput" name="path">
+
+          <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h3 id="renameModalLabel">Rename / Move</h3>
+          </div>
+          <div class="modal-body">
+            <input id="renameNewPathInput" name="new_path" type="text">
+            <p>Note: We will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button type="submit" class="btn-Action">Rename</button>
+          </div>
+        </form>
+      </div>
+
 
 <div class="site-actions" style="margin-bottom:25px">
   <% if !current_site.plan_feature(:no_file_restrictions) %>
@@ -248,6 +271,13 @@
 
 <script src="/js/dropzone.min.js"></script>
 <script>
+
+  function confirmFileRename(path) {
+    console.log(path)
+    $('#renamePathInput').val(path.replace('/', ''));
+    $('#renameNewPathInput').val(path.replace('/', ''));
+    $('#renameModal').modal();
+  }
 
   function confirmFileDelete(name) {
     $('#deleteFileName').text(name.replace('/',''));
