@@ -443,3 +443,22 @@ task :prime_redis_proxy_ssl => [:environment] do
     Site[site_id].store_ssl_in_redis_proxy
   end
 end
+
+desc 'dedupe_site_blocks'
+task :dedupe_site_blocks => [:environment] do
+  duped_blocks = []
+  block_ids = Block.select(:id).all.collect {|b| b.id}
+  block_ids.each do |block_id|
+    next unless duped_blocks.select {|db| db.id == block_id}.empty?
+    block = Block[block_id]
+    if block
+      blocks = Block.exclude(id: block.id).where(site_id: block.site_id).where(actioning_site_id: block.actioning_site_id).all
+      duped_blocks << blocks
+      duped_blocks.flatten!
+    end
+  end
+
+  duped_blocks.each do |duped_block|
+    duped_block.destroy
+  end
+end

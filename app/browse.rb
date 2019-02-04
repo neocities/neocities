@@ -93,6 +93,12 @@ def browse_sites_dataset
       ds = ds.where{views > 10_000}
       ds = ds.group :sites__id
       ds = ds.order :follow_count.desc, :views.desc, :updated_at.desc
+    when 'blocks'
+      require_admin
+      ds = ds.select{[sites.*, Sequel[count(site_id)].as(:total)]}
+      ds = ds.inner_join :blocks, :site_id => :id
+      ds = ds.group :sites__id
+      ds = ds.order :total.desc
     else
       params[:sort_by] = 'followers'
       ds = ds.where{views > 10_000}

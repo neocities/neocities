@@ -153,6 +153,15 @@
                 <input type="hidden" name="username" value="<%= site.username %>">
                 <button>Mark NSFW</button>
               </form>
+
+              <% if params[:sort_by] == 'blocks' %>
+              <p>
+                Blocks:<br>
+                <% site.blocks.each do |block| %>
+                  <a href="/site/<%= block.actioning_site.username %>"><%= block.actioning_site.username %></a><br>
+                <% end %>
+              </p>
+              <% end %>
             </div>
           <% end %>
         </div>
