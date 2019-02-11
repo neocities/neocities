@@ -171,6 +171,12 @@ end
 
 get '/site_files/:username.zip' do |username|
   require_login
+
+  if current_site.too_big_to_download?
+    flash[:error] = 'Cannot download site as zip as it is too large (or contains too many files)'
+    redirect '/dashboard'
+  end
+
   zipfile_path = current_site.files_zip
   content_type 'application/octet-stream'
   attachment   "neocities-#{current_site.username}.zip"
