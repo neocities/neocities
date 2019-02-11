@@ -71,7 +71,8 @@ class Site < Sequel::Model
   THUMBNAIL_RESOLUTIONS  = ['210x158']
 
   MAX_FILE_SIZE = 10**8 # 100 MB
-  MAX_SITE_DOWNLOAD_SIZE = 2_000_000_000 # 2GB
+  MAX_SITE_DOWNLOAD_SIZE = 200_000_000 # 200MB
+  MAX_SITE_FILES_DOWNLOAD = 500
 
   CLAMAV_THREAT_MATCHES = [
     /^VBS/,
@@ -1246,7 +1247,7 @@ class Site < Sequel::Model
   end
 
   def too_big_to_download?
-    space_used > MAX_SITE_DOWNLOAD_SIZE
+    space_used > MAX_SITE_DOWNLOAD_SIZE || site_files_dataset.count > MAX_SITE_FILES_DOWNLOAD
   end
 
   # Note: Change Stat#prune! and the nginx map compiler if you change this business logic.
