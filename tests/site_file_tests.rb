@@ -106,6 +106,22 @@ describe 'site_files' do
       res = @site.site_files.select {|sf| sf.path == 'index.html'}.first.rename('notindex.html')
       res.must_equal [false, 'cannot rename or move root index.html']
     end
+
+    it 'works with unicode characters' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
+      @site.site_files.last.rename("HELL💩؋.jpg")
+      @site.site_files.last.path.must_equal "HELL💩؋.jpg"
+    end
+
+    it 'scrubs weird carriage return shit characters' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
+      proc {
+        @site.site_files.last.rename("\r\n\t.jpg")
+      }.must_raise ArgumentError
+      @site.site_files.last.path.must_equal "test.jpg"
+    end
   end
 
   describe 'delete' do

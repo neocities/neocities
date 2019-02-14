@@ -1165,7 +1165,14 @@ class Site < Sequel::Model
       clean << part if part != '..'
     end
 
-    clean.join '/'
+    clean_path = clean.join '/'
+
+    # Scrub carriage garbage (everything below 32 bytes.. http://www.asciitable.com/)
+    clean_path.each_codepoint do |c|
+      raise ArgumentError, 'invalid character for filename' if c < 32
+    end
+
+    clean_path
   end
 
   def current_files_path(path='')
