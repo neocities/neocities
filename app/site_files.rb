@@ -124,10 +124,7 @@ post '/site_files/upload' do
     dir_name = params[:dir] if params[:dir]
 
     unless params[:file_paths].nil? || params[:file_paths].empty? || params[:file_paths].length == 0
-
-      file_path = params[:file_paths].select {|file_path|
-        file[:filename] == Pathname(file_path).basename.to_s
-      }.first
+      file_path = params[:file_paths][i]
 
       unless file_path.nil?
         dir_name += '/' + Pathname(file_path).dirname.to_s
@@ -161,7 +158,7 @@ post '/site_files/delete' do
   require_login
   path = HTMLEntities.new.decode params[:filename]
   current_site.delete_file path
-  flash[:success] = "Deleted #{params[:filename]}. Please note it can take up to 30 minutes for deleted files to stop being viewable on your site."
+  flash[:success] = "Deleted #{params[:filename]}."
 
   dirname = Pathname(path).dirname
   dir_query = dirname.nil? || dirname.to_s == '.' ? '' : "?dir=#{Rack::Utils.escape dirname}"

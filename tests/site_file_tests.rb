@@ -213,6 +213,21 @@ describe 'site_files' do
       PurgeCacheWorker.jobs.select {|j| j['args'].last == '/subdir/'}.length.must_equal 1
     end
 
+    it 'succeeds with multiple files' do
+      upload(
+        'file_paths' => ['one/test.jpg', 'two/test.jpg'],
+        'files' => [
+          Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg'),
+          Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+        ]
+      )
+
+      @site.site_files.select {|s| s.path == 'one'}.length.must_equal 1
+      @site.site_files.select {|s| s.path == 'one/test.jpg'}.length.must_equal 1
+      @site.site_files.select {|s| s.path == 'two'}.length.must_equal 1
+      @site.site_files.select {|s| s.path == 'two/test.jpg'}.length.must_equal 1
+    end
+
     it 'succeeds with valid file' do
       initial_space_used = @site.space_used
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
