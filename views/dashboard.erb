@@ -153,7 +153,7 @@
                 <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
               <% end %>
               <% if !file[:is_root_index] %>
-                <a href="#" onclick="confirmFileRename($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-edit" title="Rename"></i> Rename</a>
+                <a href="#" onclick="confirmFileRename($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-file" title="Rename"></i> Rename</a>
                 <a href="#" onclick="confirmFileDelete($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-trash" title="Delete"></i> Delete</a>
               <% end %>
               <% if file[:is_directory] %>
