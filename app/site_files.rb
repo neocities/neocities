@@ -166,6 +166,26 @@ post '/site_files/delete' do
   redirect "/dashboard#{dir_query}"
 end
 
+post '/site_files/rename' do
+  require_login
+  path = HTMLEntities.new.decode params[:path]
+  new_path = HTMLEntities.new.decode params[:new_path]
+  site_file = current_site.site_files.select {|s| s.path == path}.first
+
+  res = site_file.rename new_path
+
+  if res.first == true
+    flash[:success] = "Renamed #{path} to #{new_path}"
+  else
+    flash[:error] = "Failed to rename #{path} to #{new_path}: #{res.last}"
+  end
+
+  dirname = Pathname(path).dirname
+  dir_query = dirname.nil? || dirname.to_s == '.' ? '' : "?dir=#{Rack::Utils.escape dirname}"
+
+  redirect "/dashboard#{dir_query}"
+end
+
 get '/site_files/:username.zip' do |username|
   require_login
 

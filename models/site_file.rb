@@ -40,6 +40,55 @@ class SiteFile < Sequel::Model
     super
   end
 
+  def rename(new_path)
+    current_path = self.path
+    new_path = site.scrubbed_path new_path
+
+    if current_path == 'index.html'
+      return false, 'cannot rename or move root index.html'
+    end
+
+    if site.site_files.select {|sf| sf.path == new_path}.length > 0
+      return false, "#{is_directory ? 'directory' : 'file'} already exists"
+    end
+
+    unless is_directory
+      mime_type = Magic.guess_file_mime_type site.files_path(self.path)
+      extname = File.extname new_path
+
+      return false, 'unsupported file type' unless site.class.valid_file_mime_type_and_ext?(mime_type, extname)
+    end
+
+    begin
+      FileUtils.mv site.files_path(path), site.files_path(new_path)
+    rescue Errno::ENOENT => e
+      return false, 'destination directory does not exist' if e.message =~ /No such file or directory/i
+      raise e
+    rescue ArgumentError => e
+      raise e unless e.message =~ /same file/
+    end
+
+    DB.transaction do
+      self.path = new_path
+      self.save_changes
+      site.purge_cache current_path
+      site.purge_cache new_path
+
+      if is_directory
+        site_files_in_dir = site.site_files.select {|sf| sf.path =~ /^#{current_path}\//}
+        site_files_in_dir.each do |site_file|
+          original_site_file_path = site_file.path
+          site_file.path = site_file.path.gsub(/^#{current_path}\//, "#{new_path}\/")
+          site_file.save_changes
+          site.purge_cache original_site_file_path
+          site.purge_cache site_file.path
+        end
+      end
+    end
+
+    return true, nil
+  end
+
   def after_destroy
     super
     unless is_directory

@@ -76,6 +76,37 @@ post '/api/upload' do
   api_success 'your file(s) have been successfully uploaded'
 end
 
+post '/api/rename' do
+  require_api_credentials
+
+  api_error 400, 'missing_arguments', 'you must provide path and new_path' if params[:path].blank? || params[:new_path].blank?
+
+  path = current_site.scrubbed_path params[:path]
+  new_path = current_site.scrubbed_path params[:new_path]
+
+  unless path.is_a?(String)
+    api_error 400, 'bad_path', "#{path} is not a valid path, cancelled renaming"
+  end
+
+  unless new_path.is_a?(String)
+    api_error 400, 'bad_new_path', "#{new_path} is not a valid new_path, cancelled renaming"
+  end
+
+  site_file = current_site.site_files.select {|sf| sf.path == path}.first
+
+  if site_file.nil?
+    api_error 400, 'missing_file', "could not find #{path}"
+  end
+
+  res = site_file.rename new_path
+
+  if res.first == true
+    api_success "#{path} has been renamed to #{new_path}"
+  else
+    api_error 400, 'rename_error', res.last
+  end
+end
+
 post '/api/delete' do
   require_api_credentials
 
