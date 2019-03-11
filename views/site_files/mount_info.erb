@@ -22,15 +22,18 @@
         This feature requires a supporter account. <a href="/supporter">Click here</a> to become a supporter.
       </p>
     <% else %>
-      <h2>Instructions for Windows</h2>
+      <h2>Instructions per operating system</h2>
+
+      <h3>Windows</h3>
 
       <p>
         Unfortunately, the WebDAV that comes with Windows file manager has issues with SSL,
         and the problem has not yet been fixed. We recommend using a client like <a href="https://cyberduck.io">Cyberduck</a> with Windows, which is free and has
         WebDAV support. You can also try <a href="https://mountainduck.io/">Mountain Duck</a>
         which will allow you to mount your Neocities site as a hard drive on your computer.
+      </p>
 
-      <h2>Instructions for OSX</h2>
+      <h3>macOS</h3>
 
       <p>
         <a href="http://support.apple.com/kb/ph3857">Use these instructions</a>, and use this URL to connect: <strong>https://neocities.org/webdav</strong>
@@ -42,22 +45,33 @@
         You can also try out <a href="https://cyberduck.io">Cyberduck</a> or <a href="https://mountainduck.io/">Mountain Duck</a> if you run into any issues.
       </p>
 
-      <h2>Instructions for Linux (Ubuntu)</h2>
+      <h3>Linux (Gnome)</h3>
 
       <p>
         <ol>
           <li>Open Nautilus.</li>
-          <li>Press ALT-L to show the location bar.</li>
-          <li>Type davs://neocities.org/webdav into location bar.</li>
+          <li>Press CTRL-L to show the location bar.</li>
+          <li>Type <code>davs://neocities.org/webdav</code> into location bar.</li>
           <li>Enter your login into the popup.</li>
         </ol>
       </p>
 
-      <h2>Instructions for Linux (command line)</h2>
+      <h4>Linux (mount as filesystem)</h4>
 
       <p>
-        For command line, use the <a href="http://johnreid.it/2009/09/26/mount-a-webdav-folder-in-ubuntu-linux/">davfs2</a> package.
+        To mount the WebDAV as a folder in your filesystem use the <a href="https://savannah.nongnu.org/projects/davfs2">davfs2</a> package.
       </p>
+
+      <h2>Accessing multiple sites</h2>
+
+      <p>
+        By default you can use your username/password combination to access your parent site via WebDAV (This is <code><%= current_site.parent? ? current_site.username : current_site.parent.username %></code>). In case you want to access any other sites you only need to use the site's subdomain name as the username (with the same password for your account).
+      </p>
+
+      <p>
+        You can see a list of your sites in <a href="/settings">your settings page</a>.
+      </p>
+
     <% end %>
   </article>
 </div>
