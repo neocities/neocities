@@ -17,3 +17,16 @@ sudo sh -c 'echo "local all all trust" >> /etc/postgresql/9.3/main/pg_hba.conf'
 sudo sh -c 'echo "host all all 127.0.0.1/32 trust" >> /etc/postgresql/9.3/main/pg_hba.conf'
 sudo sh -c 'echo "host all all ::1/128 trust" >> /etc/postgresql/9.3/main/pg_hba.conf'
 sudo service postgresql restart
+
+# Create empty file for disposable email accounts
+DISPOSABLE_EMAIL_PATH=/vagrant/files/disposable_email_blacklist.conf
+if [ ! -f $DISPOSABLE_EMAIL_PATH ]; then
+    sudo su vagrant -c "touch $DISPOSABLE_EMAIL_PATH"
+fi
+
+# Automatically enter the project path on vagrant ssh
+if grep -qv "cd /vagrant" /home/vagrant/.bashrc
+then
+    sudo su vagrant -c "echo 'cd /vagrant' >> ~/.bashrc"
+fi
+
