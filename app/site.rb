@@ -6,8 +6,15 @@ end
 
 get '/site/:username/?' do |username|
   site = Site[username: username]
-  # TODO: There should probably be a "this site was deleted" page.
-  not_found if site.nil? || site.is_banned || site.is_deleted
+
+  not_found if site.nil? || site.is_banned
+
+  if site.is_deleted
+    @title = "Site deleted"
+    @heading = "Site has been deleted"
+    @message = "Penelope the Neocities Cat found out the site you're looking for has unfortunately been deleted"
+    not_found
+  end
 
   redirect '/' if site.is_education
 

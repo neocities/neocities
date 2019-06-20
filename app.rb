@@ -88,7 +88,9 @@ end
 not_found do
   api_not_found if @api
   redirect_to_internet_archive_for_geocities_sites
-  @title = 'Not Found'
+
+  @title = 'Not Found' if !@title
+
   erb :'not_found'
 end
 
