@@ -41,7 +41,7 @@
           <a href="/site/<%= site.username %>/archives" class="btn-Action edit"><i class="fa fa-history" title="Archives"></i> Archives</a>
         <% end %>
 
-        <% if current_site && current_site != site %>
+        <% if current_site && current_site != site && current_site.can_follow?(site) %>
           <% is_following = current_site.is_following?(site) %>
 
           <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>'); return false" class="btn-Action <%= is_following ? 'is-following' : '' %>">
