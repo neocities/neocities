@@ -345,6 +345,19 @@ class Site < Sequel::Model
     followings_dataset.select(:follows__id).filter(site_id: site.id).first ? true : false
   end
 
+  def account_sites_follow?(site)
+    account_site_ids = account_sites_dataset.select(:id).all.collect {|s| s.id}
+    return true if Follow.where(actioning_site_id: account_site_ids, site_id: site.id).count > 0
+    return false
+  end
+
+  def can_follow?(site)
+    return false if site.id == self.id # Do not follow yourself
+    return false if site.owned_by?(self) # Do not follow your own sites
+    # return false if account_sites_follow?(site) # Do not follow if any of your other sites follow
+    true
+  end
+
   def toggle_follow(site)
     if is_following? site
       DB.transaction do
@@ -355,7 +368,7 @@ class Site < Sequel::Model
       end
       false
     else
-      return false if site.id == self.id # Do not follow yourself
+      return false unless can_follow?(site)
 
       DB.transaction do
         follow = add_following site_id: site.id
@@ -924,8 +937,6 @@ class Site < Sequel::Model
   def ssl_installed?
     !domain.blank? && !ssl_key.blank? && !ssl_cert.blank?
   end
-
-
 
   def sandboxed?
     plan_type == 'free' && created_at > SANDBOX_TIME.ago
