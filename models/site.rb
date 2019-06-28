@@ -1294,7 +1294,7 @@ class Site < Sequel::Model
   end
 
   def stripe_paying_supporter?
-    owner.stripe_customer_id && !owner.plan_ended && owner.values[:plan_type] && owner.values[:plan_type].match(/free|special/).nil?
+    owner.stripe_customer_id && owner.stripe_subscription_id && !owner.plan_ended && owner.values[:plan_type] && owner.values[:plan_type].match(/free|special/).nil?
   end
 
   def paypal_paying_supporter?
