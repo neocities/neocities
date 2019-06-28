@@ -7,7 +7,7 @@
       <a class="tag" href="/browse?tag=<%== Rack::Utils.escape tag.name %>"><%= tag.name %></a>
     <% end %>
 
-    <% if is_current_site %>
+    <% if is_current_site && request.path != '/' %>
       <div class="clear">
         <% if is_current_site && current_site.tags_dataset.count < Site::MAXIMUM_TAGS %>
           <a href="#addTag" data-toggle="modal">Add</a>
