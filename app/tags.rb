@@ -5,7 +5,7 @@ post '/tags/add' do
   if current_site.valid?
     current_site.save_tags
   else
-    flash[:errors] = current_site.errors.first
+    flash[:errors] = current_site.errors.first.last.first
   end
 
   redirect request.referer

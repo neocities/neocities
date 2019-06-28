@@ -2,11 +2,9 @@
   <% if flash.keys.length > 0 %>
     <div class="row content">
       <div class="alert txt-Center">
-        <p style="padding:5px">
           <% flash.keys.each do |key| %>
             <%= flash[key] %>
           <% end %>
-        </p>
       </div>
     </div>
   <% end %>
