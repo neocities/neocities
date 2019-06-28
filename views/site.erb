@@ -26,9 +26,10 @@
         <p><a href="<%= site.latest_archive.url %>" style="margin-right: 5px"><%= site.latest_archive.ipfs_hash %></a><small style="font-size: 7pt"><a href="/permanent-web">(what is this?)</a></small></p>
       <% end %>
       -->
+      <% follow_count = site.follows.count %>
       <div class="stats">
         <div class="stat"><strong><%= site.views.format_large_number %></strong> <span>view<%= site.views == 1 ? '' : 's' %></span></div>
-        <div class="stat"><strong><%= site.follow_count.format_large_number %></strong> <span>follower<%= site.follow_count == 1 ? '' : 's' %></span></div>
+        <div class="stat"><strong><%= follow_count.format_large_number %></strong> <span>follower<%= follow_count == 1 ? '' : 's' %></span></div>
         <div class="stat"><strong><%= site.changed_count.format_large_number %></strong> <span>update<%= site.changed_count == 1 ? '' : 's' %></span></div>
         <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div>
       </div>
@@ -41,7 +42,7 @@
           <a href="/site/<%= site.username %>/archives" class="btn-Action edit"><i class="fa fa-history" title="Archives"></i> Archives</a>
         <% end %>
 
-        <% if current_site && current_site != site && current_site.can_follow?(site) %>
+        <% if current_site && current_site != site %>
           <% is_following = current_site.is_following?(site) %>
 
           <a id="followLink" href="#" onclick="Site.toggleFollow(<%= site.id %>, '<%= csrf_token %>'); return false" class="btn-Action <%= is_following ? 'is-following' : '' %>">

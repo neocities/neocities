@@ -351,11 +351,20 @@ class Site < Sequel::Model
     return false
   end
 
-  def can_follow?(site)
-    return false if site.id == self.id # Do not follow yourself
-    return false if site.owned_by?(self) # Do not follow your own sites
-    # return false if account_sites_follow?(site) # Do not follow if any of your other sites follow
+  def scorable_follow?(site)
+    return false if site.id == self.id # Do not count follow of yourself
+    return false if site.owned_by?(self) # Do not count follow of your own sites
+    return false if account_sites_follow?(site) # Do not count follow if any of your other sites follow
     true
+  end
+
+  def scorable_follow_count
+    score_follow_count = 0
+
+    follows_dataset.all.each do |follow|
+      score_follow_count += 1 if scorable_follow?(follow.actioning_site)
+    end
+    score_follow_count
   end
 
   def toggle_follow(site)
@@ -364,15 +373,13 @@ class Site < Sequel::Model
         follow = followings_dataset.filter(site_id: site.id).first
         site.events_dataset.filter(follow_id: follow.id).delete
         follow.delete
-        DB['update sites set follow_count=follow_count-1 where id=?', site.id].first
+        DB['update sites set follow_count=follow_count-1 where id=?', site.id].first if scorable_follow?(site)
       end
       false
     else
-      return false unless can_follow?(site)
-
       DB.transaction do
         follow = add_following site_id: site.id
-        DB['update sites set follow_count=follow_count+1 where id=?', site.id].first
+        DB['update sites set follow_count=follow_count+1 where id=?', site.id].first if scorable_follow?(site)
         Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
       end
 
