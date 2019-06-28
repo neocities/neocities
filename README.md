@@ -1,3 +1,5 @@
+### NOTE: THIS IS NOT FOR NEOCITIES SUPPORT! Any issues filed not related to the source code itself will be closed. For support please contact: https://neocities.org/contact
+
 # Neocities.org
 
 [![Build Status](https://travis-ci.org/neocities/neocities.png?branch=master)](https://travis-ci.org/neocities/neocities)
