@@ -98,8 +98,9 @@
               <% end %>
             </div>
             <div class="col col-50">
+              <% follow_count = site.follows.count %>
               <div><strong><%= site.views.format_large_number %></strong> views</div>
-              <div><strong><%= site.follow_count.format_large_number %></strong> follower<%= site.follow_count == 1 ? '' : 's' %></div>
+              <div><strong><%= follow_count.format_large_number %></strong> follower<%= follow_count == 1 ? '' : 's' %></div>
             </div>
           </div>
         </div>
