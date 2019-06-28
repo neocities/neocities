@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'sinatra', '2.0.3'
+gem 'sinatra', '2.0.5'
 gem 'redis'
 gem 'redis-namespace'
 gem 'sequel'
@@ -9,7 +9,7 @@ gem 'sinatra-flash',      require: 'sinatra/flash'
 gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
 gem 'puma',               require: nil
 gem 'rmagick',            require: nil
-gem 'sidekiq', '~> 4.1.2'
+gem 'sidekiq', '~> 4.2.10'
 gem 'mail'
 gem 'tilt'
 gem 'erubis'

@@ -152,6 +152,7 @@ GEM
       net-ssh (>= 2.6.5)
     net-ssh (5.1.0)
     netrc (0.11.0)
+    nio4r (2.3.1)
     nokogiri (1.10.1)
       mini_portile2 (~> 2.4.0)
     nokogumbo (2.0.1)
@@ -171,11 +172,12 @@ GEM
       byebug (~> 10.0)
       pry (~> 0.10)
     public_suffix (3.0.3)
-    puma (3.12.0)
-    rack (2.0.6)
+    puma (4.0.0)
+      nio4r (~> 2.0)
+    rack (2.0.7)
     rack-cache (1.8.0)
       rack (>= 0.4)
-    rack-protection (2.0.3)
+    rack-protection (2.0.5)
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -221,11 +223,11 @@ GEM
       sequel (>= 4.38.0)
     shotgun (0.9.2)
       rack (>= 1.0)
-    sidekiq (4.1.4)
+    sidekiq (4.2.10)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
+      rack-protection (>= 1.5.0)
       redis (~> 3.2, >= 3.2.1)
-      sinatra (>= 1.4.7)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -233,10 +235,10 @@ GEM
     simplecov-html (0.10.2)
     simpleidn (0.1.1)
       unf (~> 0.1.4)
-    sinatra (2.0.3)
+    sinatra (2.0.5)
       mustermann (~> 1.0)
       rack (~> 2.0)
-      rack-protection (= 2.0.3)
+      rack-protection (= 2.0.5)
       tilt (~> 2.0)
     sinatra-flash (0.3.0)
       sinatra (>= 1.0.0)
@@ -342,10 +344,10 @@ DEPENDENCIES
   sequel
   sequel_pg
   shotgun
-  sidekiq (~> 4.1.2)
+  sidekiq (~> 4.2.10)
   simplecov
   simpleidn
-  sinatra (= 2.0.3)
+  sinatra (= 2.0.5)
   sinatra-flash
   sinatra-xsendfile
   stripe (= 4.2.0)
