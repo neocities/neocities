@@ -21,6 +21,4 @@
     <a href="/site/<%= site.username %>?event_id=<%= profile_comment.event.id %>"><%= profile_comment.created_at.ago %></a>
   </span>
 </div>
-<div class="content">
-  <%== sanitize_comment profile_comment.message %>
-</div>
+<div class="content"><%== sanitize_comment profile_comment.message %></div>
