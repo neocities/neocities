@@ -163,6 +163,7 @@ post '/site/:username/comment' do |username|
 
   if site.profile_comments_enabled == false ||
      params[:message].empty? ||
+     params[:message].length > Site::MAX_COMMENT_SIZE ||
      site.is_blocking?(current_site) ||
      current_site.is_blocking?(site) ||
      current_site.commenting_allowed? == false ||
