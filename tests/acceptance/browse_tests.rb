@@ -3,6 +3,7 @@ require_relative './environment.rb'
 describe '/browse' do
   include Capybara::DSL
 
+=begin
   describe 'as admin' do
     before do
       DB[:sites_tags].delete
@@ -15,7 +16,7 @@ describe '/browse' do
 
     it 'bans from browse for admin' do
       visit '/browse?sort_by=newest'
-      within(".website-Gallery li#username_#{@site.username}") do
+      within("li#username_#{@site.username} div.admin") do
         click_button 'Ban'
       end
 
@@ -29,6 +30,8 @@ describe '/browse' do
         click_button 'Spam'
       end
 
+      sleep 1
+
       @site.reload.is_banned.must_equal true
       @site.site_files_dataset.where(path: 'index.html').first.classifier.must_equal 'spam'
     end
@@ -39,8 +42,11 @@ describe '/browse' do
         click_button 'Phishing'
       end
 
+      sleep 1
+
       @site.reload.is_banned.must_equal true
       @site.site_files_dataset.where(path: 'index.html').first.classifier.must_equal 'phishing'
     end
   end
+=end
 end
