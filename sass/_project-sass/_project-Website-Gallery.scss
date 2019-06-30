@@ -5,19 +5,19 @@
 .website-Gallery{
   list-style:none;
   padding:30px 24px;
-  
+
   li{
     @extend .col-25;
     float:left;
     margin-bottom:$spacing*2;
     color: #666;
     @include box-shadow(0px 1px 3px 0px rgba(0, 0, 0, 0.18));
-    
+
     @media (max-device-width:480px), screen and (max-width:800px){
       width:50%
     }
   }
-  
+
 //  li a {
 //    display:block;
 //  }
@@ -49,6 +49,14 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .admin {
+      width: 100%;
+      float: left;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .site-tags .fa-tag {
       vertical-align: -2px;
     }
@@ -67,20 +75,20 @@
       float: left;
     }
   }
-  
+
   &.int-Gall{
-    
+
     li {
       margin:0 .5% 12px;
       width:24%;
-      
+
       background-color: white;
       border: 9px solid white;
       overflow: hidden;
 
       @media (max-width:1000px){
         width:32%
-      }      
+      }
       @media (max-device-width:480px), screen and (max-width:800px){
         width:48%;
         margin:0 1% 12px;
@@ -88,7 +96,7 @@
     }
     &.suggestions {
       padding: .25em 0 0 0;
-      
+
       li {
         margin: 0 1.33% 12px 0;
         width: 32%;
@@ -96,10 +104,10 @@
 
         @media (max-width:1000px){
           width:48%
-        } 
+        }
       }
     }
-    
+
     @media (max-device-width:480px), screen and (max-width:800px){
       padding: 4% 2%;
     }
@@ -148,7 +156,7 @@
     width: 14.5%;
     margin-right: 1.5%;
     margin-bottom: 0;
-    
+
     @media (max-device-width:480px), screen and (max-width:800px){
       width:45%;
       margin-bottom: 8px;
