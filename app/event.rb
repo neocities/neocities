@@ -16,7 +16,8 @@ post '/event/:event_id/comment' do |event_id|
   if(site.is_blocking?(current_site) ||
      site.profile_comments_enabled == false ||
      current_site.commenting_allowed? == false ||
-     (current_site.is_a_jerk? && event.site_id != current_site.id && !site.is_following?(current_site)))
+     (current_site.is_a_jerk? && event.site_id != current_site.id && !site.is_following?(current_site)) ||
+     params[:message].length > Site::MAX_COMMENT_SIZE)
     return {result: 'error'}.to_json
   end
 
@@ -28,7 +29,8 @@ post '/event/:event_id/update_profile_comment' do |event_id|
   require_login
   content_type :json
   event = Event[id: event_id]
-  return {result: 'error'}.to_json unless current_site.id == event.profile_comment.actioning_site_id
+  return {result: 'error'}.to_json unless (current_site.id == event.profile_comment.actioning_site_id &&
+                                           params[:message].length <= Site::MAX_COMMENT_SIZE)
 
   event.profile_comment.update message: params[:message]
   return {result: 'success'}.to_json
