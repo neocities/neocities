@@ -30,7 +30,10 @@ include WebMock::API
 require 'webmock/minitest'
 require 'sidekiq/testing'
 
-WebMock.disable_net_connect! allow_localhost: true
+WebMock.disable_net_connect!({
+  allow_localhost: true,
+  allow: 'chromedriver.storage.googleapis.com'
+})
 WebMock.enable!
 
 WebMock.globally_stub_request do |request|
