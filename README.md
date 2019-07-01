@@ -19,7 +19,6 @@ vagrant up --provision
 
 ```
 vagrant ssh
-cd /vagrant
 bundle exec rackup -o 0.0.0.0
 ```
 
