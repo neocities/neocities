@@ -465,3 +465,17 @@ task :dedupe_site_blocks => [:environment] do
     duped_block.destroy
   end
 end
+
+desc 'ml_screenshots_list_dump'
+task :ml_screenshots_list_dump => [:environment] do
+  ['phishing', 'spam', 'ham', nil].each do |classifier|
+    File.open("./files/screenshot-urls-#{classifier.to_s}.txt", 'w') do |fp|
+      SiteFile.where(classifier: classifier).where(path: 'index.html').each do |site_file|
+        begin
+          fp.write "#{site_file.site.screenshot_url('index.html', Site::SCREENSHOT_RESOLUTIONS.first)}\n"
+        rescue NoMethodError
+        end
+      end
+    end
+  end
+end
