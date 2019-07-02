@@ -15,7 +15,7 @@
 <% site_follows = site.follows %>
 <% if (!is_current_site && !site_follows.empty?) || is_current_site %>
   <div class="follower-list">
-    <h3><a href="/site/<%= site.username %>/followers">Sites that follow you</a></h3>
+    <h3><a href="/site/<%= site.username %>/followers">Followers</a></h3>
     <% if site_follows.empty? %>
       No followers yet.
     <% else %>
