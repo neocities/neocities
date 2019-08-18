@@ -746,13 +746,13 @@ class Site < Sequel::Model
     if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
       rbox = Rye::Box.new $config['ipfs_ssh_host'], user: $config['ipfs_ssh_user']
       begin
-        cidv0    = rbox.ipfs(:add, :r, :Q, "sites/#{self.class.sharding_dir self.username}/#{self.username.gsub(/\/|\.\./, '')}").first
+        cidv0    = rbox.ipfs(:add, :r, :H, :Q, "sites/#{self.class.sharding_dir self.username}/#{self.username.gsub(/\/|\.\./, '')}").first
         cidv1b32 = rbox.ipfs(:cid, :base32, cidv0).first
       ensure
         rbox.disconnect
       end
     else
-      line = Terrapin::CommandLine.new('ipfs', 'add -r -Q :path')
+      line = Terrapin::CommandLine.new('ipfs', 'add -r -H -Q :path')
       response = line.run(path: files_path).strip
       line = Terrapin::CommandLine.new('ipfs', 'cid base32 :hash')
       cidv1b32 = line.run(hash: response).strip
