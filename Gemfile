@@ -17,7 +17,7 @@ gem 'stripe', '4.2.0' #, source: 'https://code.stripe.com/'
 gem 'terrapin'
 gem 'zipruby'
 gem 'sass', require: nil
-gem 'dav4rack', git: 'https://github.com/planio-gmbh/dav4rack.git', branch: 'redmine-storage'
+gem 'dav4rack', git: 'https://github.com/neocities/dav4rack.git', ref: '3ecde122a0b8bcc1d85581dc85ef3a7120b6a8f0'
 gem 'filesize'
 gem 'thread'
 gem 'rack-cache'

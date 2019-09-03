@@ -43,19 +43,31 @@ map '/webdav' do
     end
 
     if env['REQUEST_METHOD'] == 'MOVE'
-      tmpfile = Tempfile.new 'moved_file'
-      tmpfile.close
 
       destination = env['HTTP_DESTINATION'].match(/^.+\/webdav(.+)$/i).captures.first
 
-      FileUtils.cp site.files_path(env['PATH_INFO']), tmpfile.path
+      env['PATH_INFO'] = env['PATH_INFO'][1..env['PATH_INFO'].length] if env['PATH_INFO'][0] == '/'
 
-      DB.transaction do
-        @site.store_files [{filename: destination, tempfile: tmpfile}]
-        @site.delete_file env['PATH_INFO']
-      end
+      site_file = @site.site_files.select {|s| s.path == env['PATH_INFO']}.first
+      res = site_file.rename destination
 
       return [201, {}, ['']]
+    end
+
+    if env['REQUEST_METHOD'] == 'COPY'
+      return [501, {}, ['']]
+    end
+
+    if env['REQUEST_METHOD'] == 'LOCK'
+      return [501, {}, ['']]
+    end
+
+    if env['REQUEST_METHOD'] == 'UNLOCK'
+      return [501, {}, ['']]
+    end
+
+    if env['REQUEST_METHOD'] == 'PROPPATCH'
+      return [501, {}, ['']]
     end
 
     if env['REQUEST_METHOD'] == 'DELETE'

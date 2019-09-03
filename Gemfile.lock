@@ -1,12 +1,13 @@
 GIT
-  remote: https://github.com/planio-gmbh/dav4rack.git
-  revision: ec491dccab4bcfa846bb4616c7177fb09819981c
-  branch: redmine-storage
+  remote: https://github.com/neocities/dav4rack.git
+  revision: 3ecde122a0b8bcc1d85581dc85ef3a7120b6a8f0
+  ref: 3ecde122a0b8bcc1d85581dc85ef3a7120b6a8f0
   specs:
-    dav4rack (0.3.0)
-      nokogiri (>= 1.4.2)
+    dav4rack (1.1.0)
+      addressable (>= 2.5.0)
+      nokogiri (>= 1.6.0)
       ox (>= 2.1.0)
-      rack (>= 1.1.0)
+      rack (>= 1.6)
       uuidtools (~> 2.1.1)
 
 GEM
@@ -387,4 +388,4 @@ DEPENDENCIES
   zipruby
 
 BUNDLED WITH
-   2.0.1
+   2.0.2
