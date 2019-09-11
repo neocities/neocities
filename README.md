@@ -15,7 +15,7 @@ Neocities can be quickly launched in development mode with [Vagrant](https://www
 vagrant up --provision
 ```
 
-![Vagrant takes a while, make a pizza while waiting](http://i.imgur.com/vfIJPXP.png)
+![Vagrant takes a while, make a pizza while waiting](https://i.imgur.com/dxpKVRi.gif)
 
 ```
 vagrant ssh
