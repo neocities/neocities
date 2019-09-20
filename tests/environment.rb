@@ -69,7 +69,7 @@ end
 
 # Clean up junk from tests
 [Site::SITE_FILES_ROOT, Site::SCREENSHOTS_ROOT, Site::THUMBNAILS_ROOT].each do |p|
+  FileUtils.rm_rf p
   FileUtils.mkdir_p p
-  FileUtils.rm_rf File.join(p, '*')
   File.write File.join(p, '.gitignore'), '*'
 end
