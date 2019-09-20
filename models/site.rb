@@ -801,7 +801,9 @@ class Site < Sequel::Model
   end
 
   def create_directory(path)
+    path = scrubbed_path path
     relative_path = files_path path
+
     if Dir.exists?(relative_path) || File.exist?(relative_path)
       return 'Directory (or file) already exists.'
     end
@@ -820,7 +822,6 @@ class Site < Sequel::Model
       raise ArgumentError, 'directory name cannot be empty' if path_site_file == ''
 
       site_file = SiteFile.where(site_id: self.id, path: path_site_file).first
-
       if site_file.nil?
         SiteFile.create(
           site_id: self.id,

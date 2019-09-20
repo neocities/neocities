@@ -78,7 +78,7 @@ describe 'site_files' do
       @site.site_files.select {|sf| sf.path =~ /test2\/test.jpg/}.length.must_equal 1
       @site.site_files.select {|sf| sf.path =~ /test\/test.jpg/}.length.must_equal 0
 
-      PurgeCacheWorker.jobs.collect {|p| p['args'].last}.must_equal ["/test/test.jpg", "/test/index.html", "/test/", "test", "test2", "test/test.jpg", "test2/test.jpg", "test/index.html", "test/", "test2/index.html", "test2/"]
+      PurgeCacheWorker.jobs.collect {|p| p['args'].last}.sort.must_equal ["/test/test.jpg", "/test/index.html", "/test/", "test", "test2", "test/test.jpg", "test2/test.jpg", "test/index.html", "test/", "test2/index.html", "test2/"].sort
     end
 
     it 'doesnt wipe out existing file' do
@@ -448,6 +448,13 @@ describe 'site_files' do
 
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
       @site.reload.changed_count.must_equal 2
+    end
+
+    describe 'directory create' do
+      it 'scrubs ../ from directory' do
+        @site.create_directory '../../test'
+        @site.site_files.select {|site_file| site_file.path =~ /\.\./}.length.must_equal 0
+      end
     end
 
     describe 'classification' do
