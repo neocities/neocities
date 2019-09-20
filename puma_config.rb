@@ -1,6 +1,6 @@
 require 'facter'
 
-#threads 1, 1
+threads 5, 5
 environment 'production'
 #daemonize
 pidfile '/var/run/neocities/neocities.pid'
