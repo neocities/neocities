@@ -70,7 +70,6 @@ group :test do
   gem 'rack-test',                      require: 'rack/test'
   gem 'mocha',                          require: nil
   gem 'rake',                           require: nil
-  gem 'poltergeist'
   gem 'capybara',                       require: nil #, '2.10.1',     require: nil
   gem 'rack_session_access',            require: nil
   gem 'webmock', '3.5.1',               require: nil
@@ -80,5 +79,4 @@ group :test do
   gem 'simplecov',                      require: nil
   gem 'm'
   gem 'apparition'
-  gem 'poltergeist', require: nil
 end

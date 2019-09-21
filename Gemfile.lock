@@ -43,7 +43,6 @@ GEM
       xpath (~> 3.2)
     certified (1.0.0)
     climate_control (0.2.0)
-    cliver (0.3.2)
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
@@ -164,10 +163,6 @@ GEM
     ox (2.11.0)
     paypal-recurring (1.1.0)
     pg (1.1.4)
-    poltergeist (1.18.1)
-      capybara (>= 2.1, < 4)
-      cliver (~> 0.3.1)
-      websocket-driver (>= 0.2.0)
     progress (3.5.2)
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -331,7 +326,6 @@ DEPENDENCIES
   msgpack
   paypal-recurring
   pg
-  poltergeist
   pry
   pry-byebug
   puma
