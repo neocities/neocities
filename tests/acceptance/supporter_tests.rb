@@ -1,14 +1,10 @@
 require_relative './environment.rb'
 
-Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, js_errors: false)
-end
-
 describe '/supporter' do
   include Capybara::DSL
 
   before do
-    Capybara.default_driver = :poltergeist
+    Capybara.default_driver = :apparition
     Capybara.reset_sessions!
 
     @site = Fabricate :site
@@ -33,14 +29,16 @@ describe '/supporter' do
 
   it 'should work for fresh signup' do
     visit '/supporter'
-    find('#cc_number', visible: false).set '4242424242424242'
-    find('#cc_exp_month', visible: false).set '01'
-    find('#cc_exp_year', visible: false).set Date.today.next_year.year.to_s[2..3]
-    find('#cc_name', visible: false).set 'Penelope'
-    find('#cc_cvc', visible: false).set '123'
-    find('#stripe_token', visible: false).set @stripe_helper.generate_card_token
+    find('.cc-number input[type=text]').set '4242424242424242'
+    all('.cc-exp input[type=text]').first.set '01'
+    all('.cc-exp input[type=text]').last.set Date.today.next_year.year.to_s[2..3]
+    find('.cc-name').set 'Penelope'
+    all('.flip-tab').first.click
+    find('.cc-cvc').set '123'
+    page.evaluate_script("document.getElementById('stripe_token').value = '#{@stripe_helper.generate_card_token}'")
     click_link 'Upgrade for $5/mo'
     page.current_path.must_equal '/supporter/thanks'
+    all('.txt-Center')
     page.body.must_match /You have become a Neocities Supporter/
     @site.reload
     @site.stripe_customer_id.wont_be_nil

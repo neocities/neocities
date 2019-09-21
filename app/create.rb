@@ -69,13 +69,18 @@ post '/create' do
       return {result: 'error'}.to_json
     end
 
-    if !@site.valid? || Site.ip_create_limit?(request.ip)
+    if Site.ip_create_limit?(request.ip)
       flash[:error] = 'Your IP address has created too many sites, please try again later or contact support.'
       return {result: 'error'}.to_json
     end
 
     if Site.disposable_mx_record?(@site.email)
       flash[:error] = 'Cannot use a disposable email address.'
+      return {result: 'error'}.to_json
+    end
+
+    if !@site.valid?
+      flash[:error] = @site.errors.first.last.first
       return {result: 'error'}.to_json
     end
   end

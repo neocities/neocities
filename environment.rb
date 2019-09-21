@@ -105,7 +105,7 @@ Sequel::Model.plugin :validation_helpers
 Sequel::Model.plugin :force_encoding, 'UTF-8'
 Sequel::Model.plugin :defaults_setter
 Sequel::Model.plugin :create_timestamp
-Sequel.default_timezone = 'UTC'
+Sequel.default_timezone = :utc
 Sequel::Migrator.apply DB, './migrations'
 
 Stripe.api_key = $config['stripe_api_key']

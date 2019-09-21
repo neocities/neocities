@@ -1,9 +1,5 @@
 require_relative './environment.rb'
 
-Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, js_errors: false)
-end
-
 describe 'signup' do
   include Capybara::DSL
 
@@ -28,10 +24,9 @@ describe 'signup' do
   end
 
   before do
-    Capybara.default_driver = :poltergeist
+    Capybara.default_driver = :apparition
     Capybara.reset_sessions!
     visit_signup
-    page.must_have_content 'Neocities' # Used to force load wait
   end
 
   after do
@@ -65,15 +60,15 @@ describe 'signup' do
   end
 
   it 'fails if site with same ip has been banned' do
-    @banned_site = Fabricate :site
-    @banned_site.is_banned = true
-    @banned_site.save_changes
-
+    @banned_site = Fabricate :site, ip: '127.0.0.1'
+    @banned_site.ban!
     fill_in_valid
     click_signup_button
+    site = Site[username: @site[:username]]
     Site[username: @site[:username]].must_be_nil
     current_path.must_equal '/'
     page.wont_have_content 'Welcome to Neocities'
+    @banned_site.update ip: nil
   end
 
   it 'fails if IP is banned from blocked ips list' do

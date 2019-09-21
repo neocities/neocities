@@ -1,9 +1,5 @@
 require_relative './environment.rb'
 
-Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, js_errors: false)
-end
-
 describe 'signup' do
   include Capybara::DSL
 
@@ -17,7 +13,7 @@ describe 'signup' do
   end
 
   before do
-    Capybara.default_driver = :poltergeist
+    Capybara.default_driver = :apparition
     Capybara.reset_sessions!
     visit '/education'
     page.must_have_content 'Neocities' # Used to force load wait

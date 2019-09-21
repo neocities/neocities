@@ -1,13 +1,13 @@
 require_relative './environment.rb'
 require 'rack/test'
 
-include Rack::Test::Methods
-
-def app
-  Sinatra::Application
-end
-
 describe 'tipping' do
+  include Rack::Test::Methods
+
+  def app
+    Sinatra::Application
+  end
+
   before do
     EmailWorker.jobs.clear
     @site = Fabricate :site

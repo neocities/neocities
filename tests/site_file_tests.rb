@@ -1,20 +1,21 @@
 require_relative './environment.rb'
-
-include Rack::Test::Methods
-
-def app
-  Sinatra::Application
-end
-
-def upload(hash)
-  post '/site_files/upload', hash.merge(csrf_token: 'abcd'), {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
-end
-
-def delete_file(hash)
-  post '/site_files/delete', hash.merge(csrf_token: 'abcd'), {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
-end
+require 'rack/test'
 
 describe 'site_files' do
+  include Rack::Test::Methods
+
+  def app
+    Sinatra::Application
+  end
+
+  def upload(hash)
+    post '/site_files/upload', hash.merge(csrf_token: 'abcd'), {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+  end
+
+  def delete_file(hash)
+    post '/site_files/delete', hash.merge(csrf_token: 'abcd'), {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+  end
+
   before do
     @site = Fabricate :site
     ThumbnailWorker.jobs.clear
@@ -32,9 +33,10 @@ describe 'site_files' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
 
-      @site.site_files.last.path.must_equal 'test.jpg'
-      @site.site_files.last.rename('derp.jpg')
-      @site.site_files.last.path.must_equal('derp.jpg')
+      testfile = @site.site_files_dataset.where(path: 'test.jpg').first
+      testfile.wont_equal nil
+      testfile.rename 'derp.jpg'
+      @site.site_files_dataset.where(path: 'derp.jpg').first.wont_equal nil
       PurgeCacheWorker.jobs.first['args'].last.must_equal '/test.jpg'
       File.exist?(@site.files_path('derp.jpg')).must_equal true
     end
@@ -43,21 +45,25 @@ describe 'site_files' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
 
-      @site.site_files.last.path.must_equal 'test.jpg'
-      res = @site.site_files.last.rename('dasharezone.exe')
+      testfile = @site.site_files_dataset.where(path: 'test.jpg').first
+      res = testfile.rename('dasharezone.exe')
       res.must_equal [false, 'unsupported file type']
-      @site.site_files.last.path.must_equal('test.jpg')
+      @site.site_files_dataset.where(path: 'test.jpg').first.wont_equal nil
     end
 
 
     it 'works for directory' do
       @site.create_directory 'dirone'
-      @site.site_files.last.path.must_equal 'dirone'
-      @site.site_files.last.is_directory.must_equal true
-      res = @site.site_files.last.rename('dasharezone')
+      @site.site_files.select {|sf| sf.path == 'dirone'}.length.must_equal 1
+
+      dirone = @site.site_files_dataset.where(path: 'dirone').first
+      dirone.wont_equal nil
+      dirone.is_directory.must_equal true
+      res = dirone.rename('dasharezone')
       res.must_equal [true, nil]
-      @site.site_files.last.path.must_equal('dasharezone')
-      @site.site_files.last.is_directory.must_equal true
+      dasharezone = @site.site_files_dataset.where(path: 'dasharezone').first
+      dasharezone.wont_equal nil
+      dasharezone.is_directory.must_equal true
 
       PurgeCacheWorker.jobs.first['args'].last.must_equal 'dirone'
       PurgeCacheWorker.jobs.last['args'].last.must_equal 'dasharezone'
@@ -91,14 +97,14 @@ describe 'site_files' do
         'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'image/jpeg')
       )
 
-      res = @site.site_files.last.rename('test/test.jpg')
+      res = @site.site_files_dataset.where(path: 'test/index.html').first.rename('test/test.jpg')
       res.must_equal [false, 'file already exists']
     end
 
     it 'doesnt wipe out existing dir' do
       @site.create_directory 'dirone'
       @site.create_directory 'dirtwo'
-      res = @site.site_files.last.rename 'dirone'
+      res = @site.site_files.select{|sf| sf.path == 'dirtwo'}.first.rename 'dirone'
       res.must_equal [false, 'directory already exists']
     end
 
@@ -110,17 +116,17 @@ describe 'site_files' do
     it 'works with unicode characters' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
-      @site.site_files.last.rename("HELL💩؋.jpg")
-      @site.site_files.last.path.must_equal "HELL💩؋.jpg"
+      @site.site_files_dataset.where(path: 'test.jpg').first.rename("HELL💩؋.jpg")
+      @site.site_files_dataset.where(path: "HELL💩؋.jpg").first.wont_equal nil
     end
 
     it 'scrubs weird carriage return shit characters' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
       proc {
-        @site.site_files.last.rename("\r\n\t.jpg")
+        @site.site_files_dataset.where(path: 'test.jpg').first.rename("\r\n\t.jpg")
       }.must_raise ArgumentError
-      @site.site_files.last.path.must_equal "test.jpg"
+      @site.site_files_dataset.where(path: 'test.jpg').first.wont_equal nil
     end
   end
 

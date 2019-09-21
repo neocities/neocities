@@ -324,7 +324,7 @@ class Site < Sequel::Model
       return false if ip.blank?
       return true if Site.where(is_banned: true).
         where(ip: ip).
-        where(['updated_at > ?', Time.now-BANNED_TIME]).
+        where(['banned_at > ?', Time.now-BANNED_TIME]).
         first
 
       return true if BlockedIp[ip]
