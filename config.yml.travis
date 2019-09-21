@@ -3,9 +3,6 @@ database_pool: 1
 session_secret: 's3cr3t'
 recaptcha_public_key: '1234'
 recaptcha_private_key: '5678'
-phantomjs_url:
-  - http://localhost:8910
-ip_hash_salt: "400$8$1$fc21863da5d531c1"
 email_unsubscribe_token: "somethingrandomderrrrp"
 paypal_api_username: derp
 paypal_api_password: ing

@@ -2,9 +2,9 @@ ENV['RACK_ENV'] = 'test'
 raise 'Forget it.' if ENV['RACK_ENV'] == 'production'
 
 require 'coveralls'
-#require 'simplecov'
+require 'simplecov'
 require 'mock_redis'
-=begin
+
 SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
@@ -16,7 +16,7 @@ SimpleCov.start do
 end
 
 SimpleCov.command_name 'minitest'
-=end
+
 require 'rack_session_access'
 require './environment'
 require './app'

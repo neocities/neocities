@@ -387,11 +387,6 @@ class Site < Sequel::Model
     end
   end
 
-  def tip_amount
-    return '0.00' if tips_dataset.count == 0
-    '31.337'
-  end
-
   def username=(val)
     @redis_proxy_change = true
     @old_username = self.username
