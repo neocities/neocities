@@ -24,7 +24,11 @@ describe 'signup' do
   end
 
   it 'fails for unwhitelisted tag' do
-    fill_in_valid
+    @site = Fabricate.attributes_for(:site)
+    @class_tag = "mrteacher" # SecureRandom.uuid.gsub('-', '')[0..Tag::NAME_LENGTH_MAX-1]
+    fill_in 'username',        with: @site[:username]
+    fill_in 'password',        with: @site[:password]
+    fill_in 'email',           with: @site[:email]
     fill_in 'new_tags_string', with: 'nope'
     click_button 'Create My Site'
     page.wont_have_content /Let's Get Started/
