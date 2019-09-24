@@ -36,6 +36,7 @@ class Site < Sequel::Model
     image/webp
     image/x-xcf
     application/epub+zip
+    message/rfc822
   }
 
   VALID_EXTENSIONS = %w{
