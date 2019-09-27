@@ -37,6 +37,7 @@ class Site < Sequel::Model
     image/x-xcf
     application/epub+zip
     message/rfc822
+    application/font-sfnt
   }
 
   VALID_EXTENSIONS = %w{
