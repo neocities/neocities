@@ -155,7 +155,6 @@ GEM
       net-ssh (>= 2.6.5, < 6.0.0)
     net-ssh (5.2.0)
     netrc (0.11.0)
-    nio4r (2.5.1)
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     nokogumbo (2.0.1)
@@ -171,8 +170,7 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.10)
     public_suffix (4.0.1)
-    puma (4.1.1)
-      nio4r (~> 2.0)
+    puma (3.12.1)
     rack (2.0.7)
     rack-cache (1.9.0)
       rack (>= 0.4)
@@ -328,7 +326,7 @@ DEPENDENCIES
   pg
   pry
   pry-byebug
-  puma
+  puma (= 3.12.1)
   rack-cache
   rack-test
   rack_session_access
