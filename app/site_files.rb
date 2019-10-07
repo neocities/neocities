@@ -125,13 +125,12 @@ post '/site_files/upload' do
 
     unless params[:file_paths].nil? || params[:file_paths].empty? || params[:file_paths].length == 0
       file_path = params[:file_paths][i]
-
       unless file_path.nil?
         dir_name += '/' + Pathname(file_path).dirname.to_s
       end
     end
 
-    file[:filename] = "#{dir_name}/#{file[:filename]}"
+    file[:filename] = "#{dir_name}/#{site.scrubbed_path file[:filename]}"
     if current_site.file_size_too_large? file[:tempfile].size
       file_upload_response "#{file[:filename]} is too large, upload cancelled."
     end

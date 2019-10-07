@@ -337,7 +337,8 @@
       })
 
       this.on("sending", function(file) {
-        $('#uploads').append('<input type="hidden" name="file_paths[]" value="'+file.fullPath+'">')
+        if(file.fullPath !== undefined)
+          $('#uploads').append('<input type="hidden" name="file_paths[]" value="'+file.fullPath+'">')
       })
     }
   }
