@@ -1607,23 +1607,17 @@ class Site < Sequel::Model
       DB["update sites set space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?", self.id].first
 
       if opts[:new_install] != true
-        if files.select {|f| f[:filename] =~ /^\/?index.html$/}.length > 0 || site_changed == true
-          index_changed = true
-        else
-          index_changed = false
+        if files.select {|f| f[:filename] =~ /^\/?index.html$/}.length > 0 && site_changed != true && !empty_index?
+          DB[:sites].where(id: self.id).update site_changed: true
         end
-
-        index_changed = false if empty_index?
 
         time = Time.now
 
-        sql = DB["update sites set site_changed=?, site_updated_at=?, updated_at=?, changed_count=changed_count+1 where id=?",
-          index_changed,
+        DB["update sites set site_updated_at=?, updated_at=?, changed_count=changed_count+1 where id=?",
           time,
           time,
           self.id
-        ]
-        sql.first
+        ].first
 
         if ipfs_archiving_enabled == true
           ArchiveWorker.perform_in Archive::ARCHIVE_WAIT_TIME, self.id
