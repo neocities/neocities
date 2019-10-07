@@ -53,21 +53,23 @@ class Site < Sequel::Model
   VALID_HOSTNAME = /^[a-z0-9][a-z0-9-]+?[a-z0-9]$/i # http://tools.ietf.org/html/rfc1123
 
   # FIXME smarter DIR_ROOT discovery
-  DIR_ROOT             = './'
-  TEMPLATE_ROOT        = File.join DIR_ROOT, 'views', 'templates'
-  PUBLIC_ROOT          = File.join DIR_ROOT, 'public'
-  SITE_FILES_ROOT      = File.join PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites')
-  SCREENSHOTS_ROOT     = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_screenshots_test' : 'site_screenshots'))
-  THUMBNAILS_ROOT      = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_thumbnails_test' : 'site_thumbnails'))
-  SCREENSHOTS_URL_ROOT = ENV['RACK_ENV'] == 'test' ? '/site_screenshots_test' : '/site_screenshots'
-  THUMBNAILS_URL_ROOT  = ENV['RACK_ENV'] == 'test' ? '/site_thumbnails_test' : '/site_thumbnails'
-  DELETED_SITES_ROOT   = File.join PUBLIC_ROOT, 'deleted_sites'
-  BANNED_SITES_ROOT    = File.join PUBLIC_ROOT, 'banned_sites'
-  IMAGE_REGEX          = /jpg|jpeg|png|bmp|gif/
-  LOSSLESS_IMAGE_REGEX = /png|bmp|gif/
-  LOSSY_IMAGE_REGEX    = /jpg|jpeg/
-  HTML_REGEX           = /.html$|.htm$/
-  MAX_COMMENT_SIZE     = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
+  DIR_ROOT               = './'
+  TEMPLATE_ROOT          = File.join DIR_ROOT, 'views', 'templates'
+  PUBLIC_ROOT            = File.join DIR_ROOT, 'public'
+  SITE_FILES_ROOT        = File.join PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'sites_test' : 'sites')
+  SCREENSHOTS_ROOT       = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_screenshots_test' : 'site_screenshots'))
+  THUMBNAILS_ROOT        = File.join(PUBLIC_ROOT, (ENV['RACK_ENV'] == 'test' ? 'site_thumbnails_test' : 'site_thumbnails'))
+  SCREENSHOTS_URL_ROOT   = ENV['RACK_ENV'] == 'test' ? '/site_screenshots_test' : '/site_screenshots'
+  THUMBNAILS_URL_ROOT    = ENV['RACK_ENV'] == 'test' ? '/site_thumbnails_test' : '/site_thumbnails'
+  DELETED_SITES_ROOT     = File.join PUBLIC_ROOT, 'deleted_sites'
+  BANNED_SITES_ROOT      = File.join PUBLIC_ROOT, 'banned_sites'
+  IMAGE_REGEX            = /jpg|jpeg|png|bmp|gif/
+  LOSSLESS_IMAGE_REGEX   = /png|bmp|gif/
+  LOSSY_IMAGE_REGEX      = /jpg|jpeg/
+  HTML_REGEX             = /.html$|.htm$/
+  INDEX_HTML_REGEX       = /\/?index.html$/
+  ROOT_INDEX_HTML_REGEX  = /^\/?index.html$/
+  MAX_COMMENT_SIZE       = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
 
   SCREENSHOT_RESOLUTIONS = ['540x405', '210x158', '100x100', '50x50']
   THUMBNAIL_RESOLUTIONS  = ['210x158']
@@ -1383,6 +1385,11 @@ class Site < Sequel::Model
     "#{default_schema}://#{host}"
   end
 
+  def file_uri(path)
+    path = '/' + path unless path[0] == '/'
+    uri + (path =~ ROOT_INDEX_HTML_REGEX ? '/' : path)
+  end
+
   def title
     begin
       if values[:title].blank? || values[:title].strip.empty?
@@ -1527,7 +1534,7 @@ class Site < Sequel::Model
   end
 
   def empty_index?
-    !site_files_dataset.where(path: /^\/?index.html$/).where(sha1_hash: EMPTY_FILE_HASH).first.nil?
+    !site_files_dataset.where(path: ROOT_INDEX_HTML_REGEX).where(sha1_hash: EMPTY_FILE_HASH).first.nil?
   end
 
   def tipping_enabled?
