@@ -24,7 +24,7 @@ describe 'signup' do
   end
 
   it 'fails for unwhitelisted tag' do
-    @site = Fabricate.attributes_for(:site)
+    @site = Fabricate.attributes_for :site
     @class_tag = "mrteacher" # SecureRandom.uuid.gsub('-', '')[0..Tag::NAME_LENGTH_MAX-1]
     fill_in 'username',        with: @site[:username]
     fill_in 'password',        with: @site[:password]
@@ -49,14 +49,6 @@ describe 'signup' do
     site.is_education.must_equal true
     site.tags.length.must_equal 1
     site.tags.first.name.must_equal @class_tag
-  end
-
-  it 'fails to create for existing site' do
-    @existing_site = Fabricate :site
-    fill_in_valid
-    fill_in :username, with: @existing_site.username
-    click_button 'Create My Site'
-    page.must_have_content 'already taken'
   end
 
   it 'fails for multiple tags' do
