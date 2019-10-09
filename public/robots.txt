@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
-Sitemap: https://neocities.org/sitemap/index-root.xml
-Sitemap: https://neocities.org/sitemap/index-tags.xml
-Sitemap: https://neocities.org/sitemap/index-sites.xml
+Sitemap: https://neocities.org/sitemap/index-root.xml.gz
+Sitemap: https://neocities.org/sitemap/index-tags.xml.gz
+Sitemap: https://neocities.org/sitemap/index-sites.xml.gz
