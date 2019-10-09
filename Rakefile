@@ -547,7 +547,7 @@ task :generate_sitemap => [:environment] do
     xml.sitemapindex(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
       sorted_sites.keys.sort.each { |key|
         xml.sitemap {
-          xml.loc "https://neocities.org/sitemap/index-#{key}.xm"
+          xml.loc "https://neocities.org/sitemap/index-#{key}.xml"
           xml.lastmod Time.now.strftime("%Y-%m-%d")
         }
       }
