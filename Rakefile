@@ -559,28 +559,10 @@ task :generate_sitemap => [:environment] do
       }
     }
 
-    Zlib::GzipWriter.open File.join(sitemap_root, "index-#{key}.xml.gz") do |gz|
+    Zlib::GzipWriter.open File.join(sitemap_root, "index-sites-#{key}.xml.gz") do |gz|
       gz.write builder.to_xml(encoding: 'UTF-8')
     end
   }
-
-
-  # Create root sitemap index that links to the other ones
-  builder = Nokogiri::XML::Builder.new { |xml|
-    xml.sitemapindex(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
-      sorted_sites.keys.sort.each { |key|
-        xml.sitemap {
-          xml.loc "https://neocities.org/sitemap/index-#{key}.xml.gz"
-          xml.lastmod Time.now.strftime("%Y-%m-%d")
-        }
-      }
-    }
-  }
-
-  Zlib::GzipWriter.open File.join(sitemap_root, "index-sites.xml.gz") do |gz|
-    gz.write builder.to_xml(encoding: 'UTF-8')
-  end
-
 
   # Set basic neocities.org root paths
   builder = Nokogiri::XML::Builder.new { |xml|
