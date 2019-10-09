@@ -479,3 +479,98 @@ task :ml_screenshots_list_dump => [:environment] do
     end
   end
 end
+
+desc 'generate_sitemap'
+task :generate_sitemap => [:environment] do
+  sorted_sites = {}
+
+  sites = Site.
+    select(:id, :username, :updated_at).
+    where(site_changed: true).
+    exclude(updated_at: nil).
+    order(:follow_count.desc, :updated_at.desc).
+    all
+
+  sitemap_root = File.join Site::PUBLIC_ROOT, 'sitemap'
+  FileUtils.mkdir_p sitemap_root
+
+  sites.each do |site|
+    sharding_dir = Site.sharding_dir site.username
+    key = sharding_dir.split('/').first
+
+    site_urlset_path = File.join(sitemap_root, key, "#{site.username}.xml")
+
+    if site.is_deleted
+      FileUtils.rm site_urlset_path if File.exist? site_urlset_path
+      next
+    end
+
+    builder = Nokogiri::XML::Builder.new { |xml|
+      xml.urlset(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
+        site.site_files_dataset.where(path: /\.html?$/).all.each { |site_file|
+          xml.url {
+            xml.loc site.file_uri site_file.path
+            xml.lastmod site_file.updated_at.strftime("%Y-%m-%d")
+          }
+        }
+      }
+    }
+
+    FileUtils.mkdir_p File.join(sitemap_root, key)
+    File.write site_urlset_path, builder.to_xml(encoding: 'UTF-8')
+
+    sorted_sites[key] ||= []
+    sorted_sites[key] << site
+  end
+  sites = nil
+  GC.start
+
+  # Create XML file for each site
+  sorted_sites.keys.sort.each { |key|
+    builder = Nokogiri::XML::Builder.new { |xml|
+      xml.sitemapindex(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
+        sorted_sites[key].each { |site|
+          next if site.is_deleted
+          xml.sitemap {
+            xml.loc "https://neocities.org/sitemap/#{key}/#{site.username}.xml"
+            xml.lastmod site.updated_at.strftime("%Y-%m-%d")
+          }
+        }
+      }
+    }
+
+    File.write File.join(sitemap_root, "index-#{key}.xml"), builder.to_xml(encoding: 'UTF-8')
+  }
+
+  # Create root sitemap index that links to the other ones
+  builder = Nokogiri::XML::Builder.new { |xml|
+    xml.sitemapindex(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
+      sorted_sites.keys.sort.each { |key|
+        xml.sitemap {
+          xml.loc "https://neocities.org/sitemap/index-#{key}.xm"
+          xml.lastmod Time.now.strftime("%Y-%m-%d")
+        }
+      }
+    }
+  }
+  File.write File.join(sitemap_root, "index.xml"), builder.to_xml(encoding: 'UTF-8')
+
+  # Set basic neocities.org root paths
+  builder = Nokogiri::XML::Builder.new { |xml|
+    xml.urlset(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
+      File.read(File.join(DIR_ROOT, 'files', 'root_site_uris.txt')).each_line { |uri|
+        xml.url {
+          xml.loc uri.strip
+        }
+      }
+    }
+  }
+
+  File.write File.join(sitemap_root, 'index-root.xml'), builder.to_xml(encoding: 'UTF-8')
+
+=begin
+    Zlib::GzipWriter.open File.join(sitemap_root, "index-#{key}.xml.gz") do |gz|
+      gz.write builder.to_xml(encoding: 'UTF-8')
+    end
+=end
+end
