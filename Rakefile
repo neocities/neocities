@@ -572,7 +572,6 @@ task :generate_sitemap => [:environment] do
         xml.sitemap {
           xml.loc "https://neocities.org/sitemap/index-#{key}.xml.gz"
           xml.lastmod Time.now.strftime("%Y-%m-%d")
-          xml.changefreq 'daily'
         }
       }
     }
