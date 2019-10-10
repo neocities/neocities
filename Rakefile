@@ -488,81 +488,50 @@ task :generate_sitemap => [:environment] do
     select(:id, :username, :updated_at, :profile_enabled).
     where(site_changed: true).
     exclude(updated_at: nil).
-    order(:follow_count.desc, :updated_at.desc).
+    order(:follow_count, :updated_at).
     all
+
+  site_files = []
+
+  sites.each do |site|
+    site.site_files_dataset.exclude(path: 'not_found.html').where(path: /\.html?$/).all.each do |site_file|
+
+      if site.file_uri(site_file.path) == site.uri+'/'
+        priority = 0.5
+      else
+        priority = 0.4
+      end
+
+      site_files << [site.file_uri(site_file.path), site_file.updated_at.utc.iso8601, priority]
+    end
+  end
+
+  sites = nil
+  GC.start
 
   sitemap_root = File.join Site::PUBLIC_ROOT, 'sitemap'
   FileUtils.mkdir_p sitemap_root
 
-  sites.each do |site|
-    sharding_dir = Site.sharding_dir site.username
-    key = sharding_dir.split('/').first
+  index = 0
+  until site_files.empty?
+    sfs = site_files.pop 50000
 
-    site_urlset_path = File.join(sitemap_root, key, "#{site.username}.xml.gz")
+    file = File.open File.join(sitemap_root, "index-sites-#{index}.xml.gz"), 'w'
 
-    # Delete old records for deleted sites
-    if site.is_deleted
-      FileUtils.rm site_urlset_path if File.exist? site_urlset_path
-      next
+    Zlib::GzipWriter.open File.join(sitemap_root, "index-sites-#{index}.xml.gz") do |gz|
+      gz.write %{<?xml version="1.0" encoding="UTF-8"?>\n}
+      gz.write %{<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n}
+
+      sfs.each do |sf|
+        gz.write %{<url><loc>#{sf[0].encode(xml: :text)}</loc><lastmod>#{sf[1].encode(xml: :text)}</lastmod><priority>#{sf[2].to_s.encode(xml: :text)}</priority></url>\n}
+      end
+
+      gz.write %{</urlset>}
     end
 
-    # Make sitemap for each site
-    builder = Nokogiri::XML::Builder.new { |xml|
-      xml.urlset(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
-        site.site_files_dataset.exclude(path: 'not_found.html').where(path: /\.html?$/).all.each { |site_file|
-          xml.url {
-            loc = site.file_uri site_file.path
-            xml.loc site.file_uri site_file.path
-            xml.lastmod site_file.updated_at.strftime("%Y-%m-%d")
-            if site.file_uri(site_file.path) == site.uri+'/'
-              xml.priority 0.5
-            else
-              xml.priority 0.4
-            end
-          }
-        }
-
-        if site.profile_enabled
-          xml.url {
-            xml.loc "https://neocities.org/site/#{site.username}"
-            xml.lastmod site.updated_at.strftime("%Y-%m-%d")
-            xml.priority 0.3
-          }
-        end
-
-      }
-    }
-
-    FileUtils.mkdir_p File.join(sitemap_root, key)
-
-    Zlib::GzipWriter.open(site_urlset_path) do |gz|
-      gz.write builder.to_xml(encoding: 'UTF-8')
-    end
-
-    sorted_sites[key] ||= []
-    sorted_sites[key] << site
+    index += 1
   end
-  sites = nil
-  GC.start
 
-  # Create sitemap for key
-  sorted_sites.keys.sort.each { |key|
-    builder = Nokogiri::XML::Builder.new { |xml|
-      xml.sitemapindex(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
-        sorted_sites[key].each { |site|
-          next if site.is_deleted
-          xml.sitemap {
-            xml.loc "https://neocities.org/sitemap/#{key}/#{site.username}.xml.gz"
-            xml.lastmod site.updated_at.strftime("%Y-%m-%d")
-          }
-        }
-      }
-    }
-
-    Zlib::GzipWriter.open File.join(sitemap_root, "index-sites-#{key}.xml.gz") do |gz|
-      gz.write builder.to_xml(encoding: 'UTF-8')
-    end
-  }
 
   # Set basic neocities.org root paths
   builder = Nokogiri::XML::Builder.new { |xml|
@@ -590,7 +559,7 @@ task :generate_sitemap => [:environment] do
         xml.url {
           xml.loc "https://neocities.org/browse?sort_by=views&tag=#{tag[:name]}"
           xml.changefreq 'daily'
-          xml.lastmod Time.now.strftime("%Y-%m-%d")
+          xml.lastmod Time.now.utc.iso8601
         }
       }
     }
@@ -599,4 +568,19 @@ task :generate_sitemap => [:environment] do
   Zlib::GzipWriter.open File.join(sitemap_root, 'index-tags.xml.gz') do |gz|
     gz.write builder.to_xml(encoding: 'UTF-8')
   end
+
+
+  # Final sitemap.xml.gz entrypoint
+  Zlib::GzipWriter.open File.join(sitemap_root, 'sitemap.xml.gz') do |gz|
+    gz.write %{<?xml version="1.0" encoding="UTF-8"?>\n}
+    gz.write %{<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n}
+    gz.write %{<sitemap><loc>https://neocities.org/sitemap/index-root.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
+    gz.write %{<sitemap><loc>https://neocities.org/sitemap/index-tags.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
+    0.upto(index).each do |i|
+      gz.write %{<sitemap><loc>https://neocities.org/sitemap/index-sites-#{i}.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
+    end
+    gz.write %{</sitemapindex>}
+  end
+
+
 end
