@@ -576,7 +576,7 @@ task :generate_sitemap => [:environment] do
     gz.write %{<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n}
     gz.write %{<sitemap><loc>https://neocities.org/sitemap/root.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
     gz.write %{<sitemap><loc>https://neocities.org/sitemap/tags.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
-    0.upto(index).each do |i|
+    0.upto(index-1).each do |i|
       gz.write %{<sitemap><loc>https://neocities.org/sitemap/sites-#{i}.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
     end
     gz.write %{</sitemapindex>}
