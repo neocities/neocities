@@ -516,9 +516,9 @@ task :generate_sitemap => [:environment] do
   until site_files.empty?
     sfs = site_files.pop 50000
 
-    file = File.open File.join(sitemap_root, "index-sites-#{index}.xml.gz"), 'w'
+    file = File.open File.join(sitemap_root, "sites-#{index}.xml.gz"), 'w'
 
-    Zlib::GzipWriter.open File.join(sitemap_root, "index-sites-#{index}.xml.gz") do |gz|
+    Zlib::GzipWriter.open File.join(sitemap_root, "sites-#{index}.xml.gz") do |gz|
       gz.write %{<?xml version="1.0" encoding="UTF-8"?>\n}
       gz.write %{<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n}
 
@@ -547,7 +547,7 @@ task :generate_sitemap => [:environment] do
     }
   }
 
-  Zlib::GzipWriter.open File.join(sitemap_root, 'index-root.xml.gz') do |gz|
+  Zlib::GzipWriter.open File.join(sitemap_root, 'root.xml.gz') do |gz|
     gz.write builder.to_xml(encoding: 'UTF-8')
   end
 
@@ -565,7 +565,7 @@ task :generate_sitemap => [:environment] do
     }
   }
 
-  Zlib::GzipWriter.open File.join(sitemap_root, 'index-tags.xml.gz') do |gz|
+  Zlib::GzipWriter.open File.join(sitemap_root, 'tags.xml.gz') do |gz|
     gz.write builder.to_xml(encoding: 'UTF-8')
   end
 
@@ -574,10 +574,10 @@ task :generate_sitemap => [:environment] do
   Zlib::GzipWriter.open File.join(sitemap_root, 'sitemap.xml.gz') do |gz|
     gz.write %{<?xml version="1.0" encoding="UTF-8"?>\n}
     gz.write %{<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n}
-    gz.write %{<sitemap><loc>https://neocities.org/sitemap/index-root.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
-    gz.write %{<sitemap><loc>https://neocities.org/sitemap/index-tags.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
+    gz.write %{<sitemap><loc>https://neocities.org/sitemap/root.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
+    gz.write %{<sitemap><loc>https://neocities.org/sitemap/tags.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
     0.upto(index).each do |i|
-      gz.write %{<sitemap><loc>https://neocities.org/sitemap/index-sites-#{i}.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
+      gz.write %{<sitemap><loc>https://neocities.org/sitemap/sites-#{i}.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
     end
     gz.write %{</sitemapindex>}
   end
