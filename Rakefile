@@ -570,8 +570,8 @@ task :generate_sitemap => [:environment] do
   end
 
 
-  # Final sitemap.xml.gz entrypoint
-  Zlib::GzipWriter.open File.join(sitemap_root, 'sitemap.xml.gz') do |gz|
+  # Final index.xml.gz entrypoint
+  Zlib::GzipWriter.open File.join(sitemap_root, 'index.xml.gz') do |gz|
     gz.write %{<?xml version="1.0" encoding="UTF-8"?>\n}
     gz.write %{<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n}
     gz.write %{<sitemap><loc>https://neocities.org/sitemap/root.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
