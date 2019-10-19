@@ -141,11 +141,13 @@ get '/supporter/paypal/return' do
     redirect '/supporter'
   end
 
+  site = current_site.parent || current_site
+
   ppr = PayPal::Recurring.new(paypal_recurring_authorization_hash.merge(
     frequency:   1,
     token:       params[:token],
     period:      :monthly,
-    reference:   current_site.id.to_s,
+    reference:   site.id.to_s,
     payer_id:    params[:PayerID],
     start_at:    1.month.from_now,
     failed:      3,
@@ -154,12 +156,12 @@ get '/supporter/paypal/return' do
 
   paypal_response = ppr.create_recurring_profile
 
-  current_site.paypal_token = params[:token]
-  current_site.paypal_profile_id = paypal_response.profile_id
-  current_site.paypal_active = true
-  current_site.plan_type = 'supporter'
-  current_site.plan_ended = false
-  current_site.save_changes validate: false
+  site.paypal_token = params[:token]
+  site.paypal_profile_id = paypal_response.profile_id
+  site.paypal_active = true
+  site.plan_type = 'supporter'
+  site.plan_ended = false
+  site.save_changes validate: false
 
   redirect '/supporter/thanks'
 end
