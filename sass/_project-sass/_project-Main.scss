@@ -1903,6 +1903,13 @@ a.tag:hover {
             @include box-shadow(0 0 10px #00cfa7);
           }
         }
+        .skeuocard.js .flip-tab p {
+          font-size: 0.85em;
+        }
+        .skeuocard.js .flip-tab.back p {
+          font-size: 0.85em;
+          padding-left: 10px;
+        }
       }
       .btn-Action {
         margin-right: 3px;
