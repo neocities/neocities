@@ -15,6 +15,7 @@ class Site < Sequel::Model
     image/png
     image/jpeg
     image/gif
+    image/svg
     image/svg+xml
     application/vnd.ms-fontobject
     application/x-font-ttf
@@ -35,6 +36,7 @@ class Site < Sequel::Model
     application/x-elc
     image/webp
     image/x-xcf
+    application/epub
     application/epub+zip
     message/rfc822
     application/font-sfnt
