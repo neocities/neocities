@@ -48,7 +48,7 @@
         <% if site.followings_dataset.count == 0 %>
           <% if !@events.empty? %><h2>Sites to Follow</h2><% end %>
           <ul class="row website-Gallery content int-Gall suggestions">
-          <% @suggestions.each do |suggested_site| %>
+          <% current_site.suggestions.each do |suggested_site| %>
             <li>
               <a href="<%= suggested_site.uri %>" class="neo-Screen-Shot" title="<%= suggested_site.title %>">
                 <span class="img-Holder" style="background:url(<%= suggested_site.screenshot_url('index.html', '540x405') %>) no-repeat;">

@@ -4,8 +4,6 @@ get '/?' do
 
     redirect '/dashboard' if current_site.is_education
 
-    @suggestions = current_site.suggestions
-
     @page = params[:page].to_i
     @page = 1 if @page == 0
 
