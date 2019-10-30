@@ -19,7 +19,7 @@
     <% if site_follows.empty? %>
       No followers yet.
     <% else %>
-      <% site.follows_dataset.select(:actioning_site_id).all.each do |follow| %>
+      <% site.profile_follows_actioning_ids.each do |follow| %>
         <% follow_actioning_site = follow.actioning_site_dataset.select(:username).first %>
         <a href="/site/<%= follow_actioning_site.username %>" title="<%= follow_actioning_site.title %>"><img src="<%= follow_actioning_site.screenshot_url 'index.html', '50x50' %>" class="avatar" onerror="this.src='/img/50x50.png'"></a>
       <% end %>

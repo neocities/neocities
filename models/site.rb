@@ -534,7 +534,11 @@ class Site < Sequel::Model
 
   # Who this site is following
   def follows_dataset
-    super.select_all(:follows).inner_join(:sites, :id=>:actioning_site_id).exclude(:sites__is_deleted => true).exclude(:sites__is_banned => true)
+    super.select_all(:follows).inner_join(:sites, :id=>:actioning_site_id).exclude(:sites__is_deleted => true).order(:follow_count.desc,:views.desc,:updated_at.desc)
+  end
+
+  def profile_follows_actioning_ids
+    follows_dataset.select(:actioning_site_id).exclude(:sites__site_changed => false).all
   end
 
 =begin
