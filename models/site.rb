@@ -537,6 +537,10 @@ class Site < Sequel::Model
     super.select_all(:follows).inner_join(:sites, :id=>:actioning_site_id).exclude(:sites__is_deleted => true).order(:score.desc)
   end
 
+  def follows
+    follows_dataset.all
+  end
+
   def profile_follows_actioning_ids
     follows_dataset.select(:actioning_site_id).exclude(:sites__site_changed => false).all
   end
