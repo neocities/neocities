@@ -51,6 +51,7 @@ gem 'sequel_pg', require: nil
 gem 'hiredis'
 gem 'activesupport'
 gem 'facter', require: nil
+gem 'maxmind-db'
 
 group :development, :test do
   gem 'pry'
