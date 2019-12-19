@@ -171,7 +171,7 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.10)
     public_suffix (4.0.1)
-    puma (3.12.1)
+    puma (3.12.2)
     rack (2.0.7)
     rack-cache (1.9.0)
       rack (>= 0.4)
@@ -328,7 +328,7 @@ DEPENDENCIES
   pg
   pry
   pry-byebug
-  puma (= 3.12.1)
+  puma (= 3.12.2)
   rack-cache
   rack-test
   rack_session_access
