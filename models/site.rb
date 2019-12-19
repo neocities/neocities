@@ -505,6 +505,14 @@ class Site < Sequel::Model
     is_banned
   end
 
+  def unban!
+    undelete!
+    self.is_banned = false
+    self.banned_at = nil
+    self.blackbox_whitelisted = true
+    save validate: false
+  end
+
   def ban!
     if username.nil? || username.empty?
       raise 'username is missing'

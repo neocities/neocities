@@ -14,6 +14,21 @@ describe Site do
     end
   end
 
+  describe 'unban' do
+    it 'works' do
+      site = Fabricate :site
+      index_path = File.join site.base_files_path, 'index.html'
+      site.ban!
+      File.exist?(index_path).must_equal false
+      site.unban!
+      site.reload
+      site.is_banned.must_equal false
+      site.banned_at.must_be_nil
+      site.blackbox_whitelisted.must_equal true
+      File.exist?(index_path).must_equal true
+    end
+  end
+
   describe 'directory create' do
     it 'handles wacky pathnames' do
       ['/derp', '/derp/'].each do |path|
