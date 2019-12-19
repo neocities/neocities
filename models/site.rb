@@ -1684,7 +1684,10 @@ class Site < Sequel::Model
     end
 
     if pathname.extname.match(HTML_REGEX) && defined?(BlackBox)
-      BlackBox.tos_violation_check self, uploaded
+      begin
+        BlackBox.tos_violation_check self, uploaded
+      rescue
+      end
     end
 
     relative_path_dir = Pathname(relative_path).dirname
