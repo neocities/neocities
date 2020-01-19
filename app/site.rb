@@ -39,7 +39,7 @@ end
 
 get '/site/:username/archives' do
   @site = Site[username: params[:username]]
-  not_found if @site.nil? || !@site.ipfs_archiving_enabled
+  not_found if @site.nil? || site.is_banned || site.is_deleted || !@site.ipfs_archiving_enabled
   @title = "Site archives for #{@site.title}"
   @archives = @site.archives_dataset.limit(300).order(:updated_at.desc).all
   erb :'site/archives'
@@ -49,7 +49,7 @@ MAX_STAT_POINTS = 30
 get '/site/:username/stats' do
   @default_stat_points = 7
   @site = Site[username: params[:username]]
-  not_found if @site.nil?
+  not_found if @site.nil? || @site.is_banned || @site.is_deleted
 
   @title = "Site stats for #{@site.host}"
 
@@ -137,7 +137,7 @@ end
 get '/site/:username/follows' do |username|
   @title = "Sites #{username} follows"
   @site = Site[username: username]
-  not_found if @site.nil?
+  not_found if @site.nil? || @site.is_banned || @site.is_deleted
   @sites = @site.followings.collect {|f| f.site}
   erb :'site/follows'
 end
@@ -145,7 +145,7 @@ end
 get '/site/:username/followers' do |username|
   @title = "Sites that follow #{username}"
   @site = Site[username: username]
-  not_found if @site.nil?
+  not_found if @site.nil? || @site.is_banned || @site.is_deleted
   @sites = @site.follows.collect {|f| f.actioning_site}
   erb :'site/followers'
 end
