@@ -6,6 +6,9 @@
 
 <div class="content single-Col misc-page">
   <h2>Currently Allowed File Types</h2>
+
+  <p>Neocities is best with files that are used for making static HTML web sites, such as:</p>
+
   <p>
     <ul style="font-size: 16pt; margin-bottom: 20px">
       <li>HTML (.html, .htm)</li>
@@ -16,8 +19,13 @@
       <li>Text (.txt, .text, .csv, .tsv)</li>
       <li>XML (.xml)</li>
       <li>Web Fonts (.eot, .ttf, .woff, .woff2, .svg)</li>
-      <li>MIDI Files (.mid, .midi)</li>
     </ul>
+  </p>
+
+  <p>This is not a complete list of the file types we support, but it is still recommended that you focus on files used for making web sites. The full list of supported file extensions is:</p>
+
+  <p>
+  <strong><%= Site::VALID_EXTENSIONS.sort.join("\n") %></strong>
   </p>
 
   <p>In addition, we have measures in place to prevent <a href="/site_files/hotlinking">hotlinking</a> of content from non-Neocities sites.
