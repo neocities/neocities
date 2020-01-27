@@ -73,8 +73,9 @@ class Site < Sequel::Model
   ROOT_INDEX_HTML_REGEX  = /^\/?index.html$/
   MAX_COMMENT_SIZE       = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
 
-  SCREENSHOT_RESOLUTIONS = ['540x405', '210x158', '100x100', '50x50']
-  THUMBNAIL_RESOLUTIONS  = ['210x158']
+  SCREENSHOT_DELAY_SECONDS = 30
+  SCREENSHOT_RESOLUTIONS   = ['540x405', '210x158', '100x100', '50x50']
+  THUMBNAIL_RESOLUTIONS    = ['210x158']
 
   MAX_FILE_SIZE = 10**8 # 100 MB
   MAX_SITE_DOWNLOAD_SIZE = 200_000_000 # 200MB
@@ -1696,6 +1697,35 @@ class Site < Sequel::Model
     !site_file.nil?
   end
 
+  def regenerate_thumbnails
+    site_files.each do |sf|
+      next unless File.extname(sf.path).match IMAGE_REGEX
+      ThumbnailWorker.perform_async values[:username], sf.path
+    end
+  end
+
+  def regenerate_screenshots
+    site_files.each do |sf|
+      next unless File.extname(sf.path).match HTML_REGEX
+      ScreenshotWorker.perform_async values[:username], sf.path
+    end
+  end
+
+  def regenerate_thumbnails_and_screenshots
+    regenerate_screenshots
+    regenerate_thumbnails
+  end
+
+  def generate_screenshot_or_thumbnail(path, screenshot_delay=0)
+    extname = File.extname path
+
+    if extname.match HTML_REGEX
+      ScreenshotWorker.perform_in screenshot_delay.seconds, values[:username], path
+    elsif extname.match IMAGE_REGEX
+      ThumbnailWorker.perform_async values[:username], path
+    end
+  end
+
   private
 
   def store_file(path, uploaded, opts={})
@@ -1748,12 +1778,7 @@ class Site < Sequel::Model
     site_file.save
 
     purge_cache path
-
-    if pathname.extname.match HTML_REGEX
-      ScreenshotWorker.perform_in 30.seconds, values[:username], relative_path
-    elsif pathname.extname.match IMAGE_REGEX
-      ThumbnailWorker.perform_async values[:username], relative_path
-    end
+    generate_screenshot_or_thumbnail relative_path, SCREENSHOT_DELAY_SECONDS
 
     true
   end
