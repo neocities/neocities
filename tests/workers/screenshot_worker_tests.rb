@@ -4,10 +4,15 @@ describe ScreenshotWorker do
 
   it 'saves a screenshot for a root html file' do
     ['index.html', 'derpie/derp/index.html'].each do |path|
-      uri = Addressable::URI.parse $config['screenshots_url']
+      uri = Addressable::URI.parse $config['screenshot_urls'].sample
       site = Fabricate :site
 
-      stub_request(:get, "#{uri.scheme}://#{uri.host}/?url=#{site.uri}/#{path}&wait_time=#{ScreenshotWorker::PAGE_WAIT_TIME}").
+      base_host = "#{uri.scheme}://#{uri.host}"
+      if uri.port != 80 && uri.port != 443
+        base_host += ":#{uri.port}"
+      end
+
+      stub_request(:get, "#{base_host}/?url=#{site.uri}/#{path}&wait_time=#{ScreenshotWorker::PAGE_WAIT_TIME}").
         with(basic_auth: [uri.user, uri.password]).
         to_return(status: 200, headers: {}, body: File.read('tests/files/img/test.jpg'))
 
