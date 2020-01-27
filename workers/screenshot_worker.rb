@@ -7,7 +7,7 @@ class ScreenshotWorker
   HARD_TIMEOUT = 30.freeze
   PAGE_WAIT_TIME = 5.freeze # 3D/VR sites take a bit to render after loading usually.
   include Sidekiq::Worker
-  sidekiq_options queue: :screenshots, retry: 3, backtrace: true
+  sidekiq_options queue: :screenshots, retry: 2, backtrace: true
 
   def perform(username, path)
 
@@ -33,7 +33,7 @@ class ScreenshotWorker
 
     path = "/#{path}" unless path[0] == '/'
 
-    uri = Addressable::URI.parse $config['screenshots_url']
+    uri = Addressable::URI.parse $config['screenshot_urls'].sample
     api_user, api_password = uri.user, uri.password
     uri = "#{uri.scheme}://#{uri.host}:#{uri.port}" + '?' + Rack::Utils.build_query(
       url: Site.select(:username,:domain).where(username: username).first.uri + path,
@@ -41,7 +41,11 @@ class ScreenshotWorker
     )
 
     img_list = Magick::ImageList.new
-    img_list.from_blob HTTP.basic_auth(user: api_user, pass: api_password).get(uri).to_s
+    begin
+      img_list.from_blob HTTP.basic_auth(user: api_user, pass: api_password).get(uri).to_s
+    rescue Magick::ImageMagickError
+      return false
+    end
 
     img_list.new_image(img_list.first.columns, img_list.first.rows) { self.background_color = "white" }
     img = img_list.reverse.flatten_images
