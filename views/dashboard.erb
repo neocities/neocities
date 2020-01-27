@@ -147,7 +147,7 @@
             <div class="overlay">
               <div id="<%= Digest::SHA256.hexdigest file[:path] %>" style="display: none"><%= file[:path] %></div>
               <% if file[:is_editable] %>
-                <a href="/site_files/text_editor<%= file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
+                <a href="/site_files/text_editor/<%= file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
               <% end %>
               <% if file[:is_directory] %>
                 <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
