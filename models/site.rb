@@ -90,7 +90,6 @@ class Site < Sequel::Model
 
   EMPTY_FILE_HASH = Digest::SHA1.hexdigest ''
 
-  PHISHING_FORM_REGEX = /www.formbuddy.com\/cgi-bin\/form.pl/i
   EMAIL_SANITY_REGEX = /.+@.+\..+/i
   EDITABLE_FILE_EXT = /#{VALID_EDITABLE_EXTENSIONS.join('|')}/i
   BANNED_TIME = 2592000 # 30 days in seconds
@@ -471,7 +470,7 @@ class Site < Sequel::Model
       self.domain = nil
       self.save_changes validate: false
       owner.end_supporter_membership! if parent?
-      FileUtils.mkdir_p File.join(DELETED_SITES_ROOT, self.class.sharding_dir(username))
+      FileUtils.mkdir_p File.join(DELETED_SITES_ROOT, sharding_dir)
 
       begin
         FileUtils.mv files_path, deleted_files_path
@@ -491,7 +490,7 @@ class Site < Sequel::Model
 
   def undelete!
     return false unless Dir.exist? deleted_files_path
-    FileUtils.mkdir_p File.join(SITE_FILES_ROOT, self.class.sharding_dir(username))
+    FileUtils.mkdir_p File.join(SITE_FILES_ROOT, sharding_dir)
 
     DB.transaction {
       FileUtils.mv deleted_files_path, files_path
@@ -674,18 +673,7 @@ class Site < Sequel::Model
 
   def okay_to_upload?(uploaded_file)
     return true if [:supporter].include?(plan_type.to_sym)
-    return false if self.class.possible_phishing?(uploaded_file)
     self.class.valid_file_type?(uploaded_file)
-  end
-
-  def self.possible_phishing?(uploaded_file)
-    if File.extname(uploaded_file[:filename]).match EDITABLE_FILE_EXT
-      open(uploaded_file[:tempfile].path, 'r:binary') {|f|
-        matches = f.grep PHISHING_FORM_REGEX
-        return true unless matches.empty?
-      }
-    end
-    false
   end
 
   def self.valid_file_mime_type_and_ext?(mime_type, extname)
@@ -763,7 +751,7 @@ class Site < Sequel::Model
     if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
       rbox = Rye::Box.new $config['ipfs_ssh_host'], user: $config['ipfs_ssh_user']
       begin
-        cidv0    = rbox.ipfs(:add, :r, :Q, "sites/#{self.class.sharding_dir self.username}/#{self.username.gsub(/\/|\.\./, '')}").first
+        cidv0    = rbox.ipfs(:add, :r, :Q, "sites/#{sharding_dir}/#{self.username.gsub(/\/|\.\./, '')}").first
         cidv1b32 = rbox.ipfs(:cid, :base32, cidv0).first
       ensure
         rbox.disconnect
@@ -883,7 +871,13 @@ class Site < Sequel::Model
 
   def move_files_from(oldusername)
     FileUtils.mkdir_p self.class.sharding_base_path(username)
+    FileUtils.mkdir_p self.class.sharding_screenshots_path(username)
+    FileUtils.mkdir_p self.class.sharding_thumbnails_path(username)
     FileUtils.mv base_files_path(oldusername), base_files_path
+    otp = base_thumbnails_path(oldusername)
+    osp = base_screenshots_path(oldusername)
+    FileUtils.mv(otp, base_thumbnails_path) if File.exist?(otp)
+    FileUtils.mv(osp, base_screenshots_path) if File.exist?(osp)
   end
 
   def install_new_html_file(path)
@@ -1168,7 +1162,7 @@ class Site < Sequel::Model
 
   def current_base_files_path(name=username)
     raise 'username missing' if name.nil? || name.empty?
-    return File.join DELETED_SITES_ROOT, self.class.sharding_dir(name), name if is_deleted
+    return base_deleted_files_path if is_deleted
     base_files_path name
   end
 
@@ -1186,9 +1180,21 @@ class Site < Sequel::Model
     File.join SITE_FILES_ROOT, sharding_dir(name)
   end
 
+  def self.sharding_screenshots_path(name)
+    File.join SCREENSHOTS_ROOT, sharding_dir(name)
+  end
+
+  def self.sharding_thumbnails_path(name)
+    File.join THUMBNAILS_ROOT, sharding_dir(name)
+  end
+
   def self.sharding_dir(name)
     chksum = Zlib::crc32(name).to_s
     File.join(chksum[0..1], chksum[2..3])
+  end
+
+  def sharding_dir
+    self.class.sharding_dir values[:username]
   end
 
   # https://practicingruby.com/articles/implementing-an-http-file-server?u=dc2ab0f9bb
@@ -1227,10 +1233,11 @@ class Site < Sequel::Model
 
   def file_list(path='')
     list = Dir.glob(File.join(files_path(path), '*')).collect do |file_path|
+      extname = File.extname file_path
       file = {
         path: file_path.gsub(base_files_path, ''),
         name: File.basename(file_path),
-        ext: File.extname(file_path).gsub('.', ''),
+        ext: extname.gsub('.', ''),
         is_directory: File.directory?(file_path),
         is_root_index: file_path == "#{base_files_path}/index.html"
       }
@@ -1242,7 +1249,7 @@ class Site < Sequel::Model
         file[:updated_at] = site_file.updated_at
       end
 
-      file[:is_html] = !(file[:ext].match HTML_REGEX).nil?
+      file[:is_html] = !(extname.match(HTML_REGEX)).nil?
       file[:is_image] = !(file[:ext].match IMAGE_REGEX).nil?
       file[:is_editable] = !(file[:ext].match EDITABLE_FILE_EXT).nil?
 
@@ -1497,21 +1504,33 @@ class Site < Sequel::Model
   end
 
   def screenshot_path(path, resolution)
-    File.join(SCREENSHOTS_ROOT, self.class.sharding_dir(values[:username]), values[:username], "#{path}.#{resolution}.jpg")
+    File.join base_screenshots_path, "#{path}.#{resolution}.jpg"
+  end
+
+  def base_screenshots_path(name=username)
+    raise 'screenshots name missing' if name.nil? || name.empty?
+    File.join self.class.sharding_screenshots_path(name), name
+  end
+
+  def base_screenshots_url(name=username)
+    raise 'screenshots name missing' if name.nil? || name.empty?
+    File.join SCREENSHOTS_URL_ROOT, self.class.sharding_dir(name), name
   end
 
   def screenshot_exists?(path, resolution)
-    File.exist? File.join(SCREENSHOTS_ROOT, values[:username], "#{path}.#{resolution}.jpg")
+    File.exist? File.join(base_screenshots_path, "#{path}.#{resolution}.jpg")
   end
 
   def screenshot_url(path, resolution)
+    path[0] = '' if path[0] == '/'
     out = ''
     out = 'https://neocities.org' if ENV['RACK_ENV'] == 'development'
-    out+"#{SCREENSHOTS_URL_ROOT}/#{self.class.sharding_dir(values[:username])}/#{values[:username]}/#{path}.#{resolution}.jpg"
+    out+"#{base_screenshots_url}/#{path}.#{resolution}.jpg"
   end
 
-  def base_thumbnails_path
-    File.join THUMBNAILS_ROOT, self.class.sharding_dir(values[:username]), values[:username]
+  def base_thumbnails_path(name=username)
+    raise 'thumbnails name missing' if name.nil? || name.empty?
+    File.join self.class.sharding_thumbnails_path(name), name
   end
 
   def thumbnail_path(path, resolution)
@@ -1528,8 +1547,9 @@ class Site < Sequel::Model
   end
 
   def thumbnail_url(path, resolution)
+    path[0] = '' if path[0] == '/'
     ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    "#{THUMBNAILS_URL_ROOT}/#{self.class.sharding_dir(values[:username])}/#{values[:username]}/#{path}.#{resolution}.#{ext}"
+    "#{THUMBNAILS_URL_ROOT}/#{sharding_dir}/#{values[:username]}/#{path}.#{resolution}.#{ext}"
   end
 
   def to_rss
