@@ -61,6 +61,8 @@ class SiteFile < Sequel::Model
 
     begin
       FileUtils.mv site.files_path(path), site.files_path(new_path)
+      site.delete_thumbnail_or_screenshot current_path
+      site.generate_thumbnail_or_screenshot new_path
     rescue Errno::ENOENT => e
       return false, 'destination directory does not exist' if e.message =~ /No such file or directory/i
       raise e
@@ -80,8 +82,10 @@ class SiteFile < Sequel::Model
           original_site_file_path = site_file.path
           site_file.path = site_file.path.gsub(/^#{current_path}\//, "#{new_path}\/")
           site_file.save_changes
-          site.purge_cache original_site_file_path
+          site.delete_thumbnail_or_screenshot original_site_file_path
+          site.generate_thumbnail_or_screenshot site_file.path
           site.purge_cache site_file.path
+          site.purge_cache original_site_file_path
         end
       end
     end

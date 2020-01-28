@@ -64,6 +64,7 @@ post '/settings/:username/change_name' do
   require_login
   require_ownership_for_settings
 
+  old_site = Site[username: @site.username]
   old_username = @site.username
 
   if params[:name] == nil || params[:name] == ''
@@ -87,9 +88,10 @@ post '/settings/:username/change_name' do
       @site.move_files_from old_username
     }
 
-    old_site_file_paths.each do |site_file_path|
-      @site.delete_cache site_file_path
-    end
+    old_site.delete_all_thumbnails_and_screenshots
+    old_site.delete_all_cache
+    @site.delete_all_cache
+    @site.regenerate_thumbnails_and_screenshots
 
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it!</b>"
     redirect "/settings/#{@site.username}#username"

@@ -524,9 +524,7 @@ class Site < Sequel::Model
     save validate: false
     destroy
 
-    site_files.each do |site_file|
-      delete_cache site_file.path
-    end
+    delete_all_cache
   end
 
   def ban_all_sites_on_account!
@@ -733,6 +731,12 @@ class Site < Sequel::Model
       PurgeCacheWorker.perform_async username, purge_file_path
     else
       PurgeCacheWorker.perform_async username, relative_path
+    end
+  end
+
+  def delete_all_cache
+    site_files.each do |site_file|
+      delete_cache site_file.path
     end
   end
 
@@ -1716,7 +1720,23 @@ class Site < Sequel::Model
     regenerate_thumbnails
   end
 
-  def generate_screenshot_or_thumbnail(path, screenshot_delay=0)
+  def delete_all_thumbnails_and_screenshots
+    site_files.each do |sf|
+      delete_thumbnail_or_screenshot sf.path
+    end
+  end
+
+  def delete_thumbnail_or_screenshot(path)
+    extname = File.extname path
+
+    if extname.match HTML_REGEX
+      screenshots_delete path
+    elsif extname.match IMAGE_REGEX
+      thumbnails_delete path
+    end
+  end
+
+  def generate_thumbnail_or_screenshot(path, screenshot_delay=0)
     extname = File.extname path
 
     if extname.match HTML_REGEX
@@ -1778,7 +1798,7 @@ class Site < Sequel::Model
     site_file.save
 
     purge_cache path
-    generate_screenshot_or_thumbnail relative_path, SCREENSHOT_DELAY_SECONDS
+    generate_thumbnail_or_screenshot relative_path, SCREENSHOT_DELAY_SECONDS
 
     true
   end
