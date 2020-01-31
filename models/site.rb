@@ -1240,7 +1240,7 @@ class Site < Sequel::Model
     list = Dir.glob(File.join(files_path(path), '*')).collect do |file_path|
       extname = File.extname file_path
       file = {
-        path: file_path.gsub(base_files_path, ''),
+        path: file_path.gsub(base_files_path+'/', ''),
         name: File.basename(file_path),
         ext: extname.gsub('.', ''),
         is_directory: File.directory?(file_path),
