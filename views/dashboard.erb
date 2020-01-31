@@ -274,13 +274,13 @@
 
   function confirmFileRename(path) {
     console.log(path)
-    $('#renamePathInput').val(path.replace('/', ''));
-    $('#renameNewPathInput').val(path.replace('/', ''));
+    $('#renamePathInput').val(path);
+    $('#renameNewPathInput').val(path);
     $('#renameModal').modal();
   }
 
   function confirmFileDelete(name) {
-    $('#deleteFileName').text(name.replace('/',''));
+    $('#deleteFileName').text(name);
     $('#deleteConfirmModal').modal();
   }
 
