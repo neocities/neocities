@@ -108,9 +108,9 @@ get '/site/:username/stats' do
     attachment "#{current_site.username}-stats.csv"
 
     return CSV.generate do |csv|
-      csv << ['day', 'hits', 'views', 'comments', 'follows', 'site_updates', 'bandwidth']
+      csv << ['day', 'hits', 'views', 'bandwidth']
       stats.each do |s|
-        csv << [s[:created_at].to_s, s[:hits], s[:views], s[:comments], s[:follows], s[:site_updates], s[:bandwidth]]
+        csv << [s[:created_at].to_s, s[:hits], s[:views], s[:bandwidth]]
       end
     end
   end
