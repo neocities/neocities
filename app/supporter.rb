@@ -98,6 +98,7 @@ get '/supporter/thanks' do
 end
 
 get '/supporter/bitcoin/?' do
+  @title = 'Bitcoin Supporter'
   erb :'supporter/bitcoin'
 end
 
