@@ -24,7 +24,7 @@
         <p><a href="<%= site.latest_archive.url %>" style="margin-right: 5px"><%= site.latest_archive.ipfs_hash %></a><small style="font-size: 7pt"><a href="/permanent-web">(what is this?)</a></small></p>
       <% end %>
       -->
-      <% follow_count = site.follows.count %>
+      <% follow_count = site.follows_dataset.count %>
       <div class="stats">
         <div class="stat"><strong><%= site.views.format_large_number %></strong> <span>view<%= site.views == 1 ? '' : 's' %></span></div>
         <div class="stat"><strong><%= follow_count.format_large_number %></strong> <span>follower<%= follow_count == 1 ? '' : 's' %></span></div>

@@ -71,7 +71,7 @@
                   </a>
                 </div>
                 <div class="site-tags">
-                  <% if suggested_site.tags.count > 0 %>
+                  <% if suggested_site.tags_dataset.count > 0 %>
                     <i class="fa fa-tag"></i>
                     <% suggested_site.tags.each_with_index do |tag, index| %>
                       <a class="" href="/browse?tag=<%= Rack::Utils.escape tag.name %>"><%= tag.name %></a><% if index != suggested_site.tags.length - 1 %>,<% end %>
@@ -98,7 +98,7 @@
               <% end %>
             </div>
             <div class="col col-50">
-              <% follow_count = site.follows.count %>
+              <% follow_count = site.follows_dataset.count %>
               <div><strong><%= site.views.format_large_number %></strong> views</div>
               <div><strong><%= follow_count.format_large_number %></strong> follower<%= follow_count == 1 ? '' : 's' %></div>
             </div>
