@@ -379,13 +379,15 @@ class Site < Sequel::Model
         follow = followings_dataset.filter(site_id: site.id).first
         site.events_dataset.filter(follow_id: follow.id).delete
         follow.delete
-        DB['update sites set follow_count=follow_count-1 where id=?', site.id].first if scorable_follow?(site)
+        # FIXME This is a being abused somehow. A weekly script now computes this.
+        # DB['update sites set follow_count=follow_count-1 where id=?', site.id].first if scorable_follow?(site)
       end
       false
     else
       DB.transaction do
         follow = add_following site_id: site.id
-        DB['update sites set follow_count=follow_count+1 where id=?', site.id].first if scorable_follow?(site)
+        # FIXME see above.
+        # DB['update sites set follow_count=follow_count+1 where id=?', site.id].first if scorable_follow?(site)
         Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
       end
 
