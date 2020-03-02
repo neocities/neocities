@@ -33,7 +33,7 @@ gem 'sanitize'
 gem 'will_paginate'
 gem 'simpleidn'
 gem 'gandi'
-gem 'hoe', '3.14.2', require: nil
+gem 'hoe', require: nil
 gem 'msgpack'
 gem 'acme-client', '0.6.3'
 gem 'http'
@@ -70,7 +70,7 @@ group :test do
   gem 'minitest-reporters',             require: 'minitest/reporters'
   gem 'rack-test',                      require: 'rack/test'
   gem 'mocha',                          require: nil
-  gem 'rake',                           require: nil
+  gem 'rake', '>= 12.3.3',                          require: nil
   gem 'capybara',                       require: nil #, '2.10.1',     require: nil
   gem 'rack_session_access',            require: nil
   gem 'webmock', '3.5.1',               require: nil

@@ -86,8 +86,8 @@ GEM
     hashie (3.6.0)
     highline (2.0.2)
     hiredis (0.6.3)
-    hoe (3.14.2)
-      rake (>= 0.8, < 11.0)
+    hoe (3.22.1)
+      rake (>= 0.8, < 15.0)
     htmlentities (4.3.4)
     http (4.1.1)
       addressable (~> 2.3)
@@ -184,7 +184,7 @@ GEM
     rack_session_access (0.2.0)
       builder (>= 2.0.0)
       rack (>= 1.0.0)
-    rake (10.5.0)
+    rake (13.0.1)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
@@ -309,7 +309,7 @@ DEPENDENCIES
   gandi
   geoip
   hiredis
-  hoe (= 3.14.2)
+  hoe
   htmlentities
   http
   image_optim
@@ -334,7 +334,7 @@ DEPENDENCIES
   rack-cache
   rack-test
   rack_session_access
-  rake
+  rake (>= 12.3.3)
   redis
   redis-namespace
   rest-client
