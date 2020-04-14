@@ -1,8 +1,7 @@
 class LetsEncryptWorker
-  class NotAuthorizedYetError < StandardError; end
   class VerificationTimeoutError < StandardError; end
-  class InvalidAuthError < StandardError; end
-  class VerifyNotFoundWithDomain < StandardError; end
+  class FinalizeTimeoutError < StandardError; end
+
   include Sidekiq::Worker
   sidekiq_options queue: :lets_encrypt_worker, retry: 10, backtrace: true
 
@@ -13,10 +12,13 @@ class LetsEncryptWorker
   # If you need to clear scheduled jobs:
   # Sidekiq::ScheduledSet.new.select {|s| JSON.parse(s.value)['class'] == 'LetsEncryptWorker'}.each {|j| j.delete}
 
+  DIRECTORY = 'https://acme-v02.api.letsencrypt.org/directory'
+  STAGING_DIRECTORY = 'https://acme-staging-v02.api.letsencrypt.org/directory'
+
   def letsencrypt
     Acme::Client.new(
       private_key: OpenSSL::PKey::RSA.new(File.read($config['letsencrypt_key'])),
-      endpoint: $config['letsencrypt_endpoint']
+      directory: (ENV['RACK_ENV'] == 'production' ? DIRECTORY : STAGING_DIRECTORY)
     )
   end
 
@@ -74,70 +76,10 @@ class LetsEncryptWorker
         next
       end
 
-      puts "test succeeded, sending challenge request verification"
-
-      begin
-        auth = letsencrypt.authorize domain: domain
-        challenge = auth.http01
-      rescue => e
-        if e.message =~ /Internationalized domain names.+not yet supported/
-          @international_domain = true
-          puts "This is an internationalized domain, and so is not yet supported. Skipping to next"
-          next
-        else
-          raise e
-        end
-      end
-
-      if challenge.nil?
-        puts "challenge object is nil, going to next domain"
-        next
-      end
-
-      begin
-        FileUtils.mkdir_p File.join(site.base_files_path, File.dirname(challenge.filename))
-        File.write File.join(site.base_files_path, challenge.filename), challenge.file_content
-      rescue => e
-        puts "FAILED TO WRITE CHALLENGE: #{site.domain} #{challenge.filename}"
-        # A verification needs to be attempted anyways, otherwise 300 of them will jam up the system for a week
-      end
-
-      challenge.request_verification
-
-      sleep 1
-      attempts = 0
-
-      while true
-        result = challenge.verify_status
-        puts "#{domain} : #{result}"
-
-        if result == 'valid'
-          puts "VALIDATED: #{domain}"
-          clean_wellknown_turds site
-          verified_domains.push domain
-          break
-        end
-
-        raise VerificationTimeoutError if attempts == 60
-
-        if result == 'invalid'
-          puts "returned invalid, walking away"
-          clean_wellknown_turds site
-          break
-        end
-
-        attempts += 1
-        sleep 2
-      end
+      verified_domains << domain
     end
 
     if verified_domains.empty? || (site.created_at.year >= 2017 && !verified_domains.include?(domain_raw))
-      if @international_domain
-        puts "still waiting on IDN support, ignoring failure for now"
-        clean_wellknown_turds site
-        return
-      end
-
       puts "no verified domains, skipping cert setup, reporting invalid domain"
 
       # This is a bit of an inappropriate shared responsibility,
@@ -168,25 +110,68 @@ class LetsEncryptWorker
       return
     end
 
-    puts "verified domains: #{verified_domains.inspect}"
+    finalized_domains = []
+
+    order = client.new_order identifiers: verified_domains
+    order.authorizations.each do |authorization|
+      challenge = authorization.http
+
+      if challenge.nil?
+        puts "challenge object is nil, going to next domain"
+        next
+      end
+
+      begin
+        FileUtils.mkdir_p File.join(site.base_files_path, File.dirname(challenge.filename))
+        File.write File.join(site.base_files_path, challenge.filename), challenge.file_content
+      rescue => e
+        puts "FAILED TO WRITE CHALLENGE: #{site.domain} #{challenge.filename}"
+        # A verification needs to be attempted anyways, otherwise 300 of them will jam up the system for a week
+      end
+
+      challenge.request_verification
+
+      sleep 1
+      attempts = 0
+
+      while true
+        result = challenge.status
+        puts "#{domain} : #{result}"
+
+        if result == 'valid'
+          puts "VALIDATED: #{domain}"
+          clean_wellknown_turds site
+          finalized_domains.push authorization.domain
+          break
+        end
+
+        raise VerificationTimeoutError if attempts == 60
+
+        if result == 'invalid'
+          puts "returned invalid, walking away"
+          clean_wellknown_turds site
+          break
+        end
+
+        attempts += 1
+        sleep 2
+      end
+    end
 
     clean_wellknown_turds site
 
-    retries = 0
-    begin
-      csr = Acme::Client::CertificateRequest.new names: verified_domains
-      certificate = letsencrypt.new_certificate csr
-    rescue Acme::Client::Error => e
-      if retries == 2
-        puts "Failed to create cert, returning: #{e.message}"
-        return
-      end
-      retries += 1
-      retry
+    csr = Acme::Client::CertificateRequest.new names: finalized_domains
+    order.finalize csr: csr
+
+    attempts = 0
+    while order.status == 'processing'
+      raise FinalizeTimeoutError if attempts > 60
+      attempts += 1
+      sleep 1
     end
 
-    site.ssl_key = certificate.request.private_key.to_pem
-    site.ssl_cert = certificate.fullchain_to_pem
+    site.ssl_key = csr.private_key.to_pem
+    site.ssl_cert = order.certificate.fullchain_to_pem
     site.cert_updated_at = Time.now
     site.domain_fail_count = 0
     site.save_changes validate: false
