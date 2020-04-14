@@ -112,7 +112,7 @@ class LetsEncryptWorker
 
     finalized_domains = []
 
-    order = client.new_order identifiers: verified_domains
+    order = letsencrypt.new_order identifiers: verified_domains
     order.authorizations.each do |authorization|
       challenge = authorization.http
 
@@ -129,17 +129,17 @@ class LetsEncryptWorker
         # A verification needs to be attempted anyways, otherwise 300 of them will jam up the system for a week
       end
 
-      challenge.request_verification
+      challenge.request_validation
 
       sleep 1
       attempts = 0
 
       while true
         result = challenge.status
-        puts "#{domain} : #{result}"
+        puts "#{authorization.domain} : #{result}"
 
         if result == 'valid'
-          puts "VALIDATED: #{domain}"
+          puts "VALIDATED: #{authorization.domain}"
           clean_wellknown_turds site
           finalized_domains.push authorization.domain
           break
@@ -148,12 +148,13 @@ class LetsEncryptWorker
         raise VerificationTimeoutError if attempts == 60
 
         if result == 'invalid'
-          puts "returned invalid, walking away"
+          puts "returned invalid (#{authorization.domain}, walking away"
           clean_wellknown_turds site
           break
         end
 
         attempts += 1
+        challenge.reload
         sleep 2
       end
     end
@@ -171,7 +172,7 @@ class LetsEncryptWorker
     end
 
     site.ssl_key = csr.private_key.to_pem
-    site.ssl_cert = order.certificate.fullchain_to_pem
+    site.ssl_cert = order.certificate
     site.cert_updated_at = Time.now
     site.domain_fail_count = 0
     site.save_changes validate: false
