@@ -125,7 +125,7 @@
               </div>
             <% else %>
               <div class="html-thumbnail misc fileimagehover">
-                <div class="misc-icon"><%= file[:ext] %></div>
+                <div class="misc-icon"><%= file[:ext][0..3] %></div>
                 <div class="overlay"></div>
               </div>
             <% end %>
