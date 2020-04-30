@@ -200,6 +200,12 @@ class Site < Sequel::Model
 
   one_to_many :archives
 
+  def self.supporter_ids
+    parent_supporters = DB[%{SELECT id FROM sites WHERE plan_type IS NOT NULL AND plan_type != 'free'}].all.collect {|s| s[:id]}
+    child_supporters = DB[%{select a.id as id from sites a, sites b where a.parent_site_id is not null and a.parent_site_id=b.id and (a.plan_type != 'free' or b.plan_type != 'free')}].all.collect {|s| s[:id]}
+    parent_supporters + child_supporters
+  end
+
   def self.newsletter_sites
      Site.select(:email).
        exclude(email: 'nil').exclude(is_banned: true).
