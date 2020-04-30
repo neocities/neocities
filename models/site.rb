@@ -711,7 +711,12 @@ class Site < Sequel::Model
       expected_outcodes: [0, 1]
     )
 
-    output = line.run path: uploaded_file[:tempfile].path
+    begin
+      output = line.run path: uploaded_file[:tempfile].path
+    rescue Terrapin::ExitStatusError => e
+      puts "WARNING: CLAMAV FAILED #{username} #{uploaded_file[:tempfile].path} #{e.message}"
+      return true
+    end
 
     return true if output == ''
 
