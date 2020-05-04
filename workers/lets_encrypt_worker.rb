@@ -71,12 +71,13 @@ class LetsEncryptWorker
         next
       end
 
-      if res.status != 200 && res.body != testfile_key
+      if res.body.to_s == testfile_key
+        puts "match: #{challenge_url}"
+        verified_domains << domain
+      else
         puts "CONTENT DOWNLOADED DID NOT MATCH #{challenge_url}"
         next
       end
-
-      verified_domains << domain
     end
 
     if verified_domains.empty? || (site.created_at.year >= 2017 && !verified_domains.include?(domain_raw))
@@ -160,7 +161,6 @@ class LetsEncryptWorker
     end
 
     clean_wellknown_turds site
-
     csr = Acme::Client::CertificateRequest.new names: finalized_domains
     order.finalize csr: csr
 
