@@ -196,7 +196,7 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     rinku (2.0.6)
-    rmagick (4.0.0)
+    rmagick (4.1.2)
     ruby-progressbar (1.10.1)
     rye (0.9.13)
       annoy
