@@ -1,4 +1,8 @@
 get '/?' do
+  if params[:_ga_adgroupid]
+    session[:ga_adgroupid] = params[:_ga_adgroupid]
+  end
+
   if current_site
     require_login
 

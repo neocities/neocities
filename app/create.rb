@@ -58,7 +58,8 @@ post '/create' do
     email: params[:email],
     new_tags_string: params[:new_tags_string],
     is_education: params[:is_education] == 'true' ? true : false,
-    ip: request.ip
+    ip: request.ip,
+    ga_adgroupid: session[:ga_adgroupid]
   )
 
   if education_whitelisted?
