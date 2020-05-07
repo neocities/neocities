@@ -132,7 +132,7 @@ post '/site_files/upload' do
 
     file[:filename] = "#{dir_name}/#{site.scrubbed_path file[:filename]}"
     if current_site.file_size_too_large? file[:tempfile].size
-      file_upload_response "#{file[:filename]} is too large, upload cancelled."
+      file_upload_response "#{Rack::Utils.escape_html file[:filename]} is too large, upload cancelled."
     end
     if !site.okay_to_upload? file
       file_upload_response %{#{Rack::Utils.escape_html file[:filename]}: file type (or content in file) is only supported by <a href="/supporter">supporter accounts</a>. <a href="/site_files/allowed_types">Why We Do This</a>}
@@ -157,7 +157,7 @@ post '/site_files/delete' do
   require_login
   path = HTMLEntities.new.decode params[:filename]
   current_site.delete_file path
-  flash[:success] = "Deleted #{params[:filename]}."
+  flash[:success] = "Deleted #{Rack::Utils.escape_html params[:filename]}."
 
   dirname = Pathname(path).dirname
   dir_query = dirname.nil? || dirname.to_s == '.' ? '' : "?dir=#{Rack::Utils.escape dirname}"
@@ -174,9 +174,9 @@ post '/site_files/rename' do
   res = site_file.rename new_path
 
   if res.first == true
-    flash[:success] = "Renamed #{path} to #{new_path}"
+    flash[:success] = "Renamed #{Rack::Utils.escape_html path} to #{Rack::Utils.escape_html new_path}"
   else
-    flash[:error] = "Failed to rename #{path} to #{new_path}: #{res.last}"
+    flash[:error] = "Failed to rename #{Rack::Utils.escape_html path} to #{Rack::Utils.escape_html new_path}: #{Rack::Utils.escape_html res.last}"
   end
 
   dirname = Pathname(path).dirname
