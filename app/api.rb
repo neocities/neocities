@@ -164,6 +164,7 @@ def api_info_for(site)
       sitename: site.username,
       views: site.views,
       hits: site.hits,
+      updates: site.changed_count,
       created_at: site.created_at.rfc2822,
       last_updated: site.site_updated_at ? site.site_updated_at.rfc2822 : nil,
       domain: site.domain,
