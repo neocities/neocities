@@ -989,7 +989,7 @@ class Site < Sequel::Model
     user_record = {}
     domain_record = {}
 
-    if values[:domain]
+    unless values[:domain].blank?
       domain_record[:username] = username
 
       if ssl_installed?
