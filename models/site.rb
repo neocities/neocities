@@ -1781,10 +1781,7 @@ class Site < Sequel::Model
     end
 
     if pathname.extname.match(HTML_REGEX) && defined?(BlackBox)
-      begin
-        BlackBox.tos_violation_check self, uploaded
-      rescue
-      end
+      BlackBoxWorker.perform_async values[:id], relative_path
     end
 
     relative_path_dir = Pathname(relative_path).dirname
