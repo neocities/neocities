@@ -9,7 +9,7 @@ post '/contact' do
     @errors << 'Please fill out all fields'
   end
 
-  if !recaptcha_valid?
+  unless verify_hcaptcha
     @errors << 'Captcha was not filled out (or was filled out incorrectly)'
   end
 

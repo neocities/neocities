@@ -163,3 +163,8 @@ $gandi = Gandi::Session.new $config['gandi_api_key'], gandi_opts
 $image_optim = ImageOptim.new pngout: false, svgo: false
 
 Money.locale_backend = nil
+
+Hcaptcha.configure do |config|
+  config.site_key   = $config['hcaptcha_site_key']
+  config.secret_key = $config['hcaptcha_secret_key']
+end

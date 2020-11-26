@@ -5,6 +5,8 @@ development:
   session_secret: "SECRET GOES HERE"
   recaptcha_public_key: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
   recaptcha_private_key: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+  hcaptcha_site_key: sitekey
+  hcaptcha_secret_key: secret
   sidekiq_user: "ENTER USER HERE"
   sidekiq_pass: "ENTER PASS HERE"
   stripe_publishable_key: "ENTER KEY HERE"

@@ -21,3 +21,5 @@ screenshot_urls:
 cache_control_ips:
   - 1.2.3.4
   - 4.5.6.7
+hcaptcha_site_key: sitekey
+hcaptcha_secret_key: secret
