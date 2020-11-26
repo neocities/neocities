@@ -53,7 +53,6 @@ gem 'activesupport'
 gem 'facter', require: nil
 gem 'maxmind-db'
 gem 'json', '>= 2.3.0'
-gem 'hcaptcha'
 
 group :development, :test do
   gem 'pry'

@@ -11,8 +11,6 @@ use Rack::Session::Cookie, key:          'neocities',
 
 use Rack::TempfileReaper
 
-include Hcaptcha::Adapters::ControllerMethods
-
 helpers do
   def site_change_file_display_class(filename)
     return 'html' if filename.match(Site::HTML_REGEX)
@@ -24,7 +22,12 @@ helpers do
     %{<input name="csrf_token" type="hidden" value="#{csrf_token}">}
   end
 
-  include Hcaptcha::Adapters::ViewMethods
+  def hcaptcha_input
+    %{
+      <script src="https://hcaptcha.com/1/api.js" async defer></script>
+      <div class="h-captcha" data-sitekey="#{$config['hcaptcha_site_key']}"></div>
+    }
+  end
 end
 
 set :protection, :frame_options => "DENY"
