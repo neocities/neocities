@@ -84,8 +84,6 @@ GEM
     geoip (1.6.4)
     hashdiff (1.0.0)
     hashie (3.6.0)
-    hcaptcha (7.0.1)
-      json
     highline (2.0.2)
     hiredis (0.6.3)
     hoe (3.22.1)
@@ -310,7 +308,6 @@ DEPENDENCIES
   filesize
   gandi
   geoip
-  hcaptcha
   hiredis
   hoe
   htmlentities
