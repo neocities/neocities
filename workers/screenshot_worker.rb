@@ -31,6 +31,9 @@ class ScreenshotWorker
       scheduled_job.delete
     end
 
+    site = Site[username: username]
+    return if site.is_deleted
+
     path = "/#{path}" unless path[0] == '/'
 
     uri = Addressable::URI.parse $config['screenshot_urls'].sample
