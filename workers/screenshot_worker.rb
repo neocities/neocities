@@ -11,6 +11,9 @@ class ScreenshotWorker
 
   def perform(username, path)
 
+    site = Site[username: username]
+    return if site.is_deleted
+
     queue = Sidekiq::Queue.new self.class.sidekiq_options_hash['queue']
     logger.info "JOB ID: #{jid} #{username} #{path}"
     queue.each do |job|
@@ -30,9 +33,6 @@ class ScreenshotWorker
       logger.info "DELETING scheduled job #{scheduled_job.jid} for #{username} #{path}"
       scheduled_job.delete
     end
-
-    site = Site[username: username]
-    return if site.is_deleted
 
     path = "/#{path}" unless path[0] == '/'
 
