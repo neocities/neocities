@@ -12,7 +12,7 @@ describe 'stats' do
     @time = Time.now
     @time_iso8601 = @time.iso8601
 
-    log = [
+    @log = [
       "#{@time_iso8601}\t#{@site_one.username}\t5000\t/\t67.180.75.140\thttp://example.com",
       "#{@time_iso8601}\t#{@site_one.username}\t5000\t/\t67.180.75.140\thttp://example.com",
       "#{@time_iso8601}\t#{@site_one.username}\t5000\t/\t172.56.16.152\thttp://example.com",
@@ -23,8 +23,19 @@ describe 'stats' do
     ]
 
     Zlib::GzipWriter.open("tests/stat_logs/#{SecureRandom.uuid}.log.gz") do |gz|
-      gz.write log.join("\n")
+      gz.write @log.join("\n")
     end
+  end
+
+  it 'works with two logfiles' do
+    Zlib::GzipWriter.open("tests/stat_logs/#{SecureRandom.uuid}.log.gz") do |gz|
+      gz.write @log.join("\n")
+    end
+    Stat.parse_logfiles STAT_LOGS_PATH
+    stat = @site_one.stats.first
+    stat.hits.must_equal 8
+    stat.bandwidth.must_equal 40000
+    stat.views.must_equal 2
   end
 
   it 'deals with spaces in paths' do

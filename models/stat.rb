@@ -23,9 +23,9 @@ class Stat < Sequel::Model
 
       cache_control_ips = $config['cache_control_ips']
 
-      Dir["#{path}/*.log.gz"].each do |log_path|
-        site_logs = {}
+      site_logs = {}
 
+      Dir["#{path}/*.log.gz"].each do |log_path|
         gzfile = File.open log_path, 'r'
         logfile = Zlib::GzipReader.new gzfile
 
@@ -83,65 +83,58 @@ class Stat < Sequel::Model
             site_logs[log_time][username][:paths][path] ||= 0
             site_logs[log_time][username][:paths][path] += 1
           end
+
+          logfile.close
+          FileUtils.rm log_path
         rescue => e
           puts "Log parse exception: #{e.inspect}"
           logfile.close
           FileUtils.mv log_path, log_path.gsub('.log', '.brokenlog')
           next
         end
-
-        logfile.close
-
-        DB[:stats].lock('EXCLUSIVE') do
-          DB.transaction do
-            site_logs.each do |log_time, usernames|
-              Site.select(:id, :username).where(username: usernames.keys).all.each do |site|
-                usernames[site.username][:id] = site.id
-              end
-
-              usernames.each do |username, site_log|
-                next unless site_log[:id]
-
-                opts = {site_id: site_log[:id], created_at: log_time.to_date.to_s}
-                stat = Stat.select(:id).where(opts).first
-                stat = Stat.create opts if stat.nil?
-
-                DB['update sites set hits=hits+?, views=views+? where id=?',
-                  site_log[:hits],
-                  site_log[:views],
-                  site_log[:id]
-                ].first
-
-                DB[
-                  'update stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where id=?',
-                  site_log[:hits],
-                  site_log[:views],
-                  site_log[:bandwidth],
-                  stat.id
-                ].first
-              end
-            end
-          end
-        end
-        FileUtils.rm log_path
+        #FileUtils.rm log_path
       end
 
-      DB[:daily_site_stats].lock('EXCLUSIVE') do
-        DB.transaction do
-          total_site_stats.each do |time, stats|
-            opts = {created_at: time.to_date.to_s}
-              stat = DailySiteStat.select(:id).where(opts).first
-              stat = DailySiteStat.create opts if stat.nil?
-
-              DB[
-                'update daily_site_stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where created_at=?',
-                stats[:hits],
-                stats[:views],
-                stats[:bandwidth],
-                time.to_date
-              ].first
-          end
+      site_logs.each do |log_time, usernames|
+        Site.select(:id, :username).where(username: usernames.keys).all.each do |site|
+          usernames[site.username][:id] = site.id
         end
+
+        usernames.each do |username, site_log|
+          next unless site_log[:id]
+
+          opts = {site_id: site_log[:id], created_at: log_time.to_date.to_s}
+          stat = Stat.select(:id).where(opts).first
+          stat = Stat.create opts if stat.nil?
+
+          DB['update sites set hits=hits+?, views=views+? where id=?',
+            site_log[:hits],
+            site_log[:views],
+            site_log[:id]
+          ].first
+
+          DB[
+            'update stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where id=?',
+            site_log[:hits],
+            site_log[:views],
+            site_log[:bandwidth],
+            stat.id
+          ].first
+        end
+      end
+
+      total_site_stats.each do |time, stats|
+        opts = {created_at: time.to_date.to_s}
+          stat = DailySiteStat.select(:id).where(opts).first
+          stat = DailySiteStat.create opts if stat.nil?
+
+          DB[
+            'update daily_site_stats set hits=hits+?, views=views+?, bandwidth=bandwidth+? where created_at=?',
+            stats[:hits],
+            stats[:views],
+            stats[:bandwidth],
+            time.to_date
+          ].first
       end
     end
   end
