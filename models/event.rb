@@ -27,7 +27,7 @@ class Event < Sequel::Model
   def self.news_feed_default_dataset
     if SimpleCache.expired?(:excluded_actioning_site_ids)
       res = DB[%{select distinct(actioning_site_id) from events join sites on actioning_site_id=sites.id where sites.is_banned='t' or sites.is_nsfw='t' or sites.is_deleted='t'}].all.collect {|r| r[:actioning_site_id]}
-      excluded_actioning_site_ids = SimpleCache.store :excluded_actioning_site_ids, res, 10.minutes
+      excluded_actioning_site_ids = SimpleCache.store :excluded_actioning_site_ids, res, 2.hours
     else
       excluded_actioning_site_ids = SimpleCache.get :excluded_actioning_site_ids
     end
