@@ -89,7 +89,7 @@ def browse_sites_dataset
     when 'tipping_enabled'
       ds = ds.where tipping_enabled: true
       ds = ds.where("(tipping_paypal is not null and tipping_paypal != '') or (tipping_bitcoin is not null and tipping_bitcoin != '')")
-      ds = ds.where{views > 10_000}
+      ds = ds.where{views > Tag::SITE_VIEWS_MINIMUM_FOR_BROWSE}
       ds = ds.group :sites__id
       ds = ds.order :follow_count.desc, :views.desc, :updated_at.desc
     when 'blocks'
@@ -100,7 +100,7 @@ def browse_sites_dataset
       ds = ds.order :total.desc
     else
       params[:sort_by] = 'followers'
-      ds = ds.where{views > 10_000}
+      ds = ds.where{views > Tag::SITE_VIEWS_MINIMUM_FOR_BROWSE}
       ds = ds.order :follow_count.desc, :views.desc, :updated_at.desc
   end
 

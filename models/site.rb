@@ -720,7 +720,7 @@ class Site < Sequel::Model
     begin
       output = line.run path: uploaded_file[:tempfile].path
     rescue Terrapin::ExitStatusError => e
-      puts "WARNING: CLAMAV FAILED #{uploaded_file[:tempfile].path} #{e.message}"
+      puts "WARNING: CLAMAV FAILED #{uploaded_file[:tempfile].path} #{e.message}" unless ENV['RACK_ENV'] == 'test'
       return true
     end
 
@@ -763,7 +763,7 @@ class Site < Sequel::Model
     purge_cache path
   end
 
-  Rye::Cmd.add_command :ipfs
+  #Rye::Cmd.add_command :ipfs
 
   def add_to_ipfs
     # Not ideal. An SoA version is in progress.

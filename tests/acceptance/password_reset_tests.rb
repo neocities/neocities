@@ -73,13 +73,13 @@ describe '/password_reset' do
 
     visit "/password_reset_confirm?#{Rack::Utils.build_query username: @site.username, token: @site.reload.password_reset_token}"
 
-    page.current_url.must_match /.+\/settings$/
+    page.current_url.must_match /.+\/settings#password/
 
     fill_in 'new_password', with: 'n3wp4s$'
     fill_in 'new_password_confirm', with: 'n3wp4s$'
     click_button 'Change Password'
 
-    page.current_url.must_match /.+\/settings$/
+    page.current_url.must_match /.+\/settings#password/
     page.must_have_content 'Successfully changed password'
     Site.valid_login?(@site.username, 'n3wp4s$').must_equal true
     page.get_rack_session['id'].must_equal @site.id

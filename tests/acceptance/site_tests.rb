@@ -63,11 +63,18 @@ describe 'site page' do
     page.must_have_content /#{site.username}/
   end
 
-=begin
+  it 'does not allow blocked site to follow site that is blocking it' do
+    
+  end
+
   it 'allows site blocking' do
-    Capybara.default_driver = :poltergeist
+    #Capybara.default_driver = :poltergeist
     tag = SecureRandom.hex 10
-    blocked_site = Fabricate :site, new_tags_string: tag, created_at: 2.weeks.ago, site_changed: true
+    blocked_site = Fabricate :site,
+                             new_tags_string: tag,
+                             views: Tag::SITE_VIEWS_MINIMUM_FOR_BROWSE+1,
+                             created_at: 5.weeks.ago,
+                             site_changed: true
     site = Fabricate :site
 
     page.set_rack_session id: site.id
@@ -89,7 +96,7 @@ describe 'site page' do
     site.blockings.length.must_equal 1
     site.blockings.first.site_id.must_equal blocked_site.id
   end
-=end
+
 
   it '404s if site is banned' do
     site = Fabricate :site

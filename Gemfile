@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'sinatra', '2.0.5'
+gem 'sinatra', '2.0.8'
 gem 'redis'
 gem 'redis-namespace'
 gem 'sequel'
@@ -13,7 +13,7 @@ gem 'sidekiq', '~> 4.2.10'
 gem 'mail'
 gem 'tilt'
 gem 'erubis'
-gem 'stripe', '~> 5.17.0' #, source: 'https://code.stripe.com/'
+gem 'stripe'
 gem 'terrapin'
 gem 'zipruby'
 gem 'sass', require: nil
@@ -26,7 +26,7 @@ gem 'addressable', require: 'addressable/uri'
 gem 'paypal-recurring', require: 'paypal/recurring'
 gem 'geoip'
 gem 'io-extra', require: 'io/extra'
-gem 'rye'
+#gem 'rye'
 gem 'base32'
 gem 'coveralls', require: false
 gem 'sanitize'
@@ -53,6 +53,7 @@ gem 'activesupport'
 gem 'facter', require: nil
 gem 'maxmind-db'
 gem 'json', '>= 2.3.0'
+gem 'rss'
 
 group :development, :test do
   gem 'pry'
@@ -67,15 +68,15 @@ end
 group :test do
   gem 'faker'
   gem 'fabrication',                    require: 'fabrication'
-  gem 'minitest'
+  gem 'minitest', '= 5.11.3'
   gem 'minitest-reporters',             require: 'minitest/reporters'
   gem 'rack-test',                      require: 'rack/test'
   gem 'mocha',                          require: nil
   gem 'rake', '>= 12.3.3',                          require: nil
   gem 'capybara',                       require: nil #, '2.10.1',     require: nil
   gem 'rack_session_access',            require: nil
-  gem 'webmock', '3.5.1',               require: nil
-  gem 'stripe-ruby-mock', '2.5.8',      require: 'stripe_mock'
+  gem 'webmock',                        require: nil
+  gem 'stripe-ruby-mock',               require: 'stripe_mock'
   gem 'timecop'
   gem 'mock_redis'
   gem 'simplecov',                      require: nil
