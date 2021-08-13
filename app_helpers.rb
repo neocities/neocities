@@ -119,7 +119,7 @@ def flash_display(opts={})
 end
 
 def recaptcha_valid?
-  return true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
+  return true if ENV['RACK_ENV'] == 'test' || ENV['CI']
   return false unless params[:'g-recaptcha-response']
   resp = Net::HTTP.get URI(
     'https://www.google.com/recaptcha/api/siteverify?'+
@@ -137,7 +137,7 @@ def recaptcha_valid?
 end
 
 def hcaptcha_valid?
-  return true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
+  return true if ENV['RACK_ENV'] == 'test' || ENV['CI']
   return false unless params[:'h-captcha-response']
 
   resp = Net::HTTP.get URI(
