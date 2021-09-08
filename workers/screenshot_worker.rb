@@ -12,7 +12,7 @@ class ScreenshotWorker
   def perform(username, path)
 
     site = Site[username: username]
-    return if site.is_deleted
+    return if site.nil? || site.is_deleted
 
     queue = Sidekiq::Queue.new self.class.sidekiq_options_hash['queue']
     logger.info "JOB ID: #{jid} #{username} #{path}"
