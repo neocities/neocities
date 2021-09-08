@@ -22,7 +22,7 @@ gem 'filesize'
 gem 'thread'
 gem 'rack-cache'
 gem 'rest-client', require: 'rest_client'
-gem 'addressable', require: 'addressable/uri'
+gem 'addressable', '>= 2.8.0', require: 'addressable/uri'
 gem 'paypal-recurring', require: 'paypal/recurring'
 gem 'geoip'
 gem 'io-extra', require: 'io/extra'
@@ -53,6 +53,7 @@ gem 'activesupport'
 gem 'facter', require: nil
 gem 'maxmind-db'
 gem 'json', '>= 2.3.0'
+gem 'nokogiri', '= 1.11.4'
 
 group :development, :test do
   gem 'pry'
