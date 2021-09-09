@@ -51,6 +51,18 @@ describe 'site_files' do
       @site.site_files_dataset.where(path: 'test.jpg').first.wont_equal nil
     end
 
+    it 'renames nonstandard file type for supporters' do
+      no_file_restriction_plans = Site::PLAN_FEATURES.select {|p,v| v[:no_file_restrictions] == true}
+      no_file_restriction_plans.each do |plan_type,hash|
+        @site = Fabricate :site, plan_type: plan_type
+        upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
+        testfile = @site.site_files_dataset.where(path: 'flowercrime.wav').first
+        res = testfile.rename('flowercrime.exe')
+        res.first.must_equal true
+        File.exists?(@site.files_path('flowercrime.exe')).must_equal true
+        @site.site_files_dataset.where(path: 'flowercrime.exe').first.wont_equal nil
+      end
+    end
 
     it 'works for directory' do
       @site.create_directory 'dirone'

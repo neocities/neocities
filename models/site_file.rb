@@ -56,7 +56,9 @@ class SiteFile < Sequel::Model
       mime_type = Magic.guess_file_mime_type site.files_path(self.path)
       extname = File.extname new_path
 
-      return false, 'unsupported file type' unless site.class.valid_file_mime_type_and_ext?(mime_type, extname)
+      unless site.supporter? || site.class.valid_file_mime_type_and_ext?(mime_type, extname)
+        return false, 'unsupported file type'
+      end
     end
 
     begin
