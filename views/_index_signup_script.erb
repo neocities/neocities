@@ -15,8 +15,9 @@
       } else {
         for(var i=0; i<errors.length;i++) {
           if(errors[i][0] == 'captcha') {
-            var captchaDiv = $('#captcha-input')
+            var captchaDiv = $('#captcha_input')
             captchaDiv.attr('data-original-title', errors[i][1])
+            captchaDiv.attr('data-placement', 'left')
             captchaDiv.tooltip('show')
           } else {
             var ele = $('input[name='+errors[i][0]+']')

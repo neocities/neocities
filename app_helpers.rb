@@ -118,24 +118,6 @@ def flash_display(opts={})
   erb :'_flash', layout: false, locals: {opts: opts}
 end
 
-def recaptcha_valid?
-  return true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
-  return false unless params[:'g-recaptcha-response']
-  resp = Net::HTTP.get URI(
-    'https://www.google.com/recaptcha/api/siteverify?'+
-    Rack::Utils.build_query(
-      secret: $config['recaptcha_private_key'],
-      response: params[:'g-recaptcha-response']
-    )
-  )
-
-  if JSON.parse(resp)['success'] == true
-    true
-  else
-    false
-  end
-end
-
 def hcaptcha_valid?
   return true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
   return false unless params[:'h-captcha-response']

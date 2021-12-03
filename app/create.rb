@@ -12,11 +12,12 @@ post '/create_validate_all' do
   site = Site.new fields
 
   if site.valid?
-    return [].to_json if education_whitelisted? || params[:'g-recaptcha-response'] || self.class.test?
-    return [['captcha', 'Please complete the captcha.']].to_json
+    return [].to_json if education_whitelisted?
   end
 
-  site.errors.collect {|e| [e.first, e.last.first]}.to_json
+  resp = site.errors.collect {|e| [e.first, e.last.first]}
+  resp << ['captcha', 'Please complete the captcha.'] if params[:'h-captcha-response'].empty? && !self.class.test?
+  resp.to_json
 end
 
 post '/create_validate' do
@@ -65,7 +66,7 @@ post '/create' do
   if education_whitelisted?
     @site.email_confirmed = true
   else
-    if !recaptcha_valid?
+    if !hcaptcha_valid?
       flash[:error] = 'The captcha was not valid, please try again.'
       return {result: 'error'}.to_json
     end

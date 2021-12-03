@@ -3,10 +3,8 @@ development:
   database_pool: 1
   redis_url: "redis://localhost"
   session_secret: "SECRET GOES HERE"
-  recaptcha_public_key: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-  recaptcha_private_key: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
-  hcaptcha_site_key: sitekey
-  hcaptcha_secret_key: secret
+  hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
+  hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
   sidekiq_user: "ENTER USER HERE"
   sidekiq_pass: "ENTER PASS HERE"
   stripe_publishable_key: "ENTER KEY HERE"
@@ -32,8 +30,8 @@ test:
   database: 'postgres://localhost/neocities_test'
   database_pool: 1
   session_secret: "SECRET GOES HERE"
-  recaptcha_public_key: "ENTER PUBLIC KEY HERE"
-  recaptcha_private_key: "ENTER PRIVATE KEY HERE"
+  hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
+  hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
   sidekiq_user: "ENTER USER HERE"
   sidekiq_pass: "ENTER PASS HERE"
   stripe_publishable_key: "ENTER KEY HERE"

@@ -53,7 +53,7 @@
   <div class="col intro">
     <h2 class="section-header">Create your own free website.<br>Unlimited creativity, zero ads.</h2>
     <p class="intro-text">
-     Neocities is a social network of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> web sites</a> that are bringing back the lost individual creativity of the web. We offer free static web hosting and tools that allow you to create your own web site. Join us!
+      Neocities is a social network of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> web sites</a> that are bringing back the lost individual creativity of the web. We offer free static web hosting and tools that allow you to create your own web site. Join us!
     </p>
     <ul class="intro-List">
       <li class="intro-Tools">
@@ -61,6 +61,7 @@
         <h3 class="delta">Powerful features to help you build</h3>
         <p class="base">
           We’ve made it easy to build your web site and explore other sites. Neocities features an in-browser HTML editor, a <a href="/cli">command line tool</a>, custom domain support, fast site performance, easy file uploading, RSS feeds, folder support, and so much more.
+        </p>
       </li>
 
       <li class="intro-Social">
@@ -126,14 +127,11 @@
                      autocorrect="off" autocomplete="off" />
             </div>
 
-            <div class="col col-50" style="padding-left:0;">
+            <div class="col col-50" style="padding-left:0">
               <label>
                 Confirm you are human
               </label>
-              <div id="captcha-input" class="g-recaptcha"
-                   data-sitekey="<%= $config['recaptcha_public_key'] %>"
-                   data-theme="dark" data-placement="left" data-trigger="manual">
-              </div>
+              <%== hcaptcha_input %>
             </div>
 
             <div class="col col-50">
@@ -142,6 +140,7 @@
               </div>
             </div>
           </div>
+
         </fieldset>
       </form>
 

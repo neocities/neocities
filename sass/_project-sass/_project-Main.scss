@@ -2288,3 +2288,8 @@ pre, code {
   position: fixed!important;
   top: 105px!important;
 }
+
+.h-captcha iframe {
+  width: 90% !important;
+  border-radius: 10px;
+}

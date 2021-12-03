@@ -25,7 +25,7 @@ helpers do
   def hcaptcha_input
     %{
       <script src="https://hcaptcha.com/1/api.js" async defer></script>
-      <div class="h-captcha" data-sitekey="#{$config['hcaptcha_site_key']}"></div>
+      <div id="captcha_input" class="h-captcha" data-sitekey="#{$config['hcaptcha_site_key']}"></div>
     }
   end
 end
@@ -89,7 +89,7 @@ after do
 end
 
 #after do
-  #response.headers['Content-Security-Policy'] = %{block-all-mixed-content; default-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://www.google.com/recaptcha/ https://js.stripe.com; script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: }
+  #response.headers['Content-Security-Policy'] = %{block-all-mixed-content; default-src 'self'; connect-src 'self' https://api.stripe.com https://assets.hcaptcha.com; frame-src https://assets.hcaptcha.com https://js.stripe.com; script-src 'self' 'unsafe-inline' https://js.stripe.com https://hcaptcha.com https://assets.hcaptcha.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: }
 #end
 
 not_found do
