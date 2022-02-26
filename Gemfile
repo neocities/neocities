@@ -53,7 +53,7 @@ gem 'activesupport'
 gem 'facter', require: nil
 gem 'maxmind-db'
 gem 'json', '>= 2.3.0'
-gem 'nokogiri', '= 1.11.4'
+gem 'nokogiri', '1.13.2'
 
 group :development, :test do
   gem 'pry'
