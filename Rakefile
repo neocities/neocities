@@ -30,12 +30,16 @@ HERE
 end
 =end
 
-desc "parse logs"
-task :parse_logs => [:environment] do
+desc "prune logs"
+task :prune_logs => [:environment] do
   Stat.prune!
   StatLocation.prune!
   StatReferrer.prune!
   StatPath.prune!
+end
+
+desc "parse logs"
+task :parse_logs => [:environment] do
   Stat.parse_logfiles $config['logs_path']
 end
 
