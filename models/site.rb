@@ -72,6 +72,7 @@ class Site < Sequel::Model
   INDEX_HTML_REGEX       = /\/?index.html$/
   ROOT_INDEX_HTML_REGEX  = /^\/?index.html$/
   MAX_COMMENT_SIZE       = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
+  MAX_FOLLOWS            = 1000
 
   SCREENSHOT_DELAY_SECONDS = 30
   SCREENSHOT_RESOLUTIONS   = ['540x405', '210x158', '100x100', '50x50']
@@ -160,7 +161,7 @@ class Site < Sequel::Model
 
   MAXIMUM_EMAIL_CONFIRMATIONS = 20
   MAX_COMMENTS_PER_DAY = 5
-  SANDBOX_TIME = 2.days
+  SANDBOX_TIME = 14.days
 
   many_to_many :tags
 
@@ -380,6 +381,7 @@ class Site < Sequel::Model
   end
 
   def toggle_follow(site)
+    return false if followings_dataset.count > MAX_FOLLOWS
     if is_following? site
       DB.transaction do
         follow = followings_dataset.filter(site_id: site.id).first
@@ -508,6 +510,7 @@ class Site < Sequel::Model
     }
 
     delete_all_cache
+    update_redis_proxy_record
     true
   end
 
@@ -986,35 +989,47 @@ class Site < Sequel::Model
   end
 
   def update_redis_proxy_record
-    user_record = {}
-    domain_record = {}
+    u_key = "u-#{username}"
 
-    unless values[:domain].blank?
-      domain_record[:username] = username
+    if supporter?
+      $redis_proxy.hset u_key, 'is_supporter', '1'
+    else
+      $redis_proxy.hdel u_key, 'is_supporter'
+    end
+
+    if sandboxed?
+      $redis_proxy.hset u_key, 'is_sandboxed', '1'
+    else
+      $redis_proxy.hdel u_key, 'is_sandboxed'
+    end
+
+    if values[:domain]
+      d_root_key = "d-#{values[:domain]}"
+      d_www_key  = "d-www.#{values[:domain]}"
+
+      $redis_proxy.hset u_key, 'domain', values[:domain]
+      $redis_proxy.hset d_root_key, 'username', username
+      $redis_proxy.hset d_www_key, 'username', username
 
       if ssl_installed?
-        domain_record[:ssl_cert] = ssl_cert
-        domain_record[:ssl_key]  = ssl_key
+        $redis_proxy.hset d_root_key, 'ssl_cert', ssl_cert
+        $redis_proxy.hset d_root_key, 'ssl_key',  ssl_key
+        $redis_proxy.hset d_www_key,  'ssl_cert', ssl_cert
+        $redis_proxy.hset d_www_key,  'ssl_key',  ssl_key
       end
-    end
-
-    user_record[:is_sandboxed] = '1' if sandboxed?
-    user_record[:is_supporter] = '1' if supporter?
-
-    unless user_record.empty?
-      user_record[:domain] = values[:domain]
-      $redis_proxy.mapped_hmset "u-#{username}", user_record
-    end
-
-    unless domain_record.empty?
-      $redis_proxy.mapped_hmset "d-#{values[:domain]}", domain_record
-      $redis_proxy.mapped_hmset "d-www.#{values[:domain]}", domain_record
+    else
+      $redis_proxy.hdel u_key, 'domain'
     end
 
     $redis_proxy.del "u-#{@old_username}" if @old_username
     $redis_proxy.del "d-#{@old_domain}" if @old_domain
     $redis_proxy.del "d-www.#{@old_domain}" if @old_domain
-    $redis_proxy.del "u-#{username}" if is_deleted
+
+    if is_deleted
+      $redis_proxy.del u_key
+      $redis_proxy.del d_root_key
+      $redis_proxy.del d_www_key
+    end
 
     true
   end
@@ -1819,3 +1834,4 @@ class Site < Sequel::Model
     true
   end
 end
+
