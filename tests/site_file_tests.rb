@@ -81,6 +81,17 @@ describe 'site_files' do
       PurgeCacheWorker.jobs.last['args'].last.must_equal 'dasharezone'
     end
 
+    it 'wont set an empty directory' do
+      @site.create_directory 'dirone'
+      @site.site_files.select {|sf| sf.path == 'dirone'}.length.must_equal 1
+
+      dirone = @site.site_files_dataset.where(path: 'dirone').first
+      res = dirone.rename('')
+      @site.site_files_dataset.where(path: '').count.must_equal 0
+      res.must_equal [false, 'cannot rename to empty path']
+      @site.site_files_dataset.where(path: '').count.wont_equal 1
+    end
+
     it 'changes path of files and dirs within directory when changed' do
       upload(
         'dir' => 'test',
