@@ -58,6 +58,7 @@ GEOCITIES_NEIGHBORHOODS = %w{
   televisioncity
   tokyo
   vienna
+  westhollywood
   yosemite
 }.freeze
 
