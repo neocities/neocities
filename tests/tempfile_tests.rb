@@ -5,6 +5,6 @@ describe Tempfile do
     tmp = Tempfile.new
     tmp.write ''
     tmp.close
-    tmp.size.must_equal 0
+    _(tmp.size).must_equal 0
   end
 end

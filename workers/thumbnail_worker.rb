@@ -43,8 +43,8 @@ class ThumbnailWorker
 
       full_thumbnail_path = File.join(user_thumbnails_path, "#{path}.#{res}.#{save_ext}")
 
-      resimg.write(full_thumbnail_path) {
-        self.quality = 75
+      resimg.write(full_thumbnail_path) { |i|
+        i.quality = 75
       }
       resimg.destroy!
       #$image_optim.optimize_image! full_thumbnail_path

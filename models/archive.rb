@@ -13,6 +13,7 @@ class Archive < Sequel::Model
   end
 
   def unpin
+    return nil
     # Not ideal. An SoA version is in progress.
     if ENV['RACK_ENV'] == 'production' && $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
       rbox = Rye::Box.new $config['ipfs_ssh_host'], :user => $config['ipfs_ssh_user']

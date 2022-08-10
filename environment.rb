@@ -12,7 +12,14 @@ Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
 require 'tilt/erubis'
-require 'active_support/core_ext/integer/time'
+require 'active_support'
+require 'active_support/time'
+
+class File
+  def self.exists?(val)
+    self.exist?(val)
+  end
+end
 
 Dir['./ext/**/*.rb'].each {|f| require f}
 
@@ -163,3 +170,5 @@ $gandi = Gandi::Session.new $config['gandi_api_key'], gandi_opts
 $image_optim = ImageOptim.new pngout: false, svgo: false
 
 Money.locale_backend = nil
+Money.default_currency = Money::Currency.new("USD")
+Money.rounding_mode = BigDecimal::ROUND_HALF_UP

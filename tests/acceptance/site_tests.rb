@@ -19,18 +19,18 @@ describe 'site page' do
     it 'allows commenting' do
       fill_in 'message', with: 'I love your site!'
       click_button 'Post'
-      @site.profile_comments.count.must_equal 1
+      _(@site.profile_comments.count).must_equal 1
       profile_comment = @site.profile_comments.first
-      profile_comment.actioning_site.id.must_equal @commenting_site.id
-      profile_comment.message.must_equal 'I love your site!'
+      _(profile_comment.actioning_site.id).must_equal @commenting_site.id
+      _(profile_comment.message).must_equal 'I love your site!'
     end
 
     it 'does not send comment email if not wished' do
       @site.update send_comment_emails: false
       fill_in 'message', with: 'I am annoying'
       click_button 'Post'
-      @site.profile_comments.count.must_equal 1
-      EmailWorker.jobs.length.must_equal 0
+      _(@site.profile_comments.count).must_equal 1
+      _(EmailWorker.jobs.length).must_equal 0
     end
 
     it 'does not send email if there is none' do
@@ -38,7 +38,7 @@ describe 'site page' do
       @site.save_changes validate: false
       fill_in 'message', with: 'DERP'
       click_button 'Post'
-      EmailWorker.jobs.length.must_equal 0
+      _(EmailWorker.jobs.length).must_equal 0
     end
   end
 
@@ -52,15 +52,15 @@ describe 'site page' do
 
   it '404s for missing site' do
     visit '/site/failderp'
-    page.status_code.must_equal 404
-    page.must_have_content /not found/i
+    _(page.status_code).must_equal 404
+    _(page).must_have_content /not found/i
   end
 
   it 'loads site page' do
     site = Fabricate :site
     visit "/site/#{site.username}"
-    page.status_code.must_equal 200
-    page.must_have_content /#{site.username}/
+    _(page.status_code).must_equal 200
+    _(page).must_have_content /#{site.username}/
   end
 
 =begin
@@ -74,7 +74,7 @@ describe 'site page' do
 
     visit "/browse?tag=#{tag}"
 
-    page.find('.website-Gallery .username a')['href'].must_match /\/site\/#{blocked_site.username}/
+    _(page.find('.website-Gallery .username a')['href']).must_match /\/site\/#{blocked_site.username}/
 
     visit "/site/#{blocked_site.username}"
 
@@ -83,11 +83,11 @@ describe 'site page' do
 
     visit "/browse?tag=#{tag}"
 
-    page.must_have_content /no active sites found/i
+    _(page).must_have_content /no active sites found/i
 
     site.reload
-    site.blockings.length.must_equal 1
-    site.blockings.first.site_id.must_equal blocked_site.id
+    _(site.blockings.length).must_equal 1
+    _(site.blockings.first.site_id).must_equal blocked_site.id
   end
 =end
 
@@ -95,7 +95,7 @@ describe 'site page' do
     site = Fabricate :site
     site.ban!
     visit "/site/#{site.username}"
-    page.status_code.must_equal 404
-    page.must_have_content /not found/i
+    _(page.status_code).must_equal 404
+    _(page).must_have_content /not found/i
   end
 end

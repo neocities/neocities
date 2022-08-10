@@ -763,10 +763,11 @@ class Site < Sequel::Model
     purge_cache path
   end
 
-  Rye::Cmd.add_command :ipfs
+  #Rye::Cmd.add_command :ipfs
 
   def add_to_ipfs
     # Not ideal. An SoA version is in progress.
+    return nil
 
     if archives_dataset.count > Archive::MAXIMUM_ARCHIVES_PER_SITE
       archives_dataset.order(:updated_at).first.destroy
@@ -833,7 +834,7 @@ class Site < Sequel::Model
     path = scrubbed_path path
     relative_path = files_path path
 
-    if Dir.exists?(relative_path) || File.exist?(relative_path)
+    if Dir.exist?(relative_path) || File.exist?(relative_path)
       return 'Directory (or file) already exists.'
     end
 

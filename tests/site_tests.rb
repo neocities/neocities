@@ -9,8 +9,8 @@ describe Site do
     it 'still makes files available' do
       site = Fabricate :site
       site.ban!
-      File.exist?(site.current_files_path('index.html')).must_equal true
-      site.current_files_path('index.html').must_equal File.join(Site::DELETED_SITES_ROOT, Site.sharding_dir(site.username), site.username, 'index.html')
+      _(File.exist?(site.current_files_path('index.html'))).must_equal true
+      _(site.current_files_path('index.html')).must_equal File.join(Site::DELETED_SITES_ROOT, Site.sharding_dir(site.username), site.username, 'index.html')
     end
   end
 
@@ -19,13 +19,13 @@ describe Site do
       site = Fabricate :site
       index_path = File.join site.base_files_path, 'index.html'
       site.ban!
-      File.exist?(index_path).must_equal false
+      _(File.exist?(index_path)).must_equal false
       site.unban!
       site.reload
-      site.is_banned.must_equal false
-      site.banned_at.must_be_nil
-      site.blackbox_whitelisted.must_equal true
-      File.exist?(index_path).must_equal true
+      _(site.is_banned).must_equal false
+      _(site.banned_at).must_be_nil
+      _(site.blackbox_whitelisted).must_equal true
+      _(File.exist?(index_path)).must_equal true
     end
   end
 
@@ -35,9 +35,9 @@ describe Site do
         site = Fabricate :site
         site_file_count = site.site_files_dataset.count
         site.create_directory path
-        site.site_files.select {|s| s.path == '' || s.path == '.'}.length.must_equal 0
-        site.site_files.select {|s| s.path == path.gsub('/', '')}.first.wont_be_nil
-        site.site_files_dataset.count.must_equal site_file_count+1
+        _(site.site_files.select {|s| s.path == '' || s.path == '.'}.length).must_equal 0
+        _(site.site_files.select {|s| s.path == path.gsub('/', '')}.first).wont_be_nil
+        _(site.site_files_dataset.count).must_equal site_file_count+1
       end
     end
   end
@@ -45,24 +45,24 @@ describe Site do
   describe 'custom_max_space' do
     it 'should use the custom max space if it is more' do
       site = Fabricate :site
-      site.maximum_space.must_equal Site::PLAN_FEATURES[:free][:space]
+      _(site.maximum_space).must_equal Site::PLAN_FEATURES[:free][:space]
       site.custom_max_space = 10**9
       site.save_changes
-      site.maximum_space.must_equal 10**9
+      _(site.maximum_space).must_equal 10**9
     end
   end
 
   describe 'can_email' do
     it 'should fail if send_emails is false' do
       site = Fabricate :site
-      site.can_email?.must_equal true
+      _(site.can_email?).must_equal true
       site.update send_emails: false
-      site.can_email?.must_equal false
-      site.can_email?(:send_comment_emails).must_equal false
+      _(site.can_email?).must_equal false
+      _(site.can_email?(:send_comment_emails)).must_equal false
       site.update send_emails: true
-      site.can_email?(:send_comment_emails).must_equal true
+      _(site.can_email?(:send_comment_emails)).must_equal true
       site.update send_comment_emails: false
-      site.can_email?(:send_comment_emails).must_equal false
+      _(site.can_email?(:send_comment_emails)).must_equal false
     end
   end
 
@@ -74,12 +74,12 @@ describe Site do
 
     it 'works' do
       @site.send_email(subject: 'Subject', body: 'Body')
-      EmailWorker.jobs.length.must_equal 1
+      _(EmailWorker.jobs.length).must_equal 1
       args = EmailWorker.jobs.first['args'].first
-      args['from'].must_equal Site::FROM_EMAIL
-      args['to'].must_equal @site.email
-      args['subject'].must_equal 'Subject'
-      args['body'].must_equal 'Body'
+      _(args['from']).must_equal Site::FROM_EMAIL
+      _(args['to']).must_equal @site.email
+      _(args['subject']).must_equal 'Subject'
+      _(args['body']).must_equal 'Body'
     end
 
     it 'fails if send_emails is false' do
@@ -91,21 +91,21 @@ describe Site do
   describe 'plan_name' do
     it 'should set to free for missing stripe_customer_id' do
       site = Fabricate :site
-      site.reload.plan_type.must_equal 'free'
+      _(site.reload.plan_type).must_equal 'free'
     end
 
     it 'should be free for no plan_type entry' do
       site = Fabricate :site, stripe_customer_id: 'cust_derp'
-      site.plan_type.must_equal 'free'
+      _(site.plan_type).must_equal 'free'
     end
 
     it 'should match plan_type' do
       %w{supporter free}.each do |plan_type|
         site = Fabricate :site, plan_type: plan_type
-        site.plan_type.must_equal plan_type
+        _(site.plan_type).must_equal plan_type
       end
       site = Fabricate :site, plan_type: nil
-      site.plan_type.must_equal 'free'
+      _(site.plan_type).must_equal 'free'
     end
   end
 
@@ -114,16 +114,18 @@ describe Site do
       site = Fabricate :site, new_tags_string: 'vegetables'
       Site::SUGGESTIONS_LIMIT.times { Fabricate :site, new_tags_string: 'vegetables' }
 
-      site.suggestions.length.must_equal Site::SUGGESTIONS_LIMIT
+      _(site.suggestions.length).must_equal Site::SUGGESTIONS_LIMIT
 
-      site.suggestions.each {|s| s.tags.first.name.must_equal 'vegetables'}
+      site.suggestions.each do |suggestion|
+        _(suggestion.tags.first.name).must_equal 'vegetables'
+      end
 
       site = Fabricate :site, new_tags_string: 'gardening'
       (Site::SUGGESTIONS_LIMIT-5).times {
         Fabricate :site, new_tags_string: 'gardening', views: Site::SUGGESTIONS_VIEWS_MIN
       }
 
-      site.suggestions.length.must_equal(Site::SUGGESTIONS_LIMIT - 5)
+      _(site.suggestions.length).must_equal(Site::SUGGESTIONS_LIMIT - 5)
     end
   end
 end

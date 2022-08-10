@@ -19,8 +19,8 @@ describe ScreenshotWorker do
       ScreenshotWorker.new.perform site.username, path
 
       Site::SCREENSHOT_RESOLUTIONS.each do |r|
-        File.exists?(File.join(Site::SCREENSHOTS_ROOT, Site.sharding_dir(site.username), site.username, "#{path}.#{r}.jpg")).must_equal true
-        site.screenshot_url(path, r).must_equal(
+        _(File.exists?(File.join(Site::SCREENSHOTS_ROOT, Site.sharding_dir(site.username), site.username, "#{path}.#{r}.jpg"))).must_equal true
+        _(site.screenshot_url(path, r)).must_equal(
           File.join(Site::SCREENSHOTS_URL_ROOT, Site.sharding_dir(site.username), site.username, "#{path}.#{r}.jpg")
         )
       end
