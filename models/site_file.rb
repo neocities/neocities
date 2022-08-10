@@ -44,6 +44,10 @@ class SiteFile < Sequel::Model
     current_path = self.path
     new_path = site.scrubbed_path new_path
 
+    if new_path == ''
+      return false, 'cannot rename to empty path'
+    end
+
     if current_path == 'index.html'
       return false, 'cannot rename or move root index.html'
     end

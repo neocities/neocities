@@ -30,12 +30,16 @@ HERE
 end
 =end
 
-desc "parse logs"
-task :parse_logs => [:environment] do
+desc "prune logs"
+task :prune_logs => [:environment] do
   Stat.prune!
   StatLocation.prune!
   StatReferrer.prune!
   StatPath.prune!
+end
+
+desc "parse logs"
+task :parse_logs => [:environment] do
   Stat.parse_logfiles $config['logs_path']
 end
 
@@ -473,7 +477,7 @@ end
 desc 'ml_screenshots_list_dump'
 task :ml_screenshots_list_dump => [:environment] do
   ['phishing', 'spam', 'ham', nil].each do |classifier|
-    File.open("./files/screenshot-urls-#{classifier.to_s}.txt", 'w') do |fp|
+    File.open("./files/screenshot-urls#{classifier.nil? ? '' : '-'+classifier.to_s}.txt", 'w') do |fp|
       SiteFile.where(classifier: classifier).where(path: 'index.html').each do |site_file|
         begin
           fp.write "#{site_file.site.screenshot_url('index.html', Site::SCREENSHOT_RESOLUTIONS.first)}\n"
@@ -585,19 +589,4 @@ task :generate_sitemap => [:environment] do
     end
     gz.write %{</sitemapindex>}
   end
-
-  desc 'ml_screenshots_list_dump'
-  task :ml_screenshots_list_dump => [:environment] do
-    ['phishing', 'spam', 'ham', nil].each do |classifier|
-      File.open("./files/screenshot-urls-#{classifier.to_s}.txt", 'w') do |fp|
-        SiteFile.where(classifier: classifier).where(path: 'index.html').each do |site_file|
-          begin
-            fp.write "#{site_file.site.screenshot_url('index.html', Site::SCREENSHOT_RESOLUTIONS.first)}\n"
-          rescue NoMethodError
-          end
-        end
-      end
-    end
-  end
-
 end

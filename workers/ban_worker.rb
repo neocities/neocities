@@ -3,6 +3,7 @@ class BanWorker
   sidekiq_options queue: :ban, retry: 10, backtrace: true
 
   def perform(site_id)
-    Site[site_id].ban!
+    site = Site[site_id]
+    site.ban! unless site.supporter?
   end
 end

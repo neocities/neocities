@@ -40,7 +40,7 @@ def deleted?
 end
 
 def banned?(ip_check=false)
-  return true if session[:banned]
+  #return true if session[:banned]
   return true if current_site && (current_site.is_banned || parent_site.is_banned)
 
   return true if ip_check && Site.banned_ip?(request.ip)

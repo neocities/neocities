@@ -5,7 +5,7 @@ class BlackBoxWorker
   def perform(site_id, path)
     site = Site[site_id]
     return true if site.nil? || site.is_banned? || site.is_deleted
-    BlackBox.tos_violation_check site, path
+    BlackBox.new(site, path).tos_violation_check!
   end
 end
 
