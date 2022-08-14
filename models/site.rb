@@ -1286,6 +1286,7 @@ class Site < Sequel::Model
       if site_file
         file[:size] = site_file.size unless file[:is_directory]
         file[:updated_at] = site_file.updated_at
+        file[:sha1_hash] = site_file.sha1_hash
       end
 
       file[:is_html] = !(extname.match(HTML_REGEX)).nil?

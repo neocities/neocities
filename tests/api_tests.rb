@@ -63,13 +63,15 @@ describe 'api' do
       tempfile = Tempfile.new
       tempfile.write('meep html')
       @site.store_files [{filename: '/derp/test.html', tempfile: tempfile}]
+      site_file = @site.site_files.select {|s| s.path == 'derp/test.html'}.first
       basic_authorize @user, @pass
       get '/api/list', path: '/derp'
       res[:result].must_equal 'success'
       res[:files].length.must_equal 1
       file = res[:files].first
       file[:path].must_equal 'derp/test.html'
-      file[:updated_at].must_equal @site.site_files.select {|s| s.path == 'derp/test.html'}.first.updated_at.rfc2822
+      file[:updated_at].must_equal site_file.updated_at.rfc2822
+      file[:sha1_hash].must_equal site_file.sha1_hash
     end
   end
 
