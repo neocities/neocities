@@ -183,6 +183,7 @@
       editor.setBehavioursEnabled(false)
 
       editor.setValue(resp, -1)
+      editor.getSession().setUndoManager(new ace.UndoManager())
 
       editor.on('change', function(obj) {
         $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
