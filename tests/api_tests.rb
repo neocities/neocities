@@ -94,12 +94,13 @@ describe 'api' do
 
     it 'succeeds for valid sitename' do
       create_site
-      @site.update hits: 31337, domain: 'derp.com', new_tags_string: 'derpie, man'
+      @site.update hits: 31337, changed_count: 222, domain: 'derp.com', new_tags_string: 'derpie, man'
       @site.add_archive ipfs_hash: 'QmXGTaGWTT1uUtfSb2sBAvArMEVLK4rQEcQg5bv7wwdzwU'
       get '/api/info', sitename: @user
       res[:result].must_equal 'success'
       res[:info][:sitename].must_equal @site.username
       res[:info][:hits].must_equal 31337
+      res[:info][:updates].must_equal 222
       res[:info][:created_at].must_equal @site.created_at.rfc2822
       res[:info][:last_updated].must_be_nil
       res[:info][:domain].must_equal 'derp.com'
