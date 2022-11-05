@@ -28,20 +28,20 @@ describe 'tipping' do
 
     post '/webhooks/paypal/tipping_notify', paypal_hash
 
-    @site.tips.length.must_equal 1
+    _(@site.tips.length).must_equal 1
     tip = @site.tips.first
-    tip.site.id.must_equal @site.id
-    tip.actioning_site.id.must_equal @actioning_site.id
-    tip.currency.must_equal 'USD'
-    tip.amount_string.must_equal '$5.00'
-    tip.fee_string.must_equal '$0.45'
-    tip.message.must_equal 'I like your site'
-    tip.paypal_payer_email.must_equal @actioning_site.email
-    tip.paypal_receiver_email.must_equal @site.email
-    tip.paypal_txn_id.must_equal 'TXID'
-    tip.created_at.must_equal Time.parse("2017-02-03 21:39:51 -0800")
+    _(tip.site.id).must_equal @site.id
+    _(tip.actioning_site.id).must_equal @actioning_site.id
+    _(tip.currency).must_equal 'USD'
+    _(tip.amount_string).must_equal '$5.00'
+    _(tip.fee_string).must_equal '$0.45'
+    _(tip.message).must_equal 'I like your site'
+    _(tip.paypal_payer_email).must_equal @actioning_site.email
+    _(tip.paypal_receiver_email).must_equal @site.email
+    _(tip.paypal_txn_id).must_equal 'TXID'
+    _(tip.created_at).must_equal Time.parse("2017-02-03 21:39:51 -0800")
 
-    EmailWorker.jobs.length.must_equal 2
+    _(EmailWorker.jobs.length).must_equal 2
   end
 
   it 'adds a tip even if there is no actioning site id' do
@@ -60,8 +60,8 @@ describe 'tipping' do
 
     post '/webhooks/paypal/tipping_notify', paypal_hash
 
-    @site.tips.length.must_equal 1
-    @site.tips.first.actioning_site_id.must_be_nil
+    _(@site.tips.length).must_equal 1
+    _(@site.tips.first.actioning_site_id).must_be_nil
   end
 end
 

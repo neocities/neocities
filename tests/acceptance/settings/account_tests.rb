@@ -20,38 +20,38 @@ describe 'site/settings' do
       fill_in 'email', with: @new_email
       click_button 'Change Email'
 
-      page.must_have_content /enter the confirmation code here/
+      _(page).must_have_content /enter the confirmation code here/
 
       fill_in 'token', with: @site.reload.email_confirmation_token
       click_button 'Confirm Email'
 
-      page.must_have_content /Email address changed/i
+      _(page).must_have_content /Email address changed/i
 
       @site.reload
-      @site.email.must_equal @new_email
-      @site.password_reset_token.must_be_nil
+      _(@site.email).must_equal @new_email
+      _(@site.password_reset_token).must_be_nil
 
-      EmailWorker.jobs.length.must_equal 2
+      _(EmailWorker.jobs.length).must_equal 2
 
       args = EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /confirm your email address/i}.first['args'].first
-      args['to'].must_equal @new_email
-      args['subject'].must_match /confirm your email address/i
-      args['body'].must_match /hello #{@site.username}/i
-      args['body'].must_match /#{@site.email_confirmation_token}/
+      _(args['to']).must_equal @new_email
+      _(args['subject']).must_match /confirm your email address/i
+      _(args['body']).must_match /hello #{@site.username}/i
+      _(args['body']).must_match /#{@site.email_confirmation_token}/
 
       args = EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /your email address.+changed/i}.first['args'].first
-      args['body'].must_match /previous email.+#{original_email}/
-      args['body'].must_match /new email.+#{@site.email}/
+      _(args['body']).must_match /previous email.+#{original_email}/
+      _(args['body']).must_match /new email.+#{@site.email}/
     end
 
     it 'should fail for invalid email address' do
       @new_email = SecureRandom.uuid.gsub '-', ''
       fill_in 'email', with: @new_email
       click_button 'Change Email'
-      page.must_have_content /a valid email address is required/i
+      _(page).must_have_content /a valid email address is required/i
       @site.reload
-      @site.email.wont_equal @new_email
-      EmailWorker.jobs.empty?.must_equal true
+      _(@site.email).wont_equal @new_email
+      _(EmailWorker.jobs.empty?).must_equal true
     end
 
     it 'should fail for existing email' do
@@ -60,10 +60,10 @@ describe 'site/settings' do
 
       fill_in 'email', with: @existing_email
       click_button 'Change Email'
-      page.must_have_content /this email address already exists on neocities/i
+      _(page).must_have_content /this email address already exists on neocities/i
       @site.reload
-      @site.email.wont_equal @new_email
-      EmailWorker.jobs.empty?.must_equal true
+      _(@site.email).wont_equal @new_email
+      _(EmailWorker.jobs.empty?).must_equal true
     end
 
     it 'should update email preferences' do
@@ -71,15 +71,15 @@ describe 'site/settings' do
       uncheck 'send_comment_emails'
       uncheck 'send_follow_emails'
 
-      @site.send_emails.must_equal true
-      @site.send_comment_emails.must_equal true
-      @site.send_follow_emails.must_equal true
+      _(@site.send_emails).must_equal true
+      _(@site.send_comment_emails).must_equal true
+      _(@site.send_follow_emails).must_equal true
 
       click_button 'Update Notification Settings'
       @site.reload
-      @site.send_emails.must_equal false
-      @site.send_comment_emails.must_equal false
-      @site.send_follow_emails.must_equal false
+      _(@site.send_emails).must_equal false
+      _(@site.send_comment_emails).must_equal false
+      _(@site.send_follow_emails).must_equal false
     end
   end
 
@@ -112,13 +112,13 @@ describe 'site/settings' do
       EmailWorker.drain
       email = Mail::TestMailer.deliveries.first
 
-      email.body.to_s.must_match @email_unsubscribe_url
-      @site.send_emails.must_equal true
+      _(email.body.to_s).must_match @email_unsubscribe_url
+      _(@site.send_emails).must_equal true
       visit '/settings/unsubscribe_email?'+@params_query
 
-      page.body.must_match /You have been successfully unsubscribed.+#{@site.email}/i
+      _(page.body).must_match /You have been successfully unsubscribed.+#{@site.email}/i
 
-      @site.reload.send_emails.must_equal false
+      _(@site.reload.send_emails).must_equal false
     end
 
     it 'should fail to subscribe for bad token' do
@@ -142,12 +142,12 @@ describe 'site/settings' do
       fill_in 'new_password_confirm', with: 'derpie2'
       click_button 'Change Password'
 
-      page.must_have_content /successfully changed password/i
+      _(page).must_have_content /successfully changed password/i
       @site.reload
-      @site.valid_password?('derpie').must_equal false
-      @site.valid_password?('derpie2').must_equal true
+      _(@site.valid_password?('derpie')).must_equal false
+      _(@site.valid_password?('derpie2')).must_equal true
 
-      EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /password has been changed/i}.length.must_equal 1
+      _(EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /password has been changed/i}.length).must_equal 1
     end
 
     it 'should not change for invalid current password' do
@@ -156,12 +156,12 @@ describe 'site/settings' do
       fill_in 'new_password_confirm', with: 'derpie2'
       click_button 'Change Password'
 
-      page.must_have_content /provided password does not match the current one/i
+      _(page).must_have_content /provided password does not match the current one/i
       @site.reload
-      @site.valid_password?('derpie').must_equal true
-      @site.valid_password?('derpie2').must_equal false
+      _(@site.valid_password?('derpie')).must_equal true
+      _(@site.valid_password?('derpie2')).must_equal false
 
-      EmailWorker.jobs.length.must_equal 0
+      _(EmailWorker.jobs.length).must_equal 0
     end
   end
 end

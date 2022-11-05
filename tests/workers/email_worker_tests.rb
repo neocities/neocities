@@ -15,12 +15,12 @@ describe EmailWorker do
     })
 
     mail = Mail::TestMailer.deliveries.first
-    mail.from.first.must_equal 'from@example.com'
-    mail.to.first.must_equal 'to@example.com'
-    mail.subject.must_equal 'Hello World'
+    _(mail.from.first).must_equal 'from@example.com'
+    _(mail.to.first).must_equal 'to@example.com'
+    _(mail.subject).must_equal 'Hello World'
     body = mail.body.to_s
-    body.must_match /testing/
-    body.must_match /unsubscribe/
+    _(body).must_match /testing/
+    _(body).must_match /unsubscribe/
   end
 
   it 'sends an email without a footer' do
@@ -33,7 +33,7 @@ describe EmailWorker do
       'body'      => 'testing'
     })
     body = Mail::TestMailer.deliveries.first.body.to_s
-    body.must_match /testing/
-    body.wont_match /unsubscribe/
+    _(body).must_match /testing/
+    _(body).wont_match /unsubscribe/
   end
 end

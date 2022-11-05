@@ -10,7 +10,7 @@ describe '/password_reset' do
 
   it 'should load the password reset page' do
     visit '/password_reset'
-    page.body.must_match /Reset Password/
+    _(page.body).must_match /Reset Password/
   end
 
   it 'should not load password reset if logged in' do
@@ -18,14 +18,14 @@ describe '/password_reset' do
     page.set_rack_session id: @site.id
 
     visit '/password_reset'
-    URI.parse(page.current_url).path.must_equal '/'
+    _(URI.parse(page.current_url).path).must_equal '/'
   end
 
   it 'errors for missing email' do
     visit '/password_reset'
     click_button 'Send Reset Token'
-    URI.parse(page.current_url).path.must_equal '/password_reset'
-    body.must_match /You must enter a valid email address/
+    _(URI.parse(page.current_url).path).must_equal '/password_reset'
+    _(body).must_match /You must enter a valid email address/
   end
 
   it 'fails for invalid username or token' do
@@ -45,8 +45,8 @@ describe '/password_reset' do
 
     ].each do |params|
       visit "/password_reset_confirm?#{Rack::Utils.build_query params}"
-      page.must_have_content 'Could not find a site with this username and token'
-      @site.reload.password_reset_confirmed.must_equal false
+      _(page).must_have_content 'Could not find a site with this username and token'
+      _(@site.reload.password_reset_confirmed).must_equal false
     end
 
     [
@@ -55,8 +55,8 @@ describe '/password_reset' do
       {username: '', token: ''}
     ].each do |params|
       visit "/password_reset_confirm?#{Rack::Utils.build_query params}"
-      page.must_have_content 'Token cannot be empty'
-      @site.reload.password_reset_confirmed.must_equal false
+      _(page).must_have_content 'Token cannot be empty'
+      _(@site.reload.password_reset_confirmed).must_equal false
     end
 
   end
@@ -67,24 +67,24 @@ describe '/password_reset' do
     fill_in 'email', with: @site.email
     click_button 'Send Reset Token'
 
-    body.must_match /send an e-mail to your account with password reset instructions/
-    @site.reload.password_reset_token.blank?.must_equal false
-    EmailWorker.jobs.first['args'].first['body'].must_match /#{Rack::Utils.build_query(username: @site.username, token: @site.password_reset_token)}/
+    _(body).must_match /send an e-mail to your account with password reset instructions/
+    _(@site.reload.password_reset_token.blank?).must_equal false
+    _(EmailWorker.jobs.first['args'].first['body']).must_match /#{Rack::Utils.build_query(username: @site.username, token: @site.password_reset_token)}/
 
     visit "/password_reset_confirm?#{Rack::Utils.build_query username: @site.username, token: @site.reload.password_reset_token}"
 
-    page.current_url.must_match /.+\/settings#password/
+    _(page.current_url).must_match /.+\/settings#password/
 
     fill_in 'new_password', with: 'n3wp4s$'
     fill_in 'new_password_confirm', with: 'n3wp4s$'
     click_button 'Change Password'
 
-    page.current_url.must_match /.+\/settings#password/
-    page.must_have_content 'Successfully changed password'
-    Site.valid_login?(@site.username, 'n3wp4s$').must_equal true
-    page.get_rack_session['id'].must_equal @site.id
-    @site.reload.password_reset_token.must_be_nil
-    @site.password_reset_confirmed.must_equal false
+    _(page.current_url).must_match /.+\/settings#password/
+    _(page).must_have_content 'Successfully changed password'
+    _(Site.valid_login?(@site.username, 'n3wp4s$')).must_equal true
+    _(page.get_rack_session['id']).must_equal @site.id
+    _(@site.reload.password_reset_token).must_be_nil
+    _(@site.password_reset_confirmed).must_equal false
   end
 
 end

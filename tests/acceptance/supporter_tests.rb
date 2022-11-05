@@ -10,9 +10,8 @@ describe '/supporter' do
     @site = Fabricate :site
     @stripe_helper = StripeMock.create_test_helper
     StripeMock.start
-    @stripe_helper.create_plan id: 'special', amount: 0
-    @stripe_helper.create_plan id: 'supporter', amount: 500
-    @stripe_helper.create_plan id: 'free', amount: 0
+    @stripe_helper.create_product(id: 'supporter', name: 'Supporter')
+    @stripe_helper.create_plan product: 'supporter', amount: 500
     page.set_rack_session id: @site.id
     EmailWorker.jobs.clear
     Mail::TestMailer.deliveries.clear
@@ -37,17 +36,17 @@ describe '/supporter' do
     find('.cc-cvc').set '123'
     page.evaluate_script("document.getElementById('stripe_token').value = '#{@stripe_helper.generate_card_token}'")
     click_link 'Upgrade for $5/mo'
-    page.current_path.must_equal '/supporter/thanks'
+    _(page.current_path).must_equal '/supporter/thanks'
     all('.txt-Center')
-    page.body.must_match /You have become a Neocities Supporter/
+    _(page.body).must_match /You have become a Neocities Supporter/
     @site.reload
-    @site.stripe_customer_id.wont_be_nil
-    @site.stripe_subscription_id.wont_be_nil
-    @site.values[:plan_type].must_equal 'supporter'
-    @site.supporter?.must_equal true
+    _(@site.stripe_customer_id).wont_be_nil
+    _(@site.stripe_subscription_id).wont_be_nil
+    _(@site.values[:plan_type]).must_equal 'supporter'
+    _(@site.supporter?).must_equal true
 
     EmailWorker.drain
     mail = Mail::TestMailer.deliveries.first
-    mail.subject.must_match "You've become a supporter"
+    _(mail.subject).must_match "You've become a supporter"
   end
 end

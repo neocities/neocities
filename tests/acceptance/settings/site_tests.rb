@@ -93,13 +93,13 @@ describe 'site/settings' do
       page.set_rack_session id: @other_site.id
 
       visit "/settings/#{@parent_site.username}"
-      page.current_path.must_equal '/' # This could be better
+      _(page.current_path).must_equal '/' # This could be better
     end
 
     it 'allows child site editing from parent' do
       page.set_rack_session id: @parent_site.id
       visit "/settings/#{@child_site.username}"
-      page.current_path.must_equal "/settings/#{@child_site.username}"
+      _(page.current_path).must_equal "/settings/#{@child_site.username}"
     end
   end
 
@@ -114,33 +114,33 @@ describe 'site/settings' do
     end
 
     after do
-      Site[username: @site[:username]].wont_equal nil
+      _(Site[username: @site[:username]]).wont_equal nil
     end
 
     it 'fails for blank username' do
       fill_in 'name', with: ''
       click_button 'Change Name'
-      page.must_have_content /cannot be blank/i
-      Site[username: ''].must_be_nil
+      _(page).must_have_content /cannot be blank/i
+      _(Site[username: '']).must_be_nil
     end
 
     it 'fails for subdir periods' do
       fill_in 'name', with: '../hack'
       click_button 'Change Name'
-      page.must_have_content /Usernames can only contain/i
-      Site[username: '../hack'].must_be_nil
+      _(page).must_have_content /Usernames can only contain/i
+      _(Site[username: '../hack']).must_be_nil
     end
 
     it 'fails for same username' do
       fill_in 'name', with: @site.username
       click_button 'Change Name'
-      page.must_have_content /You already have this name/
+      _(page).must_have_content /You already have this name/
     end
 
     it 'fails for same username with DiFfErEnT CaSiNg' do
       fill_in 'name', with: @site.username.upcase
       click_button 'Change Name'
-      page.must_have_content /You already have this name/
+      _(page).must_have_content /You already have this name/
     end
   end
 end
@@ -163,8 +163,8 @@ describe 'delete' do
     fill_in 'username', with: 'NOPE'
     click_button 'Delete Site'
 
-    page.body.must_match /Site user name and entered user name did not match/i
-    @site.reload.is_deleted.must_equal false
+    _(page.body).must_match /Site user name and entered user name did not match/i
+    _(@site.reload.is_deleted).must_equal false
   end
 
   it 'succeeds' do
@@ -175,19 +175,19 @@ describe 'delete' do
     click_button 'Delete Site'
 
     @site.reload
-    @site.is_deleted.must_equal true
-    @site.deleted_reason.must_equal deleted_reason
-    page.current_path.must_equal '/'
+    _(@site.is_deleted).must_equal true
+    _(@site.deleted_reason).must_equal deleted_reason
+    _(page.current_path).must_equal '/'
 
-    File.exist?(@site.files_path('./index.html')).must_equal false
-    Dir.exist?(@site.files_path).must_equal false
+    _(File.exist?(@site.files_path('./index.html'))).must_equal false
+    _(Dir.exist?(@site.files_path)).must_equal false
 
     path = File.join Site::DELETED_SITES_ROOT, Site.sharding_dir(@site.username), @site.username
-    Dir.exist?(path).must_equal true
-    File.exist?(File.join(path, 'index.html')).must_equal true
+    _(Dir.exist?(path)).must_equal true
+    _(File.exist?(File.join(path, 'index.html'))).must_equal true
 
     visit "/site/#{@site.username}"
-    page.status_code.must_equal 404
+    _(page.status_code).must_equal 404
   end
 
   it 'stops charging for supporter account' do
@@ -215,10 +215,10 @@ describe 'delete' do
     fill_in 'deleted_reason', with: 'derp'
     click_button 'Delete Site'
 
-    Stripe::Customer.retrieve(@site.stripe_customer_id).subscriptions.count.must_equal 0
+    _(Stripe::Customer.retrieve(@site.stripe_customer_id).subscriptions.count).must_equal 0
     @site.reload
-    @site.stripe_subscription_id.must_be_nil
-    @site.is_deleted.must_equal true
+    _(@site.stripe_subscription_id).must_be_nil
+    _(@site.is_deleted).must_equal true
   end
 
   it 'should fail unless owned by current user' do
@@ -230,16 +230,16 @@ describe 'delete' do
       deleted_reason: 'Dade Murphy enters Acid Burns turf'
     }
 
-    page.driver.status_code.must_equal 302
-    URI.parse(page.driver.response_headers['Location']).path.must_equal '/'
+    _(page.driver.status_code).must_equal 302
+    _(URI.parse(page.driver.response_headers['Location']).path).must_equal '/'
     someone_elses_site.reload
-    someone_elses_site.is_deleted.must_equal false
+    _(someone_elses_site.is_deleted).must_equal false
   end
 
   it 'should not show NSFW tab for admin NSFW flag' do
     owned_site = Fabricate :site, parent_site_id: @site.id, admin_nsfw: true
     visit "/settings/#{owned_site.username}"
-    page.body.wont_match /18\+/
+    _(page.body).wont_match /18\+/
   end
 
   it 'should succeed if you own the site' do
@@ -250,15 +250,15 @@ describe 'delete' do
 
     @site.reload
     owned_site.reload
-    owned_site.is_deleted.must_equal true
-    @site.is_deleted.must_equal false
+    _(owned_site.is_deleted).must_equal true
+    _(@site.is_deleted).must_equal false
 
-    page.current_path.must_equal "/settings"
+    _(page.current_path).must_equal "/settings"
   end
 
   it 'fails to delete parent site if children exist' do
     owned_site = Fabricate :site, parent_site_id: @site.id
     visit "/settings/#{@site.username}#delete"
-    page.body.must_match /You cannot delete the parent site without deleting the children sites first/i
+    _(page.body).must_match /You cannot delete the parent site without deleting the children sites first/i
   end
 end

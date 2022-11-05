@@ -50,14 +50,14 @@ class ScreenshotWorker
       return false
     end
 
-    img_list.new_image(img_list.first.columns, img_list.first.rows) { self.background_color = "white" }
+    img_list.new_image(img_list.first.columns, img_list.first.rows) {|i| i.background_color = "white" }
     img = img_list.reverse.flatten_images
     img_list.destroy!
 
     user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
     screenshot_path = File.join user_screenshots_path, File.dirname(path)
 
-    FileUtils.mkdir_p screenshot_path unless Dir.exists?(screenshot_path)
+    FileUtils.mkdir_p screenshot_path unless Dir.exist?(screenshot_path)
 
     Site::SCREENSHOT_RESOLUTIONS.each do |res|
       width, height = res.split('x').collect {|r| r.to_i}
@@ -72,7 +72,7 @@ class ScreenshotWorker
       tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
 
       begin
-        new_img.write(tmpfile_path) { self.quality = 92 }
+        new_img.write(tmpfile_path) { |i| i.quality = 92 }
         new_img.destroy!
         $image_optim.optimize_image! tmpfile_path
         File.open(full_screenshot_path, 'wb') {|file| file.write File.read(tmpfile_path)}

@@ -14,9 +14,9 @@ describe 'dashboard' do
       end
 
       it 'records a dashboard access' do
-        @site.reload.dashboard_accessed.must_equal false
+        _(@site.reload.dashboard_accessed).must_equal false
         visit '/dashboard'
-        @site.reload.dashboard_accessed.must_equal true
+        _(@site.reload.dashboard_accessed).must_equal true
       end
 
       it 'creates a base directory' do
@@ -25,8 +25,8 @@ describe 'dashboard' do
         fill_in 'name', with: 'testimages'
         #click_button 'Create'
         all('#createDir button[type=submit]').first.click
-        page.must_have_content /testimages/
-        File.directory?(@site.files_path('testimages')).must_equal true
+        _(page).must_have_content /testimages/
+        _(File.directory?(@site.files_path('testimages'))).must_equal true
       end
 
       it 'creates a new file' do
@@ -36,8 +36,8 @@ describe 'dashboard' do
         fill_in 'filename', with: "#{random}.html"
         #click_button 'Create'
         all('#createFile button[type=submit]').first.click
-        page.must_have_content /#{random}\.html/
-        File.exist?(@site.files_path("#{random}.html")).must_equal true
+        _(page).must_have_content /#{random}\.html/
+        _(File.exist?(@site.files_path("#{random}.html"))).must_equal true
       end
     end
   end

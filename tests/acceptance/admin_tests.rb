@@ -15,13 +15,13 @@ describe '/admin' do
     include Capybara::DSL
 
     it 'works for admin site' do
-      page.body.must_match /Administration/
+      _(page.body).must_match /Administration/
     end
 
     it 'fails for site without admin' do
       page.set_rack_session id: @site.id
       visit '/admin'
-      page.current_path.must_equal '/'
+      _(page.current_path).must_equal '/'
     end
   end
 
@@ -29,9 +29,10 @@ describe '/admin' do
     include Capybara::DSL
 
     before do
-      @stripe_helper = StripeMock.create_test_helper
+      stripe_helper = StripeMock.create_test_helper
       StripeMock.start
-      @plan = @stripe_helper.create_plan id: 'special', amount: 0
+      stripe_helper.create_product(id: 'supporter', name: 'Supporter Plan')
+      @plan = stripe_helper.create_plan(product: 'supporter', amount: 0)
     end
 
     after do
@@ -43,10 +44,10 @@ describe '/admin' do
         fill_in 'username', with: @site.username
         click_button 'Upgrade to Supporter'
         @site.reload
-        @site.stripe_customer_id.wont_be_nil
-        @site.stripe_subscription_id.wont_be_nil
-        @site.values[:plan_type].must_equal 'special'
-        @site.supporter?.must_equal true
+        _(@site.stripe_customer_id).wont_be_nil
+        _(@site.stripe_subscription_id).wont_be_nil
+        _(@site.values[:plan_type]).must_equal 'special'
+        _(@site.supporter?).must_equal true
       end
     end
 
@@ -82,20 +83,20 @@ describe '/admin' do
         click_button 'Send'
 
         relevant_jobs = EmailWorker.jobs.select{|j| relevant_emails.include?(j['args'].first['to']) }
-        relevant_jobs.length.must_equal sites_emailed_count
+        _(relevant_jobs.length).must_equal sites_emailed_count
 
         relevant_jobs.each do |job|
           args = job['args'].first
-          args['from'].must_equal 'Kyle from Neocities <kyle@neocities.org>'
-          args['subject'].must_equal 'Subject Test'
-          args['body'].must_equal 'Body Test'
+          _(args['from']).must_equal 'Kyle from Neocities <kyle@neocities.org>'
+          _(args['subject']).must_equal 'Subject Test'
+          _(args['body']).must_equal 'Body Test'
         end
 
-        relevant_jobs.select {|j| j['at'].nil? || j['at'] == Time.now.to_f}.length.must_equal 1
-        relevant_jobs.select {|j| j['at'] == (Time.now + 0.5).to_f}.length.must_equal 1
+        _(relevant_jobs.select {|j| j['at'].nil? || j['at'] == Time.now.to_f}.length).must_equal 1
+        _(relevant_jobs.select {|j| j['at'] == (Time.now + 0.5).to_f}.length).must_equal 1
 
-        relevant_jobs.select {|j| j['at'] == (time+1.day.to_i).to_f}.length.must_equal 1
-        relevant_jobs.select {|j| j['at'] == (time+1.day.to_i+0.5).to_f}.length.must_equal 1
+        _(relevant_jobs.select {|j| j['at'] == (time+1.day.to_i).to_f}.length).must_equal 1
+        _(relevant_jobs.select {|j| j['at'] == (time+1.day.to_i+0.5).to_f}.length).must_equal 1
       end
     end
   end
