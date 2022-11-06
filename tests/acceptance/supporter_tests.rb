@@ -8,23 +8,17 @@ describe '/supporter' do
     Capybara.reset_sessions!
 
     @site = Fabricate :site
-    @stripe_helper = StripeMock.create_test_helper
-    StripeMock.start
-    @stripe_helper.create_product(id: 'supporter', name: 'Supporter')
-    @stripe_helper.create_plan product: 'supporter', amount: 500
     page.set_rack_session id: @site.id
     EmailWorker.jobs.clear
     Mail::TestMailer.deliveries.clear
   end
 
   after do
-    StripeMock.stop
     Capybara.default_driver = :rack_test
   end
 
-  it 'should work for paypal' do
-
-  end
+  #it 'should work for paypal' do
+  #end
 
   it 'should work for fresh signup' do
     visit '/supporter'
@@ -34,7 +28,7 @@ describe '/supporter' do
     find('.cc-name').set 'Penelope'
     all('.flip-tab').first.click
     find('.cc-cvc').set '123'
-    page.evaluate_script("document.getElementById('stripe_token').value = '#{@stripe_helper.generate_card_token}'")
+    page.evaluate_script("document.getElementById('stripe_token').value = '#{$stripe_helper.generate_card_token}'")
     click_link 'Upgrade for $5/mo'
     _(page.current_path).must_equal '/supporter/thanks'
     all('.txt-Center')

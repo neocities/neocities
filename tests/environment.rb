@@ -73,3 +73,11 @@ end
   FileUtils.mkdir_p p
   File.write File.join(p, '.gitignore'), '*'
 end
+
+$stripe_helper = StripeMock.create_test_helper
+StripeMock.start
+
+product = $stripe_helper.create_product name: 'supporter'
+$stripe_helper.create_plan id: 'supporter', amount: 500, product: product.id
+$stripe_helper.create_plan id: 'free', amount: 0, product: product.id
+$stripe_helper.create_plan id: 'special', amount: 0, product: product.id

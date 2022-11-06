@@ -155,10 +155,6 @@ describe 'delete' do
     visit "/settings/#{@site[:username]}#delete"
   end
 
-  after do
-    StripeMock.stop
-  end
-
   it 'fails for incorrect entered username' do
     fill_in 'username', with: 'NOPE'
     click_button 'Delete Site'
@@ -191,13 +187,8 @@ describe 'delete' do
   end
 
   it 'stops charging for supporter account' do
-    @stripe_helper = StripeMock.create_test_helper
-    StripeMock.start
-    @stripe_helper.create_plan id: 'supporter', amount: 500
-    @stripe_helper.create_plan id: 'free', amount: 0
-
     customer = Stripe::Customer.create(
-      source: @stripe_helper.generate_card_token
+      source: $stripe_helper.generate_card_token
     )
 
     subscription = customer.subscriptions.create plan: 'supporter'

@@ -28,17 +28,6 @@ describe '/admin' do
   describe 'supporter upgrade' do
     include Capybara::DSL
 
-    before do
-      stripe_helper = StripeMock.create_test_helper
-      StripeMock.start
-      stripe_helper.create_product(id: 'supporter', name: 'Supporter Plan')
-      @plan = stripe_helper.create_plan(product: 'supporter', amount: 0)
-    end
-
-    after do
-      StripeMock.stop
-    end
-
     it 'works for valid site' do
       within(:css, '#upgradeToSupporter') do
         fill_in 'username', with: @site.username

@@ -8,6 +8,7 @@ describe ArchiveWorker do
     ArchiveWorker.new.perform site.id
     _(site.archives.length).must_equal 1
     archive_one = site.archives.first
+    _(archive_one.ipfs_hash).wont_be_nil
     _(archive_one.ipfs_hash).must_equal ipfs_hash
     _(archive_one.updated_at).wont_be_nil
 
