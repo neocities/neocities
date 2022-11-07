@@ -443,6 +443,14 @@ describe 'site_files' do
       end
     end
 
+    it 'works with unicode chars on filename and dir' do
+      upload(
+        'dir' => '詩經',
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/詩經.jpg', 'image/jpeg')
+      )
+      _(@site.site_files_dataset.where(path: '詩經/詩經.jpg').count).must_equal 1
+    end
+
     it 'does not register site changing until root index.html is changed' do
       upload(
         'dir' => 'derpie/derptest',

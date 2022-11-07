@@ -423,6 +423,14 @@ describe 'api' do
       _(site_file_exists?('test.jpg')).must_equal true
     end
 
+    it 'works with unicode chars on filename and dir' do
+      create_site
+      basic_authorize @user, @pass
+      post '/api/upload', '詩經/詩經.jpg' => Rack::Test::UploadedFile.new('./tests/files/詩經.jpg', 'image/jpeg')
+      _(res[:result]).must_equal 'success'
+      _(site_file_exists?('詩經/詩經.jpg')).must_equal true
+    end
+
     it 'succeeds with two files' do
       create_site
       basic_authorize @user, @pass

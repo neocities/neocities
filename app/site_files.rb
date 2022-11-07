@@ -130,7 +130,8 @@ post '/site_files/upload' do
       end
     end
 
-    file[:filename] = "#{dir_name}/#{site.scrubbed_path file[:filename]}"
+    file[:filename] = "#{dir_name.force_encoding('UTF-8')}/#{site.scrubbed_path file[:filename].force_encoding('UTF-8')}"
+
     if current_site.file_size_too_large? file[:tempfile].size
       file_upload_response "#{Rack::Utils.escape_html file[:filename]} is too large, upload cancelled."
     end
