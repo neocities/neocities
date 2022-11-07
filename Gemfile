@@ -7,7 +7,7 @@ gem 'sequel'
 gem 'bcrypt'
 gem 'sinatra-flash',      require: 'sinatra/flash'
 gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
-gem 'puma',               require: nil
+gem 'puma', '5.6.5',      require: nil
 gem 'rmagick',            require: nil
 gem 'sidekiq', '~> 5.2.0'
 gem 'mail'
