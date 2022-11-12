@@ -1,7 +1,7 @@
 var ProfileComment = {
   displayEditor: function(eventId) {
-    var commentDiv = $('#event_'+eventId+' div.content')
-    var eventActions = $('#event_'+eventId+'_actions')
+    var commentDiv = $('#event_'+eventId+' div.content').first()
+    var eventActions = $('#event_'+eventId+'_actions').first()
 
     eventActions.find('a#editLink').css('display', 'none')
 
@@ -10,15 +10,14 @@ var ProfileComment = {
   },
 
   cancelEditor: function(eventId) {
-    var eventActions = $('#event_'+eventId+'_actions')
-    var commentDiv = $('#event_'+eventId+' div.content')
+    var eventActions = $('#event_'+eventId+'_actions').first()
+    var commentDiv = $('#event_'+eventId+' div.content').first()
     eventActions.find('a#editLink').css('display', 'inline')
     commentDiv.text(commentDiv.find('textarea').text())
   },
 
   update: function(eventId, csrfToken) {
-    var eventActions = $('#event_'+eventId+'_actions')
-    var commentDiv = $('#event_'+eventId+' div.content')
+    var commentDiv = $('#event_'+eventId+' div.content').first()
     var self = this
     console.log(commentDiv.find('textarea').val())
     $.post('/event/'+eventId+'/update_profile_comment', {
