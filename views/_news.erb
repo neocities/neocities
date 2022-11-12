@@ -32,7 +32,7 @@
               <% if current_site && current_site.id == actioning_site.id %>
                 <a href="/site/<%= current_site.username %>" class="you">You</a>
               <% else %>
-                <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"><% if actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
+                <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"><% if actioning_site.supporter? %><img src="/img/verified-badge.svg" style="width:1.2em; height:1.2em;"><% end %></i><%= actioning_site.username %></a>
               <% end %>
             <% else %>
               An anonymous donor
@@ -43,7 +43,7 @@
             <% if current_site && event_site.id == current_site.id %>
               <a href="/site/<%= current_site.username %>" class="you">you</a>!
             <% else %>
-              <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a>!
+              <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><img src="/img/verified-badge.svg" style="width:1.2em; height:1.2em;"><% end %></i><%= event_site.username %></a>!
             <% end %>
           </div>
 
@@ -68,7 +68,7 @@
         <% if current_site && current_site.id == actioning_site.id %>
           <a href="/site/<%= current_site.username %>" class="you">You</a>
         <% else %>
-          <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"><% if actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
+          <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"></i><%= actioning_site.username %><% if actioning_site.supporter? %><img src="/img/verified-badge.svg" style="width:1.0em; height:1.0em;"><% end %></a>
         <% end %>
 
         followed
@@ -76,7 +76,7 @@
         <% if current_site && event_site.id == current_site.id %>
           <a href="/site/<%= current_site.username %>" class="you">you</a>
         <% else %>
-          <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a>
+          <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"></i><%= event_site.username %><% if event_site.supporter? %><img src="/img/verified-badge.svg" style="width:1.0em; height:1.0em;"><% end %></a>
         <% end %>
       </div>
 
@@ -148,7 +148,7 @@
           <% comment_event_site = comment.event.site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <div class="comment" id="comment_<%= comment.id %>">
             <a href="/site/<%= comment_actioning_site.username %>"><img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>"></a>
-            <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><i class="fa fa-user"><% if comment_actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= comment_actioning_site.username %></a>
+            <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><i class="fa fa-user"><% if comment_actioning_site.supporter? %><img src="/img/verified-badge.svg" style="width:1.2em; height:1.2em;"><% end %></i><%= comment_actioning_site.username %></a>
             <span class="date">
               <a href="/site/<%= comment_event_site.username %>?event_id=<%= event.id %>"><%= comment.created_at.ago %></a>
             </span>

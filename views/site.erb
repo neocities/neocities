@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="col col-50 profile-info">
-      <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? %><a href="/supporter" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
+      <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? %><a href="/supporter" title="Neocities Supporter"><img src="/img/verified-badge.svg" style="width:1.0em; height:1.0em;"></a><% end %></h2>
       <p class="site-url"><a href="<%= site.uri %>"><%= site.host %></a></p>
       <!--
       <% if false #site.latest_archive %>
