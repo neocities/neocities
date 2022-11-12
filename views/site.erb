@@ -105,7 +105,7 @@
       <div class="report">
         <% if signed_in? %>
           <% if current_site && current_site.is_blocking?(site) %>
-            <a href="#">Unblock</a>
+            <a href="/site/<%= site.username %>/unblock">Unblock</a>
           <% else %>
             <a href="#block" data-toggle="modal">Block Site</a>
           <% end %>

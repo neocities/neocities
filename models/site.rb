@@ -73,6 +73,9 @@ class Site < Sequel::Model
   ROOT_INDEX_HTML_REGEX  = /^\/?index.html$/
   MAX_COMMENT_SIZE       = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
   MAX_FOLLOWS            = 1000
+  
+  BROWSE_MINIMUM_VIEWS   = 100
+  BROWSE_MINIMUM_FOLLOWER_VIEWS = 10_000
 
   SCREENSHOT_DELAY_SECONDS = 30
   SCREENSHOT_RESOLUTIONS   = ['540x405', '210x158', '100x100', '50x50']
@@ -627,6 +630,12 @@ class Site < Sequel::Model
     block = blockings_dataset.filter(site_id: site.id).first
     return true if block
     add_blocking site: site
+  end
+
+  def unblock!(site)
+    block = blockings_dataset.filter(site_id: site.id).first
+    return true if block.nil?
+    block.destroy
   end
 
   def is_blocking?(site)

@@ -284,3 +284,15 @@ post '/site/:username/block' do |username|
     redirect request.referer
   end
 end
+
+get '/site/:username/unblock' do |username|
+  require_login
+  site = Site[username: username]
+
+  if site.nil? || current_site.id == site.id
+    redirect request.referer
+  end
+
+  current_site.unblock! site
+  redirect request.referer
+end
