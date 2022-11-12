@@ -63,11 +63,10 @@ describe 'site page' do
     _(page).must_have_content /#{site.username}/
   end
 
-=begin
-  it 'allows site blocking' do
-    Capybara.default_driver = :poltergeist
+
+  it 'allows site blocking and unblocking' do
     tag = SecureRandom.hex 10
-    blocked_site = Fabricate :site, new_tags_string: tag, created_at: 2.weeks.ago, site_changed: true
+    blocked_site = Fabricate :site, new_tags_string: tag, created_at: 2.weeks.ago, site_changed: true, views: Site::BROWSE_MINIMUM_FOLLOWER_VIEWS+1
     site = Fabricate :site
 
     page.set_rack_session id: site.id
@@ -88,8 +87,14 @@ describe 'site page' do
     site.reload
     _(site.blockings.length).must_equal 1
     _(site.blockings.first.site_id).must_equal blocked_site.id
+
+    visit "/site/#{blocked_site.username}"
+
+    click_link 'Unblock'
+
+    visit "/browse?tag=#{tag}"
+    _(page.find('.website-Gallery .username a')['href']).must_match /\/site\/#{blocked_site.username}/
   end
-=end
 
   it '404s if site is banned' do
     site = Fabricate :site
