@@ -720,8 +720,8 @@ class Site < Sequel::Model
 
     return false unless valid_file_mime_type_and_ext?(mime_type, extname)
 
-    # clamdscan doesn't work on travis for testing
-    return true if ENV['TRAVIS'] == 'true'
+    # clamdscan doesn't work on continuous integration for testing
+    return true if ENV['CI'] == 'true'
 
     File.chmod 0666, uploaded_file[:tempfile].path
     line = Terrapin::CommandLine.new(

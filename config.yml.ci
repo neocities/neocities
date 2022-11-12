@@ -1,4 +1,4 @@
-database: 'postgres://postgres@localhost/travis_ci_test'
+database: 'postgres://postgres:citestpassword@localhost/ci_test'
 database_pool: 1
 session_secret: 's3cr3t'
 email_unsubscribe_token: "somethingrandomderrrrp"
