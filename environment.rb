@@ -24,8 +24,8 @@ end
 Dir['./ext/**/*.rb'].each {|f| require f}
 
 # :nocov:
-if ENV['TRAVIS']
-  $config = YAML.load_file File.join(DIR_ROOT, 'config.yml.travis')
+if ENV['CI']
+  $config = YAML.load_file File.join(DIR_ROOT, 'config.yml.ci')
 else
   begin
     $config = YAML.load_file(File.join(DIR_ROOT, 'config.yml'))[ENV['RACK_ENV']]
