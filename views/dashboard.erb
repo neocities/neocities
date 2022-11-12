@@ -71,6 +71,11 @@
       <div id="progressBar" class="progress-bar" style="display: none"><div id="uploadingProgress" class="progress" style="width: 0%"></div></div>
     </div>
   </div>
+  <div id="movingOverlay" class="uploading-overlay" style="display: none">
+    <div class="uploading">
+        <p>Moving file, please wait...</p>
+    </div>
+  </div>
   <div class="header">
     <div class="btn-group" role="group" aria-label="...">
       <button type="button" class="btn btn-default iconview-button" title="Icon View" onclick="iconView()"><i class="fa fa-th"></i></button>
@@ -119,7 +124,7 @@
                 <div class="overlay"></div>
               </div>
             <% elsif file[:is_directory] %>
-              <div class="html-thumbnail folder fileimagehover">
+              <div class="html-thumbnail folder fileimagehover" ondrop="moveFileToFolder(event)">
                 <div class="folder-icon"></div>
                 <div class="overlay"></div>
               </div>
@@ -271,6 +276,55 @@
 
 <script src="/js/dropzone.min.js"></script>
 <script>
+
+  var uploadForm = $('#uploadFilesButtonForm')[0];
+  var deleteForm = $('#deleteFilenameForm')[0];
+
+  function moveFileToFolder(event) {
+    var link = event.dataTransfer.getData("Text");
+    if(link) link = link.trim();
+    if(!link || link.startsWith('https://neocities.org/dashboard')) return;
+    event.preventDefault();
+    var name = link.split('.neocities.org/').slice(1).join('.neocities.org/');
+    var oReq = new XMLHttpRequest();
+    oReq.open("GET", "/site_files/download/" + name, true);
+    oReq.responseType = "arraybuffer";
+    
+    $('#movingOverlay').css('display', 'block')
+
+    oReq.onload = function() {
+      var newFile = new File([oReq.response], name);
+      var dataTransfer = new DataTransfer();
+      var currentFolder = new URL(location.href).searchParams.get('dir');
+      if(!currentFolder) currentFolder = '';
+      else currentFolder = currentFolder + '/';
+
+      dataTransfer.items.add(newFile);
+      $('#uploadFilesButtonForm > input[name="dir"]')[0].value = currentFolder + event.target.parentElement.parentElement.getElementsByClassName('title')[0].innerText.trim();
+      $('#uploadFiles')[0].files = dataTransfer.files;
+      $.ajax({
+        type: uploadForm.method,
+        url: uploadForm.action,
+        data: new FormData(uploadForm),
+        processData: false,
+        contentType: false,
+        success: function() {
+          let csrf = $('#uploadFilesButtonForm > input[name="csrf_token"]')[0].value;
+          var dReq = new XMLHttpRequest();
+          dReq.open(deleteForm.method, deleteForm.action, true);
+          dReq.onload = function() {
+            location.reload()
+          }
+          dReq.setRequestHeader("content-type", 'application/x-www-form-urlencoded');
+          dReq.send("csrf_token=" + encodeURIComponent(csrf) + "&filename=" + name.replace(/\s/g, '+'));
+        },
+        error: function() {
+          location.reload()
+        }
+      });
+    };
+    oReq.send();
+  }
 
   function confirmFileRename(path) {
     console.log(path)
