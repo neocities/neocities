@@ -2,7 +2,7 @@ name: CI
 on: [push, pull_request]
 jobs:
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     services:
       postgres:
