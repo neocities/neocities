@@ -47,7 +47,7 @@ class Site < Sequel::Model
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
-    html htm txt js css scss md manifest less webmanifest xml json opml rdf
+    html htm txt js css scss md manifest less webmanifest xml json opml rdf svg
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
