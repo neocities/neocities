@@ -2,7 +2,7 @@
 
 # Neocities.org
 
-[![Build Status](https://travis-ci.org/neocities/neocities.png?branch=master)](https://travis-ci.org/neocities/neocities)
+[![Build Status](https://github.com/neocities/neocities/actions/workflows/ci.yml/badge.svg)](https://github.com/neocities/neocities/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/neocities/neocities/badge.svg?branch=master&service=github)](https://coveralls.io/github/neocities/neocities?branch=master)
 
 The web site for Neocities! It's open source. Want a feature on the site? Send a pull request!

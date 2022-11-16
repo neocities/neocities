@@ -2,7 +2,7 @@ require_relative '../environment.rb'
 
 describe ArchiveWorker do
   it 'stores an IPFS archive' do
-    return if ENV['TRAVIS']
+    return if ENV['CI']
     site = Fabricate :site
     ipfs_hash = site.add_to_ipfs
     ArchiveWorker.new.perform site.id
