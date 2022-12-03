@@ -165,6 +165,7 @@ class Site < Sequel::Model
   MAXIMUM_EMAIL_CONFIRMATIONS = 20
   MAX_COMMENTS_PER_DAY = 5
   SANDBOX_TIME = 14.days
+  BLACK_BOX_WAIT_TIME = 10.seconds
 
   many_to_many :tags
 
@@ -1806,7 +1807,7 @@ class Site < Sequel::Model
     end
 
     if pathname.extname.match(HTML_REGEX) && defined?(BlackBox)
-      BlackBoxWorker.perform_async values[:id], relative_path
+      BlackBoxWorker.perform_in BLACK_BOX_WAIT_TIME, values[:id], relative_path
     end
 
     relative_path_dir = Pathname(relative_path).dirname
