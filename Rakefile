@@ -53,13 +53,17 @@ end
 desc 'Update banned IPs list'
 task :update_blocked_ips => [:environment] do
 
-  IO.copy_stream(
-    open('https://www.stopforumspam.com/downloads/listed_ip_90.zip'),
-    '/tmp/listed_ip_90.zip'
-  )
+  filename = 'listed_ip_365_ipv46'
 
-  Zip::Archive.open('/tmp/listed_ip_90.zip') do |ar|
-    ar.fopen('listed_ip_90.txt') do |f|
+  File.open("/tmp/#{filename}.zip", 'wb') do |file|
+    response = HTTP.get "https://www.stopforumspam.com/downloads/#{filename}.zip"
+    response.body.each do |chunk|
+      file.write chunk
+    end
+  end
+
+  Zip::Archive.open("/tmp/#{filename}.zip") do |ar|
+    ar.fopen("#{filename}.txt") do |f|
       ips = f.read
       insert_hashes = []
       ips.each_line {|ip| insert_hashes << {ip: ip.strip, created_at: Time.now}}
@@ -71,6 +75,8 @@ task :update_blocked_ips => [:environment] do
       end
     end
   end
+
+  FileUtils.rm "/tmp/#{filename}.zip"
 end
 
 desc 'parse tor exits'
