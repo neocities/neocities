@@ -275,6 +275,14 @@ describe 'site_files' do
       _(File.exists?(@site.files_path('chunkfive.otf'))).must_equal true
     end
 
+    it 'purges cache for html file with extension removed' do
+      upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/notindex.html', 'text/html')
+      _(PurgeCacheWorker.jobs.first['args'].last).must_equal '/notindex.html'
+      PurgeCacheWorker.jobs.clear
+      PurgeCacheWorker.new.perform @site.username, '/notindex.html'
+      _(PurgeCacheWorker.jobs.first['args'].last).must_equal '/notindex'
+    end
+
     it 'succeeds with index.html file' do
       _(@site.site_changed).must_equal false
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')

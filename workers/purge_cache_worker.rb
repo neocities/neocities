@@ -14,6 +14,12 @@ class PurgeCacheWorker
     # Must always have a forward slash
     path = '/' + path if path[0] != '/'
 
+    # Add removed html ext if present
+    html = path.match(/(.*)\.html?$/)
+    if html
+      PurgeCacheWorker.perform_async username, html.captures.first
+    end
+
     $redis_proxy.publish 'proxy', {cmd: 'purge', path: "#{username}#{path}"}.to_msgpack
 =begin
     url = Addressable::URI.encode_component(
