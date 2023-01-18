@@ -228,6 +228,7 @@ GEM
     rmagick (5.0.0)
     rss (0.2.9)
       rexml
+    rszr (1.3.0)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     sanitize (6.0.0)
@@ -362,6 +363,7 @@ DEPENDENCIES
   rinku
   rmagick
   rss
+  rszr
   sanitize
   sass
   sequel

@@ -56,6 +56,7 @@ gem 'maxmind-db'
 gem 'json', '>= 2.3.0'
 gem 'nokogiri'
 gem 'rss'
+gem 'rszr'
 
 group :development, :test do
   gem 'pry'

@@ -43,49 +43,41 @@ class ScreenshotWorker
       wait_time: PAGE_WAIT_TIME
     )
 
-    img_list = Magick::ImageList.new
     begin
-      img_list.from_blob HTTP.basic_auth(user: api_user, pass: api_password).get(uri).to_s
-    rescue Magick::ImageMagickError
-      return false
-    end
+      base_image_tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
+      File.write base_image_tmpfile_path, HTTP.basic_auth(user: api_user, pass: api_password).get(uri).to_s
+      image = Rszr::Image.load base_image_tmpfile_path
 
-    img_list.new_image(img_list.first.columns, img_list.first.rows) {|i| i.background_color = "white" }
-    img = img_list.reverse.flatten_images
-    img_list.destroy!
+      user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
+      screenshot_path = File.join user_screenshots_path, File.dirname(path)
 
-    user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
-    screenshot_path = File.join user_screenshots_path, File.dirname(path)
+      FileUtils.mkdir_p screenshot_path unless Dir.exist?(screenshot_path)
 
-    FileUtils.mkdir_p screenshot_path unless Dir.exist?(screenshot_path)
+      Site::SCREENSHOT_RESOLUTIONS.each do |res|
+        width, height = res.split('x').collect {|r| r.to_i}
 
-    Site::SCREENSHOT_RESOLUTIONS.each do |res|
-      width, height = res.split('x').collect {|r| r.to_i}
+        if width == height
+          new_img = image.resize(width, height, crop: :n)
+        else
+          new_img = image.resize width, height
+        end
 
-      if width == height
-        new_img = img.crop_resized width, height, Magick::NorthGravity
-      else
-        new_img = img.scale width, height
+        full_screenshot_path = File.join(user_screenshots_path, "#{path}.#{res}.jpg")
+        tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
+
+        begin
+          new_img.save tmpfile_path, quality: 92
+          $image_optim.optimize_image! tmpfile_path
+          File.open(full_screenshot_path, 'wb') {|file| file.write File.read(tmpfile_path)}
+        ensure
+          FileUtils.rm tmpfile_path
+        end
       end
 
-      full_screenshot_path = File.join(user_screenshots_path, "#{path}.#{res}.jpg")
-      tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
-
-      begin
-        new_img.write(tmpfile_path) { |i| i.quality = 92 }
-        new_img.destroy!
-        $image_optim.optimize_image! tmpfile_path
-        File.open(full_screenshot_path, 'wb') {|file| file.write File.read(tmpfile_path)}
-      ensure
-        FileUtils.rm tmpfile_path
-      end
+      true
+    ensure
+      FileUtils.rm base_image_tmpfile_path
     end
-
-    img.destroy!
-
-    GC.start full_mark: true, immediate_sweep: true
-
-    true
   end
 
   sidekiq_retries_exhausted do |msg|
