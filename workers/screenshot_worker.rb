@@ -36,6 +36,16 @@ class ScreenshotWorker
 
     path = "/#{path}" unless path[0] == '/'
 
+    path_for_screenshot = path
+    
+    if path.match(Site::HTML_REGEX)
+      path = path.match(/(.+)#{Site::HTML_REGEX}/).captures.first
+    end
+   
+    if path.match(/(.+)index?/)
+      path = path.match(/(.+)index?/).captures.first
+    end
+
     uri = Addressable::URI.parse $config['screenshot_urls'].sample
     api_user, api_password = uri.user, uri.password
     uri = "#{uri.scheme}://#{uri.host}:#{uri.port}" + '?' + Rack::Utils.build_query(
@@ -49,7 +59,7 @@ class ScreenshotWorker
       image = Rszr::Image.load base_image_tmpfile_path
 
       user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
-      screenshot_path = File.join user_screenshots_path, File.dirname(path)
+      screenshot_path = File.join user_screenshots_path, File.dirname(path_for_screenshot)
 
       FileUtils.mkdir_p screenshot_path unless Dir.exist?(screenshot_path)
 
@@ -62,7 +72,7 @@ class ScreenshotWorker
           new_img = image.resize width, height
         end
 
-        full_screenshot_path = File.join(user_screenshots_path, "#{path}.#{res}.jpg")
+        full_screenshot_path = File.join(user_screenshots_path, "#{path_for_screenshot}.#{res}.jpg")
         tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
 
         begin
