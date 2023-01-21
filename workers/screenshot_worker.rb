@@ -1,4 +1,3 @@
-require 'rmagick'
 require 'securerandom'
 require 'open3'
 
@@ -10,7 +9,6 @@ class ScreenshotWorker
   sidekiq_options queue: :screenshots, retry: 2, backtrace: true
 
   def perform(username, path)
-
     site = Site[username: username]
     return if site.nil? || site.is_deleted
 
@@ -37,14 +35,6 @@ class ScreenshotWorker
     path = "/#{path}" unless path[0] == '/'
 
     path_for_screenshot = path
-    
-    if path.match(Site::HTML_REGEX)
-      path = path.match(/(.+)#{Site::HTML_REGEX}/).captures.first
-    end
-   
-    if path.match(/(.+)index?/)
-      path = path.match(/(.+)index?/).captures.first
-    end
 
     uri = Addressable::URI.parse $config['screenshot_urls'].sample
     api_user, api_password = uri.user, uri.password
@@ -54,37 +44,30 @@ class ScreenshotWorker
     )
 
     begin
-      base_image_tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
+      base_image_tmpfile_path = "/tmp/#{SecureRandom.uuid}.png"
       File.write base_image_tmpfile_path, HTTP.basic_auth(user: api_user, pass: api_password).get(uri).to_s
-      image = Rszr::Image.load base_image_tmpfile_path
 
       user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
       screenshot_path = File.join user_screenshots_path, File.dirname(path_for_screenshot)
-
       FileUtils.mkdir_p screenshot_path unless Dir.exist?(screenshot_path)
 
       Site::SCREENSHOT_RESOLUTIONS.each do |res|
         width, height = res.split('x').collect {|r| r.to_i}
 
+        full_screenshot_path = File.join(user_screenshots_path, "#{path_for_screenshot}.#{res}.webp")
+
+        opts = {quality: 90, resize_w: width, resize_h: height}
+
         if width == height
-          new_img = image.resize(width, height, crop: :n)
-        else
-          new_img = image.resize width, height
+          opts.merge! crop_x: 160, crop_y: 0, crop_w: 960, crop_h: 960
         end
 
-        full_screenshot_path = File.join(user_screenshots_path, "#{path_for_screenshot}.#{res}.jpg")
-        tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
-
-        begin
-          new_img.save tmpfile_path, quality: 92
-          $image_optim.optimize_image! tmpfile_path
-          File.open(full_screenshot_path, 'wb') {|file| file.write File.read(tmpfile_path)}
-        ensure
-          FileUtils.rm tmpfile_path
-        end
+        WebP.encode base_image_tmpfile_path, full_screenshot_path, opts
       end
 
       true
+    rescue => e
+      raise e
     ensure
       FileUtils.rm base_image_tmpfile_path
     end

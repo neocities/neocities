@@ -8,7 +8,6 @@ gem 'bcrypt'
 gem 'sinatra-flash',      require: 'sinatra/flash'
 gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
 gem 'puma', '5.6.5',      require: nil
-gem 'rmagick',            require: nil
 gem 'sidekiq', '~> 5.2.0'
 gem 'mail'
 gem 'net-smtp'
@@ -56,6 +55,7 @@ gem 'maxmind-db'
 gem 'json', '>= 2.3.0'
 gem 'nokogiri'
 gem 'rss'
+gem 'webp-ffi'
 gem 'rszr'
 
 group :development, :test do

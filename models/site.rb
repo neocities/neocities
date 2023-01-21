@@ -1554,7 +1554,7 @@ class Site < Sequel::Model
   end
 
   def screenshot_path(path, resolution)
-    File.join base_screenshots_path, "#{path}.#{resolution}.jpg"
+    File.join base_screenshots_path, "#{path}.#{resolution}.webp"
   end
 
   def base_screenshots_path(name=username)
@@ -1568,14 +1568,14 @@ class Site < Sequel::Model
   end
 
   def screenshot_exists?(path, resolution)
-    File.exist? File.join(base_screenshots_path, "#{path}.#{resolution}.jpg")
+    File.exist? File.join(base_screenshots_path, "#{path}.#{resolution}.webp")
   end
 
   def screenshot_url(path, resolution)
     path[0] = '' if path[0] == '/'
     out = ''
     out = 'https://neocities.org' if ENV['RACK_ENV'] == 'development'
-    out+"#{base_screenshots_url}/#{path}.#{resolution}.jpg"
+    out+"#{base_screenshots_url}/#{path}.#{resolution}.webp"
   end
 
   def base_thumbnails_path(name=username)
@@ -1584,8 +1584,7 @@ class Site < Sequel::Model
   end
 
   def thumbnail_path(path, resolution)
-    ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    File.join base_thumbnails_path, "#{path}.#{resolution}.#{ext}"
+    File.join base_thumbnails_path, "#{path}.#{resolution}.webp"
   end
 
   def thumbnail_exists?(path, resolution)
@@ -1598,8 +1597,7 @@ class Site < Sequel::Model
 
   def thumbnail_url(path, resolution)
     path[0] = '' if path[0] == '/'
-    ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    "#{THUMBNAILS_URL_ROOT}/#{sharding_dir}/#{values[:username]}/#{path}.#{resolution}.#{ext}"
+    "#{THUMBNAILS_URL_ROOT}/#{sharding_dir}/#{values[:username]}/#{path}.#{resolution}.webp"
   end
 
   def to_rss
