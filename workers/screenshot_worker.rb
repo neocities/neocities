@@ -45,7 +45,10 @@ class ScreenshotWorker
 
     begin
       base_image_tmpfile_path = "/tmp/#{SecureRandom.uuid}.png"
-      File.write base_image_tmpfile_path, HTTP.basic_auth(user: api_user, pass: api_password).get(uri).to_s
+
+      http_resp = HTTP.basic_auth(user: api_user, pass: api_password).get(uri)
+      BlackBox.new(site, path).check_uri(http_resp.headers['X-URL'])
+      File.write base_image_tmpfile_path, http_resp.to_s
 
       user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
       screenshot_path = File.join user_screenshots_path, File.dirname(path_for_screenshot)
