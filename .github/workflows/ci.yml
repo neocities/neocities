@@ -33,9 +33,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - run: sudo apt-get update && sudo apt-get -y install libimlib2-dev chromium-browser
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.1
         bundler-cache: true
-    - run: sudo apt-get -y install chromium-browser
     - run: bundle exec rake
