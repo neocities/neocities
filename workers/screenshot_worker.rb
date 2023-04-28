@@ -59,7 +59,7 @@ class ScreenshotWorker
 
         full_screenshot_path = File.join(user_screenshots_path, "#{path_for_screenshot}.#{res}.webp")
 
-        opts = {quality: 90, resize_w: width, resize_h: height}
+        opts = {resize_w: width, resize_h: height, near_lossless: 0}
 
         if width == height
           opts.merge! crop_x: 160, crop_y: 0, crop_w: 960, crop_h: 960
