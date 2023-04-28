@@ -47,7 +47,7 @@ class ScreenshotWorker
       base_image_tmpfile_path = "/tmp/#{SecureRandom.uuid}.png"
 
       http_resp = HTTP.basic_auth(user: api_user, pass: api_password).get(uri)
-      BlackBox.new(site, path).check_uri(http_resp.headers['X-URL'])
+      BlackBox.new(site, path).check_uri(http_resp.headers['X-URL']) if defined?(BlackBox)
       File.write base_image_tmpfile_path, http_resp.to_s
 
       user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
@@ -72,7 +72,7 @@ class ScreenshotWorker
     rescue => e
       raise e
     ensure
-      FileUtils.rm base_image_tmpfile_path
+      FileUtils.rm base_image_tmpfile_path if File.exist?(base_image_tmpfile_path)
     end
   end
 
