@@ -43,11 +43,11 @@ class Site < Sequel::Model
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp xcf epub gltf bin webmanifest knowl atom opml rdf map gpg
+    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
-    html htm txt js css scss md manifest less webmanifest xml json opml rdf svg gpg pgp
+    html htm txt js css scss md manifest less webmanifest xml json opml rdf svg gpg pgp resolveHandle
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
