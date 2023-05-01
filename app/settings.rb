@@ -20,6 +20,9 @@ get '/settings/:username/?' do |username|
   pass if Site.select(:id).where(username: username).first.nil?
   require_login
   require_ownership_for_settings
+
+  @bluesky_did = $redis_proxy.hget "dns-_atproto.#{@site.username}.neocities.org", 'TXT'
+
   @title = "Site settings for #{username}"
   erb :'settings/site'
 end
@@ -172,6 +175,24 @@ post '/settings/:username/custom_domain' do
     flash[:error] = @site.errors.first.last.first
     redirect "/settings/#{@site.username}#custom_domain"
   end
+end
+
+post '/settings/:username/bluesky_set_did' do
+  require_login
+  require_ownership_for_settings
+  redirect '/settings' if !@site.domain.empty?
+
+  # todo standards based validation
+  if params[:did].length > 50
+    flash[:error] = 'DID provided was too long'
+  elsif !params[:did].match(/^did=did:plc:([a-z|0-9)]+)$/)
+    flash[:error] = 'DID was invalid'
+  else
+    $redis_proxy.hset "dns-_atproto.#{@site.username}.neocities.org", 'TXT', params[:did]
+    flash[:success] = 'DID set! You can now verify the domain on the Bluesky app.'
+  end
+
+  redirect "/settings/#{@site.username}#bluesky"
 end
 
 post '/settings/:username/generate_api_key' do
