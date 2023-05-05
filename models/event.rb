@@ -35,6 +35,7 @@ class Event < Sequel::Model
     ds = select_all(:events).
       order(:created_at.desc).
       join_table(:inner, :sites, id: :site_id).
+      where(follow_id: nil)
       exclude(Sequel.qualify(:sites, :is_deleted) => true).
       exclude(Sequel.qualify(:events, :is_deleted) => true).
       exclude(is_banned: true)
