@@ -166,6 +166,7 @@ class Site < Sequel::Model
   MAX_COMMENTS_PER_DAY = 5
   SANDBOX_TIME = 14.days
   BLACK_BOX_WAIT_TIME = 10.seconds
+  MAX_DISPLAY_FOLLOWS = 56*3
 
   many_to_many :tags
 
@@ -568,8 +569,8 @@ class Site < Sequel::Model
     follows_dataset.all
   end
 
-  def profile_follows_actioning_ids
-    follows_dataset.select(:actioning_site_id).exclude(:sites__site_changed => false).all
+  def profile_follows_actioning_ids(limit=nil)
+    follows_dataset.select(:actioning_site_id).exclude(:sites__site_changed => false).limit(limit).all
   end
 
 =begin
