@@ -1448,6 +1448,10 @@ class Site < Sequel::Model
     paginate(current_page, limit)
   end
 
+  def newest_follows
+    follows_dataset.where(:follows__created_at => (1.month.ago..Time.now)).all
+  end
+
   def host
     !domain.empty? ? domain : "#{username}.neocities.org"
   end

@@ -10,6 +10,23 @@
 <script src="/js/news/event.js"></script>
 <script src="/js/news/site.js"></script>
 
+<% follow_events = site.newest_follows %>
+<% unless follow_events.empty? %>
+  <div class="news-item follow">
+    <div class="icon"><a href="/site/<%= site.username %>" title="<%= site.username %>" class="avatar" style="background-image: url(<%= site.screenshot_url 'index.html', '50x50' %>);"></a></div>
+
+    <div class="text">
+      <strong>New Followers</strong>
+    </div>
+
+    <div class="content">
+      <% follow_events.first.site.newest_follows.each_with_index do |event,i| %>
+        <a href="/site/<%= event.actioning_site.username %>" class="user" title="<%= event.actioning_site.title %>"><i class="fa fa-user"><% if event.actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event.actioning_site.username %></a><% unless follow_events.length == i+1 %>, <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <% events.each do |event| %>
   <% if event.profile_comment_id %>
     <div class="news-item comment" id="event_<%= event.id %>">
@@ -39,7 +56,7 @@
             <% end %>
 
             sent a <strong><%= tip.amount_string %></strong> tip to
-
+site/actioning_site.username
             <% if current_site && event_site.id == current_site.id %>
               <a href="/site/<%= current_site.username %>" class="you">you</a>!
             <% else %>

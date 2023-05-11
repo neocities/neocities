@@ -74,9 +74,9 @@
           </p>
         <% end %>
       </div>
-      <%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %>
+      <%== erb :'_news', layout: false, locals: {site: site, events: @latest_events} %>
     <% else %>
-      <div class="site-profile-padding"><%== erb :'_news', layout: false, locals: {site: @site, events: @latest_events} %></div>
+      <div class="site-profile-padding"><%== erb :'_news', layout: false, locals: {site: site, events: @latest_events} %></div>
     <% end %>
   </div>
 
