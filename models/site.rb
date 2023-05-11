@@ -1449,7 +1449,7 @@ class Site < Sequel::Model
   end
 
   def newest_follows
-    follows_dataset.where(:follows__created_at => (1.month.ago..Time.now)).all
+    follows_dataset.where(:follows__created_at => (1.month.ago..Time.now)).order(:follows__created_at.desc).all
   end
 
   def host
