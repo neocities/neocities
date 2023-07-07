@@ -58,7 +58,6 @@
             <% end %>
 
             sent a <strong><%= tip.amount_string %></strong> tip to
-site/actioning_site.username
             <% if current_site && event_site.id == current_site.id %>
               <a href="/site/<%= current_site.username %>" class="you">you</a>!
             <% else %>
