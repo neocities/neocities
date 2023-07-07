@@ -10,7 +10,7 @@
 <script src="/js/news/event.js"></script>
 <script src="/js/news/site.js"></script>
 
-<% if defined?(site) %>
+<% if defined?(site) && !params[:event_id] %>
   <% follow_events = site.newest_follows %>
   <% unless follow_events.empty? %>
     <div class="news-item follow">
