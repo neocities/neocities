@@ -24,11 +24,20 @@ class ThumbnailWorker
       format = File.extname(path).gsub('.', '')
       full_thumbnail_path = File.join(user_thumbnails_path, "#{path}.#{res}.webp")
 
-      image = Rszr::Image.load site_file_path
-      if image.width > image.height
-        image.resize! width, :auto
-      else
-        image.resize! :auto, height
+      begin
+        image = Rszr::Image.load site_file_path
+      rescue Rszr::LoadError
+        next
+      end
+
+      begin
+        if image.width > image.height
+          image.resize! width, :auto
+        else
+          image.resize! :auto, height
+        end
+      rescue Rszr::TransformationError
+        next
       end
 
       begin

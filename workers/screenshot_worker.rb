@@ -6,7 +6,7 @@ class ScreenshotWorker
   HARD_TIMEOUT = 30.freeze
   PAGE_WAIT_TIME = 5.freeze # 3D/VR sites take a bit to render after loading usually.
   include Sidekiq::Worker
-  sidekiq_options queue: :screenshots, retry: 2, backtrace: true
+  sidekiq_options queue: :screenshots, retry: 10, backtrace: true
 
   def perform(username, path)
     site = Site[username: username]
@@ -47,12 +47,14 @@ class ScreenshotWorker
       base_image_tmpfile_path = "/tmp/#{SecureRandom.uuid}.png"
 
       http_resp = HTTP.basic_auth(user: api_user, pass: api_password).get(uri)
-      BlackBox.new(site, path).check_uri(http_resp.headers['X-URL']) if defined?(BlackBox)
+      BlackBox.new(site, path).check_uri(http_resp.headers['X-URL']) if defined?(BlackBox) && http_resp.headers['X-URL']
       File.write base_image_tmpfile_path, http_resp.to_s
 
       user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
       screenshot_path = File.join user_screenshots_path, File.dirname(path_for_screenshot)
       FileUtils.mkdir_p screenshot_path unless Dir.exist?(screenshot_path)
+
+      FileUtils.cp base_image_tmpfile_path, File.join(user_screenshots_path, "#{path_for_screenshot}.png")
 
       Site::SCREENSHOT_RESOLUTIONS.each do |res|
         width, height = res.split('x').collect {|r| r.to_i}
@@ -69,6 +71,8 @@ class ScreenshotWorker
       end
 
       true
+    rescue WebP::EncoderError => e
+      puts "Failed: #{username} #{path} #{e.inspect}"
     rescue => e
       raise e
     ensure
