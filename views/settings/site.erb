@@ -26,13 +26,17 @@
           <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
           <!-- <li><a href="#domain" data-toggle="tab">Domain Name</a></li> -->
           <li><a href="#custom_domain" data-toggle="tab">Custom Domain</a></li>
-          <li><a href="#username" data-toggle="tab">Change Site Name</a></li>
+          <li><a href="#username" data-toggle="tab">Rename</a></li>
           <li><a href="#tipping" data-toggle="tab">Tipping</a></li>
 
-          <li><a href="#api_key" data-toggle="tab">API Key</a></li>
+          <li><a href="#api_key" data-toggle="tab">API</a></li>
 
           <% if @site.admin_nsfw != true %>
             <li><a href="#nsfw" data-toggle="tab">18+</a></li>
+          <% end %>
+
+          <% if @site.domain.empty? %>
+            <li><a href="#bluesky" data-toggle="tab">Bluesky</a></li>
           <% end %>
 
           <li><a href="#delete" data-toggle="tab">Delete</a></li>
@@ -63,6 +67,10 @@
               <%== erb :'settings/site/nsfw' %>
             </div>
           <% end %>
+
+          <div class="tab-pane" id="bluesky">
+            <%== erb :'settings/site/bluesky' %>
+          </div>
 
           <div class="tab-pane" id="delete">
             <%== erb :'settings/site/delete' %>

@@ -35,6 +35,7 @@ class Site < Sequel::Model
     application/rss+xml
     application/x-elc
     image/webp
+    image/avif
     image/x-xcf
     application/epub
     application/epub+zip
@@ -43,11 +44,11 @@ class Site < Sequel::Model
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp xcf epub gltf bin webmanifest knowl atom opml rdf map gpg
+    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
-    html htm txt js css scss md manifest less webmanifest xml json opml rdf svg gpg pgp
+    html htm txt js css scss md manifest less webmanifest xml json opml rdf svg gpg pgp resolveHandle
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
@@ -166,6 +167,7 @@ class Site < Sequel::Model
   MAX_COMMENTS_PER_DAY = 5
   SANDBOX_TIME = 14.days
   BLACK_BOX_WAIT_TIME = 10.seconds
+  MAX_DISPLAY_FOLLOWS = 56*3
 
   many_to_many :tags
 
@@ -568,8 +570,8 @@ class Site < Sequel::Model
     follows_dataset.all
   end
 
-  def profile_follows_actioning_ids
-    follows_dataset.select(:actioning_site_id).exclude(:sites__site_changed => false).all
+  def profile_follows_actioning_ids(limit=nil)
+    follows_dataset.select(:actioning_site_id).exclude(:sites__site_changed => false).limit(limit).all
   end
 
 =begin
@@ -1445,6 +1447,10 @@ class Site < Sequel::Model
     Event.news_feed_default_dataset.where{Sequel.|({site_id: search_ids}, {actioning_site_id: search_ids})}.
     order(:created_at.desc).
     paginate(current_page, limit)
+  end
+
+  def newest_follows
+    follows_dataset.where(:follows__created_at => (1.month.ago..Time.now)).order(:follows__created_at.desc).all
   end
 
   def host

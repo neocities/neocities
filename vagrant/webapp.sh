@@ -4,7 +4,28 @@ DEBIAN_FRONTEND=noninteractive
 
 . /vagrant/vagrant/redis.sh
 
-apt-get install -y git curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev libffi-dev libpq-dev libmagickwand-dev imagemagick libmagickwand-dev libmagic-dev file clamav-daemon
+apt-get install -y \
+  build-essential \
+  clamav-daemon \
+  curl \
+  file \
+  git \
+  imagemagick \
+  libcurl4-openssl-dev \
+  libffi-dev \
+  libimlib2-dev \
+  libmagic-dev \
+  libmagickwand-dev \
+  libpq-dev \
+  libreadline-dev \
+  libsqlite3-dev \
+  libssl-dev \
+  libwebp-dev \
+  libxml2-dev \
+  libxslt1-dev \
+  libyaml-dev \
+  sqlite3 \
+  zlib1g-dev
 
 sed -i 's|[#]*DetectPUA false|DetectPUA true|g' /etc/clamav/clamd.conf
 

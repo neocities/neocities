@@ -64,7 +64,11 @@ class LetsEncryptWorker
       puts "testing #{challenge_url}"
 
       begin
-        res = HTTP.timeout(connect: 10, write: 10, read: 10).follow.get(challenge_url)
+        # Some dumb letsencrypt related cert expiration issue hotfix
+        ctx = OpenSSL::SSL::SSLContext.new
+        ctx.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+        res = HTTP.timeout(connect: 10, write: 10, read: 10).follow.get(challenge_url, ssl_context: ctx)
       rescue => e
         puts e.inspect
         puts "error with #{challenge_url}"

@@ -1,0 +1,36 @@
+<% actioning_site = event.tip.actioning_site_dataset.select(:id, :username, :stripe_customer_id, :plan_type, :parent_site_id).first %>
+<% event_site = event.site_dataset.select(:id, :username, :stripe_customer_id, :plan_type, :parent_site_id).first %>
+
+<div class="title">
+
+  <div class="icon">
+    <% if actioning_site %>
+      <a href="/site/<%= actioning_site.username %>" title="<%= actioning_site.username %>" class="avatar" style="background-image: url(<%= actioning_site.screenshot_url 'index.html', '50x50' %>);"></a>
+    <% end %>
+  </div>
+
+  <div class="text">
+    <% if actioning_site %>
+      <% if current_site && current_site.id == actioning_site.id %>
+        <a href="/site/<%= current_site.username %>" class="you">You</a>
+      <% else %>
+        <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"><% if actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
+      <% end %>
+    <% else %>
+      An anonymous donor
+    <% end %>
+
+    sent a <strong style="color: #229954 !important;"><%= tip.amount_string %></strong> tip to
+    <% if current_site && event_site.id == current_site.id %>
+      <a href="/site/<%= current_site.username %>" class="you">you</a>
+    <% else %>
+      <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a>
+    <% end %>
+  </div>
+
+  <span class="date">
+    <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
+  </span>
+</div>
+
+<div class="content"><%== sanitize_comment tip.message %></div>

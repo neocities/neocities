@@ -145,6 +145,35 @@ describe 'site/settings' do
   end
 end
 
+describe 'api key' do
+  include Capybara::DSL
+
+  before do
+    Capybara.reset_sessions!
+    @site = Fabricate :site
+    @child_site = Fabricate :site, parent_site_id: @site.id
+    page.set_rack_session id: @site.id
+  end
+
+  it 'sets api key' do
+    visit "/settings/#{@child_site[:username]}#api_key"
+    _(@site.api_key).must_be_nil
+    _(@child_site.api_key).must_be_nil
+    click_button 'Generate API Key'
+    _(@site.reload.api_key).must_be_nil
+    _(@child_site.reload.api_key).wont_be_nil
+    _(page.body).must_match @child_site.api_key
+  end
+
+  it 'regenerates api key for child site' do
+    visit "/settings/#{@child_site[:username]}#api_key"
+    @child_site.generate_api_key!
+    api_key = @child_site.api_key
+    click_button 'Generate API Key'
+    _(@child_site.reload.api_key).wont_equal api_key
+  end
+end
+
 describe 'delete' do
   include Capybara::DSL
 

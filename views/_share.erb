@@ -13,4 +13,4 @@
 <br>
 <a href="https://www.tumblr.com/share?<%= Rack::Utils.build_query(v: 3, u: "#{page_uri}", t: "#{site.title}") %>" target="_blank">Tumblr</a>
 <br>
-<a href="https://toot.kytta.dev/?<%= Rack::Utils.build_query(text: "#{page_uri}") %>" target="_blank">Mastodon</a>
+<a href="https://toot.kytta.dev/?<%= Rack::Utils.build_query(text: "#{site.title}: #{page_uri}") %>" target="_blank">Mastodon</a>
