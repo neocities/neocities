@@ -30,6 +30,24 @@ HERE
 end
 =end
 
+desc "retry dead screenshots"
+task :retry_dead_screenshots => [:environment] do
+  ds = Sidekiq::DeadSet.new
+
+  ds.select { |job|
+    job.klass == 'ScreenshotWorker'
+  }.map(&:retry)
+end
+
+desc "delete dead screenshots"
+task :delete_dead_screenshots => [:environment] do
+  ds = Sidekiq::DeadSet.new
+
+  ds.select { |job|
+    job.klass == 'ScreenshotWorker'
+  }.map(&:delete)
+end
+
 desc "prune logs"
 task :prune_logs => [:environment] do
   Stat.prune!
