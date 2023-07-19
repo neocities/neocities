@@ -8,7 +8,7 @@ gem 'bcrypt'
 gem 'sinatra-flash',      require: 'sinatra/flash'
 gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
 gem 'puma', '5.6.5',      require: nil
-gem 'sidekiq', '~> 5.2.0'
+gem 'sidekiq', '~> 7.0.8'
 gem 'mail'
 gem 'net-smtp'
 gem 'tilt'
