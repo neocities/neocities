@@ -1,7 +1,12 @@
 CREATE_MATCH_REGEX = /^username$|^password$|^email$|^new_tags_string$|^is_education$/
 
+def education_whitelist_required?
+  return true if params[:is_education] == 'true' && $config['education_tag_whitelist']
+  false
+end
+
 def education_whitelisted?
-  return true if params[:is_education] == 'true' && $config['education_tag_whitelist'] && !$config['education_tag_whitelist'].select {|t| params[:new_tags_string].match(t)}.empty?
+  return true if education_whitelist_required? && !$config['education_tag_whitelist'].select {|t| params[:new_tags_string].match(t)}.empty?
   false
 end
 
@@ -63,8 +68,13 @@ post '/create' do
     ga_adgroupid: session[:ga_adgroupid]
   )
 
-  if education_whitelisted?
-    @site.email_confirmed = true
+  if education_whitelist_required?
+    if education_whitelisted?
+      @site.email_confirmed = true
+    else
+      flash[:error] = 'The class tag is invalid.'
+      return {result: 'error'}.to_json
+    end
   else
     if !hcaptcha_valid?
       flash[:error] = 'The captcha was not valid, please try again.'
