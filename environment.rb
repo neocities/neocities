@@ -40,6 +40,7 @@ DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $c
 DB.extension :pagination
 DB.extension :auto_literal_strings
 Sequel.split_symbols = true
+Sidekiq.strict_args!(false)
 
 require 'will_paginate/sequel'
 
@@ -54,9 +55,13 @@ end
 =end
 # :nocov:
 
-Sidekiq::Logging.logger = nil unless ENV['RACK_ENV'] == 'production'
+unless ENV['RACK_ENV'] == 'production'
+  Sidekiq.configure_server do |config|
+    config.logger = nil
+  end
+end
 
-sidekiq_redis_config = {namespace: 'neocitiesworker'}
+sidekiq_redis_config = {}
 sidekiq_redis_config[:url] = $config['sidekiq_url'] if $config['sidekiq_url']
 
 # :nocov:
