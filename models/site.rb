@@ -1609,7 +1609,7 @@ class Site < Sequel::Model
   def to_rss
     RSS::Maker.make("atom") do |maker|
       maker.channel.title   = title
-      maker.channel.updated = updated_at
+      maker.channel.updated = (updated_at ? updated_at : created_at)
       maker.channel.author  = username
       maker.channel.id      = "#{username}.neocities.org"
 
