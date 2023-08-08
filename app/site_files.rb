@@ -189,15 +189,25 @@ end
 get '/site_files/:username.zip' do |username|
   require_login
 
-  if current_site.too_big_to_download?
-    flash[:error] = 'Cannot download site as zip as it is too large (or contains too many files)'
-    redirect '/dashboard'
-  end
-
-  zipfile_path = current_site.files_zip
-  content_type 'application/octet-stream'
+  content_type 'application/zip'
   attachment   "neocities-#{current_site.username}.zip"
-  send_file zipfile_path
+
+  directory_path = current_site.files_path
+
+  stream do |out|
+    ZipTricks::Streamer.open(out) do |zip|
+      Dir["#{directory_path}/**/*"].each do |file|
+        next if File.directory?(file)
+
+        zip_path = file.sub("#{directory_path}/", '')
+        zip.write_deflated_file(zip_path) do |file_writer|
+          File.open(file, 'rb') do |file|
+            IO.copy_stream(file, file_writer)
+          end
+        end
+      end
+    end
+  end
 end
 
 get %r{\/site_files\/download\/(.+)} do
