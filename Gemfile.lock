@@ -308,6 +308,7 @@ GEM
       webrick
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    zip_tricks (5.6.0)
     zipruby (0.3.6)
 
 PLATFORMS
@@ -388,6 +389,7 @@ DEPENDENCIES
   webp-ffi
   will_paginate
   xmlrpc
+  zip_tricks
   zipruby
 
 BUNDLED WITH

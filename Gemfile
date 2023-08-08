@@ -57,6 +57,7 @@ gem 'nokogiri'
 gem 'rss'
 gem 'webp-ffi'
 gem 'rszr'
+gem 'zip_tricks'
 
 group :development, :test do
   gem 'pry'
