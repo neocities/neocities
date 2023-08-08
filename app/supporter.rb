@@ -74,7 +74,7 @@ post '/supporter/update' do
 
     site.send_email(
       subject: "[Neocities] You've become a supporter!",
-      body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(
+      body: Tilt.new('./views/templates/email/subscription.erb', pretty: true).render(
         self, {
           username:   site.username,
           plan_name:  Site::PLAN_FEATURES[params[:plan_type].to_sym][:name],

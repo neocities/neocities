@@ -103,7 +103,7 @@ post '/create' do
   unless education_whitelisted?
     @site.send_email(
       subject: "[Neocities] Welcome to Neocities!",
-      body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
+      body: Tilt.new('./views/templates/email/welcome.erb', pretty: true).render(self)
     )
 
     send_confirmation_email @site
