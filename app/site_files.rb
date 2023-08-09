@@ -208,7 +208,7 @@ get '/site_files/:username.zip' do |username|
         next if File.directory?(file)
 
         zip_path = file.sub("#{directory_path}/", '')
-        zip.write_deflated_file(zip_path) do |file_writer|
+        zip.write_stored_file(zip_path) do |file_writer|
           File.open(file, 'rb') do |file|
             IO.copy_stream(file, file_writer)
           end
