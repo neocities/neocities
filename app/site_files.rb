@@ -189,8 +189,16 @@ end
 get '/site_files/:username.zip' do |username|
   require_login
 
+  if !current_site.dl_queued_at.nil? && current_site.dl_queued_at > 1.hour.ago
+    flash[:error] = 'Site downloads are currently limited to once per hour, please try again later.'
+    redirect request.referer
+  end
+
   content_type 'application/zip'
   attachment   "neocities-#{current_site.username}.zip"
+
+  current_site.dl_queued_at = Time.now
+  current_site.save_changes validate: false
 
   directory_path = current_site.files_path
 
