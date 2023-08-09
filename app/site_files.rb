@@ -186,7 +186,7 @@ post '/site_files/rename' do
   redirect "/dashboard#{dir_query}"
 end
 
-get '/site_files/:username.zip' do |username|
+get '/site_files/download' do
   require_login
 
   if !current_site.dl_queued_at.nil? && current_site.dl_queued_at > 1.hour.ago
