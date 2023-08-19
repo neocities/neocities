@@ -197,7 +197,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (5.0.0)
-    puma (5.6.7)
+    puma (6.3.1)
       nio4r (~> 2.0)
     racc (1.7.1)
     rack (2.2.6.4)
@@ -357,7 +357,7 @@ DEPENDENCIES
   paypal-recurring
   pg
   pry
-  puma (= 5.6.7)
+  puma (< 7)
   rack-cache
   rack-test
   rack_session_access

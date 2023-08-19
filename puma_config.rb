@@ -1,7 +1,6 @@
 require 'facter'
 
-threads 1, 1
-#threads 5, 5
+#threads 1, 1
 environment 'production'
 #daemonize
 pidfile '/var/run/neocities/neocities.pid'
@@ -11,3 +10,4 @@ workers Facter.value('processors')['count']
 preload_app!
 on_worker_boot { DB.disconnect }
 bind 'unix:/var/run/neocities/neocities.sock?backlog=2048'
+supported_http_methods Puma::Const::IANA_HTTP_METHODS
