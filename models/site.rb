@@ -1119,7 +1119,7 @@ class Site < Sequel::Model
       errors.add :tipping_paypal, 'A valid PayPal tipping email address is required.'
     end
 
-    if !values[:tipping_bitcoin].blank? && !BitcoinValidator.valid_address?(values[:tipping_bitcoin])
+    if !values[:tipping_bitcoin].blank? && !AdequateCryptoAddress.valid?(values[:tipping_bitcoin], 'BTC')
       errors.add :tipping_bitcoin, 'Bitcoin tipping address is not valid.'
     end
 

@@ -58,6 +58,7 @@ gem 'rss'
 gem 'webp-ffi'
 gem 'rszr'
 gem 'zip_tricks'
+gem 'adequate_crypto_address'
 
 group :development, :test do
   gem 'pry'
