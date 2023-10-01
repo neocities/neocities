@@ -140,7 +140,7 @@ class Site < Sequel::Model
   DISPOSABLE_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_blacklist.conf')
   BANNED_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'banned_email_blacklist.conf')
 
-  BLOCK_JERK_THRESHOLD = 4
+  BLOCK_JERK_THRESHOLD = 25
   MAXIMUM_TAGS = 5
   MAX_USERNAME_LENGTH = 32.freeze
 
