@@ -1,0 +1,73 @@
+<section class="section plans welcome">
+  <h2>Verify your phone number</h2>
+  <div class="txt-Center"><img src="/img/catbus.png" width="90px"></div>
+  <h3 class="subtitle">
+    You're almost ready!<br>
+    To prevent spam and keep the searchability of your site high, we have one last step:
+    <br>please verify your mobile phone number.
+  </h3>
+
+  <div class="row">
+    <div class="col col-100 txt-Center" style="margin-top: 10px;">
+        <% if flash[:success] %>
+          <div class="alert alert-block alert-success" style="margin-top: 20px">
+            <%== flash[:success] %>
+          </div>
+        <% end %>
+
+        <% if flash[:error] %>
+          <div class="alert alert-block alert-error" style="margin-top: 20px">
+            <%== flash[:error] %>
+          </div>
+        <% end %>
+
+      <form method="POST" action="/site/<%= current_site.username %>/confirm_phone" class="content">
+        <%== csrf_token_input_html %>
+
+        <% if current_site.phone_verification_sid %>
+          <fieldset>
+            <label for="token">Enter the code:<br></label>
+          <input name="code" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" value="<%= flash[:code] %>" style="width: 290px">
+          </fieldset>
+          <input class="btn-Action" type="submit" value="Verify Code">
+        <% else %>
+
+          <fieldset>
+            <label for="token">Enter your phone number<br><small>(including country code)</small></label>
+          <input id="phone" name="phone" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" autocomplete="off" style="width: 290px">
+          <input id="phone_intl" name="phone_intl" type="hidden">
+          </fieldset>
+          <input id="submitButton" class="btn-Action" type="submit" value="Send Verification Code" style="display: none">
+
+
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+          <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+          <script>
+            const input = document.querySelector("#phone");
+            const iti = window.intlTelInput(input, {
+              nationalMode: true,
+              utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
+            });
+
+            const handleChange = () => {
+              let text;
+              if(iti.isValidNumber()) {
+                document.getElementById('submitButton').style = "display: inline-block"
+                document.getElementById('phone_intl').value = iti.getNumber()
+              } else {
+                document.getElementById('submitButton').style = "display: none"
+              }
+            };
+
+            // listen to "keyup", but also "change" to update when the user selects a country
+            input.addEventListener('change', handleChange);
+            input.addEventListener('keyup', handleChange);
+          </script>
+
+        <% end %>
+
+      </form>
+    </div>
+  </div>
+
+</section>

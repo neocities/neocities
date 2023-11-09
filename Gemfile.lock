@@ -142,6 +142,7 @@ GEM
     io-extra (1.4.0)
     ipaddress (0.8.3)
     json (2.6.2)
+    jwt (2.7.1)
     llhttp-ffi (0.4.0)
       ffi-compiler (~> 1.0)
       rake (~> 13.0)
@@ -192,6 +193,7 @@ GEM
     ox (2.14.11)
     paypal-recurring (1.1.0)
     pg (1.5.3)
+    phonelib (0.8.3)
     progress (3.6.0)
     pry (0.14.1)
       coderay (~> 1.1)
@@ -286,6 +288,10 @@ GEM
     timeout (0.3.0)
     tins (1.31.1)
       sync
+    twilio-ruby (6.3.1)
+      faraday (>= 0.9, < 3.0)
+      jwt (>= 1.5, < 3.0)
+      nokogiri (>= 1.6, < 2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unf (0.1.4)
@@ -356,6 +362,7 @@ DEPENDENCIES
   nokogiri
   paypal-recurring
   pg
+  phonelib
   pry
   puma (< 7)
   rack-cache
@@ -385,6 +392,7 @@ DEPENDENCIES
   thread
   tilt
   timecop
+  twilio-ruby
   webmock
   webp-ffi
   will_paginate

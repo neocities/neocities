@@ -1789,6 +1789,11 @@ class Site < Sequel::Model
     end
   end
 
+  def phone_verification_needed?
+    return true if phone_verification_required && !phone_verified
+    false
+  end
+
   private
 
   def store_file(path, uploaded, opts={})

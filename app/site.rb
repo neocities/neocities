@@ -296,3 +296,61 @@ get '/site/:username/unblock' do |username|
   current_site.unblock! site
   redirect request.referer
 end
+
+get '/site/:username/confirm_phone' do
+  require_login
+  redirect '/' unless current_site.phone_verification_needed?
+  @title = 'Verify your Phone Number'
+  erb :'site/confirm_phone'
+end
+
+post '/site/:username/confirm_phone' do
+  require_login
+  redirect '/' unless current_site.phone_verification_needed?
+
+  if params[:phone_intl]
+    phone = Phonelib.parse params[:phone_intl]
+
+    if !phone.valid?
+      flash[:error] = "Invalid phone number, please try again."
+      redirect "/site/#{current_site.username}/confirm_phone"
+    end
+
+    if phone.types.include?(:premium_rate) || phone.types.include?(:shared_cost)
+      flash[:error] = 'Neocities does not support this type of number, please use another number.'
+      redirect "/site/#{current_site.username}/confirm_phone"
+    end
+
+    current_site.phone_verification_sent_at = Time.now
+    current_site.save_changes validate: false
+
+    verification = $twilio.verify
+                          .v2
+                          .services($config['twilio_service_sid'])
+                          .verifications
+                          .create(to: phone.e164, channel: 'sms')
+
+    current_site.phone_verification_sid = verification.sid
+    current_site.save_changes validate: false
+
+    flash[:success] = 'Validation message sent! Check your phone and enter the code below.'
+  else
+    # Check code
+    vc = $twilio.verify
+                .v2
+                .services($config['twilio_service_sid'])
+                .verification_checks
+                .create(verification_sid: current_site.phone_verification_sid, code: params[:code])
+
+    # puts vc.status (pending if failed, approved if it passed)
+    if vc.status == 'approved'
+      current_site.phone_verified = true
+      current_site.save_changes validate: false
+    else
+      flash[:error] = 'Code was not correct, please re-enter.'
+    end
+  end
+
+  # Will redirect to / automagically if phone was verified
+  redirect "/site/#{current_site.username}/confirm_phone"
+end

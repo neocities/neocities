@@ -58,6 +58,8 @@ gem 'rss'
 gem 'webp-ffi'
 gem 'rszr'
 gem 'zip_tricks'
+gem 'twilio-ruby'
+gem 'phonelib'
 
 group :development, :test do
   gem 'pry'

@@ -77,6 +77,8 @@ before do
     # Skips the CSRF/validation check for stripe web hooks
   elsif email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/signout|^\/welcome|^\/supporter/)
     redirect "/site/#{current_site.username}/confirm_email"
+  elsif current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_phone/)
+    redirect  "/site/#{current_site.username}/confirm_phone"
   else
     content_type :html, 'charset' => 'utf-8'
     redirect '/' if request.post? && !csrf_safe?
