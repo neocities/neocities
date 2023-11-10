@@ -177,3 +177,5 @@ $image_optim = ImageOptim.new pngout: false, svgo: false
 Money.locale_backend = nil
 Money.default_currency = Money::Currency.new("USD")
 Money.rounding_mode = BigDecimal::ROUND_HALF_UP
+
+$twilio = Twilio::REST::Client.new $config['twilio_account_sid'], $config['twilio_auth_token']

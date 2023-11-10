@@ -98,6 +98,20 @@ post '/create' do
   end
 
   @site.email_confirmed = true if self.class.development?
+  @site.phone_confirmed = true if self.class.development?
+
+  begin
+    @site.phone_verification_required = true if self.class.production? && BlackBox.phone_verification_required?(site)
+  rescue => e
+    EmailWorker.perform_async({
+      from: 'web@neocities.org',
+      to: 'errors@neocities.org',
+      subject: "[Neocities Error] Phone verification exception",
+      body: "#{e.inspect}\n#{e.backtrace}",
+      no_footer: true
+    })
+  end
+
   @site.save
 
   unless education_whitelisted?

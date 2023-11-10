@@ -59,6 +59,8 @@ gem 'webp-ffi'
 gem 'rszr'
 gem 'zip_tricks'
 gem 'adequate_crypto_address'
+gem 'twilio-ruby'
+gem 'phonelib'
 
 group :development, :test do
   gem 'pry'
