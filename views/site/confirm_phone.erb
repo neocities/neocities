@@ -26,10 +26,27 @@
 
         <% if current_site.phone_verification_sid %>
           <fieldset>
-            <label for="token">Enter the code:<br></label>
-          <input name="code" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" value="<%= flash[:code] %>" style="width: 100px" maxlength=6>
+            <label for="token">Enter the 6 digit code:<br></label>
+          <input id="code" name="code" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" value="<%= flash[:code] %>" style="width: 100px" maxlength=6>
           </fieldset>
-          <input class="btn-Action" type="submit" value="Verify Code">
+          <input id="submitButton" class="btn-Action" type="submit" value="Verify Code" style="display: none" autocomplete="off">
+
+          <script>
+            document.getElementById('code').addEventListener('input', function(e) {
+              var inputVal = e.target.value;
+              var submitButton = document.getElementById('submitButton');
+
+              // Check if there are exactly 6 digits in the input
+              var isValid = /^\d{6}$/.test(inputVal);
+
+              if(isValid) {
+                submitButton.style = 'display: inline-block';
+              } else {
+                submitButton.style = 'display: none';
+              }
+            });
+          </script>
+
         <% else %>
 
           <fieldset>

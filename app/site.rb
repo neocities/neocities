@@ -329,6 +329,13 @@ post '/site/:username/confirm_phone' do
     end
 
     current_site.phone_verification_sent_at = Time.now
+    current_site.phone_verification_attempts += 1
+
+    if current_site.phone_verification_attempts > Site::PHONE_VERIFICATION_LOCKOUT_ATTEMPTS
+      flash[:error] = 'You have exceeded the number of phone verification attempts allowed.'
+      redirect "/site/#{current_site.username}/confirm_phone"
+    end
+
     current_site.save_changes validate: false
 
     verification = $twilio.verify
