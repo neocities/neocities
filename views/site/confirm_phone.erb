@@ -2,7 +2,7 @@
   <h2>Verify your phone number</h2>
   <div class="txt-Center"><img src="/img/catbus.png" width="90px"></div>
   <h3 class="subtitle">
-    You're almost ready!<br>
+    Last thing!<br>
     To prevent spam and keep the searchability of your site high, we have one last step:
     <br>please verify your mobile phone number.
   </h3>
@@ -27,13 +27,13 @@
         <% if current_site.phone_verification_sid %>
           <fieldset>
             <label for="token">Enter the code:<br></label>
-          <input name="code" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" value="<%= flash[:code] %>" style="width: 290px">
+          <input name="code" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" value="<%= flash[:code] %>" style="width: 100px" maxlength=6>
           </fieldset>
           <input class="btn-Action" type="submit" value="Verify Code">
         <% else %>
 
           <fieldset>
-            <label for="token">Enter your phone number<br><small>(including country code)</small></label>
+            <label for="phone">Enter your phone number<br><small>(including country code)</small></label>
           <input id="phone" name="phone" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" autocomplete="off" style="width: 290px">
           <input id="phone_intl" name="phone_intl" type="hidden">
           </fieldset>

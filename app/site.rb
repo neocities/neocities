@@ -304,6 +304,13 @@ get '/site/:username/confirm_phone' do
   erb :'site/confirm_phone'
 end
 
+def restart_phone_verification
+  current_site.phone_verification_sent_at = nil
+  current_site.phone_verification_sid = nil
+  current_site.save_changes validate: false
+  redirect "/site/#{current_site.username}/confirm_phone"
+end
+
 post '/site/:username/confirm_phone' do
   require_login
   redirect '/' unless current_site.phone_verification_needed?
@@ -335,19 +342,34 @@ post '/site/:username/confirm_phone' do
 
     flash[:success] = 'Validation message sent! Check your phone and enter the code below.'
   else
-    # Check code
-    vc = $twilio.verify
-                .v2
-                .services($config['twilio_service_sid'])
-                .verification_checks
-                .create(verification_sid: current_site.phone_verification_sid, code: params[:code])
 
-    # puts vc.status (pending if failed, approved if it passed)
-    if vc.status == 'approved'
-      current_site.phone_verified = true
-      current_site.save_changes validate: false
-    else
-      flash[:error] = 'Code was not correct, please re-enter.'
+    restart_phone_verification if current_site.phone_verification_sent_at < Time.now - Site::PHONE_VERIFICATION_EXPIRATION_TIME
+    minutes_remaining = ((current_site.phone_verification_sent_at - (Time.now - Site::PHONE_VERIFICATION_EXPIRATION_TIME))/60).round
+
+    begin
+      # Check code
+      vc = $twilio.verify
+                  .v2
+                  .services($config['twilio_service_sid'])
+                  .verification_checks
+                  .create(verification_sid: current_site.phone_verification_sid, code: params[:code])
+
+      # puts vc.status (pending if failed, approved if it passed)
+      if vc.status == 'approved'
+        current_site.phone_verified = true
+        current_site.save_changes validate: false
+      else
+        flash[:error] = "Code was not correct, please try again. If the phone number you entered was incorrect, you can re-enter the number after #{minutes_remaining} more minutes have passed."
+      end
+
+    rescue Twilio::REST::RestError => e
+      if e.message =~ /60202/
+        flash[:error] = "You have exhausted your check attempts. Please try again in #{minutes_remaining} minutes."
+      elsif e.message =~ /20404/ # Unable to create record
+        restart_phone_verification
+      else
+        raise e
+      end
     end
   end
 

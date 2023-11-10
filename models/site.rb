@@ -167,6 +167,9 @@ class Site < Sequel::Model
   BLACK_BOX_WAIT_TIME = 10.seconds
   MAX_DISPLAY_FOLLOWS = 56*3
 
+  PHONE_VERIFICATION_EXPIRATION_TIME = 10.minutes
+  PHONE_VERIFICATION_LOCKOUT_ATTEMPTS = 3
+
   many_to_many :tags
 
   one_to_many :profile_comments
