@@ -42,7 +42,7 @@ the Neocities Cat
     end
   end
 
-  flash[:success] = 'If your email was valid (and used by a site), the Neocities Cat will send an e-mail to your account with password reset instructions.'
+  flash[:success] = "We sent an e-mail with password reset instructions. Check your spam folder if you don't see it in your inbox."
   redirect '/'
 end
 
