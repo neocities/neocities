@@ -75,9 +75,9 @@ before do
     content_type :json
   elsif request.path.match /^\/webhooks\//
     # Skips the CSRF/validation check for stripe web hooks
-  elsif email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/signout|^\/welcome|^\/supporter/)
+  elsif email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/signout|^\/welcome|^\/supporter|^\/signout/)
     redirect "/site/#{current_site.username}/confirm_email"
-  elsif !email_not_validated? && current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_phone/)
+  elsif !email_not_validated? && current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_phone|^\/signout/)
     redirect  "/site/#{current_site.username}/confirm_phone"
   else
     content_type :html, 'charset' => 'utf-8'

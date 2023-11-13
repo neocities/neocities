@@ -63,6 +63,7 @@ GEM
       rexml
     crass (1.0.6)
     dante (0.2.0)
+    dnsbl-client (1.1.1)
     docile (1.4.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -337,6 +338,7 @@ DEPENDENCIES
   certified
   coveralls_reborn
   dav4rack!
+  dnsbl-client
   erubis
   fabrication
   facter

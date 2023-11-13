@@ -61,6 +61,7 @@ gem 'zip_tricks'
 gem 'adequate_crypto_address'
 gem 'twilio-ruby'
 gem 'phonelib'
+gem 'dnsbl-client'
 
 group :development, :test do
   gem 'pry'
