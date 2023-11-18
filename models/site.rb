@@ -516,8 +516,8 @@ class Site < Sequel::Model
       save_changes
     }
 
-    delete_all_cache
     update_redis_proxy_record
+    delete_all_cache
     true
   end
 
