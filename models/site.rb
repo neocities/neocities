@@ -504,6 +504,7 @@ class Site < Sequel::Model
 
   def after_destroy
     update_redis_proxy_record
+    delete_all_cache
   end
 
   def undelete!
@@ -543,8 +544,6 @@ class Site < Sequel::Model
     self.banned_at = Time.now
     save validate: false
     destroy
-
-    delete_all_cache
   end
 
   def ban_all_sites_on_account!
@@ -988,11 +987,6 @@ class Site < Sequel::Model
   def parent?
     parent_site_id.nil?
   end
-
-#  def after_destroy
-#    FileUtils.rm_rf files_path
-#    super
-#  end
 
   def ssl_installed?
     !domain.blank? && !ssl_key.blank? && !ssl_cert.blank?
