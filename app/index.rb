@@ -80,6 +80,8 @@ get '/?' do
     @blog_feed_html = SimpleCache.get :blog_feed_html
   end
 
+  @create_disabled = defined?(BlackBox.create_disabled?) && BlackBox.create_disabled?(request)
+
   erb :index, layout: :index_layout
 end
 

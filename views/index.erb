@@ -96,54 +96,56 @@
         <fieldset class="content">
           <h2 class="gamma">Sign up for free</h2>
           <hr />
-          <div class="siteCreateInputs">
-            <label for="create-Input">Username</label>
-            <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" style="position:absolute; top:-2000px; left:-2000px;" />
-            <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" style="position:absolute; top:-2000px; left:-2000px;" />
-            <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
-            <label for="create-Input" id="domain-name">.neocities.org</label>
+          <% if @create_disabled %>
+            <p>Sign up is not currently available, please try again later.</p>
+          <% else %>
+            <div class="siteCreateInputs">
+              <label for="create-Input">Username</label>
+              <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" style="position:absolute; top:-2000px; left:-2000px;" />
+              <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" style="position:absolute; top:-2000px; left:-2000px;" />
+              <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <label for="create-Input" id="domain-name">.neocities.org</label>
 
-            <label for="tags-input">Tags (your interests, site topics)</label>
-            <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <label for="tags-input">Tags (your interests, site topics)</label>
+              <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
 
-            <div class="col col-50" style="padding-left:0;">
-              <label for="password-input">
-                Password
-              </label>
-              <input type="password" class="input-Area" id="password-input"
-                      name="password" placeholder="password"
-                      data-placement="left" data-trigger="manual"
-                      autocapitalize="off" autocorrect="off" autocomplete="off" />
-            </div>
+              <div class="col col-50" style="padding-left:0;">
+                <label for="password-input">
+                  Password
+                </label>
+                <input type="password" class="input-Area" id="password-input"
+                        name="password" placeholder="password"
+                        data-placement="left" data-trigger="manual"
+                        autocapitalize="off" autocorrect="off" autocomplete="off" />
+              </div>
 
-            <div class="col col-50">
-              <label for="email-input">
-                Email
-              </label>
-              <input type="email" class="input-Area"
-                     id="email-input" name="email"
-                     placeholder="me@example.com" data-placement="left"
-                     data-trigger="manual" autocapitalize="off"
-                     autocorrect="off" autocomplete="off" />
-            </div>
+              <div class="col col-50">
+                <label for="email-input">
+                  Email
+                </label>
+                <input type="email" class="input-Area"
+                      id="email-input" name="email"
+                      placeholder="me@example.com" data-placement="left"
+                      data-trigger="manual" autocapitalize="off"
+                      autocorrect="off" autocomplete="off" />
+              </div>
 
-            <div class="col col-50" style="padding-left:0">
-              <label>
-                Confirm you are human
-              </label>
-              <%== hcaptcha_input %>
-            </div>
+              <div class="col col-50" style="padding-left:0">
+                <label>
+                  Confirm you are human
+                </label>
+                <%== hcaptcha_input %>
+              </div>
 
-            <div class="col col-50">
-              <div style="margin-top: 15px">
-                <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+              <div class="col col-50">
+                <div style="margin-top: 15px">
+                  <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+                </div>
               </div>
             </div>
-          </div>
-
+          <% end %>
         </fieldset>
       </form>
-
     <% end %>
 
   </div> <!-- end .col-50 -->
