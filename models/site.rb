@@ -504,7 +504,7 @@ class Site < Sequel::Model
 
   def after_destroy
     update_redis_proxy_record
-    delete_all_cache
+    purge_all_cache
   end
 
   def undelete!
@@ -518,7 +518,7 @@ class Site < Sequel::Model
     }
 
     update_redis_proxy_record
-    delete_all_cache
+    purge_all_cache
     true
   end
 
@@ -768,14 +768,10 @@ class Site < Sequel::Model
     end
   end
 
-  def delete_all_cache
+  def purge_all_cache
     site_files.each do |site_file|
-      delete_cache site_file.path
+      purge_cache site_file.path
     end
-  end
-
-  def delete_cache(path)
-    purge_cache path
   end
 
   #Rye::Cmd.add_command :ipfs

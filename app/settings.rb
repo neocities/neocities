@@ -92,8 +92,8 @@ post '/settings/:username/change_name' do
     }
 
     old_site.delete_all_thumbnails_and_screenshots
-    old_site.delete_all_cache
-    @site.delete_all_cache
+    old_site.purge_all_cache
+    @site.purge_all_cache
     @site.regenerate_thumbnails_and_screenshots
 
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it!</b>"

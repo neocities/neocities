@@ -105,7 +105,7 @@ class SiteFile < Sequel::Model
       DB['update sites set space_used=space_used-? where id=?', size, site_id].first
     end
 
-    site.delete_cache site.files_path(path)
+    site.purge_cache site.files_path(path)
     SiteChangeFile.filter(site_id: site_id, filename: path).delete
   end
 end
