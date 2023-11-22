@@ -18,6 +18,8 @@ development:
   paypal_api_signature: tonz
   letsencrypt_key: ./tests/files/letsencrypt.key
   letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
+  minfraud_account_id: 696969420
+  minfraud_license_key: DERPDERPDERP
   proxy_ips:
     - 10.0.0.1
     - 10.0.0.2
@@ -58,3 +60,5 @@ test:
   twilio_account_sid: ACEDERPDERP
   twilio_auth_token: derpderpderp
   twilio_service_sid: VADERPDERPDERP
+  minfraud_account_id: 696969420
+  minfraud_license_key: DERPDERPDERP

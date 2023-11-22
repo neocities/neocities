@@ -179,3 +179,9 @@ Money.default_currency = Money::Currency.new("USD")
 Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 
 $twilio = Twilio::REST::Client.new $config['twilio_account_sid'], $config['twilio_auth_token']
+
+Minfraud.configure do |c|
+  c.account_id  = $config['minfraud_account_id']
+  c.license_key = $config['minfraud_license_key']
+  c.enable_validation = true
+end
