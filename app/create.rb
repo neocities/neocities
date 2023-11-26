@@ -91,7 +91,7 @@ post '/create' do
       return {result: 'error'}.to_json
     end
 
-    if defined?(BlackBox.create_disabled?) && BlackBox.create_disabled?(site, request)
+    if defined?(BlackBox.create_disabled?) && BlackBox.create_disabled?(@site, request)
       flash[:error] = 'Site creation is currently unavailable, please try again later.'
       return {result: 'error'}.to_json
     end
