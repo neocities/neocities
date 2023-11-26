@@ -13,15 +13,43 @@
     </div>
   <% end %>
 
-  <h2>Contact</h2>
-
   <p>
-    Please note that we can only respond to english inquiries.
+    Please note that we can only respond to messages in english and klingon. Thank you!
   </p>
 
-  <p>
-    Frequently asked questions:
-  </p>
+  <h2>Frequently Asked Questions</h2>
+
+  <h4>Sites / Editing</h3>
+
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" href="#cemailresetnotfound">
+        I didn't receive my password reset email.
+      </a>
+    </div>
+    <div id="cemailresetnotfound" class="accordion-body collapse">
+      <div class="accordion-inner">
+        <p>
+          This is almost always because you used a different email address to create the site (check all your email addresses), or because the email has somehow been put in the spam folder of your email client.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" href="#ctwo">
+        I lost my email address, can you reset the password?
+      </a>
+    </div>
+    <div id="ctwo" class="accordion-body collapse">
+      <div class="accordion-inner">
+        <p>
+          For security reasons, we cannot reset your password if you don't have control of your email address, because there is no way to know if you're the legitimate owner or an attacker. You will have to make a new site (don’t worry, it’s free!). If you didn’t get an email from the password reset form, check your spam folder.
+        </p>
+      </div>
+    </div>
+  </div>
 
   <div class="accordion">
     <div class="accordion-group">
@@ -75,15 +103,17 @@
 
     <div class="accordion-group">
       <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#ctwo">
-          I didn't enter an email for my site, can you reset the password?
+        <a class="accordion-toggle" data-toggle="collapse" href="#hitsviews">
+          What is the difference between hits and views?
         </a>
       </div>
-      <div id="ctwo" class="accordion-body collapse">
+      <div id="hitsviews" class="accordion-body collapse">
         <div class="accordion-inner">
           <p>
-            For security reasons, we cannot reset your password if you did not enter an email for your site. You will have to make a new site (don’t worry, it’s free!). If you didn’t get an email from the password reset form, you didn’t enter an email (or it’s in your spam folder). Again you will have to make a new site; we cannot help you for security reasons.
+            <strong>Hits</strong> are number of requests for any file on a site, <strong>views</strong> count for one unique IP address per hour. Views provide better insight into how many individuals (or search engines, etc) are looking at your site. There is no such thing as perfectly accurate stats, so this doesn't necessarily reflect how many actual people are viewing your site, but it does provide a rough way to see how popular your site is becoming. If you put a hit counter on your site, it may give a different number than what Neocities records and that is expected.
           </p>
+
+          <p>We don't provide a way to look at individual visitor records on Neocities, the main reason being that the information isn't very useful anymore, since most sources block HTTP Referer headers, making it difficult to determine origin.</p>
         </div>
       </div>
     </div>
@@ -97,7 +127,7 @@
       <div id="cthree" class="accordion-body collapse">
         <div class="accordion-inner">
           <p>
-            We don't support FTP, sorry! Aside from security problems with FTP, it isn't used by many people anymore. We need to stay focused on what we work on, so we only support ways to upload content that most people use these days.
+            We don't support FTP, apologies! Aside from security problems with FTP, it isn't used by many people anymore. We need to stay focused on what we work on, so we only support ways to upload content that most people use these days.
           </p>
 
           <p>
@@ -128,6 +158,73 @@
 
     <div class="accordion-group">
       <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cten">
+          Can you delete my site for me?
+        </a>
+      </div>
+      <div id="cten" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            For security reasons, we can't. But you can delete your own site by logging in and going to the settings page!
+          </p>
+
+          <p>
+            For safety reasons, if you have more than one site, you'll need to delete all sites before deleting the main account. Click on "Manage Site Settings" to delete each site individually.
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#csitename">
+          A site name is taken but is not being actively used or is not found, can I take it over?
+        </a>
+      </div>
+      <div id="csitename" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            Neocities does not have a policy of transferring inactive sites to different owners and can't make manual exceptions at the moment. This is a tricky subject because we don't have a way to be sure if a user has actually abandoned their site, even if it's just the default "new site" template. We may have a different policy in the future regarding this.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cfiles">
+          Do you support WASM / MP3 / MP4 for free sites?
+        </a>
+      </div>
+      <div id="cfiles" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            We don't currently support certain types of files, particularly multimedia files and WebASM with free sites because of persistent issues with abuse (piracy, bitcoin mining, excessive bandwidth usage). In general, these files are not conducive to Neocities' mission of bringing back personal home pages vs being a piracy and webapp hosting platform. You can embed audio and videos through other providers like YouTube, which is preferred because they will automatically provide the streaming media in formats that work better for your specific users' devices (such as mobile phones).
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#celeven">
+          How can I load Neocities sites on old web browsers?
+        </a>
+      </div>
+      <div id="celeven" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            We recommend using an "old web browser" proxy server like <a href="https://github.com/atauenis/webone">WebOne</a> or <a href="https://github.com/tenox7/wrp">WRP</a>. These translate between modern browser
+            standards and old browser standards, allowing for us to provide the speed and security of the new web without compromising the ability to use old browsers.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Legal / Abuse</h3>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" href="#cfive">
           I want to take down someone's Neocities site.
         </a>
@@ -150,10 +247,7 @@
       <div id="csix" class="accordion-body collapse">
         <div class="accordion-inner">
           <p>
-            Cool.
-          </p>
-          <p>
-            Please consult our <a href="/legal">legal guide for Neocities</a> for more information.
+            Cool! Please consult our <a href="/legal">legal guide for Neocities</a> for more information on why this is a really bad idea.
           </p>
         </div>
       </div>
@@ -213,42 +307,6 @@
       </div>
     </div>
 
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#cten">
-          Can you delete my site for me?
-        </a>
-      </div>
-      <div id="cten" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            For security reasons, we can't. But you can delete your own site by logging in and going to the settings page!
-          </p>
-
-          <p>
-            For safety reasons, if you have more than one site, you'll need to delete all sites before deleting the main account. Click on "Manage Site Settings" to delete each site individually.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#celeven">
-          How can I load Neocities sites on old web browsers?
-        </a>
-      </div>
-      <div id="celeven" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            We recommend using an "old web browser" proxy server like <a href="https://github.com/atauenis/webone">WebOne</a> or <a href="https://github.com/tenox7/wrp">WRP</a>. These translate between modern browser
-            standards and old browser standards, allowing for us to provide the speed and security of the new web without compromising the ability to use old browsers.
-          </p>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <h2>Contact Form</h2>
@@ -264,6 +322,14 @@
 
       <label for="your_comments">Comments</label>
       <textarea name="body" id="your_comments" class="col-75" rows="10"><%= params[:body] %></textarea>
+
+      <label class="text-Label" for="faq_check">Did you check the Frequently Asked Questions to see if it answered your question?</label>
+      <div class="select-Container" style="width: 100px; float: none">
+        <select name="faq_check" id="faq_check" class="input-Select">
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
+      </div>
 
       <label>Fill out the captcha so we know you’re not a robot:</label>
       <%== hcaptcha_input %>
