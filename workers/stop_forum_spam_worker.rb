@@ -4,7 +4,7 @@ class StopForumSpamWorker
 
   def perform(opts)
     txn = Minfraud::Components::Report::Transaction.new(
-      ip_address:      opts.ip,
+      ip_address:      opts[:ip],
       tag:             :spam_or_abuse,
       # The following key/values are not mandatory but are encouraged
       maxmind_id:      $config['minfraud_account_id'],
@@ -20,9 +20,9 @@ class StopForumSpamWorker
 
     res = HTTP.post 'https://stopforumspam.com/add', form: {
       api_key: $config['stop_forum_spam_api_key'],
-      username: opts.username,
-      email: opts.email,
-      ip: opts.ip
+      username: opts[:username],
+      email: opts[:email],
+      ip: opts[:ip]
     }
     puts res.inspect
   end
