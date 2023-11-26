@@ -183,6 +183,20 @@
       </div>
     </div>
 
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#csitebackup">
+          Site backup downloading is not working
+        </a>
+      </div>
+      <div id="csitebackup" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            Site downloading issues are almost always related to the internet connectivity issues. If your download is continuing to get cancelled or interrupted, check your WiFi router, or try plugging in directly to the router to see if that resolves it. You could also try downloading from a local library or coffee shop and see if you have the same issue.
+          </p>
+        </div>
+      </div>
+    </div>
 
     <div class="accordion-group">
       <div class="accordion-heading">
@@ -202,7 +216,7 @@
     <div class="accordion-group">
       <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" href="#cfiles">
-          Do you support WASM / MP3 / MP4 for free sites?
+          Do you support WASM / MP3 / MP4/ ZIP for free sites?
         </a>
       </div>
       <div id="cfiles" class="accordion-body collapse">
@@ -213,6 +227,25 @@
         </div>
       </div>
     </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cfilesizes">
+          Can I upload very large files to Neocities?
+        </a>
+      </div>
+      <div id="cfilesizes" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            We currently have a file size limit for very large files on Neocities, including supporter sites. This is mainly because our CDN (content delivery network) is optimized for lots of small files (the kind that web sites use), and also because large files tend to be easily abused (think piracy). Files used to make web pages will not hit these limits, but things like very large zipballs are more likely to. These also tend to be the file types that lead to abuse and would make Neocities unsustainable to operate in the long run (piracy, malware, etc), another reason we're hesitant to add support for them.
+          </p>
+          <p>
+            Even if we supported this, it wouldn't work very well because HTTP servers are not good at this anyways and there are almost always better alternatives for very large file distribution. For example if you need to upload a video, YouTube or Vimeo are better because they automatically format in the different file types that different browsers support, or if you are releasing a large game, it's probably better to release it through a game platform like Steam. Using BitTorrent is also a really effective way to have your site visitors help distribute your content quickly (provided it's legal!)
+          </p>
+        </div>
+      </div>
+    </div>
+
     <div class="accordion-group">
       <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" href="#celeven">
@@ -224,6 +257,25 @@
           <p>
             We recommend using an "old web browser" proxy server like <a href="https://github.com/atauenis/webone">WebOne</a> or <a href="https://github.com/tenox7/wrp">WRP</a>. These translate between modern browser
             standards and old browser standards, allowing for us to provide the speed and security of the new web without compromising the ability to use old browsers.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cnine">
+          Do you support .htaccess files?
+        </a>
+      </div>
+      <div id="cnine" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            Neocities does not support .htaccess files. This is an Apache HTTP server specific file type, and we don't use Apache for our backend. In addition, we generally don't add features to Neocities that make the functionality of sites depend on custom backend functionality (the sole exception being that we make sure "page not found" goes to "not_found.html" so you can create a custom 404.)
+          </p>
+
+          <p>
+            Finally, we sometimes see people trying to use .htaccess for authentication (with usernames and passwords). Neocities is only for sites and information you want to make public, and it is dangerous to use it for private sites! We make backups of your site and attackers can easily find any information you're trying to hide using our archivers. Our goal is to make sure your sites stay up for a long time and persist, not to enforce secrecy zones on your site. If you want to make a controlled access site, Neocities is probably not what you're looking for.
           </p>
         </div>
       </div>
@@ -290,31 +342,6 @@
         </div>
       </div>
     </div>
-
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#cnine">
-          Do you support .htaccess files?
-        </a>
-      </div>
-      <div id="cnine" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            No. And we don't intend to.
-          </p>
-
-          <p>
-            The .htaccess file is an Apache specific thing, and we don't use Apache for our backend. In addition, we generally don't add features to Neocities that make the functionality of sites depend on custom backend functionality (the sole exception being that we make sure "page not found" goes to "not_found.html" so you can create a custom 404.)
-          </p>
-
-          <p>
-            Finally, we sometimes see people trying to use .htaccess for authentication (with usernames and passwords). Neocities is only for sites and information you want to make public, and it is dangerous to use it for private sites! We make backups of your site and attackers can easily find any information you're trying to hide using our archivers. Our goal is to make sure your sites stay up for a long time and persist, not to enforce secrecy zones on your site. If you want to make a controlled access site, Neocities is not for you.
-          </p>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <h2>Contact Form</h2>
@@ -331,7 +358,7 @@
       <label for="your_comments">Comments</label>
       <textarea name="body" id="your_comments" class="col-75" rows="10"><%= params[:body] %></textarea>
 
-      <label class="text-Label" for="faq_check">Did you check the Frequently Asked Questions to see if it answered your question?</label>
+      <label class="text-Label" for="faq_check">We may not be able to respond to questions that are already answered.<br>Did you check the Frequently Asked Questions to see if it answered your question?</label>
       <div class="select-Container" style="width: 100px; float: none">
         <select name="faq_check" id="faq_check" class="input-Select">
           <option value="no">No</option>
