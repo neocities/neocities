@@ -250,7 +250,8 @@ post '/admin/banhammer' do
       StopForumSpamWorker.perform_async(
         username: site.username,
         email: site.email,
-        ip: site.ip
+        ip: site.ip,
+        classifier: params[:classifier]
       )
     end
   end
