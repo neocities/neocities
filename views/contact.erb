@@ -215,6 +215,21 @@
 
     <div class="accordion-group">
       <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#ctags">
+          Why can't I add more tags to my site profile?
+        </a>
+      </div>
+      <div id="ctags" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            There is a limit of <%= Site::MAXIMUM_TAGS.to_s %> per site, so try removing a tag and then you will be able to add another.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" href="#cfiles">
           Do you support WASM / MP3 / MP4/ ZIP for free sites?
         </a>
@@ -292,7 +307,7 @@
       <div id="cfive" class="accordion-body collapse">
         <div class="accordion-inner">
           <p>
-            We will not remove a site unless it is violating our <a href="/terms">Terms of Service</a> or breaking the law. Chances are, it isn't. And the First Amendment of the United States Constitution defends our right to do this. If you'd like a more in-depth explanation of our policies, see our <a href="/legal">legal guide for Neocities</a>.
+            We will not remove a site unless it is violating our <a href="/terms">Terms of Service</a> or breaking the law. Chances are, it isn't. And the laws in place defend our right to do this. If you'd like a more in-depth explanation of our policies, see our <a href="/legal">legal guide for Neocities</a>.
           </p>
         </div>
       </div>
@@ -301,7 +316,7 @@
     <div class="accordion-group">
       <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" href="#csix">
-          I want to sue you.
+          I don't like something you're hosting and I'm going to sue you!
         </a>
       </div>
       <div id="csix" class="accordion-body collapse">
