@@ -15,6 +15,13 @@ def require_ownership_for_settings
   end
 end
 
+get '/settings/invoices/?' do
+  require_login
+  @title = 'Invoices'
+  @invoices = current_site.stripe_customer_id ? Stripe::Invoice.list(customer: current_site.stripe_customer_id) : []
+  erb :'settings/invoices'
+end
+
 get '/settings/:username/?' do |username|
   # This is for the email_unsubscribe below
   pass if Site.select(:id).where(username: username).first.nil?

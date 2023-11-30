@@ -24,10 +24,10 @@
       <div class="tabbable" style="margin-top: 20px"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs">
 
-          <li class="active"><a href="#sites" data-toggle="tab">Manage Sites</a></li>
-          <li><a href="#supporter" data-toggle="tab">Supporter Info</a></li>
-          <li><a href="#password" data-toggle="tab">Change Password</a></li>
-          <li><a href="#email" data-toggle="tab">Change Email</a></li>
+          <li class="active"><a href="#sites" data-toggle="tab">Sites</a></li>
+          <li><a href="#supporter" data-toggle="tab">Supporter</a></li>
+          <li><a href="#password" data-toggle="tab">Password</a></li>
+          <li><a href="#email" data-toggle="tab">Email</a></li>
           <% if current_site.stripe_paying_supporter? %>
             <li><a href="#billing" data-toggle="tab">Change Card</a></li>
           <% end %>
