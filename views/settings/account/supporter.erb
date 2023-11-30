@@ -4,19 +4,27 @@
   </p>
 
   <% if parent_site.paying_supporter? %>
-    <a class="btn-Action" href="/supporter" style="margin-bottom: 20px">Supporter Info</a>
+    <a href="/supporter" style="margin-bottom: 20px">Supporter Info</a>
     <small><a href="#" onclick="$('#endSupporterConfirm').modal()" style="font-size: 8pt">End Supporter Membership</a></small>
   <% end %>
 <% else %>
   <p class="tiny">
     You currently have the <strong>Free Plan (<%= current_site.maximum_space.to_space_pretty %>)</strong>.<br>Want to get more space and help Neocities? Become a supporter!
   </p>
-  <a href="/supporter">Supporter Info</a>
+  <a href="/supporter">Supporter Info</a>a
+  <% puts "XXXX #{parent_site.stripe_customer_id}" %>
+  <% puts "XXXX #{parent_site.paypal_profile_id}" %>
   <% if parent_site.stripe_customer_id || parent_site.paypal_profile_id %>
     <br>
     <a href="/settings/invoices">Generated Invoices</a>
   <% end %>
 <% end %>
+
+  <% if parent_site.stripe_customer_id || parent_site.paypal_profile_id %>
+    <br>
+    <a href="/settings/invoices">Generated Invoices</a>
+  <% end %>
+
 
 <div class="modal hide fade" id="endSupporterConfirm" tabindex="-1" role="dialog" aria-labelledby="endSupporterConfirmLabel" aria-hidden="true">
   <form method="POST" action="/supporter/end">
