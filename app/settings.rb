@@ -18,7 +18,7 @@ end
 get '/settings/invoices/?' do
   require_login
   @title = 'Invoices'
-  @invoices = current_site.stripe_customer_id ? Stripe::Invoice.list(customer: current_site.stripe_customer_id) : []
+  @invoices = parent_site.stripe_customer_id ? Stripe::Invoice.list(customer: parent_site.stripe_customer_id) : []
   erb :'settings/invoices'
 end
 

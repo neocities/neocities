@@ -12,7 +12,7 @@
     You currently have the <strong>Free Plan (<%= current_site.maximum_space.to_space_pretty %>)</strong>.<br>Want to get more space and help Neocities? Become a supporter!
   </p>
   <a href="/supporter">Supporter Info</a>
-  <% if current_site.stripe_customer_id || current_site.paypal_profile_id %>
+  <% if parent_site.stripe_customer_id || parent_site.paypal_profile_id %>
     <br>
     <a href="/settings/invoices">Generated Invoices</a>
   <% end %>
