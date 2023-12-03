@@ -45,7 +45,8 @@ end
 
 desc 'Update disposable email blacklist'
 task :update_disposable_email_blacklist => [:environment] do
-  uri = URI.parse('https://raw.githubusercontent.com/martenson/disposable-email-domains/master/disposable_email_blocklist.conf')
+  # Formerly: https://raw.githubusercontent.com/martenson/disposable-email-domains/master/disposable_email_blocklist.conf
+  uri = URI.parse('https://raw.githubusercontent.com/disposable/disposable-email-domains/master/domains.txt')
 
   File.write(Site::DISPOSABLE_EMAIL_BLACKLIST_PATH, Net::HTTP.get(uri))
 end
