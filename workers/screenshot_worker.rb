@@ -54,7 +54,14 @@ class ScreenshotWorker
       screenshot_path = File.join user_screenshots_path, File.dirname(path_for_screenshot)
       FileUtils.mkdir_p screenshot_path unless Dir.exist?(screenshot_path)
 
+      ImageOptimizer.new(base_image_tmpfile_path, level: 1).optimize
       FileUtils.cp base_image_tmpfile_path, File.join(user_screenshots_path, "#{path_for_screenshot}.png")
+
+      # Optimized for open graph link expanders
+      image = Rszr::Image.load base_image_tmpfile_path
+      image.resize! 1200, 630, crop: :n
+      image.save File.join(user_screenshots_path, "#{path_for_screenshot}.jpg"), quality: 85
+      ImageOptimizer.new(File.join(user_screenshots_path, "#{path_for_screenshot}.jpg")).optimize
 
       Site::SCREENSHOT_RESOLUTIONS.each do |res|
         width, height = res.split('x').collect {|r| r.to_i}
