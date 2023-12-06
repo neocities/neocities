@@ -34,8 +34,6 @@ class ScreenshotWorker
 
     path = "/#{path}" unless path[0] == '/'
 
-    path_for_screenshot = path
-
     uri = Addressable::URI.parse $config['screenshot_urls'].sample
     api_user, api_password = uri.user, uri.password
     uri = "#{uri.scheme}://#{uri.host}:#{uri.port}" + '?' + Rack::Utils.build_query(
@@ -51,23 +49,24 @@ class ScreenshotWorker
       File.write base_image_tmpfile_path, http_resp.to_s
 
       user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
-      screenshot_path = File.join user_screenshots_path, File.dirname(path_for_screenshot)
+      screenshot_path = File.join user_screenshots_path, File.dirname(path)
       FileUtils.mkdir_p screenshot_path unless Dir.exist?(screenshot_path)
 
-      ImageOptimizer.new(base_image_tmpfile_path, level: 1).optimize
-      FileUtils.cp base_image_tmpfile_path, File.join(user_screenshots_path, "#{path_for_screenshot}.png")
+      # We only need the full PNG for the main index right now
+      if path.match /^\/index.html?$/
+        ImageOptimizer.new(base_image_tmpfile_path, level: 1).optimize
+        FileUtils.cp base_image_tmpfile_path, File.join(user_screenshots_path, "#{path}.png")
+      end
 
-      # Optimized for open graph link expanders
+      # Optimized image for open graph link expanders
       image = Rszr::Image.load base_image_tmpfile_path
       image.resize! 1200, 630, crop: :n
-      image.save File.join(user_screenshots_path, "#{path_for_screenshot}.jpg"), quality: 85
-      ImageOptimizer.new(File.join(user_screenshots_path, "#{path_for_screenshot}.jpg")).optimize
+      image.save File.join(user_screenshots_path, "#{path}.jpg"), quality: 85
+      ImageOptimizer.new(File.join(user_screenshots_path, "#{path}.jpg")).optimize
 
       Site::SCREENSHOT_RESOLUTIONS.each do |res|
         width, height = res.split('x').collect {|r| r.to_i}
-
-        full_screenshot_path = File.join(user_screenshots_path, "#{path_for_screenshot}.#{res}.webp")
-
+        full_screenshot_path = File.join(user_screenshots_path, "#{path}.#{res}.webp")
         opts = {resize_w: width, resize_h: height, near_lossless: 0}
 
         if width == height
