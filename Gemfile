@@ -63,7 +63,7 @@ gem 'twilio-ruby'
 gem 'phonelib'
 gem 'dnsbl-client'
 gem 'minfraud'
-gem 'image_optimizer' # apt install optipng jpegoptim
+gem 'image_optimizer' # apt install optipng jpegoptim pngquant
 
 group :development, :test do
   gem 'pry'

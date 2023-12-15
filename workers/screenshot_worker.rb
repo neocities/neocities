@@ -6,7 +6,7 @@ class ScreenshotWorker
   HARD_TIMEOUT = 30.freeze
   PAGE_WAIT_TIME = 5.freeze # 3D/VR sites take a bit to render after loading usually.
   include Sidekiq::Worker
-  sidekiq_options queue: :screenshots, retry: 10, backtrace: true
+  sidekiq_options queue: :screenshots, retry: 4, backtrace: true
 
   def perform(username, path)
     site = Site[username: username]
