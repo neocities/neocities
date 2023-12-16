@@ -1127,6 +1127,25 @@ a.tag:hover {
     margin-left: 0;
   }
 }
+
+.interior .header-Outro .col.col-50.signup-Area.site-display-preview-wrapper {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    padding: 0 7%;
+  }
+}
+
+.interior .header-Outro .site-display-preview {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    margin: 0 auto 5px;
+  }
+}
+
+.interior .header-Outro .site-info-row {
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    padding: 20px 0%;
+  }
+}
+
 .interior .header-Outro .stats {
   margin-bottom: 1.3em;
   float: left;
@@ -1134,15 +1153,29 @@ a.tag:hover {
   margin-top: 1.9em;
 
   @media (max-device-width:480px), screen and (max-width:800px) {
-    float: none;
-    width: 270px;
-    margin: 0.9em auto 5.5em auto;
     text-align: center;
+    margin-top: 0.5em;
+    display: flex;
+    justify-content: center;
   }
 }
+
 .interior .header-Outro .stats .tips {
   @media (max-device-width:480px), screen and (max-width:800px) {
     display: none;
+  }
+}
+
+.interior .header-Outro .stats .stat {
+  float: left;
+  text-align: center;
+  margin-right: 28px;
+  color: #84997E;
+
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    margin: 0;
+    width: fit-content;
+    min-width: 90px;
   }
 }
 
@@ -1157,17 +1190,7 @@ a.tag:hover {
   clear: both;
   display: block;
 }
-.interior .header-Outro .stats .stat {
-  float: left;
-  text-align: center;
-  margin-right: 28px;
-  color: #84997E;
 
-  @media (max-device-width:480px), screen and (max-width:800px) {
-    margin: 0;
-    width: 90px;
-  }
-}
 .interior .header-Outro .stats .stat.tips {
   width: 60px;
 }
