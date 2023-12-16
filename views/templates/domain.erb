@@ -8,7 +8,7 @@ server {
   error_page 404 = @notfound;
 
   location @notfound {
-      try_files /not_found.html @notfound_root;
+      try_files /not_found.html /404.html @notfound_root;
   }
 
   location @notfound_root {
