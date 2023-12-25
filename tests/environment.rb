@@ -48,7 +48,7 @@ end
 
 Site.bcrypt_cost = BCrypt::Engine::MIN_COST
 
-MiniTest::Reporters.use! MiniTest::Reporters::SpecReporter.new
+Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
 
 # Bootstrap the database
 Sequel.extension :migration
