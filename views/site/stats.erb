@@ -139,7 +139,7 @@
         <h2>
           Total Visitors
           <small>
-            <% if params[:days].blank? %>
+            <% if params[:days].to_s.blank? %>
               last <%= @default_stat_points %> days
             <% elsif params[:days] == 'sincethebigbang' %>
               all time

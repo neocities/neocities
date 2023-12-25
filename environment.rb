@@ -1,3 +1,4 @@
+RubyVM::YJIT.enable
 ENV['RACK_ENV'] ||= 'development'
 ENV['TZ'] = 'UTC'
 DIR_ROOT = File.expand_path File.dirname(__FILE__)
