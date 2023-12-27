@@ -1031,8 +1031,8 @@ class Site < Sequel::Model
 
     if is_deleted
       $redis_proxy.del u_key
-      $redis_proxy.del d_root_key
-      $redis_proxy.del d_www_key
+      $redis_proxy.del(d_root_key) if defined?(d_root_key)
+      $redis_proxy.del(d_www_key) if defined?(d_www_key)
     end
 
     true
