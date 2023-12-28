@@ -206,8 +206,6 @@ class Site < Sequel::Model
   one_to_many :stat_locations
   one_to_many :stat_paths
 
-  one_to_many :archives
-
   def self.supporter_ids
     parent_supporters = DB[%{SELECT id FROM sites WHERE plan_type IS NOT NULL AND plan_type != 'free'}].all.collect {|s| s[:id]}
     child_supporters = DB[%{select a.id as id from sites a, sites b where a.parent_site_id is not null and a.parent_site_id=b.id and (a.plan_type != 'free' or b.plan_type != 'free')}].all.collect {|s| s[:id]}
@@ -772,69 +770,6 @@ class Site < Sequel::Model
     site_files.each do |site_file|
       purge_cache site_file.path
     end
-  end
-
-  #Rye::Cmd.add_command :ipfs
-
-  def add_to_ipfs
-    # Not ideal. An SoA version is in progress.
-    return nil
-
-    if archives_dataset.count > Archive::MAXIMUM_ARCHIVES_PER_SITE
-      archives_dataset.order(:updated_at).first.destroy
-    end
-
-    if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
-      rbox = Rye::Box.new $config['ipfs_ssh_host'], user: $config['ipfs_ssh_user']
-      begin
-        cidv0    = rbox.ipfs(:add, :r, :Q, "sites/#{sharding_dir}/#{self.username.gsub(/\/|\.\./, '')}").first
-        cidv1b32 = rbox.ipfs(:cid, :base32, cidv0).first
-      ensure
-        rbox.disconnect
-      end
-    else
-      line = Terrapin::CommandLine.new('ipfs', 'add -r -Q :path')
-      response = line.run(path: files_path).strip
-      line = Terrapin::CommandLine.new('ipfs', 'cid base32 :hash')
-      cidv1b32 = line.run(hash: response).strip
-    end
-
-    cidv1b32
-  end
-
-  def purge_old_archives
-    archives_dataset.order(:updated_at).offset(Archive::MAXIMUM_ARCHIVES_PER_SITE).all.each do |archive|
-      archive.destroy
-    end
-  end
-
-  def archive!
-    ipfs_hash = add_to_ipfs
-
-    archive = archives_dataset.where(ipfs_hash: ipfs_hash).first
-    if archive
-      archive.updated_at = Time.now
-      archive.save_changes
-    else
-      begin
-        add_archive ipfs_hash: ipfs_hash, updated_at: Time.now
-      rescue Sequel::UniqueConstraintViolation
-        # Record already exists, update timestamp
-        archives_dataset.where(ipfs_hash: ipfs_hash).first.update updated_at: Time.now
-      end
-    end
-
-    add_redis_proxy_dnslink
-  end
-
-  def add_redis_proxy_dnslink
-    if host =~ /(.+)\.neocities\.org/ && latest_archive
-      $redis_proxy.hset "dns-#{host}", 'TXT', "dnslink=/ipfs/#{latest_archive.ipfs_hash}"
-    end
-  end
-
-  def latest_archive
-    @latest_archive ||= archives_dataset.order(:updated_at.desc).first
   end
 
   def is_directory?(path)
@@ -1707,10 +1642,6 @@ class Site < Sequel::Model
           time,
           self.id
         ].first
-
-        if ipfs_archiving_enabled == true
-          ArchiveWorker.perform_in Archive::ARCHIVE_WAIT_TIME, self.id
-        end
       end
 
       reload

@@ -38,14 +38,6 @@ get '/site/:username/?' do |username|
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
-get '/site/:username/archives' do
-  @site = Site[username: params[:username]]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted || !@site.ipfs_archiving_enabled
-  @title = "Site archives for #{@site.title}"
-  @archives = @site.archives_dataset.limit(300).order(:updated_at.desc).all
-  erb :'site/archives'
-end
-
 MAX_STAT_POINTS = 30
 get '/site/:username/stats' do
   @default_stat_points = 7

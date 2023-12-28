@@ -20,15 +20,6 @@
         > Disable Site Profile
         <br>
       </div>
-
-      <h3>IPFS Archiving</h3>
-
-      <div style="display: inline-block; text-align: left; margin-bottom: 10px">
-        <input name="site[ipfs_archiving_enabled]" type="hidden" value="false">
-        <input name="site[ipfs_archiving_enabled]" type="checkbox" value="true"
-          <% if @site.ipfs_archiving_enabled == true %>checked<% end %>
-        > Enable IPFS Archiving <small>(<a href="/distributed-web">what is this?</a>)</small>
-      </div>
     </div>
 
     <input class="btn-Action" type="submit" value="Update Settings">

@@ -27,7 +27,6 @@ gem 'paypal-recurring', require: 'paypal/recurring'
 gem 'geoip'
 gem 'io-extra', require: 'io/extra'
 #gem 'rye'
-gem 'base32'
 gem 'coveralls_reborn', require: false
 gem 'sanitize'
 gem 'will_paginate'
