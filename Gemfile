@@ -15,7 +15,6 @@ gem 'tilt'
 gem 'erubis'
 gem 'stripe' #, source: 'https://code.stripe.com/'
 gem 'terrapin'
-gem 'zipruby'
 gem 'sass', require: nil
 gem 'dav4rack', git: 'https://github.com/neocities/dav4rack.git', ref: '3ecde122a0b8bcc1d85581dc85ef3a7120b6a8f0'
 gem 'filesize'
@@ -82,6 +81,7 @@ group :test do
   gem 'mocha',                            require: nil
   gem 'rake', '>= 12.3.3',                require: nil
   gem 'capybara',                         require: nil #, '2.10.1',     require: nil
+  gem 'selenium-webdriver'
   gem 'rack_session_access',              require: nil
   gem 'webmock',                          require: nil
   gem 'stripe-ruby-mock', '~> 3.1.0.rc3', require: 'stripe_mock'
@@ -89,5 +89,4 @@ group :test do
   gem 'mock_redis'
   gem 'simplecov',                        require: nil
   gem 'm'
-  gem 'apparition', github: 'twalpole/apparition', ref: 'ca86be4d54af835d531dbcd2b86e7b2c77f85f34'
 end

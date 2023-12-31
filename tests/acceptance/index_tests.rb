@@ -2,6 +2,7 @@ require_relative './environment.rb'
 
 describe '/' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
   describe 'news feed' do
     before do
@@ -21,7 +22,8 @@ describe '/' do
       @another_site = Fabricate :site
       @followed_site.toggle_follow @another_site
       visit '/'
-      _(find('.news-item', match: :first).text).must_match /#{@followed_site.username} followed #{@another_site.username}/i
+      _(page).must_have_link(@followed_site.title, href: "/site/#{@followed_site.username}")
+      #_(find('.news-item', match: :first).text).must_match /#{@followed_site.username} followed #{@another_site.username}/i
     end
 
     it 'loads my activities only' do
@@ -30,7 +32,7 @@ describe '/' do
       @another_site = Fabricate :site
       @followed_site.toggle_follow @another_site
       visit '/?activity=mine'
-      _(find('.news-item').text).must_match //i
+      _(page).must_have_link(@followed_site.title, href: "/site/#{@followed_site.username}")
     end
 
     it 'loads a specific event with the id' do

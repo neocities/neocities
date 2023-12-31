@@ -4,8 +4,8 @@ describe 'dashboard' do
   describe 'create directory' do
 
     describe 'logged in' do
-
       include Capybara::DSL
+      include Capybara::Minitest::Assertions
 
       before do
         Capybara.reset_sessions!

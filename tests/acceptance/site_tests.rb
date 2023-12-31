@@ -2,6 +2,7 @@ require_relative './environment.rb'
 
 describe 'site page' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
   after do
     Capybara.default_driver = :rack_test

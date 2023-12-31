@@ -813,33 +813,6 @@ class Site < Sequel::Model
     true
   end
 
-  def files_zip
-    zip_name = "neocities-#{username}"
-
-    tmpfile = Tempfile.new 'neocities-site-zip'
-    tmpfile.close
-
-    begin
-      Zip::Archive.open(tmpfile.path, Zip::CREATE) do |ar|
-        ar.add_dir(zip_name)
-
-        Dir.glob("#{base_files_path}/**/*").each do |path|
-          relative_path = path.gsub(base_files_path+'/', '')
-          if File.directory?(path)
-            ar.add_dir(zip_name+'/'+relative_path)
-          else
-            ar.add_file(zip_name+'/'+relative_path, path) # add_file(<entry name>, <source path>)
-          end
-        end
-      end
-    rescue => e
-      tmpfile.unlink
-      raise e
-    end
-
-    tmpfile.path
-  end
-
   def move_files_from(oldusername)
     FileUtils.mkdir_p self.class.sharding_base_path(username)
     FileUtils.mkdir_p self.class.sharding_screenshots_path(username)
