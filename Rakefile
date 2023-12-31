@@ -68,89 +68,6 @@ task :update_blocked_ips => [:environment] do
   FileUtils.rm zip_path
 end
 
-desc 'parse tor exits'
-task :parse_tor_exits => [:environment] do
-  exit_ips = Net::HTTP.get(URI.parse('https://check.torproject.org/exit-addresses'))
-
-  exit_ips.split("\n").collect {|line|
-    line.match(/ExitAddress (\d+\.\d+\.\d+\.\d+)/)&.captures&.first
-  }.compact
-
-  # ^^ Array of ip addresses of known exit nodes
-end
-
-desc 'Set existing stripe customers to internal supporter plan'
-task :primenewstriperunonlyonce => [:environment] do
-#  Site.exclude(stripe_customer_id: nil).all.each do |site|
-#    site.plan_type = 'supporter'
-#    site.save_changes validate: false
-#  end
-
-  Site.exclude(stripe_customer_id: nil).where(plan_type: nil).where(plan_ended: false).all.each do |s|
-    customer = Stripe::Customer.retrieve(s.stripe_customer_id)
-    subscription = customer.subscriptions.first
-    next if subscription.nil?
-    puts "set subscription id to #{subscription.id}"
-    puts "set plan type to #{subscription.plan.id}"
-    s.stripe_subscription_id = subscription.id
-    s.plan_type = subscription.plan.id
-    s.save_changes(validate: false)
-  end
-
-end
-
-desc 'dedupe tags'
-task :dedupetags => [:environment] do
-  Tag.all.each do |tag|
-    begin
-      tag.reload
-    rescue Sequel::Error => e
-      next if e.message =~ /Record not found/
-    end
-
-    matching_tags = Tag.exclude(id: tag.id).where(name: tag.name).all
-
-    matching_tags.each do |matching_tag|
-      DB[:sites_tags].where(tag_id: matching_tag.id).update(tag_id: tag.id)
-      matching_tag.delete
-    end
-  end
-end
-
-desc 'Clean tags'
-task :cleantags => [:environment] do
-
-  Site.select(:id).all.each do |site|
-    if site.tags.length > 5
-      site.tags.slice(5, site.tags.length).each {|tag| site.remove_tag tag}
-    end
-  end
-
-  empty_tag = Tag.where(name: '').first
-
-  if empty_tag
-    DB[:sites_tags].where(tag_id: empty_tag.id).delete
-  end
-
-  Tag.all.each do |tag|
-    if tag.name.length > Tag::NAME_LENGTH_MAX || tag.name.match(/ /)
-      DB[:sites_tags].where(tag_id: tag.id).delete
-      DB[:tags].where(id: tag.id).delete
-    else
-      tag.update name: tag.name.downcase.strip
-    end
-  end
-
-  Tag.where(name: 'porn').first.update is_nsfw: true
-end
-
-desc 'update screenshots'
-task :update_screenshots => [:environment] do
-  Site.select(:username).where(site_changed: true, is_banned: false, is_crashing: false).filter(~{updated_at: nil}).order(:updated_at.desc).all.each do |site|
-    ScreenshotWorker.perform_async site.username, 'index.html'
-  end
-end
-
 desc 'rebuild_thumbnails'
 task :rebuild_thumbnails => [:environment] do
   dirs = Dir[Site::SITE_FILES_ROOT+'/**/*'].collect {|s| s.sub(Site::SITE_FILES_ROOT, '')}.collect {|s| s.sub('/', '')}
@@ -171,140 +88,9 @@ task :rebuild_thumbnails => [:environment] do
   end
 end
 
-desc 'prime_space_used'
-task :prime_space_used => [:environment] do
-  Site.select(:id,:username,:space_used).all.each do |s|
-    s.space_used = s.actual_space_used
-    s.save_changes validate: false
-  end
-end
-
-desc 'prime site_updated_at'
-task :prime_site_updated_at => [:environment] do
-  Site.select(:id,:username,:site_updated_at, :updated_at).all.each do |s|
-    s.site_updated_at = s.updated_at
-    s.save_changes validate: false
-  end
-end
-
-desc 'prime_site_files'
-task :prime_site_files => [:environment] do
-  Site.where(is_banned: false).where(is_deleted: false).select(:id, :username).all.each do |site|
-    Dir.glob(File.join(site.files_path, '**/*')).each do |file|
-      path = file.gsub(site.base_files_path, '').sub(/^\//, '')
-
-      site_file = site.site_files_dataset[path: path]
-
-      if site_file.nil?
-        mtime = File.mtime file
-
-        site_file_opts = {
-          path: path,
-          updated_at: mtime,
-          created_at: mtime
-        }
-
-        if File.directory? file
-          site_file_opts.merge! is_directory: true
-        else
-          site_file_opts.merge!(
-            size: File.size(file),
-            sha1_hash: Digest::SHA1.file(file).hexdigest
-          )
-        end
-
-        site.add_site_file site_file_opts
-      end
-    end
-  end
-end
-
-desc 'dedupe_follows'
-task :dedupe_follows => [:environment] do
-  follows = Follow.all
-  deduped_follows = Follow.all.uniq {|f| "#{f.site_id}_#{f.actioning_site_id}"}
-
-  follows.each do |follow|
-    unless deduped_follows.include?(follow)
-      puts "deleting dedupe: #{follow.inspect}"
-      follow.delete
-    end
-  end
-end
-
-desc 'flush_empty_index_sites'
-task :flush_empty_index_sites => [:environment] do
-  sites = Site.select(:id).all
-
-  counter = 0
-
-  sites.each do |site|
-    if site.empty_index?
-      counter += 1
-      site.site_changed = false
-      site.save_changes validate: false
-    end
-  end
-
-  puts "#{counter} sites set to not changed."
-end
-
 desc 'compute_scores'
 task :compute_scores => [:environment] do
   Site.compute_scores
-end
-
-=begin
-desc 'Update screenshots'
-task :update_screenshots => [:environment] do
-  Site.select(:username).filter(is_banned: false).filter(~{updated_at: nil}).order(:updated_at.desc).all.collect {|s|
-    ScreenshotWorker.perform_async s.username
-  }
-end
-=end
-
-desc 'prime_classifier'
-task :prime_classifier => [:environment] do
-  Site.select(:id, :username).where(is_banned: false, is_deleted: false).all.each do |site|
-    next if site.site_files_dataset.where(classifier: 'spam').count > 0
-    html_files = site.site_files_dataset.where(path: /\.html$/).all
-
-    html_files.each do |html_file|
-      print "training #{site.username}/#{html_file.path}..."
-      site.train html_file.path
-      print "done.\n"
-    end
-  end
-end
-
-desc 'train_spam'
-task :train_spam => [:environment] do
-  paths = File.read('./spam.txt')
-
-  paths.split("\n").each do |path|
-    username, site_file_path = path.match(/^([a-zA-Z0-9_\-]+)\/(.+)$/i).captures
-    site = Site[username: username]
-    next if site.nil?
-    site_file = site.site_files_dataset.where(path: site_file_path).first
-    next if site_file.nil?
-    site.train site_file_path, :spam
-    site.ban!
-    puts "Deleted #{site_file_path}, banned #{site.username}"
-  end
-end
-
-desc 'regenerate_ssl_certs'
-task :regenerate_ssl_certs => [:environment] do
-  sites = DB[%{select id from sites where (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't'}].all
-
-  seconds = 2
-
-  sites.each do |site|
-    LetsEncryptWorker.perform_in seconds, site[:id]
-    seconds += 10
-  end
-
-  puts "#{sites.length.to_s} records are primed"
 end
 
 desc 'renew_ssl_certs'
@@ -323,24 +109,6 @@ task :purge_tmp_turds => [:environment] do
   end
 end
 
-desc 'shard_migration'
-task :shard_migration => [:environment] do
-  #Site.exclude(is_deleted: true).exclude(is_banned: true).select(:username).each do |site|
-  #  FileUtils.mkdir_p File.join('public', 'testsites', site.username)
-  #end
-  #exit
-  Dir.chdir('./public/testsites')
-  Dir.glob('*').each do |dir|
-    sharding_dir = Site.sharding_dir(dir)
-    FileUtils.mkdir_p File.join('..', 'newtestsites', sharding_dir)
-    FileUtils.mv dir, File.join('..', 'newtestsites', sharding_dir)
-  end
-  sleep 1
-  FileUtils.rmdir './public/testsites'
-  sleep 1
-  FileUtils.mv './public/newtestsites', './public/testsites'
-end
-
 desc 'compute_follow_count_scores'
 task :compute_follow_count_scores => [:environment] do
 
@@ -351,37 +119,6 @@ task :compute_follow_count_scores => [:environment] do
       puts "#{site.username} #{site.follow_count} => #{count}"
     end
     DB['update sites set follow_count=? where id=?', count, site.id].first
-  end
-end
-
-desc 'prime_redis_proxy_ssl'
-task :prime_redis_proxy_ssl => [:environment] do
-  site_ids = DB[%{
-    select id from sites where domain is not null and ssl_cert is not null and ssl_key is not null
-    and is_deleted != ? and is_banned != ?
-  }, true, true].all.collect {|site_id| site_id[:id]}
-
-  site_ids.each do |site_id|
-    Site[site_id].store_ssl_in_redis_proxy
-  end
-end
-
-desc 'dedupe_site_blocks'
-task :dedupe_site_blocks => [:environment] do
-  duped_blocks = []
-  block_ids = Block.select(:id).all.collect {|b| b.id}
-  block_ids.each do |block_id|
-    next unless duped_blocks.select {|db| db.id == block_id}.empty?
-    block = Block[block_id]
-    if block
-      blocks = Block.exclude(id: block.id).where(site_id: block.site_id).where(actioning_site_id: block.actioning_site_id).all
-      duped_blocks << blocks
-      duped_blocks.flatten!
-    end
-  end
-
-  duped_blocks.each do |duped_block|
-    duped_block.destroy
   end
 end
 
