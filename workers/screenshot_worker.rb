@@ -1,3 +1,4 @@
+require 'sidekiq/api'
 require 'securerandom'
 require 'open3'
 
