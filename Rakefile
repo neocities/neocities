@@ -14,22 +14,6 @@ end
 
 task :default => :test
 
-=begin
-desc "send domain update email"
-task :send_domain_update_email => [:environment] do
-  Site.exclude(domain: nil).exclude(domain: '').all.each do |site|
-    msg = <<-HERE
-MESSAGE GOES HERE TEST
-HERE
-
-    site.send_email(
-      subject: 'SUBJECT GOES HERE',
-      body: msg
-    )
-  end
-end
-=end
-
 desc "prune logs"
 task :prune_logs => [:environment] do
   Stat.prune!
@@ -55,29 +39,33 @@ desc 'Update banned IPs list'
 task :update_blocked_ips => [:environment] do
 
   filename = 'listed_ip_365_ipv46'
+  zip_path = "/tmp/#{filename}.zip"
 
-  File.open("/tmp/#{filename}.zip", 'wb') do |file|
+  File.open(zip_path, 'wb') do |file|
     response = HTTP.get "https://www.stopforumspam.com/downloads/#{filename}.zip"
     response.body.each do |chunk|
       file.write chunk
     end
   end
 
-  Zip::Archive.open("/tmp/#{filename}.zip") do |ar|
-    ar.fopen("#{filename}.txt") do |f|
-      ips = f.read
-      insert_hashes = []
-      ips.each_line {|ip| insert_hashes << {ip: ip.strip, created_at: Time.now}}
-      ips = nil
+  Zip::File.open(zip_path) do |zip_file|
+    zip_file.each do |entry|
+      if entry.name == "#{filename}.txt"
+        ips = entry.get_input_stream.read
+        insert_hashes = []
+        ips.each_line { |ip| insert_hashes << { ip: ip.strip, created_at: Time.now } }
+        ips = nil
 
-      DB.transaction do
-        DB[:blocked_ips].delete
-        DB[:blocked_ips].multi_insert insert_hashes
+        # Database transaction
+        DB.transaction do
+          DB[:blocked_ips].delete
+          DB[:blocked_ips].multi_insert insert_hashes
+        end
       end
     end
   end
 
-  FileUtils.rm "/tmp/#{filename}.zip"
+  FileUtils.rm zip_path
 end
 
 desc 'parse tor exits'
@@ -89,90 +77,6 @@ task :parse_tor_exits => [:environment] do
   }.compact
 
   # ^^ Array of ip addresses of known exit nodes
-end
-
-desc 'Compile nginx mapfiles'
-task :compile_nginx_mapfiles => [:environment] do
-  FileUtils.mkdir_p './files/maps'
-
-  File.open('./files/maps/domains.txt', 'w') do |file|
-    Site.exclude(domain: nil).exclude(domain: '').select(:username,:domain).all.each do |site|
-      file.write ".#{site.values[:domain]} #{site.username};\n"
-    end
-  end
-
-  File.open('./files/maps/supporters.txt', 'w') do |file|
-    Site.select(:username, :domain).exclude(plan_type: 'free').exclude(plan_type: nil).all.each do |parent_site|
-      sites = [parent_site] + parent_site.children
-      sites.each do |site|
-        file.write "#{site.username}.neocities.org 1;\n"
-        unless site.host.match(/\.neocities\.org$/)
-          file.write ".#{site.values[:domain]} 1;\n"
-        end
-      end
-    end
-  end
-
-  File.open('./files/maps/subdomain-to-domain.txt', 'w') do |file|
-    Site.select(:username, :domain).exclude(domain: nil).exclude(domain: '').all.each do |site|
-      file.write "#{site.username}.neocities.org #{site.values[:domain]};\n"
-    end
-  end
-
-  File.open('./files/maps/sandboxed.txt', 'w') do |file|
-    usernames = DB["select username from sites where created_at > ? and parent_site_id is null and (plan_type is null or plan_type='free') and is_banned != 't' and is_deleted != 't'", 2.days.ago].all.collect {|s| s[:username]}.each {|username| file.write "#{username} 1;\n"}
-  end
-
-  # Compile letsencrypt ssl keys
-  sites = DB[%{select username,ssl_key,ssl_cert,domain from sites where ssl_cert is not null and ssl_key is not null and (domain is not null or domain != '') and is_banned != 't' and is_deleted != 't'}].all
-
-  ssl_path = './files/maps/ssl'
-
-  FileUtils.mkdir_p ssl_path
-
-  sites.each do |site|
-    [site[:domain], "www.#{site[:domain]}"].each do |domain|
-      begin
-        key = OpenSSL::PKey::RSA.new site[:ssl_key]
-        crt = OpenSSL::X509::Certificate.new site[:ssl_cert]
-      rescue => e
-        puts "SSL ERROR: #{e.class} #{e.inspect}"
-        next
-      end
-
-      File.open(File.join(ssl_path, "#{domain}.key"), 'wb') {|f| f.write key.to_der}
-      File.open(File.join(ssl_path, "#{domain}.crt"), 'wb') {|f| f.write site[:ssl_cert]}
-    end
-  end
-
-end
-
-desc 'Produce SSL config package for proxy'
-task :buildssl => [:environment] do
-  sites = Site.select(:id, :username, :domain, :ssl_key, :ssl_cert).
-    exclude(domain: nil).
-    exclude(ssl_key: nil).
-    exclude(ssl_cert: nil).
-    all
-
-  payload = []
-
-  begin
-    FileUtils.rm './files/sslsites.zip'
-  rescue Errno::ENOENT
-  end
-
-  Zip::Archive.open('./files/sslsites.zip', Zip::CREATE) do |ar|
-    ar.add_dir 'ssl'
-
-    sites.each do |site|
-      ar.add_buffer "ssl/#{site.username}.key", site.ssl_key
-      ar.add_buffer "ssl/#{site.username}.crt", site.ssl_cert
-      payload << {username: site.username, domain: site.domain}
-    end
-
-    ar.add_buffer 'sslsites.json', payload.to_json
-  end
 end
 
 desc 'Set existing stripe customers to internal supporter plan'

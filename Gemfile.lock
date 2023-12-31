@@ -405,6 +405,7 @@ DEPENDENCIES
   rinku
   rss
   rszr
+  rubyzip
   sanitize
   sass
   selenium-webdriver

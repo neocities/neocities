@@ -62,6 +62,7 @@ gem 'phonelib'
 gem 'dnsbl-client'
 gem 'minfraud'
 gem 'image_optimizer' # apt install optipng jpegoptim pngquant
+gem 'rubyzip', require: 'zip'
 
 group :development, :test do
   gem 'pry'
