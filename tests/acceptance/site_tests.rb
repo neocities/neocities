@@ -104,6 +104,35 @@ describe 'site page' do
       visit "/browse?tag=#{@tag}"
       _(page.find('.website-Gallery .username a')['href']).must_match /\/site\/#{@blocked_site.username}/
     end
+
+    it 'removes follows/followings when blocking' do
+      site = Fabricate :site
+      not_blocked_site = Fabricate :site
+      blocked_site = Fabricate :site
+
+      site.add_follow actioning_site: not_blocked_site
+      site.add_following site: not_blocked_site
+
+      site.add_follow actioning_site: blocked_site
+      site.add_following site: blocked_site
+
+      _(site.follows.count).must_equal 2
+      _(site.followings.count).must_equal 2
+
+      page.set_rack_session id: site.id
+
+      visit "/site/#{blocked_site.username}"
+
+      click_link 'Block'
+      click_button 'Block Site'
+
+      _(site.follows.count).must_equal 1
+      _(site.followings.count).must_equal 1
+
+      _(site.follows.count {|s| s.actioning_site == blocked_site}).must_equal 0
+      _(site.followings.count {|s| s.site == blocked_site}).must_equal 0
+
+    end
   end
 
   it '404s if site is banned' do

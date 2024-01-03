@@ -627,10 +627,23 @@ class Site < Sequel::Model
     @blocking_site_ids ||= blockings_dataset.select(:site_id).all.collect {|s| s.site_id}
   end
 
+  def unfollow_blocked_sites!
+    blockings.each do |blocking|
+      follows.each do |follow|
+        follow.destroy if follow.actioning_site_id == blocking.site_id
+      end
+
+      followings.each do |following|
+        following.destroy if following.site_id == blocking.site_id
+      end
+    end
+  end
+
   def block!(site)
     block = blockings_dataset.filter(site_id: site.id).first
     return true if block
     add_blocking site: site
+    unfollow_blocked_sites!
   end
 
   def unblock!(site)
