@@ -658,7 +658,7 @@ class Site < Sequel::Model
   end
 
   def self.valid_username?(username)
-    !username.empty? && username.match(/^[a-zA-Z0-9_\-]+$/i)
+    !username.empty? && username.match(/^[a-zA-Z0-9][a-zA-Z0-9_\-]+[a-zA-Z0-9]$/i)
   end
 
   def self.disposable_email_domains
@@ -986,7 +986,7 @@ class Site < Sequel::Model
     super
 
     if !self.class.valid_username?(values[:username])
-      errors.add :username, 'Usernames can only contain letters, numbers, and hyphens.'
+      errors.add :username, 'Usernames can only contain letters, numbers, and hyphens, and cannot start or end with a hyphen.'
     end
 
     if !values[:username].blank?
