@@ -95,10 +95,6 @@ after do
   response.headers['Content-Security-Policy'] = %{default-src 'self' data: blob: 'unsafe-inline'; script-src 'self' blob: 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; connect-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://api.stripe.com; frame-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com}
 end
 
-connect-src, https://api.stripe.com, https://maps.googleapis.com
-frame-src, https://js.stripe.com, https://hooks.stripe.com
-script-src, https://js.stripe.com, https://maps.googleapis.com
-
 not_found do
   api_not_found if @api
   redirect_to_internet_archive_for_geocities_sites
