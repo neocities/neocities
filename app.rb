@@ -91,9 +91,13 @@ after do
   end
 end
 
-#after do
-  #response.headers['Content-Security-Policy'] = %{block-all-mixed-content; default-src 'self'; connect-src 'self' https://api.stripe.com https://assets.hcaptcha.com; frame-src https://assets.hcaptcha.com https://js.stripe.com; script-src 'self' 'unsafe-inline' https://js.stripe.com https://hcaptcha.com https://assets.hcaptcha.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: }
-#end
+after do
+  response.headers['Content-Security-Policy'] = %{default-src 'self' 'unsafe-inline'; script-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com; style-src 'self' https://hcaptcha.com, https://*.hcaptcha.com; connect-src 'self' https://hcaptcha.com, https://*.hcaptcha.com https://api.stripe.com; frame-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com}
+end
+
+connect-src, https://api.stripe.com, https://maps.googleapis.com
+frame-src, https://js.stripe.com, https://hooks.stripe.com
+script-src, https://js.stripe.com, https://maps.googleapis.com
 
 not_found do
   api_not_found if @api
