@@ -1488,6 +1488,10 @@ class Site < Sequel::Model
     File.exist? File.join(base_screenshots_path, "#{path}.#{resolution}.webp")
   end
 
+  def sharing_screenshot_url
+    'https://neocities.org'+base_screenshots_url+'/index.html.jpg'
+  end
+
   def screenshot_url(path, resolution)
     path[0] = '' if path[0] == '/'
     out = ''
@@ -1518,18 +1522,20 @@ class Site < Sequel::Model
   end
 
   def to_rss
-    RSS::Maker.make("atom") do |maker|
-      maker.channel.title   = title
-      maker.channel.updated = (updated_at ? updated_at : created_at)
-      maker.channel.author  = username
-      maker.channel.id      = "#{username}.neocities.org"
+    RSS::Maker.make("2.0") do |m|
+      m.channel.title = title
+      m.channel.link = uri
+      m.channel.description = "Site feed for #{title}"
+      m.image.url = sharing_screenshot_url
+      m.image.title = title
+
 
       latest_events.each do |event|
         if event.site_change_id
-          maker.items.new_item do |item|
-            item.link = "https://#{host}"
-            item.title = "#{title} has been updated"
-            item.updated = event.site_change.created_at
+          m.items.new_item do |i|
+            i.title = "#{title} has been updated."
+            i.link = "https://neocities.org/site/#{username}?event_id=#{event.id.to_s}"
+            i.pubDate = event.created_at
           end
         end
       end

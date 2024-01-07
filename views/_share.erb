@@ -3,7 +3,7 @@
     page_uri = site.uri
   end
 %>
-<a href="/site/<%= site.username %>.rss" target="_blank"><span>RSS/Atom Feed</span></a>
+<a href="/site/<%= site.username %>.rss" target="_blank"><span>RSS Feed</span></a>
 <br>
 <a href="https://facebook.com/sharer.php?<%= Rack::Utils.build_query(u: "#{page_uri}") %>" target="_blank">Facebook</a>
 <br>
