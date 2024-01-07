@@ -109,10 +109,10 @@ describe 'signup' do
     _(page).must_have_content 'Usernames can only contain'
     fill_in 'username', with: 'nope-'
     click_signup_button
-    _(page).must_have_content 'A valid user/site name is required'
+    _(page).must_have_content 'Usernames can only contain'
     fill_in 'username', with: '-nope'
     click_signup_button
-    _(page).must_have_content 'A valid user/site name is required'
+    _(page).must_have_content 'Usernames can only contain'
   end
 
   it 'fails with username greater than 32 characters' do
