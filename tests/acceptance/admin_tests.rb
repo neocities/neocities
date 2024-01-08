@@ -2,6 +2,8 @@ require_relative './environment.rb'
 
 describe '/admin' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
+
 
   before do
     Capybara.reset_sessions!

@@ -1,35 +1,15 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <title><%= title %></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- <link rel="manifest" href="/manifest.json"> -->
-    <meta itemprop="name"           content="Neocities.org">
-    <meta itemprop="description"    content="Free web hosting and tools that allow anyone to create a website. Join our community today!">
-    <meta name="description"        content="Free web hosting and tools that allow anyone to create a website. Join our community today!">
-    <meta name="keywords"           content="free website, html, css, learn to code, free hosting, build a website, create a web page">
-    <meta property="og:title"       content="Neocities">
-    <meta property="og:site_name"   content="Neocities | neocities.org">
-    <meta property="og:type"        content="website">
-    <meta property="og:image"       content="/img/cat-larger.png">
-    <meta property="og:url"         content="https://www.neocities.org">
-    <meta property="og:description" content="Neocities is the new Geocities. Create your own free home page, and do whatever you want with it.">
-    <meta name="referrer"           content="no-referrer-when-downgrade">
-    
-    <link rel="canonical" href="https://neocities.org<%= request.fullpath %>" />
+
+    <%== erb :'_meta' %>
 
     <% if meta_robots %>
       <meta name="robots" content="<%= meta_robots %>">
     <% end %>
 
     <link href="/css/neo.css" rel="stylesheet" type="text/css" media="all">
-
-    <link href="/favicon.ico?v=4" rel="shortcut icon" type="image/ico">
-
-    <!-- Mobile Meta -->
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized"  content="320">
-    <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1">
 
     <% if @dont_browser_cache %>
       <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -61,7 +41,7 @@
     <script src="/js/nav.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/typeahead.bundle.js"></script>
-
+    
     <script>
       $("a#like").tooltip({html: true})
       $("a.comment_like").tooltip({html: true})

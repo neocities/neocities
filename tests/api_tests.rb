@@ -95,7 +95,6 @@ describe 'api' do
     it 'succeeds for valid sitename' do
       create_site
       @site.update hits: 31337, domain: 'derp.com', new_tags_string: 'derpie, man'
-      @site.add_archive ipfs_hash: 'QmXGTaGWTT1uUtfSb2sBAvArMEVLK4rQEcQg5bv7wwdzwU'
       get '/api/info', sitename: @user
       _(res[:result]).must_equal 'success'
       _(res[:info][:sitename]).must_equal @site.username
@@ -104,14 +103,7 @@ describe 'api' do
       _(res[:info][:last_updated]).must_be_nil
       _(res[:info][:domain]).must_equal 'derp.com'
       _(res[:info][:tags]).must_equal ['derpie', 'man']
-      _(res[:info][:latest_ipfs_hash]).must_equal 'QmXGTaGWTT1uUtfSb2sBAvArMEVLK4rQEcQg5bv7wwdzwU'
       _(@site.reload.api_calls).must_equal 0
-    end
-
-    it 'shows latest ipfs hash as nil when not present' do
-      create_site
-      get '/api/info', sitename: @user
-      _(res[:info][:latest_ipfs_hash]).must_be_nil
     end
 
     it 'fails for bad auth' do

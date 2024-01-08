@@ -75,8 +75,10 @@ before do
     content_type :json
   elsif request.path.match /^\/webhooks\//
     # Skips the CSRF/validation check for stripe web hooks
-  elsif email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/signout|^\/welcome|^\/supporter/)
+  elsif email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/signout|^\/welcome|^\/supporter|^\/signout/)
     redirect "/site/#{current_site.username}/confirm_email"
+  elsif !email_not_validated? && current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_phone|^\/signout/)
+    redirect  "/site/#{current_site.username}/confirm_phone"
   else
     content_type :html, 'charset' => 'utf-8'
     redirect '/' if request.post? && !csrf_safe?
@@ -89,9 +91,9 @@ after do
   end
 end
 
-#after do
-  #response.headers['Content-Security-Policy'] = %{block-all-mixed-content; default-src 'self'; connect-src 'self' https://api.stripe.com https://assets.hcaptcha.com; frame-src https://assets.hcaptcha.com https://js.stripe.com; script-src 'self' 'unsafe-inline' https://js.stripe.com https://hcaptcha.com https://assets.hcaptcha.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: }
-#end
+after do
+  response.headers['Content-Security-Policy'] = %{default-src 'self' data: blob: 'unsafe-inline'; script-src 'self' blob: 'unsafe-inline' 'unsafe-eval' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; connect-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://api.stripe.com; frame-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com} unless self.class.development?
+end
 
 not_found do
   api_not_found if @api

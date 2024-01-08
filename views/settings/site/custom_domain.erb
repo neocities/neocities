@@ -16,7 +16,7 @@
 
   <p><code>198.51.233.1</code></p>
 
-  <h3>Step 2 (optional)</h3>
+  <h3>Step 2 (optional but recommended)</h3>
 
   <p>
     Next, you can add an "AAAA record" that also points to your root domain. This isn't strictly required, but provides IPv6 support which helps future proof your site. Use this address for the AAAA record:
@@ -24,10 +24,10 @@
 
   <p><code>2620:2:6000::bad:dab:cafe</code></p>
 
-  <h3>Step 3 (optional)</h3>
+  <h3>Step 3 (optional but recommended)</h3>
 
   <p>
-    If you would like to have a <strong>www</strong> for your domain, create a CNAME record pointing <strong>www</strong> to <strong>yourdomain.com</strong>:
+    Sometimes users will type in www before a domain despite it no longer being necessary to load web sites. If you would like to have a <strong>www</strong> for your domain, create a CNAME record pointing <strong>www</strong> to <strong>yourdomain.com</strong>:
   </p>
 
   <p><code>www CNAME yourdomain.com</code></p>
@@ -36,9 +36,15 @@
 
   <h3>Step 4</h3>
 
-  <p>Wait about 5 minutes for the nameserver changes to update. Sometimes it can take a short while for your domain provider to update their records.</p>
+  <p>
+    Remove any "URL redirects" if they are present, they are not needed and cause issues with connecting the domain. For example, Namecheap has a <strong>URL Redirect Record</strong> on new domains that needs to be deleted.
+  </p>
 
   <h3>Step 5</h3>
+
+  <p>Wait about 5 minutes for the nameserver changes to update. Sometimes it can take a short while for your domain provider to update their records.</p>
+
+  <h3>Step 6</h3>
 
   <p>
     Finally, add your domain name to the box below (just the <strong>yourdomain.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes! We will automatically create SSL certs for your domain.

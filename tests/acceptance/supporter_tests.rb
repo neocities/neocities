@@ -2,9 +2,10 @@ require_relative './environment.rb'
 
 describe '/supporter' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
   before do
-    Capybara.default_driver = :apparition
+    Capybara.default_driver = :selenium_chrome_headless
     Capybara.reset_sessions!
 
     @site = Fabricate :site

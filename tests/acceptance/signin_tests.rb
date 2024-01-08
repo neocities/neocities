@@ -2,6 +2,7 @@ require_relative './environment.rb'
 
 describe 'signin' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
   def fill_in_valid
     @site = Fabricate.attributes_for :site

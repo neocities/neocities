@@ -15,6 +15,13 @@ def require_ownership_for_settings
   end
 end
 
+get '/settings/invoices/?' do
+  require_login
+  @title = 'Invoices'
+  @invoices = parent_site.stripe_customer_id ? Stripe::Invoice.list(customer: parent_site.stripe_customer_id) : []
+  erb :'settings/invoices'
+end
+
 get '/settings/:username/?' do |username|
   # This is for the email_unsubscribe below
   pass if Site.select(:id).where(username: username).first.nil?
@@ -56,8 +63,7 @@ post '/settings/:username/profile' do
 
   @site.update(
     profile_comments_enabled: params[:site][:profile_comments_enabled],
-    profile_enabled: params[:site][:profile_enabled],
-    ipfs_archiving_enabled: params[:site][:ipfs_archiving_enabled]
+    profile_enabled: params[:site][:profile_enabled]
   )
   flash[:success] = 'Profile settings changed.'
   redirect "/settings/#{@site.username}#profile"
@@ -92,8 +98,8 @@ post '/settings/:username/change_name' do
     }
 
     old_site.delete_all_thumbnails_and_screenshots
-    old_site.delete_all_cache
-    @site.delete_all_cache
+    old_site.purge_all_cache
+    @site.purge_all_cache
     @site.regenerate_thumbnails_and_screenshots
 
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it!</b>"

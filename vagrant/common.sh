@@ -21,3 +21,9 @@ sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
 #sed -i 's|[#]*PermitRootLogin yes|PermitRootLogin no|g' /etc/ssh/sshd_config
 
 service ssh restart
+
+
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt-get install -f -y
+rm google-chrome-stable_current_amd64.deb

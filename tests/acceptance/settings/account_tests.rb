@@ -1,9 +1,10 @@
 require_relative '../environment.rb'
 
 describe 'site/settings' do
-  describe 'email' do
-    include Capybara::DSL
+  include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
+  describe 'email' do
     before do
       EmailWorker.jobs.clear
       @email = "#{SecureRandom.uuid.gsub('-', '')}@exampleedsdfdsf.com"
@@ -84,8 +85,6 @@ describe 'site/settings' do
   end
 
   describe 'unsubscribe email' do
-    include Capybara::DSL
-
     before do
       @email = "#{SecureRandom.uuid.gsub('-', '')}@exampleedsdfdsf.com"
       @site = Fabricate :site, email: @email
@@ -127,8 +126,6 @@ describe 'site/settings' do
   end
 
   describe 'change password' do
-    include Capybara::DSL
-
     before do
       EmailWorker.jobs.clear
       @site = Fabricate :site, password: 'derpie'

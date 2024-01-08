@@ -167,8 +167,7 @@ def api_info_for(site)
       created_at: site.created_at.rfc2822,
       last_updated: site.site_updated_at ? site.site_updated_at.rfc2822 : nil,
       domain: site.domain,
-      tags: site.tags.collect {|t| t.name},
-      latest_ipfs_hash: site.latest_archive ? site.latest_archive.ipfs_hash : nil
+      tags: site.tags.collect {|t| t.name}
     }
   }
 end

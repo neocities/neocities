@@ -96,54 +96,56 @@
         <fieldset class="content">
           <h2 class="gamma">Sign up for free</h2>
           <hr />
-          <div class="siteCreateInputs">
-            <label for="create-Input">Username</label>
-            <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" style="position:absolute; top:-2000px; left:-2000px;" />
-            <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" style="position:absolute; top:-2000px; left:-2000px;" />
-            <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
-            <label for="create-Input" id="domain-name">.neocities.org</label>
+          <% if @create_disabled %>
+            <p>Sign up is not currently available, please try again later.</p>
+          <% else %>
+            <div class="siteCreateInputs">
+              <label for="create-Input">Username</label>
+              <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" style="position:absolute; top:-2000px; left:-2000px;" />
+              <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" style="position:absolute; top:-2000px; left:-2000px;" />
+              <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <label for="create-Input" id="domain-name">.neocities.org</label>
 
-            <label for="tags-input">Tags (your interests, site topics)</label>
-            <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <label for="tags-input">Tags (your interests, site topics)</label>
+              <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
 
-            <div class="col col-50" style="padding-left:0;">
-              <label for="password-input">
-                Password
-              </label>
-              <input type="password" class="input-Area" id="password-input"
-                      name="password" placeholder="password"
-                      data-placement="left" data-trigger="manual"
-                      autocapitalize="off" autocorrect="off" autocomplete="off" />
-            </div>
+              <div class="col col-50" style="padding-left:0;">
+                <label for="password-input">
+                  Password
+                </label>
+                <input type="password" class="input-Area" id="password-input"
+                        name="password" placeholder="password"
+                        data-placement="left" data-trigger="manual"
+                        autocapitalize="off" autocorrect="off" autocomplete="off" />
+              </div>
 
-            <div class="col col-50">
-              <label for="email-input">
-                Email
-              </label>
-              <input type="email" class="input-Area"
-                     id="email-input" name="email"
-                     placeholder="me@example.com" data-placement="left"
-                     data-trigger="manual" autocapitalize="off"
-                     autocorrect="off" autocomplete="off" />
-            </div>
+              <div class="col col-50">
+                <label for="email-input">
+                  Email
+                </label>
+                <input type="email" class="input-Area"
+                      id="email-input" name="email"
+                      placeholder="me@example.com" data-placement="left"
+                      data-trigger="manual" autocapitalize="off"
+                      autocorrect="off" autocomplete="off" />
+              </div>
 
-            <div class="col col-50" style="padding-left:0">
-              <label>
-                Confirm you are human
-              </label>
-              <%== hcaptcha_input %>
-            </div>
+              <div class="col col-50" style="padding-left:0">
+                <label>
+                  Confirm you are human
+                </label>
+                <%== hcaptcha_input %>
+              </div>
 
-            <div class="col col-50">
-              <div style="margin-top: 15px">
-                <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+              <div class="col col-50">
+                <div style="margin-top: 15px">
+                  <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+                </div>
               </div>
             </div>
-          </div>
-
+          <% end %>
         </fieldset>
       </form>
-
     <% end %>
 
   </div> <!-- end .col-50 -->
@@ -218,7 +220,7 @@
   <div class="row">
     <div class="col col-50">
       <h3>
-        <i class="fa fa-eye-slash"></i>Zero advertising
+        <i class="fa fa-eye-slash"></i>Zero Advertising
       </h3>
       <p>
         <strong>Neocities will never sell your personal data or put advertising on your site.</strong> Instead, we are funded directly by people just like you with <a href="/supporter">supporter accounts</a> and <a href="/donate">donations</a>.
@@ -226,14 +228,14 @@
     </div>
 
     <div class="col col-50">
-      <h3><i class="fa fa-tachometer"></i>Blazing Fast Performance</h3>
-      <p>Unlike many other web hosts, we don't skimp on infrastructure. Neocities operates our own caching CDN in 11 datacenters all over the world to quickly serve your site. We also force 100% strong SSL on all sites, and have full support for HTTP/2. Because of our commitment to quality, we routinely out-perform the pricey cloud services on reliability, speed and uptime. Whether it’s your personal home page or a busy professional site, <strong>your site loads fast</strong>.</p>
+      <h3><i class="fa fa-tachometer"></i>Fast Site Loading</h3>
+      <p>Neocities operates our own caching anycast CDN in over a dozen datacenters all over the world to quickly serve your site to visitors with strong SSL and support for HTTP/2. Our strict focus on static web hosting allows us to routinely out-perform the pricey cloud services on reliability, speed and uptime.</p>
     </div>
   </div>
 
   <div class="row">
     <div class="col col-50">
-      <h3><i class="fa fa-wrench"></i>Developer tools</h3>
+      <h3><i class="fa fa-wrench"></i>Developer Tools</h3>
       <p>Our fast static hosting comes with a great in-browser HTML editor, easy file uploading, a <a href="/cli">command line tool</a>, RSS feeds for every site, <a href="/api">APIs</a> for building developer applications, and much more!
     </div>
 

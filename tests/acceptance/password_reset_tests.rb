@@ -2,6 +2,7 @@ require_relative './environment.rb'
 
 describe '/password_reset' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
   before do
     Capybara.reset_sessions!
@@ -67,7 +68,7 @@ describe '/password_reset' do
     fill_in 'email', with: @site.email
     click_button 'Send Reset Token'
 
-    _(body).must_match /send an e-mail to your account with password reset instructions/
+    _(body).must_match /We sent an e-mail with password reset instructions/
     _(@site.reload.password_reset_token.blank?).must_equal false
     _(EmailWorker.jobs.first['args'].first['body']).must_match /#{Rack::Utils.build_query(username: @site.username, token: @site.password_reset_token)}/
 

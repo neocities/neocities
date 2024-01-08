@@ -186,11 +186,19 @@ post '/site_files/rename' do
   redirect "/dashboard#{dir_query}"
 end
 
-get '/site_files/:username.zip' do |username|
+get '/site_files/download' do
   require_login
+
+  if !current_site.dl_queued_at.nil? && current_site.dl_queued_at > 1.hour.ago
+    flash[:error] = 'Site downloads are currently limited to once per hour, please try again later.'
+    redirect request.referer
+  end
 
   content_type 'application/zip'
   attachment   "neocities-#{current_site.username}.zip"
+
+  current_site.dl_queued_at = Time.now
+  current_site.save_changes validate: false
 
   directory_path = current_site.files_path
 
@@ -200,7 +208,7 @@ get '/site_files/:username.zip' do |username|
         next if File.directory?(file)
 
         zip_path = file.sub("#{directory_path}/", '')
-        zip.write_deflated_file(zip_path) do |file_writer|
+        zip.write_stored_file(zip_path) do |file_writer|
           File.open(file, 'rb') do |file|
             IO.copy_stream(file, file_writer)
           end

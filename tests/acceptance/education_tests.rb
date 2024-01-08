@@ -2,6 +2,7 @@ require_relative './environment.rb'
 
 describe 'signup' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
   def fill_in_valid
     @site = Fabricate.attributes_for(:site)
@@ -13,7 +14,7 @@ describe 'signup' do
   end
 
   before do
-    Capybara.default_driver = :apparition
+    Capybara.default_driver = :selenium_chrome_headless
     Capybara.reset_sessions!
     visit '/education'
     _(page).must_have_content 'Neocities' # Used to force load wait

@@ -41,8 +41,9 @@
               </li>
               <li class="divider"></li>
             <% end %>
-            <li><a href="/dashboard">Edit Site</a></li>
-            <li><a href="<%= current_site.uri %>" target="_blank">View Site</a></li>
+            <li><a href="/dashboard">Edit</a></li>
+            <li><a href="<%= current_site.uri %>" target="_blank">View</a></li>
+            <li><a href="/site/<%= current_site.username %>/stats">Stats</a></li>
             <li class="divider"></li>
             <li><a href="/settings">Settings</a></li>
 

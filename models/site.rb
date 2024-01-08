@@ -45,11 +45,11 @@ class Site < Sequel::Model
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png apng gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle
+    html htm txt text css js jpg jpeg png apng gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle pls
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
-    html htm txt js css scss md manifest less webmanifest xml json opml rdf svg gpg pgp resolveHandle
+    html htm txt js css scss md manifest less webmanifest xml json opml rdf svg gpg pgp resolveHandle pls
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
@@ -141,7 +141,7 @@ class Site < Sequel::Model
   DISPOSABLE_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_blacklist.conf')
   BANNED_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'banned_email_blacklist.conf')
 
-  BLOCK_JERK_THRESHOLD = 4
+  BLOCK_JERK_THRESHOLD = 25
   MAXIMUM_TAGS = 5
   MAX_USERNAME_LENGTH = 32.freeze
 
@@ -167,6 +167,9 @@ class Site < Sequel::Model
   SANDBOX_TIME = 14.days
   BLACK_BOX_WAIT_TIME = 10.seconds
   MAX_DISPLAY_FOLLOWS = 56*3
+
+  PHONE_VERIFICATION_EXPIRATION_TIME = 10.minutes
+  PHONE_VERIFICATION_LOCKOUT_ATTEMPTS = 3
 
   many_to_many :tags
 
@@ -203,8 +206,6 @@ class Site < Sequel::Model
   one_to_many :stat_referrers
   one_to_many :stat_locations
   one_to_many :stat_paths
-
-  one_to_many :archives
 
   def self.supporter_ids
     parent_supporters = DB[%{SELECT id FROM sites WHERE plan_type IS NOT NULL AND plan_type != 'free'}].all.collect {|s| s[:id]}
@@ -502,6 +503,7 @@ class Site < Sequel::Model
 
   def after_destroy
     update_redis_proxy_record
+    purge_all_cache
   end
 
   def undelete!
@@ -514,8 +516,8 @@ class Site < Sequel::Model
       save_changes
     }
 
-    delete_all_cache
     update_redis_proxy_record
+    purge_all_cache
     true
   end
 
@@ -541,8 +543,6 @@ class Site < Sequel::Model
     self.banned_at = Time.now
     save validate: false
     destroy
-
-    delete_all_cache
   end
 
   def ban_all_sites_on_account!
@@ -628,10 +628,23 @@ class Site < Sequel::Model
     @blocking_site_ids ||= blockings_dataset.select(:site_id).all.collect {|s| s.site_id}
   end
 
+  def unfollow_blocked_sites!
+    blockings.each do |blocking|
+      follows.each do |follow|
+        follow.destroy if follow.actioning_site_id == blocking.site_id
+      end
+
+      followings.each do |following|
+        following.destroy if following.site_id == blocking.site_id
+      end
+    end
+  end
+
   def block!(site)
     block = blockings_dataset.filter(site_id: site.id).first
     return true if block
     add_blocking site: site
+    unfollow_blocked_sites!
   end
 
   def unblock!(site)
@@ -646,7 +659,7 @@ class Site < Sequel::Model
   end
 
   def self.valid_username?(username)
-    !username.empty? && username.match(/^[a-zA-Z0-9_\-]+$/i)
+    !username.empty? && username.match(/^[a-zA-Z0-9][a-zA-Z0-9_\-]+[a-zA-Z0-9]$/i)
   end
 
   def self.disposable_email_domains
@@ -767,77 +780,10 @@ class Site < Sequel::Model
     end
   end
 
-  def delete_all_cache
+  def purge_all_cache
     site_files.each do |site_file|
-      delete_cache site_file.path
+      purge_cache site_file.path
     end
-  end
-
-  def delete_cache(path)
-    purge_cache path
-  end
-
-  #Rye::Cmd.add_command :ipfs
-
-  def add_to_ipfs
-    # Not ideal. An SoA version is in progress.
-    return nil
-
-    if archives_dataset.count > Archive::MAXIMUM_ARCHIVES_PER_SITE
-      archives_dataset.order(:updated_at).first.destroy
-    end
-
-    if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
-      rbox = Rye::Box.new $config['ipfs_ssh_host'], user: $config['ipfs_ssh_user']
-      begin
-        cidv0    = rbox.ipfs(:add, :r, :Q, "sites/#{sharding_dir}/#{self.username.gsub(/\/|\.\./, '')}").first
-        cidv1b32 = rbox.ipfs(:cid, :base32, cidv0).first
-      ensure
-        rbox.disconnect
-      end
-    else
-      line = Terrapin::CommandLine.new('ipfs', 'add -r -Q :path')
-      response = line.run(path: files_path).strip
-      line = Terrapin::CommandLine.new('ipfs', 'cid base32 :hash')
-      cidv1b32 = line.run(hash: response).strip
-    end
-
-    cidv1b32
-  end
-
-  def purge_old_archives
-    archives_dataset.order(:updated_at).offset(Archive::MAXIMUM_ARCHIVES_PER_SITE).all.each do |archive|
-      archive.destroy
-    end
-  end
-
-  def archive!
-    ipfs_hash = add_to_ipfs
-
-    archive = archives_dataset.where(ipfs_hash: ipfs_hash).first
-    if archive
-      archive.updated_at = Time.now
-      archive.save_changes
-    else
-      begin
-        add_archive ipfs_hash: ipfs_hash, updated_at: Time.now
-      rescue Sequel::UniqueConstraintViolation
-        # Record already exists, update timestamp
-        archives_dataset.where(ipfs_hash: ipfs_hash).first.update updated_at: Time.now
-      end
-    end
-
-    add_redis_proxy_dnslink
-  end
-
-  def add_redis_proxy_dnslink
-    if host =~ /(.+)\.neocities\.org/ && latest_archive
-      $redis_proxy.hset "dns-#{host}", 'TXT', "dnslink=/ipfs/#{latest_archive.ipfs_hash}"
-    end
-  end
-
-  def latest_archive
-    @latest_archive ||= archives_dataset.order(:updated_at.desc).first
   end
 
   def is_directory?(path)
@@ -879,33 +825,6 @@ class Site < Sequel::Model
 
     FileUtils.mkdir_p relative_path
     true
-  end
-
-  def files_zip
-    zip_name = "neocities-#{username}"
-
-    tmpfile = Tempfile.new 'neocities-site-zip'
-    tmpfile.close
-
-    begin
-      Zip::Archive.open(tmpfile.path, Zip::CREATE) do |ar|
-        ar.add_dir(zip_name)
-
-        Dir.glob("#{base_files_path}/**/*").each do |path|
-          relative_path = path.gsub(base_files_path+'/', '')
-          if File.directory?(path)
-            ar.add_dir(zip_name+'/'+relative_path)
-          else
-            ar.add_file(zip_name+'/'+relative_path, path) # add_file(<entry name>, <source path>)
-          end
-        end
-      end
-    rescue => e
-      tmpfile.unlink
-      raise e
-    end
-
-    tmpfile.path
   end
 
   def move_files_from(oldusername)
@@ -987,11 +906,6 @@ class Site < Sequel::Model
     parent_site_id.nil?
   end
 
-#  def after_destroy
-#    FileUtils.rm_rf files_path
-#    super
-#  end
-
   def ssl_installed?
     !domain.blank? && !ssl_key.blank? && !ssl_cert.blank?
   end
@@ -1029,6 +943,11 @@ class Site < Sequel::Model
         $redis_proxy.hset d_www_key,  'ssl_cert', ssl_cert
         $redis_proxy.hset d_www_key,  'ssl_key',  ssl_key
       end
+
+      if is_deleted
+        $redis_proxy.del d_root_key
+        $redis_proxy.del d_www_key
+      end
     else
       $redis_proxy.hdel u_key, 'domain'
     end
@@ -1039,8 +958,6 @@ class Site < Sequel::Model
 
     if is_deleted
       $redis_proxy.del u_key
-      $redis_proxy.del d_root_key
-      $redis_proxy.del d_www_key
     end
 
     true
@@ -1070,7 +987,7 @@ class Site < Sequel::Model
     super
 
     if !self.class.valid_username?(values[:username])
-      errors.add :username, 'Usernames can only contain letters, numbers, and hyphens.'
+      errors.add :username, 'Usernames can only contain letters, numbers, and hyphens, and cannot start or end with a hyphen.'
     end
 
     if !values[:username].blank?
@@ -1120,7 +1037,7 @@ class Site < Sequel::Model
       errors.add :tipping_paypal, 'A valid PayPal tipping email address is required.'
     end
 
-    if !values[:tipping_bitcoin].blank? && !BitcoinValidator.valid_address?(values[:tipping_bitcoin])
+    if !values[:tipping_bitcoin].blank? && !AdequateCryptoAddress.valid?(values[:tipping_bitcoin], 'BTC')
       errors.add :tipping_bitcoin, 'Bitcoin tipping address is not valid.'
     end
 
@@ -1572,6 +1489,10 @@ class Site < Sequel::Model
     File.exist? File.join(base_screenshots_path, "#{path}.#{resolution}.webp")
   end
 
+  def sharing_screenshot_url
+    'https://neocities.org'+base_screenshots_url+'/index.html.jpg'
+  end
+
   def screenshot_url(path, resolution)
     path[0] = '' if path[0] == '/'
     out = ''
@@ -1602,18 +1523,20 @@ class Site < Sequel::Model
   end
 
   def to_rss
-    RSS::Maker.make("atom") do |maker|
-      maker.channel.title   = title
-      maker.channel.updated = (updated_at ? updated_at : created_at)
-      maker.channel.author  = username
-      maker.channel.id      = "#{username}.neocities.org"
+    RSS::Maker.make("2.0") do |m|
+      m.channel.title = title
+      m.channel.link = uri
+      m.channel.description = "Site feed for #{title}"
+      m.image.url = sharing_screenshot_url
+      m.image.title = title
+
 
       latest_events.each do |event|
         if event.site_change_id
-          maker.items.new_item do |item|
-            item.link = "https://#{host}"
-            item.title = "#{title} has been updated"
-            item.updated = event.site_change.created_at
+          m.items.new_item do |i|
+            i.title = "#{title} has been updated."
+            i.link = "https://neocities.org/site/#{username}?event_id=#{event.id.to_s}"
+            i.pubDate = event.created_at
           end
         end
       end
@@ -1712,10 +1635,6 @@ class Site < Sequel::Model
           time,
           self.id
         ].first
-
-        if ipfs_archiving_enabled == true
-          ArchiveWorker.perform_in Archive::ARCHIVE_WAIT_TIME, self.id
-        end
       end
 
       reload
@@ -1788,6 +1707,11 @@ class Site < Sequel::Model
     elsif extname.match IMAGE_REGEX
       ThumbnailWorker.perform_async values[:username], path
     end
+  end
+
+  def phone_verification_needed?
+    return true if phone_verification_required && !phone_verified
+    false
   end
 
   private

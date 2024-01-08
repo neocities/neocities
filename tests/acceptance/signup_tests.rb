@@ -2,6 +2,7 @@ require_relative './environment.rb'
 
 describe 'signup' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
   def fill_in_valid
     @site = Fabricate.attributes_for(:site)
@@ -24,7 +25,7 @@ describe 'signup' do
   end
 
   before do
-    Capybara.default_driver = :apparition
+    Capybara.default_driver = :selenium_chrome_headless_largewindow
     Capybara.reset_sessions!
     visit_signup
   end
@@ -39,7 +40,6 @@ describe 'signup' do
     fill_in_valid
     click_signup_button
     site_created?
-
     click_link 'Continue'
     _(page).must_have_content /almost ready!/
     fill_in 'token', with: Site[username: @site[:username]].email_confirmation_token
@@ -109,10 +109,10 @@ describe 'signup' do
     _(page).must_have_content 'Usernames can only contain'
     fill_in 'username', with: 'nope-'
     click_signup_button
-    _(page).must_have_content 'A valid user/site name is required'
+    _(page).must_have_content 'Usernames can only contain'
     fill_in 'username', with: '-nope'
     click_signup_button
-    _(page).must_have_content 'A valid user/site name is required'
+    _(page).must_have_content 'Usernames can only contain'
   end
 
   it 'fails with username greater than 32 characters' do

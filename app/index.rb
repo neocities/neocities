@@ -80,6 +80,8 @@ get '/?' do
     @blog_feed_html = SimpleCache.get :blog_feed_html
   end
 
+  @create_disabled = false
+
   erb :index, layout: :index_layout
 end
 
