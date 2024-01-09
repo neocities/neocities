@@ -27,7 +27,7 @@
 <div class="header-Outro editor">
   <div class="row content">
     <div class="breadcrumbs">
-      <a href="/dashboard">Dashboard</a> >
+      <a href="/dashboard" style="text-decoration: underline;"><strong>Dashboard</strong></a> >
       <span class="filename">
         <% dir_array = Pathname(@filename).dirname.to_s.split '/' %>
         <% dir_array = [] if dir_array == ['.'] %>
@@ -76,8 +76,8 @@
       </div>
       <a id="saveButton" class="btn-Action" href="#" onclick="saveTextFile(false); return false" style="opacity: 0.5"><span class="hide-on-mobile"><i class="fa fa-save"></i></span>Save</a>
       <span class="hide-on-mobile">
-        <a class="btn-Action" href="<%= current_site.uri %>/<%= @filename == 'index.html' ? '' : @filename %>" target="_blank">View</a>
-        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'>Share</a>
+        <a class="btn-Action" href="<%= current_site.uri %>/<%= @filename == 'index.html' ? '' : @filename %>" target="_blank"><i class="fa fa-globe"></i> View</a>
+        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'><i class="fa fa-share-alt"></i> Share</a>
       </span>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
       <div id="editorUpdates" class="tooltip fade bottom in hidden" style="top: 90px;right: 12.5em;">
