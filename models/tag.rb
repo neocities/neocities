@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Tag < Sequel::Model
 	NAME_LENGTH_MAX = 25
 	NAME_WORDS_MAX = 1

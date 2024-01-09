@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class SiteChange < Sequel::Model
   NEW_CHANGE_TIMEOUT = 3600 * 24 # 24 hours
   many_to_one :site

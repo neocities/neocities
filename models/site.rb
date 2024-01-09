@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'tilt'
 require 'rss'
 require 'nokogiri'
@@ -144,7 +145,7 @@ class Site < Sequel::Model
   BLOCK_JERK_PERCENTAGE = 30
   BLOCK_JERK_THRESHOLD = 25
   MAXIMUM_TAGS = 5
-  MAX_USERNAME_LENGTH = 32.freeze
+  MAX_USERNAME_LENGTH = 32
 
   LEGACY_SUPPORTER_PRICES = {
     plan_one: 1,

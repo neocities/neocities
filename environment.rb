@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RubyVM::YJIT.enable
 ENV['RACK_ENV'] ||= 'development'
 ENV['TZ'] = 'UTC'
