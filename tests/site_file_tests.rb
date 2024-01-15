@@ -270,6 +270,28 @@ describe 'site_files' do
       _(File.exists?(@site.files_path('cache.manifest'))).must_equal true
     end
 
+    it 'fails with filename greater than limit' do
+      file_path = './tests/files' + (0...SiteFile::FILE_NAME_CHARACTER_LIMIT+1).map { ('a'..'z').to_a[rand(26)] }.join + '.html'
+      begin
+        File.open(file_path, "w") do |file|
+          file.write("derp")
+        end
+
+        upload 'files[]' => Rack::Test::UploadedFile.new(file_path, 'text/html')
+        _(last_response.body).must_match /name is too long/i
+      ensure
+        FileUtils.rm file_path
+      end
+    end
+
+    it 'fails with path greater than limit' do
+      upload(
+        'dir' => (("a" * 50 + "/") * (SiteFile::FILE_PATH_CHARACTER_LIMIT / 50 - 1) + "a" * 50),
+        'files[]' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      )
+      _(last_response.body).must_match /path is too long/i
+    end
+
     it 'works with otf fonts' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/chunkfive.otf', 'application/vnd.ms-opentype')
       _(File.exists?(@site.files_path('chunkfive.otf'))).must_equal true

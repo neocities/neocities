@@ -130,13 +130,21 @@ post '/site_files/upload' do
       end
     end
 
-    file[:filename] = "#{dir_name.force_encoding('UTF-8')}/#{site.scrubbed_path file[:filename].force_encoding('UTF-8')}"
+    file_base_name = site.scrubbed_path file[:filename].force_encoding('UTF-8')
+
+    file[:filename] = "#{dir_name.force_encoding('UTF-8')}/#{file_base_name}"
 
     if current_site.file_size_too_large? file[:tempfile].size
       file_upload_response "#{Rack::Utils.escape_html file[:filename]} is too large, upload cancelled."
     end
     if !site.okay_to_upload? file
       file_upload_response %{#{Rack::Utils.escape_html file[:filename]}: file type (or content in file) is only supported by <a href="/supporter">supporter accounts</a>. <a href="/site_files/allowed_types">Why We Do This</a>}
+    end
+    if SiteFile.path_too_long? file[:filename]
+      file_upload_response "#{Rack::Utils.escape_html file[:filename]}: path is too long, upload cancelled."
+    end
+    if SiteFile.name_too_long? file_base_name
+      file_upload_response "#{Rack::Utils.escape_html file[:filename]}: file name is too long, upload cancelled."
     end
   end
 

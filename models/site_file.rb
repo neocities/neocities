@@ -5,9 +5,21 @@ require 'sanitize'
 class SiteFile < Sequel::Model
   CLASSIFIER_LIMIT = 1_000_000
   CLASSIFIER_WORD_LIMIT = 25
+  FILE_PATH_CHARACTER_LIMIT = 300
+  FILE_NAME_CHARACTER_LIMIT = 100
   unrestrict_primary_key
   plugin :update_primary_key
   many_to_one :site
+
+  def self.path_too_long?(filename)
+    return true if filename.length > FILE_PATH_CHARACTER_LIMIT
+    false
+  end
+
+  def self.name_too_long?(filename)
+    return true if filename.length > FILE_NAME_CHARACTER_LIMIT
+    false
+  end
 
   def before_destroy
     if is_directory
