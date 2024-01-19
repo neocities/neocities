@@ -1,3 +1,4 @@
+
 ;                (function() {
                     window.require(["ace/snippets/zeek"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {

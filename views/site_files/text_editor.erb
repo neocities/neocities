@@ -27,11 +27,11 @@
 <div class="header-Outro editor">
   <div class="row content">
     <div class="breadcrumbs">
-      <a href="/dashboard" style="text-decoration: underline;"><strong>Dashboard</strong></a> >
+      <a href="/dashboard"><strong>Dashboard</strong></a> >
       <span class="filename">
         <% dir_array = Pathname(@filename).dirname.to_s.split '/' %>
         <% dir_array = [] if dir_array == ['.'] %>
-        <% dir_array.each_with_index do |dir,i| %><a href="/dashboard?dir=<%= Rack::Utils.escape dir_array[0..i].join('/') %>"><%= dir %></a>/<% end %><%= Pathname(@filename).basename %>
+        <% dir_array.each_with_index do |dir,i| %><a href="/dashboard?dir=<%= Rack::Utils.escape dir_array[0..i].join('/') %>"><%= dir %></a> / <% end %><%= Pathname(@filename).basename %>
       </span>
     </div>
     <div class="tools">
@@ -40,32 +40,45 @@
         <select id="theme" size="1" onchange="setTheme();" onkeyup="setTheme();">
           <optgroup label="Bright">
             <option value="ace/theme/chrome">Chrome</option>
+            <option value="ace/theme/cloud_editor">Cloud Editor</option>
             <option value="ace/theme/clouds">Clouds</option>
             <option value="ace/theme/crimson_editor">Crimson Editor</option>
             <option value="ace/theme/dawn">Dawn</option>
             <option value="ace/theme/dreamweaver">Dreamweaver</option>
             <option value="ace/theme/eclipse">Eclipse</option>
             <option value="ace/theme/github">GitHub</option>
+            <option value="ace/theme/iplastic">I-Plastic</option>
+            <option value="ace/theme/katzenmilch">Katzen Milch</option>
+            <option value="ace/theme/kuroir">Kuroir</option>
             <option value="ace/theme/solarized_light">Solarized Light</option>
-            <option value="ace/theme/textmate">TextMate</option>
+            <option value="ace/theme/sqlserver">SQL Server</option>
+            <option value="ace/theme/textmate">Text Mate</option>
             <option value="ace/theme/tomorrow">Tomorrow</option>
             <option value="ace/theme/xcode">XCode</option>
           </optgroup>
           <optgroup label="Dark">
             <option value="ace/theme/ambiance">Ambiance</option>
             <option value="ace/theme/chaos">Chaos</option>
+            <option value="ace/theme/cloud_editor_dark">Cloud Editor Dark</option>
             <option value="ace/theme/clouds_midnight">Clouds Midnight</option>
             <option value="ace/theme/cobalt">Cobalt</option>
-            <option value="ace/theme/idle_fingers">idleFingers</option>
-            <option value="ace/theme/kr_theme">krTheme</option>
+            <option value="ace/theme/dracula">Dracula</option>
+            <option value="ace/theme/github_dark">GitHub Dark</option>
+            <option value="ace/theme/gob">Green on Black</option>
+            <option value="ace/theme/gruvbox">Gruvbox</option>
+            <option value="ace/theme/idle_fingers">Idle Fingers</option>
+            <option value="ace/theme/kr_theme">KR Theme</option>
             <option value="ace/theme/merbivore">Merbivore</option>
             <option value="ace/theme/merbivore_soft">Merbivore Soft</option>
             <option value="ace/theme/mono_industrial">Mono Industrial</option>
             <option value="ace/theme/monokai">Monokai</option>
+            <option value="ace/theme/nord_dark">Nord Dark</option>
+            <option value="ace/theme/one_dark">One Dark</option>
             <option value="ace/theme/pastel_on_dark">Pastel on dark</option>
             <option value="ace/theme/solarized_dark">Solarized Dark</option>
+            <option value="ace/theme/sunburst" selected>Sunburst</option>
             <option value="ace/theme/terminal">Terminal</option>
-            <option value="ace/theme/tomorrow_night" selected="selected">Tomorrow Night</option>
+            <option value="ace/theme/tomorrow_night">Tomorrow Night</option>
             <option value="ace/theme/tomorrow_night_blue">Tomorrow Night Blue</option>
             <option value="ace/theme/tomorrow_night_bright">Tomorrow Night Bright</option>
             <option value="ace/theme/tomorrow_night_eighties">Tomorrow Night 80s</option>

@@ -2063,9 +2063,15 @@ a.tag:hover {
   .breadcrumbs {
     float: left;
     margin: 4px 0;
+
+    a {
+      text-decoration: underline;
+    }
+
     .filename {
       font-weight: bold;
     }
+
     @media (max-device-width:480px), screen and (max-width:800px) {
       width: 70%;
       overflow: hidden;
