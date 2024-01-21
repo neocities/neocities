@@ -52,7 +52,6 @@ gem 'facter', require: nil
 gem 'maxmind-db'
 gem 'json', '>= 2.3.0'
 gem 'nokogiri'
-gem 'rss'
 gem 'webp-ffi'
 gem 'rszr'
 gem 'zip_tricks'

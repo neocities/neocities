@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 require 'tilt'
-require 'rss'
 require 'nokogiri'
 require 'pathname'
 require 'zlib'
@@ -1526,24 +1525,30 @@ class Site < Sequel::Model
   end
 
   def to_rss
-    RSS::Maker.make("2.0") do |m|
-      m.channel.title = title
-      m.channel.link = uri
-      m.channel.description = "Site feed for #{title}"
-      m.image.url = sharing_screenshot_url
-      m.image.title = title
+    site_change_events = events_dataset.exclude(is_deleted: true).exclude(site_change_id: nil).order(:created_at.desc).limit(10).all
 
+    Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
+      xml.rss('version' => '2.0') {
+        xml.channel {
+          xml.title title
+          xml.link uri
+          xml.description "Site feed for #{title}"
+          xml.image {
+            xml.url sharing_screenshot_url
+            xml.title title
+          }
 
-      latest_events.each do |event|
-        if event.site_change_id
-          m.items.new_item do |i|
-            i.title = "#{title} has been updated."
-            i.link = "https://neocities.org/site/#{username}?event_id=#{event.id.to_s}"
-            i.pubDate = event.created_at
+          site_change_events.each do |event|
+            xml.item {
+              xml.title "#{title} has been updated."
+              xml.link "https://neocities.org/site/#{username}?event_id=#{event.id.to_s}"
+              xml.pubDate event.created_at.rfc822
+              xml.guid event.id.to_s
+            }
           end
-        end
-      end
-    end
+        }
+      }
+    end.to_xml
   end
 
   def empty_index?
