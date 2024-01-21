@@ -199,4 +199,6 @@ Airbrake.add_filter do |notice|
     # Filter out password.
     notice[:params][:password] = '[Filtered]'
   end
+
+  notice.ignore! if notice.stash[:exception].is_a?(Sinatra::NotFound)
 end
