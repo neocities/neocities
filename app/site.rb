@@ -2,7 +2,7 @@ get '/site/:username.rss' do |username|
   site = Site[username: username]
   halt 404 if site.nil?
   content_type :xml
-  site.to_rss.to_xml
+  site.to_rss
 end
 
 get '/site/:username/?' do |username|
