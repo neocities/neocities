@@ -1536,6 +1536,7 @@ class Site < Sequel::Model
           xml.image {
             xml.url sharing_screenshot_url
             xml.title title
+            xml.link uri
           }
 
           site_change_events.each do |event|
@@ -1543,7 +1544,7 @@ class Site < Sequel::Model
               xml.title "#{title} has been updated."
               xml.link "https://neocities.org/site/#{username}?event_id=#{event.id.to_s}"
               xml.pubDate event.created_at.rfc822
-              xml.guid event.id.to_s
+              xml.guid(event.id.to_s, isPermaLink: 'false')
             }
           end
         }
