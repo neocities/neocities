@@ -43,11 +43,10 @@ class Site < Sequel::Model
     message/rfc822
     application/font-sfnt
     application/opensearchdescription+xml
-    application/x-shockwave-flash
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png apng gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle pls yaml yml toml osdx swf
+    html htm txt text css js jpg jpeg png apng gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle pls yaml yml toml osdx
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
