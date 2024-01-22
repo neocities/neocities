@@ -24,6 +24,7 @@ end
 
 get '/tutorial/:section/?' do
   require_login
+  not_found unless %w{html css js}.include?(params[:section])
   redirect "/tutorial/#{params[:section]}/1"
 end
 

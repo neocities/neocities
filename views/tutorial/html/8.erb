@@ -38,8 +38,7 @@
       notok('You need to add an <strong>href</strong> to your <strong>a</strong> tag, like: <strong>href="http://neocities.org"</strong>')
       return
     }
-
-    if(a.text() == '' || a.text().match(/\s+/)) {
+    if(a.text() == '' || !a.text().match(/[^\s]+/)) {
       notok('You need to add a name for your link, which is the text between the &lt;a&gt; tag, and the closing tag &lt;/a&gt;')
       return
     }
