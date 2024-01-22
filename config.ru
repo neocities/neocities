@@ -1,6 +1,9 @@
 require 'rubygems'
 require './app.rb'
 require 'sidekiq/web'
+require 'airbrake/sidekiq'
+
+use Airbrake::Rack::Middleware
 
 map('/') do
   use(Rack::Cache,

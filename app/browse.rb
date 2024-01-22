@@ -62,7 +62,7 @@ def browse_sites_dataset
     when 'followers'
       ds = ds.order :follow_count.desc, :updated_at.desc
     when 'supporters'
-      ds = ds.where id: Site.supporter_ids
+      ds = ds.where sites__id: Site.supporter_ids
       ds = ds.order :follow_count.desc, :views.desc, :site_updated_at.desc
     when 'featured'
       ds = ds.exclude featured_at: nil
