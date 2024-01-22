@@ -19,7 +19,7 @@
 
   <h2>Frequently Asked Questions</h2>
 
-  <h4>Sites / Editing</h3>
+  <h3>Email</h3>
 
   <div class="accordion-group">
     <div class="accordion-heading">
@@ -58,6 +58,28 @@
       </div>
     </div>
   </div>
+
+  <h3>HTML Editing</h3>
+
+  <div class="accordion">
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#ccsp">
+          "Content-Security-Policy: The page's settings blocked the loading of a resource"
+        </a>
+      </div>
+      <div id="ccsp" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            To prevent phishing attacks, Neocities does not allow sending data to external servers after page load with newer free plans (older sites have legacy support for it). Content can be loaded on page load via HTML, but JavaScript is not allowed to send arbitary requests to external servers after page load. If you would like to enable this functionality, you will need to upgrade to <a href="/supporter">supporter</a>.
+          </p>
+
+          <p>
+            If you are having trouble with content not loading, the solution is to include that content as part of your site on Neocities by including the files you are trying to load directly with your site hosted on Neocities. This is almost always the correct way to do it anyways, because it makes your site faster and more reliable, and future proofs your site against the content being removed from the external server (which if the history of the 90s web is any indication, is very likely to happen).
+          </p>
+        </div>
+      </div>
+    </div>
 
   <div class="accordion">
     <div class="accordion-group">
@@ -128,25 +150,8 @@
 
     <div class="accordion-group">
       <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#hitsviews">
-          What is the difference between hits and views?
-        </a>
-      </div>
-      <div id="hitsviews" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            <strong>Hits</strong> are number of requests for any file on a site, <strong>views</strong> count for one unique IP address per hour. Views provide better insight into how many individuals (or search engines, etc) are looking at your site. There is no such thing as perfectly accurate stats, so this doesn't necessarily reflect how many actual people are viewing your site, but it does provide a rough way to see how popular your site is becoming. If you put a hit counter on your site, it may give a different number than what Neocities records and that is expected.
-          </p>
-
-          <p>We don't provide a way to look at individual visitor records on Neocities, the main reason being that the information isn't very useful anymore, since most sources block HTTP Referer headers, making it difficult to determine origin.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" href="#cthree">
-          Do you support FTP?
+          Do you support FTP for editing?
         </a>
       </div>
       <div id="cthree" class="accordion-body collapse">
@@ -177,6 +182,93 @@
           <p>
             We do provide services for the sites on the main site (neocities.org), such as a site profile and tagging so you can form communities of sites with similar interests. We think that's a better way to do it than to push our way into your site. You can of course link to your Neocities Site Profile (https://neocities.org/site/yourusername) from your own site if you'd like.
           </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cfiles">
+          Do you support WASM / MP3 / MP4/ ZIP for free sites?
+        </a>
+      </div>
+      <div id="cfiles" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            We don't currently support certain types of files, particularly multimedia files and WebASM with free sites because of persistent issues with abuse (piracy, bitcoin mining, excessive bandwidth usage). In general, these files are not conducive to Neocities' mission of bringing back personal home pages vs being a piracy and webapp hosting platform. You can embed audio and videos through other providers like YouTube, which is preferred because they will automatically provide the streaming media in formats that work better for your specific users' devices (such as mobile phones).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cfilesizes">
+          Can I upload very large files to Neocities?
+        </a>
+      </div>
+      <div id="cfilesizes" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            We currently have a file size limit for very large files on Neocities, including supporter sites. This is mainly because our CDN (content delivery network) is optimized for lots of small files (the kind that web sites use), and also because large files tend to be easily abused (think piracy). Files used to make web pages will not hit these limits, but things like very large zipballs are more likely to. These also tend to be the file types that lead to abuse and would make Neocities unsustainable to operate in the long run (piracy, malware, etc), another reason we're hesitant to add support for them.
+          </p>
+          <p>
+            Even if we supported this, it wouldn't work very well because HTTP servers are not good at this anyways and there are almost always better alternatives for very large file distribution. For example if you need to upload a video, YouTube or Vimeo are better because they automatically format in the different file types that different browsers support, or if you are releasing a large game, it's probably better to release it through a game platform like Steam. Using BitTorrent is also a really effective way to have your site visitors help distribute your content quickly (provided it's legal!)
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cnine">
+          Do you support .htaccess files?
+        </a>
+      </div>
+      <div id="cnine" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            Neocities does not support .htaccess files. This is an Apache HTTP server specific file type, and we don't use Apache for our backend. In addition, we generally don't add features to Neocities that make the functionality of sites depend on custom backend functionality (the sole exception being that we make sure "page not found" goes to "not_found.html" so you can create a custom 404.)
+          </p>
+
+          <p>
+            Finally, we sometimes see people trying to use .htaccess for authentication (with usernames and passwords). Neocities is only for sites and information you want to make public, and it is dangerous to use it for private sites! We make backups of your site and attackers can easily find any information you're trying to hide using our archivers. Our goal is to make sure your sites stay up for a long time and persist, not to enforce secrecy zones on your site. If you want to make a controlled access site, Neocities is probably not what you're looking for.
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+    <h3>Site</h3>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#ceight">
+          "Site creation is not currently available from your location, please try again later."
+        </a>
+      </div>
+      <div id="ceight" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            If you are a new user, this message means that your IP address, browser, or some other characteristic of your session has been flagged by our monitoring for potential spam/abuse. This is a collaborative list we maintain with other sites, so another site may have added your IP address. If you are using a VPN, try disabling that. You could also consider running an anti-virus scan on your computer, as it may be infected with malware that is causing this.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#hitsviews">
+          What is the difference between hits and views?
+        </a>
+      </div>
+      <div id="hitsviews" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            <strong>Hits</strong> are number of requests for any file on a site, <strong>views</strong> count for one unique IP address per hour. Views provide better insight into how many individuals (or search engines, etc) are looking at your site. There is no such thing as perfectly accurate stats, so this doesn't necessarily reflect how many actual people are viewing your site, but it does provide a rough way to see how popular your site is becoming. If you put a hit counter on your site, it may give a different number than what Neocities records and that is expected.
+          </p>
+
+          <p>We don't provide a way to look at individual visitor records on Neocities, the main reason being that the information isn't very useful anymore, since most sources block HTTP Referer headers, making it difficult to determine origin.</p>
         </div>
       </div>
     </div>
@@ -247,39 +339,6 @@
 
     <div class="accordion-group">
       <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#cfiles">
-          Do you support WASM / MP3 / MP4/ ZIP for free sites?
-        </a>
-      </div>
-      <div id="cfiles" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            We don't currently support certain types of files, particularly multimedia files and WebASM with free sites because of persistent issues with abuse (piracy, bitcoin mining, excessive bandwidth usage). In general, these files are not conducive to Neocities' mission of bringing back personal home pages vs being a piracy and webapp hosting platform. You can embed audio and videos through other providers like YouTube, which is preferred because they will automatically provide the streaming media in formats that work better for your specific users' devices (such as mobile phones).
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#cfilesizes">
-          Can I upload very large files to Neocities?
-        </a>
-      </div>
-      <div id="cfilesizes" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            We currently have a file size limit for very large files on Neocities, including supporter sites. This is mainly because our CDN (content delivery network) is optimized for lots of small files (the kind that web sites use), and also because large files tend to be easily abused (think piracy). Files used to make web pages will not hit these limits, but things like very large zipballs are more likely to. These also tend to be the file types that lead to abuse and would make Neocities unsustainable to operate in the long run (piracy, malware, etc), another reason we're hesitant to add support for them.
-          </p>
-          <p>
-            Even if we supported this, it wouldn't work very well because HTTP servers are not good at this anyways and there are almost always better alternatives for very large file distribution. For example if you need to upload a video, YouTube or Vimeo are better because they automatically format in the different file types that different browsers support, or if you are releasing a large game, it's probably better to release it through a game platform like Steam. Using BitTorrent is also a really effective way to have your site visitors help distribute your content quickly (provided it's legal!)
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" href="#cinvoices">
           Where can I find invoices for supporter membership?
         </a>
@@ -309,26 +368,22 @@
       </div>
     </div>
 
+    <h3>Legal</h3>
+
     <div class="accordion-group">
       <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#cnine">
-          Do you support .htaccess files?
+        <a class="accordion-toggle" data-toggle="collapse" href="#cseven">
+          I want to file a DMCA Takedown Notice with Neocities.
         </a>
       </div>
-      <div id="cnine" class="accordion-body collapse">
+      <div id="cseven" class="accordion-body collapse">
         <div class="accordion-inner">
           <p>
-            Neocities does not support .htaccess files. This is an Apache HTTP server specific file type, and we don't use Apache for our backend. In addition, we generally don't add features to Neocities that make the functionality of sites depend on custom backend functionality (the sole exception being that we make sure "page not found" goes to "not_found.html" so you can create a custom 404.)
-          </p>
-
-          <p>
-            Finally, we sometimes see people trying to use .htaccess for authentication (with usernames and passwords). Neocities is only for sites and information you want to make public, and it is dangerous to use it for private sites! We make backups of your site and attackers can easily find any information you're trying to hide using our archivers. Our goal is to make sure your sites stay up for a long time and persist, not to enforce secrecy zones on your site. If you want to make a controlled access site, Neocities is probably not what you're looking for.
+            See our <a href="/dmca">DMCA</a> page.
           </p>
         </div>
       </div>
     </div>
-
-    <h3>Legal / Abuse</h3>
 
     <div class="accordion-group">
       <div class="accordion-heading">
@@ -355,36 +410,6 @@
         <div class="accordion-inner">
           <p>
             Cool! Please consult our <a href="/legal">legal guide for Neocities</a> for more information on why this is a really bad idea.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#cseven">
-          I want to file a DMCA Takedown Notice with Neocities.
-        </a>
-      </div>
-      <div id="cseven" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            See our <a href="/dmca">DMCA</a> page.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#ceight">
-          "Site creation has been banned due to ToS violation/spam."
-        </a>
-      </div>
-      <div id="ceight" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            If you are a new user, this message means that your IP address has been flagged by our IP database for posting spam. We share this list with other sites, so another site may have added your IP address. We recommend running an anti-virus program on your computer—it is possible that something on your machine is posting spam on other sites (or ours).
           </p>
         </div>
       </div>
