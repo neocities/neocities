@@ -21,6 +21,7 @@ get '/site/:username/?' do |username|
   @page = 1 if @page == 0
 
   if params[:event_id]
+    not_found if params[:event_id].is_a?(Array)
     not_found unless params[:event_id].to_i > 0
     event = Event.select(:id).where(id: params[:event_id]).first
     not_found if event.nil?
