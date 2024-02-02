@@ -14,7 +14,15 @@ post '/create_validate_all' do
   content_type :json
   fields = params.select {|p| p.match CREATE_MATCH_REGEX}
 
-  site = Site.new fields
+  begin
+    site = Site.new fields
+  rescue ArgumentError => e
+    if e.message == 'input string invalid'
+      return {error: 'invalid input'}.to_json
+    else
+      raise e
+    end
+  end
 
   if site.valid?
     return [].to_json if education_whitelisted?
@@ -32,7 +40,16 @@ post '/create_validate' do
     return {error: 'not a valid field'}.to_json
   end
 
-  site = Site.new(params[:field] => params[:value])
+  begin
+    site = Site.new(params[:field] => params[:value])
+  rescue ArgumentError => e
+    if e.message == 'input string invalid'
+      return {error: 'invalid input'}.to_json
+    else
+      raise e
+    end
+  end
+
   site.is_education = params[:is_education]
   site.valid?
 
