@@ -122,15 +122,6 @@ get '/legal/?' do
   erb :'legal'
 end
 
-get '/permanent-web' do
-  redirect '/distributed-web'
-end
-
-get '/distributed-web' do
-  @title = 'The Distributed Web'
-  erb :'distributed_web'
-end
-
 get '/thankyou' do
   @title = 'Thank you!'
   erb :'thankyou'
