@@ -202,3 +202,5 @@ Airbrake.add_filter do |notice|
 
   notice.ignore! if notice.stash[:exception].is_a?(Sinatra::NotFound)
 end
+
+Airbrake.add_filter Airbrake::Sidekiq::RetryableJobsFilter.new
