@@ -12,10 +12,6 @@ class String
     gsub /^#{scan(/^\s*/).min_by{|l|l.length}}/, ""
   end
 
-  def is_integer?
-    true if Integer(self) rescue false
-  end
-
   def blank?
     return true if self == ''
     false
