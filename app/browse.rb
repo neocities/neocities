@@ -1,6 +1,12 @@
 get '/browse/?' do
   @surfmode = false
-  @page = params[:page].to_i
+
+  begin
+    @page = params[:page].to_i
+  rescue
+    @page = 1
+  end
+
   @page = 1 if @page == 0
 
   params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
