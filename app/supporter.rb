@@ -47,12 +47,17 @@ post '/supporter/update' do
       site.stripe_subscription_id = subscription.id
       site.save_changes validate: false
     else
-      customer = Stripe::Customer.create(
-        source: params[:stripe_token],
-        description: "#{site.username} - #{site.id}",
-        email: site.email,
-        plan: plan_type
-      )
+      begin
+        customer = Stripe::Customer.create(
+          source: params[:stripe_token],
+          description: "#{site.username} - #{site.id}",
+          email: site.email,
+          plan: plan_type
+        )
+      rescue Stripe::CardError => e
+        flash[:error] = "Error: #{Rack::Utils.escape_html e.message}"
+        redirect '/supporter'
+      end
 
       site.stripe_customer_id = customer.id
       site.stripe_subscription_id = customer.subscriptions.first.id
