@@ -55,7 +55,7 @@ post '/supporter/update' do
           plan: plan_type
         )
       rescue Stripe::CardError => e
-        flash[:error] = "Error: #{Rack::Utils.escape_html e.message}"
+        flash[:error] = "Error: #{Rack::Utils.escape_html e.message} This is likely caused by incorrect information, or an issue with your credit card. Please try again, or contact your bank."
         redirect '/supporter'
       end
 

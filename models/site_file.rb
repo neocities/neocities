@@ -58,6 +58,14 @@ class SiteFile < Sequel::Model
     current_path = self.path
     new_path = site.scrubbed_path new_path
 
+    if new_path.length > FILE_PATH_CHARACTER_LIMIT
+      return false, 'new path too long'
+    end
+
+    if File.basename(new_path).length > FILE_NAME_CHARACTER_LIMIT
+      return false, 'new filename too long'
+    end
+
     if new_path == ''
       return false, 'cannot rename to empty path'
     end
