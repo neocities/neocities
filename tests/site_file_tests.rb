@@ -41,6 +41,16 @@ describe 'site_files' do
       _(File.exist?(@site.files_path('derp.jpg'))).must_equal true
     end
 
+    it 'fails when file does not exist' do
+      #uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      #upload 'files[]' => uploaded_file
+
+      post '/site_files/rename', {path: 'derp.jpg', new_path: 'derp2.jpg', csrf_token: 'abcd'}, {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+      _(last_response.headers['Location']).must_match /dashboard/
+      get '/dashboard', {}, {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+      _(last_response.body).must_match /file derp.jpg does not exist/i
+    end
+
     it 'fails for bad extension change' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file

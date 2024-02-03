@@ -180,12 +180,19 @@ post '/site_files/rename' do
   new_path = HTMLEntities.new.decode params[:new_path]
   site_file = current_site.site_files.select {|s| s.path == path}.first
 
-  res = site_file.rename new_path
+  escaped_path = Rack::Utils.escape_html path
+  escaped_new_path = Rack::Utils.escape_html new_path
 
-  if res.first == true
-    flash[:success] = "Renamed #{Rack::Utils.escape_html path} to #{Rack::Utils.escape_html new_path}"
+  if site_file.nil?
+    flash[:error] = "File #{escaped_path} does not exist."
   else
-    flash[:error] = "Failed to rename #{Rack::Utils.escape_html path} to #{Rack::Utils.escape_html new_path}: #{Rack::Utils.escape_html res.last}"
+    res = site_file.rename new_path
+
+    if res.first == true
+      flash[:success] = "Renamed #{escaped_path} to #{escaped_new_path}"
+    else
+      flash[:error] = "Failed to rename #{escaped_path} to #{escaped_new_path}: #{Rack::Utils.escape_html res.last}"
+    end
   end
 
   dirname = Pathname(path).dirname
