@@ -164,6 +164,9 @@ post '/settings/:username/custom_domain' do
     else
       raise e
     end
+  rescue Socket::ResolutionError
+    flash[:error] = 'Temporary failure in name resolution, please try again later.'
+    redirect "/settings/#{@site.username}#custom_domain"
   end
 
   if @site.valid?
