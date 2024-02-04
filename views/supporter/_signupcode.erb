@@ -19,9 +19,19 @@
         }, stripeResponseHandler);
         return false;
       } else {
+        clearCardInfo();
         return true;
       }
     });
+
+    function clearCardInfo() {
+      $('[name="cc_number"]').val('');
+      $('[name="cc_cvc"]').val('');
+      $('[name="cc_exp_month"]').val('');
+      $('[name="cc_exp_year"]').val('');
+      $('[name="cc_name"]').val('');
+      $('[name="cc_type"]').val('');
+    }
 
     function stripeResponseHandler(status, response) {
       if (response.error) {
@@ -29,6 +39,7 @@
       } else {
         var token = response.id;
         $('#stripe_token').val(token);
+        clearCardInfo();
         $('#upgradeForm').off('submit').submit();
       }
     }
