@@ -39,7 +39,12 @@ post '/supporter/update' do
         customer.sources.create source: params[:stripe_token]
       end
 
-      subscription = customer.subscriptions.create plan: plan_type
+      begin
+        subscription = customer.subscriptions.create plan: plan_type
+      rescue Stripe::CardError => e
+        flash[:error] = "Error: #{Rack::Utils.escape_html e.message}"
+        redirect '/supporter'
+      end
 
       site.plan_ended = false
       site.plan_type = plan_type
