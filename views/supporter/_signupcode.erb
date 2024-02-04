@@ -8,7 +8,7 @@
 
   $(document).ready(function() {
     $('#upgradeForm').submit(function(event) {
-      event.preventDefault();
+      /* event.preventDefault(); */
 
       if ($('#stripe_token').val() === '') {
         Stripe.card.createToken({
