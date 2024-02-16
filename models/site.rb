@@ -317,6 +317,7 @@ class Site < Sequel::Model
     end
 
     def get_with_identifier(username_or_email)
+      return nil if username_or_email.nil? || username_or_email.empty?
       if username_or_email =~ /@/
         site = get_with_email username_or_email
       else
