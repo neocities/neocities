@@ -144,6 +144,7 @@ task :generate_sitemap => [:environment] do
     select(:id, :username, :updated_at, :profile_enabled).
     where(site_changed: true).
     exclude(updated_at: nil).
+    exclude(is_deleted: true).
     order(:follow_count, :updated_at).
     all
 
