@@ -19,7 +19,14 @@ def require_login
 end
 
 def signed_in?
-  !session[:id].nil?
+  return false if current_site.nil?
+  true
+end
+
+def signout
+  @_site = nil
+  @_parent_site = nil
+  session[:id] = nil
 end
 
 def current_site
@@ -29,7 +36,6 @@ def current_site
 
   if @_site.is_banned || @_site.is_deleted || (@_parent_site && (@_parent_site.is_banned || @_parent_site.is_deleted))
     signout
-    redirect '/'
   end
 
   @_site

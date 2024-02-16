@@ -78,7 +78,3 @@ post '/signout' do
   signout
   redirect '/'
 end
-
-def signout
-  session[:id] = nil
-end

@@ -88,7 +88,6 @@ end
 
 def require_login_file_upload_ajax
   file_upload_response 'You are not signed in!' unless signed_in?
-  file_upload_response 'Please contact support.' if banned?
 end
 
 post '/site_files/upload' do
