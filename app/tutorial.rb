@@ -31,7 +31,7 @@ end
 get '/tutorial/:section/:page/?' do
   require_login
   @page = params[:page]
-  not_found if @page.to_i == 0
+  not_found unless @page.match?(/\A[1-9]\z|\A10\z/)
   not_found unless %w{html css js}.include?(params[:section])
 
   @section = params[:section]
