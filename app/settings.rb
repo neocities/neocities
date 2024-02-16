@@ -353,10 +353,12 @@ post '/settings/update_card' do
 
   begin
     customer.sources.create source: params[:stripe_token]
-  rescue Stripe::InvalidRequestError => e
+  rescue Stripe::InvalidRequestError, Stripe::CardError => e
     if  e.message.match /cannot use a.+token more than once/
       flash[:error] = 'Card is already being used.'
       redirect '/settings#billing'
+    elsif e.message.match /Your card was declined/
+      flash[:error] = 'The card was declined. Please contact your bank.'
     else
       raise e
     end
