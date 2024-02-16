@@ -154,7 +154,7 @@ post '/settings/:username/custom_domain' do
 
   begin
     Socket.gethostbyname @site.values[:domain]
-  rescue SocketError => e
+  rescue SocketError, ResolutionError => e
     if e.message =~ /name or service not known/i
       flash[:error] = 'Domain needs to be valid and already registered.'
       redirect "/settings/#{@site.username}#custom_domain"
