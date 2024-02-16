@@ -393,6 +393,7 @@ class Site < Sequel::Model
     if is_following? site
       DB.transaction do
         follow = followings_dataset.filter(site_id: site.id).first
+        return false if follow.nil?
         site.events_dataset.filter(follow_id: follow.id).delete
         follow.delete
         # FIXME This is a being abused somehow. A weekly script now computes this.
