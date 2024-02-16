@@ -524,10 +524,6 @@ class Site < Sequel::Model
     true
   end
 
-  def is_banned?
-    is_banned
-  end
-
   def unban!
     undelete!
     self.is_banned = false

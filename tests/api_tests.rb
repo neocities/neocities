@@ -308,6 +308,18 @@ describe 'api' do
       _(site_file_exists?('test.jpg')).must_equal true
     end
 
+    it 'succeeds with valid user session' do
+      create_site
+      post '/api/upload',
+           {'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg'),
+            'csrf_token' => 'abcd'},
+           {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+
+      _(res[:result]).must_equal 'success'
+      _(last_response.status).must_equal 200
+      _(site_file_exists?('test.jpg')).must_equal true
+    end
+
     it 'fails with bad api key' do
       create_site
       @site.generate_api_key!

@@ -16,8 +16,6 @@ end
 
 def require_login
   redirect '/' unless signed_in? && current_site
-  enforce_ban if banned?
-  signout if deleted?
 end
 
 def signed_in?
@@ -27,30 +25,18 @@ end
 def current_site
   return nil if session[:id].nil?
   @_site ||= Site[id: session[:id]]
+  @_parent_site ||= @_site.parent
+
+  if @_site.is_banned || @_site.is_deleted || (@_parent_site && (@_parent_site.is_banned || @_parent_site.is_deleted))
+    signout
+    redirect '/'
+  end
+
+  @_site
 end
 
 def parent_site
-  return nil if current_site.nil?
-  current_site.parent? ? current_site : current_site.parent
-end
-
-def deleted?
-  return true if current_site && current_site.is_deleted
-  false
-end
-
-def banned?(ip_check=false)
-  #return true if session[:banned]
-  return true if current_site && (current_site.is_banned || parent_site.is_banned)
-
-  return true if ip_check && Site.banned_ip?(request.ip)
-  false
-end
-
-def enforce_ban
-  signout
-  session[:banned] = true
-  redirect '/'
+  @_parent_site || current_site
 end
 
 def meta_robots(newtag=nil)
