@@ -4,7 +4,7 @@ get '/browse/?' do
   @page = params[:page]
   @page = 1 if @page.not_an_integer?
 
-  params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
+  params.delete 'tag' if params[:tag].nil? || !params[:tag].is_a?(String) || params[:tag].strip.empty? || params[:tag].match?(Tag::INVALID_TAG_REGEX)
 
   if is_education?
     ds = education_sites_dataset
