@@ -1753,7 +1753,7 @@ class Site < Sequel::Model
       rescue NoMethodError => e
       else
         if new_title.length < TITLE_MAX
-          self.title = new_title
+          self.title = new_title.force_encoding('UTF-8')
           save_changes validate: false
         end
       end
