@@ -6,4 +6,8 @@ class NilClass
   def blank?
     true
   end
+
+  def not_an_integer?
+    true
+  end
 end

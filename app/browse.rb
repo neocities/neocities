@@ -1,13 +1,8 @@
 get '/browse/?' do
   @surfmode = false
 
-  begin
-    @page = params[:page].to_i
-  rescue
-    @page = 1
-  end
-
-  @page = 1 if @page == 0
+  @page = params[:page]
+  @page = 1 if @page.not_an_integer?
 
   params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
 
@@ -17,7 +12,7 @@ get '/browse/?' do
     ds = browse_sites_dataset
   end
 
-  ds = ds.paginate @page, Site::BROWSE_PAGINATION_LENGTH
+  ds = ds.paginate @page.to_i, Site::BROWSE_PAGINATION_LENGTH
   @pagination_dataset = ds
   @sites = ds.all
 

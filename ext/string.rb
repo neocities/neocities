@@ -16,4 +16,11 @@ class String
     return true if self == ''
     false
   end
+
+  def not_an_integer?
+    Integer(self)
+    false
+  rescue ArgumentError
+    true
+  end
 end

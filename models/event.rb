@@ -50,7 +50,7 @@ class Event < Sequel::Model
 
   def self.global_dataset(current_page=1, limit=DEFAULT_GLOBAL_LIMIT)
     news_feed_default_dataset.
-      paginate(current_page, 100).
+      paginate(current_page.to_i, 100).
       exclude(is_nsfw: true).
       exclude(is_crashing: true).
       where{views > GLOBAL_VIEWS_MINIMUM}.

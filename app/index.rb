@@ -8,8 +8,8 @@ get '/?' do
 
     redirect '/dashboard' if current_site.is_education
 
-    @page = params[:page].to_i
-    @page = 1 if @page == 0
+    @page = params[:page]
+    @page = 1 if @page.not_an_integer?
 
     if params[:activity] == 'mine'
       events_dataset = current_site.latest_events(@page, 10)

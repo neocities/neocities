@@ -17,12 +17,10 @@ get '/site/:username/?' do |username|
   @title = site.title
 
   @page = params[:page]
-  @page = @page.to_i
-  @page = 1 if @page == 0
+  @page = 1 if @page.not_an_integer?
 
   if params[:event_id]
-    not_found if params[:event_id].is_a?(Array)
-    not_found unless params[:event_id].to_i > 0
+    not_found if params[:event_id].not_an_integer?
     event = Event.select(:id).where(id: params[:event_id]).first
     not_found if event.nil?
     events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
@@ -84,7 +82,7 @@ get '/site/:username/stats' do
 
   if @site.supporter?
     unless params[:days].to_s == 'sincethebigbang'
-      if params[:days] && params[:days].to_i != 0
+      unless params[:days].not_an_integer?
         stats_dataset = stats_dataset.limit params[:days]
       else
         params[:days] = @default_stat_points

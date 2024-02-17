@@ -1350,7 +1350,7 @@ class Site < Sequel::Model
     site_id = self.id
     Event.news_feed_default_dataset.where{Sequel.|({site_id: site_id}, {actioning_site_id: site_id})}.
     order(:created_at.desc).
-    paginate(current_page, limit)
+    paginate(current_page.to_i, limit.to_i)
   end
 
   def news_feed(current_page=1, limit=10)
@@ -1359,7 +1359,7 @@ class Site < Sequel::Model
 
     Event.news_feed_default_dataset.where{Sequel.|({site_id: search_ids}, {actioning_site_id: search_ids})}.
     order(:created_at.desc).
-    paginate(current_page, limit)
+    paginate(current_page.to_i, limit.to_i)
   end
 
   def newest_follows
