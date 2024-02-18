@@ -31,7 +31,10 @@ class SiteFile < Sequel::Model
       end
 
       site.site_files_dataset.where(path: /^#{Regexp.quote path}\//, is_directory: false).all.each do |site_file|
-        site_file.destroy
+        begin
+          site_file.destroy
+        rescue Sequel::NoExistingObject
+        end
       end
 
       begin
