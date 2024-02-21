@@ -87,8 +87,7 @@ describe 'site_files' do
       _(dasharezone).wont_equal nil
       _(dasharezone.is_directory).must_equal true
 
-      _(PurgeCacheWorker.jobs.first['args'].last).must_equal 'dirone'
-      _(PurgeCacheWorker.jobs.last['args'].last).must_equal 'dasharezone'
+      # No purge cache is executed because the directory is empty
     end
 
     it 'wont set an empty directory' do
@@ -112,12 +111,14 @@ describe 'site_files' do
         'files[]' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'image/jpeg')
       )
 
+      PurgeCacheWorker.jobs.clear
+
       @site.site_files.select {|s| s.path == 'test'}.first.rename('test2')
       _(@site.site_files.select {|sf| sf.path =~ /test2\/index.html/}.length).must_equal 1
       _(@site.site_files.select {|sf| sf.path =~ /test2\/test.jpg/}.length).must_equal 1
       _(@site.site_files.select {|sf| sf.path =~ /test\/test.jpg/}.length).must_equal 0
 
-      _(PurgeCacheWorker.jobs.collect {|p| p['args'].last}.sort).must_equal ["/test/test.jpg", "/test/index.html", "/test/", "test", "test2", "test/test.jpg", "test2/test.jpg", "test/index.html", "test/", "test2/index.html", "test2/"].sort
+      _(PurgeCacheWorker.jobs.collect {|p| p['args'].last}.sort).must_equal ["/test/", "/test/test.jpg", "/test2/", "/test2/test.jpg",].sort
     end
 
     it 'doesnt wipe out existing file' do
@@ -309,8 +310,7 @@ describe 'site_files' do
 
     it 'purges cache for html file with extension removed' do
       upload 'files[]' => Rack::Test::UploadedFile.new('./tests/files/notindex.html', 'text/html')
-      _(PurgeCacheWorker.jobs.first['args'].last).must_equal '/notindex.html'
-      PurgeCacheWorker.jobs.clear
+      _(PurgeCacheWorker.jobs.length).must_equal 1
       PurgeCacheWorker.new.perform @site.username, '/notindex.html'
       _(PurgeCacheWorker.jobs.first['args'].last).must_equal '/notindex'
     end
@@ -329,25 +329,14 @@ describe 'site_files' do
       _(@site.site_changed).must_equal true
       _(@site.title).must_equal 'Hello?'
 
-      # Purge cache needs to flush / and index.html for either scenario.
-      _(PurgeCacheWorker.jobs.length).must_equal 3
+      _(PurgeCacheWorker.jobs.length).must_equal 1
       first_purge = PurgeCacheWorker.jobs.first
-      surf_purge = PurgeCacheWorker.jobs[1]
-      dirname_purge = PurgeCacheWorker.jobs.last
 
       username, pathname = first_purge['args']
-      _(username).must_equal @site.username
-      _(pathname).must_equal '/index.html'
-
-      _(surf_purge['args'].last).must_equal '/?surf=1'
-
-      username, pathame = nil
-      username, pathname = dirname_purge['args']
       _(username).must_equal @site.username
       _(pathname).must_equal '/'
 
       _(@site.space_used).must_equal @site.actual_space_used
-
       _((@site.space_used > 0)).must_equal true
     end
 

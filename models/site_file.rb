@@ -104,8 +104,6 @@ class SiteFile < Sequel::Model
     DB.transaction do
       self.path = new_path
       self.save_changes
-      site.purge_cache current_path
-      site.purge_cache new_path
 
       if is_directory
         site_files_in_dir = site.site_files.select {|sf| sf.path =~ /^#{current_path}\//}

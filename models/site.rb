@@ -766,18 +766,24 @@ class Site < Sequel::Model
   def purge_cache(path)
     relative_path = path.gsub base_files_path, ''
 
-    # We gotta flush the dirname too if it's an index file.
-    if relative_path != '' && relative_path.match(/\/$|index\.html?$/i)
-      PurgeCacheWorker.perform_async username, relative_path
+    if relative_path[0] != '/'
+      relative_path = '/' + relative_path
+    end
 
+    # We gotta flush the dirname too if it's an index file.
+    if relative_path != '' && relative_path.match(/\/$|\/index\.html?$/i)
       purge_file_path = Pathname(relative_path).dirname.to_s
       purge_file_path = '' if purge_file_path == '.'
       purge_file_path += '/' if purge_file_path != '/'
 
-      PurgeCacheWorker.perform_async username, '/?surf=1' if purge_file_path == '/'
       PurgeCacheWorker.perform_async username, purge_file_path
     else
-      PurgeCacheWorker.perform_async username, relative_path
+      html = relative_path.match(/(.*)\.html?$/)
+      if html
+        PurgeCacheWorker.perform_async username, html.captures.first
+      else
+        PurgeCacheWorker.perform_async username, relative_path
+      end
     end
   end
 

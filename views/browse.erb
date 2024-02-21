@@ -2,10 +2,6 @@
   function getPage(page) {
     document.location.href = '/browse?page='+page+'&'+$('#search_criteria').serialize();
   }
-
-  function surf(page) {
-    document.location.href = '/surf?page='+page+'&'+$('#search_criteria').serialize();
-  }
 </script>
 
 <div class="header-Outro with-columns browse-page">
@@ -80,9 +76,6 @@
         <a href="<%= site.uri %>"
            class="neo-Screen-Shot"
            title="<%= site.title %>"
-           <% if @surfmode %>
-             onclick="surf(<%= ((@page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false"
-           <% end %>
         >
           <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
             <img src="/img/placeholder.png" alt="<%= site.title %>" />
@@ -91,9 +84,6 @@
         <div class="title">
           <a href="<%= site.uri %>"
              title="<%= site.title %>"
-             <% if @surfmode %>
-               onclick="surf(<%= ((@page-1)*Site::BROWSE_PAGINATION_LENGTH)+i+1 %>); return false"
-             <% end %>
           ><%= site.title.shorten(30) %></a>
         </div>
         <div class="site-info">

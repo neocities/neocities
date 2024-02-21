@@ -1,6 +1,4 @@
 get '/browse/?' do
-  @surfmode = false
-
   @page = params[:page]
   @page = 1 if @page.not_an_integer?
 

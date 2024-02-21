@@ -128,4 +128,91 @@ describe Site do
       _(site.suggestions.length).must_equal(Site::SUGGESTIONS_LIMIT - 5)
     end
   end
+
+  describe 'purge_cache' do
+    before do
+      @site = Fabricate :site
+      PurgeCacheWorker.jobs.clear
+    end
+    it 'works for /index.html' do
+      @site.purge_cache '/index.html'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      _(args.last).must_equal '/'
+    end
+
+    it 'works for /dir/index.html' do
+      @site.purge_cache '/dir/index.html'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      _(args.last).must_equal '/dir/'
+    end
+
+    it 'works for /test.html' do
+      @site.purge_cache '/test.html'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      _(args.last).must_equal '/test'
+    end
+
+    it 'works for /newdir/index.html' do
+      @site.purge_cache '/newdir/test.html'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      _(args.last).must_equal '/newdir/test'
+    end
+
+    it 'works for /file.png' do
+      @site.purge_cache '/file.png'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      _(args.last).must_equal '/file.png'
+    end
+
+    it 'works for /testdir/file.png' do
+      @site.purge_cache '/testdir/file.png'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      _(args.last).must_equal '/testdir/file.png'
+    end
+
+    it 'works for /notindex.html' do
+      @site.purge_cache '/notindex.html'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      _(args.last).must_equal '/notindex'
+    end
+
+    it 'works for index.html missing forward slash' do
+      @site.purge_cache 'index.html'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      _(args.last).must_equal '/'
+    end
+
+    it 'works for photo.png missing forward slash' do
+      @site.purge_cache 'photo.png'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      _(args.last).must_equal '/photo.png'
+    end
+
+    it 'works for testdir/photo.png missing forward slash' do
+      @site.purge_cache 'testdir/photo.png'
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      args = PurgeCacheWorker.jobs.first['args']
+      _(args.first).must_equal @site.username
+      binding.pry
+      _(args.last).must_equal '/testdir/photo.png'
+    end
+  end
 end
