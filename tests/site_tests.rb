@@ -211,7 +211,6 @@ describe Site do
       _(PurgeCacheWorker.jobs.length).must_equal 1
       args = PurgeCacheWorker.jobs.first['args']
       _(args.first).must_equal @site.username
-      binding.pry
       _(args.last).must_equal '/testdir/photo.png'
     end
   end
