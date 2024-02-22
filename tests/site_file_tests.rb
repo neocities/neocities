@@ -24,6 +24,20 @@ describe 'site_files' do
     ScreenshotWorker.jobs.clear
   end
 
+  describe 'install' do
+    it 'installs new html file' do
+      post '/site_files/create', {filename: 'test.html', csrf_token: 'abcd'}, {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+      _(last_response.body).must_equal ""
+      _(last_response.status).must_equal 302
+      _(last_response.headers['Location']).must_match /dashboard/
+      testfile = @site.site_files_dataset.where(path: 'test.html').first
+      _(testfile).wont_equal nil
+      _(File.exists?(@site.files_path('test.html'))).must_equal true
+      _(PurgeCacheWorker.jobs.length).must_equal 1
+      _(PurgeCacheWorker.jobs.first['args'].last).must_equal '/test'
+    end
+  end
+
   describe 'rename' do
     before do
       PurgeCacheWorker.jobs.clear

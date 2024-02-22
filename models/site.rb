@@ -850,7 +850,6 @@ class Site < Sequel::Model
     tmpfile.write render_template('index.erb')
     tmpfile.close
     store_files [{filename: path, tempfile: tmpfile}]
-    purge_cache path
     tmpfile.unlink
   end
 

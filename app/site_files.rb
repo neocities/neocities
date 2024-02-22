@@ -14,7 +14,7 @@ post '/site_files/create' do
   require_login
   @errors = []
 
-  filename = params[:pagefilename] || params[:filename]
+  filename = params[:filename]
 
   filename.gsub!(/[^a-zA-Z0-9_\-.]/, '')
 
