@@ -116,6 +116,9 @@ class SiteFile < Sequel::Model
           site.purge_cache site_file.path
           site.purge_cache original_site_file_path
         end
+      else
+        site.purge_cache new_path
+        site.purge_cache current_path
       end
     end
 

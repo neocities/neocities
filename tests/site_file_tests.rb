@@ -29,6 +29,17 @@ describe 'site_files' do
       PurgeCacheWorker.jobs.clear
     end
 
+    it 'works with html file' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/notindex.html', 'text/html')
+      upload 'files[]' => uploaded_file
+      PurgeCacheWorker.jobs.clear
+      testfile = @site.site_files_dataset.where(path: 'notindex.html').first
+      testfile.rename 'notindex2.html'
+      _(PurgeCacheWorker.jobs.length).must_equal 2
+      _(PurgeCacheWorker.jobs.collect {|p| p['args'].last}.sort).must_equal ["/notindex", "/notindex2"]
+    end
+
+
     it 'renames in same path' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
