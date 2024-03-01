@@ -108,9 +108,7 @@ get '/site/:username/stats' do
   end
 
   if stats.length > MAX_STAT_POINTS
-    puts stats.length
     stats = stats.select.with_index {|a, i| (i % (stats.length / MAX_STAT_POINTS.to_f).round) == 0}
-    puts stats.length
   end
 
   @stats[:stat_days] = stats
