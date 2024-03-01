@@ -27,7 +27,7 @@
         <div class="stat tips"><strong><%= site.tips_dataset.count %></strong> <span>tips</span></div>
       </div>
       <div class="actions">
-        <% if current_site == site %>
+        <% if current_site == site && !current_site.tutorial_required %>
           <a href="/dashboard" class="btn-Action edit"><i class="fa fa-edit" title="Edit"></i> Edit Site</a>
         <% end %>
 

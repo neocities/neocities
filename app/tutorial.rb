@@ -38,5 +38,15 @@ get '/tutorial/:section/:page/?' do
 
   @title = "#{params[:section].upcase} Tutorial - #{@page}/10"
 
+
+  if @page == '9'
+    unless csrf_safe?
+      signout
+      redirect '/'
+    end
+    current_site.tutorial_required = false
+    current_site.save_changes validate: false
+  end
+
   erb "tutorial/layout".to_sym
 end

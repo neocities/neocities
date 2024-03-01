@@ -20,7 +20,7 @@
 
     $('#saveToSite').on('click', function() {
       $.ajax({
-        url: '/site_files/save/index.html?csrf_token=<%= Rack::Utils.escape csrf_token %>',
+        url: '/site_files/upload?csrf_token=<%= Rack::Utils.escape csrf_token %>&filename=<%= Rack::Utils.escape 'index.html' %>&site_id=<%= current_site.id %>',
         data: sessionStorage.getItem('tutorialHtml'),
         processData: false,
         contentType: false,
@@ -29,11 +29,7 @@
           alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
         },
         success: function(response){
-          if(response == 'ok') {
-            window.location = '/tutorial/html/10'
-          } else {
-            alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
-          }
+          window.location = '/tutorial/html/10'
         }
       })
 

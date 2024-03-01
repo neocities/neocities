@@ -104,6 +104,10 @@ post '/create' do
       return {result: 'error'}.to_json
     end
 
+    if defined?(BlackBox.tutorial_required?) && BlackBox.tutorial_required?(@site, request)
+      @site.tutorial_required = true
+    end
+
     if !@site.valid?
       flash[:error] = @site.errors.first.last.first
       return {result: 'error'}.to_json

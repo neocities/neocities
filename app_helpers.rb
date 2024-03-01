@@ -16,6 +16,7 @@ end
 
 def require_login
   redirect '/' unless signed_in? && current_site
+  redirect '/tutorial/html/1' if current_site.tutorial_required && !(request.path =~ /tutorial/)
 end
 
 def signed_in?

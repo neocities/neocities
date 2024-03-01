@@ -44,6 +44,6 @@
     }
 
     sessionStorage.setItem('tutorialHtml', html)
-    ok('Great, you did it!', '/tutorial/html/9')
+    ok('Great, you did it!', '/tutorial/html/9?csrf_token=<%= Rack::Utils.escape csrf_token %>')
   }
 </script>
