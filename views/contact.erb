@@ -430,7 +430,8 @@
       <label for="email_subject">Subject</label>
       <input type="text" id="email_subject" name="subject" placeholder="Subject" class="col-50" value="<%= params[:subject] %>">
 
-      <label for="your_comments">Comments</label>
+      <label for="your_comments">Message</label>
+      <small>Being simple but descriptive is helpful. For example, provide the site name, domain, or file path that is causing the issues in question.</small>
       <textarea name="body" id="your_comments" class="col-75" rows="10"><%= params[:body] %></textarea>
 
       <label class="text-Label" for="faq_check">We may not be able to respond to questions that are already answered.<br>Did you check the Frequently Asked Questions to see if it answered your question?</label>
