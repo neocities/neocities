@@ -58,6 +58,11 @@ def browse_sites_dataset
     end
   end
 
+  if current_site.is_admin && params[:sites]
+    ds = ds.where sites__username: params[:sites].split(',')
+    return ds
+  end
+
   case params[:sort_by]
     when 'special_sauce'
       ds = ds.exclude score: nil
