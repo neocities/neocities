@@ -41,15 +41,23 @@ get '/api/list' do
   api_success files: files
 end
 
+def extract_files(params, files = [])
+  params.each do |key, value|
+    # If the value is a Hash and contains a :tempfile key, it's considered an uploaded file.
+    if value.is_a?(Hash) && value.has_key?(:tempfile) && !value[:tempfile].nil?
+      files << {filename: value[:name], tempfile: value[:tempfile]}
+    elsif value.is_a?(Hash) || value.is_a?(Array)
+      # If the value is a Hash or Array, recursively search for more files.
+      extract_files(value, files)
+    end
+  end
+  files
+end
+
 post '/api/upload' do
   require_api_credentials
 
-  files = []
-  params.each do |k,v|
-    next unless v.is_a?(Hash) && v[:tempfile]
-    path = k.to_s
-    files << {filename: k || v[:filename], tempfile: v[:tempfile]}
-  end
+  files = extract_files params
 
   api_error 400, 'missing_files', 'you must provide files to upload' if files.empty?
 

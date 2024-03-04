@@ -308,6 +308,15 @@ describe 'api' do
       _(site_file_exists?('test.jpg')).must_equal true
     end
 
+    it 'succeeds with square bracket in filename' do
+      create_site
+      @site.generate_api_key!
+      header 'Authorization', "Bearer #{@site.api_key}"
+      post '/api/upload', 'te[s]t.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      _(res[:result]).must_equal 'success'
+      _(site_file_exists?('te[s]t.jpg')).must_equal true
+    end
+
     it 'succeeds with valid user session' do
       create_site
       post '/api/upload',

@@ -53,7 +53,6 @@ describe 'site_files' do
       _(PurgeCacheWorker.jobs.collect {|p| p['args'].last}.sort).must_equal ["/notindex", "/notindex2"]
     end
 
-
     it 'renames in same path' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'files[]' => uploaded_file
@@ -431,6 +430,13 @@ describe 'site_files' do
       end
 
       _(@site.site_changed).must_equal false
+    end
+
+    it 'works with square bracket filename' do
+      uploaded_file = Rack::Test::UploadedFile.new('./tests/files/te[s]t.jpg', 'image/jpeg')
+      upload 'files[]' => uploaded_file
+      _(last_response.body).must_match /successfully uploaded/i
+      _(File.exists?(@site.files_path('te[s]t.jpg'))).must_equal true
     end
 
     it 'sets site changed to false if index is empty' do
