@@ -58,7 +58,7 @@ def browse_sites_dataset
     end
   end
 
-  if current_site.is_admin && params[:sites]
+  if current_site && current_site.is_admin && params[:sites]
     ds = ds.where sites__username: params[:sites].split(',')
     return ds
   end
