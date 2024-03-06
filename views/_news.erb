@@ -1,8 +1,3 @@
-<script type="text/javascript">
-  function getPage(currentPage) {
-    document.location.href = '?current_page='+currentPage+'&activity=<%= Rack::Utils.escape(params[:activity]) %>'
-  }
-</script>
 <script src="/js/news/template.js"></script>
 <script src="/js/news/like.js"></script>
 <script src="/js/news/comment.js"></script>
@@ -10,7 +5,7 @@
 <script src="/js/news/event.js"></script>
 <script src="/js/news/site.js"></script>
 
-<% if defined?(site) && !params[:event_id] %>
+<% if defined?(site) && !params[:event_id] && (params[:page].blank? || params[:page] == '1') %>
   <% follow_events = site.newest_follows %>
   <% unless follow_events.empty? %>
     <div class="news-item follow">
