@@ -39,7 +39,7 @@
 	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_space_used.to_space_pretty %>) of your <%= current_site.maximum_space.to_space_pretty %></strong>.
   <br>
   <% unless current_site.is_education || current_site.supporter? %>Need more space? <a href="/supporter">Become a Supporter!</a><% end %></li>
-	<li><strong><%= current_site.views.format_large_number %></strong> views</li>
+	<li><strong><%= current_site.site_files.count.format_large_number %></strong> files</li>
 	</ul>
 	</div>
 
