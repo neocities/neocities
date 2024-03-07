@@ -131,3 +131,15 @@ def hcaptcha_valid?
     false
   end
 end
+
+JS_ESCAPE_MAP = {"\\" => "\\\\", "</" => '<\/', "\r\n" => '\n', "\n" => '\n', "\r" => '\n', '"' => '\\"', "'" => "\\'", "`" => "\\`", "$" => "\\$"}
+
+def escape_javascript(javascript)
+  javascript = javascript.to_s
+  if javascript.empty?
+    result = ""
+  else
+    result = javascript.gsub(/(\\|<\/|\r\n|\342\200\250|\342\200\251|[\n\r"']|[`]|[$])/u, JS_ESCAPE_MAP)
+  end
+  result
+end

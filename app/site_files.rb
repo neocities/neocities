@@ -75,7 +75,9 @@ post '/site_files/create' do
 end
 
 def file_upload_response(error=nil)
-  flash[:error] = error if error
+  if error
+    flash[:error] = error
+  end
 
   if params[:from_button]
     query_string = params[:dir] ? "?"+Rack::Utils.build_query(dir: params[:dir]) : ''
@@ -88,77 +90,6 @@ end
 
 def require_login_file_upload_ajax
   file_upload_response 'You are not signed in!' unless signed_in?
-end
-
-post '/site_files/upload' do
-  if params[:filename]
-    require_login_file_upload_ajax
-    tempfile = Tempfile.new 'neocities_saving_file'
-
-    input = request.body.read
-    tempfile.set_encoding input.encoding
-    tempfile.write input
-    tempfile.close
-
-    params[:files] = [{filename: params[:filename], tempfile: tempfile}]
-  else
-    require_login
-  end
-
-  @errors = []
-
-  if params[:files].nil?
-    file_upload_response "Uploaded files were not seen by the server, cancelled. We don't know what's causing this yet. Please contact us so we can help fix it. Thanks!"
-  end
-
-  # For migration from original design.. some pages out there won't have the site_id param yet for a while.
-  site = params[:site_id].nil? ? current_site : Site[params[:site_id]]
-
-  unless site.owned_by?(current_site)
-    file_upload_response 'You do not have permission to save this file. Did you sign in as a different user?'
-  end
-
-  params[:files].each_with_index do |file,i|
-    dir_name = ''
-    dir_name = params[:dir] if params[:dir]
-
-    unless params[:file_paths].nil? || params[:file_paths].empty? || params[:file_paths].length == 0
-      file_path = params[:file_paths][i]
-      unless file_path.nil?
-        dir_name += '/' + Pathname(file_path).dirname.to_s
-      end
-    end
-
-    file_base_name = site.scrubbed_path file[:filename].force_encoding('UTF-8')
-
-    file[:filename] = "#{dir_name.force_encoding('UTF-8')}/#{file_base_name}"
-
-    if current_site.file_size_too_large? file[:tempfile].size
-      file_upload_response "#{Rack::Utils.escape_html file[:filename]} is too large, upload cancelled."
-    end
-    if !site.okay_to_upload? file
-      file_upload_response %{#{Rack::Utils.escape_html file[:filename]}: file type (or content in file) is only supported by <a href="/supporter">supporter accounts</a>. <a href="/site_files/allowed_types">Why We Do This</a>}
-    end
-    if SiteFile.path_too_long? file[:filename]
-      file_upload_response "#{Rack::Utils.escape_html file[:filename]}: path is too long, upload cancelled."
-    end
-    if SiteFile.name_too_long? file_base_name
-      file_upload_response "#{Rack::Utils.escape_html file[:filename]}: file name is too long, upload cancelled."
-    end
-  end
-
-  uploaded_size = params[:files].collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
-
-  if site.file_size_too_large? uploaded_size
-    file_upload_response "File(s) do not fit in your available free space, upload cancelled."
-  end
-
-  if site.too_many_files? params[:files].length
-    file_upload_response "Your site has exceeded the maximum number of files, please delete some files first."
-  end
-
-  results = site.store_files params[:files]
-  file_upload_response
 end
 
 post '/site_files/delete' do

@@ -61,13 +61,10 @@
 <%== flash_display %>
 
 <div id="filesDisplay" class="files">
-  <script>
-    if(localStorage && localStorage.getItem('viewType') == 'list')
-      $('#filesDisplay').addClass('list-view')
-  </script>
   <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
     <div class="uploading">
         <p>Uploading, please wait...</p>
+        <p id="uploadFileName"></p>
       <div id="progressBar" class="progress-bar" style="display: none"><div id="uploadingProgress" class="progress" style="width: 0%"></div></div>
     </div>
   </div>
@@ -106,7 +103,7 @@
     </div>
   </div>
   <div class="list">
-    <form action="/site_files/upload" class="dropzone" id="uploads">
+    <form action="/site_files/upload" id="dropzone">
       <div class="dz-message" style="display: none"></div>
       <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
       <input name="dir" type="hidden" value="<%= @dir %>">
@@ -227,13 +224,12 @@
 </div>
 </main>
 
-<form id="uploadFilesButtonForm" method="POST" action="/site_files/upload" enctype="multipart/form-data" style="display: none" onsubmit="showUploadProgress()">
+<form id="uploadFilesButtonForm" method="POST" action="/api/upload" enctype="multipart/form-data" style="display: none" onsubmit="event.preventDefault(); showUploadProgress(); uploadFileFromButton();">
   <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
   <input name="from_button" type="hidden" value="true">
-  <input name="dir" type="hidden" value="<%= @dir %>">
-  <input id="uploadFiles" type="file" name="files[]" multiple onchange="$('#uploadFilesButtonForm').submit()">
+  <input name="dir" type="hidden" id="dir" value="<%= @dir %>">
+  <input id="uploadFiles" type="file" name="file" multiple>
 </form>
-
 
 <div class="modal hide fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
   <form method="post" action="/site/create_directory">
@@ -272,148 +268,4 @@
   </form>
 </div>
 
-<script src="/js/dropzone.min.js"></script>
-<script>
-
-  var uploadForm = $('#uploadFilesButtonForm')[0];
-  var deleteForm = $('#deleteFilenameForm')[0];
-
-  function moveFileToFolder(event) {
-    var link = event.dataTransfer.getData("Text");
-    if(link) link = link.trim();
-    if(!link || link.startsWith('https://neocities.org/dashboard')) return;
-    event.preventDefault();
-    var name = link.split('.neocities.org/').slice(1).join('.neocities.org/');
-    var oReq = new XMLHttpRequest();
-    oReq.open("GET", "/site_files/download/" + name, true);
-    oReq.responseType = "arraybuffer";
-    
-    $('#movingOverlay').css('display', 'block')
-
-    oReq.onload = function() {
-      var newFile = new File([oReq.response], name);
-      var dataTransfer = new DataTransfer();
-      var currentFolder = new URL(location.href).searchParams.get('dir');
-      if(!currentFolder) currentFolder = '';
-      else currentFolder = currentFolder + '/';
-
-      dataTransfer.items.add(newFile);
-      $('#uploadFilesButtonForm > input[name="dir"]')[0].value = currentFolder + event.target.parentElement.parentElement.getElementsByClassName('title')[0].innerText.trim();
-      $('#uploadFiles')[0].files = dataTransfer.files;
-      $.ajax({
-        type: uploadForm.method,
-        url: uploadForm.action,
-        data: new FormData(uploadForm),
-        processData: false,
-        contentType: false,
-        success: function() {
-          let csrf = $('#uploadFilesButtonForm > input[name="csrf_token"]')[0].value;
-          var dReq = new XMLHttpRequest();
-          dReq.open(deleteForm.method, deleteForm.action, true);
-          dReq.onload = function() {
-            location.reload()
-          }
-          dReq.setRequestHeader("content-type", 'application/x-www-form-urlencoded');
-          dReq.send("csrf_token=" + encodeURIComponent(csrf) + "&filename=" + name.replace(/\s/g, '+'));
-        },
-        error: function() {
-          location.reload()
-        }
-      });
-    };
-    oReq.send();
-  }
-
-  function confirmFileRename(path) {
-    console.log(path)
-    $('#renamePathInput').val(path);
-    $('#renameNewPathInput').val(path);
-    $('#renameModal').modal();
-  }
-
-  function confirmFileDelete(name) {
-    $('#deleteFileName').text(name);
-    $('#deleteConfirmModal').modal();
-  }
-
-  function fileDelete() {
-    $('#deleteFilenameInput').val($('#deleteFileName').html());
-    $('#deleteFilenameForm').submit();
-  }
-
-  function clickUploadFiles() {
-    $("input[id='uploadFiles']").click()
-  }
-
-  function showUploadProgress() {
-    $('#uploadingOverlay').css('display', 'block')
-  }
-
-  function hideUploadProgress() {
-    $('#progressBar').css('display', 'none')
-    $('#uploadingOverlay').css('display', 'none')
-  }
-
-  allUploadsComplete = false
-
-  Dropzone.options.uploads = {
-    paramName: 'files',
-    maxFilesize: <%= current_site.remaining_space.to_mb %>,
-    clickable: false,
-    addRemoveLinks: false,
-    dictDefaultMessage: '',
-    uploadMultiple: true,
-    init: function() {
-      this.on("completemultiple", function(file) {
-        if(allUploadsComplete == true)
-          location.reload()
-      })
-
-      this.on("error", function(file, errorMessage) {
-        hideUploadProgress()
-        // Guess a directory upload error
-        if(file.status == 'error' && file.name.match(/.+\..+/) == null && errorMessage == 'Server responded with 0 code.') {
-          alert('Recursive directory upload is only supported by the Chrome web browser.')
-        } else {
-          location.href = '/dashboard<%= @dir ? "?dir=#{Rack::Utils.escape @dir}" : "" %>'
-        }
-      })
-
-      this.on("totaluploadprogress", function(progress, totalBytes, totalBytesSent) {
-        if(progress == 100)
-          allUploadsComplete = true
-
-        showUploadProgress()
-        $('#progressBar').css('display', 'block')
-        $('#uploadingProgress').css('width', progress+'%')
-      })
-
-      this.on("sending", function(file) {
-        if(file.fullPath !== undefined)
-          $('#uploads').append('<input type="hidden" name="file_paths[]" value="'+file.fullPath+'">')
-      })
-    }
-  }
-
-  $('#createDir').on('shown', function () {
-    $('#newDirInput').focus();
-  })
-
-  $('#createFile').on('shown', function () {
-    $('#newFileInput').focus();
-  })
-
-  function listView() {
-    if(localStorage)
-      localStorage.setItem('viewType', 'list')
-
-    $('#filesDisplay').addClass('list-view')
-  }
-
-  function iconView() {
-    if(localStorage)
-      localStorage.removeItem('viewType')
-
-    $('#filesDisplay').removeClass('list-view')
-  }
-</script>
+<script src="/js/dashboard.js"><script>
