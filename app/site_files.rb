@@ -177,7 +177,16 @@ get %r{\/site_files\/text_editor\/(.+)} do
   dont_browser_cache
 
   @filename = params[:captures].first
+  redirect '/site_files/text_editor?filename=' + Rack::Utils.escape(@filename)
+end
+
+get '/site_files/text_editor' do
+  require_login
+  dont_browser_cache
+
+  @filename = params[:filename]
   extname = File.extname @filename
+
   @ace_mode = case extname
     when /htm|html/ then 'html'
     when /js/ then 'javascript'

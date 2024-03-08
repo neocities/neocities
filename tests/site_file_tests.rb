@@ -410,7 +410,7 @@ describe 'site_files' do
     it 'fails with unsupported file' do
       upload 'flowercrime.wav' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
 
-      _(JSON.parse(last_response.body)['message']).must_match /please upgrade to a supporter account/i
+      _(JSON.parse(last_response.body)['error_type']).must_equal 'invalid_file_type'
       _(File.exists?(@site.files_path('flowercrime.wav'))).must_equal false
       _(@site.site_changed).must_equal false
     end

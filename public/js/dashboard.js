@@ -11,13 +11,16 @@ function uploadFileFromButton() {
   formData.append('from_button', $(form).find('input[name="from_button"]').val());
   formData.append('dir', dirValue);
 
+  uploadFilesCount = 0
   // Append files with modified filenames
   $.each($('#uploadFiles')[0].files, function(i, file) {
     var modifiedFileName = dirValue + '/' + file.name;
     formData.append(modifiedFileName, file);
+    uploadFilesCount++;
   });
 
-  // Submit the form data using jQuery's AJAX
+  alertClear();
+
   $.ajax({
     url: '/api/upload',
     type: 'POST',
@@ -25,12 +28,15 @@ function uploadFileFromButton() {
     contentType: false, // This is required for FormData
     processData: false, // This is required for FormData
     success: function(data) {
-      console.log('Files successfully uploaded.');
-      location.reload()
+      alertType('success');
+      alertAdd(uploadFilesCount+' files uploaded successfully.');
+      reloadDashboardFiles();
     },
     error: function(xhr, status, error) {
-      console.error('Upload failed: ' + error);
-      location.reload()
+      var responseBody = JSON.parse(xhr.responseText);
+      alertType('error');
+      alertAdd(responseBody.message);
+      reloadDashboardFiles();
     }
   });
 }
@@ -40,125 +46,106 @@ $('#uploadFiles').change(function() {
 });
 
 var uploadForm = $('#uploadFilesButtonForm')[0];
-  var deleteForm = $('#deleteFilenameForm')[0];
+var deleteForm = $('#deleteFilenameForm')[0];
 
-  function moveFileToFolder(event) {
-    var link = event.dataTransfer.getData("Text");
-    if(link) link = link.trim();
-    if(!link || link.startsWith('https://neocities.org/dashboard')) return;
-    event.preventDefault();
-    var name = link.split('.neocities.org/').slice(1).join('.neocities.org/');
-    var oReq = new XMLHttpRequest();
-    oReq.open("GET", "/site_files/download/" + name, true);
-    oReq.responseType = "arraybuffer";
-    
-    $('#movingOverlay').css('display', 'block')
+function moveFileToFolder(event) {
+  var link = event.dataTransfer.getData("Text");
+  if(link) link = link.trim();
+  if(!link || link.startsWith('https://neocities.org/dashboard')) return;
+  event.preventDefault();
+  var name = link.split('.neocities.org/').slice(1).join('.neocities.org/');
+  var oReq = new XMLHttpRequest();
+  oReq.open("GET", "/site_files/download/" + name, true);
+  oReq.responseType = "arraybuffer";
 
-    oReq.onload = function() {
-      var newFile = new File([oReq.response], name);
-      var dataTransfer = new DataTransfer();
-      var currentFolder = new URL(location.href).searchParams.get('dir');
-      if(!currentFolder) currentFolder = '';
-      else currentFolder = currentFolder + '/';
+  $('#movingOverlay').css('display', 'block')
 
-      dataTransfer.items.add(newFile);
-      $('#uploadFilesButtonForm > input[name="dir"]')[0].value = currentFolder + event.target.parentElement.parentElement.getElementsByClassName('title')[0].innerText.trim();
-      $('#uploadFiles')[0].files = dataTransfer.files;
-      $.ajax({
-        type: uploadForm.method,
-        url: uploadForm.action,
-        data: new FormData(uploadForm),
-        processData: false,
-        contentType: false,
-        success: function() {
-          let csrf = $('#uploadFilesButtonForm > input[name="csrf_token"]')[0].value;
-          var dReq = new XMLHttpRequest();
-          dReq.open(deleteForm.method, deleteForm.action, true);
-          dReq.onload = function() {
-            location.reload()
-          }
-          dReq.setRequestHeader("content-type", 'application/x-www-form-urlencoded');
-          dReq.send("csrf_token=" + encodeURIComponent(csrf) + "&filename=" + name.replace(/\s/g, '+'));
-        },
-        error: function() {
+  oReq.onload = function() {
+    var newFile = new File([oReq.response], name);
+    var dataTransfer = new DataTransfer();
+    var currentFolder = new URL(location.href).searchParams.get('dir');
+    if(!currentFolder) currentFolder = '';
+    else currentFolder = currentFolder + '/';
+
+    dataTransfer.items.add(newFile);
+    $('#uploadFilesButtonForm > input[name="dir"]')[0].value = currentFolder + event.target.parentElement.parentElement.getElementsByClassName('title')[0].innerText.trim();
+    $('#uploadFiles')[0].files = dataTransfer.files;
+    $.ajax({
+      type: uploadForm.method,
+      url: uploadForm.action,
+      data: new FormData(uploadForm),
+      processData: false,
+      contentType: false,
+      success: function() {
+        let csrf = $('#uploadFilesButtonForm > input[name="csrf_token"]')[0].value;
+        var dReq = new XMLHttpRequest();
+        dReq.open(deleteForm.method, deleteForm.action, true);
+        dReq.onload = function() {
           location.reload()
         }
-      });
-    };
-    oReq.send();
-  }
+        dReq.setRequestHeader("content-type", 'application/x-www-form-urlencoded');
+        dReq.send("csrf_token=" + encodeURIComponent(csrf) + "&filename=" + name.replace(/\s/g, '+'));
+      },
+      error: function() {
+        location.reload()
+      }
+    });
+  };
+  oReq.send();
+}
 
-  function confirmFileRename(path) {
-    console.log(path)
-    $('#renamePathInput').val(path);
-    $('#renameNewPathInput').val(path);
-    $('#renameModal').modal();
-  }
+function confirmFileRename(path) {
+  $('#renamePathInput').val(path);
+  $('#renameNewPathInput').val(path);
+  $('#renameModal').modal();
+}
 
-  function confirmFileDelete(name) {
-    $('#deleteFileName').text(name);
-    $('#deleteConfirmModal').modal();
-  }
+function confirmFileDelete(name) {
+  $('#deleteFileName').text(name);
+  $('#deleteConfirmModal').modal();
+}
 
-  function fileDelete() {
-    $('#deleteFilenameInput').val($('#deleteFileName').html());
-    $('#deleteFilenameForm').submit();
-  }
+function fileDelete() {
+  $('#deleteFilenameInput').val($('#deleteFileName').html());
+  $('#deleteFilenameForm').submit();
+}
 
-  function clickUploadFiles() {
-    $("input[id='uploadFiles']").click()
-  }
+function clickUploadFiles() {
+  $("input[id='uploadFiles']").click()
+}
 
-  function showUploadProgress() {
-    $('#uploadingOverlay').css('display', 'block')
-  }
+function showUploadProgress() {
+  $('#uploadingOverlay').css('display', 'block')
+}
 
-  function hideUploadProgress() {
-    $('#progressBar').css('display', 'none')
-    $('#uploadingOverlay').css('display', 'none')
-  }
+function hideUploadProgress() {
+  $('#progressBar').css('display', 'none')
+  $('#uploadingOverlay').css('display', 'none')
+}
 
+allUploadsComplete = false
 
-/*
-      this.on("totaluploadprogress", function(progress, totalBytes, totalBytesSent) {
-        if(progress == 100)
-          allUploadsComplete = true
+$('#createDir').on('shown', function () {
+  $('#newDirInput').focus();
+})
 
-        showUploadProgress()
-        $('#progressBar').css('display', 'block')
-        $('#uploadingProgress').css('width', progress+'%')
-      })
-*/
+$('#createFile').on('shown', function () {
+  $('#newFileInput').focus();
+})
 
-  allUploadsComplete = false
+function listView() {
+  if(localStorage)
+    localStorage.setItem('viewType', 'list')
 
-  $('#createDir').on('shown', function () {
-    $('#newDirInput').focus();
-  })
+  $('#filesDisplay').addClass('list-view')
+}
 
-  $('#createFile').on('shown', function () {
-    $('#newFileInput').focus();
-  })
+function iconView() {
+  if(localStorage)
+    localStorage.removeItem('viewType')
 
-  function listView() {
-    if(localStorage)
-      localStorage.setItem('viewType', 'list')
-
-    $('#filesDisplay').addClass('list-view')
-  }
-
-  function iconView() {
-    if(localStorage)
-      localStorage.removeItem('viewType')
-
-    $('#filesDisplay').removeClass('list-view')
-  }
-
-
-
-
-
-
+  $('#filesDisplay').removeClass('list-view')
+}
 
 // Drop handler function to get all files
 async function getAllFileEntries(dataTransferItemList) {
@@ -210,8 +197,21 @@ async function uploadFile(file, dir, additionalFormData) {
     formData.append(key, value);
   }
 
-  // Append the file to the FormData, using the file name as key
-  var modifiedFileName = dir + '/' + file.webkitRelativePath || file.name;
+  var modifiedFileName;
+
+  if (file.webkitRelativePath === '') {
+    modifiedFileName = file.name;
+  } else {
+    modifiedFileName = file.webkitRelativePath;
+  }
+
+  if (dir && dir !== '/') {
+    modifiedFileName = dir.replace(/^\//, '') + '/' + modifiedFileName;
+  }
+
+  modifiedFileName = modifiedFileName.replace(/^\//, '');
+
+  console.log('modifiedFileName: '+modifiedFileName)
   formData.append(modifiedFileName, file, modifiedFileName);
 
   $('#uploadFileName').text(modifiedFileName).prepend('<i class="icon-file"></i> ');
@@ -223,9 +223,17 @@ async function uploadFile(file, dir, additionalFormData) {
       body: formData,
     });
     const result = await response.json();
-    console.log('Upload successful for', file.name, result);
+
+    if (result.result == 'error') {
+      fileUploadErrorCount++;
+      if(fileUploadErrorCount == 1) {
+        alertType('error');
+      }
+      alertAdd(result.message);
+    } else {
+      fileUploadSuccessCount++;
+    }
   } catch (err) {
-    console.error('Upload error for', file.name, err);
   }
 }
 
@@ -238,6 +246,8 @@ async function processEntry(entry, dir, additionalFormData) {
 }
 
 async function uploadFiles(fileEntries) {
+  alertClear();
+
   // Collect additional form data
   const form = document.getElementById('dropzone');
   let additionalFormData = {};
@@ -254,6 +264,8 @@ async function uploadFiles(fileEntries) {
   $('#progressBar').css('display', 'block')
 
   fileUploadCount = 0
+  fileUploadErrorCount = 0
+  fileUploadSuccessCount = 0
 
   for (let entry of fileEntries) {
     await processEntry(entry, dir, additionalFormData);
@@ -263,18 +275,57 @@ async function uploadFiles(fileEntries) {
   }
 
   allUploadsComplete = true
-  location.reload();
+
+  if(fileUploadErrorCount > 0) {
+    alertAdd(fileUploadSuccessCount+'/'+fileUploadCount+' files uploaded successfully.');
+  } else {
+    alertType('success')
+    alertAdd(fileUploadSuccessCount+' files uploaded successfully.');
+  }
+
+  reloadDashboardFiles();
 }
 
-var elDrop = document.getElementById('dropzone');
+function reInitDashboardFiles() {
+  var elDrop = document.getElementById('dropzone');
 
-elDrop.addEventListener('dragover', function (event) {
-  event.preventDefault();
-});
+  elDrop.addEventListener('dragover', function (event) {
+    event.preventDefault();
+  });
+  
+  elDrop.addEventListener('drop', async function (event) {
+    event.preventDefault();
+    showUploadProgress();
+    let items = await getAllFileEntries(event.dataTransfer.items);
+    await uploadFiles(items);
+  });
+}
 
-elDrop.addEventListener('drop', async function (event) {
-  event.preventDefault();
-  showUploadProgress();
-  let items = await getAllFileEntries(event.dataTransfer.items);
-  await uploadFiles(items);
-});
+function reloadDashboardFiles() {
+  $.get('/dashboard/files?dir='+encodeURIComponent($("#dir").val()), function(data) {
+    $('#filesDisplay').html(data);
+    reInitDashboardFiles();
+  });
+}
+
+function alertAdd(text) {
+  var a = $('#alertDialogue');
+  a.css('display', 'block');
+  a.append(text+'<br>');
+}
+
+function alertClear(){
+  var a = $('#alertDialogue');
+  a.css('display', 'none');
+  a.text('');
+}
+
+function alertType(type){
+  var a = $('#alertDialogue');
+  a.removeClass('alert-success');
+  a.removeClass('alert-error');
+  a.addClass('alert-'+type);
+}
+
+// for first time load
+reInitDashboardFiles();
