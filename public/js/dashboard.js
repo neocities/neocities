@@ -123,8 +123,6 @@ function hideUploadProgress() {
   $('#uploadingOverlay').css('display', 'none')
 }
 
-allUploadsComplete = false
-
 $('#createDir').on('shown', function () {
   $('#newDirInput').focus();
 })
@@ -147,167 +145,6 @@ function iconView() {
   $('#filesDisplay').removeClass('list-view')
 }
 
-// Drop handler function to get all files
-async function getAllFileEntries(dataTransferItemList) {
-  let fileEntries = [];
-  // Use BFS to traverse entire directory/file structure
-  let queue = [];
-  for (let i = 0; i < dataTransferItemList.length; i++) {
-    queue.push(dataTransferItemList[i].webkitGetAsEntry());
-  }
-  while (queue.length > 0) {
-    let entry = queue.shift();
-    if (entry.isFile) {
-      fileEntries.push(entry);
-    } else if (entry.isDirectory) {
-      let reader = entry.createReader();
-      queue.push(...await readAllDirectoryEntries(reader));
-    }
-  }
-  return fileEntries;
-}
-
-// Get all the entries (files or sub-directories) in a directory
-async function readAllDirectoryEntries(directoryReader) {
-  let entries = [];
-  let readEntries = await readEntriesPromise(directoryReader);
-  while (readEntries.length > 0) {
-    entries.push(...readEntries);
-    readEntries = await readEntriesPromise(directoryReader);
-  }
-  return entries;
-}
-
-// Wrap readEntries in a promise
-async function readEntriesPromise(directoryReader) {
-  try {
-    return await new Promise((resolve, reject) => {
-      directoryReader.readEntries(resolve, reject);
-    });
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function uploadFile(file, dir, additionalFormData) {
-  const formData = new FormData();
-
-  // Append additional form data (from other input fields) to each file's FormData
-  for (const [key, value] of Object.entries(additionalFormData)) {
-    formData.append(key, value);
-  }
-
-  var modifiedFileName;
-
-  if (file.webkitRelativePath === '') {
-    modifiedFileName = file.name;
-  } else {
-    modifiedFileName = file.webkitRelativePath;
-  }
-
-  if (dir && dir !== '/') {
-    modifiedFileName = dir.replace(/^\//, '') + '/' + modifiedFileName;
-  }
-
-  modifiedFileName = modifiedFileName.replace(/^\//, '');
-
-  console.log('modifiedFileName: '+modifiedFileName)
-  formData.append(modifiedFileName, file, modifiedFileName);
-
-  $('#uploadFileName').text(modifiedFileName).prepend('<i class="icon-file"></i> ');
-
-  // Send the FormData with the file and additional data
-  try {
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
-    const result = await response.json();
-
-    if (result.result == 'error') {
-      fileUploadErrorCount++;
-      if(fileUploadErrorCount == 1) {
-        alertType('error');
-      }
-      alertAdd(result.message);
-    } else {
-      fileUploadSuccessCount++;
-    }
-  } catch (err) {
-  }
-}
-
-async function processEntry(entry, dir, additionalFormData) {
-  await new Promise((resolve) => {
-    entry.file((file) => {
-      uploadFile(file, dir, additionalFormData).then(resolve);
-    });
-  });
-}
-
-async function uploadFiles(fileEntries) {
-  alertClear();
-
-  // Collect additional form data
-  const form = document.getElementById('dropzone');
-  let additionalFormData = {};
-  for (let i = 0; i < form.elements.length; i++) {
-    const input = form.elements[i];
-    if (input.name && input.type !== "file") { // Avoid file inputs
-      additionalFormData[input.name] = input.value;
-    }
-  }
-  
-  const dir = additionalFormData['dir'] || '';
-
-  var totalFiles = fileEntries.length;
-  $('#progressBar').css('display', 'block')
-
-  fileUploadCount = 0
-  fileUploadErrorCount = 0
-  fileUploadSuccessCount = 0
-
-  for (let entry of fileEntries) {
-    await processEntry(entry, dir, additionalFormData);
-    fileUploadCount++;
-    var progress = (fileUploadCount / totalFiles) * 100;
-    $('#uploadingProgress').css('width', progress+'%');
-  }
-
-  allUploadsComplete = true
-
-  if(fileUploadErrorCount > 0) {
-    alertAdd(fileUploadSuccessCount+'/'+fileUploadCount+' files uploaded successfully.');
-  } else {
-    alertType('success')
-    alertAdd(fileUploadSuccessCount+' files uploaded successfully.');
-  }
-
-  reloadDashboardFiles();
-}
-
-function reInitDashboardFiles() {
-  var elDrop = document.getElementById('dropzone');
-
-  elDrop.addEventListener('dragover', function (event) {
-    event.preventDefault();
-  });
-  
-  elDrop.addEventListener('drop', async function (event) {
-    event.preventDefault();
-    showUploadProgress();
-    let items = await getAllFileEntries(event.dataTransfer.items);
-    await uploadFiles(items);
-  });
-}
-
-function reloadDashboardFiles() {
-  $.get('/dashboard/files?dir='+encodeURIComponent($("#dir").val()), function(data) {
-    $('#filesDisplay').html(data);
-    reInitDashboardFiles();
-  });
-}
-
 function alertAdd(text) {
   var a = $('#alertDialogue');
   a.css('display', 'block');
@@ -327,5 +164,86 @@ function alertType(type){
   a.addClass('alert-'+type);
 }
 
+var processedFiles = 0;
+var uploadedFiles = 0;
+var uploadedFileErrors = 0;
+
+function joinPaths(...paths) {
+  return paths
+    .map(path => path.replace(/(^\/|\/$)/g, ''))
+    .filter(path => path !== '')
+    .join('/');
+}
+
+function reInitDashboardFiles() {
+  new Dropzone("#uploads", {
+    url: "/api/upload",
+    paramName: 'file',
+    dictDefaultMessage: "",
+    uploadMultiple: false,
+    parallelUploads: 1,
+    maxFilesize: 104857600, // 100MB
+    clickable: false,
+
+    init: function() {
+      this.on("processing", function(file) {
+        var dir = $('#uploads input[name="dir"]').val();
+        if(file.fullPath) {
+          this.options.paramName = joinPaths(dir,file.fullPath);
+        } else {
+          this.options.paramName = joinPaths(dir, file.name);
+        }
+
+        processedFiles++;
+        $('#uploadFileName').text(this.options.paramName).prepend('<i class="icon-file"></i> ');
+      });
+
+      this.on("success", function(file) {
+        uploadedFiles++;
+      });
+
+      this.on("error", function(file, message) {
+        uploadedFiles++;
+        uploadedFileErrors++;
+        alertType('error');
+        if (message && message.message) {
+          alertAdd(message.message);
+        } else {
+          alertAdd(this.options.paramName+' failed to upload');
+        }
+      });
+
+      this.on("queuecomplete", function() {
+        hideUploadProgress();
+        if(uploadedFileErrors > 0) {
+          alertType('error');
+          alertAdd(uploadedFiles-uploadedFileErrors+'/'+uploadedFiles+' files uploaded successfully');
+        } else {
+          alertType('success');
+          alertAdd(uploadedFiles+' files uploaded successfully');
+        }
+        reloadDashboardFiles();
+      });
+
+      this.on("addedfiles", function(files) {
+        uploadedFiles = 0;
+        uploadedFileErrors = 0;
+        alertClear();
+        showUploadProgress();
+      });
+    }
+  });
+}
+
+function reloadDashboardFiles() {
+  $.get('/dashboard/files?dir='+encodeURIComponent($("#dir").val()), function(data) {
+    $('#filesDisplay').html(data);
+    reInitDashboardFiles();
+  });
+}
+
 // for first time load
 reInitDashboardFiles();
+
+
+

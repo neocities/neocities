@@ -74,7 +74,6 @@ def extract_files(params, files = [])
   files
 end
 
-
 post '/api/upload' do
   require_api_credentials
   files = extract_files params
