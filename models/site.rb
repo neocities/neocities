@@ -84,7 +84,7 @@ class Site < Sequel::Model
   SCREENSHOT_RESOLUTIONS   = ['540x405', '210x158', '100x100', '50x50']
   THUMBNAIL_RESOLUTIONS    = ['210x158']
 
-  MAX_FILE_SIZE = 10**8 # 100 MB
+  MAX_FILE_SIZE = 10**8 # 100 MB, change dashboard.js dropzone file size limit if you change this
 
   CLAMAV_THREAT_MATCHES = [
     /^VBS/,

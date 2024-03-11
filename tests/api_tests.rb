@@ -308,6 +308,18 @@ describe 'api' do
       _(site_file_exists?('test.jpg')).must_equal true
     end
 
+    it 'fails api_key auth unless controls site' do
+      create_site
+      @site.generate_api_key!
+      @other_site = Fabricate :site
+      header 'Authorization', "Bearer #{@site.api_key}"
+      post '/api/upload', 'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg'), 'username' => @other_site.username
+
+      _(res[:result]).must_equal 'error'
+      _(@other_site.site_files.select {|s| s.path == 'test.jpg'}).must_equal []
+      _(res[:error_type]).must_equal 'site_not_allowed'
+    end
+
     it 'succeeds with square bracket in filename' do
       create_site
       @site.generate_api_key!
@@ -327,6 +339,34 @@ describe 'api' do
       _(res[:result]).must_equal 'success'
       _(last_response.status).must_equal 200
       _(site_file_exists?('test.jpg')).must_equal true
+    end
+
+    it 'succeeds with valid user session controlled site' do
+      create_site
+      @other_site = Fabricate :site, parent_site_id: @site.id
+      post '/api/upload',
+           {'test.jpg'     => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg'),
+            'csrf_token'   => 'abcd',
+            'username'     => @other_site.username},
+           {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+
+      _(res[:result]).must_equal 'success'
+      _(last_response.status).must_equal 200
+      _(@other_site.site_files.select {|sf| sf.path == 'test.jpg'}.length).must_equal 1
+    end
+
+    it 'fails session upload unless controls site' do
+      create_site
+      @other_site = Fabricate :site
+      post '/api/upload', {
+        'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg'),
+        'username' => @other_site.username,
+        'csrf_token' => 'abcd'},
+        {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+
+      _(res[:result]).must_equal 'error'
+      _(@other_site.site_files.select {|s| s.path == 'test.jpg'}).must_equal []
+      _(res[:error_type]).must_equal 'site_not_allowed'
     end
 
     it 'fails with bad api key' do

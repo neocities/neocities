@@ -1,0 +1,173 @@
+<script src="/js/dropzone-min.js"></script>
+<style>
+  .dz-default {
+    display: none;
+  }
+  .dz-preview {
+    display: none;
+  }
+  .dz-processing {
+    display: none;
+  }
+  .dz-error {
+    display: none;
+  }
+  .dz-image-preview {
+    display: none;
+  }
+</style>
+<div class="header-Outro with-site-image dashboard">
+  <div class="row content wide">
+    <div class="col col-50 signup-Area">
+      <div class="signup-Form">
+  	  <fieldset class="content">
+        <a href="<%= current_site.uri %>" class="screenshot dashboard" style="background-image:url(<%= current_site.screenshot_url('index.html', '540x405') %>);"></a>
+	    </fieldset>
+      </div>
+    </div>
+
+	<div class="col col-50">
+    <h2 class="eps"><%= current_site.title %></h2>
+    <p class="site-url">
+      <a href="<%= current_site.uri %>" target="_blank"><%= current_site.host %></a>
+      <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'><i class="fa fa-share-alt"></i> <span>Share</span></a>
+    </p>
+	<ul>
+<% if current_site.site_updated_at %>
+	<li>Last updated <%= current_site.site_updated_at.ago.downcase %></li>
+<% end %>
+	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_space_used.to_space_pretty %>) of your <%= current_site.maximum_space.to_space_pretty %></strong>.
+  <br>
+  <% unless current_site.is_education || current_site.supporter? %>Need more space? <a href="/supporter">Become a Supporter!</a><% end %></li>
+	<li><strong><%= current_site.views.format_large_number %></strong> views</li>
+	</ul>
+	</div>
+
+  </div> <!-- end .row -->
+</div> <!-- end .header-Outro -->
+
+<main class="content-Base" role="main">
+
+<div class="content wide">
+
+<% unless current_site.changed_count >= 1 %>
+<div class="welcome">
+  <!-- <div class="close-button"></div> -->
+  <h4>Hello! Welcome to your new site.</h4>
+  To get started, click on the <strong>index.html</strong> file below to edit your home page. Once you make changes your website will begin appearing in our <a href="/browse">website gallery</a>. You can add more files (such as images) by dragging them from your computer into the box below. Need help building web sites? Try our <a href="/tutorial/html/">HTML tutorial</a>!
+</div>
+<% end %>
+
+<% if flash.keys.length > 0 %>
+  <div id="alertDialogue" class="alert alert-block alert-<%= flash.keys.first %>" style="display: block; max-height: 200px; overflow-y: auto;">
+    <% flash.keys.select {|k| [:success, :error, :errors].include?(k)}.each do |key| %>
+      <%== flash[key] %>
+    <% end %>
+  </div>
+<% else %>
+  <div id="alertDialogue" class="alert alert-block alert-<%= flash.keys.first || 'success' %>" style="display: none; max-height: 200px; overflow-y: auto;"></div>
+<% end %>
+
+<div id="filesDisplay" class="files">
+  <%== erb :'dashboard/files' %>
+</div>
+
+      <form method="POST" action="/site_files/delete" id="deleteFilenameForm">
+        <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+        <input type="hidden" id="deleteFilenameInput" name="filename">
+      </form>
+
+      <div class="modal hide fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+          <h3 id="deleteConfirmModalLabel">Confirm deletion</h3>
+        </div>
+        <div class="modal-body">
+          <p>You are about to delete <strong><span id="deleteFileName"></span></strong>. Are you sure?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn cancel" data-dismiss="modal" aria-hidden="true" type="button">Cancel</button>
+          <button class="btn-Action btn-danger" type="button" onclick="fileDelete()"><i class="fa fa-trash" title="Delete"></i>Delete</button>
+        </div>
+      </div>
+
+      <div class="modal hide fade" id="renameModal" tabindex="-1" role="dialog" aria-labelledby="renameModalLabel" aria-hidden="true">
+        <form method="post" action="/site_files/rename">
+          <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+          <input type="hidden" value="<%= @dir %>" name="dir">
+          <input type="hidden" id="renamePathInput" name="path">
+
+          <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h3 id="renameModalLabel">Rename / Move</h3>
+          </div>
+          <div class="modal-body">
+            <input id="renameNewPathInput" name="new_path" type="text" style="width: 100%">
+            <p>Note: We will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button type="submit" class="btn-Action">Rename</button>
+          </div>
+        </form>
+      </div>
+
+
+<div class="site-actions" style="margin-bottom:25px">
+  <% if !current_site.plan_feature(:no_file_restrictions) %>
+    <a href="/site_files/allowed_types">Allowed file types</a> |
+  <% end %>
+    <a href="/site_files/download">Download entire site</a> |
+  <% unless is_education? %>
+    <a href="/site_files/mount_info">Mount your site as a drive on your computer</a>
+  <% end %>
+</div>
+
+</div>
+</main>
+
+<form id="uploadFilesButtonForm" method="POST" action="/api/upload" enctype="multipart/form-data" style="display: none" onsubmit="event.preventDefault(); showUploadProgress(); uploadFileFromButton();">
+  <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+  <input name="from_button" type="hidden" value="true">
+  <input name="dir" type="hidden" id="dir" value="<%= @dir %>">
+  <input id="uploadFiles" type="file" name="file" multiple>
+</form>
+
+<div class="modal hide fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
+  <form method="post" action="/site/create_directory">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <input type="hidden" value="<%= @dir %>" name="dir">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+      <h3 id="createDirLabel">Create Folder</h3>
+    </div>
+    <div class="modal-body">
+      <input id="newDirInput" name="name" type="text" placeholder="folder_name">
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn-Action">Create</button>
+    </div>
+  </form>
+</div>
+
+<div class="modal hide fade" id="createFile" tabindex="-1" role="dialog" aria-labelledby="createFileLabel" aria-hidden="true">
+  <form method="post" action="/site_files/create">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <input type="hidden" value="<%= @dir %>" name="dir">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+      <h3 id="createFileLabel">Create New File</h3>
+    </div>
+    <div class="modal-body">
+      <input id="newFileInput" name="filename" type="text" placeholder="newfile.html">
+      <p>Note: We will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn-Action">Create</button>
+    </div>
+  </form>
+</div>
+
+<script src="/js/dashboard.js"><script>

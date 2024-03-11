@@ -132,17 +132,31 @@
   function saveTextFile(quit) {
     if(unsavedChanges == false)
       return
+
+    var formData = new FormData();
+    var fileContent = new Blob([editor.getValue()], { type: 'text/html' });
+    formData.append('<%= escape_javascript @filename %>', fileContent, '<%= escape_javascript @filename %>');
+    formData.append('csrf_token', '<%= escape_javascript csrf_token %>');
+    formData.append('username', '<%= escape_javascript current_site.username %>');
+
     $.ajax({
-      url: "/site_files/upload?csrf_token=<%= Rack::Utils.escape csrf_token %>&filename=<%= Rack::Utils.escape @filename %>&site_id=<%= current_site.id %>",
-      data: editor.getValue(),
+      url: '/api/upload',
+      data: formData,
       processData: false,
       contentType: false,
       type: 'POST',
       error: function(jqXHR, textStatus, errorThrown) {
         var errorMessage = 'There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!'
 
-        if(jqXHR.responseText)
-          errorMessage += ' ERROR MESSAGE: '+jqXHR.responseText
+        if(jqXHR.responseText) {
+          try {
+            // Attempt to parse the JSON responseText to get the error message
+            var parsedResponse = JSON.parse(jqXHR.responseText);
+            errorMessage += ' ERROR MESSAGE: ' + parsedResponse.message;
+          } catch (error) {
+          }
+        }
+
 
         $('#saveButton').tooltip('show')
         $('#editorUpdates span').text(errorMessage)
