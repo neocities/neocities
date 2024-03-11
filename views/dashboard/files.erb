@@ -2,7 +2,7 @@
   <div class="uploading">
       <p>Uploading, please wait...</p>
       <p id="uploadFileName"></p>
-    <div id="progressBar" class="progress-bar" style="display: none"><div id="uploadingProgress" class="progress" style="width: 0%"></div></div>
+    <!-- <div id="progressBar" class="progress-bar" style="display: none"><div id="uploadingProgress" class="progress" style="width: 0%"></div></div> -->
   </div>
 </div>
 <div id="movingOverlay" class="uploading-overlay" style="display: none">
@@ -36,14 +36,14 @@
   <div class="actions">
     <a href="#createFile" class="btn-Action" data-toggle="modal"><i class="fa fa-file"></i> New File</a>
     <a href="#createDir" class="btn-Action" data-toggle="modal"><i class="fa fa-folder"></i> New Folder</a>
-    <a href="#" class="btn-Action" onclick="clickUploadFiles(); return false"><i class="fa fa-arrow-circle-up"></i> Upload</a>
+    <a href="#" id="uploadButton" class="btn-Action"><i class="fa fa-arrow-circle-up"></i> Upload</a>
   </div>
 </div>
 <div class="list">
   <form action="/site_files/upload" class="dropzone" id="uploads">
     <div class="dz-message" style="display: none"></div>
     <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
-    <input name="dir" type="hidden" value="<%= @dir %>">
+    <input name="dir" type="hidden" value="<%= @dir %>" id="dir">
     <div class="upload-Boundary with-instruction">
       <% @file_list.each do |file| %>
         <div class="file filehover">
