@@ -141,6 +141,7 @@ class Site < Sequel::Model
   EMAIL_VALIDATION_CUTOFF_DATE = Time.parse('May 16, 2016')
   DISPOSABLE_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_blacklist.conf')
   BANNED_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'banned_email_blacklist.conf')
+  DISPOSABLE_EMAIL_WHITELIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_whitelist.conf')
 
   BLOCK_JERK_PERCENTAGE = 30
   BLOCK_JERK_THRESHOLD = 25
@@ -663,6 +664,10 @@ class Site < Sequel::Model
     !username.empty? && username.match(/^[a-zA-Z0-9][a-zA-Z0-9_\-]+[a-zA-Z0-9]$/i)
   end
 
+  def self.disposable_email_domains_whitelist
+    File.readlines(DISPOSABLE_EMAIL_WHITELIST_PATH).collect {|d| d.strip}
+  end
+
   def self.disposable_email_domains
     File.readlines(DISPOSABLE_EMAIL_BLACKLIST_PATH).collect {|d| d.strip}
   end
@@ -672,6 +677,9 @@ class Site < Sequel::Model
   end
 
   def self.disposable_mx_record?(email)
+    return false unless File.exist?(DISPOSABLE_EMAIL_BLACKLIST_PATH)
+    return false unless File.exist?(DISPOSABLE_EMAIL_WHITELIST_PATH)
+
     email_domain = email.match(/@(.+)/).captures.first
 
     begin
@@ -682,15 +690,21 @@ class Site < Sequel::Model
       return false
     end
 
+    return false if disposable_email_domains_whitelist.include? email_root_domain
     return true if disposable_email_domains.include? email_root_domain
     false
   end
 
   def self.disposable_email?(email)
     return false unless File.exist?(DISPOSABLE_EMAIL_BLACKLIST_PATH)
+    return false unless File.exist?(DISPOSABLE_EMAIL_WHITELIST_PATH)
     return false if email.blank?
 
     email.strip!
+
+    disposable_email_domains_whitelist.each do |whitelisted_disposable_email_domain|
+      return false if email.match /@#{whitelisted_disposable_email_domain}$/i
+    end
 
     disposable_email_domains.each do |disposable_email_domain|
       return true if email.match /@#{disposable_email_domain}$/i
