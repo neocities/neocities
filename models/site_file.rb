@@ -81,7 +81,12 @@ class SiteFile < Sequel::Model
       return false, "#{is_directory ? 'directory' : 'file'} already exists"
     end
 
-    unless is_directory
+    if is_directory
+      if new_path.match(/\.html?$/)
+        return false, 'directory name cannot end with .htm or .html'
+      end
+
+    else # a file
       mime_type = Magic.guess_file_mime_type site.files_path(self.path)
       extname = File.extname new_path
 

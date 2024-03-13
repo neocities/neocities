@@ -111,6 +111,15 @@ describe 'site_files' do
       # No purge cache is executed because the directory is empty
     end
 
+    it 'fails for directory name ending in .htm or .html' do
+      @site.create_directory 'dirone'
+      dirone = @site.site_files_dataset.where(path: 'dirone').first
+      res = dirone.rename('dasharezone.html')
+      _(res).must_equal [false, 'directory name cannot end with .htm or .html']
+      res = dirone.rename('dasharezone.htm')
+      _(res).must_equal [false, 'directory name cannot end with .htm or .html']
+    end
+
     it 'wont set an empty directory' do
       @site.create_directory 'dirone'
       _(@site.site_files.select {|sf| sf.path == 'dirone'}.length).must_equal 1
