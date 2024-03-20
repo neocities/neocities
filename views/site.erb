@@ -55,20 +55,7 @@
 <div class="content misc-page columns right-col"><div class="col-left">
   <div class="col col-66">
     <%== erb :'site/_profile_comments', locals: {site: site} %>
-
-    <% if @latest_events.empty? %>
-      <div class="site-profile-padding">
-        <p>No recent activity.</p>
-        <% if current_site && site.owned_by?(parent_site) %>
-          <p>
-            You should <a href="/dashboard">update your site</a>!
-          </p>
-        <% end %>
-      </div>
-      <%== erb :'_news', layout: false, locals: {site: site, events: @latest_events} %>
-    <% else %>
-      <div class="site-profile-padding"><%== erb :'_news', layout: false, locals: {site: site, events: @latest_events} %></div>
-    <% end %>
+    <div class="site-profile-padding"><%== erb :'_news', layout: false, locals: {site: site, events: @latest_events} %></div>
   </div>
 
   <div class="col col-33">
