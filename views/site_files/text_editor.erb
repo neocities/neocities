@@ -134,8 +134,8 @@
       return
 
     var formData = new FormData();
-    var fileContent = new Blob([editor.getValue()], { type: 'text/html' });
-    formData.append('<%= escape_javascript @filename %>', fileContent, '<%= escape_javascript @filename %>');
+    var fileContent = editor.getValue();
+    formData.append('<%= escape_javascript @filename %>', new File([fileContent], '<%= escape_javascript @filename %>', { type: 'text/html' }));
     formData.append('csrf_token', '<%= escape_javascript csrf_token %>');
     formData.append('username', '<%= escape_javascript current_site.username %>');
 
