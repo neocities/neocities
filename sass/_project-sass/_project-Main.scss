@@ -877,6 +877,10 @@ a.tag:hover {
   width:37px;
   margin: 0 4px 4px 0;
   float: left;
+  background-size: cover;
+  background-position: center;
+  object-fit: cover;
+  object-position: center;
 }
 .misc-page.columns a:visited {
   color: $c-Brand-1;
