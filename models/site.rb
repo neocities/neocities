@@ -8,42 +8,43 @@ class Site < Sequel::Model
   include Sequel::ParanoidDelete
 
   VALID_MIME_TYPES = %w{
-    text/plain
-    text/html
-    text/css
-    application/javascript
-    image/png
-    image/apng
-    image/jpeg
-    image/gif
-    image/svg
-    image/svg+xml
-    application/vnd.ms-fontobject
-    application/x-font-ttf
-    application/vnd.ms-opentype
-    application/octet-stream
-    text/csv
-    text/tsv
-    text/cache-manifest
-    image/x-icon
-    application/pdf
-    application/pgp-keys
-    application/pgp
-    text/xml
-    application/xml
-    audio/midi
-    text/cache-manifest
-    application/rss+xml
-    application/x-elc
-    image/webp
-    image/avif
-    image/x-xcf
     application/epub
     application/epub+zip
-    message/rfc822
     application/font-sfnt
-    application/opensearchdescription+xml
+    application/javascript
     application/json
+    application/octet-stream
+    application/opensearchdescription+xml
+    application/pdf
+    application/pgp
+    application/pgp-keys
+    application/rss+xml
+    application/vnd.ms-fontobject
+    application/vnd.ms-opentype
+    application/x-elc
+    application/x-font-ttf
+    application/xml
+    audio/midi
+    image/apng
+    image/avif
+    image/gif
+    image/jpeg
+    image/png
+    image/svg
+    image/svg+xml
+    image/vnd.microsoft.icon
+    image/webp
+    image/x-icon
+    image/x-xcf
+    message/rfc822
+    text/cache-manifest
+    text/cache-manifest
+    text/css
+    text/csv
+    text/html
+    text/plain
+    text/tsv
+    text/xml
   }
 
   VALID_EXTENSIONS = %w{
