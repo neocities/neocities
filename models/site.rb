@@ -43,6 +43,7 @@ class Site < Sequel::Model
     message/rfc822
     application/font-sfnt
     application/opensearchdescription+xml
+    application/json
   }
 
   VALID_EXTENSIONS = %w{
