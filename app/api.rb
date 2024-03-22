@@ -106,7 +106,7 @@ post '/api/upload' do
 
   files.each do |file|
     if !current_site.okay_to_upload?(file)
-      api_error 400, 'invalid_file_type', "#{file[:filename]} is not a allowed file type for free sites, supporter required"
+      api_error 400, 'invalid_file_type', "#{file[:filename]} is not an allowed file type for free sites, supporter required"
     end
 
     if File.directory? file[:filename]
