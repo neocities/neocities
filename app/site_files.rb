@@ -227,3 +227,33 @@ get '/site_files/mount_info' do
   @title = 'Site Mount Information'
   erb :'site_files/mount_info'
 end
+
+post '/site_files/chat' do
+  require_login
+  dont_browser_cache
+
+  # Ensure the request is treated as a stream
+  stream do |out|
+    url = 'https://api.anthropic.com/v1/messages'
+
+    headers = {
+        "anthropic-version" => "2023-06-01",
+        "anthropic-beta" => "messages-2023-12-15",
+        "content-type" => "application/json",
+        "x-api-key" => $config['anthropic_api_key']
+    }
+
+    body = {
+      model: "claude-3-haiku-20240307",
+      messages: [{role: "user", content: params[:message]}],
+      max_tokens: 4096,
+      stream: true
+    }.to_json
+
+    res = HTTP.headers(headers).post(url, body: body)
+
+    while(buffer = res.body.readpartial)
+      out << buffer
+    end
+  end
+end

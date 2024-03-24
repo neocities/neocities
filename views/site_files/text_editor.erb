@@ -103,9 +103,25 @@
   </div>
 </div>
 
-<div class="row editor">
-  <div class="col col-100">
+<script src="/js/purify.min.js"></script>
+<script src="/js/marked.min.js"></script>
+<script src="/js/sse.min.js"></script>
+<script src="/js/chat.js"></script>
+
+<div class="row editor" style="display: flex; flex-wrap: wrap;">
+  <div class="col col-66" style="flex: 66%; padding: 10px">
     <div id="editor"><h3>Loading...</h3></div>
+  </div>
+  <div class="col col-33" style="flex: 33%; padding: 10px">
+    <div class="chat-container">
+      <div id="chat-box" class="chat-box"></div>
+        <form id="chat-form">
+          <input name="csrf_token" value="<%= csrf_token %>" type="hidden">
+          <input type="text" id="chat-input" placeholder="Ask a coding question..." value="give me a hello world html file" autocomplete="off">
+          <button type="submit" class="btn-Action">Send</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -156,7 +172,6 @@
           } catch (error) {
           }
         }
-
 
         $('#saveButton').tooltip('show')
         $('#editorUpdates span').text(errorMessage)

@@ -2147,18 +2147,20 @@ a.tag:hover {
     white-space: normal;
   }
 }
+
 .row.editor {
-  float: left;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  overflow-y: auto;
   width: 100%;
-  overflow: auto;
-  position: absolute;
-  top: 105px;
-  bottom: 0;
   margin: 0;
   .col {
+    height: 100%;
     padding: 0;
   }
 }
+
 .header-Outro.with-columns.press .col {
   padding: 25px 40px 15px 40px;
 }
@@ -2277,6 +2279,104 @@ pre, code {
   background: #1d1f21;
   color: #FFFFFF;
 }
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 95%; /* This will make it fill its parent container */
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: Arial, sans-serif;
+  border: 1px solid #333; /* Optional: adds a slight border for visual structure */
+}
+
+.chat-box {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #1e1e1e;
+
+  font-weight: 300;
+  font-size: 13.5px;
+  line-height: 1.5em;
+
+  p {
+    font-weight: 300;
+    font-size: 13.5px;
+    word-break: break-word;
+  }
+
+  ul, ol {
+    list-style: square;
+  }
+
+  li {
+    font-weight: 300;
+    font-size: 13.5px;
+  }
+
+  .message {
+    margin-bottom: 12px;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: #333;
+    color: #fff;
+  }
+
+  .bot-message {
+    text-align: left;
+  }
+
+  .user-message {
+    text-align: right;
+    background-color: #5e95a1;
+  }
+
+  div {
+    background: #16414c;
+    color: #a9b9b9;
+    border: 0;
+  }
+
+  div code {
+    display: inline;
+    padding: 2px;
+  }
+
+  div pre {
+    display: block;
+    width: 100%;
+  }
+
+  div pre code {
+    display: block;
+  }
+
+  div code {
+    border-left: 0px;
+    border: 0px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+}
+
+.chat-container {
+  form {
+    display: flex;
+    padding: 10px;
+    background-color: #252525;
+  }
+
+  input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    margin-right: 10px;
+    background-color: #333;
+    border: 1px solid #777;
+    color: #fff;
+  }
+}
+
 .welcoming-cat {
   width: 200px;
   float: right;
