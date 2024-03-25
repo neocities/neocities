@@ -245,8 +245,10 @@ post '/site_files/chat' do
 
     body = {
       model: "claude-3-haiku-20240307",
-      messages: [{role: "user", content: params[:message]}],
+      system: params[:system],
+      messages: JSON.parse(params[:messages]),
       max_tokens: 4096,
+      temperature: 0.5,
       stream: true
     }.to_json
 

@@ -114,7 +114,12 @@
   </div>
   <div class="col col-33" style="flex: 33%; padding: 10px">
     <div class="chat-container">
-      <div id="chat-box" class="chat-box"></div>
+      <div id="chat-box" class="chat-box">
+        <div class="bot-message message">
+          <p>I'm Penelope, your coding assistant! I'm here to answer any questions you have about coding web sites. I'm quite good at coding, but can be incorrect on general knowledge, so be sure to verify facts.</p>
+          <p>How can I help you today?</p>
+        </div>
+      </div>
         <form id="chat-form">
           <input name="csrf_token" value="<%= csrf_token %>" type="hidden">
           <input type="text" id="chat-input" placeholder="Ask a coding question..." value="give me a hello world html file" autocomplete="off">
