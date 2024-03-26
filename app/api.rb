@@ -2,14 +2,14 @@ require 'base64'
 
 get '/api' do
   @title = 'Developers API'
-  erb :api
+  erb :'api'
 end
 
 post '/api/upload_hash' do
   require_api_credentials
   res = {}
   files = []
-  params.each do |k, v|
+  params.each do |k,v|
     res[k] = current_site.sha1_hash_match? k, v
   end
   api_success files: res
@@ -20,11 +20,11 @@ get '/api/list' do
 
   files = []
 
-  file_list = if params[:path].nil? || params[:path].empty?
-                current_site.site_files
-              else
-                current_site.file_list params[:path]
-              end
+  if params[:path].nil? || params[:path].empty?
+    file_list = current_site.site_files
+  else
+    file_list = current_site.file_list params[:path]
+  end
 
   file_list.each do |file|
     new_file = {}
@@ -36,7 +36,7 @@ get '/api/list' do
     files << new_file
   end
 
-  files.each { |f| f[:path].sub!(%r{^/}, '') }
+  files.each {|f| f[:path].sub!(/^\//, '')}
 
   api_success files: files
 end
@@ -46,18 +46,20 @@ def extract_files(params, files = [])
   if params.is_a?(Array)
     params.each do |item|
       # Call extract_files on each item if it's an Array or Hash to handle nested structures
-      extract_files(item, files) if item.is_a?(Array) || item.is_a?(Hash)
+      if item.is_a?(Array) || item.is_a?(Hash)
+        extract_files(item, files)
+      end
     end
   elsif params.is_a?(Hash)
-    params.each do |_key, value|
+    params.each do |key, value|
       # If the value is a Hash and contains a :tempfile key, it's considered an uploaded file.
       if value.is_a?(Hash) && value.has_key?(:tempfile) && !value[:tempfile].nil?
-        files << { filename: value[:name], tempfile: value[:tempfile] }
+        files << {filename: value[:name], tempfile: value[:tempfile]}
       elsif value.is_a?(Array)
         value.each do |val|
           if val.is_a?(Hash) && val.has_key?(:tempfile) && !val[:tempfile].nil?
             # Directly add the file info if it's an uploaded file within an array
-            files << { filename: val[:name], tempfile: val[:tempfile] }
+            files << {filename: val[:name], tempfile: val[:tempfile]}
           elsif val.is_a?(Hash) || val.is_a?(Array)
             # Recursively search for more files if the element is a Hash or Array
             extract_files(val, files)
@@ -76,38 +78,40 @@ post '/api/upload' do
   require_api_credentials
   files = extract_files params
 
-  unless params[:username].blank?
+  if !params[:username].blank?
     site = Site[username: params[:username]]
 
-    api_error 400, 'site_not_found', 'could not find site' if site.nil? || site.is_deleted
+    if site.nil? || site.is_deleted
+      api_error 400, 'site_not_found', "could not find site"
+    end
 
     if site.owned_by?(current_site)
       @_site = site
     else
-      api_error 400, 'site_not_allowed', 'not allowed to change this site with your current logged in site'
+      api_error 400, 'site_not_allowed', "not allowed to change this site with your current logged in site"
     end
   end
 
   api_error 400, 'missing_files', 'you must provide files to upload' if files.empty?
 
-  uploaded_size = files.collect { |f| f[:tempfile].size }.inject { |sum, x| sum + x }
+  uploaded_size = files.collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
 
   if current_site.file_size_too_large? uploaded_size
     api_error 400, 'too_large', 'files are too large to fit in your space, try uploading smaller (or less) files'
   end
 
   if current_site.too_many_files?(files.length)
-    api_error 400, 'too_many_files',
-              "cannot exceed the maximum site files limit (#{current_site.plan_feature(:maximum_site_files)})"
+    api_error 400, 'too_many_files', "cannot exceed the maximum site files limit (#{current_site.plan_feature(:maximum_site_files)})"
   end
 
   files.each do |file|
-    unless current_site.okay_to_upload?(file)
-      api_error 400, 'invalid_file_type',
-                "#{file[:filename]} is not an allowed file type for free sites, supporter required"
+    if !current_site.okay_to_upload?(file)
+      api_error 400, 'invalid_file_type', "#{file[:filename]} is not an allowed file type for free sites, supporter required"
     end
 
-    api_error 400, 'directory_exists', "#{file[:filename]} being used by a directory" if File.directory? file[:filename]
+    if File.directory? file[:filename]
+      api_error 400, 'directory_exists', "#{file[:filename]} being used by a directory"
+    end
 
     if current_site.file_size_too_large? file[:tempfile].size
       api_error 400, 'file_too_large' "#{file[:filename]} is too large"
@@ -118,7 +122,7 @@ post '/api/upload' do
     end
 
     if SiteFile.name_too_long? file[:filename]
-      api_error 400, 'file_name_too_long', "#{file[:filename]} filename is too long. (Longer than 255 characters)"
+      api_error 400, 'file_name_too_long', "#{file[:filename]} filename is too long (exceeds 255 characters)"
     end
   end
 
@@ -129,21 +133,24 @@ end
 post '/api/rename' do
   require_api_credentials
 
-  if params[:path].blank? || params[:new_path].blank?
-    api_error 400, 'missing_arguments',
-              'you must provide path and new_path'
-  end
+  api_error 400, 'missing_arguments', 'you must provide path and new_path' if params[:path].blank? || params[:new_path].blank?
 
   path = current_site.scrubbed_path params[:path]
   new_path = current_site.scrubbed_path params[:new_path]
 
-  api_error 400, 'bad_path', "#{path} is not a valid path, cancelled renaming" unless path.is_a?(String)
+  unless path.is_a?(String)
+    api_error 400, 'bad_path', "#{path} is not a valid path, cancelled renaming"
+  end
 
-  api_error 400, 'bad_new_path', "#{new_path} is not a valid new_path, cancelled renaming" unless new_path.is_a?(String)
+  unless new_path.is_a?(String)
+    api_error 400, 'bad_new_path', "#{new_path} is not a valid new_path, cancelled renaming"
+  end
 
-  site_file = current_site.site_files.select { |sf| sf.path == path }.first
+  site_file = current_site.site_files.select {|sf| sf.path == path}.first
 
-  api_error 400, 'missing_file', "could not find #{path}" if site_file.nil?
+  if site_file.nil?
+    api_error 400, 'missing_file', "could not find #{path}"
+  end
 
   res = site_file.rename new_path
 
@@ -157,24 +164,23 @@ end
 post '/api/delete' do
   require_api_credentials
 
-  if params[:filenames].nil? || params[:filenames].empty?
-    api_error 400, 'missing_filenames',
-              'you must provide files to delete'
-  end
+  api_error 400, 'missing_filenames', 'you must provide files to delete' if params[:filenames].nil? || params[:filenames].empty?
 
   paths = []
   params[:filenames].each do |path|
-    api_error 400, 'bad_filename', "#{path} is not a valid filename, canceled deleting" unless path.is_a?(String)
+    unless path.is_a?(String)
+      api_error 400, 'bad_filename', "#{path} is not a valid filename, canceled deleting"
+    end
 
     if current_site.files_path(path) == current_site.files_path
       api_error 400, 'cannot_delete_site_directory', 'cannot delete the root directory of the site'
     end
 
-    unless current_site.file_exists?(path)
+    if !current_site.file_exists?(path)
       api_error 400, 'missing_files', "#{path} was not found on your site, canceled deleting"
     end
 
-    if ['index.html', '/index.html'].include?(path)
+    if path == 'index.html' || path == '/index.html'
       api_error 400, 'cannot_delete_index', 'you cannot delete your index.html file, canceled deleting'
     end
 
@@ -214,7 +220,7 @@ def api_info_for(site)
       created_at: site.created_at.rfc2822,
       last_updated: site.site_updated_at ? site.site_updated_at.rfc2822 : nil,
       domain: site.domain,
-      tags: site.tags.collect { |t| t.name }
+      tags: site.tags.collect {|t| t.name}
     }
   }
 end
@@ -234,10 +240,7 @@ def require_api_credentials
 
   if !request.env['HTTP_AUTHORIZATION'].nil?
     init_api_credentials
-    if email_not_validated?
-      api_error(403, 'email_not_validated',
-                'you need to validate your email address before using the API')
-    end
+    api_error(403, 'email_not_validated', 'you need to validate your email address before using the API') if email_not_validated?
   else
     api_error_invalid_auth
   end
@@ -253,7 +256,7 @@ def init_api_credentials
     else
       user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
     end
-  rescue StandardError
+  rescue
     api_error_invalid_auth
   end
 
@@ -265,7 +268,9 @@ def init_api_credentials
     api_error_invalid_auth
   end
 
-  api_error_invalid_auth if site.nil? || site.is_banned || site.is_deleted
+  if site.nil? || site.is_banned || site.is_deleted
+    api_error_invalid_auth
+  end
 
   DB['update sites set api_calls=api_calls+1 where id=?', site.id].first
 
@@ -273,7 +278,7 @@ def init_api_credentials
 end
 
 def api_success(message_or_obj)
-  output = { result: 'success' }
+  output = {result: 'success'}
 
   if message_or_obj.is_a?(String)
     output[:message] = message_or_obj
@@ -285,7 +290,7 @@ def api_success(message_or_obj)
 end
 
 def api_response(status, output)
-  halt status, JSON.pretty_generate(output) + "\n"
+  halt status, JSON.pretty_generate(output)+"\n"
 end
 
 def api_error(status, error_type, message)
