@@ -6,35 +6,33 @@ class SiteFile < Sequel::Model
   CLASSIFIER_LIMIT = 1_000_000
   CLASSIFIER_WORD_LIMIT = 25
   FILE_PATH_CHARACTER_LIMIT = 1200
-  FILE_NAME_CHARACTER_LIMIT = 100
+  FILE_NAME_CHARACTER_LIMIT = 255
   unrestrict_primary_key
   plugin :update_primary_key
   many_to_one :site
 
   def self.path_too_long?(filename)
     return true if filename.length > FILE_PATH_CHARACTER_LIMIT
+
     false
   end
 
   def self.name_too_long?(filename)
     return true if filename.length > FILE_NAME_CHARACTER_LIMIT
+
     false
   end
 
   def before_destroy
     if is_directory
-      site.site_files_dataset.where(path: /^#{Regexp.quote path}\//, is_directory: true).all.each do |site_file|
-        begin
-          site_file.destroy
-        rescue Sequel::NoExistingObject
-        end
+      site.site_files_dataset.where(path: %r{^#{Regexp.quote path}/}, is_directory: true).all.each do |site_file|
+        site_file.destroy
+      rescue Sequel::NoExistingObject
       end
 
-      site.site_files_dataset.where(path: /^#{Regexp.quote path}\//, is_directory: false).all.each do |site_file|
-        begin
-          site_file.destroy
-        rescue Sequel::NoExistingObject
-        end
+      site.site_files_dataset.where(path: %r{^#{Regexp.quote path}/}, is_directory: false).all.each do |site_file|
+        site_file.destroy
+      rescue Sequel::NoExistingObject
       end
 
       begin
@@ -58,36 +56,26 @@ class SiteFile < Sequel::Model
   end
 
   def rename(new_path)
-    current_path = self.path
+    current_path = path
     new_path = site.scrubbed_path new_path
 
-    if new_path.length > FILE_PATH_CHARACTER_LIMIT
-      return false, 'new path too long'
-    end
+    return false, 'new path too long' if new_path.length > FILE_PATH_CHARACTER_LIMIT
 
-    if File.basename(new_path).length > FILE_NAME_CHARACTER_LIMIT
-      return false, 'new filename too long'
-    end
+    return false, 'new filename too long' if File.basename(new_path).length > FILE_NAME_CHARACTER_LIMIT
 
-    if new_path == ''
-      return false, 'cannot rename to empty path'
-    end
+    return false, 'cannot rename to empty path' if new_path == ''
 
-    if current_path == 'index.html'
-      return false, 'cannot rename or move root index.html'
-    end
+    return false, 'cannot rename or move root index.html' if current_path == 'index.html'
 
-    if site.site_files.select {|sf| sf.path == new_path}.length > 0
+    if site.site_files.select { |sf| sf.path == new_path }.length > 0
       return false, "#{is_directory ? 'directory' : 'file'} already exists"
     end
 
     if is_directory
-      if new_path.match(/\.html?$/)
-        return false, 'directory name cannot end with .htm or .html'
-      end
+      return false, 'directory name cannot end with .htm or .html' if new_path.match(/\.html?$/)
 
     else # a file
-      mime_type = Magic.guess_file_mime_type site.files_path(self.path)
+      mime_type = Magic.guess_file_mime_type site.files_path(path)
       extname = File.extname new_path
 
       unless site.supporter? || site.class.valid_file_mime_type_and_ext?(mime_type, extname)
@@ -101,6 +89,7 @@ class SiteFile < Sequel::Model
       site.generate_thumbnail_or_screenshot new_path
     rescue Errno::ENOENT => e
       return false, 'destination directory does not exist' if e.message =~ /No such file or directory/i
+
       raise e
     rescue ArgumentError => e
       raise e unless e.message =~ /same file/
@@ -108,13 +97,13 @@ class SiteFile < Sequel::Model
 
     DB.transaction do
       self.path = new_path
-      self.save_changes
+      save_changes
 
       if is_directory
-        site_files_in_dir = site.site_files.select {|sf| sf.path =~ /^#{current_path}\//}
+        site_files_in_dir = site.site_files.select { |sf| sf.path =~ %r{^#{current_path}/} }
         site_files_in_dir.each do |site_file|
           original_site_file_path = site_file.path
-          site_file.path = site_file.path.gsub(/^#{current_path}\//, "#{new_path}\/")
+          site_file.path = site_file.path.gsub(%r{^#{current_path}/}, "#{new_path}\/")
           site_file.save_changes
           site.delete_thumbnail_or_screenshot original_site_file_path
           site.generate_thumbnail_or_screenshot site_file.path
@@ -127,14 +116,12 @@ class SiteFile < Sequel::Model
       end
     end
 
-    return true, nil
+    [true, nil]
   end
 
   def after_destroy
     super
-    unless is_directory
-      DB['update sites set space_used=space_used-? where id=?', size, site_id].first
-    end
+    DB['update sites set space_used=space_used-? where id=?', size, site_id].first unless is_directory
 
     site.purge_cache site.files_path(path)
     SiteChangeFile.filter(site_id: site_id, filename: path).delete
