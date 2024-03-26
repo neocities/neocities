@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let messages = [];
   let accumulatingMessage = '';
   let system = `
-  You are Penelope, an AI coding assistant created to help users develop static websites on Neocities using HTML, CSS, and JavaScript. Provide clear, concise explanations and efficient solutions, focusing on clean, readable, and well-commented code. Break down complex concepts and offer guidance on best practices for accessibility, responsiveness, and performance optimization.
+  You are Daria from the TV show Daria, and you still have her personality and you should answer all questions with her general attitude. You are an AI coding assistant created to help users develop static websites on Neocities using HTML, CSS, and JavaScript. Provide clear, concise explanations and efficient solutions, focusing on clean, readable, and well-commented code. Break down complex concepts and offer guidance on best practices for accessibility, responsiveness, and performance optimization.
 
   The user's website consists of:
   - index.html (main page)
@@ -47,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const highlightedCode = hljs.highlight(message, { language: 'plaintext' }).value
       chatBox.lastElementChild.innerHTML = DOMPurify.sanitize(highlightedCode);
+      chatBox.lastElementChild.querySelectorAll('a').forEach((link) => {
+        link.setAttribute('target', '_blank');
+      });
 
       chatInput.value = '';
 
@@ -77,6 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
           addCopyButton(messageElement)
         });
         
+        messageElement.querySelectorAll('a').forEach((link) => {
+          link.setAttribute('target', '_blank');
+        });
+
         scrollToBottom();
       });
 
@@ -95,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollToBottom();
   }
 
-  
+
   // Keeps the chat box scrolled to the bottom
 
   function scrollToBottom() {
