@@ -105,11 +105,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Keeps the chat box scrolled to the bottom
 
+  // Function to scroll to the bottom
   function scrollToBottom() {
-    chatBox.scrollTop = chatBox.scrollHeight;
+    // Check if auto-scrolling is enabled
+    if (shouldAutoScroll) {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
   }
 
-  window.onload = scrollToBottom;
+  // Flag to keep track of whether auto-scrolling should be performed
+  let shouldAutoScroll = true;
+
+  window.onload = function() {
+    scrollToBottom();
+    // Detect manual scrolling by the user
+    chatBox.addEventListener('scroll', () => {
+      // Calculate the distance from the bottom
+      const distanceFromBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight;
+
+      // If the distance from the bottom is small (or zero), the user is at the bottom
+      if (distanceFromBottom < 1) {
+        shouldAutoScroll = true;
+      } else {
+        // If the user has scrolled up, disable auto-scrolling
+        shouldAutoScroll = false;
+      }
+    });
+  };
 
   const observer = new MutationObserver(scrollToBottom);
   observer.observe(chatBox, { childList: true });

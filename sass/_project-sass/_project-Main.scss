@@ -2286,6 +2286,8 @@ pre, code {
   height: 95%; /* This will make it fill its parent container */
   background-color: #121212;
   color: #e0e0e0;
+
+  border-left: 1px solid #373737;
   font-family: Arial, sans-serif;
 }
 
@@ -2373,7 +2375,6 @@ pre, code {
   }
 }
 
-
 .chat-container {
   form {
     display: flex;
@@ -2388,6 +2389,11 @@ pre, code {
     background-color: #333;
     border: 1px solid #777;
     color: #fff;
+  }
+
+  button {
+    margin-top: 9px;
+    height: 30px;
   }
 }
 
