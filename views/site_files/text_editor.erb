@@ -90,7 +90,7 @@
       <a id="saveButton" class="btn-Action" href="#" onclick="saveTextFile(false); return false" style="opacity: 0.5"><span class="hide-on-mobile"><i class="fa fa-save"></i></span>Save</a>
       <span class="hide-on-mobile">
         <a class="btn-Action" href="<%= current_site.uri %>/<%= @filename == 'index.html' ? '' : @filename %>" target="_blank"><i class="fa fa-globe"></i> View</a>
-        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'><i class="fa fa-share-alt"></i> Share</a>
+        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'><i class="fa fa-share-alt"></i> Share</a> <a href="#" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom"><i class="fa fa-comments"></i> Penelope</a>
       </span>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
       <div id="editorUpdates" class="tooltip fade bottom in hidden" style="top: 90px;right: 12.5em;">
@@ -109,10 +109,11 @@
 <script src="/js/chat.js"></script>
 
 <div class="row editor">
-  <div class="col col-66">
+  <div class="col left-col" style="width: 66%;">
     <div id="editor"><h3>Loading...</h3></div>
   </div>
-  <div class="col col-33 chat-col">
+  <div class="col right-col" style="width: 33%;">
+    <div class="resize-handle"></div>
     <div class="chat-container">
       <div id="chat-box" class="chat-box">
         <div class="bot-message message">

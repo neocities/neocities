@@ -671,9 +671,6 @@
     border: 0;
   }
 }
-.right-col {
-  background: #FAF6F1;
-}
 .content.misc-page .col-33 h3 {
   font-size: 1.5em;
 }
@@ -2284,16 +2281,10 @@ pre, code {
 
 
 
-
-
-
-
-
 .chat-container {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 60px); /* Adjust the height as needed */
-  background-color: #121212;
   color: #e0e0e0;
   border-left: 1px solid #373737;
   font-family: Arial, sans-serif;
@@ -2396,6 +2387,24 @@ pre, code {
   }
 }
 
+
+
+
+
+
+
+
+.resize-handle {
+  position: absolute;
+  left: -5px; /* Adjust based on handle width to center it on the border */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px; /* Handle width */
+  height: 40px; /* Handle height */
+  background-color: #666; /* Handle color */
+  cursor: ew-resize;
+  z-index: 10;
+}
 
 
 
