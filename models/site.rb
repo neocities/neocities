@@ -8,6 +8,7 @@ class Site < Sequel::Model
   include Sequel::ParanoidDelete
 
   VALID_MIME_TYPES = %w{
+    application/atom+xml
     application/epub
     application/epub+zip
     application/json
