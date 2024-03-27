@@ -10,8 +10,6 @@ class Site < Sequel::Model
   VALID_MIME_TYPES = %w{
     application/epub
     application/epub+zip
-    application/font-sfnt
-    application/javascript
     application/json
     application/octet-stream
     application/opensearchdescription+xml
@@ -21,10 +19,13 @@ class Site < Sequel::Model
     application/rss+xml
     application/vnd.ms-fontobject
     application/vnd.ms-opentype
-    application/x-elc
-    application/x-font-ttf
     application/xml
     audio/midi
+    font/otf
+    font/sfnt
+    font/ttf
+    font/woff
+    font/woff2
     image/apng
     image/avif
     image/gif
@@ -38,10 +39,10 @@ class Site < Sequel::Model
     image/x-xcf
     message/rfc822
     text/cache-manifest
-    text/cache-manifest
     text/css
     text/csv
     text/html
+    text/javascript
     text/plain
     text/tsv
     text/xml
