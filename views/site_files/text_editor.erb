@@ -112,24 +112,22 @@
   <div class="col left-col" style="width: 66%;">
     <div id="editor"><h3>Loading...</h3></div>
   </div>
-  <div class="col right-col" style="width: 33%;">
+  <div class="col right-col chat-container" style="width: 33%;">
     <div class="resize-handle"></div>
-    <div class="chat-container">
-      <div id="chat-box" class="chat-box">
-        <div class="bot-message message">
-          <img src="/img/plaincat.svg" style="width: 30px; margin-bottom: 10px;"> 
-          <p>I'm Penelope, your coding assistant! I'm here to answer any questions you have about coding web sites.</p>
-          <p>I'm good at coding but can be wrong on general knowledge, <strong>so be sure to verify facts I give you</strong>.</p>
-          <p>How can I help you today?</p>
-        </div>
+    <div id="chat-box" class="chat-box">
+      <div class="bot-message message">
+        <img src="/img/plaincat.svg" style="width: 30px; margin-bottom: 10px;"> 
+        <p>I'm Penelope, your coding assistant! I'm here to answer any questions you have about coding web sites.</p>
+        <p>I'm good at coding but can be wrong on general knowledge, <strong>so be sure to verify facts I give you</strong>.</p>
+        <p>How can I help you today?</p>
       </div>
-        <div id="chat-form">
-          <form>
-            <input name="csrf_token" value="<%= csrf_token %>" type="hidden">
-            <input type="text" id="chat-input" placeholder="Ask a coding question..." value="give me a hello world html file" autocomplete="off">
-            <button type="submit" class="btn-Action">Send</button>
-          </form>
-        </div>
+    </div>
+      <div id="chat-form">
+        <form>
+          <input name="csrf_token" value="<%= csrf_token %>" type="hidden">
+          <input type="text" id="chat-input" placeholder="Ask a coding question..." value="give me a hello world html file" autocomplete="off">
+          <button type="submit" class="btn-Action">Send</button>
+        </form>
       </div>
     </div>
   </div>
