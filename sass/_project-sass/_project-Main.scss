@@ -2147,8 +2147,8 @@ a.tag:hover {
 
 .row.editor {
   display: flex;
+  height: calc(100vh - 105px);
 }
-
 .header-Outro.with-columns.press .col {
   padding: 25px 40px 15px 40px;
 }
@@ -2269,11 +2269,36 @@ pre, code {
 }
 
 
+/* Width and background of the scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: #F5F5F5;
+}
+
+/* Background of the scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: #1d1f21;
+}
+
+/* Style of the scrollbar thumb (the part you drag) */
+::-webkit-scrollbar-thumb {
+  background-color: #CCC;
+  border-radius: 6px;
+}
+
+/* Style of the scrollbar thumb when hovering */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #B5B5B5;
+}
+
+/* Style of the scrollbar corner */
+::-webkit-scrollbar-corner {
+  background-color: #F5F5F5;
+}
 
 .left-col {
   padding: 1rem;
   overflow-y: scroll;
-  height: 90vh;
 }
 
 .right-col {
@@ -2289,8 +2314,8 @@ pre, code {
   line-height: 1.5em;
 
   .chat-box {
+    height: calc(100vh - 180px);
     overflow-y: scroll;
-    height: calc(90vh - 60px);
     padding: 10px;
     background-color: #1d1f21;
     font-weight: 300;
@@ -2390,7 +2415,7 @@ pre, code {
 
 .resize-handle {
   position: absolute;
-  left: -5px; /* Adjust based on handle width to center it on the border */
+  left: -1px; /* Adjust based on handle width to center it on the border */
   top: 50%;
   transform: translateY(-50%);
   width: 10px; /* Handle width */
