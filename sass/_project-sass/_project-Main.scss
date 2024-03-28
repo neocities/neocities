@@ -2148,6 +2148,32 @@ a.tag:hover {
 .row.editor {
   display: flex;
   height: calc(100vh - 105px);
+  /* Width and background of the scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    background-color: #F5F5F5;
+  }
+
+  /* Background of the scrollbar track */
+  ::-webkit-scrollbar-track {
+    background-color: #1d1f21;
+  }
+
+  /* Style of the scrollbar thumb (the part you drag) */
+  ::-webkit-scrollbar-thumb {
+    background-color: #CCC;
+    border-radius: 6px;
+  }
+
+  /* Style of the scrollbar thumb when hovering */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #B5B5B5;
+  }
+
+  /* Style of the scrollbar corner */
+  ::-webkit-scrollbar-corner {
+    background-color: #F5F5F5;
+  }
 }
 .header-Outro.with-columns.press .col {
   padding: 25px 40px 15px 40px;
@@ -2266,34 +2292,6 @@ ul.thankyou {
 pre, code {
   background: #1d1f21;
   color: #FFFFFF;
-}
-
-
-/* Width and background of the scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  background-color: #F5F5F5;
-}
-
-/* Background of the scrollbar track */
-::-webkit-scrollbar-track {
-  background-color: #1d1f21;
-}
-
-/* Style of the scrollbar thumb (the part you drag) */
-::-webkit-scrollbar-thumb {
-  background-color: #CCC;
-  border-radius: 6px;
-}
-
-/* Style of the scrollbar thumb when hovering */
-::-webkit-scrollbar-thumb:hover {
-  background-color: #B5B5B5;
-}
-
-/* Style of the scrollbar corner */
-::-webkit-scrollbar-corner {
-  background-color: #F5F5F5;
 }
 
 .left-col {

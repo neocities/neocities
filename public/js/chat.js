@@ -170,6 +170,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const editorRow = document.querySelector('.row.editor');
   let isResizing = false;
 
+  if(!localStorage.getItem('leftColPct')) localStorage.setItem('leftColPct', '70%')
+  if(!localStorage.getItem('rightColPct')) localStorage.setItem('rightColPct', '30%')
+
   handle.addEventListener('mousedown', function(e) {
     e.preventDefault();
     isResizing = true;
@@ -197,6 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Apply the new widths
       leftCol.style.width = `${leftColPercentage}%`;
       rightCol.style.width = `${rightColPercentage}%`;
+      localStorage.setItem('leftColPct', leftCol.style.width)
+      localStorage.setItem('rightColPct', rightCol.style.width)
       startX = e.pageX;
     }
 
@@ -209,4 +214,74 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
   });
+
+  function toggleChat() {
+    const leftCol = document.querySelector('.left-col');
+    const rightCol = document.querySelector('.right-col');
+    let chatContainer = document.getElementsByClassName('chat-container')[0];
+
+    var chatEnabled = localStorage.getItem('chatEnabled');
+    if (chatEnabled === 'true') {
+      leftCol.style.width = localStorage.getItem('leftColPct') || '70%';
+      rightCol.style.width = localStorage.getItem('rightColPct') || '30%';
+      chatContainer.style.display = '';
+    } else {
+      rightCol.style.width = '0%';
+      leftCol.style.width = '100%';
+      chatContainer.style.display = 'none';
+    }
+  }
+
+  document.getElementById('chatButton').addEventListener('click', function(e) {
+    e.preventDefault()
+    var chatEnabled = localStorage.getItem('chatEnabled');
+    if(chatEnabled === 'true' || chatEnabled === null) {
+      localStorage.setItem('chatEnabled', 'false');
+    } else {
+      localStorage.setItem('chatEnabled', 'true');
+    }
+
+    toggleChat()
+  });
+
+  toggleChat()
+
+  if(localStorage.getItem('chatEnabled') !== 'false') {
+    leftCol.style.width = localStorage.getItem('leftColPct');
+    rightCol.style.width = localStorage.getItem('rightColPct');
+    rightCol.style.display = '';  
+  }
+
+  leftCol.style.display = '';
+
+/*
+
+  localStorage.removeItem("leftColPct");
+  localStorage.removeItem("rightColPct");
+  localStorage.removeItem("chatEnabled");
+
+  function toggleChat() {
+    const leftCol = document.querySelector('.left-col');
+    const rightCol = document.querySelector('.right-col');
+    let chatContainer = document.getElementsByClassName('chat-container')[0]
+
+    if(localStorage)
+
+    if(rightCol.style.width == '0%') {
+      rightCol.style.width = '30%';
+      leftCol.style.width = '70%';
+      chatContainer.style.display = ''
+    } else {
+      rightCol.style.width = '0%';
+      leftCol.style.width = '100%';
+      chatContainer.style.display = 'none'
+    }
+  }
+
+  chatButton.addEventListener('click', function(e) {
+    e.preventDefault()
+    toggleChat()
+  });
+*/
+
 });
