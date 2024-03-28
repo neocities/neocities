@@ -8,10 +8,9 @@ class Site < Sequel::Model
   include Sequel::ParanoidDelete
 
   VALID_MIME_TYPES = %w{
+    application/atom+xml
     application/epub
     application/epub+zip
-    application/font-sfnt
-    application/javascript
     application/json
     application/octet-stream
     application/opensearchdescription+xml
@@ -21,10 +20,13 @@ class Site < Sequel::Model
     application/rss+xml
     application/vnd.ms-fontobject
     application/vnd.ms-opentype
-    application/x-elc
-    application/x-font-ttf
     application/xml
     audio/midi
+    font/otf
+    font/sfnt
+    font/ttf
+    font/woff
+    font/woff2
     image/apng
     image/avif
     image/gif
@@ -38,10 +40,10 @@ class Site < Sequel::Model
     image/x-xcf
     message/rfc822
     text/cache-manifest
-    text/cache-manifest
     text/css
     text/csv
     text/html
+    text/javascript
     text/plain
     text/tsv
     text/xml
@@ -77,8 +79,8 @@ class Site < Sequel::Model
   INDEX_HTML_REGEX       = /\/?index.html$/
   ROOT_INDEX_HTML_REGEX  = /^\/?index.html$/
   MAX_COMMENT_SIZE       = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
-  MAX_FOLLOWS            = 1000
-  
+  MAX_FOLLOWS            = 2000
+
   BROWSE_MINIMUM_VIEWS   = 100
   BROWSE_MINIMUM_FOLLOWER_VIEWS = 10_000
 
