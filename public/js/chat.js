@@ -55,15 +55,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
       var formData = new FormData();
       formData.append('csrf_token', chatForm.querySelector('input[name="csrf_token"]').value);
-      let systemWithFile = system + "\nThis is the user's current file they are editing:\n" + editor.getValue();
-      formData.append('system', systemWithFile);
+      formData.append('system', system);
+      // let systemWithFile = system + "\nThis is the user's current file they are editing:\n" + editor.getValue();
+      //formData.append('system', systemWithFile);
       formData.append('messages', JSON.stringify(messages));
 
       var source = new SSE('/site_files/chat', {payload: formData, debug: false});
 
+      addMessage('bot')
+      chatBox.lastElementChild.innerHTML = '<i>thinking...</i>'
+
+      source.addEventListener('error', function(e) {
+        chatBox.lastElementChild.innerText = 'An error occurred. Please try again later.';
+        chatForm.querySelector('button').disabled = false;
+        messages.pop();
+      })
+
       source.addEventListener('message_start', function(e) {
         var payload = JSON.parse(e.data);
-        addMessage('bot', '')
       });
 
       source.addEventListener('content_block_start', function(e) {
@@ -161,8 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-
-
   // Resize chat box
   const handle = document.querySelector('.resize-handle');
   const leftCol = document.querySelector('.left-col');
@@ -253,35 +260,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   leftCol.style.display = '';
-
-/*
-
-  localStorage.removeItem("leftColPct");
-  localStorage.removeItem("rightColPct");
-  localStorage.removeItem("chatEnabled");
-
-  function toggleChat() {
-    const leftCol = document.querySelector('.left-col');
-    const rightCol = document.querySelector('.right-col');
-    let chatContainer = document.getElementsByClassName('chat-container')[0]
-
-    if(localStorage)
-
-    if(rightCol.style.width == '0%') {
-      rightCol.style.width = '30%';
-      leftCol.style.width = '70%';
-      chatContainer.style.display = ''
-    } else {
-      rightCol.style.width = '0%';
-      leftCol.style.width = '100%';
-      chatContainer.style.display = 'none'
-    }
-  }
-
-  chatButton.addEventListener('click', function(e) {
-    e.preventDefault()
-    toggleChat()
-  });
-*/
-
 });
