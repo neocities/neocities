@@ -51,12 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       var formData = new FormData();
       formData.append('csrf_token', chatForm.querySelector('input[name="csrf_token"]').value);
-      
-      
-      // uncomment this out if disable next two lines
-      //formData.append('system', system);
-      
-      let systemWithFile = system + "\nThis is the user's current file they are editing:\n" + editor.getValue();
+
+      // let systemWithFile = system + "\nThis is the user's current file they are editing:\n" + editor.getValue();
+      let systemWithFile = system
       formData.append('system', systemWithFile);
       
       formData.append('messages', JSON.stringify(messages));
@@ -229,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let chatContainer = document.getElementsByClassName('chat-container')[0];
 
     var chatEnabled = localStorage.getItem('chatEnabled');
+
     if (chatEnabled === 'true') {
       leftCol.style.width = localStorage.getItem('leftColPct') || '70%';
       rightCol.style.width = localStorage.getItem('rightColPct') || '30%';

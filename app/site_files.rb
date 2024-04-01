@@ -231,6 +231,7 @@ end
 post '/site_files/chat' do
   require_login
   dont_browser_cache
+  halt(403) unless parent_site.supporter?
 
   # Ensure the request is treated as a stream
   stream do |out|
