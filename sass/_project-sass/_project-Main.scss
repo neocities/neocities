@@ -2297,11 +2297,19 @@ pre, code {
 .left-col {
   padding: 1rem;
   overflow-y: scroll;
+
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    width: 100% !important;
+  }
 }
 
 .right-col {
   padding: 1rem;
   position: relative;
+
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    display: none;
+  }
 }
 
 .chat-container {
