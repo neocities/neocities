@@ -79,7 +79,7 @@ before do
     redirect "/site/#{current_site.username}/confirm_email"
   elsif current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/signout/)
     redirect  "/site/#{current_site.username}/confirm_phone"
-  elsif current_site && current_site.tutorial_required && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/tutorial/)
+  elsif current_site && current_site.tutorial_required && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/tutorial\/.+/)
     redirect '/tutorial/html/1'
   else
     content_type :html, 'charset' => 'utf-8'
