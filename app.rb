@@ -75,11 +75,11 @@ before do
     content_type :json
   elsif request.path.match /^\/webhooks\//
     # Skips the CSRF/validation check for stripe web hooks
-  elsif current_site && current_site.email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/signout|^\/welcome|^\/supporter|^\/signout/)
+  elsif current_site && current_site.email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/welcome|^\/supporter|^\/signout/)
     redirect "/site/#{current_site.username}/confirm_email"
-  elsif current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_phone|^\/signout/)
+  elsif current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/signout/)
     redirect  "/site/#{current_site.username}/confirm_phone"
-  elsif current_site && current_site.tutorial_required && !(request.path =~ /tutorial/)
+  elsif current_site && current_site.tutorial_required && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/tutorial/)
     redirect '/tutorial/html/1'
   else
     content_type :html, 'charset' => 'utf-8'
