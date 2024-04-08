@@ -1746,6 +1746,16 @@ class Site < Sequel::Model
     false
   end
 
+  def email_not_validated?
+    return false if created_at < EMAIL_VALIDATION_CUTOFF_DATE
+    parent? && !is_education && !email_confirmed && !supporter?
+  end
+
+  def required_validations_met?
+    return false if phone_verification_needed? || tutorial_required || email_not_validated?
+    true
+  end
+
   private
 
   def store_file(path, uploaded, opts={})

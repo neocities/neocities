@@ -16,7 +16,6 @@ end
 
 def require_login
   redirect '/' unless signed_in? && current_site
-  redirect '/tutorial/html/1' if current_site.tutorial_required && !(request.path =~ /tutorial/)
 end
 
 def signed_in?
@@ -95,12 +94,6 @@ def dont_browser_cache
   headers['Pragma'] = 'no-cache'
   headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
   @dont_browser_cache = true
-end
-
-def email_not_validated?
-  return false if current_site && current_site.created_at < Site::EMAIL_VALIDATION_CUTOFF_DATE
-
-  current_site && current_site.parent? && !current_site.is_education && !current_site.email_confirmed && !current_site.supporter?
 end
 
 def sanitize_comment(text)
