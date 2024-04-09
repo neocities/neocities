@@ -178,6 +178,8 @@ class Site < Sequel::Model
   PHONE_VERIFICATION_EXPIRATION_TIME = 10.minutes
   PHONE_VERIFICATION_LOCKOUT_ATTEMPTS = 3
 
+  PASSWORD_RESET_EXPIRATION_TIME = 24.hours
+
   many_to_many :tags
 
   one_to_many :profile_comments

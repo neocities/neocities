@@ -13,21 +13,23 @@ post '/send_password_reset' do
   sites = Site.get_recovery_sites_with_email params[:email]
 
   if sites.length > 0
-    token = SecureRandom.uuid.gsub('-', '')
+    token = SecureRandom.uuid.gsub('-', '')+'-'+Time.now.to_i.to_s
     sites.each do |site|
       next unless site.parent?
       site.password_reset_token = token
       site.save_changes validate: false
 
       body = <<-EOT
-Hello! This is the Neocities cat, and I have received a password reset request for your e-mail address.
+Hello! This is the Penelope the Neocities cat, and I have received a password reset request for your e-mail address.
 
-Go to this URL to reset your password: https://neocities.org/password_reset_confirm?username=#{Rack::Utils.escape(site.username)}&token=#{token}
+Go to this URL to reset your password: https://neocities.org/password_reset_confirm?username=#{Rack::Utils.escape(site.username)}&token=#{Rack::Utils.escape(token)}
+
+This link will expire in 24 hours.
 
 If you didn't request this password reset, you can ignore it. Or hide under a bed. Or take a nap. Your call.
 
 Meow,
-the Neocities Cat
+Penelope
     EOT
 
       body.strip!
@@ -61,7 +63,13 @@ get '/password_reset_confirm' do
     redirect '/'
   end
 
-  reset_site.password_reset_token = nil
+  timestamp = Time.at(reset_site.password_reset_token.split('-').last.to_i)
+
+  if Time.now.to_i - timestamp.to_i > Site::PASSWORD_RESET_EXPIRATION_TIME
+    flash[:error] = 'Token has expired.'
+    redirect '/'
+  end
+
   reset_site.password_reset_confirmed = true
   reset_site.save_changes
 

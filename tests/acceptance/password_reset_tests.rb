@@ -74,6 +74,9 @@ describe '/password_reset' do
 
     visit "/password_reset_confirm?#{Rack::Utils.build_query username: @site.username, token: @site.reload.password_reset_token}"
 
+    _(@site.reload.password_reset_token).wont_be_nil
+    _(@site.password_reset_confirmed).must_equal true
+
     _(page.current_url).must_match /.+\/settings#password/
 
     fill_in 'new_password', with: 'n3wp4s$'
@@ -85,6 +88,21 @@ describe '/password_reset' do
     _(Site.valid_login?(@site.username, 'n3wp4s$')).must_equal true
     _(page.get_rack_session['id']).must_equal @site.id
     _(@site.reload.password_reset_token).must_be_nil
+    _(@site.password_reset_confirmed).must_equal false
+  end
+
+  it 'fails if timestamp is too old' do
+    @site = Fabricate :site
+    visit '/password_reset'
+    fill_in 'email', with: @site.email
+    click_button 'Send Reset Token'
+
+    @site.update password_reset_token: "#{SecureRandom.hex}-#{(Time.now - Site::PASSWORD_RESET_EXPIRATION_TIME - 1).to_i}"
+
+    visit "/password_reset_confirm?#{Rack::Utils.build_query username: @site.username, token: @site.reload.password_reset_token}"
+
+    _(page).must_have_content 'Token has expired'
+    _(@site.reload.password_reset_token).wont_be_nil
     _(@site.password_reset_confirmed).must_equal false
   end
 
