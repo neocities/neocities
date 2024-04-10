@@ -108,13 +108,10 @@ def hcaptcha_valid?
   return true if ENV['RACK_ENV'] == 'test' || ENV['CI']
   return false unless params[:'h-captcha-response']
 
-  resp = Net::HTTP.get URI(
-    'https://hcaptcha.com/siteverify?'+
-    Rack::Utils.build_query(
-      secret: $config['hcaptcha_secret_key'],
-      response: params[:'h-captcha-response']
-    )
-  )
+  resp = HTTP.get('https://hcaptcha.com/siteverify', params: {
+    secret: $config['hcaptcha_secret_key'],
+    response: params[:'h-captcha-response']
+  })
 
   resp = JSON.parse resp
 
