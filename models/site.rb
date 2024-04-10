@@ -1226,7 +1226,7 @@ class Site < Sequel::Model
   end
 
   def file_list(path='')
-    list = Dir.glob(File.join(files_path(path), '*')).collect do |file_path|
+    list = Dir.glob(File.join(files_path(path), '*'), File::FNM_DOTMATCH).reject { |entry| File.basename(entry) == '.' || File.basename(entry) == '..' }.collect do |file_path|
       extname = File.extname file_path
       file = {
         path: file_path.gsub(base_files_path+'/', ''),
