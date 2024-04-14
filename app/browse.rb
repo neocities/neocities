@@ -78,9 +78,12 @@ def browse_sites_dataset
     when 'hits'
       ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
       ds = ds.order(:hits.desc, :site_updated_at.desc)
-    when 'views'
+    when 'most_views'
       ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
       ds = ds.order(:views.desc, :site_updated_at.desc)
+    when 'least_views'
+      ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
+      ds = ds.order(:views.asc, :site_updated_at.desc)
     when 'newest'
       ds = ds.order(:created_at.desc, :views.desc)
     when 'oldest'
