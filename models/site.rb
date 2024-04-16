@@ -628,8 +628,12 @@ class Site < Sequel::Model
   end
 
   def is_a_jerk?
-    blocks_dataset_count = blocks_dataset.count
-    blocks_dataset_count >= BLOCK_JERK_THRESHOLD && ((blocks_dataset_count / follows_dataset.count.to_f) * 100) > BLOCK_JERK_PERCENTAGE
+    blocks_count = blocks_dataset.count
+    blockings_count = blockings_dataset.count
+    follows_count = follows_dataset.count
+    return true if blocks_count > BLOCK_JERK_THRESHOLD * 2
+    return true if blockings_count > BLOCK_JERK_THRESHOLD * 4
+    blocks_count >= BLOCK_JERK_THRESHOLD && ((blocks_count / follows_count.to_f) * 100) > BLOCK_JERK_PERCENTAGE && blocks_count > 60
   end
 
   def blocking_site_ids
