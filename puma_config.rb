@@ -9,6 +9,6 @@ quiet
 workers Facter.value('processors')['count']
 #preload_app!
 prune_bundler
-on_worker_boot { DB.disconnect }
+#on_worker_boot { DB.disconnect }
 bind 'unix:/var/run/neocities/neocities.sock?backlog=2048'
 supported_http_methods Puma::Const::IANA_HTTP_METHODS
