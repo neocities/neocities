@@ -184,17 +184,18 @@ Maintain a friendly, patient, supportive tone. Prioritize the user's learning an
     e.preventDefault();
     isResizing = true;
     let startX = e.pageX;
-
+    let initialLeftColWidth = leftCol.offsetWidth; // Capture the initial width when resizing starts
+  
     function handleMouseMove(e) {
       if (!isResizing) return;
       const editorRowWidth = editorRow.offsetWidth; // Get the total width of the editor row
       let moveX = e.pageX - startX;
-      let leftColWidth = leftCol.offsetWidth + moveX;
-
+      let leftColWidth = initialLeftColWidth + moveX; // Use the initial width for relative adjustments
+  
       // Convert to percentage
       let leftColPercentage = (leftColWidth / editorRowWidth) * 100;
       let rightColPercentage = 100 - leftColPercentage;
-
+  
       // Check and enforce the minimum and maximum widths
       if (rightColPercentage < 20) { // Minimum 20% for right column
         rightColPercentage = 20;
@@ -203,21 +204,20 @@ Maintain a friendly, patient, supportive tone. Prioritize the user's learning an
         rightColPercentage = 80;
         leftColPercentage = 20;
       }
-
+  
       // Apply the new widths
       leftCol.style.width = `${leftColPercentage}%`;
       rightCol.style.width = `${rightColPercentage}%`;
-      localStorage.setItem('leftColPct', leftCol.style.width)
-      localStorage.setItem('rightColPct', rightCol.style.width)
-      startX = e.pageX;
+      localStorage.setItem('leftColPct', `${leftColPercentage}%`);
+      localStorage.setItem('rightColPct', `${rightColPercentage}%`);
     }
-
+  
     function handleMouseUp() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
       isResizing = false;
     }
-
+  
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
   });
