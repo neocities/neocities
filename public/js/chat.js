@@ -132,7 +132,7 @@ Maintain a friendly, patient, supportive tone. Prioritize the user's learning an
       const distanceFromBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight;
 
       // If the distance from the bottom is small (or zero), the user is at the bottom
-      if (distanceFromBottom < 1) {
+      if (distanceFromBottom < 5) {
         shouldAutoScroll = true;
       } else {
         // If the user has scrolled up, disable auto-scrolling
