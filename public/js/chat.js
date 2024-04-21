@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatInput = document.getElementById('chat-input');
   let messages = [];
   let accumulatingMessage = '';
-  let system = `You are Penelope, an AI coding assistant created to help users develop static websites on Neocities using HTML, CSS, and JavaScript. Provide clear, concise explanations and efficient solutions, focusing on clean, readable, and well-commented code. Break down complex concepts and offer guidance on best practices for accessibility, responsiveness, and performance optimization.
+  let system = `You are Penelope, an AI coding assistant created to help users develop static websites on Neocities using HTML, CSS, and JavaScript. Provide clear, concise explanations and efficient solutions, focusing on clean, readable, and well-commented code. Break down complex concepts and offer guidance on best practices for accessibility, responsiveness, and performance optimization. Only answer questions related to web development and design.
 
 The user's website consists of:
 - index.html (main page)
@@ -54,8 +54,7 @@ Maintain a friendly, patient, supportive tone. Prioritize the user's learning an
       var formData = new FormData();
       formData.append('csrf_token', chatForm.querySelector('input[name="csrf_token"]').value);
 
-      // let systemWithFile = system + "\nThis is the user's current file they are editing:\n" + editor.getValue();
-      let systemWithFile = system
+      let systemWithFile = system + "\nThis is the user's current file they are editing:\n" + editor.getValue();
       formData.append('system', systemWithFile);
       
       formData.append('messages', JSON.stringify(messages));
@@ -66,7 +65,7 @@ Maintain a friendly, patient, supportive tone. Prioritize the user's learning an
       chatBox.lastElementChild.innerHTML = '<i>thinking...</i>'
 
       source.addEventListener('error', function(e) {
-        chatBox.lastElementChild.innerText = 'An error occurred. Please try again later.';
+        chatBox.lastElementChild.innerText = 'An error occurred, or the chat is temporarily unavailable. Please try again later.';
         chatForm.querySelector('button').disabled = false;
         messages.pop();
       })

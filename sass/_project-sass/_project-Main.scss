@@ -2420,7 +2420,7 @@ pre, code {
 
 .resize-handle {
   position: absolute;
-  left: -1px; /* Adjust based on handle width to center it on the border */
+  left: -5px; /* Adjust based on handle width to center it on the border */
   top: 50%;
   transform: translateY(-50%);
   width: 10px; /* Handle width */
