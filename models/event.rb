@@ -107,4 +107,12 @@ class Event < Sequel::Model
       true
     end
   end
+
+  def name
+    return 'follow' if follow_id
+    return 'tip' if tip_id
+    return 'tag' if tag_id
+    return 'site change' if site_change_id
+    return 'comment' if profile_comment_id
+  end
 end
