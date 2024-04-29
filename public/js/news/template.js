@@ -9,8 +9,14 @@ var Template = {
   
   renderComment: function(eventId) {
     var event = $('#event_'+eventId+'_actions')
+    var eventForms = event.find('form')
+
+    if(eventForms.length > 0) {
+      eventForms[0].remove()
+      return false
+    }
+
     var rendered = this.template($('#comment-template').html(), {eventId: eventId})
-    event.find('a#reply').css('display', 'none')
     event.append(rendered)
   }
 }
