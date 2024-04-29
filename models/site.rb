@@ -39,6 +39,7 @@ class Site < Sequel::Model
     image/x-icon
     image/x-xcf
     message/rfc822
+    model/gltf-binary
     text/cache-manifest
     text/css
     text/csv
@@ -50,7 +51,7 @@ class Site < Sequel::Model
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png apng gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle pls yaml yml toml osdx mjs cjs ts
+    html htm txt text css js jpg jpeg png apng gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle pls yaml yml toml osdx mjs cjs ts glb
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
