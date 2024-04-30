@@ -152,7 +152,7 @@
 
             <% if current_site %>
               <% if event.site_id == current_site.id || comment.actioning_site_id == current_site.id %>
-                <a href="#" onclick="Comment.delete(<%= comment.id %>, '<%= csrf_token %>'); return false">Delete</a>
+                <a href="#" id="comment_<%= comment.id %>_delete" onclick="Comment.delete(<%= comment.id %>, '<%= csrf_token %>'); return false">Delete</a>
               <% end %>
             <% end %>
           </div>
