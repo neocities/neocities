@@ -77,7 +77,7 @@
         <input type="hidden" id="deleteFilenameInput" name="filename">
       </form>
 
-      <div class="modal hide fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+      <div class="modal hide" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
         <div class="modal-header">
           <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
           <h3 id="deleteConfirmModalLabel">Confirm deletion</h3>
@@ -91,7 +91,7 @@
         </div>
       </div>
 
-      <div class="modal hide fade" id="renameModal" tabindex="-1" role="dialog" aria-labelledby="renameModalLabel" aria-hidden="true">
+      <div class="modal hide" id="renameModal" tabindex="-1" role="dialog" aria-labelledby="renameModalLabel" aria-hidden="true">
         <form method="post" action="/site_files/rename">
           <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
           <input type="hidden" value="<%= @dir %>" name="dir">
@@ -133,7 +133,7 @@
   <input id="uploadFiles" type="file" name="file" multiple>
 </form>
 
-<div class="modal hide fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
+<div class="modal hide" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
   <form method="post" action="/site/create_directory">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <input type="hidden" value="<%= @dir %>" name="dir">
@@ -151,7 +151,7 @@
   </form>
 </div>
 
-<div class="modal hide fade" id="createFile" tabindex="-1" role="dialog" aria-labelledby="createFileLabel" aria-hidden="true">
+<div class="modal hide" id="createFile" tabindex="-1" role="dialog" aria-labelledby="createFileLabel" aria-hidden="true">
   <form method="post" action="/site_files/create">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <input type="hidden" value="<%= @dir %>" name="dir">

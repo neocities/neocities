@@ -24,7 +24,7 @@
   <% end %>
 
 
-<div class="modal hide fade" id="endSupporterConfirm" tabindex="-1" role="dialog" aria-labelledby="endSupporterConfirmLabel" aria-hidden="true">
+<div class="modal hide" id="endSupporterConfirm" tabindex="-1" role="dialog" aria-labelledby="endSupporterConfirmLabel" aria-hidden="true">
   <form method="POST" action="/supporter/end">
     <%== csrf_token_input_html %>
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
