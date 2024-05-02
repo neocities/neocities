@@ -482,10 +482,15 @@
 .overlay a {
   color: white;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 12px;
   display: block;
   margin-left: 5px;
 }
+
+.overlay a:hover {
+  font-size: 14px;
+}
+
 .overlay .fa-trash, .modal .fa-trash {
   vertical-align: 1px;
 }
