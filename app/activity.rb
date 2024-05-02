@@ -59,6 +59,7 @@ get '/activity' do
     initial_events.each do |event|
       event_site = event.site
       next if @events.select {|e| e.site_id == event.site_id}.count >= 1
+      next if event_site.changed_count > 50_000 # Likely a bot
       next if event_site.is_a_jerk?
       next unless event_site.follows_dataset.count > 1
       @events.push event
