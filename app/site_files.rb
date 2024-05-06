@@ -52,7 +52,10 @@ post '/site_files/create' do
   end
 
   if extname.match(/^\.html|^\.htm/i)
-    current_site.install_new_html_file name
+    begin
+      current_site.install_new_html_file name
+    rescue Sequel::UniqueConstraintViolation
+    end
   else
     file_path = current_site.files_path(name)
     FileUtils.touch file_path

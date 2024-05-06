@@ -411,10 +411,13 @@ class Site < Sequel::Model
       false
     else
       DB.transaction do
-        follow = add_following site_id: site.id
-        # FIXME see above.
-        # DB['update sites set follow_count=follow_count+1 where id=?', site.id].first if scorable_follow?(site)
-        Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
+        begin
+          follow = add_following site_id: site.id
+          # FIXME see above.
+          # DB['update sites set follow_count=follow_count+1 where id=?', site.id].first if scorable_follow?(site)
+          Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
+        rescue Sequel::UniqueConstraintViolation
+        end
       end
 
       true
