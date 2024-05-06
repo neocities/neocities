@@ -1248,7 +1248,8 @@ class Site < Sequel::Model
 
       if site_file
         file[:size] = site_file.size unless file[:is_directory]
-        file[:updated_at] = site_file.updated_at
+        file[:created_at] = site_file.created_at
+        file[:updated_at] = site_file.updated_at ? site_file.updated_at : site_file.created_at
       end
 
       file[:is_html] = !(extname.match(HTML_REGEX)).nil?

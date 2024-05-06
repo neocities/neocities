@@ -31,6 +31,7 @@ get '/api/list' do
     new_file[:path] = file[:path]
     new_file[:is_directory] = file[:is_directory]
     new_file[:size] = file[:size] unless file[:is_directory]
+    new_file[:created_at] = file[:created_at].rfc2822
     new_file[:updated_at] = file[:updated_at].rfc2822
     new_file[:sha1_hash] = file[:sha1_hash] unless file[:is_directory]
     files << new_file
