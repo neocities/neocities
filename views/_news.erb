@@ -143,7 +143,9 @@
           <div class="actions">
             <% comment_likes_count = comment.comment_likes_dataset.count %>
             <% if current_site %>
-              <a href="#" class="comment_like" id="comment_<%= comment.id %>_like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= comment.liking_site_usernames.join('<br>') %>" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>'); return false"><%= comment.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= comment_likes_count > 0 ? " (#{comment_likes_count})" : '' %></a>
+              <% if current_site.commenting_allowed? %>
+                <a href="#" class="comment_like" id="comment_<%= comment.id %>_like" data-placement="bottom" data-toggle="tooltip" data-original-title="<%= comment.liking_site_usernames.join('<br>') %>" onclick="Comment.toggleLike(<%= comment.id %>, '<%= csrf_token %>'); return false"><%= comment.site_likes?(current_site) ? 'Unlike' : 'Like' %><%= comment_likes_count > 0 ? " (#{comment_likes_count})" : '' %></a>
+              <% end %>
             <% else %>
               <% if comment_likes_count > 0 %>
                 <%= comment_likes_count %>&nbsp;<%= comment_likes_count == 1 ? 'like' : 'likes' %>
