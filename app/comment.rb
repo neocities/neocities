@@ -2,6 +2,7 @@ post '/comment/:comment_id/toggle_like' do |comment_id|
   require_login
   content_type :json
   comment = Comment[id: comment_id]
+  return 403 if comment.event.site.is_blocking?(current_site) || current_site.is_blocking?(comment.event.site)
   liked_response = comment.toggle_site_like(current_site) ? 'liked' : 'unliked'
   {result: liked_response, comment_like_count: comment.comment_likes_dataset.count, liking_site_names: comment.liking_site_usernames}.to_json
 end

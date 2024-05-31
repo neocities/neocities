@@ -1,6 +1,6 @@
 get '/site/:username.rss' do |username|
   site = Site[username: username]
-  halt 404 if site.nil?
+  halt 404 if site.nil? || (current_site && site.is_blocking?(current_site))
   content_type :xml
   site.to_rss
 end
@@ -8,7 +8,7 @@ end
 get '/site/:username/?' do |username|
   site = Site[username: username]
   # TODO: There should probably be a "this site was deleted" page.
-  not_found if site.nil? || site.is_banned || site.is_deleted
+  not_found if site.nil? || site.is_banned || site.is_deleted || (current_site && site.is_blocking?(current_site))
 
   redirect '/' if site.is_education
 
@@ -41,7 +41,7 @@ MAX_STAT_POINTS = 30
 get '/site/:username/stats' do
   @default_stat_points = 7
   @site = Site[username: params[:username]]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted
+  not_found if @site.nil? || @site.is_banned || @site.is_deleted || (current_site && @site.is_blocking?(current_site))
 
   @title = "Site stats for #{@site.host}"
 
@@ -127,7 +127,7 @@ end
 get '/site/:username/follows' do |username|
   @title = "Sites #{username} follows"
   @site = Site[username: username]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted
+  not_found if @site.nil? || @site.is_banned || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
   @sites = @site.followings.collect {|f| f.site}
   erb :'site/follows'
 end
@@ -135,7 +135,7 @@ end
 get '/site/:username/followers' do |username|
   @title = "Sites that follow #{username}"
   @site = Site[username: username]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted
+  not_found if @site.nil? || @site.is_banned || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
   @sites = @site.follows.collect {|f| f.actioning_site}
   erb :'site/followers'
 end
@@ -144,6 +144,8 @@ post '/site/:username/comment' do |username|
   require_login
 
   site = Site[username: username]
+
+  redirect request.referer if current_site && (site.is_blocking?(current_site) || current_site.is_blocking?(site))
 
   last_comment = site.profile_comments_dataset.order(:created_at.desc).first
 
@@ -173,6 +175,7 @@ post '/site/:site_id/toggle_follow' do |site_id|
   require_login
   content_type :json
   site = Site[id: site_id]
+  return 403 if site.is_blocking?(current_site)
   {result: (current_site.toggle_follow(site) ? 'followed' : 'unfollowed')}.to_json
 end
 
