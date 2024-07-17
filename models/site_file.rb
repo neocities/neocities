@@ -6,7 +6,7 @@ class SiteFile < Sequel::Model
   CLASSIFIER_LIMIT = 1_000_000
   CLASSIFIER_WORD_LIMIT = 25
   FILE_PATH_CHARACTER_LIMIT = 1200
-  FILE_NAME_CHARACTER_LIMIT = 100
+  FILE_NAME_CHARACTER_LIMIT = 255
   unrestrict_primary_key
   plugin :update_primary_key
   many_to_one :site
