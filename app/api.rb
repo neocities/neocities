@@ -123,7 +123,7 @@ post '/api/upload' do
     end
 
     if SiteFile.name_too_long? file[:filename]
-      api_error 400, 'file_name_too_long', "#{file[:filename]} filename is too long (exceeds 255 characters)"
+      api_error 400, 'file_name_too_long', "#{file[:filename]} filename is too long (exceeds #{SiteFile::FILE_NAME_CHARACTER_LIMIT} characters)"
     end
   end
 
