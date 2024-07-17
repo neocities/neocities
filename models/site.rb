@@ -171,7 +171,7 @@ class Site < Sequel::Model
   end
 
   MAXIMUM_EMAIL_CONFIRMATIONS = 20
-  MAX_COMMENTS_PER_DAY = 5
+  MAX_COMMENTS_PER_DAY = 10
   SANDBOX_TIME = 14.days
   BLACK_BOX_WAIT_TIME = 10.seconds
   MAX_DISPLAY_FOLLOWS = 56*3
@@ -603,15 +603,15 @@ class Site < Sequel::Model
 
   def commenting_allowed?
     return false if owner.commenting_banned == true
-    return true if owner.commenting_allowed
+    return false if owner.commenting_too_much?
 
     if owner.supporter?
       set commenting_allowed: true
       save_changes validate: false
       return true
-    else
-      return false if owner.commenting_too_much?
     end
+
+    return true if owner.commenting_allowed
 
     if (account_sites_events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT || (created_at < Date.new(2014, 12, 25).to_time && changed_count >= COMMENTING_ALLOWED_UPDATED_COUNT )) &&
        created_at < Time.now - 604800
