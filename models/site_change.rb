@@ -6,8 +6,8 @@ class SiteChange < Sequel::Model
   one_to_one  :site_change
   one_to_many :site_change_files
 
-  def site_change_filenames(limit=4)
-    site_change_files_dataset.select(:filename).limit(limit).all.collect {|f| f.filename}.sort_by {|f| f.match('html') ? 0 : 1}
+  def site_change_filenames(limit=6)
+    site_change_files_dataset.select(:filename).limit(limit).order(:created_at.desc).all.collect {|f| f.filename}.sort_by {|f| f.match('html') ? 0 : 1}
   end
 
   def self.record(site, filename)
