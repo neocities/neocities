@@ -1519,7 +1519,7 @@ class Site < Sequel::Model
     profile_comments_weight = 10
 
     follow_count_factor = 0.1
-    views_factor = 0.005
+    views_factor = 0.0001
     profile_comments_factor = 0.01
     likes_factor = 0.01
 
