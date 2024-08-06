@@ -15,18 +15,18 @@
             <label class="text-Label" for="sort_by">Sort by:</label>
             <div class="select-Container">
               <select name="sort_by" id="sort_by" class="input-Select">
-                <option value="followers" <%= params[:sort_by] == 'followers' ? 'selected' : '' %>>Most Followed</option>
-                <option value="special_sauce" <%= params[:sort_by] == 'special_sauce' ? 'selected' : '' %>>Special Sauce (alpha)</option>
+                <option value="followers" <%= params[:sort_by] == 'followers' ? 'selected' : '' %>>Most Followed</option>\
+                <option value="special_sauce" <%= params[:sort_by] == 'special_sauce' ? 'selected' : '' %>>Special Sauce</option>
+                <option value="random" <%= params[:sort_by] == 'random' ? 'selected' : '' %>>Random</option>
                 <option value="last_updated" <%= params[:sort_by] == 'last_updated' ? 'selected' : '' %>>Last Updated</option>
                 <option value="supporters" <%= params[:sort_by] == 'supporters' ? 'selected' : '' %>>Neocities Supporters</option>
-                <option value="featured" <%= params[:sort_by] == 'featured' ? 'selected' : '' %>>Featured</option>
+                <!-- <option value="featured" <%= params[:sort_by] == 'featured' ? 'selected' : '' %>>Featured</option> -->
                 <option value="tipping_enabled" <%= params[:sort_by] == 'tipping_enabled' ? 'selected' : '' %>>Accepting Tips</option>
-                <option value="most_views" <%= params[:sort_by] == 'most_views' ? 'selected' : '' %>>Most Views</option>
-                <option value="least_views" <%= params[:sort_by] == 'least_views' ? 'selected' : '' %>>Least Views</option>
-                <option value="hits" <%= params[:sort_by] == 'hits' ? 'selected' : '' %>>Most Hits</option>
+                <!-- <option value="most_views" <%= params[:sort_by] == 'most_views' ? 'selected' : '' %>>Most Views</option> -->
+                <!-- <option value="least_views" <%= params[:sort_by] == 'least_views' ? 'selected' : '' %>>Least Views</option> -->
+                <!-- <option value="hits" <%= params[:sort_by] == 'hits' ? 'selected' : '' %>>Most Hits</option> -->
                 <option value="newest" <%= params[:sort_by] == 'newest' ? 'selected' : '' %>>Newest</option>
-                <option value="oldest" <%= params[:sort_by] == 'oldest' ? 'selected' : '' %>>Oldest</option>
-                <option value="random" <%= params[:sort_by] == 'random' ? 'selected' : '' %>>Random</option>
+                <!-- <option value="oldest" <%= params[:sort_by] == 'oldest' ? 'selected' : '' %>>Oldest</option> -->
               </select>
             </div>
 
@@ -79,7 +79,7 @@
         <div class="title">
           <a href="<%= site.uri %>"
              title="<%= site.title %>"
-          ><%= site.title.shorten(30) %></a>
+          ><%= site.title.shorten(30) %></a>&nbsp;
         </div>
         <div class="site-info">
           <div class="username">
@@ -136,6 +136,10 @@
 
 <% if params[:sort_by] != 'random' %>
   <%== erb :'_pagination', layout: false %>
+<% else %>
+  <div class="txt-Center eps pagination" style="margin-top: 0"  >
+    <a href="/browse?sort_by=random&tag=<%= Rack::Utils.escape params[:tag] %>" class="btn-Action txt-Center" style="margin: 0 auto;">More</a>
+  </div>
 <% end %>
 
 <% unless is_education? %>

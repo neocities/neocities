@@ -1449,42 +1449,143 @@ class Site < Sequel::Model
   end
 
   def self.compute_scores
-    select(:id, :username, :created_at, :updated_at, :views, :featured_at, :changed_count, :api_calls).exclude(is_banned: true).exclude(is_crashing: true).exclude(is_nsfw: true).exclude(updated_at: nil).where(site_changed: true).all.each do |s|
-      s.score = s.compute_score
-      s.save_changes validate: false
+    sites = select(:id, :username, :created_at, :updated_at, :views, :featured_at, :changed_count, :api_calls, :follow_count, :score)
+            .exclude(is_deleted: true)
+            .exclude(is_crashing: true)
+            .exclude(updated_at: nil)
+            .where(site_changed: true)
+            #.all
+            #.where { changed_count > 25 }
+            #.where { created_at < 1.week.ago }
+            #.where { follow_count > 4 }
+            #.where { views > 10_000 }
+            .all
+
+    site_ids = sites.map(&:id)
+
+    likes_counts = DB[:events]
+                   .join(:likes, event_id: :id)
+                   .where(site_id: site_ids)
+                   .group_and_count(:site_id)
+                   .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    profile_comments_counts = DB[:events]
+                              .exclude(profile_comment_id: nil)
+                              .exclude(is_deleted: true)
+                              .where(site_id: site_ids)
+                              .group_and_count(:site_id)
+                              .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    comment_counts = DB[:comments]
+                     .where(actioning_site_id: site_ids)
+                     .exclude(is_deleted: true)
+                     .group_and_count(:actioning_site_id)
+                     .map { |r| [r[:actioning_site_id], r[:count]] }.to_h
+
+    blocks_counts = DB[:blocks]
+                    .where(site_id: site_ids)
+                    .group_and_count(:site_id)
+                    .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    follow_counts = DB[:follows]
+                    .join(:sites, id: :actioning_site_id  )
+                    .where(site_id: site_ids)
+                    .exclude(Sequel[:sites][:is_deleted] => true)
+                    .exclude(Sequel[:sites][:profile_enabled] => false)
+                    .group_and_count(:site_id)
+                    .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    followings_counts = DB[:follows]
+                    .join(:sites, id: :site_id)
+                    .where(actioning_site_id: site_ids)
+                    .exclude(Sequel[:sites][:is_deleted] => true)
+                    .exclude(Sequel[:sites][:profile_enabled] => false)
+                    .group_and_count(:actioning_site_id)
+                    .map { |r| [r[:actioning_site_id], r[:count]] }.to_h
+
+    site_files_counts = DB[:site_files]
+                        .where(site_id: site_ids)
+                        .group_and_count(:site_id)
+                        .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    updates = []
+
+    max_points = 100
+
+    follow_count_weight     = 30
+    views_weight            = 20
+    feature_bonus_weight    = 20
+    likes_weight            = 20
+    profile_comments_weight = 10
+
+    follow_count_factor = 0.1
+    views_factor = 0.005
+    profile_comments_factor = 0.01
+    likes_factor = 0.01
+
+    sites.each do |site|
+      points = 0
+
+      #$debug = true if site.username == 'username'
+
+      points += [(site.follow_count || 0) * follow_count_factor, follow_count_weight].min
+      puts "follows #{points}" if $debug
+      points += [(site.views * views_factor).to_i, views_weight].min
+      puts "views #{points}" if $debug
+      points += feature_bonus_weight if !site.featured_at.nil?
+      puts "featured #{points}" if $debug
+
+      likes_count = likes_counts[site.id] || 0
+      points += [likes_count * likes_factor, likes_weight].min
+      puts "likes #{points}" if $debug
+
+      profile_comments_count = profile_comments_counts[site.id] || 0
+      points += [profile_comments_count * profile_comments_factor, profile_comments_weight].min
+      puts "profile_comments #{points}" if $debug
+
+      blocks_count = blocks_counts[site.id] || 0
+      follow_count = follow_counts[site.id] || 0
+      followings_count = followings_counts[site.id] || 0
+      site_files_count = site_files_counts[site.id] || 0
+
+      if (site.api_calls && site.api_calls > 500_000) || follow_count == 0 && blocks_count > 5 || ((blocks_count / follow_count.to_f) > 0.06)
+        points *= 0.1
+      end
+
+      puts "api_call, blocks #{points}" if $debug
+
+      if followings_count < 5 || site_files_count < 10
+        points *= 0.5
+      end
+
+      comment_count = comment_counts[site.id] || 0
+      points *= 0.5 if comment_count < 20
+      puts "comment_count #{points}" if $debug
+
+      time_score_gravity = 0.3
+      time_factor = ((Time.now - site.updated_at) / 1.days)
+
+      points = (points / (time_factor**time_score_gravity)) if time_factor > 0
+      puts "time #{points}" if $debug
+
+      points = [points, max_points].min
+      puts "max_points #{points}" if $debug
+
+      score = [0, points].max
+
+      exit if $debug
+
+      if score != site.score
+        updates << { id: site.id, score: score }
+      end
+    end
+
+    DB.synchronize do |conn|
+      updates.each do |update|
+        conn.async_exec_params("UPDATE sites SET score = $1 WHERE id = $2", [update[:score], update[:id]])
+      end
     end
   end
-
-  SCORE_GRAVITY = 1.8
-
-  def compute_score
-    points = 0
-    points += (follow_count || 0) * 30
-    points += profile_comments_dataset.count * 1
-    points += views / 1000
-    points += 20 if !featured_at.nil?
-
-    # penalties
-    points = 0 if changed_count < 2
-    points = 0 if api_calls && api_calls > 1000
-
-    (points / ((Time.now - updated_at) / 7.days)**SCORE_GRAVITY).round(4)
-  end
-
-=begin
-  def compute_score
-    score = 0
-    score += (Time.now - created_at) / 1.day
-    score -= ((Time.now - updated_at) / 1.day) * 2
-    score += 500 if (updated_at > 1.week.ago)
-    score -= 1000 if
-    score -= 1000 if follow_count == 0
-    score += follow_count * 100
-    score += profile_comments_dataset.count * 5
-    score += profile_commentings_dataset.count
-    score.to_i
-  end
-=end
 
   def self.browse_dataset
     dataset.select(:id,:username,:hits,:views,:created_at,:plan_type,:parent_site_id,:domain,:score,:title).

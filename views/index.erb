@@ -164,10 +164,10 @@
 <div class="nav prev"></div>
 -->
 <ul class="website-Gallery hp-Gallery">
-  <% Site.featured.each do |site| %>
+  <% Site.order(:score.desc).limit(12).all.shuffle.each do |site| %>
     <li>
       <a href="<%= site.uri %>" title="<%= site.title %>" target="_blank">
-        <img src="<%= site.screenshot_url 'index.html', '210x158' %>" class="neo-SS" alt="<%= site.title %>" />
+        <img src="<%= site.screenshot_url 'index.html', '540x405' %>" class="neo-SS" alt="<%= site.title %>" />
       </a>
     </li>
   <% end %>
@@ -175,7 +175,7 @@
 <!--
 <div class="nav next"></div>
 -->
-<a href="/browse" class="btn-Action float-Right">Browse all sites</a>
+<a href="/browse" class="btn-Action float-Right">Browse more sites</a>
 </div>
 
 <div class="section previews">

@@ -63,40 +63,43 @@ def browse_sites_dataset
     return ds
   end
 
+  params[:sort_by] ||= 'followers'
+
   case params[:sort_by]
     when 'special_sauce'
-      ds = ds.exclude score: nil
-      ds = ds.order :score.desc
-    when 'followers'
-      ds = ds.order :follow_count.desc, :updated_at.desc
+      ds = ds.where{score > 1}
+      ds = ds.order(:score.desc, :follow_count.desc, :views.desc, :site_updated_at.desc)
     when 'supporters'
       ds = ds.where sites__id: Site.supporter_ids
       ds = ds.order :follow_count.desc, :views.desc, :site_updated_at.desc
-    when 'featured'
-      ds = ds.exclude featured_at: nil
-      ds = ds.order :featured_at.desc
-    when 'hits'
-      ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
-      ds = ds.order(:hits.desc, :site_updated_at.desc)
-    when 'most_views'
-      ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
-      ds = ds.order(:views.desc, :site_updated_at.desc)
-    when 'least_views'
-      ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
-      ds = ds.order(:views.asc, :site_updated_at.desc)
+    #when 'featured'
+    #  ds = ds.exclude featured_at: nil
+    #  ds = ds.order :featured_at.desc
+    #when 'hits'
+    #  ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
+    #  ds = ds.order(:hits.desc, :site_updated_at.desc)
+    #when 'most_views'
+    #  ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
+    #  ds = ds.order(:views.desc, :site_updated_at.desc)
+    #when 'least_views'
+    #  ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
+    #  ds = ds.order(:views.asc, :site_updated_at.desc)
     when 'newest'
       ds = ds.order(:created_at.desc, :views.desc)
-    when 'oldest'
-      ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
-      ds = ds.order(:created_at, :views.desc)
+    #when 'oldest'
+    #  ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
+    #  ds = ds.order(:created_at, :views.desc)
     when 'random'
       ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
-      ds = ds.where 'random() < 0.01'
+      ds = ds.where{score > 5}
+      ds = ds.order(Sequel.lit('RANDOM()'))
+      #ds = ds.where 'random() < 0.01'
     when 'last_updated'
+      ds = ds.where{score > 5}
       ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS}
       params[:sort_by] = 'last_updated'
       ds = ds.exclude(site_updated_at: nil)
-      ds = ds.order(:site_updated_at.desc, :views.desc)
+      ds = ds.order(:site_updated_at.desc)
     when 'tipping_enabled'
       ds = ds.where tipping_enabled: true
       ds = ds.where("(tipping_paypal is not null and tipping_paypal != '') or (tipping_bitcoin is not null and tipping_bitcoin != '')")
@@ -109,10 +112,11 @@ def browse_sites_dataset
       ds = ds.inner_join :blocks, :site_id => :id
       ds = ds.group :sites__id
       ds = ds.order :total.desc
-    else
+    when 'followers'
       params[:sort_by] = 'followers'
-      ds = ds.where{views > Site::BROWSE_MINIMUM_FOLLOWER_VIEWS}
-      ds = ds.order :follow_count.desc, :views.desc, :updated_at.desc
+      ds = ds.where{follow_count > 0}
+      ds = ds.where{updated_at > 9.months.ago}
+      ds = ds.order :follow_count.desc, :score.desc, :updated_at.desc
   end
 
   ds = ds.where ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
