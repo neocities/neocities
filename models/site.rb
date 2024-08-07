@@ -926,7 +926,7 @@ class Site < Sequel::Model
       raise ArgumentError, "argument missing: #{a}" if args[a].nil?
     end
 
-    if email && can_email?(args[:col])
+    if owner.email && can_email?(args[:col])
       EmailWorker.perform_async({
         from: FROM_EMAIL,
         to: owner.email,
