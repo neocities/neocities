@@ -68,7 +68,7 @@ describe 'site page' do
   describe 'blocking' do
     before do
       @tag = SecureRandom.hex 10
-      @blocked_site = Fabricate :site, new_tags_string: @tag, created_at: 2.weeks.ago, site_changed: true, views: Site::BROWSE_MINIMUM_FOLLOWER_VIEWS+1
+      @blocked_site = Fabricate :site, new_tags_string: @tag, created_at: 1.year.ago, site_changed: true, views: Site::BROWSE_MINIMUM_FOLLOWER_VIEWS+1, follow_count: Site::BROWSE_FOLLOWER_MINIMUM_FOLLOWS+1
     end
 
     after do
