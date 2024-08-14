@@ -238,3 +238,21 @@ task :generate_sitemap => [:environment] do
     gz.write %{</sitemapindex>}
   end
 end
+
+desc 'dedupe tags'
+task :dedupetags => [:environment] do
+  Tag.all.each do |tag|
+    begin
+      tag.reload
+    rescue Sequel::Error => e
+      next if e.message =~ /Record not found/
+    end
+
+    matching_tags = Tag.exclude(id: tag.id).where(name: tag.name).all
+
+    matching_tags.each do |matching_tag|
+      DB[:sites_tags].where(tag_id: matching_tag.id).update(tag_id: tag.id)
+      matching_tag.delete
+    end
+  end
+end
