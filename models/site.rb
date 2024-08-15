@@ -1595,18 +1595,18 @@ class Site < Sequel::Model
   end
 
   def suggestions(limit=SUGGESTIONS_LIMIT, offset=0)
-    suggestions_dataset = Site.exclude(id: id).exclude(is_deleted: true).exclude(is_nsfw: true).exclude(profile_enabled: false).order(:views.desc, :updated_at.desc)
+    suggestions_dataset = Site.exclude(id: id).exclude(is_deleted: true).exclude(is_nsfw: true).exclude(profile_enabled: false).exclude(site_changed: false).order(:score.desc, :views.desc, :updated_at.desc)
     suggestions = suggestions_dataset.where(tags: tags).limit(limit, offset).all
 
     return suggestions if suggestions.length == limit
 
     ds = self.class.browse_dataset
     ds = ds.select_all :sites
-    ds = ds.order :follow_count.desc, :updated_at.desc
+    ds = ds.order :score.desc, :updated_at.desc
     ds = ds.where Sequel.lit("views >= #{SUGGESTIONS_VIEWS_MIN}")
     ds = ds.limit limit - suggestions.length
 
-    suggestions += ds.all
+    suggestions += ds.all.shuffle
   end
 
   def screenshot_path(path, resolution)
