@@ -1,8 +1,4 @@
 get '/?' do
-  if params[:_ga_adgroupid]
-    session[:ga_adgroupid] = params[:_ga_adgroupid]
-  end
-
   if current_site
     require_login
 
@@ -32,7 +28,6 @@ get '/?' do
     halt erb :'home', locals: {site: current_site}
   end
 
-
   if SimpleCache.expired?(:index)
     @sites_count = Site.count.roundup(100)
     @total_hits_count = DB['SELECT SUM(hits) AS hits FROM SITES'].first[:hits] || 0
@@ -52,7 +47,7 @@ get '/?' do
 
     @create_disabled = false
 
-    @index_rendered = SimpleCache.store :index, erb(:index, layout: :index_layout), 1.hour
+    @index_rendered = SimpleCache.store :index, erb(:index, layout: :index_layout), (ENV['RACK_ENV'] == 'test' ? -1 : 1.hour)
 
     return @index_rendered
   else

@@ -112,7 +112,7 @@ describe Site do
   describe 'suggestions' do
     it 'should return suggestions for tags' do
       site = Fabricate :site, new_tags_string: 'vegetables'
-      Site::SUGGESTIONS_LIMIT.times { Fabricate :site, new_tags_string: 'vegetables' }
+      Site::SUGGESTIONS_LIMIT.times { Fabricate :site, new_tags_string: 'vegetables', site_changed: true }
 
       _(site.suggestions.length).must_equal Site::SUGGESTIONS_LIMIT
 
@@ -122,10 +122,10 @@ describe Site do
 
       site = Fabricate :site, new_tags_string: 'gardening'
       (Site::SUGGESTIONS_LIMIT-5).times {
-        Fabricate :site, new_tags_string: 'gardening', views: Site::SUGGESTIONS_VIEWS_MIN
+        Fabricate :site, new_tags_string: 'gardening', views: Site::SUGGESTIONS_VIEWS_MIN, site_changed: true
       }
 
-      _(site.suggestions.length).must_equal(Site::SUGGESTIONS_LIMIT - 5)
+      _(site.suggestions.length).must_equal(Site::SUGGESTIONS_LIMIT)
     end
   end
 
