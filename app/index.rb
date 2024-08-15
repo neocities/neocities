@@ -32,37 +32,12 @@ get '/?' do
     halt erb :'home', locals: {site: current_site}
   end
 
-  if SimpleCache.expired?(:sites_count)
-    @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 4.hours
-  else
-    @sites_count = SimpleCache.get :sites_count
-  end
 
-  if SimpleCache.expired?(:total_hits_count)
-    @total_hits_count = SimpleCache.store :total_hits_count, DB['SELECT SUM(hits) AS hits FROM SITES'].first[:hits], 4.hours
-  else
-    @total_hits_count = SimpleCache.get :total_hits_count
-  end
-
-  @total_hits_count ||= 0
-
-  if SimpleCache.expired?(:total_views_count)
-    @total_views_count = SimpleCache.store :total_views_count, DB['SELECT SUM(views) AS views FROM SITES'].first[:views], 4.hours
-  else
-    @total_views_count = SimpleCache.get :total_views_count
-  end
-
-  @total_views_count ||= 0
-
-  if SimpleCache.expired?(:changed_count)
-    @changed_count = SimpleCache.store :changed_count, DB['SELECT SUM(changed_count) AS changed_count FROM SITES'].first[:changed_count], 4.hours
-  else
-    @changed_count = SimpleCache.get :changed_count
-  end
-
-  @changed_count ||= 0
-
-  if SimpleCache.expired?(:blog_feed_html)
+  if SimpleCache.expired?(:index)
+    @sites_count = Site.count.roundup(100)
+    @total_hits_count = DB['SELECT SUM(hits) AS hits FROM SITES'].first[:hits] || 0
+    @total_views_count = DB['SELECT SUM(views) AS views FROM SITES'].first[:views] || 0
+    @changed_count = DB['SELECT SUM(changed_count) AS changed_count FROM SITES'].first[:changed_count] || 0
     @blog_feed_html = ''
 
     begin
@@ -75,14 +50,14 @@ get '/?' do
       @blog_feed_html = 'The latest news on Neocities can be found on our blog.'
     end
 
-    @blog_feed_html = SimpleCache.store :blog_feed_html, @blog_feed_html, 8.hours
+    @create_disabled = false
+
+    @index_rendered = SimpleCache.store :index, erb(:index, layout: :index_layout), 1.hour
+
+    return @index_rendered
   else
-    @blog_feed_html = SimpleCache.get :blog_feed_html
+    return SimpleCache.get(:index)
   end
-
-  @create_disabled = false
-
-  erb :index, layout: :index_layout
 end
 
 get '/welcome' do
