@@ -17,6 +17,8 @@ vagrant up --provision
 
 ![Vagrant takes a while, make a pizza while waiting](https://i.imgur.com/dKa8LUs.png)
 
+Make a copy of `config.yml.template` in the root directory, and rename it to `config.yml`. Then:
+
 ```
 vagrant ssh
 bundle exec rackup -o 0.0.0.0
