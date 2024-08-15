@@ -71,7 +71,6 @@ def browse_sites_dataset
       ds = ds.order :score.desc, :follow_count.desc, :views.desc, :site_updated_at.desc
     when 'random'
       ds = ds.where{score > 3} unless params[:tag]
-      puts params.inspect
       ds = ds.order(Sequel.lit('RANDOM()'))
     when 'most_followed'
       ds = ds.where{views > Site::BROWSE_MINIMUM_FOLLOWER_VIEWS}
