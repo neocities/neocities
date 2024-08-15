@@ -1,4 +1,4 @@
-<div class="header-Outro with-site-image">
+<div class="header-Outro with-site-image site-profile-big-container">
   <% if flash.keys.length > 0 %>
     <div class="row content">
       <div class="alert txt-Center">
@@ -9,14 +9,14 @@
     </div>
   <% end %>
   <div class="row content site-info-row">
-    <div class="col col-50 signup-Area site-display-preview-wrapper large">
-      <div class="signup-Form site-display-preview">
-  	  <fieldset class="content">
+    <div class="signup-Area site-display-preview-wrapper">
+      <div class="site-display-preview">
+  	  <fieldset class="website-thumbnail-wrapper">
         <a href="<%= site.uri %>" class="screenshot" style="background-image:url(<%= site.screenshot_url('index.html', '540x405') %>);"></a>
 	    </fieldset>
       </div>
     </div>
-    <div class="col col-50 profile-info">
+    <div class="profile-info">
       <h2 class="eps title-with-badge"><span><%= site.title %></span> <% if site.supporter? %><a href="/supporter" class="supporter-badge" title="Neocities Supporter"></a> <% end %></h2>
       <p class="site-url"><a href="<%= site.uri %>"><%= site.host %></a></p>
       <% follow_count = site.follows_dataset.count %>
