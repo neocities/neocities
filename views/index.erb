@@ -32,6 +32,8 @@
           </ul>
         </nav>
 
+        <%== flash_display centered: true %>
+
 <div class="int-Logo hp-Logo">
 <a href="/" title="back to home">
   <span class="hidden">Neocities.org</span>
@@ -89,7 +91,7 @@
       </div>
     <% else %>
       <form id="createSiteForm" class="signup-Form" onsubmit="return false">
-        <input type="hidden" name="csrf_token" value="CSRF_TOKEN_HERE">
+        <input type="hidden" name="csrf_token" value="<%= csrf_token %>">
         <input type="hidden" name="is_education" value="false">
         <fieldset class="content">
           <h2 class="gamma">Sign up for free</h2>
@@ -162,10 +164,10 @@
 <div class="nav prev"></div>
 -->
 <ul class="website-Gallery hp-Gallery">
-  <% Site.order(:score.desc).limit(12).all.shuffle.each do |site| %>
+  <% @featured_sites.each do |site| %>
     <li>
-      <a href="<%= site.uri %>" title="<%= site.title %>" target="_blank">
-        <img src="<%= site.screenshot_url 'index.html', '540x405' %>" class="neo-SS" alt="<%= site.title %>" />
+      <a href="<%= site[:uri] %>" title="<%= site[:title] %>" target="_blank">
+        <img src="<%= site[:screenshot_url] %>" class="neo-SS" alt="<%= site[:title] %>" />
       </a>
     </li>
   <% end %>
