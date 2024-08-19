@@ -48,11 +48,12 @@ get '/?' do
     @create_disabled = false
 
     @index_rendered = SimpleCache.store :index, erb(:index, layout: :index_layout), (ENV['RACK_ENV'] == 'test' ? -1 : 1.hour)
-
-    return @index_rendered
   else
-    return SimpleCache.get(:index)
+    @index_rendered = SimpleCache.get(:index)
   end
+
+  @index_rendered.gsub! 'CSRF_TOKEN_HERE', csrf_token
+  @index_rendered
 end
 
 get '/welcome' do
