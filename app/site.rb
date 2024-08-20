@@ -21,7 +21,7 @@ get '/site/:username/?' do |username|
 
   if params[:event_id]
     not_found if params[:event_id].not_an_integer?
-    event = Event.select(:id).where(id: params[:event_id]).first
+    event = Event.select(:id).where(id: params[:event_id]).exclude(is_deleted: true).first
     not_found if event.nil?
     events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
   else
