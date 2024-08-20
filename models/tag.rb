@@ -17,7 +17,11 @@ class Tag < Sequel::Model
   def self.create_unless_exists(name)
     name = clean_name name
     return nil if name == '' || name.nil?
-    dataset.filter(name: name).first || create(name: name)
+    begin
+      dataset.filter(name: name).first || create(name: name)
+    rescue Sequel::UniqueConstraintViolation
+      dataset.filter(name: name).first
+    end
   end
 
   def self.autocomplete(name, limit=3)

@@ -904,7 +904,7 @@ class Site < Sequel::Model
   end
 
   def add_tag_name(name)
-    add_tag Tag.find_or_create(name: name)
+    add_tag Tag.create_unless_exists(name)
   end
 
   def before_create
