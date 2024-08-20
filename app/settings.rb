@@ -1,3 +1,6 @@
+require 'socket'
+require 'ipaddr'
+
 get '/settings/?' do
   require_login
   @site = parent_site
@@ -150,6 +153,15 @@ post '/settings/:username/custom_domain' do
   if params[:domain] =~ /^www\..+$/i
     flash[:error] = 'Cannot begin with www - please only enter the domain name.'
     redirect "/settings/#{@site.username}/#custom_domain"
+  end
+
+  begin
+    addr = IPAddr.new @site.values[:domain]
+    if addr.ipv4? || addr.ipv6?
+      flash[:error] = 'IP addresses are not allowed. Please enter a valid domain name.'
+      redirect "/settings/#{@site.username}#custom_domain"
+    end
+  rescue IPAddr::InvalidAddressError
   end
 
   begin
