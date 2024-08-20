@@ -98,7 +98,11 @@ end
 post '/site_files/delete' do
   require_login
   path = HTMLEntities.new.decode params[:filename]
-  current_site.delete_file path
+  begin
+    current_site.delete_file path
+  rescue Sequel::NoExistingObject
+    # the deed was presumably already done
+  end
   flash[:success] = "Deleted #{Rack::Utils.escape_html params[:filename]}."
 
   dirname = Pathname(path).dirname
