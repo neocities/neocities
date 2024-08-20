@@ -1106,7 +1106,7 @@ class Site < Sequel::Model
     end
 
     if @new_tags_string
-      new_tags = @new_tags_string.split ','
+      new_tags = @new_tags_string.strip.split ','
       new_tags.compact!
       @new_filtered_tags = []
 

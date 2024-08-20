@@ -173,6 +173,14 @@ describe 'signup' do
     _(Site.last.tags.collect {|t| t.name}).must_equal ['derpie', 'shoujo']
   end
 
+  it 'succeeds with extra space in tags' do
+    fill_in_valid
+    fill_in 'new_tags_string', with: 'blinkies, music, programming, '
+    click_signup_button
+    _(site_created?).must_equal true
+    _(Site.last.tags.collect {|t| t.name}).must_equal ['blinkies', 'music', 'programming']
+  end
+
   it 'fails with invalid tag chars' do
     fill_in_valid
     fill_in 'new_tags_string', with: '$POLICE OFFICER$$$$$, derp'
