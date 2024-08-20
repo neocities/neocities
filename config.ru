@@ -52,6 +52,7 @@ map '/webdav' do
       env['PATH_INFO'] = env['PATH_INFO'][1..env['PATH_INFO'].length] if env['PATH_INFO'][0] == '/'
 
       site_file = @site.site_files.select {|s| s.path == env['PATH_INFO']}.first
+      return [404, {}, ['']] if site_file.nil?
       res = site_file.rename destination
 
       return [201, {}, ['']]
