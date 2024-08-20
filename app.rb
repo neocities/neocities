@@ -85,6 +85,13 @@ before do
     content_type :html, 'charset' => 'utf-8'
     redirect '/' if request.post? && !csrf_safe?
   end
+
+  if params[:page]
+    params[:page] = params[:page].to_s
+    unless params[:page] =~ /^\d+$/ && params[:page].to_i > 0
+      params[:page] = '1'
+    end
+  end
 end
 
 after do
