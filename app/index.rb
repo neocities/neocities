@@ -14,8 +14,6 @@ get '/?' do
       not_found if event.nil?
       not_found if event.is_deleted
       events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
-    elsif params[:activity] == 'global'
-      events_dataset = Event.global_dataset @page
     else
       events_dataset = current_site.news_feed(@page, 10)
     end

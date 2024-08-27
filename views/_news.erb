@@ -165,10 +165,8 @@
 
 <% end %>
 
-<% if params[:activity] != 'global' %>
-  <div class="content">
-    <%== erb :_pagination, layout: false %>
-  </div>
-<% end %>
+<div class="content">
+  <%== erb :_pagination, layout: false %>
+</div>
 
 <%== erb :'_news_templates', layout: false %>
