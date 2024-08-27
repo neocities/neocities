@@ -127,16 +127,22 @@ end
 get '/site/:username/follows' do |username|
   @title = "Sites #{username} follows"
   @site = Site[username: username]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
-  @sites = @site.followings.collect {|f| f.site}
+  not_found if @site.nil? || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
+
+  params[:page] ||= "1"
+
+  @pagination_dataset = @site.followings_dataset.paginate(params[:page].to_i, Site::FOLLOW_PAGINATION_LIMIT)
   erb :'site/follows'
 end
 
 get '/site/:username/followers' do |username|
   @title = "Sites that follow #{username}"
   @site = Site[username: username]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
-  @sites = @site.follows.collect {|f| f.actioning_site}
+  not_found if @site.nil? || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
+
+  params[:page] ||= "1"
+
+  @pagination_dataset = @site.follows_dataset.paginate(params[:page].to_i, Site::FOLLOW_PAGINATION_LIMIT)
   erb :'site/followers'
 end
 
