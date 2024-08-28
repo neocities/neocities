@@ -648,6 +648,10 @@ class Site < Sequel::Model
     @blocking_site_ids ||= blockings_dataset.select(:site_id).all.collect {|s| s.site_id}
   end
 
+  def block_site_ids
+    @block_site_ids ||= blocks_dataset.select(:actioning_site_id).all.collect {|s| s.actioning_site_id}
+  end
+
   def unfollow_blocked_sites!
     blockings.each do |blocking|
       follows.each do |follow|
@@ -1384,20 +1388,28 @@ class Site < Sequel::Model
     super val
   end
 
-  def latest_events(current_page=1, limit=10)
+  def latest_events(current_page=1, current_site=nil, limit=Event::PAGINATION_LENGTH)
     site_id = self.id
-    Event.news_feed_default_dataset.where{Sequel.|({site_id: site_id}, {actioning_site_id: site_id})}.
-    order(:created_at.desc).
-    paginate(current_page.to_i, limit.to_i)
+    ds = Event.news_feed_default_dataset.where{Sequel.|({site_id: site_id}, {actioning_site_id: site_id})}.
+    order(:created_at.desc)
+
+    if current_site
+      ds = ds.where(
+        Sequel.|(
+          {events__actioning_site_id: nil},
+          Sequel.~(events__actioning_site_id: current_site.block_site_ids)
+        )
+      )
+    end
+
+    ds.paginate(current_page.to_i, limit.to_i)
   end
 
-  def news_feed(current_page=1, limit=10)
+  def news_feed(current_page=1, limit=Event::PAGINATION_LENGTH)
     following_ids = self.followings_dataset.select(:site_id).all.collect {|f| f.site_id}
     search_ids = following_ids+[self.id]
 
-    Event.news_feed_default_dataset.where{Sequel.|({site_id: search_ids}, {actioning_site_id: search_ids})}.
-    order(:created_at.desc).
-    paginate(current_page.to_i, limit.to_i)
+    Event.news_feed_default_dataset.where{Sequel.|({events__actioning_site_id: search_ids})}.paginate(current_page.to_i, limit.to_i)
   end
 
   def newest_follows

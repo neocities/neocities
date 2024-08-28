@@ -8,14 +8,14 @@ get '/?' do
     @page = 1 if @page.not_an_integer?
 
     if params[:activity] == 'mine'
-      events_dataset = current_site.latest_events(@page, 10)
+      events_dataset = current_site.latest_events(@page)
     elsif params[:event_id]
       event = Event.select(:id).where(id: params[:event_id]).first
       not_found if event.nil?
       not_found if event.is_deleted
       events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
     else
-      events_dataset = current_site.news_feed(@page, 10)
+      events_dataset = current_site.news_feed(@page)
     end
 
     @pagination_dataset = events_dataset

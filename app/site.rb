@@ -21,11 +21,15 @@ get '/site/:username/?' do |username|
 
   if params[:event_id]
     not_found if params[:event_id].not_an_integer?
-    event = Event.select(:id).where(id: params[:event_id]).exclude(is_deleted: true).first
+    event = Event.where(id: params[:event_id]).exclude(is_deleted: true).first
     not_found if event.nil?
+    event_site = event.site
+    event_actioning_site = event.actioning_site
+    not_found if current_site && event_site && event_site.is_blocking?(current_site)
+    not_found if current_site && event_actioning_site && event_actioning_site.is_blocking?(current_site)
     events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
   else
-    events_dataset = site.latest_events(@page, 10)
+    events_dataset = site.latest_events(@page, current_site)
   end
 
   @page_count = events_dataset.page_count || 1

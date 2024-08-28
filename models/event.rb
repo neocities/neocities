@@ -15,29 +15,38 @@ class Event < Sequel::Model
 
   PAGINATION_LENGTH = 10
   GLOBAL_PAGINATION_LENGTH = 20
-  GLOBAL_SCORE_LIMIT = 3
+  GLOBAL_SCORE_LIMIT = 2
 
   def undeleted_comments_count
     comments_dataset.exclude(is_deleted: true).count
   end
 
-  def undeleted_comments
-    comments_dataset.exclude(is_deleted: true).order(:created_at).all
+  def undeleted_comments(exclude_ids=nil)
+    ds = comments_dataset.exclude(is_deleted: true).order(:created_at)
+    if exclude_ids
+      ds = ds.exclude actioning_site_id: exclude_ids
+    end
+    ds.all
   end
 
   def self.news_feed_default_dataset
     select(:events.*).
     join(:sites, id: :site_id).
-    order(:created_at.desc).
+    left_join(Sequel[:sites].as(:actioning_sites), id: :events__actioning_site_id).
+    order(:events__created_at.desc).
     exclude(events__is_deleted: true).
     exclude(sites__is_deleted: true).
-    exclude(is_nsfw: true).
-    exclude(is_crashing: true).
+    exclude(sites__is_nsfw: true).
+    exclude(sites__is_crashing: true).
+    exclude(actioning_sites__is_deleted: true).
     where(follow_id: nil)
   end
 
   def self.global_dataset
-    news_feed_default_dataset.where{score > GLOBAL_SCORE_LIMIT}
+    news_feed_default_dataset.where(
+      Sequel.expr(Sequel[:sites][:score] > GLOBAL_SCORE_LIMIT) |
+      Sequel.expr(Sequel[:actioning_sites][:score] > GLOBAL_SCORE_LIMIT)
+    )
   end
 
   def created_by?(site)

@@ -129,7 +129,7 @@
   <% if event.undeleted_comments_count > 0 %>
     <div class="content">
       <div class="comments">
-        <% event.undeleted_comments.each do |comment| %>
+        <% event.undeleted_comments(current_site ? current_site.blocking_site_ids : nil).each do |comment| %>
           <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <% comment_event_site = comment.event.site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <div class="comment" id="comment_<%= comment.id %>">
