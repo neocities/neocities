@@ -1409,7 +1409,9 @@ class Site < Sequel::Model
     following_ids = self.followings_dataset.select(:site_id).all.collect {|f| f.site_id}
     search_ids = following_ids+[self.id]
 
-    Event.news_feed_default_dataset.where{Sequel.|({events__actioning_site_id: search_ids})}.paginate(current_page.to_i, limit.to_i)
+    Event.news_feed_default_dataset.
+    where{Sequel.|({events__site_id: search_ids}, {events__actioning_site_id: search_ids})}.
+    paginate(current_page.to_i, limit.to_i)
   end
 
   def newest_follows
