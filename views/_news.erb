@@ -71,10 +71,11 @@
       </span>
     </div>
   <% elsif event.site_change_id %>
+    <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
     <% site_change_filenames = event.site_change.site_change_filenames %>
     <div class="news-item update">
       <div class="title">
-        <div class="icon"></div>
+        <div class="icon"><a href="/site/<%= event_site.username %>" title="<%= event_site.username %>" class="avatar" style="background-image: url(<%= event_site.screenshot_url 'index.html', '50x50' %>);"></a></div>
         <div class="text">
           <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :plan_type).first %>
           <% if current_site && event_site.id == current_site.id %>
