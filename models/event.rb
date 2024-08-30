@@ -44,7 +44,8 @@ class Event < Sequel::Model
     news_feed_default_dataset.where(
       Sequel.expr(Sequel[:sites][:score] > GLOBAL_SCORE_LIMIT) |
       Sequel.expr(Sequel[:actioning_sites][:score] > GLOBAL_SCORE_LIMIT)
-    )
+    ).
+    exclude(sites__is_nsfw: true)
   end
 
   def created_by?(site)
