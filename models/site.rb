@@ -1390,8 +1390,7 @@ class Site < Sequel::Model
 
   def latest_events(current_page=1, current_site=nil, limit=Event::PAGINATION_LENGTH)
     site_id = self.id
-    ds = Event.news_feed_default_dataset.where{Sequel.|({site_id: site_id}, {actioning_site_id: site_id})}.
-    order(:created_at.desc)
+    ds = Event.news_feed_default_dataset.where{Sequel.|({site_id: site_id}, {actioning_site_id: site_id})}
 
     if current_site
       ds = ds.where(

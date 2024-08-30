@@ -31,15 +31,13 @@ class Event < Sequel::Model
 
   def self.news_feed_default_dataset
     select(:events.*).
-    join(:sites, id: :site_id).
+    left_join(:sites, id: :site_id).
     left_join(Sequel[:sites].as(:actioning_sites), id: :events__actioning_site_id).
-    order(:events__created_at.desc).
-    exclude(events__is_deleted: true).
     exclude(sites__is_deleted: true).
-    exclude(sites__is_nsfw: true).
-    exclude(sites__is_crashing: true).
     exclude(actioning_sites__is_deleted: true).
-    where(follow_id: nil)
+    exclude(events__is_deleted: true).
+    where(follow_id: nil).
+    order(:events__created_at.desc)
   end
 
   def self.global_dataset
