@@ -31,7 +31,7 @@
       </div>
     <% end %>
 
-    <%== erb :'_news', locals: {current_site: nil, events: @events} %>
-    <%== erb :'_browse_tags' %>
+    <%== erb :'_news', layout: false, locals: {current_site: current_site, events: @events} %>
+    <%== erb :'_browse_tags', layout: false %>
   </div>
 </div>

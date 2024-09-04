@@ -32,7 +32,7 @@ get '/activity' do
       query2 = query2.where(Sequel.|({events__site_id: nil}, ~{events__site_id: blocking_site_ids})).where(Sequel.|({events__actioning_site_id: nil}, ~{events__actioning_site_id: blocking_site_ids}))
     end
 
-    ds = query1.union(query2, all: true).order(Sequel.desc(:created_at))
+    ds = query1.union(query2, all: false).order(Sequel.desc(:created_at))
   else
     ds = Event.news_feed_default_dataset.exclude(sites__is_nsfw: true)
 
