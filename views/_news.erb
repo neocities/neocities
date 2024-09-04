@@ -81,7 +81,7 @@
           <% if current_site && event_site.id == current_site.id %>
             You updated your site.
           <% else %>
-            <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(45) %></a> was updated.
+            <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a> updated <a href="https://<%= event_site.host %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(45) %></a>
           <% end %>
         </div>
         <span class="date">
