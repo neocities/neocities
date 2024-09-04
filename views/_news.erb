@@ -25,7 +25,7 @@
 <% end %>
 
 <% if events.empty? %>
-  <% if current_site && site.owned_by?(parent_site) %>
+  <% if current_site && defined?(site) && site.owned_by?(parent_site) %>
     <p>
       No feed news yet, you should <a href="/dashboard">update your site</a>!
     </p>
