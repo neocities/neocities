@@ -2,12 +2,6 @@ get '/browse/?' do
   @page = params[:page]
   @page = 1 if @page.not_an_integer?
 
-  begin
-    params.delete 'tag' if params[:tag].nil? || !params[:tag].is_a?(String) || params[:tag].strip.empty? || params[:tag].match?(Tag::INVALID_TAG_REGEX)
-  rescue Encoding::CompatibilityError
-    params.delete 'tag'
-  end
-
   if is_education?
     ds = education_sites_dataset
   else

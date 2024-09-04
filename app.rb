@@ -92,6 +92,14 @@ before do
       params[:page] = '1'
     end
   end
+
+  if params[:tag]
+    begin
+      params.delete 'tag' if params[:tag].nil? || !params[:tag].is_a?(String) || params[:tag].strip.empty? || params[:tag].match?(Tag::INVALID_TAG_REGEX)
+    rescue Encoding::CompatibilityError
+      params.delete 'tag'
+    end
+  end
 end
 
 after do

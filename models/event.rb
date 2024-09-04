@@ -16,6 +16,7 @@ class Event < Sequel::Model
   PAGINATION_LENGTH = 10
   GLOBAL_PAGINATION_LENGTH = 20
   GLOBAL_SCORE_LIMIT = 2
+  ACTIVITY_TAG_SCORE_LIMIT = 0.2
 
   def undeleted_comments_count
     comments_dataset.exclude(is_deleted: true).count
@@ -38,14 +39,6 @@ class Event < Sequel::Model
     exclude(events__is_deleted: true).
     where(follow_id: nil).
     order(:events__created_at.desc)
-  end
-
-  def self.global_dataset
-    news_feed_default_dataset.where(
-      Sequel.expr(Sequel[:sites][:score] > GLOBAL_SCORE_LIMIT) |
-      Sequel.expr(Sequel[:actioning_sites][:score] > GLOBAL_SCORE_LIMIT)
-    ).
-    exclude(sites__is_nsfw: true)
   end
 
   def created_by?(site)

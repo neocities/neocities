@@ -3,6 +3,7 @@
     <div class="col col-100">
       <% if params[:tag] %>
         <h1><a href="/browse">Websites</a> > <%= params[:tag] %></h1>
+        <h4><a href="/activity?tag=<%= params[:tag]%>">Activity</a></h4>
       <% else %>
         <h1>Sites on Neocities</h1>
       <% end %>
@@ -142,15 +143,7 @@
 <% end %>
 
 <% unless is_education? %>
-<div class="row content misc">
-  <h3>Popular Tags</h3>
-  <p class="tagcloud">
-    <% Tag.popular_names(100).each_with_index do |tag,i| %>
-      <% i = (((i+1).to_f/100) * 10).to_i %>
-      <a class="tag<%= i %>" href="/browse?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
-    <% end %>
-  </p>
-</div>
+<%== erb :_browse_tags %>
 <div class="row content misc">
   <h3>Text Search</h3>
   <form id="searchForm" method="GET" action="https://duckduckgo.com" class="content" onsubmit="return addSiteToSearch()">

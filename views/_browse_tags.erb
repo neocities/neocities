@@ -1,0 +1,9 @@
+<div class="row content misc">
+  <h3>Popular Tags</h3>
+  <p class="tagcloud">
+    <% Tag.popular_names(1000).each_with_index do |tag,i| %>
+      <% i = (((i+1).to_f/1000) * 10).to_i %>
+      <a class="tag<%= i %>" href="<%= request.path %>?tag=<%= Rack::Utils.escape tag[:name] %>"><%= tag[:name] %></a>&nbsp;&nbsp;
+    <% end %>
+  </p>
+</div>
