@@ -129,7 +129,16 @@ post '/create' do
     })
   end
 
-  @site.save
+  begin
+    @site.save
+  rescue Sequel::UniqueConstraintViolation => e
+    if e.message =~ /username.+already exists/
+      flash[:error] = 'Username already exists.'
+      return {result: 'error'}.to_json
+    end
+
+    raise e
+  end
 
   unless education_whitelisted?
     @site.send_email(
