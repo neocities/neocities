@@ -1226,6 +1226,8 @@ class Site < Sequel::Model
       raise ArgumentError, 'invalid character for filename' if c < 32
     end
 
+    # scrub question marks (I should probably just be erroring out for this)
+    clean_path.gsub!('?', '')
     clean_path
   end
 
