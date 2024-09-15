@@ -98,7 +98,7 @@
             <% if file[:is_directory] %>
             <a class="link-overlay" href="?dir=<%= Rack::Utils.escape file[:path] %>" title="View <%= file[:path] %>"></a>
             <% else %>
-            <a class="link-overlay" href="<%= current_site.file_uri Rack::Utils.escape(file[:path]) %>" title="View <%= file[:path] == '/index.html' ? 'your site index' : file[:path] %>" target="_blank"></a>
+            <a class="link-overlay" href="<%= file[:uri] %>" title="View <%= file[:path] %>" target="_blank"></a>
             <% end %>
           </div>
         </div>

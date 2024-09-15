@@ -408,11 +408,11 @@ describe 'site_files' do
       _(File.exists?(@site.files_path('te[s]t.jpg'))).must_equal true
     end
 
-    it 'scrubs question marks' do
+    it 'works with question marks' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/te[s]t.jpg', 'image/jpeg')
       upload 'te?st.jpg' => uploaded_file
       _(last_response.body).must_match /successfully uploaded/i
-      _(File.exists?(@site.files_path('test.jpg'))).must_equal true
+      _(File.exists?(@site.files_path('te?st.jpg'))).must_equal true
     end
 
     it 'sets site changed to false if index is empty' do

@@ -139,12 +139,13 @@ desc 'generate_sitemap'
 task :generate_sitemap => [:environment] do
   sorted_sites = {}
 
+  # We pop off array, so highest scores go last.
   sites = Site.
     select(:id, :username, :updated_at, :profile_enabled).
     where(site_changed: true).
     exclude(updated_at: nil).
     exclude(is_deleted: true).
-    order(:follow_count, :updated_at).
+    order(:score).
     all
 
   site_files = []
@@ -152,13 +153,13 @@ task :generate_sitemap => [:environment] do
   sites.each do |site|
     site.site_files_dataset.exclude(path: 'not_found.html').where(path: /\.html?$/).all.each do |site_file|
 
-      if site.file_uri(site_file.path) == site.uri+'/'
+      if site.uri(site_file.path) == site.uri
         priority = 0.5
       else
         priority = 0.4
       end
 
-      site_files << [site.file_uri(site_file.path), site_file.updated_at.utc.iso8601, priority]
+      site_files << [site.uri(site_file.path), site_file.updated_at.utc.iso8601, priority]
     end
   end
 

@@ -1244,8 +1244,10 @@ class Site < Sequel::Model
   def file_list(path='')
     list = Dir.glob(File.join(files_path(path), '*'), File::FNM_DOTMATCH).reject { |entry| File.basename(entry) == '.' || File.basename(entry) == '..' }.collect do |file_path|
       extname = File.extname file_path
+      path = file_path.gsub(base_files_path+'/', '')
       file = {
-        path: file_path.gsub(base_files_path+'/', ''),
+        path: path,
+        uri: uri(path),
         name: File.basename(file_path),
         ext: extname.gsub('.', ''),
         is_directory: File.directory?(file_path),
@@ -1426,13 +1428,20 @@ class Site < Sequel::Model
     'https'
   end
 
-  def uri
-    "#{default_schema}://#{host}"
-  end
+  def uri(path=nil)
+    uri = "#{default_schema}://#{host}"
 
-  def file_uri(path)
-    path = '/' + path unless path[0] == '/'
-    uri + (path =~ ROOT_INDEX_HTML_REGEX ? '/' : path)
+    return uri unless path
+
+    path = '' if path == '/' || path =~ ROOT_INDEX_HTML_REGEX
+    path = path.sub(%r{^/}, '').sub(%r{/index\.html$}, '/').sub(/\.html$/, '')
+
+    unless path.empty?
+      escaped_path = Rack::Utils.escape_path(path).gsub('?', '%3F')
+      uri += "/#{escaped_path}"
+    end
+
+    uri
   end
 
   def title
