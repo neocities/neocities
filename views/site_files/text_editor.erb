@@ -219,7 +219,7 @@
 
   $(document).ready(function() {
     $.ajax({
-      url: "/site_files/download/<%= Addressable::URI.parse(@filename).normalized_path.to_s %>",
+      url: "/site_files/download/<%= Rack::Utils.escape(@filename) %>",
       cache: false,
       success: function(resp) {
         editor = ace.edit("editor")
