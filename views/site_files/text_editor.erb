@@ -89,7 +89,8 @@
       </div>
       <a id="saveButton" class="btn-Action" href="#" onclick="saveTextFile(false); return false" style="opacity: 0.5"><span class="hide-on-mobile"><i class="fa fa-save"></i></span>Save</a>
       <span class="hide-on-mobile">
-        <a class="btn-Action" href="<%= current_site.uri %>/<%= @filename == 'index.html' ? '' : @filename %>" target="_blank"><i class="fa fa-globe"></i> View</a>
+        <a id="previewButton" class="btn-Action" href="#" onclick="togglePreview();"><span><i class="fa fa-eye"></i></span>Preview</a>
+        <a class="btn-Action" href="<%= current_site.uri %>/<%= @filename == 'index.html' ? '' : @filename %>" target="_blank"><i class="fa fa-globe"></i> Open</a>
         <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'><i class="fa fa-share-alt chat-button"></i> Share</a><% if current_site.supporter? %><a class="btn-Action" id="chatButton"><i class="fa fa-comments"></i> Penelope <span style="font-size: 8pt">(beta)</span></a><% end %>
       </span>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
@@ -111,10 +112,16 @@
   <script src="/js/chat.js"></script>
 <% end %>
 
+
 <div class="row editor">
   <div class="col left-col" style="display: <% current_site.supporter? ? 'none' : 'block' %>; margin-left: 20px;">
     <div id="editor"><h3>Loading...</h3></div>
   </div>
+  <div id="preview" class="col right-col chat-container" style="display:none;">
+    <div class="resize-handle"></div>
+    <iframe src="<%= current_site.uri %>/<%= @filename %>" width="100%" height="100%" style="background: white"></iframe>
+  </div>
+
   <div class="col right-col chat-container" style="display: none">
     <div class="resize-handle"></div>
     <div id="chat-box" class="chat-box">
@@ -125,13 +132,12 @@
         <p>How can I help you today?</p>
       </div>
     </div>
-      <div id="chat-form">
-        <form>
-          <input name="csrf_token" value="<%= csrf_token %>" type="hidden">
-          <input type="text" id="chat-input" placeholder="Ask a coding question..." autocomplete="off">
-          <button type="submit" class="btn-Action">Send</button>
-        </form>
-      </div>
+    <div id="chat-form">
+      <form>
+        <input name="csrf_token" value="<%= csrf_token %>" type="hidden">
+        <input type="text" id="chat-input" placeholder="Ask a coding question..." autocomplete="off">
+        <button type="submit" class="btn-Action">Send</button>
+      </form>
     </div>
   </div>
 </div>
@@ -155,6 +161,16 @@
       return ($(this).text() == '<%= current_site.editor_theme %>')
     }).prop('selected', true)
   <% end %>
+
+  function togglePreview() {
+    var preview = document.getElementById('preview');
+    
+    if (preview.style.display === 'none' || preview.style.display === '') {
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
+  }
 
   function saveTextFile(quit) {
     if(unsavedChanges == false)
