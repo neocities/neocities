@@ -112,6 +112,7 @@
   <script src="/js/chat.js"></script>
 <% end %>
 
+<script src="/js/preview.js"></script>
 
 <div class="row editor">
   <div class="col left-col" style="display: <% current_site.supporter? ? 'none' : 'block' %>; margin-left: 20px;">
@@ -161,17 +162,7 @@
       return ($(this).text() == '<%= current_site.editor_theme %>')
     }).prop('selected', true)
   <% end %>
-
-  function togglePreview() {
-    var preview = document.getElementById('preview');
-    
-    if (preview.style.display === 'none' || preview.style.display === '') {
-      preview.style.display = 'block';
-    } else {
-      preview.style.display = 'none';
-    }
-  }
-
+  
   function saveTextFile(quit) {
     if(unsavedChanges == false)
       return
