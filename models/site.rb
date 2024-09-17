@@ -1428,6 +1428,10 @@ class Site < Sequel::Model
     'https'
   end
 
+  def self.escape_path(val)
+    Rack::Utils.escape_path(val).gsub('?', '%3F')
+  end
+
   def uri(path=nil)
     uri = "#{default_schema}://#{host}"
 
@@ -1437,7 +1441,7 @@ class Site < Sequel::Model
     path = path.sub(%r{^/}, '').sub(%r{/index\.html$}, '/').sub(/\.html$/, '')
 
     unless path.empty?
-      escaped_path = Rack::Utils.escape_path(path).gsub('?', '%3F')
+      escaped_path = self.class.escape_path path
       uri += "/#{escaped_path}"
     end
 
