@@ -37,11 +37,11 @@ class ScreenshotWorker
 
     uri = Addressable::URI.parse $config['screenshot_urls'].sample
     api_user, api_password = uri.user, uri.password
+
     uri = "#{uri.scheme}://#{uri.host}:#{uri.port}" + '?' + Rack::Utils.build_query(
-      url: Site.select(:username,:domain).where(username: username).first.uri + path,
+      url: site.uri(path),
       wait_time: PAGE_WAIT_TIME
     )
-
     begin
       base_image_tmpfile_path = "/tmp/#{SecureRandom.uuid}.png"
 

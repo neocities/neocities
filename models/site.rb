@@ -1438,7 +1438,7 @@ class Site < Sequel::Model
     return uri unless path
 
     path = '' if path == '/' || path =~ ROOT_INDEX_HTML_REGEX
-    path = path.sub(%r{^/}, '').sub(%r{/index\.html$}, '/').sub(/\.html$/, '')
+    path = path.sub(%r{^/}, '').sub(%r{/index\.html?$}, '/').sub(/\.html?$/, '')
 
     unless path.empty?
       escaped_path = self.class.escape_path path

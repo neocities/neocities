@@ -12,7 +12,7 @@ describe ScreenshotWorker do
         base_host += ":#{uri.port}"
       end
 
-      stub_request(:get, "#{base_host}/?url=#{site.uri}/#{path}&wait_time=#{ScreenshotWorker::PAGE_WAIT_TIME}").
+      stub_request(:get, "#{base_host}/?url=#{site.uri(path)}&wait_time=#{ScreenshotWorker::PAGE_WAIT_TIME}").
         with(basic_auth: [uri.user, uri.password]).
         to_return(status: 200, headers: {}, body: File.read('tests/files/img/screenshot.png'))
 
