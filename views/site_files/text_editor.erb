@@ -91,7 +91,7 @@
       <span class="hide-on-mobile">
         <a id="previewButton" class="btn-Action" href="#" onclick="togglePreview();"><span><i class="fa fa-eye"></i></span>Preview</a>
         <a class="btn-Action" href="<%= current_site.uri @filename %>" target="_blank"><i class="fa fa-globe"></i> Open</a>
-        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'><i class="fa fa-share-alt chat-button"></i> Share</a><% if current_site.supporter? %><a class="btn-Action" id="chatButton"><i class="fa fa-comments"></i> Penelope <span style="font-size: 8pt">(beta)</span></a><% end %>
+        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'><i class="fa fa-share-alt chat-button"></i> Share</a><!-- <% if current_site.supporter? %><a class="btn-Action" id="chatButton"><i class="fa fa-comments"></i> Penelope <span style="font-size: 8pt">(beta)</span></a><% end %> -->
       </span>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
       <div id="editorUpdates" class="tooltip fade bottom in hidden" style="top: 90px;right: 12.5em;">
@@ -107,10 +107,11 @@
 <script src="/js/purify.min.js"></script>
 <script src="/js/marked.min.js"></script>
 <script src="/js/sse.min.js"></script>
-
+<!--
 <% if current_site.supporter? %>
   <script src="/js/chat.js"></script>
 <% end %>
+-->
 
 <script src="/js/preview.js"></script>
 

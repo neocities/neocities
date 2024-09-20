@@ -1438,7 +1438,7 @@ class Site < Sequel::Model
     return uri unless path
 
     path = '' if path == '/' || path =~ ROOT_INDEX_HTML_REGEX
-    path = path.sub(%r{^/}, '').sub(%r{/index\.html$}, '/').sub(/\.html$/, '')
+    path = path.sub(%r{^/}, '').sub(%r{/index\.html?$}, '/').sub(/\.html?$/, '')
 
     unless path.empty?
       escaped_path = self.class.escape_path path
@@ -1663,7 +1663,7 @@ class Site < Sequel::Model
     path[0] = '' if path[0] == '/'
     out = ''
     out = 'https://neocities.org' if ENV['RACK_ENV'] == 'development'
-    out+"#{base_screenshots_url}/#{path}.#{resolution}.webp"
+    out+"#{base_screenshots_url}/#{self.class.escape_path path}.#{resolution}.webp"
   end
 
   def base_thumbnails_path(name=username)

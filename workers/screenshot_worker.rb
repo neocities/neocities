@@ -37,17 +37,17 @@ class ScreenshotWorker
 
     uri = Addressable::URI.parse $config['screenshot_urls'].sample
     api_user, api_password = uri.user, uri.password
+
     uri = "#{uri.scheme}://#{uri.host}:#{uri.port}" + '?' + Rack::Utils.build_query(
-      url: Site.select(:username,:domain).where(username: username).first.uri + path,
+      url: site.uri(path),
       wait_time: PAGE_WAIT_TIME
     )
-
     begin
       base_image_tmpfile_path = "/tmp/#{SecureRandom.uuid}.png"
 
       http_resp = HTTP.basic_auth(user: api_user, pass: api_password).get(uri)
       BlackBox.new(site, path).check_uri(http_resp.headers['X-URL']) if defined?(BlackBox) && http_resp.headers['X-URL']
-      File.write base_image_tmpfile_path, http_resp.to_s
+      File.binwrite base_image_tmpfile_path, http_resp.body.to_s
 
       user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
       screenshot_path = File.join user_screenshots_path, File.dirname(path)
