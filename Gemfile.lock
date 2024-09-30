@@ -341,7 +341,7 @@ GEM
     webp-ffi (0.4.0)
       ffi (>= 1.9.0)
       ffi-compiler (>= 0.1.2)
-    webrick (1.8.1)
+    webrick (1.8.2)
     websocket (1.2.10)
     will_paginate (4.0.1)
     xmlrpc (0.3.3)
