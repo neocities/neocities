@@ -80,6 +80,10 @@
   <script src="/js/chat.js"></script>
 <% end %>
 -->
+
+<script src="/js/htmlhint.min.js"></script>
+
+
 <div class="row editor">
   <div class="col left-col" style="display: <% current_site.supporter? ? 'none' : 'block' %>; margin-left: 20px;">
     <div id="editor"><h3>Loading...</h3></div>
@@ -164,7 +168,6 @@
         $('#editorUpdates').removeClass('hidden')
       },
       success: function(response, textStatus, xhr){
-        console.log(xhr.status)
         if(xhr.status == 200) {
           unsavedChanges = false
           if(quit === true) {
@@ -221,6 +224,33 @@
           editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
             saveTextFile(false);
           });
+
+          // Function to set markers based on HTMLHint validation
+          function setHTMLMarkers() {
+            const code = editor.getValue();
+            const results = HTMLHint.HTMLHint.verify(code);
+
+            const markers = results.map((error) => {
+              return {
+                startLineNumber: error.line,
+                startColumn: error.col,
+                endLineNumber: error.line,
+                endColumn: error.col + 1,
+                message: error.message,
+                severity: monaco.MarkerSeverity.Error,
+              };
+            });
+
+            monaco.editor.setModelMarkers(editor.getModel(), 'htmlhint', markers);
+          }
+
+          // Register event listener to validate and set markers on content change
+          editor.onDidChangeModelContent(() => {
+            setHTMLMarkers();
+          });
+
+          // Initial validation
+          setHTMLMarkers();
         }
       });
     });
