@@ -31,7 +31,6 @@
     margin: 0;
   }
 </style>
-<link rel="stylesheet" data-name="vs/editor/editor.main" href="/js/monaco/min/vs/editor/editor.main.css">
 
 <div class="header-Outro editor">
   <div class="row content">
@@ -105,11 +104,15 @@
   </div>
 </div>
 
-<script>var require = { paths: { 'vs': '/js/monaco/min/vs' } };</script>
-<script src="/js/monaco/min/vs/loader.js"></script>
-<script src="/js/monaco/min/vs/editor/editor.main.js"></script>
-
+<script src="/monaco/min/vs/loader.js"></script>
 <script>
+  window.MonacoEnvironment = {
+    getWorkerUrl: function(workerId, label) {
+      return `/monaco/min/vs/base/worker/workerMain.js`;
+    }
+  };
+  require.config({ paths: { 'vs': '/monaco/min/vs' } });
+
   var unsavedChanges = false
 
   function setTheme(name) {
@@ -187,38 +190,39 @@
 
   var editor = {}
 
+  require(['vs/editor/editor.main'], function() {
+    $(document).ready(function() {
+      $.ajax({
+        url: "/site_files/download/<%= Site.escape_path(@filename) %>",
+        cache: false,
+        success: function(resp) {
+          document.getElementById('editor').innerHTML = '';
+          // Initialize Monaco Editor
+          editor = monaco.editor.create(document.getElementById('editor'), {
+            value: resp,
+            language: '<%= @monaco_mode %>',
+            fontSize: 14,
+            automaticLayout: true,
+            scrollBeyondLastLine: false,
+            wordWrap: 'on',
+            wrappingIndent: 'same',
+            tabSize: 2,
+            minimap: { enabled: false },
+          });
+          setTheme();
 
-  $(document).ready(function() {
-    $.ajax({
-      url: "/site_files/download/<%= Site.escape_path(@filename) %>",
-      cache: false,
-      success: function(resp) {
-        document.getElementById('editor').innerHTML = '';
-        // Initialize Monaco Editor
-        editor = monaco.editor.create(document.getElementById('editor'), {
-          value: resp,
-          language: '<%= @monaco_mode %>',
-          fontSize: 14,
-          automaticLayout: true,
-          scrollBeyondLastLine: false,
-          wordWrap: 'on',
-          wrappingIndent: 'same',
-          tabSize: 2,
-          minimap: { enabled: false },
-        });
-        setTheme();
+          // Handle change event for unsaved changes
+          editor.onDidChangeModelContent(function() {
+            $('a#saveButton,a#saveAndExitButton').css('opacity', 1);
+            unsavedChanges = true;
+          });
 
-        // Handle change event for unsaved changes
-        editor.onDidChangeModelContent(function() {
-          $('a#saveButton,a#saveAndExitButton').css('opacity', 1);
-          unsavedChanges = true;
-        });
-
-        // Add save command (Ctrl+S / Command+S)
-        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
-          saveTextFile(false);
-        });
-      }
+          // Add save command (Ctrl+S / Command+S)
+          editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
+            saveTextFile(false);
+          });
+        }
+      });
     });
   });
 
