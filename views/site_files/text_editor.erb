@@ -28,7 +28,7 @@
     line-height: normal;
     vertical-align: middle;
     padding: 0;
-    margin-bottom: 3px;
+    margin-bottom: 1px;
   }
 </style>
 
@@ -210,9 +210,13 @@
             wordWrap: 'on',
             wrappingIndent: 'same',
             tabSize: 2,
-            minimap: { enabled: false },
+            minimap: { enabled: true },
+            padding: {
+              bottom: 25
+            }
           });
           setTheme();
+
 
           // Handle change event for unsaved changes
           editor.onDidChangeModelContent(function() {
