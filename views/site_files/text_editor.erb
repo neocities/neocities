@@ -23,6 +23,7 @@
     display: none;
   }
 </style>
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="/js/monaco/min/vs/editor/editor.main.css">
 
 <div class="header-Outro editor">
   <div class="row content">
@@ -96,7 +97,9 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js"></script>
+<script>var require = { paths: { 'vs': '/js/monaco/min/vs' } };</script>
+<script src="/js/monaco/min/vs/loader.js"></script>
+<script src="/js/monaco/min/vs/editor/editor.main.js"></script>
 
 <script>
   var unsavedChanges = false
@@ -184,31 +187,28 @@
       success: function(resp) {
         document.getElementById('editor').innerHTML = '';
         // Initialize Monaco Editor
-        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs' } });
-        require(['vs/editor/editor.main'], function() {
-          editor = monaco.editor.create(document.getElementById('editor'), {
-            value: resp,
-            language: '<%= @monaco_mode %>',
-            fontSize: 14,
-            automaticLayout: true,
-            scrollBeyondLastLine: false,
-            wordWrap: 'on',
-            wrappingIndent: 'same',
-            tabSize: 2,
-            minimap: { enabled: false },
-          });
-          setTheme();
+        editor = monaco.editor.create(document.getElementById('editor'), {
+          value: resp,
+          language: '<%= @monaco_mode %>',
+          fontSize: 14,
+          automaticLayout: true,
+          scrollBeyondLastLine: false,
+          wordWrap: 'on',
+          wrappingIndent: 'same',
+          tabSize: 2,
+          minimap: { enabled: false },
+        });
+        setTheme();
 
-          // Handle change event for unsaved changes
-          editor.onDidChangeModelContent(function() {
-            $('a#saveButton,a#saveAndExitButton').css('opacity', 1);
-            unsavedChanges = true;
-          });
+        // Handle change event for unsaved changes
+        editor.onDidChangeModelContent(function() {
+          $('a#saveButton,a#saveAndExitButton').css('opacity', 1);
+          unsavedChanges = true;
+        });
 
-          // Add save command (Ctrl+S / Command+S)
-          editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
-            saveTextFile(false);
-          });
+        // Add save command (Ctrl+S / Command+S)
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
+          saveTextFile(false);
         });
       }
     });
