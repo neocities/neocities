@@ -194,7 +194,7 @@ get '/site_files/text_editor' do
   @filename = params[:filename]
   extname = File.extname @filename
 
-  @ace_mode = case extname
+  @monaco_mode = case extname
     when /htm|html/ then 'html'
     when /js/ then 'javascript'
     when /md/ then 'markdown'
