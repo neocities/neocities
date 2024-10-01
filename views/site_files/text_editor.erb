@@ -288,6 +288,7 @@
             saveTextFile(false);
           });
 
+          <% if @monaco_mode == 'html' %>
           // Function to set markers based on HTMLHint validation
           function setHTMLMarkers() {
             const code = editor.getValue();
@@ -314,6 +315,7 @@
 
           // Initial validation
           setHTMLMarkers();
+          <% end %>
         }
       });
     });
