@@ -46,13 +46,54 @@
       <div class="theme">
         Theme:
         <select id="theme" size="1" onchange="setTheme();" onkeyup="setTheme();">
-          <optgroup label="Bright">
-            <option value="vs-light">VS Light</option>
-            <option value="hc-light">High Contrast Light</option>
-          </optgroup>
           <optgroup label="Dark">
-            <option value="vs-dark">VS Dark</option>
+            <option value="allhallowseve">All Hallows Eve</option>
+            <option value="amy">Amy</option>
+            <option value="birdsofparadise">Birds of Paradise</option>
+            <option value="blackboard">Blackboard</option>
+            <option value="brillianceblack">Brilliance Black</option>
+            <option value="brilliancedull">Brilliance Dull</option>
+            <option value="cloudsmidnight">Clouds Midnight</option>
+            <option value="cobalt">Cobalt</option>
+            <option value="cobalt2">Cobalt2</option>
+            <option value="dominionday">Dominion Day</option>
+            <option value="dracula">Dracula</option>
+            <option value="espressolibre">Espresso Libre</option>
+            <option value="githubdark">GitHub Dark</option>
             <option value="hc-black">High Contrast Dark</option>
+            <option value="idlefingers">idleFingers</option>
+            <option value="krtheme">krTheme</option>
+            <option value="merbivore">Merbivore</option>
+            <option value="monoindustrial">monoindustrial</option>
+            <option value="monokai">Monokai</option>
+            <option value="nightowl">Night Owl</option>
+            <option value="nord">Nord</option>
+            <option value="oceanicnext">Oceanic Next</option>
+            <option value="pastelsondark">Pastels on Dark</option>
+            <option value="solarized-dark">Solarized-dark</option>
+            <option value="spacecadet">SpaceCadet</option>
+            <option value="sunburst">Sunburst</option>
+            <option value="tomorrow-night">Tomorrow-Night</option>
+            <option value="tomorrow-night-blue">Tomorrow-Night-Blue</option>
+            <option value="tomorrow-night-bright">Tomorrow-Night-Bright</option>
+            <option value="tomorrow-night-eighties">Tomorrow-Night-Eighties</option>
+            <option value="twilight">Twilight</option>
+            <option value="vibrantink">Vibrant Ink</option>
+            <option value="zenburnesque">Zenburnesque</option>
+            <option value="vs-dark">VS Dark</option>
+          </optgroup>
+          <optgroup label="Bright">
+            <option value="github">GitHub</option>
+            <option value="githublight">GitHub Light</option>
+            <option value="hc-light">High Contrast Light</option>
+            <option value="iplastic">iPlastic</option>
+            <option value="katzenmilch">Katzenmilch</option>
+            <option value="lazy">LAZY</option>
+            <option value="magicwbamiga">MagicWB (Amiga)</option>
+            <option value="solarized-light">Solarized-light</option>
+            <option value="tomorrow">Tomorrow</option>
+            <option value="vs-light">VS Light</option>
+            <option value="xcodedefault">Xcode_default</option>
           </optgroup>
         </select>
       </div>
@@ -86,7 +127,7 @@
 
 <div class="row editor">
   <div class="col left-col" style="display: <% current_site.supporter? ? 'none' : 'block' %>; margin-left: 20px;">
-    <div id="editor"><h3>Loading...</h3></div>
+    <div id="editor"></div>
   </div>
   <div class="col right-col chat-container" style="display: none">
     <div class="resize-handle"></div>
@@ -121,7 +162,20 @@
 
   function setTheme(name) {
     var editorTheme = $('#theme option:selected')
-    monaco.editor.setTheme(editorTheme.val());
+
+    var defaultThemes = ['vs-light', 'hc-light', 'vs-dark', 'hc-black']
+
+    if(defaultThemes.includes(editorTheme.val())) {
+      monaco.editor.setTheme(editorTheme.val());
+    } else {
+      fetch('/monaco/themes/'+editorTheme.text()+'.json')
+        .then(data => data.json())
+        .then(data => {
+          monaco.editor.defineTheme(editorTheme.val(), data);
+          monaco.editor.setTheme(editorTheme.val());
+      })
+    }
+
     $.post('/site/<%= current_site.username %>/set_editor_theme', {
       csrf_token: '<%= csrf_token %>',
       editor_theme: editorTheme.text()
@@ -131,6 +185,10 @@
   <% if current_site.editor_theme %>
     $('#theme option').filter(function() {
       return ($(this).text() == '<%= current_site.editor_theme %>')
+    }).prop('selected', true)
+  <% else %>
+    $('#theme option').filter(function() {
+      return ($(this).text() == 'VS Dark')
     }).prop('selected', true)
   <% end %>
 
@@ -213,7 +271,8 @@
             minimap: { enabled: true },
             padding: {
               bottom: 25
-            }
+            },
+            fixedOverflowWidgets: true
           });
           setTheme();
 
