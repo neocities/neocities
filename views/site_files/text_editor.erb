@@ -292,14 +292,21 @@
               bottom: 25
             },
             fixedOverflowWidgets: true,
-            suggestOnTriggerCharacters: false,
+            // idk if this is the best syntax but it works
+            <% if current_site.autocomplete_enabled %>
+              suggestOnTriggerCharacters: true,
+            <% else %>
+              suggestOnTriggerCharacters: false,
+            <% end %>
             quickSuggestions: false,
             parameterHints: {
               enabled: false
             }
           });
+          <% if current_site.vimmode_enabled %>
           var statusNode = document.getElementById('status');
           var vimMode = MonacoVim.initVimMode(editor, statusNode);
+          <% end %>
           setTheme();
 
 
