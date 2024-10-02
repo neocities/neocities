@@ -22,14 +22,6 @@
   .footer-Base {
     display: none;
   }
-
-  .monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-highlighted-label span {
-    background-color: transparent !important;
-    line-height: normal;
-    vertical-align: middle;
-    padding: 0;
-    margin-bottom: 1px;
-  }
 </style>
 
 <div class="header-Outro editor">
@@ -46,54 +38,52 @@
       <div class="theme">
         Theme:
         <select id="theme" size="1" onchange="setTheme();" onkeyup="setTheme();">
-          <optgroup label="Dark">
-            <option value="allhallowseve">All Hallows Eve</option>
-            <option value="amy">Amy</option>
-            <option value="birdsofparadise">Birds of Paradise</option>
-            <option value="blackboard">Blackboard</option>
-            <option value="brillianceblack">Brilliance Black</option>
-            <option value="brilliancedull">Brilliance Dull</option>
-            <option value="cloudsmidnight">Clouds Midnight</option>
-            <option value="cobalt">Cobalt</option>
-            <option value="cobalt2">Cobalt2</option>
-            <option value="dominionday">Dominion Day</option>
-            <option value="dracula">Dracula</option>
-            <option value="espressolibre">Espresso Libre</option>
-            <option value="githubdark">GitHub Dark</option>
-            <option value="hc-black">High Contrast Dark</option>
-            <option value="idlefingers">idleFingers</option>
-            <option value="krtheme">krTheme</option>
-            <option value="merbivore">Merbivore</option>
-            <option value="monoindustrial">monoindustrial</option>
-            <option value="monokai">Monokai</option>
-            <option value="nightowl">Night Owl</option>
-            <option value="nord">Nord</option>
-            <option value="oceanicnext">Oceanic Next</option>
-            <option value="pastelsondark">Pastels on Dark</option>
-            <option value="solarized-dark">Solarized-dark</option>
-            <option value="spacecadet">SpaceCadet</option>
-            <option value="sunburst">Sunburst</option>
-            <option value="tomorrow-night">Tomorrow-Night</option>
-            <option value="tomorrow-night-blue">Tomorrow-Night-Blue</option>
-            <option value="tomorrow-night-bright">Tomorrow-Night-Bright</option>
-            <option value="tomorrow-night-eighties">Tomorrow-Night-Eighties</option>
-            <option value="twilight">Twilight</option>
-            <option value="vibrantink">Vibrant Ink</option>
-            <option value="zenburnesque">Zenburnesque</option>
-            <option value="vs-dark">VS Dark</option>
-          </optgroup>
           <optgroup label="Bright">
-            <option value="github">GitHub</option>
-            <option value="githublight">GitHub Light</option>
-            <option value="hc-light">High Contrast Light</option>
-            <option value="iplastic">iPlastic</option>
-            <option value="katzenmilch">Katzenmilch</option>
-            <option value="lazy">LAZY</option>
-            <option value="magicwbamiga">MagicWB (Amiga)</option>
-            <option value="solarized-light">Solarized-light</option>
-            <option value="tomorrow">Tomorrow</option>
-            <option value="vs-light">VS Light</option>
-            <option value="xcodedefault">Xcode_default</option>
+            <option value="ace/theme/chrome">Chrome</option>
+            <option value="ace/theme/cloud_editor">Cloud Editor</option>
+            <option value="ace/theme/clouds">Clouds</option>
+            <option value="ace/theme/crimson_editor">Crimson Editor</option>
+            <option value="ace/theme/dawn">Dawn</option>
+            <option value="ace/theme/dreamweaver">Dreamweaver</option>
+            <option value="ace/theme/eclipse">Eclipse</option>
+            <option value="ace/theme/github">GitHub</option>
+            <option value="ace/theme/iplastic">I-Plastic</option>
+            <option value="ace/theme/katzenmilch">Katzen Milch</option>
+            <option value="ace/theme/kuroir">Kuroir</option>
+            <option value="ace/theme/solarized_light">Solarized Light</option>
+            <option value="ace/theme/sqlserver">SQL Server</option>
+            <option value="ace/theme/textmate">Text Mate</option>
+            <option value="ace/theme/tomorrow">Tomorrow</option>
+            <option value="ace/theme/xcode">XCode</option>
+          </optgroup>
+          <optgroup label="Dark">
+            <option value="ace/theme/ambiance">Ambiance</option>
+            <option value="ace/theme/chaos">Chaos</option>
+            <option value="ace/theme/cloud_editor_dark">Cloud Editor Dark</option>
+            <option value="ace/theme/clouds_midnight">Clouds Midnight</option>
+            <option value="ace/theme/cobalt">Cobalt</option>
+            <option value="ace/theme/dracula">Dracula</option>
+            <option value="ace/theme/github_dark">GitHub Dark</option>
+            <option value="ace/theme/gob">Green on Black</option>
+            <option value="ace/theme/gruvbox">Gruvbox</option>
+            <option value="ace/theme/idle_fingers">Idle Fingers</option>
+            <option value="ace/theme/kr_theme">KR Theme</option>
+            <option value="ace/theme/merbivore">Merbivore</option>
+            <option value="ace/theme/merbivore_soft">Merbivore Soft</option>
+            <option value="ace/theme/mono_industrial">Mono Industrial</option>
+            <option value="ace/theme/monokai">Monokai</option>
+            <option value="ace/theme/nord_dark">Nord Dark</option>
+            <option value="ace/theme/one_dark">One Dark</option>
+            <option value="ace/theme/pastel_on_dark">Pastel on dark</option>
+            <option value="ace/theme/solarized_dark">Solarized Dark</option>
+            <option value="ace/theme/sunburst" selected>Sunburst</option>
+            <option value="ace/theme/terminal">Terminal</option>
+            <option value="ace/theme/tomorrow_night">Tomorrow Night</option>
+            <option value="ace/theme/tomorrow_night_blue">Tomorrow Night Blue</option>
+            <option value="ace/theme/tomorrow_night_bright">Tomorrow Night Bright</option>
+            <option value="ace/theme/tomorrow_night_eighties">Tomorrow Night 80s</option>
+            <option value="ace/theme/twilight">Twilight</option>
+            <option value="ace/theme/vibrant_ink">Vibrant Ink</option>
           </optgroup>
         </select>
       </div>
@@ -121,13 +111,9 @@
   <script src="/js/chat.js"></script>
 <% end %>
 -->
-
-<script src="/js/htmlhint.min.js"></script>
-
-
 <div class="row editor">
   <div class="col left-col" style="display: <% current_site.supporter? ? 'none' : 'block' %>; margin-left: 20px;">
-    <div id="editor"></div>
+    <div id="editor"><h3>Loading...</h3></div>
   </div>
   <div class="col right-col chat-container" style="display: none">
     <div class="resize-handle"></div>
@@ -139,43 +125,25 @@
         <p>How can I help you today?</p>
       </div>
     </div>
-    <div id="chat-form">
-      <form>
-        <input name="csrf_token" value="<%= csrf_token %>" type="hidden">
-        <input type="text" id="chat-input" placeholder="Ask a coding question..." autocomplete="off">
-        <button type="submit" class="btn-Action">Send</button>
-      </form>
+      <div id="chat-form">
+        <form>
+          <input name="csrf_token" value="<%= csrf_token %>" type="hidden">
+          <input type="text" id="chat-input" placeholder="Ask a coding question..." autocomplete="off">
+          <button type="submit" class="btn-Action">Send</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 
-<script src="/monaco/min/vs/loader.js"></script>
-<script>
-  window.MonacoEnvironment = {
-    getWorkerUrl: function(workerId, label) {
-      return `/monaco/min/vs/base/worker/workerMain.js`;
-    }
-  };
-  require.config({ paths: { 'vs': '/monaco/min/vs' } });
+<script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 
+<script>
   var unsavedChanges = false
 
   function setTheme(name) {
     var editorTheme = $('#theme option:selected')
-
-    var defaultThemes = ['vs-light', 'hc-light', 'vs-dark', 'hc-black']
-
-    if(defaultThemes.includes(editorTheme.val())) {
-      monaco.editor.setTheme(editorTheme.val());
-    } else {
-      fetch('/monaco/themes/'+editorTheme.text()+'.json')
-        .then(data => data.json())
-        .then(data => {
-          monaco.editor.defineTheme(editorTheme.val(), data);
-          monaco.editor.setTheme(editorTheme.val());
-      })
-    }
-
+    editor.setTheme(editorTheme.val())
     $.post('/site/<%= current_site.username %>/set_editor_theme', {
       csrf_token: '<%= csrf_token %>',
       editor_theme: editorTheme.text()
@@ -185,10 +153,6 @@
   <% if current_site.editor_theme %>
     $('#theme option').filter(function() {
       return ($(this).text() == '<%= current_site.editor_theme %>')
-    }).prop('selected', true)
-  <% else %>
-    $('#theme option').filter(function() {
-      return ($(this).text() == 'VS Dark')
     }).prop('selected', true)
   <% end %>
 
@@ -226,6 +190,7 @@
         $('#editorUpdates').removeClass('hidden')
       },
       success: function(response, textStatus, xhr){
+        console.log(xhr.status)
         if(xhr.status == 200) {
           unsavedChanges = false
           if(quit === true) {
@@ -251,92 +216,45 @@
 
   var editor = {}
 
-  require(['vs/editor/editor.main'], function() {
-    $(document).ready(function() {
-      $.ajax({
-        url: "/site_files/download/<%= Site.escape_path(@filename) %>",
-        cache: false,
-        success: function(resp) {
-          document.getElementById('editor').innerHTML = '';
 
-            monaco.languages.css.cssDefaults.setOptions({
-              data: {
-                useDefaultDataProvider: false
-              }
-            });
+  $(document).ready(function() {
+    $.ajax({
+      url: "/site_files/download/<%= Site.escape_path(@filename) %>",
+      cache: false,
+      success: function(resp) {
+        editor = ace.edit("editor")
+        setTheme()
+        <% if @ace_mode %>
+          editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
+        <% end %>
+        editor.getSession().setTabSize(2)
+        editor.getSession().setUseWrapMode(true)
+        editor.setFontSize(14)
+        editor.setShowPrintMargin(false)
+        editor.setOptions({
+          maxLines: Infinity,
+          autoScrollEditorIntoView: true
+        })
 
-            // Disable MDN info tips for HTML
-            monaco.languages.html.htmlDefaults.setOptions({
-              data: {
-                useDefaultDataProvider: false
-              }
-            });
+        // Disable autocomplete
+        editor.setBehavioursEnabled(false)
 
-          // Initialize Monaco Editor
-          editor = monaco.editor.create(document.getElementById('editor'), {
-            value: resp,
-            language: '<%= @monaco_mode %>',
-            fontSize: 14,
-            automaticLayout: true,
-            scrollBeyondLastLine: false,
-            wordWrap: 'on',
-            wrappingIndent: 'same',
-            tabSize: 2,
-            minimap: { enabled: false },
-            padding: {
-              bottom: 25
-            },
-            fixedOverflowWidgets: true,
-            suggestOnTriggerCharacters: false,
-            quickSuggestions: false,
-            parameterHints: {
-              enabled: false
+        editor.setValue(resp, -1)
+        editor.getSession().setUndoManager(new ace.UndoManager())
+
+        editor.on('change', function(obj) {
+          $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
+          unsavedChanges = true
+        })
+
+        editor.commands.addCommand({
+            name: 'saveCommand',
+            bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+            exec: function(editor) {
+              saveTextFile(false)
             }
-          });
-          setTheme();
-
-
-          // Handle change event for unsaved changes
-          editor.onDidChangeModelContent(function() {
-            $('a#saveButton,a#saveAndExitButton').css('opacity', 1);
-            unsavedChanges = true;
-          });
-
-          // Add save command (Ctrl+S / Command+S)
-          editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
-            saveTextFile(false);
-          });
-
-          <% if @monaco_mode == 'html' %>
-          // Function to set markers based on HTMLHint validation
-          function setHTMLMarkers() {
-            const code = editor.getValue();
-            const results = HTMLHint.HTMLHint.verify(code);
-
-            const markers = results.map((error) => {
-              return {
-                startLineNumber: error.line,
-                startColumn: error.col,
-                endLineNumber: error.line,
-                endColumn: error.col + 1,
-                message: error.message,
-                severity: monaco.MarkerSeverity.Error,
-              };
-            });
-
-            monaco.editor.setModelMarkers(editor.getModel(), 'htmlhint', markers);
-          }
-
-          // Register event listener to validate and set markers on content change
-          editor.onDidChangeModelContent(() => {
-            setHTMLMarkers();
-          });
-
-          // Initial validation
-          setHTMLMarkers();
-          <% end %>
-        }
-      });
+        })
+      }
     });
   });
 
