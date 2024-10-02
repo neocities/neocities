@@ -27,38 +27,78 @@
       <% end %>
       <h3 class="editor-heading">HTML</h3>
 
-      <div id="editor" class="editor"><%== encoding_fix default_tutorial_html %></div>
-
-        <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-
+      <div id="editor" class="editor" style="height: 300px"><%== encoding_fix default_tutorial_html %></div>
+        <script src="/monaco/min/vs/loader.js"></script>
         <script>
-          $(document).ready(function() {
-            editor = ace.edit("editor")
-            editor.setTheme('ace/theme/tomorrow_night')
-            editor.getSession().setMode("ace/mode/html")
-            editor.getSession().setTabSize(2)
-            editor.getSession().setUseWrapMode(true)
-            editor.setFontSize(14)
-            editor.setShowPrintMargin(false)
-            editor.setOptions({
-              maxLines: Infinity,
-              autoScrollEditorIntoView: true
-            })
+          window.MonacoEnvironment = {
+            getWorkerUrl: function(workerId, label) {
+              return `/monaco/min/vs/base/worker/workerMain.js`;
+            }
+          };
+          require.config({ paths: { 'vs': '/monaco/min/vs' } });
 
-            // Disable autocomplete
-            editor.setBehavioursEnabled(false)
+          require(['vs/editor/editor.main'], function() {
+            let code = $('#editor').text();
+            $('#editor').text('');
 
-            editor.on('change', function(obj) {
-              $('.error').css('display', 'none')
+            $(document).ready(function() {
+              editor = monaco.editor.create(document.getElementById('editor'), {
+                value: code,
+                language: 'html',
+                fontSize: 14,
+                automaticLayout: true,
+                scrollBeyondLastLine: false,
+                wordWrap: 'on',
+                wrappingIndent: 'same',
+                tabSize: 2,
+                  minimap: { enabled: false },
+                  padding: {
+                    bottom: 25
+                  },
+                fixedOverflowWidgets: true,
+                suggestOnTriggerCharacters: false,
+                quickSuggestions: false,
+                parameterHints: {
+                  enabled: false
+                },
+                theme: 'vs-dark'
+              });
+
+              window.editor.getModel().onDidChangeContent((event) => {
+                $('.error').css('display', 'none')
+                refreshIframe()
+              });
+              /*
+              editor = ace.edit("editor")
+              editor.setTheme('ace/theme/tomorrow_night')
+              editor.getSession().setMode("ace/mode/html")
+              editor.getSession().setTabSize(2)
+              editor.getSession().setUseWrapMode(true)
+              editor.setFontSize(14)
+              editor.setShowPrintMargin(false)
+              editor.setOptions({
+                maxLines: Infinity,
+                autoScrollEditorIntoView: true
+              })
+
+              // Disable autocomplete
+              editor.setBehavioursEnabled(false)
+
+              editor.on('change', function(obj) {
+                $('.error').css('display', 'none')
+                refreshIframe()
+              })
+
+              editor.commands.addCommand({
+                name: 'saveCommand',
+                bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+                exec: function(editor) {
+                  $('#submit').click()
+                }
+              })
+              */
+
               refreshIframe()
-            })
-
-            editor.commands.addCommand({
-              name: 'saveCommand',
-              bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-              exec: function(editor) {
-                $('#submit').click()
-              }
             })
           })
         </script>
@@ -132,10 +172,6 @@
     if(typeof editor !== 'undefined')
       $('.tutorial iframe').contents().find('html').html(editor.getValue())
   }
-
-  $(function() {
-    refreshIframe()
-  })
 
   function preview() {
     return $('.tutorial iframe').contents()
