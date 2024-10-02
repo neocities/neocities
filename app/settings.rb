@@ -307,6 +307,18 @@ post '/settings/change_email_notification' do
   redirect '/settings#email'
 end
 
+post '/settings/change_editor_settings' do
+  require_login
+
+  owner = current_site.owner
+
+  owner.autocomplete_enabled = params[:autocomplete_enabled]
+  owner.vimmode_enabled = params[:vimmode_enabled]
+  owner.save_changes validate: false
+  flash[:success] = 'Code editor settings have been updated.'
+  redirect '/settings#editor'
+end
+
 post '/settings/create_child' do
   require_login
 

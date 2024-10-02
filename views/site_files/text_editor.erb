@@ -101,6 +101,8 @@
       <span class="hide-on-mobile">
         <a class="btn-Action" href="<%= current_site.uri @filename %>" target="_blank"><i class="fa fa-globe"></i> View</a>
         <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'><i class="fa fa-share-alt chat-button"></i> Share</a><!-- <% if current_site.supporter? %><a class="btn-Action" id="chatButton"><i class="fa fa-comments"></i> Penelope <span style="font-size: 8pt">(beta)</span></a><% end %> -->
+        <a id="settingsButton" class="btn-Action" href="/settings#editor"><i class="fa fa-gear"></i> Settings</a>
+
       </span>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
       <div id="editorUpdates" class="tooltip fade bottom in hidden" style="top: 90px;right: 12.5em;">
@@ -156,7 +158,10 @@
       return `/monaco/min/vs/base/worker/workerMain.js`;
     }
   };
-  require.config({ paths: { 'vs': '/monaco/min/vs' } });
+  require.config({ paths: { 
+    'vs': '/monaco/min/vs', 
+    'monaco-vim': 'https://unpkg.com/monaco-vim/dist/monaco-vim', 
+  } });
 
   var unsavedChanges = false
 
@@ -251,7 +256,7 @@
 
   var editor = {}
 
-  require(['vs/editor/editor.main'], function() {
+  require(['vs/editor/editor.main', 'monaco-vim'], function(a, MonacoVim) {
     $(document).ready(function() {
       $.ajax({
         url: "/site_files/download/<%= Site.escape_path(@filename) %>",
@@ -293,6 +298,8 @@
               enabled: false
             }
           });
+          var statusNode = document.getElementById('status');
+          var vimMode = MonacoVim.initVimMode(editor, statusNode);
           setTheme();
 
 

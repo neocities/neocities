@@ -25,6 +25,7 @@
         <ul class="nav nav-tabs">
 
           <li class="active"><a href="#sites" data-toggle="tab">Sites</a></li>
+          <li><a href="#editor" data-toggle="tab">Editor</a></li>
           <li><a href="#supporter" data-toggle="tab">Supporter</a></li>
           <li><a href="#password" data-toggle="tab">Password</a></li>
           <li><a href="#email" data-toggle="tab">Email</a></li>
@@ -38,6 +39,9 @@
         <div class="tab-content">
           <div class="tab-pane active" id="sites">
             <%== erb :'settings/account/sites' %>
+          </div>
+          <div class="tab-pane" id="editor">
+            <%== erb :'settings/account/editor' %>
           </div>
           <div class="tab-pane" id="supporter">
             <%== erb :'settings/account/supporter' %>

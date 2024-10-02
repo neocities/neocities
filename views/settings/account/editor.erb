@@ -1,0 +1,28 @@
+<h2>Code Editor Settings</h2>
+<form method="POST" action="/settings/change_editor_settings">
+  <%== csrf_token_input_html %>
+
+  <p>
+    Enable Autocomplete:
+    <input name="autocomplete_enabled" type="hidden" value="false">
+    <input name="autocomplete_enabled" type="checkbox" value="true"
+      <% if current_site.owner.autocomplete_enabled %>
+        checked
+      <% end %>
+    >
+  </p>
+  <p>
+    Enable Vim Mode:
+    <input name="vimmode_enabled" type="hidden" value="false">
+    <input name="vimmode_enabled" type="checkbox" value="true"
+      <% if current_site.owner.vimmode_enabled %>
+        checked
+      <% end %>
+    >
+  </p>
+
+  <div>
+    <input class="btn-Action" type="submit" value="Update Notification Settings">
+  </div>
+</form>
+
