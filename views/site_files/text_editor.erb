@@ -258,6 +258,20 @@
         cache: false,
         success: function(resp) {
           document.getElementById('editor').innerHTML = '';
+
+            monaco.languages.css.cssDefaults.setOptions({
+              data: {
+                useDefaultDataProvider: false
+              }
+            });
+
+            // Disable MDN info tips for HTML
+            monaco.languages.html.htmlDefaults.setOptions({
+              data: {
+                useDefaultDataProvider: false
+              }
+            });
+
           // Initialize Monaco Editor
           editor = monaco.editor.create(document.getElementById('editor'), {
             value: resp,
@@ -268,11 +282,16 @@
             wordWrap: 'on',
             wrappingIndent: 'same',
             tabSize: 2,
-            minimap: { enabled: true },
+            minimap: { enabled: false },
             padding: {
               bottom: 25
             },
-            fixedOverflowWidgets: true
+            fixedOverflowWidgets: true,
+            suggestOnTriggerCharacters: false,
+            quickSuggestions: false,
+            parameterHints: {
+              enabled: false
+            }
           });
           setTheme();
 
