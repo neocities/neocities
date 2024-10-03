@@ -683,7 +683,7 @@ class Site < Sequel::Model
   end
 
   def self.valid_username?(username)
-    !username.empty? && username.match(/^[a-zA-Z0-9][a-zA-Z0-9_\-]+[a-zA-Z0-9]$/i)
+    !username.empty? && username.match(/^[a-zA-Z0-9]([a-zA-Z0-9_\-]{0,}[a-zA-Z0-9])?$/i) != nil
   end
 
   def self.disposable_email_domains_whitelist

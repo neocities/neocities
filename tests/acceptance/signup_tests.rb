@@ -25,6 +25,10 @@ describe 'signup' do
   end
 
   before do
+    reset_signup
+  end
+
+  def reset_signup
     Capybara.default_driver = :selenium_chrome_headless_largewindow
     Capybara.reset_sessions!
     visit_signup
@@ -107,9 +111,13 @@ describe 'signup' do
     fill_in 'username', with: '|\|0p|E'
     click_signup_button
     _(page).must_have_content 'Usernames can only contain'
+    reset_signup
+    fill_in_valid
     fill_in 'username', with: 'nope-'
     click_signup_button
     _(page).must_have_content 'Usernames can only contain'
+    reset_signup
+    fill_in_valid
     fill_in 'username', with: '-nope'
     click_signup_button
     _(page).must_have_content 'Usernames can only contain'

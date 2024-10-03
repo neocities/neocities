@@ -5,6 +5,17 @@ def app
 end
 
 describe Site do
+  describe 'username' do
+    it 'only passes valid hostnames for username' do
+      _(Site.valid_username?('|\|0p|E')).must_equal false
+      _(Site.valid_username?('nope-')).must_equal false
+      _(Site.valid_username?('-nope')).must_equal false
+      _(Site.valid_username?('do-pe')).must_equal true
+      _(Site.valid_username?('d')).must_equal true
+      _(Site.valid_username?('do')).must_equal true
+    end
+  end
+
   describe 'banning' do
     it 'still makes files available' do
       site = Fabricate :site
