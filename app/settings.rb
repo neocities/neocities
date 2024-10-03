@@ -313,7 +313,7 @@ post '/settings/change_editor_settings' do
   owner = current_site.owner
 
   owner.autocomplete_enabled = params[:autocomplete_enabled]
-  owner.vimmode_enabled = params[:vimmode_enabled]
+  owner.editor_font_size = params[:editor_font_size]
   owner.save_changes validate: false
   flash[:success] = 'Code editor settings have been updated.'
   redirect '/settings#editor'

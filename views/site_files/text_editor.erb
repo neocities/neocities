@@ -160,7 +160,6 @@
   };
   require.config({ paths: { 
     'vs': '/monaco/min/vs', 
-    'monaco-vim': 'https://unpkg.com/monaco-vim/dist/monaco-vim', 
   } });
 
   var unsavedChanges = false
@@ -256,7 +255,7 @@
 
   var editor = {}
 
-  require(['vs/editor/editor.main', 'monaco-vim'], function(a, MonacoVim) {
+  require(['vs/editor/editor.main'], function() {
     $(document).ready(function() {
       $.ajax({
         url: "/site_files/download/<%= Site.escape_path(@filename) %>",
@@ -281,7 +280,7 @@
           editor = monaco.editor.create(document.getElementById('editor'), {
             value: resp,
             language: '<%= @monaco_mode %>',
-            fontSize: 14,
+            fontSize: <%= current_site.owner.editor_font_size %>,
             automaticLayout: true,
             scrollBeyondLastLine: false,
             wordWrap: 'on',
@@ -303,10 +302,6 @@
               enabled: false
             }
           });
-          <% if current_site.vimmode_enabled %>
-          var statusNode = document.getElementById('status');
-          var vimMode = MonacoVim.initVimMode(editor, statusNode);
-          <% end %>
           setTheme();
 
 

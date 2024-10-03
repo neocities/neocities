@@ -12,17 +12,16 @@
     >
   </p>
   <p>
-    Enable Vim Mode:
-    <input name="vimmode_enabled" type="hidden" value="false">
-    <input name="vimmode_enabled" type="checkbox" value="true"
-      <% if current_site.owner.vimmode_enabled %>
-        checked
-      <% end %>
-    >
+    Editor Font Size:
+    <select name="editor_font_size">
+      <option value="12" <% if current_site.owner.editor_font_size == 12 %>selected<% end %>>Small</option>
+      <option value="14" <% if current_site.owner.editor_font_size == 14 %>selected<% end %>>Medium</option>
+      <option value="18" <% if current_site.owner.editor_font_size == 18 %>selected<% end %>>Large</option>
+    </select> 
   </p>
 
   <div>
-    <input class="btn-Action" type="submit" value="Update Notification Settings">
+    <input class="btn-Action" type="submit" value="Update Editor Settings">
   </div>
 </form>
 
