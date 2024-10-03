@@ -261,7 +261,7 @@
 
             monaco.languages.css.cssDefaults.setOptions({
               data: {
-                useDefaultDataProvider: false
+                useDefaultDataProvider: true
               }
             });
 
@@ -271,7 +271,177 @@
                 useDefaultDataProvider: false
               }
             });
+          monaco.languages.setMonarchTokensProvider('css', {
+            defaultToken: '',
+            tokenPostfix: '.css',
 
+            ws: '[ \t\n\r\f]*', // whitespaces (referenced in several rules)
+            identifier:
+                '-?-?([a-zA-Z]|(\\\\(([0-9a-fA-F]{1,6}\\s?)|[^[0-9a-fA-F])))([\\w\\-]|(\\\\(([0-9a-fA-F]{1,6}\\s?)|[^[0-9a-fA-F])))*',
+
+            brackets: [
+                { open: '{', close: '}', token: 'delimiter.bracket' },
+                { open: '[', close: ']', token: 'delimiter.bracket' },
+                { open: '(', close: ')', token: 'delimiter.parenthesis' },
+                { open: '<', close: '>', token: 'delimiter.angle' }
+            ],
+
+            tokenizer: {
+                root: [{ include: '@selector' }],
+
+                selector: [
+                    { include: '@comments' },
+                    { include: '@import' },
+                    { include: '@strings' },
+                    [
+                        '[@](keyframes|-webkit-keyframes|-moz-keyframes|-o-keyframes)',
+                        { token: 'keyword', next: '@keyframedeclaration' }
+                    ],
+                    ['[@](page|content|font-face|-moz-document)', { token: 'keyword' }],
+                    ['[@](charset|namespace)', { token: 'keyword', next: '@declarationbody' }],
+                    [
+                        '(url-prefix)(\\()',
+                        ['variable.parameter', { token: 'delimiter.parenthesis', next: '@urldeclaration' }]
+                    ],
+                    [
+                        '(url)(\\()',
+                        ['variable.parameter', { token: 'delimiter.parenthesis', next: '@urldeclaration' }]
+                    ],
+                    { include: '@selectorname' },
+                    ['[\\*]', 'keyword'], // selector symbols
+                    ['[>\\+,]', 'delimiter'], // selector operators
+                    ['\\[', { token: 'delimiter.bracket', next: '@selectorattribute' }],
+                    ['{', { token: 'delimiter.bracket', next: '@selectorbody' }]
+                ],
+
+                selectorbody: [
+                    { include: '@comments' },
+                    ['[*_]?@identifier@ws:(?=(\\s|\\d|[^{;}]*[;}]))', 'type', '@rulevalue'], // rule definition: to distinguish from a nested selector check for whitespace, number or a semicolon
+                    ['}', { token: 'delimiter.bracket', next: '@pop' }]
+                ],
+
+                selectorname: [
+                    ['(\\.|#(?=[^{])|%|(@identifier)|:)+', 'keyword'] // selector (.foo, div, ...)
+                ],
+
+                selectorattribute: [{ include: '@term' }, [']', { token: 'delimiter.bracket', next: '@pop' }]],
+
+                term: [
+                    { include: '@comments' },
+                    [
+                        '(url-prefix)(\\()',
+                        ['variable.parameter', { token: 'delimiter.parenthesis', next: '@urldeclaration' }]
+                    ],
+                    [
+                        '(url)(\\()',
+                        ['variable.parameter', { token: 'delimiter.parenthesis', next: '@urldeclaration' }]
+                    ],
+                    { include: '@functioninvocation' },
+                    { include: '@numbers' },
+                    { include: '@name' },
+                    { include: '@strings' },
+                    ['([<>=\\+\\-\\*\\/\\^\\|\\~,])', 'delimiter'],
+                    [',', 'delimiter']
+                ],
+
+                rulevalue: [
+                    { include: '@comments' },
+                    { include: '@strings' },
+                    { include: '@term' },
+                    ['!important', 'keyword'],
+                    [';', 'delimiter', '@pop'],
+                    ['(?=})', { token: '', next: '@pop' }] // missing semicolon
+                ],
+
+                warndebug: [['[@](warn|debug)', { token: 'keyword', next: '@declarationbody' }]],
+
+                import: [['[@](import)', { token: 'keyword', next: '@declarationbody' }]],
+
+                urldeclaration: [
+                    { include: '@strings' },
+                    ['[^)\r\n]+', 'string'],
+                    ['\\)', { token: 'delimiter.parenthesis', next: '@pop' }]
+                ],
+
+                parenthizedterm: [
+                    { include: '@term' },
+                    ['\\)', { token: 'delimiter.parenthesis', next: '@pop' }]
+                ],
+
+                declarationbody: [
+                    { include: '@term' },
+                    [';', 'delimiter', '@pop'],
+                    ['(?=})', { token: '', next: '@pop' }] // missing semicolon
+                ],
+
+                comments: [
+                    ['\\/\\*', 'comment', '@comment'],
+                    ['\\/\\/+.*', 'comment']
+                ],
+
+                comment: [
+                    ['\\*\\/', 'comment', '@pop'],
+                    [/[^*/]+/, 'comment'],
+                    [/./, 'comment']
+                ],
+
+                name: [['@identifier', 'variable.parameter']],
+
+                numbers: [
+                    ['-?(\\d*\\.)?\\d+([eE][\\-+]?\\d+)?', { token: 'constant.numeric', next: '@units' }],
+                    ['#[0-9a-fA-F_]+(?!\\w)', 'constant.numeric']
+                ],
+
+                units: [
+                    [
+                        '(em|ex|ch|rem|fr|vmin|vmax|vw|vh|vm|cm|mm|in|px|pt|pc|deg|grad|rad|turn|s|ms|Hz|kHz|%)?',
+                        'constant.numeric',
+                        '@pop'
+                    ]
+                ],
+
+                keyframedeclaration: [
+                    ['@identifier', 'variable.parameter'],
+                    ['{', { token: 'delimiter.bracket', switchTo: '@keyframebody' }]
+                ],
+
+                keyframebody: [
+                    { include: '@term' },
+                    ['{', { token: 'delimiter.bracket', next: '@selectorbody' }],
+                    ['}', { token: 'delimiter.bracket', next: '@pop' }]
+                ],
+
+                functioninvocation: [
+                    ['@identifier\\(', { token: 'variable.parameter', next: '@functionarguments' }]
+                ],
+
+                functionarguments: [
+                    ['\\$@identifier@ws:', 'type'],
+                    ['[,]', 'delimiter'],
+                    { include: '@term' },
+                    ['\\)', { token: 'variable.parameter', next: '@pop' }]
+                ],
+
+                strings: [
+                    ['~?"', { token: 'string', next: '@stringenddoublequote' }],
+                    ["~?'", { token: 'string', next: '@stringendquote' }]
+                ],
+
+                stringenddoublequote: [
+                    ['\\\\.', 'string'],
+                    ['"', { token: 'string', next: '@pop' }],
+                    [/[^\\"]+/, 'string'],
+                    ['.', 'string']
+                ],
+
+                stringendquote: [
+                    ['\\\\.', 'string'],
+                    ["'", { token: 'string', next: '@pop' }],
+                    [/[^\\']+/, 'string'],
+                    ['.', 'string']
+                ]
+            }
+          });
           monaco.languages.setMonarchTokensProvider('html', {
             defaultToken: '',
             tokenPostfix: '.html',
@@ -281,9 +451,9 @@
             // The main tokenizer for our languages
             tokenizer: {
                 root: [
-                    [/<!DOCTYPE/, 'metatag', '@doctype'],
+                  [/<!DOCTYPE/, 'keyword', '@doctype'],
                     [/<!--/, 'comment', '@comment'],
-                    [/(<)((?:[\w\-]+:)?[\w\-]+)(\s*)(\/>)/, ['delimiter', 'tag', '', 'delimiter']],
+                    [/(<)((?:[\w\-]+:)?[\w\-]+)(\s*)(\/>)/, ['delimiter', 'keyword', '', 'delimiter']],
                     [/(<)(script)/, ['delimiter', { token: 'keyword', next: '@script' }]],
                     [/(<)(style)/, ['delimiter', { token: 'keyword', next: '@style' }]],
                     [/(<)((?:[\w\-]+:)?[\w\-]+)/, ['delimiter', { token: 'keyword', next: '@otherTag' }]],
@@ -294,7 +464,7 @@
 
                 doctype: [
                     [/[^>]+/, 'type'],
-                    [/>/, 'metatag', '@pop'],
+                    [/>/, 'keyword', '@pop'],
                 ],
 
                 comment: [
@@ -316,14 +486,14 @@
 
                 // After <script
                 script: [
-                    [/type/, 'attribute.name', '@scriptAfterType'],
+                    [/type/, 'type', '@scriptAfterType'],
                     [/"([^"]*)"/, 'string'],
                     [/'([^']*)'/, 'string'],
                     [/[\w\-]+/, 'type'],
                     [/=/, 'delimiter'],
                     [/>/, { token: 'delimiter', next: '@scriptEmbedded', nextEmbedded: 'text/javascript' }],
                     [/[ \t\r\n]+/], // whitespace
-                    [/(<\/)(script\s*)(>)/, ['delimiter', 'tag', { token: 'delimiter', next: '@pop' }]]
+                    [/(<\/)(script\s*)(>)/, ['delimiter', 'keyword', { token: 'delimiter', next: '@pop' }]]
                 ],
 
                 // After <script ... type
@@ -336,8 +506,8 @@
 
                 // After <script ... type =
                 scriptAfterTypeEquals: [
-                    [/"([^"]*)"/, { token: 'attribute.value', switchTo: '@scriptWithCustomType.$1' }],
-                    [/'([^']*)'/, { token: 'attribute.value', switchTo: '@scriptWithCustomType.$1' }],
+                    [/"([^"]*)"/, { token: 'string', switchTo: '@scriptWithCustomType.$1' }],
+                    [/'([^']*)'/, { token: 'string', switchTo: '@scriptWithCustomType.$1' }],
                     [/>/, { token: 'delimiter', next: '@scriptEmbedded', nextEmbedded: 'text/javascript' }], // cover invalid e.g. <script type=>
                     [/[ \t\r\n]+/], // whitespace
                     [/<\/script\s*>/, { token: '@rematch', next: '@pop' }]
@@ -346,9 +516,9 @@
                 // After <script ... type = $S2
                 scriptWithCustomType: [
                     [/>/, { token: 'delimiter', next: '@scriptEmbedded.$S2', nextEmbedded: '$S2' }],
-                    [/"([^"]*)"/, 'attribute.value'],
-                    [/'([^']*)'/, 'attribute.value'],
-                    [/[\w\-]+/, 'attribute.name'],
+                    [/"([^"]*)"/, 'string'],
+                    [/'([^']*)'/, 'string'],
+                    [/[\w\-]+/, 'type'],
                     [/=/, 'delimiter'],
                     [/[ \t\r\n]+/], // whitespace
                     [/<\/script\s*>/, { token: '@rematch', next: '@pop' }]
@@ -366,14 +536,14 @@
 
                 // After <style
                 style: [
-                    [/type/, 'attribute.name', '@styleAfterType'],
-                    [/"([^"]*)"/, 'attribute.value'],
-                    [/'([^']*)'/, 'attribute.value'],
-                    [/[\w\-]+/, 'attribute.name'],
+                    [/type/, 'type', '@styleAfterType'],
+                    [/"([^"]*)"/, 'string'],
+                    [/'([^']*)'/, 'string'],
+                    [/[\w\-]+/, 'type'],
                     [/=/, 'delimiter'],
                     [/>/, { token: 'delimiter', next: '@styleEmbedded', nextEmbedded: 'text/css' }],
                     [/[ \t\r\n]+/], // whitespace
-                    [/(<\/)(style\s*)(>)/, ['delimiter', 'tag', { token: 'delimiter', next: '@pop' }]]
+                    [/(<\/)(style\s*)(>)/, ['delimiter', 'keyword', { token: 'delimiter', next: '@pop' }]]
                 ],
 
                 // After <style ... type
@@ -386,8 +556,8 @@
 
                 // After <style ... type =
                 styleAfterTypeEquals: [
-                    [/"([^"]*)"/, { token: 'attribute.value', switchTo: '@styleWithCustomType.$1' }],
-                    [/'([^']*)'/, { token: 'attribute.value', switchTo: '@styleWithCustomType.$1' }],
+                    [/"([^"]*)"/, { token: 'string', switchTo: '@styleWithCustomType.$1' }],
+                    [/'([^']*)'/, { token: 'string', switchTo: '@styleWithCustomType.$1' }],
                     [/>/, { token: 'delimiter', next: '@styleEmbedded', nextEmbedded: 'text/css' }], // cover invalid e.g. <style type=>
                     [/[ \t\r\n]+/], // whitespace
                     [/<\/style\s*>/, { token: '@rematch', next: '@pop' }]
@@ -396,9 +566,9 @@
                 // After <style ... type = $S2
                 styleWithCustomType: [
                     [/>/, { token: 'delimiter', next: '@styleEmbedded.$S2', nextEmbedded: '$S2' }],
-                    [/"([^"]*)"/, 'attribute.value'],
-                    [/'([^']*)'/, 'attribute.value'],
-                    [/[\w\-]+/, 'attribute.name'],
+                    [/"([^"]*)"/, 'string'],
+                    [/'([^']*)'/, 'string'],
+                    [/[\w\-]+/, 'type'],
                     [/=/, 'delimiter'],
                     [/[ \t\r\n]+/], // whitespace
                     [/<\/style\s*>/, { token: '@rematch', next: '@pop' }]
