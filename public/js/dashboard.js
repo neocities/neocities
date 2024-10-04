@@ -38,11 +38,10 @@ function hideMovingProgress() {
   $('#movingOverlay').css('display', 'none');
 }
 
-function moveFile(fileName, folderName) {
-  console.log(fileName);
-  console.log(folderName);
+function moveFile(fileName, folderName, dragBack) {
   $('#moveCurrentPath').val(fileName.slice(1));
-  $('#moveNewPath').val(folderName + fileName);
+  fileName = fileName.split('/').pop(); 
+  $('#moveNewPath').val(folderName + '/' +fileName);
   $('#moveFileForm').submit();
 }
 
