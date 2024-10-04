@@ -30,6 +30,22 @@ function hideUploadProgress() {
   $('#uploadingOverlay').css('display', 'none')
 }
 
+function showMovingProgress() {
+  $('#movingOverlay').css('display', 'block');
+}
+
+function hideMovingProgress() {
+  $('#movingOverlay').css('display', 'none');
+}
+
+function moveFile(fileName, folderName) {
+  console.log(fileName);
+  console.log(folderName);
+  $('#moveCurrentPath').val(fileName.slice(1));
+  $('#moveNewPath').val(folderName + fileName);
+  $('#moveFileForm').submit();
+}
+
 $('#createDir').on('shown', function () {
   $('#newDirInput').focus();
 })

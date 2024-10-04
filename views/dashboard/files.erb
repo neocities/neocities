@@ -1,3 +1,16 @@
+<script>
+function moveFileToFolder(event, folderName) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const fullUrl = event.dataTransfer.getData('text/uri-list');
+  const url = new URL(fullUrl);
+  const relativeUrl = url.pathname;
+
+  moveFile(relativeUrl, folderName);
+}
+</script>
+
 <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
   <div class="uploading">
       <p>Uploading, please wait...</p>
@@ -58,7 +71,7 @@
               <div class="overlay"></div>
             </div>
           <% elsif file[:is_directory] %>
-            <div class="html-thumbnail folder fileimagehover" ondrop="moveFileToFolder(event)">
+            <div class="html-thumbnail folder fileimagehover" ondrop="moveFileToFolder(event, '<%= file[:path] %>')" ondragover="event.preventDefault()">
               <div class="folder-icon"></div>
               <div class="overlay"></div>
             </div>
