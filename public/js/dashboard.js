@@ -38,10 +38,17 @@ function hideMovingProgress() {
   $('#movingOverlay').css('display', 'none');
 }
 
-function moveFile(fileName, folderName, dragBack) {
+function moveFileToFolder(event, folderName, dragBack) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const fullUrl = event.dataTransfer.getData('text/uri-list');
+  const url = new URL(fullUrl);
+  let fileName = url.pathname;
+
   $('#moveCurrentPath').val(fileName.slice(1));
   fileName = fileName.split('/').pop(); 
-  $('#moveNewPath').val(folderName + '/' +fileName);
+  $('#moveNewPath').val(folderName + '/' + fileName);
   $('#moveFileForm').submit();
 }
 

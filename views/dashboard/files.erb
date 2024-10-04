@@ -1,16 +1,3 @@
-<script>
-function moveFileToFolder(event, folderName, dragBack) {
-  event.preventDefault();
-  event.stopPropagation();
-
-  const fullUrl = event.dataTransfer.getData('text/uri-list');
-  const url = new URL(fullUrl);
-  let relativeUrl = url.pathname;
-
-  moveFile(relativeUrl, folderName, dragBack);
-}
-</script>
-
 <div id="uploadingOverlay" class="uploading-overlay" style="display: none">
   <div class="uploading">
       <p>Uploading, please wait...</p>
