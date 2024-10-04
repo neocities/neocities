@@ -3,7 +3,7 @@ Sequel.migration do
     DB.add_column :sites, :autocomplete_enabled, :boolean, default: false
     DB.add_column :sites, :editor_font_size, :int, default: 14
     DB.add_column :sites, :keyboard_mode, :int, default: 0
-    DB.add_column :sites, :tab_width, :int, default: 4
+    DB.add_column :sites, :tab_width, :int, default: 2
   }
 
   down {
