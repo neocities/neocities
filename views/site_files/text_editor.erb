@@ -91,6 +91,7 @@
       <span class="hide-on-mobile">
         <a class="btn-Action" href="<%= current_site.uri @filename %>" target="_blank"><i class="fa fa-globe"></i> View</a>
         <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'><i class="fa fa-share-alt chat-button"></i> Share</a><!-- <% if current_site.supporter? %><a class="btn-Action" id="chatButton"><i class="fa fa-comments"></i> Penelope <span style="font-size: 8pt">(beta)</span></a><% end %> -->
+        <a id="settingsButton" class="btn-Action" href="#settings" data-toggle="modal"><i class="fa fa-gear"></i> Settings</a>
       </span>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
       <div id="editorUpdates" class="tooltip fade bottom in hidden" style="top: 90px;right: 12.5em;">
@@ -136,7 +137,58 @@
   </div>
 </div>
 
+<div class="modal hide" id="settings" tabindex="-1" role="dialog" aria-labelledby="settingsLabel" aria-hidden="true">
+  <form method="POST" action="/settings/change_editor_settings">
+    <input type="hidden" name="path" value="<%= @filename %>">
+    <%== csrf_token_input_html %>
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+      <h3 id="blockLabel">Editor Settings</h3>
+    </div>
+    <div class="modal-body">
+      <p>
+        Enable Code Suggestions:
+        <input name="autocomplete_enabled" type="hidden" value="false">
+        <input name="autocomplete_enabled" type="checkbox" value="true"
+          <% if current_site.owner.autocomplete_enabled %>
+            checked
+          <% end %>
+        >
+      </p>
+      <p>
+        Font Size:
+        <select name="editor_font_size">
+          <option value="12" <% if current_site.owner.editor_font_size == 12 %>selected<% end %>>Small</option>
+          <option value="14" <% if current_site.owner.editor_font_size == 14 %>selected<% end %>>Medium</option>
+          <option value="18" <% if current_site.owner.editor_font_size == 18 %>selected<% end %>>Large</option>
+        </select> 
+      </p>
+      <p>
+        Tab Width:
+        <select name="tab_width">
+          <option value="2" <% if current_site.owner.tab_width == 2 %>selected<% end %>>Two Spaces</option>
+          <option value="4" <% if current_site.owner.tab_width == 4 %>selected<% end %>>Four Spaces</option>
+        </select> 
+      </p>
+      <p>
+        Keyboard Mode:
+        <select name="keyboard_mode">
+          <option value="0" <% if current_site.owner.keyboard_mode == 0 %>selected<% end %>>Default</option>
+          <option value="1" <% if current_site.owner.keyboard_mode == 1 %>selected<% end %>>Vim</option>
+          <option value="2" <% if current_site.owner.keyboard_mode == 2 %>selected<% end %>>Emacs</option>
+          <option value="3" <% if current_site.owner.keyboard_mode == 3 %>selected<% end %>>VsCode</option>
+        </select> 
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn-Action">Save Settings</button>
+    </div>
+  </form>
+</div>
+
 <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
   var unsavedChanges = false
@@ -222,19 +274,35 @@
       url: "/site_files/download/<%= Site.escape_path(@filename) %>",
       cache: false,
       success: function(resp) {
+        ace.require("ace/ext/language_tools");
         editor = ace.edit("editor")
         setTheme()
         <% if @ace_mode %>
           editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
         <% end %>
-        editor.getSession().setTabSize(2)
+        editor.getSession().setTabSize(<%= current_site.owner.tab_width %>)
         editor.getSession().setUseWrapMode(true)
-        editor.setFontSize(14)
+        editor.setFontSize(<%= current_site.owner.editor_font_size %>)
         editor.setShowPrintMargin(false)
         editor.setOptions({
           maxLines: Infinity,
-          autoScrollEditorIntoView: true
+          autoScrollEditorIntoView: true,
+          // settings based options here
+          enableBasicAutocompletion: true,
+          enableLiveAutocompletion: true,
+          enableSnippets: true,
         })
+        <% if current_site.owner.keyboard_mode == 1%>
+        editor.setKeyboardHandler("ace/keyboard/vim");
+        <% elsif current_site.owner.keyboard_mode == 2%>
+        editor.setKeyboardHandler("ace/keyboard/emacs");
+        <% elsif current_site.owner.keyboard_mode == 3%>
+        editor.setKeyboardHandler("ace/keyboard/vscode");
+        <% end %>
+
+        console.log(ace.version);
+        console.log(editor.getOptions());
+
 
         // Disable autocomplete
         editor.setBehavioursEnabled(false)

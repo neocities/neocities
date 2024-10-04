@@ -307,6 +307,22 @@ post '/settings/change_email_notification' do
   redirect '/settings#email'
 end
 
+post '/settings/change_editor_settings' do
+  require_login
+
+  owner = current_site.owner
+
+  owner.autocomplete_enabled = params[:autocomplete_enabled]
+  owner.editor_font_size = params[:editor_font_size]
+  owner.keyboard_mode = params[:keyboard_mode]
+  owner.tab_width = params[:tab_width]
+  owner.save_changes validate: false
+  flash[:success] = 'Code editor settings have been updated.'
+  
+  @filename = params[:path]
+  redirect '/site_files/text_editor?filename=' + Rack::Utils.escape(@filename)
+end
+
 post '/settings/create_child' do
   require_login
 
