@@ -7,10 +7,10 @@ Sequel.migration do
   }
 
   down {
-    DB.add_column :sites, :autocomplete_enabled
-    DB.add_column :sites, :editor_font_size
-    DB.add_column :sites, :keyboard_mode
-    DB.add_column :sites, :tab_width
+    DB.drop_column :sites, :autocomplete_enabled
+    DB.drop_column :sites, :editor_font_size
+    DB.drop_column :sites, :keyboard_mode
+    DB.drop_column :sites, :tab_width
   }
 end
 
