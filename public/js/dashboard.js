@@ -38,7 +38,7 @@ function hideMovingProgress() {
   $('#movingOverlay').css('display', 'none');
 }
 
-function moveFileToFolder(event, folderName, dragBack) {
+function moveFileToFolder(event, folderName) {
   event.preventDefault();
   event.stopPropagation();
 
