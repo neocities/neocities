@@ -316,7 +316,6 @@ post '/settings/change_editor_settings' do
   owner.editor_font_size = params[:editor_font_size]
   owner.editor_keyboard_mode = params[:editor_keyboard_mode]
   owner.editor_tab_width = params[:editor_tab_width]
-  owner.editor_theme = params[:editor_theme]
   owner.save_changes validate: false
   flash[:success] = 'Code editor settings have been updated.'
   
