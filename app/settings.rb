@@ -317,7 +317,6 @@ post '/settings/change_editor_settings' do
   owner.editor_keyboard_mode = params[:editor_keyboard_mode]
   owner.editor_tab_width = params[:editor_tab_width]
   owner.save_changes validate: false
-  flash[:success] = 'Code editor settings have been updated.'
   
   @filename = params[:path]
   redirect '/site_files/text_editor?filename=' + Rack::Utils.escape(@filename)
