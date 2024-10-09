@@ -173,10 +173,10 @@
       <p>
         Keyboard Mode:
         <select name="editor_keyboard_mode">
-          <option value="" <% if current_site.owner.editor_keyboard_mode == 0 %>selected<% end %>>Default</option>
-          <option value="vim" <% if current_site.owner.editor_keyboard_mode == 1 %>selected<% end %>>Vim</option>
-          <option value="emacs" <% if current_site.owner.editor_keyboard_mode == 2 %>selected<% end %>>Emacs</option>
-          <option value="vscode" <% if current_site.owner.editor_keyboard_mode == 3 %>selected<% end %>>VSCode</option>
+          <option value="" <% if current_site.owner.editor_keyboard_mode.blank? %>selected<% end %>>Default</option>
+          <option value="vim" <% if current_site.owner.editor_keyboard_mode == 'vim' %>selected<% end %>>Vim</option>
+          <option value="emacs" <% if current_site.owner.editor_keyboard_mode == 'emacs' %>selected<% end %>>Emacs</option>
+          <option value="vscode" <% if current_site.owner.editor_keyboard_mode == 'vscode' %>selected<% end %>>VSCode</option>
         </select> 
       </p>
     </div>
@@ -294,11 +294,11 @@
           <% end %>
           enableSnippets: true,
         })
-        <% if current_site.owner.editor_keyboard_mode == 1%>
+        <% if current_site.owner.editor_keyboard_mode == 'vim' %>
         editor.setKeyboardHandler("ace/keyboard/vim");
-        <% elsif current_site.owner.editor_keyboard_mode == 2%>
+        <% elsif current_site.owner.editor_keyboard_mode == 'emacs' %>
         editor.setKeyboardHandler("ace/keyboard/emacs");
-        <% elsif current_site.owner.editor_keyboard_mode == 3%>
+        <% elsif current_site.owner.editor_keyboard_mode == 'vscode' %>
         editor.setKeyboardHandler("ace/keyboard/vscode");
         <% end %>
 
