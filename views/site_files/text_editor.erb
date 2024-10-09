@@ -148,9 +148,9 @@
     <div class="modal-body">
       <p>
         Enable Code Suggestions:
-        <input name="autocomplete_enabled" type="hidden" value="false">
-        <input name="autocomplete_enabled" type="checkbox" value="true"
-          <% if current_site.owner.autocomplete_enabled %>
+        <input name="editor_autocomplete_enabled" type="hidden" value="false">
+        <input name="editor_autocomplete_enabled" type="checkbox" value="true"
+          <% if current_site.owner.editor_autocomplete_enabled %>
             checked
           <% end %>
         >
@@ -165,18 +165,18 @@
       </p>
       <p>
         Tab Width:
-        <select name="tab_width">
-          <option value="2" <% if current_site.owner.tab_width == 2 %>selected<% end %>>Two Spaces</option>
-          <option value="4" <% if current_site.owner.tab_width == 4 %>selected<% end %>>Four Spaces</option>
+        <select name="editor_tab_width">
+          <option value="2" <% if current_site.owner.editor_tab_width == 2 %>selected<% end %>>Two Spaces</option>
+          <option value="4" <% if current_site.owner.editor_tab_width == 4 %>selected<% end %>>Four Spaces</option>
         </select> 
       </p>
       <p>
         Keyboard Mode:
-        <select name="keyboard_mode">
-          <option value="0" <% if current_site.owner.keyboard_mode == 0 %>selected<% end %>>Default</option>
-          <option value="1" <% if current_site.owner.keyboard_mode == 1 %>selected<% end %>>Vim</option>
-          <option value="2" <% if current_site.owner.keyboard_mode == 2 %>selected<% end %>>Emacs</option>
-          <option value="3" <% if current_site.owner.keyboard_mode == 3 %>selected<% end %>>VsCode</option>
+        <select name="editor_keyboard_mode">
+          <option value="" <% if current_site.owner.editor_keyboard_mode == 0 %>selected<% end %>>Default</option>
+          <option value="vim" <% if current_site.owner.editor_keyboard_mode == 1 %>selected<% end %>>Vim</option>
+          <option value="emacs" <% if current_site.owner.editor_keyboard_mode == 2 %>selected<% end %>>Emacs</option>
+          <option value="vscode" <% if current_site.owner.editor_keyboard_mode == 3 %>selected<% end %>>VSCode</option>
         </select> 
       </p>
     </div>
@@ -280,7 +280,7 @@
         <% if @ace_mode %>
           editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
         <% end %>
-        editor.getSession().setTabSize(<%= current_site.owner.tab_width %>)
+        editor.getSession().setTabSize(<%= current_site.owner.editor_tab_width %>)
         editor.getSession().setUseWrapMode(true)
         editor.setFontSize(<%= current_site.owner.editor_font_size %>)
         editor.setShowPrintMargin(false)
@@ -288,15 +288,17 @@
           maxLines: Infinity,
           autoScrollEditorIntoView: true,
           // settings based options here
+          <% if current_site.owner.editor_autocomplete_enabled %>
           enableBasicAutocompletion: true,
           enableLiveAutocompletion: true,
+          <% end %>
           enableSnippets: true,
         })
-        <% if current_site.owner.keyboard_mode == 1%>
+        <% if current_site.owner.editor_keyboard_mode == 1%>
         editor.setKeyboardHandler("ace/keyboard/vim");
-        <% elsif current_site.owner.keyboard_mode == 2%>
+        <% elsif current_site.owner.editor_keyboard_mode == 2%>
         editor.setKeyboardHandler("ace/keyboard/emacs");
-        <% elsif current_site.owner.keyboard_mode == 3%>
+        <% elsif current_site.owner.editor_keyboard_mode == 3%>
         editor.setKeyboardHandler("ace/keyboard/vscode");
         <% end %>
 

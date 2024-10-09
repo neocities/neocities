@@ -13,4 +13,3 @@ Sequel.migration do
     DB.drop_column :sites, :tab_width
   }
 end
-
