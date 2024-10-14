@@ -316,6 +316,7 @@ post '/settings/change_editor_settings' do
   owner.editor_font_size = params[:editor_font_size]
   owner.editor_keyboard_mode = params[:editor_keyboard_mode]
   owner.editor_tab_width = params[:editor_tab_width]
+  owner.editor_help_tooltips = params[:editor_help_tooltips]
   owner.save_changes validate: false
   
   @filename = params[:path]
