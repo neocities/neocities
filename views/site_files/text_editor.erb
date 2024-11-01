@@ -22,6 +22,32 @@
   .footer-Base {
     display: none;
   }
+
+  .ace_tooltip a {
+    color: #e93250;
+  }
+
+  .ace_tooltip code {
+    border-left: 0px;
+    border: 0px;
+  }
+
+  .ace_tooltip {
+    border: 0;
+  }
+
+  .ace_tooltip li {
+    line-height: normal;
+    margin: 0px;
+  }
+
+  .ace_tooltip div {
+    margin: 5px;
+  }
+
+  .ace_tooltip.ace_dark {
+    background: rgb(48, 66, 75);
+  }
 </style>
 
 <div class="header-Outro editor">
@@ -147,10 +173,19 @@
     </div>
     <div class="modal-body">
       <p>
-        Enable Code Suggestions:
+        Enable Code Autocomplete:
         <input name="editor_autocomplete_enabled" type="hidden" value="false">
         <input name="editor_autocomplete_enabled" type="checkbox" value="true"
           <% if current_site.owner.editor_autocomplete_enabled %>
+            checked
+          <% end %>
+        >
+      </p>
+      <p>
+        Enable MDN Help:
+        <input name="editor_help_tooltips" type="hidden" value="false">
+        <input name="editor_help_tooltips" type="checkbox" value="true"
+          <% if current_site.owner.editor_help_tooltips %>
             checked
           <% end %>
         >
@@ -189,6 +224,7 @@
 
 <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="/js/ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/ace-linters/build/ace-linters.js"></script>
 
 <script>
   var unsavedChanges = false
@@ -275,6 +311,7 @@
       cache: false,
       success: function(resp) {
         ace.require("ace/ext/language_tools");
+
         editor = ace.edit("editor")
         setTheme()
         <% if @ace_mode %>
@@ -289,8 +326,11 @@
           autoScrollEditorIntoView: true,
           // settings based options here
           <% if current_site.owner.editor_autocomplete_enabled %>
-          enableBasicAutocompletion: true,
-          enableLiveAutocompletion: true,
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            behavioursEnabled: true,
+          <% else %>
+            behavioursEnabled: false,
           <% end %>
           enableSnippets: true,
         })
@@ -302,12 +342,10 @@
         editor.setKeyboardHandler("ace/keyboard/vscode");
         <% end %>
 
-        console.log(ace.version);
-        console.log(editor.getOptions());
-
-
-        // Disable autocomplete
-        editor.setBehavioursEnabled(false)
+        <% if current_site.owner.editor_help_tooltips %>
+          var provider = LanguageProvider.fromCdn(window.location.origin + "/js/ace-linters/build");
+          provider.registerEditor(editor);
+        <% end %>
 
         editor.setValue(resp, -1)
         editor.getSession().setUndoManager(new ace.UndoManager())
