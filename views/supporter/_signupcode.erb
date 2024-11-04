@@ -8,14 +8,15 @@
 
   $(document).ready(function() {
     $('#upgradeForm').submit(function(event) {
-      /* event.preventDefault(); */
+      event.preventDefault();
 
       if ($('#stripe_token').val() === '') {
         Stripe.card.createToken({
-          number: $('[name="cc_number"]').val(),
-          cvc: $('[name="cc_cvc"]').val(),
-          exp_month: $('[name="cc_exp_month"]').val(),
-          exp_year: $('[name="cc_exp_year"]').val()
+          //name: $('input[id="name"]').val(),
+          number: $('input[id="cardnumber"]').val(),
+          cvc: $('input[id="securitycode"]').val(),
+          exp_month: $('input[id="expirationdate"]').val().split('/')[0],
+          exp_year: $('input[id="expirationdate"]').val().split('/')[1]
         }, stripeResponseHandler);
         return false;
       } else {
@@ -25,12 +26,10 @@
     });
 
     function clearCardInfo() {
-      $('[name="cc_number"]').val('');
-      $('[name="cc_cvc"]').val('');
-      $('[name="cc_exp_month"]').val('');
-      $('[name="cc_exp_year"]').val('');
-      $('[name="cc_name"]').val('');
-      $('[name="cc_type"]').val('');
+      //$('input[id="name"]').val('');
+      $('input[id="cardnumber"]').val('');
+      $('input[id="securitycode"]').val('');
+      $('input[id="expirationdate"]').val('');
     }
 
     function stripeResponseHandler(status, response) {
@@ -40,7 +39,9 @@
         var token = response.id;
         $('#stripe_token').val(token);
         clearCardInfo();
+        $('.form-container').html('Thank you!<br>Upgrading your account, please wait...')
         $('#upgradeForm').off('submit').submit();
+        $('#upgradeDiv').css('display', 'none');
       }
     }
   });
