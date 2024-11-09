@@ -61,9 +61,8 @@
 
             <ul>
               <li><span data-original-title="Free plans don't allow uploading music, video, compressed, and executable files to prevent piracy. With a supporter plan, you can upload anything you want.">No File Upload Type Restrictions</span></li>
-              <li><span data-original-title="Make as many sites as you want, and control them with one account.">Multiple Site Creation</span></li>
-              <li><span data-original-title="Add your domain name (yoursite.com) to your site!">Custom Domain Support</span></li>
-              <li><span data-original-title="With WebDAV, you can mount your Neocities site to your computer as a hard drive, making it easy to update with your favorite HTML editor.">Remote Filesystem Support</span></li>
+              <li><span data-original-title="Make up to <%= Site::CHILD_SITES_MAX %> additional sites, and control them with one account.">Multiple Site Creation</span></li>
+              <li><span data-original-title="If you have your own domain name (yoursite.com) you can use it for your sites.">Custom Domain Support</span></li>
             </ul>
           </div>
 
@@ -74,19 +73,18 @@
               <input type="hidden" value="supporter" name="plan_type">
               <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
               <%== erb :'_card'%>
+              <div id="upgradeDiv" class="row content txt-Center">
+                <a id="upgradeLink" href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">
+                  Upgrade for $<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo
+                </a>
+                <br>
+                or pay with <strong><a href="/supporter/paypal" style="color: #00308a; text-decoration: underline;"><span style="color: #00308a">Pay</span><span style="color: #029be1">Pal</span></a></strong> or <strong><a href="/supporter/bitcoin" style="color: #f79319; text-decoration: underline;">Bitcoin</a></strong>
+              </div>
             </form>
           </div>
         </div>
-
-        <div id="upgradeDiv" class="row content txt-Center">
-          <a id="upgradeLink" href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">
-            Upgrade for $<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo
-          </a>
-          or pay with <strong><a href="/supporter/paypal" style="color: #00308a; text-decoration: underline;"><span style="color: #00308a">Pay</span><span style="color: #029be1">Pal</span></a></strong> or <strong><a href="/supporter/bitcoin" style="color: #f79319; text-decoration: underline;">Bitcoin</a></strong>
-        </div>
       </div>
     </div>
-
   <% end %>
 
   <div class="row">
