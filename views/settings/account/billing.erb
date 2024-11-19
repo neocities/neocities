@@ -1,45 +1,13 @@
 <h2>Change Credit Card</h2>
-  <p>This allows you to change your currently stored credit card. You will be charged at the regular monthly cycle.</p>
+<p>This allows you to change your currently stored credit card. You will be charged at the regular monthly cycle.</p>
 
-  <div>
-    <div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
-    <form id="upgradeForm" method="POST" action="/settings/update_card">
-      <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-      <input type="hidden" value="supporter" name="plan_type">
-      <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
-
-      <div class="credit-card-input no-js" id="skeuocard" style="margin-left: auto; margin-right: auto; margin-bottom: 20px">
-        <p class="no-support-warning"></p>
-        <label for="cc_type">Card Type</label>
-        <select name="cc_type">
-          <option value="">...</option>
-          <option value="visa">Visa</option>
-          <option value="discover">Discover</option>
-          <option value="mastercard">MasterCard</option>
-          <option value="maestro">Maestro</option>
-          <option value="jcb">JCB</option>
-          <option value="unionpay">China UnionPay</option>
-          <option value="amex">American Express</option>
-          <option value="dinersclubintl">Diners Club</option>
-        </select>
-        <label for="cc_number">Card Number</label>
-        <input type="text" name="cc_number" id="cc_number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" size="19">
-        <label for="cc_exp_month">Expiration Month</label>
-        <input type="text" name="cc_exp_month" id="cc_exp_month" placeholder="00">
-        <label for="cc_exp_year">Expiration Year</label>
-        <input type="text" name="cc_exp_year" id="cc_exp_year" placeholder="00">
-        <label for="cc_name">Cardholder's Name</label>
-        <input type="text" name="cc_name" id="cc_name" placeholder="John Doe">
-        <label for="cc_cvc">Card Validation Code</label>
-        <input type="text" name="cc_cvc" id="cc_cvc" placeholder="123" maxlength="3" size="3">
-      </div>
-    </form>
-
-    <a href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">Update Card</a>
-  </div>
+<div id="plan_error" class="alert alert-block alert-error" style="display:none"></div>
+<form id="upgradeForm" method="POST" action="/settings/update_card">
+  <%== csrf_token_input_html %>
+  <input type="hidden" value="supporter" name="plan_type">
+  <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
+  <%== erb :'_card'%>
+</form>
+<a href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">Update Card</a>
 
 <%== erb :'supporter/_signupcode', layout: false %>
-
-<script>
-  card = new Skeuocard($('#skeuocard'))
-</script>
