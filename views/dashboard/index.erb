@@ -34,7 +34,7 @@
     </p>
 	<ul>
 <% if current_site.site_updated_at %>
-	<li>Last updated <%= current_site.site_updated_at.ago.downcase %></li>
+	<li>Last updated <strong class="local-date-title" data-timestamp="<%= current_site.site_updated_at.to_i %>"><%= current_site.site_updated_at.ago.downcase %></strong></li>
 <% end %>
 	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_space_used.to_space_pretty %>) of your <%= current_site.maximum_space.to_space_pretty %></strong>.
   <br>

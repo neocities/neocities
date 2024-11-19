@@ -62,14 +62,10 @@
     <h3>Website Stats</h3>
     <div class="stats">
       <div class="stat">
-        <span>Last updated</span>
-        <strong>
-          <% if site.updated_at.nil? %>
-            <%= site.created_at.ago.downcase %>
-          <% else %>
-            <%= site.updated_at.ago.downcase %>
-          <% end %>
-        </strong>
+        <% unless site.updated_at.nil? %>
+          <span>Last updated</span>
+          <strong class="local-date-title" data-timestamp="<%= site.site_updated_at.to_i %>"><%= site.site_updated_at.ago.downcase %></strong>
+        <% end %>
       </div>
       <div class="stat"><span>Created</span><strong><%= site.created_at.strftime('%b %-d, %Y') %></strong></div>
       <a href="/site/<%= site.username %>/stats">Site Traffic Stats</a>

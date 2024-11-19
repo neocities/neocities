@@ -23,6 +23,16 @@
     <link rel="stylesheet" href="/css/highlight/styles/tomorrow-night.css">
     <script>
       hljs.highlightAll()
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var eventDateElements = document.querySelectorAll('.local-date-title');
+        eventDateElements.forEach(function(element) {
+          var timestamp = element.getAttribute('data-timestamp');
+          var date = dayjs.unix(timestamp);
+          var formattedDate = date.format('MMMM D, YYYY [at] h:mm A');
+          element.title = formattedDate;
+        });
+      });
     </script>
   </head>
 
@@ -39,6 +49,7 @@
     <script src="/js/nav.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/typeahead.bundle.js"></script>
+    <script src="/js/dayjs.min.js"></script>
     
     <script>
       $("a#like").tooltip({html: true})

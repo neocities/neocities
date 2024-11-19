@@ -67,7 +67,7 @@
       </div>
 
       <span class="date">
-        <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
+        <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>" class="local-date-title" data-timestamp="<%= event.created_at.to_i %>"><%= event.created_at.ago %></a>
       </span>
     </div>
   <% elsif event.site_change_id %>
@@ -85,7 +85,7 @@
           <% end %>
         </div>
         <span class="date">
-          <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
+            <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>" class="local-date-title" data-timestamp="<%= event.created_at.to_i %>"><%= event.created_at.ago %></a>
         </span>
       </div>
 
@@ -137,7 +137,7 @@
             <a href="/site/<%= comment_actioning_site.username %>"><img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>"></a>
             <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><i class="fa fa-user"><% if comment_actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= comment_actioning_site.username %></a>
             <span class="date">
-              <a href="/site/<%= comment_event_site.username %>?event_id=<%= event.id %>"><%= comment.created_at.ago %></a>
+              <a href="/site/<%= comment_event_site.username %>?event_id=<%= event.id %>" class="local-date-title" data-timestamp="<%= comment.created_at.to_i %>"><%= comment.created_at.ago %></a>
             </span>
             <p><%== sanitize_comment comment.message %></p>
           </div>
@@ -171,3 +171,7 @@
 </div>
 
 <%== erb :'_news_templates', layout: false %>
+
+<script>
+
+</script>

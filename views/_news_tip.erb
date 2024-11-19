@@ -29,7 +29,7 @@
   </div>
 
   <span class="date">
-    <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
+    <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>" class="local-date-title" data-timestamp="<%= event.created_at.to_i %>"><%= event.created_at.ago %></a>
   </span>
 </div>
 
