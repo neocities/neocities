@@ -1925,19 +1925,6 @@ a.tag:hover {
           color: #777;
           margin-bottom: 1em;
         }
-        .skeuocard.js .face {
-          @include box-shadow(0px 1px 2px 0px rgba(0,0,0,0.25));
-          &.valid {
-            @include box-shadow(0 0 10px #00cfa7);
-          }
-        }
-        .skeuocard.js .flip-tab p {
-          font-size: 0.85em;
-        }
-        .skeuocard.js .flip-tab.back p {
-          font-size: 0.85em;
-          padding-left: 10px;
-        }
       }
       .btn-Action {
         margin-right: 3px;
