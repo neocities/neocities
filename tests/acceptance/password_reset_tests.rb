@@ -91,6 +91,38 @@ describe '/password_reset' do
     _(@site.password_reset_confirmed).must_equal false
   end
 
+  it 'works for deleted site' do
+    @site = Fabricate :site
+    @site.destroy
+    visit '/password_reset'
+    fill_in 'email', with: @site.email
+    click_button 'Send Reset Token'
+
+    _(body).must_match /We sent an e-mail with password reset instructions/
+    _(@site.reload.password_reset_token.blank?).must_equal false
+    _(EmailWorker.jobs.first['args'].first['body']).must_match /#{Rack::Utils.build_query(username: @site.username, token: @site.password_reset_token)}/
+
+    visit "/password_reset_confirm?#{Rack::Utils.build_query username: @site.username, token: @site.reload.password_reset_token}"
+
+    _(@site.reload.password_reset_token).wont_be_nil
+    _(@site.password_reset_confirmed).must_equal true
+
+    _(page.current_url).must_match /.+\/settings#password/
+
+    fill_in 'new_password', with: 'n3wp4s$'
+    fill_in 'new_password_confirm', with: 'n3wp4s$'
+    click_button 'Change Password'
+
+    _(page.current_url).must_match /.+\/settings#password/
+    _(page).must_have_content 'Successfully changed password'
+    _(Site.valid_login?(@site.username, 'n3wp4s$')).must_equal true
+    _(page.get_rack_session['id']).must_equal @site.id
+    _(@site.reload.password_reset_token).must_be_nil
+    _(@site.password_reset_confirmed).must_equal false
+  end
+
+
+
   it 'fails if timestamp is too old' do
     @site = Fabricate :site
     visit '/password_reset'

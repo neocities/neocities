@@ -70,6 +70,13 @@ get '/password_reset_confirm' do
     redirect '/'
   end
 
+  if reset_site.is_deleted
+    unless reset_site.undelete!
+      flash[:error] = "Sorry, we cannot restore this account."
+      redirect '/'
+    end
+  end
+
   reset_site.password_reset_confirmed = true
   reset_site.save_changes
 
