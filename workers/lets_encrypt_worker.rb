@@ -187,7 +187,7 @@ class LetsEncryptWorker
   end
 
   def clean_wellknown_turds(site)
-    wellknown_path = File.join(site.base_files_path, '.well-known')
+    wellknown_path = File.join(site.base_files_path, '.well-known', 'acme-challenge')
 
     if File.exist?(wellknown_path)
       FileUtils.rm_rf wellknown_path
