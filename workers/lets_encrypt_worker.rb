@@ -32,7 +32,7 @@ class LetsEncryptWorker
     end
 
     site = Site[site_id]
-    return if site.domain.blank? || site.is_deleted || site.is_banned
+    return if site.domain.blank? || site.is_deleted
 
     return if site.values[:domain].match /\.neocities\.org$/i
 
@@ -187,10 +187,19 @@ class LetsEncryptWorker
   end
 
   def clean_wellknown_turds(site)
-    wellknown_path = File.join(site.base_files_path, '.well-known', 'acme-challenge')
+    wellknown_path = File.join site.base_files_path, '.well-known'
+    acme_challenge_path = File.join wellknown_path, 'acme-challenge'
 
-    if File.exist?(wellknown_path)
-      FileUtils.rm_rf wellknown_path
+    if File.exist?(acme_challenge_path)
+      FileUtils.rm acme_challenge_path
+      site.site_files_dataset.where(path: '.well-known/acme-challenge').destroy
+    end
+
+    if site.site_files_dataset.where(path: '.well-known').count == 0
+      begin
+        Dir.rmdir wellknown_path
+      rescue Errno::ENOTEMPTY, Errno::ENOENT
+      end
     end
   end
 end
