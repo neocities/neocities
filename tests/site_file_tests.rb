@@ -401,6 +401,22 @@ describe 'site_files' do
       _(@site.site_changed).must_equal false
     end
 
+    it 'allows non-extension filename upload if it is a text or JSON file' do
+      uploaded_files = [Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain'), Rack::Test::UploadedFile.new('./tests/files/json-file', 'application/json')]
+
+      uploaded_files.each do |file|
+        upload file.original_filename => file
+        _(last_response.body).must_match /successfully uploaded/i
+        _(File.exists?(@site.files_path(file.original_filename))).must_equal true
+        username, path = PurgeCacheWorker.jobs.last['args']
+        _(username).must_equal @site.username
+        _(path).must_equal '/'+file.original_filename
+      end
+
+      upload 'testjpeg' => Rack::Test::UploadedFile.new('./tests/files/testjpeg', 'image/jpeg')
+      _(last_response.body).must_match /invalid_file_type/i
+    end
+
     it 'works with square bracket filename' do
       uploaded_file = Rack::Test::UploadedFile.new('./tests/files/te[s]t.jpg', 'image/jpeg')
       upload 'te[s]t.jpg' => uploaded_file

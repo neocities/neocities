@@ -754,11 +754,12 @@ class Site < Sequel::Model
   end
 
   def self.valid_file_mime_type_and_ext?(mime_type, extname)
-    unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/ || mime_type =~ /inode\/x-empty/) &&
-           Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
-      return false
+    valid_mime_type = Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/ || mime_type =~ /inode\/x-empty/
+    valid_extension = Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
+    unless valid_extension
+      return true if mime_type =~ /text/ || mime_type == 'application/json'
     end
-    true
+    valid_mime_type && valid_extension
   end
 
   def self.valid_file_type?(uploaded_file)
@@ -1264,7 +1265,7 @@ class Site < Sequel::Model
 
       file[:is_html] = !(extname.match(HTML_REGEX)).nil?
       file[:is_image] = !(file[:ext].match IMAGE_REGEX).nil?
-      file[:is_editable] = !(file[:ext].match EDITABLE_FILE_EXT).nil?
+      file[:is_editable] = !(file[:ext].match EDITABLE_FILE_EXT).nil? || file[:ext].empty?
 
       file
     end
