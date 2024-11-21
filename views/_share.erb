@@ -7,6 +7,8 @@
 <br>
 <a href="https://facebook.com/sharer.php?<%= Rack::Utils.build_query(u: "#{page_uri}") %>" target="_blank">Facebook</a>
 <br>
+<a href="https://bsky.app/intent/compose?<%= Rack::Utils.build_query(text: "#{site.title}: #{page_uri}") %>" target="_blank">Bluesky</a>
+<br>
 <a href="https://twitter.com/intent/tweet?<%= Rack::Utils.build_query(text: "#{site.title}: #{page_uri}") %>" target="_blank">Twitter</a>
 <br>
 <a href="https://www.reddit.com/submit?<%= Rack::Utils.build_query(title: "#{site.title}", url: "#{page_uri}" )%>" target="_blank">Reddit</a>
