@@ -31,8 +31,6 @@ get '/settings/:username/?' do |username|
   require_login
   require_ownership_for_settings
 
-  @bluesky_did = $redis_proxy.hget "dns-_atproto.#{@site.username}.neocities.org", 'TXT'
-
   @title = "Site settings for #{username}"
   erb :'settings/site'
 end
@@ -191,16 +189,19 @@ end
 post '/settings/:username/bluesky_set_did' do
   require_login
   require_ownership_for_settings
-  redirect '/settings' if !@site.domain.empty?
 
   # todo standards based validation
   if params[:did].length > 50
     flash[:error] = 'DID provided was too long'
-  elsif !params[:did].match(/^did=did:plc:([a-z|0-9)]+)$/)
+  elsif !params[:did].match(/^did:plc:([a-z|0-9)]+)$/)
     flash[:error] = 'DID was invalid'
   else
-    $redis_proxy.hset "dns-_atproto.#{@site.username}.neocities.org", 'TXT', params[:did]
-    flash[:success] = 'DID set! You can now verify the domain on the Bluesky app.'
+    tmpfile = Tempfile.new 'atproto-did'
+    tmpfile.write params[:did]
+    tmpfile.close
+
+    @site.store_files [{filename: '.well-known/atproto-did', tempfile: tmpfile}]
+    flash[:success] = 'DID set! You can now verify the handle on the Bluesky app.'
   end
 
   redirect "/settings/#{@site.username}#bluesky"

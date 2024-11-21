@@ -197,4 +197,33 @@ describe 'site/settings' do
       _(page.body).must_match /You cannot delete the parent site without deleting the children sites first/i
     end
   end
+
+  describe 'bluesky' do
+    it 'should set did verification file' do
+      Capybara.reset_sessions!
+      @site = Fabricate :site
+      page.set_rack_session id: @site.id
+      visit "/settings/#{@site.username}#bluesky"
+      did = 'did:plc:testexampletest'
+      fill_in 'did', with: did
+      click_button 'Update DID'
+      _(body).must_include 'DID set'
+      path = '.well-known/atproto-did'
+      _(@site.site_files_dataset.where(path: path).count).must_equal 1
+      _(File.read(@site.files_path(path))).must_equal did
+    end
+
+    it 'fails with weirdness' do
+      Capybara.reset_sessions!
+      @site = Fabricate :site
+      page.set_rack_session id: @site.id
+      visit "/settings/#{@site.username}#bluesky"
+      fill_in 'did', with: 'DIJEEDIJSFDSJNFLKJJFN'
+      click_button 'Update DID'
+      _(body).must_include 'DID was invalid'
+      fill_in 'did', with: 'did:plc:'+('a'*50)
+      click_button 'Update DID'
+      _(body).must_include 'DID provided was too long'
+    end
+  end
 end

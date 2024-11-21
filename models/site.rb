@@ -1777,7 +1777,6 @@ class Site < Sequel::Model
 
     files.each do |file|
       existing_size = 0
-
       site_file = site_files_dataset.where(path: scrubbed_path(file[:filename])).first
 
       if site_file
