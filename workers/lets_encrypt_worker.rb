@@ -190,11 +190,19 @@ class LetsEncryptWorker
     wellknown_path = File.join site.base_files_path, '.well-known'
     acme_challenge_path = File.join wellknown_path, 'acme-challenge'
 
-    if File.exist?(acme_challenge_path)
-      FileUtils.rm acme_challenge_path
-      site.site_files_dataset.where(path: '.well-known/acme-challenge').destroy
+    site.site_files_dataset.where(Sequel.like(:path, '.well-known/acme-challenge%')).each do |s|
+      s.destroy
     end
 
+    Dir.glob(File.join(acme_challenge_path, '*')).each do |f|
+      FileUtils.rm f
+    end
+
+    if Dir.exist?(acme_challenge_path)
+      Dir.rmdir acme_challenge_path
+    end
+
+    # .well-known was not created by user, removing to prevent confusion
     if site.site_files_dataset.where(path: '.well-known').count == 0
       begin
         Dir.rmdir wellknown_path
