@@ -75,7 +75,7 @@ get '/?' do
   end
 
   if SimpleCache.expired?(:featured_sites)
-    @featured_sites = Site.order(:score.desc).exclude(is_nsfw: true).exclude(is_deleted: true).limit(12).all.shuffle.collect {|s| {screenshot_url: s.screenshot_url('index.html', '540x405'), uri: s.uri, title: s.title}}
+    @featured_sites = Site.order(:score.desc).exclude(is_nsfw: true).exclude(is_deleted: true).limit(1000).all.sample(12).collect {|s| {screenshot_url: s.screenshot_url('index.html', '540x405'), uri: s.uri, title: s.title}}
     SimpleCache.store :featured_sites, @featured_sites, 1.hour
   else
     @featured_sites = SimpleCache.get :featured_sites
