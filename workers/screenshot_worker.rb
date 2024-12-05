@@ -62,7 +62,6 @@ class ScreenshotWorker
       # Optimized image for open graph link expanders
       image = Rszr::Image.load base_image_tmpfile_path
       image.resize! 1200, 630, crop: :n
-      image.save base_image_tmpfile_path
       image.save File.join(user_screenshots_path, "#{path}.jpg"), quality: 85
       ImageOptimizer.new(File.join(user_screenshots_path, "#{path}.jpg")).optimize
 
@@ -72,7 +71,7 @@ class ScreenshotWorker
         opts = {resize_w: width, resize_h: height, near_lossless: 0}
 
         if width == height
-          opts.merge! crop_x: 160, crop_y: 0, crop_w: 960, crop_h: 630
+          opts.merge! crop_x: 160, crop_y: 0, crop_w: 960, crop_h: 960
         end
 
         WebP.encode base_image_tmpfile_path, full_screenshot_path, opts
