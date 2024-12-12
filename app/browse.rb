@@ -138,7 +138,7 @@ get '/browse/search' do
       cx: $config['google_custom_search_cx'],
       safe: 'active',
       start: @start,
-      q: Rack::Utils.escape(params[:q])
+      q: Rack::Utils.escape(params[:q]) + ' -filetype:pdf -filetype:txt site:*.neocities.org'
     })
 
     @items = []

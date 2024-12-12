@@ -109,7 +109,7 @@
         <% if @start > 0 %>
           <a href="?q=<%= Rack::Utils.escape params[:q] %>&start=<%= [@start-10, 0].max %>"><i class="fa fa-arrow-left arrow">&nbsp;&nbsp;</i></a>
         <% end %>
-        <% if @total_results > @start+10 %>
+        <% if @total_results > @start+10 && @start+10 < 100 %>
           <a href="?q=<%= Rack::Utils.escape params[:q] %>&start=<%= @start+10 %>"><i class="fa fa-arrow-right arrow"></i></a>
         <% end %>
       </h2>
