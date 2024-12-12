@@ -147,6 +147,9 @@ get '/browse/search' do
       @total_results = @resp['searchInformation']['totalResults'].to_i
       @resp['items'].each do |item|
         link = Addressable::URI.parse(item['link'])
+        item['readable_link'] = link.host+Rack::Utils.unescape(Rack::Utils.unescape(link.path)) # Yes, it needs to be decoded twice
+        item['link'] = link
+
         next if link.host == 'neocities.org'
 
         username = link.host.split('.').first
