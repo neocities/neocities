@@ -1,0 +1,118 @@
+<style>
+.search-results {
+    background: #ffffff;
+}
+
+.result-item {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.screenshot {
+    width: 400px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    margin-right: 15px;
+}
+
+.screenshot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.result-details {
+    flex-grow: 1;
+}
+
+.result-title {
+    font-size: 1.2em;
+    margin: 0;
+}
+
+.result-title a {
+    color: #e93250;
+    text-decoration: none;
+}
+
+.result-title a:hover {
+    text-decoration: underline;
+}
+
+.result-url {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.result-url a {
+    color: #e93250;
+    text-decoration: none;
+}
+
+.result-url a:hover {
+    text-decoration: underline;
+}
+
+.result-snippet {
+    font-size: 0.9em;
+    color: #333;
+    line-height: 1.5;
+}
+  
+
+</style>
+
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>Neocities Search</h1>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <h1>Search Results</h1>
+
+  <% if @items.empty? %>
+    No results.
+  <% else %>
+    <div class="search-results">
+      <% @items.each do |item| %>
+        <div class="result-item">
+          <div class="screenshot">
+            <a href="<%= item['link'] %>"><img src="<%= item['screenshot_url'] %>" alt="<%= item['title'] %>"></a>
+          </div>
+          <div class="result-details">
+            <h3 class="result-title">
+              <a href="<%= item['link'] %>"><%= item['title'] %></a>
+            </h3>
+
+            <div class="result-url">
+              <a href="<%= item['link'] %>"><%= item['link'] %></a>
+            </div>
+
+            <p class="result-snippet">
+              <%== item['htmlSnippet'] %>
+            </p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="txt-Center">
+      <h2>
+        <% if @start > 0 %>
+          <a href="?q=<%= Rack::Utils.escape params[:q] %>&start=<%= [@start-10, 0].max %>"><i class="fa fa-arrow-left arrow">&nbsp;&nbsp;</i></a>
+        <% end %>
+        <% if @total_results > @start+10 %>
+          <a href="?q=<%= Rack::Utils.escape params[:q] %>&start=<%= @start+10 %>"><i class="fa fa-arrow-right arrow"></i></a>
+        <% end %>
+      </h2>
+    </div>
+  <% end %>
+</div>

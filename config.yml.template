@@ -28,6 +28,9 @@ development:
   screenshot_urls:
     - http://screenshots:derp@127.0.0.1:12345
   stop_forum_spam_api_key: testkey
+  google_custom_search_key: herpderp
+  google_custom_search_cx: herpderp
+  google_custom_search_query_limit: 69
 test:
   database: 'postgres://localhost/neocities_test'
   database_pool: 1
@@ -62,3 +65,6 @@ test:
   twilio_service_sid: VADERPDERPDERP
   minfraud_account_id: 696969420
   minfraud_license_key: DERPDERPDERP
+  google_custom_search_key: herpderp
+  google_custom_search_cx: herpderp
+  google_custom_search_query_limit: 69

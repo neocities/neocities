@@ -118,3 +118,58 @@ def browse_sites_dataset
 
   ds
 end
+
+get '/browse/search' do
+  if params[:q]
+    query_count = $redis_cache.get("search_query_count").to_i
+    if query_count >= $config['google_custom_search_query_limit']
+      halt 429, "Query limit reached. Please try again tomorrow."
+    end
+
+    $redis_cache.incr("search_query_count")
+    $redis_cache.expire("search_query_count", 86400) if query_count == 0
+
+    @start = params[:start].to_i
+    @start = 0 if @start < 0
+
+    @resp = JSON.parse HTTP.get('https://www.googleapis.com/customsearch/v1', params: {
+      key: $config['google_custom_search_key'],
+      cx: $config['google_custom_search_cx'],
+      safe: 'active',
+      start: @start,
+      q: Rack::Utils.escape(params[:q])
+    })
+
+    @items = []
+
+    if @total_results != 0 && @resp['error'].nil? && @resp['searchInformation']['totalResults'] != "0"
+      @total_results = @resp['searchInformation']['totalResults'].to_i
+      @resp['items'].each do |item|
+        link = Addressable::URI.parse(item['link'])
+        next if link.host == 'neocities.org'
+
+        username = link.host.split('.').first
+        site = Site[username: username]
+        next if site.nil? || site.is_deleted || site.is_nsfw
+
+        if link.path[-1] == '/'
+          link.path << 'index.html'
+        else
+          ['.html', '.htm'].each do |ext|
+            if site.screenshot_exists?(link.path + ext, '540x405')
+              link.path += ext
+              break
+            end
+          end
+        end
+
+        item['screenshot_url'] = site.screenshot_url(link.path, '540x405')
+        @items << item
+      end
+    end
+  else
+    @total_results = 0
+  end
+
+  erb :'search'
+end
