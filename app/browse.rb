@@ -147,7 +147,8 @@ get '/browse/search' do
       @total_results = @resp['searchInformation']['totalResults'].to_i
       @resp['items'].each do |item|
         link = Addressable::URI.parse(item['link'])
-        item['readable_link'] = link.host+Rack::Utils.unescape(Rack::Utils.unescape(link.path)) # Yes, it needs to be decoded twice
+        unencoded_path = Rack::Utils.unescape(Rack::Utils.unescape(link.path)) # Yes, it needs to be decoded twice
+        item['unencoded_link'] = link.host+unencoded_path
         item['link'] = link
 
         next if link.host == 'neocities.org'
@@ -156,16 +157,18 @@ get '/browse/search' do
         site = Site[username: username]
         next if site.nil? || site.is_deleted || site.is_nsfw
 
-        link.path << 'index' if link.path[-1] == '/'
+        screenshot_path = unencoded_path
+
+        screenshot_path << 'index' if screenshot_path[-1] == '/'
 
         ['.html', '.htm'].each do |ext|
-          if site.screenshot_exists?(link.path + ext, '540x405')
-            link.path += ext
+          if site.screenshot_exists?(screenshot_path + ext, '540x405')
+            screenshot_path += ext
             break
           end
         end
 
-        item['screenshot_url'] = site.screenshot_url(link.path, '540x405')
+        item['screenshot_url'] = site.screenshot_url(screenshot_path, '540x405')
         @items << item
       end
     end
