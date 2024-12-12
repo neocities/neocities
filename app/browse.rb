@@ -121,6 +121,7 @@ end
 
 get '/browse/search' do
   if params[:q]
+    @title = 'Search Results'
     query_count = $redis_cache.get("search_query_count").to_i
     if query_count >= $config['google_custom_search_query_limit']
       halt 429, "Query limit reached. Please try again tomorrow."
@@ -152,14 +153,12 @@ get '/browse/search' do
         site = Site[username: username]
         next if site.nil? || site.is_deleted || site.is_nsfw
 
-        if link.path[-1] == '/'
-          link.path << 'index.html'
-        else
-          ['.html', '.htm'].each do |ext|
-            if site.screenshot_exists?(link.path + ext, '540x405')
-              link.path += ext
-              break
-            end
+        link.path << 'index' if link.path[-1] == '/'
+
+        ['.html', '.htm'].each do |ext|
+          if site.screenshot_exists?(link.path + ext, '540x405')
+            link.path += ext
+            break
           end
         end
 
