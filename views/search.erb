@@ -65,22 +65,43 @@
     color: #333;
     line-height: 1.5;
 }
-  
-
 </style>
 
+
+<!--
 <div class="header-Outro">
   <div class="row content single-Col">
     <h1>Neocities Search</h1>
   </div>
 </div>
 
-<div class="content single-Col misc-page">
-  <h1>Search Results</h1>
+-->
 
-  <% if @items.empty? %>
+
+
+<div class="header-Outro with-columns browse-page">
+  <div class="row content">
+    <div class="col col-100">
+      <h1>Site Search</h1>
+    </div>
+
+    <form id="search_criteria" action="/browse/search" method="GET">
+      <div class="col col-50 filter">
+        <fieldset class="grouping">
+          <input name="q" type="text" class="input-Area" value="<%= params[:q] %>">
+          <input style="vertical-align: 5px; margin-left: 4px;" type="submit" class="btn-Action" value="Search">
+        </fieldset>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="content single-Col misc-page">
+  <% if @daily_search_max_reached %>
+    Search temporarily unavailable, please try again tomorrow.
+  <% elsif @items == [] %>
     No results.
-  <% else %>
+  <% elsif !@items.nil? %>
     <div class="search-results">
       <% @items.each do |item| %>
         <div class="result-item">

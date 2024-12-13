@@ -119,16 +119,24 @@ def browse_sites_dataset
   ds
 end
 
-get '/browse/search' do
-  if params[:q]
-    @title = 'Search Results'
-    query_count = $redis_cache.get("search_query_count").to_i
-    if query_count >= $config['google_custom_search_query_limit']
-      halt 429, "Query limit reached. Please try again tomorrow."
-    end
+def daily_search_max?
+  query_count = $redis_cache.get("search_query_count").to_i
+  $redis_cache.expire("search_query_count", 86400) if query_count == 0
+  return true if query_count >= $config['google_custom_search_query_limit']
+  false
+end
 
+get '/browse/search' do
+  @title = 'Site Search'
+
+  @daily_search_max_reached = daily_search_max?
+
+  if @daily_search_max_reached
+    params[:q] = nil
+  end
+
+  if !params[:q].blank?
     $redis_cache.incr("search_query_count")
-    $redis_cache.expire("search_query_count", 86400) if query_count == 0
 
     @start = params[:start].to_i
     @start = 0 if @start < 0
@@ -173,6 +181,7 @@ get '/browse/search' do
       end
     end
   else
+    @items = nil
     @total_results = 0
   end
 
