@@ -26,3 +26,6 @@ twilio_auth_token: derpderpderp
 twilio_service_sid: VADERPDERPDERP
 minfraud_account_id: 696969420
 minfraud_license_key: DERPDERPDERP
+google_custom_search_key: herpderp
+google_custom_search_cx: herpderp
+google_custom_search_query_limit: 69
