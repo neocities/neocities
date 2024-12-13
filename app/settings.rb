@@ -201,6 +201,7 @@ post '/settings/:username/bluesky_set_did' do
     tmpfile.close
 
     @site.store_files [{filename: '.well-known/atproto-did', tempfile: tmpfile}]
+    $redis_proxy.hdel "dns-_atproto.#{@site.username}.neocities.org", 'TXT'
     flash[:success] = 'DID set! You can now verify the handle on the Bluesky app.'
   end
 
