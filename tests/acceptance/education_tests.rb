@@ -44,7 +44,7 @@ describe 'signup' do
     _(File.exist?(index_file_path)).must_equal true
 
     site = Site[username: @site[:username]]
-    _(site.site_files.length).must_equal 4
+    _(site.site_files.length).must_equal 5
     _(site.site_changed).must_equal false
     _(site.site_updated_at).must_be_nil
     _(site.is_education).must_equal true

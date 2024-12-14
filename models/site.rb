@@ -494,6 +494,11 @@ class Site < Sequel::Model
     FileUtils.cp template_file_path('neocities.png'), tmpfile.path
     files << {filename: 'neocities.png', tempfile: tmpfile}
 
+    tmpfile = Tempfile.new 'robots.txt'
+    tmpfile.close
+    FileUtils.cp template_file_path('robots.txt'), tmpfile.path
+    files << {filename: 'robots.txt', tempfile: tmpfile}
+
     store_files files, new_install: true
   end
 
