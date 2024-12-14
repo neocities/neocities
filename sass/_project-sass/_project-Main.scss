@@ -1007,6 +1007,14 @@ a.tag:hover {
       height: 202px;
     }
   }
+  &.big-file .html-thumbnail.html img {
+    width: 540px;
+    height: 405px;
+    @media (max-device-width:480px), screen and (max-width:800px) {
+      width: 270px;
+      height: 202px;
+    }
+  }
 }
 .news-item .file .image-container {
   float: left;
