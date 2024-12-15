@@ -142,14 +142,13 @@
 <% end %>
 
 <% unless is_education? %>
-<%== erb :_browse_tags, layout: false %>
-<div class="row content misc">
+<div class="row content misc txt-Center">
   <h3>Site Search</h3>
 
   <% if !daily_search_max? %>
     <form method="GET" action="/browse/search">
       <fieldset>
-        <input name="q" type="text" placeholder="keywords" class="input-Area" autocapitalize="off" autocorrect="off" style="width: 50%">
+        <input name="q" type="text" placeholder="keywords" class="input-Area" autocapitalize="off" autocorrect="off" style="width: 300px;">
         <input class="btn btn-Action" type="submit" value="Search">
       </fieldset>
     </form>
@@ -163,6 +162,7 @@
     <p>Search powered by <a href="https://duckduckgo.com/">Duck Duck Go</a></p>
   <% end %>
 </div>
+<%== erb :_browse_tags, layout: false %>
 <% end %>
 </div>
 

@@ -67,18 +67,6 @@
 }
 </style>
 
-
-<!--
-<div class="header-Outro">
-  <div class="row content single-Col">
-    <h1>Neocities Search</h1>
-  </div>
-</div>
-
--->
-
-
-
 <div class="header-Outro with-columns browse-page">
   <div class="row content">
     <div class="col col-100">
@@ -88,7 +76,7 @@
     <form id="search_criteria" action="/browse/search" method="GET">
       <div class="col col-50 filter">
         <fieldset class="grouping">
-          <input name="q" type="text" class="input-Area" value="<%= params[:q] %>">
+          <input name="q" type="text" class="input-Area" value="<%= params[:q] %>"  placeholder="keywords">
           <input style="vertical-align: 5px; margin-left: 4px;" type="submit" class="btn-Action" value="Search">
         </fieldset>
       </div>
@@ -135,5 +123,7 @@
         <% end %>
       </h2>
     </div>
+  <% else %>
+    Enter some keywords to begin searching.
   <% end %>
 </div>
