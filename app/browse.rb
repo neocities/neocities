@@ -120,10 +120,8 @@ def browse_sites_dataset
 end
 
 def daily_search_max?
-  query_count = $redis_cache.get("search_query_count").to_i
-  $redis_cache.expire("search_query_count", 86400) if query_count == 0
-  return true if query_count >= $config['google_custom_search_query_limit']
-  false
+  query_count = $redis_cache.get('search_query_count').to_i
+  query_count >= $config['google_custom_search_query_limit']
 end
 
 get '/browse/search' do
@@ -136,7 +134,8 @@ get '/browse/search' do
   end
 
   if !params[:q].blank?
-    $redis_cache.incr("search_query_count")
+    created = $redis_cache.set('search_query_count', 1, nx: true, ex: 86400)
+    $redis_cache.incr('search_query_count') unless created
 
     @start = params[:start].to_i
     @start = 0 if @start < 0
