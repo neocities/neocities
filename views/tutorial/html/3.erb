@@ -25,7 +25,7 @@
   function checkHomework() {
     var html = editor.getValue()
 
-    if(!html.match(/<h1>\S.+<\/h1>/)) {
+    if(!html.match(/<h1>.+<\/h1>/)) {
       notok("That doesn't look like a header! Try again.")
     } else {
       sessionStorage.setItem('tutorialHtml', html)
