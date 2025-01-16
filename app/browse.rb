@@ -155,7 +155,7 @@ get '/browse/search' do
       @resp['items'].each do |item|
         link = Addressable::URI.parse(item['link'])
         unencoded_path = Rack::Utils.unescape(Rack::Utils.unescape(link.path)) # Yes, it needs to be decoded twice
-        item['unencoded_link'] = link.host+unencoded_path
+        item['unencoded_link'] = unencoded_path == '/' ? link.host : link.host+unencoded_path
         item['link'] = link
 
         next if link.host == 'neocities.org'
