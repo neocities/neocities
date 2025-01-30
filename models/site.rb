@@ -499,6 +499,14 @@ class Site < Sequel::Model
     FileUtils.cp template_file_path('robots.txt'), tmpfile.path
     files << {filename: 'robots.txt', tempfile: tmpfile}
 
+    tmpfile = Tempfile.new '.feedignore'
+    tmpfile.write "# Use .feedignore to prevent certain files from showing up in the update feed.\n"
+    tmpfile.write "# You can name specific files, or use the * wildcard.\n\n# Ignore this file\n.feedignore\n\n"
+    tmpfile.write "# Ignore all files in the test/ directory\ntest/*"
+    tmpfile.write "\n\n"
+    tmpfile.close
+    files << {filename: '.feedignore', tempfile: tmpfile}
+
     store_files files, new_install: true
   end
 
