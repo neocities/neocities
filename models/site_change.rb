@@ -7,10 +7,14 @@ class SiteChange < Sequel::Model
   one_to_many :site_change_files
 
   def site_change_filenames(limit=6)
-    site_change_files_dataset.select(:filename).limit(limit).order(:created_at.desc).all.collect {|f| f.filename}.sort_by {|f| f.match('html') ? 0 : 1}
+    filenames = site_change_files_dataset.select(:filename).limit(limit).order(:created_at.desc).all.collect {|f| f.filename}
+    filenames = filenames.reject { |f| site.should_ignore_from_feed?(f) }
+    filenames.sort_by {|f| f.match('html') ? 0 : 1}
   end
 
   def self.record(site, filename)
+    return if site.should_ignore_from_feed?(filename)
+
     site_change = filter(site_id: site.id).order(:created_at.desc).first
 
     if site_change.nil? || site_change.created_at+NEW_CHANGE_TIMEOUT < Time.now

@@ -1903,6 +1903,27 @@ class Site < Sequel::Model
     true
   end
 
+  def feedignore_patterns
+    return @feedignore_patterns if defined?(@feedignore_patterns)
+    
+    feedignore_path = current_files_path('.feedignore')
+    if File.exist?(feedignore_path)
+      @feedignore_patterns = File.readlines(feedignore_path).map(&:strip).reject { |line| line.empty? || line.start_with?('#') }
+    else
+      @feedignore_patterns = []
+    end
+    @feedignore_patterns
+  end
+
+  def should_ignore_from_feed?(path)
+    return false if feedignore_patterns.empty?
+    feedignore_patterns.any? do |pattern|
+      # Convert glob pattern to regex
+      regex = Regexp.new("^#{pattern.gsub('*', '.*').gsub('?', '.')}$")
+      path.match?(regex)
+    end
+  end
+
   private
 
   def store_file(path, uploaded, opts={})
