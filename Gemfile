@@ -12,7 +12,7 @@ gem 'sidekiq', '~> 7'
 gem 'mail'
 gem 'net-smtp'
 gem 'tilt'
-gem 'erubis'
+gem 'erubi'
 gem 'stripe' #, source: 'https://code.stripe.com/'
 gem 'terrapin'
 gem 'sass', require: nil

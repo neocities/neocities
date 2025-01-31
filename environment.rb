@@ -13,7 +13,7 @@ require 'logger'
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
-require 'tilt/erubis'
+require 'tilt/erubi'
 require 'active_support'
 require 'active_support/time'
 
