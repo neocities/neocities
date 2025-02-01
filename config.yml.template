@@ -2,7 +2,7 @@ development:
   database: 'postgres://localhost/neocities'
   database_pool: 1
   redis_url: "redis://localhost"
-  session_secret: "SECRET GOES HERE"
+  session_secret: "SSBqdXN0IHdhbnRlZCB0byBzZWUgd2hhdCB5b3UgbG9va2VkIGxpa2UgaW4gYSBkcmVzcywgRGFkZSBNdXJwaHk="
   hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
   hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
   sidekiq_user: "ENTER USER HERE"
@@ -34,7 +34,7 @@ development:
 test:
   database: 'postgres://localhost/neocities_test'
   database_pool: 1
-  session_secret: "SECRET GOES HERE"
+  session_secret: "SSBqdXN0IHdhbnRlZCB0byBzZWUgd2hhdCB5b3UgbG9va2VkIGxpa2UgaW4gYSBkcmVzcywgRGFkZSBNdXJwaHk="
   hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
   hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
   sidekiq_user: "ENTER USER HERE"

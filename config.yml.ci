@@ -1,6 +1,6 @@
 database: 'postgres://postgres:citestpassword@localhost/ci_test'
 database_pool: 1
-session_secret: 's3cr3t'
+session_secret: 'SSBqdXN0IHdhbnRlZCB0byBzZWUgd2hhdCB5b3UgbG9va2VkIGxpa2UgaW4gYSBkcmVzcywgRGFkZSBNdXJwaHk='
 email_unsubscribe_token: "somethingrandomderrrrp"
 paypal_api_username: derp
 paypal_api_password: ing

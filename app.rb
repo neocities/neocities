@@ -4,7 +4,7 @@ require './app_helpers.rb'
 use Rack::Session::Cookie, key:          'neocities',
                            path:         '/',
                            expire_after: 31556926, # one year in seconds
-                           secret:       $config['session_secret'],
+                           secret:       Base64.strict_decode64($config['session_secret']),
                            httponly: true,
                            same_site: :lax,
                            secure: ENV['RACK_ENV'] == 'production'
@@ -105,11 +105,14 @@ end
 after do
   if @api
     request.session_options[:skip] = true
+  else
+    # Set issue timestamp on session cookie if it doesn't exist yet
+    session['i'] = Time.now.to_i if session && !session['i'] && session['id']
   end
-end
 
-after do
-  response.headers['Content-Security-Policy'] = %{default-src 'self' data: blob: 'unsafe-inline'; script-src 'self' blob: 'unsafe-inline' 'unsafe-eval' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; connect-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://api.stripe.com; frame-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com} unless self.class.development?
+  unless self.class.development?
+    response.headers['Content-Security-Policy'] = %{default-src 'self' data: blob: 'unsafe-inline'; script-src 'self' blob: 'unsafe-inline' 'unsafe-eval' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; connect-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://api.stripe.com; frame-src 'self' https://hcaptcha.com https://*.hcaptcha.com https://js.stripe.com}
+  end
 end
 
 not_found do
