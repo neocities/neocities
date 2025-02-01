@@ -499,6 +499,14 @@ class Site < Sequel::Model
     FileUtils.cp template_file_path('robots.txt'), tmpfile.path
     files << {filename: 'robots.txt', tempfile: tmpfile}
 
+    tmpfile = Tempfile.new '.feedignore'
+    tmpfile.write "# Use .feedignore to prevent certain files from showing up in the update feed.\n"
+    tmpfile.write "# You can name specific files, or use the * wildcard.\n\n# Ignore this file\n.feedignore\n\n"
+    tmpfile.write "# Ignore all files in the test/ directory\ntest/*"
+    tmpfile.write "\n\n"
+    tmpfile.close
+    files << {filename: '.feedignore', tempfile: tmpfile}
+
     store_files files, new_install: true
   end
 
@@ -1901,6 +1909,27 @@ class Site < Sequel::Model
   def required_validations_met?
     return false if phone_verification_needed? || tutorial_required || email_not_validated?
     true
+  end
+
+  def feedignore_patterns
+    return @feedignore_patterns if defined?(@feedignore_patterns)
+    
+    feedignore_path = current_files_path('.feedignore')
+    if File.exist?(feedignore_path)
+      @feedignore_patterns = File.readlines(feedignore_path).map(&:strip).reject { |line| line.empty? || line.start_with?('#') }
+    else
+      @feedignore_patterns = []
+    end
+    @feedignore_patterns
+  end
+
+  def should_ignore_from_feed?(path)
+    return false if feedignore_patterns.empty?
+    feedignore_patterns.any? do |pattern|
+      # Convert glob pattern to regex
+      regex = Regexp.new("^#{pattern.gsub('*', '.*').gsub('?', '.')}$")
+      path.match?(regex)
+    end
   end
 
   private
