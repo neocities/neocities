@@ -33,13 +33,16 @@
       <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site} %>'><i class="fa fa-share-alt"></i> <span>Share</span></a>
     </p>
 	<ul>
-<% if current_site.site_updated_at %>
-	<li>Last updated <strong class="local-date-title" data-timestamp="<%= current_site.site_updated_at.to_i %>"><%= current_site.site_updated_at.ago.downcase %></strong></li>
-<% end %>
-	<li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_space_used.to_space_pretty %>) of your <%= current_site.maximum_space.to_space_pretty %></strong>.
-  <br>
-  <% unless current_site.is_education || current_site.supporter? %>Need more space? <a href="/supporter">Become a Supporter!</a><% end %></li>
-	<li><strong><%= current_site.views.format_large_number %></strong> views</li>
+    <% if current_site.site_updated_at %>
+      <li>Last updated <strong class="local-date-title" data-timestamp="<%= current_site.site_updated_at.to_i %>"><%= current_site.site_updated_at.ago.downcase %></strong></li>
+    <% end %>
+    <li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_space_used.to_space_pretty %>)</strong> of your <strong><%= current_site.maximum_space.to_space_pretty %></strong> storage.
+    <br>
+    <li>
+      Used <strong><%= current_site.monthly_bandwidth_used.to_bytes_pretty %></strong> of bandwidth this month.
+      <br>
+      <% unless current_site.is_education || current_site.supporter? %>Need more space? <a href="/supporter">Become a Supporter!</a><% end %>
+    </li>
 	</ul>
 	</div>
 

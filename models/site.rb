@@ -205,8 +205,6 @@ class Site < Sequel::Model
   one_to_many :reports
   one_to_many :reportings, key: :reporting_site_id, class: :Report
 
-  one_to_many :stats
-
   one_to_many :events
 
   one_to_many :site_changes
@@ -1901,6 +1899,16 @@ class Site < Sequel::Model
   def required_validations_met?
     return false if phone_verification_needed? || tutorial_required || email_not_validated?
     true
+  end
+
+  def maximum_monthly_bandwidth
+    PLAN_FEATURES[(parent? ? self : parent).plan_type.to_sym][:bandwidth].to_i
+  end
+
+  def monthly_bandwidth_used
+    stat = stats_dataset.order(:created_at.desc).select(:bandwidth).first
+    return 0 if stat.nil?
+    stat[:bandwidth]
   end
 
   private
