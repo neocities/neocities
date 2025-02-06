@@ -1,14 +1,13 @@
 GIT
   remote: https://github.com/neocities/dav4rack.git
-  revision: 3ecde122a0b8bcc1d85581dc85ef3a7120b6a8f0
-  ref: 3ecde122a0b8bcc1d85581dc85ef3a7120b6a8f0
+  revision: 1bf1975c613d4f14d00f1e70ce7e0bb9e2e6cd9b
+  ref: 1bf1975c613d4f14d00f1e70ce7e0bb9e2e6cd9b
   specs:
-    dav4rack (1.1.0)
-      addressable (>= 2.5.0)
-      nokogiri (>= 1.6.0)
-      ox (>= 2.1.0)
-      rack (>= 1.6)
+    dav4rack (0.3.0)
+      nokogiri (>= 1.4.2)
+      rack (~> 3.0)
       uuidtools (~> 2.1.1)
+      webrick
 
 GEM
   remote: https://rubygems.org/
@@ -254,8 +253,6 @@ GEM
     nokogiri (1.18.2-x86_64-linux-musl)
       racc (~> 1.4)
     ostruct (0.6.1)
-    ox (2.14.21)
-      bigdecimal (>= 3.0)
     paypal-recurring (1.1.0)
     pg (1.5.9)
     phonelib (0.10.3)
