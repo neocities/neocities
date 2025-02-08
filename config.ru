@@ -68,6 +68,17 @@ map '/webdav' do
 
       env['PATH_INFO'] = "/#{@site.scrubbed_path(path)}" unless path.empty?
 
+      # Terrible hack to fix WebDAV for the VSC plugin
+      if env['CONTENT_LENGTH'] == "0"
+        env['rack.input'] = StringIO.new('<?xml version="1.0" encoding="utf-8"?>
+<propfind xmlns="DAV:"><prop>
+<getcontentlength xmlns="DAV:"/>
+<getlastmodified xmlns="DAV:"/>
+<resourcetype xmlns="DAV:"/>
+</prop></propfind>')
+        env['CONTENT_LENGTH'] = env['rack.input'].length.to_s
+      end
+
       DAV4Rack::Handler.new(
         root: @site.files_path,
         root_uri_path: '/webdav'
