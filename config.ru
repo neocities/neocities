@@ -24,6 +24,24 @@ map '/webdav' do
     request_method = env['REQUEST_METHOD']
     path = env['PATH_INFO']
 
+    unless @site.owner.supporter?
+      return [
+        402,
+        {
+          'Content-Type' => 'application/xml',
+          'X-Upgrade-Required' => 'https://neocities.org/supporter'
+        },
+        [
+          <<~XML
+            <?xml version="1.0" encoding="utf-8"?>
+            <error xmlns="DAV:">
+              <message>WebDAV access requires a supporter account.</message>
+            </error>
+          XML
+        ]
+      ]
+    end
+
     case request_method
     when 'OPTIONS'
       return [200, {'Allow' => 'OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL, MOVE', 'DAV' => '1,2'}, ['']]
