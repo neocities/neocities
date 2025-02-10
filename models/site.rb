@@ -17,6 +17,7 @@ class Site < Sequel::Model
     application/pdf
     application/pgp
     application/pgp-keys
+    application/pgp-signature
     application/rss+xml
     application/vnd.ms-fontobject
     application/vnd.ms-opentype
