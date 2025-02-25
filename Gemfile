@@ -10,7 +10,6 @@ gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
 gem 'puma', '< 7',      require: nil
 gem 'sidekiq', '~> 7'
 gem 'mail'
-gem 'net-smtp'
 gem 'tilt'
 gem 'erubi'
 gem 'stripe' #, source: 'https://code.stripe.com/'

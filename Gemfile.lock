@@ -445,7 +445,6 @@ DEPENDENCIES
   mock_redis
   monetize
   msgpack
-  net-smtp
   nokogiri
   paypal-recurring
   pg

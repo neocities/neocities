@@ -128,14 +128,6 @@ Dir.glob('workers/*.rb').each {|w| require File.join(DIR_ROOT, "/#{w}") }
 DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
 
 Mail.defaults do
-  #options = { :address => "smtp.gmail.com",
-  # :port => 587,
-  # :domain => 'your.host.name',
-  # :user_name => '<username>',
-  # :password => '<password>',
-  # :authentication => 'plain',
-  # :enable_starttls_auto => true }
-
   options = {}
   delivery_method :sendmail, options
 end
