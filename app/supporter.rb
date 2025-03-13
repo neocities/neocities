@@ -102,6 +102,7 @@ post '/supporter/update' do
 end
 
 get '/supporter/thanks' do
+  @title = 'Supporter Confirmation'
   require_login
   erb :'supporter/thanks'
 end

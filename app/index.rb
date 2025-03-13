@@ -56,6 +56,7 @@ get '/?' do
 
   @changed_count ||= 0
 
+=begin
   if SimpleCache.expired?(:blog_feed_html)
     @blog_feed_html = ''
 
@@ -73,6 +74,9 @@ get '/?' do
   else
     @blog_feed_html = SimpleCache.get :blog_feed_html
   end
+=end
+
+@blog_feed_html = 'The latest news on Neocities can be found on our blog.'
 
   if SimpleCache.expired?(:featured_sites)
     @featured_sites = Site.order(:score.desc).exclude(is_nsfw: true).exclude(is_deleted: true).limit(1000).all.sample(12).collect {|s| {screenshot_url: s.screenshot_url('index.html', '540x405'), uri: s.uri, title: s.title}}
