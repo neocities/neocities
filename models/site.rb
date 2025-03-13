@@ -562,6 +562,7 @@ class Site < Sequel::Model
     self.banned_at = Time.now
     save validate: false
     destroy
+    account_sites_dataset.exclude(id: self.id).all.each {|s| s.ban!}
   end
 
   def ban_all_sites_on_account!
@@ -1350,6 +1351,21 @@ class Site < Sequel::Model
     if stripe_paying_supporter?
       customer = Stripe::Customer.retrieve stripe_customer_id
       subscription = customer.subscriptions.retrieve stripe_subscription_id
+
+      if is_banned
+        latest_invoice = Stripe::Invoice.retrieve subscription.latest_invoice
+
+        payment_intent_id = latest_invoice.payment_intent
+        if payment_intent_id
+          payment_intent = Stripe::PaymentIntent.retrieve(payment_intent_id)
+
+          if payment_intent.charges.data.any?
+            charge_id = payment_intent.charges.data.first.id
+            Stripe::Refund.create({ charge: charge_id })
+          end
+        end
+      end
+
       subscription.delete
 
       self.plan_type = nil
