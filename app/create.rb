@@ -141,12 +141,12 @@ post '/create' do
   end
 
   unless education_whitelisted?
+    send_confirmation_email @site
+
     @site.send_email(
       subject: "[Neocities] Welcome to Neocities!",
       body: Tilt.new('./views/templates/email/welcome.erb', pretty: true).render(self)
     )
-
-    send_confirmation_email @site
   end
 
   session[:id] = @site.id
