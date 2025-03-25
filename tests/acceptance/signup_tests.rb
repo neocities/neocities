@@ -45,12 +45,12 @@ describe 'signup' do
     click_signup_button
     site_created?
     click_link 'Continue'
+    _(current_path).must_equal "/site/#{@site[:username]}/confirm_email"
     _(page).must_have_content /almost ready!/
     fill_in 'token', with: Site[username: @site[:username]].email_confirmation_token
     click_button 'Confirm Email'
-    _(current_path).must_equal '/tutorial'
     _(page).must_have_content /Let's Get Started/
-
+    _(current_path).must_equal '/tutorial'
     index_file_path = File.join Site::SITE_FILES_ROOT, Site.sharding_dir(@site[:username]), @site[:username], 'index.html'
     _(File.exist?(index_file_path)).must_equal true
 
