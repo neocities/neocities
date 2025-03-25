@@ -43,7 +43,7 @@
         <fieldset class="grouping">
           <% unless is_education? %>
             <label class="text-Label" for="tag"><span class="hide-on-mobile">Filter by </span>Tag:</label>
-            <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
+            <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto" oninput="this.value = this.value.replace(/[^a-zA-Z0-9]+/g, '')">
             <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Filter">
           <% else %>
             <% if params[:tag] %>

@@ -2,6 +2,11 @@ get '/browse/?' do
   @page = params[:page]
   @page = 1 if @page.not_an_integer?
 
+  if params[:tag]
+    params[:tag] = params[:tag].gsub(Tag::INVALID_TAG_REGEX, '').gsub(/\s+/, '').slice(0, Tag::NAME_LENGTH_MAX)
+    @title = "Sites tagged #{params[:tag]}"
+  end
+
   if is_education?
     ds = education_sites_dataset
   else
@@ -18,10 +23,6 @@ get '/browse/?' do
   @site_tags = {}
   site_ids.each do |site_id|
     @site_tags[site_id] = tags.select {|t| t[:site_id] == site_id}.collect {|t| t[:name]}
-  end
-
-  if params[:tag]
-    @title = "Sites tagged #{params[:tag]}"
   end
 
   erb :browse
