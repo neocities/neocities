@@ -1361,7 +1361,11 @@ class Site < Sequel::Model
 
           if payment_intent.charges.data.any?
             charge_id = payment_intent.charges.data.first.id
-            Stripe::Refund.create({ charge: charge_id })
+            begin
+              Stripe::Refund.create({ charge: charge_id })
+            rescue Stripe::InvalidRequestError => e
+              raise e unless e.message =~ /has already been refunded/
+            end
           end
         end
       end
