@@ -520,13 +520,6 @@ describe 'site_files' do
       _(@site.reload.changed_count).must_equal 2
     end
 
-    describe 'directory create' do
-      it 'scrubs ../ from directory' do
-        @site.create_directory '../../test'
-        _(@site.site_files.select {|site_file| site_file.path =~ /\.\./}.length).must_equal 0
-      end
-    end
-
     describe 'classification' do
       before do
         puts "TODO FINISH CLASSIFIER"

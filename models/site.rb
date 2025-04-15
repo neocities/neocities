@@ -843,6 +843,10 @@ class Site < Sequel::Model
     path = scrubbed_path path
     relative_path = files_path path
 
+    if SiteFile.path_too_long?(relative_path)
+      return 'Directory path is too long.'
+    end
+
     if Dir.exist?(relative_path) || File.exist?(relative_path)
       return 'Directory (or file) already exists.'
     end

@@ -51,6 +51,19 @@ describe Site do
         _(site.site_files_dataset.count).must_equal site_file_count+1
       end
     end
+
+    it 'scrubs ../ from directory' do
+      site = Fabricate :site
+      site.create_directory '../../test'
+      _(site.site_files.select {|site_file| site_file.path =~ /\.\./}.length).must_equal 0
+    end
+
+    it 'blocks long directory create' do
+      site = Fabricate :site
+      long_path_string = 'a' * (SiteFile::FILE_PATH_CHARACTER_LIMIT + 1)
+      res = site.create_directory long_path_string
+      _(res).must_equal 'Directory path is too long.'
+    end
   end
 
   describe 'custom_max_space' do
