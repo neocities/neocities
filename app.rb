@@ -69,6 +69,8 @@ def redirect_to_internet_archive_for_geocities_sites
   end
 end
 
+WHITELISTED_POST_PATHS = ['/create_validate_all', '/create_validate', '/create'].freeze
+
 before do
   if request.path.match /^\/api\//i
     @api = true
@@ -83,7 +85,7 @@ before do
     redirect '/tutorial/html/1'
   else
     content_type :html, 'charset' => 'utf-8'
-    redirect '/' if request.post? && !csrf_safe?
+    redirect '/' if request.post? && !WHITELISTED_POST_PATHS.include?(request.path_info) && !csrf_safe?
   end
 
   if params[:page]
