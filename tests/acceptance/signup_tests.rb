@@ -32,6 +32,13 @@ describe 'signup' do
     Capybara.default_driver = :selenium_chrome_headless_largewindow
     Capybara.reset_sessions!
     visit_signup
+  
+    # This fixes up flaky tests
+    page.driver.browser.manage.delete_all_cookies # Explicitly delete cookies
+    page.evaluate_script('window.localStorage.clear()') # Clear local storage
+    page.evaluate_script('window.sessionStorage.clear()') # Clear session storage
+    visit_signup # Ensure we revisit after clearing storage
+    _(page).must_have_content 'Sign up for free' # Ensure we're back on signup page
   end
 
   after do
