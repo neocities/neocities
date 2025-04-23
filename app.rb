@@ -105,7 +105,7 @@ before do
 end
 
 after do
-  if @api
+  if @api || (!signed_in? && request.path == '/')
     request.session_options[:skip] = true
   else
     # Set issue timestamp on session cookie if it doesn't exist yet
