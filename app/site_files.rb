@@ -40,7 +40,7 @@ post '/site_files/create' do
   extname = File.extname name
 
   unless extname.empty? || extname.match(/^\.#{Site::EDITABLE_FILE_EXT}/i)
-    flash[:error] = "Must be an text editable file type (#{Site::VALID_EDITABLE_EXTENSIONS.join(', ')})."
+    flash[:error] = "Must be an editable text file type (#{Site::VALID_EDITABLE_EXTENSIONS.join(', ')})."
     redirect redirect_uri
   end
 
