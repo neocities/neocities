@@ -98,7 +98,7 @@ before do
   if params[:tag]
     begin
       params.delete 'tag' if params[:tag].nil? || !params[:tag].is_a?(String) || params[:tag].strip.empty? || params[:tag].match?(Tag::INVALID_TAG_REGEX)
-    rescue Encoding::CompatibilityError
+    rescue Encoding::CompatibilityError, ArgumentError
       params.delete 'tag'
     end
   end
