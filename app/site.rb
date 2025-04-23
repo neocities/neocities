@@ -21,7 +21,7 @@ get '/site/:username/?' do |username|
 
   if params[:event_id]
     not_found if params[:event_id].not_an_integer?
-    not_found if params[:event_id] > 2_147_483_647 # max integer
+    not_found if params[:event_id].to_i > 2_147_483_647 # max integer
     event = Event.where(id: params[:event_id]).exclude(is_deleted: true).first
     not_found if event.nil?
     event_site = event.site
