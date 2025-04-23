@@ -1,4 +1,4 @@
-require 'rmagick'
+require 'sidekiq/api'
 require 'securerandom'
 require 'open3'
 
@@ -7,9 +7,11 @@ class ScreenshotWorker
   HARD_TIMEOUT = 30.freeze
   PAGE_WAIT_TIME = 5.freeze # 3D/VR sites take a bit to render after loading usually.
   include Sidekiq::Worker
-  sidekiq_options queue: :screenshots, retry: 2, backtrace: true
+  sidekiq_options queue: :screenshots, backtrace: true
 
   def perform(username, path)
+    site = Site[username: username]
+    return if site.nil? || site.is_deleted
 
     queue = Sidekiq::Queue.new self.class.sidekiq_options_hash['queue']
     logger.info "JOB ID: #{jid} #{username} #{path}"
@@ -35,54 +37,54 @@ class ScreenshotWorker
 
     uri = Addressable::URI.parse $config['screenshot_urls'].sample
     api_user, api_password = uri.user, uri.password
+
     uri = "#{uri.scheme}://#{uri.host}:#{uri.port}" + '?' + Rack::Utils.build_query(
-      url: Site.select(:username,:domain).where(username: username).first.uri + path,
+      url: site.uri(path),
       wait_time: PAGE_WAIT_TIME
     )
-
-    img_list = Magick::ImageList.new
     begin
-      img_list.from_blob HTTP.basic_auth(user: api_user, pass: api_password).get(uri).to_s
-    rescue Magick::ImageMagickError
-      return false
-    end
+      base_image_tmpfile_path = "/tmp/#{SecureRandom.uuid}.png"
 
-    img_list.new_image(img_list.first.columns, img_list.first.rows) { self.background_color = "white" }
-    img = img_list.reverse.flatten_images
-    img_list.destroy!
+      http_resp = HTTP.basic_auth(user: api_user, pass: api_password).get(uri)
+      BlackBox.new(site, path).check_uri(http_resp.headers['X-URL']) if defined?(BlackBox) && http_resp.headers['X-URL']
+      File.binwrite base_image_tmpfile_path, http_resp.body.to_s
 
-    user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
-    screenshot_path = File.join user_screenshots_path, File.dirname(path)
+      user_screenshots_path = File.join SCREENSHOTS_PATH, Site.sharding_dir(username), username
+      screenshot_path = File.join user_screenshots_path, File.dirname(path)
+      FileUtils.mkdir_p screenshot_path unless Dir.exist?(screenshot_path)
 
-    FileUtils.mkdir_p screenshot_path unless Dir.exists?(screenshot_path)
-
-    Site::SCREENSHOT_RESOLUTIONS.each do |res|
-      width, height = res.split('x').collect {|r| r.to_i}
-
-      if width == height
-        new_img = img.crop_resized width, height, Magick::NorthGravity
-      else
-        new_img = img.scale width, height
+      # We only need the full PNG for the main index right now
+      if path.match /^\/index.html?$/
+        ImageOptimizer.new(base_image_tmpfile_path, level: 1).optimize
+        FileUtils.cp base_image_tmpfile_path, File.join(user_screenshots_path, "#{path}.png")
       end
 
-      full_screenshot_path = File.join(user_screenshots_path, "#{path}.#{res}.jpg")
-      tmpfile_path = "/tmp/#{SecureRandom.uuid}.jpg"
+      # Optimized image for open graph link expanders
+      image = Rszr::Image.load base_image_tmpfile_path
+      image.resize! 1200, 630, crop: :n
+      image.save File.join(user_screenshots_path, "#{path}.jpg"), quality: 85
+      ImageOptimizer.new(File.join(user_screenshots_path, "#{path}.jpg")).optimize
 
-      begin
-        new_img.write(tmpfile_path) { self.quality = 92 }
-        new_img.destroy!
-        $image_optim.optimize_image! tmpfile_path
-        File.open(full_screenshot_path, 'wb') {|file| file.write File.read(tmpfile_path)}
-      ensure
-        FileUtils.rm tmpfile_path
+      Site::SCREENSHOT_RESOLUTIONS.each do |res|
+        width, height = res.split('x').collect {|r| r.to_i}
+        full_screenshot_path = File.join(user_screenshots_path, "#{path}.#{res}.webp")
+        opts = {resize_w: width, resize_h: height, near_lossless: 0}
+
+        if width == height
+          opts.merge! crop_x: 160, crop_y: 0, crop_w: 960, crop_h: 960
+        end
+
+        WebP.encode base_image_tmpfile_path, full_screenshot_path, opts
       end
+
+      true
+    rescue WebP::EncoderError => e
+      puts "Failed: #{username} #{path} #{e.inspect}"
+    rescue => e
+      raise e
+    ensure
+      FileUtils.rm base_image_tmpfile_path if File.exist?(base_image_tmpfile_path)
     end
-
-    img.destroy!
-
-    GC.start full_mark: true, immediate_sweep: true
-
-    true
   end
 
   sidekiq_retries_exhausted do |msg|

@@ -1,6 +1,9 @@
 require 'rubygems'
 require './app.rb'
 require 'sidekiq/web'
+require 'airbrake/sidekiq'
+
+use Airbrake::Rack::Middleware
 
 map('/') do
   use(Rack::Cache,
@@ -13,72 +16,92 @@ end
 
 map '/webdav' do
   use Rack::Auth::Basic do |username, password|
-    @site = Site.get_site_from_login username, password
+    @site = Site.get_site_from_login(username, password)
     @site ? true : false
   end
 
-  run lambda {|env|
-    if env['REQUEST_METHOD'] == 'PUT'
-      path = env['PATH_INFO']
-      tmpfile = Tempfile.new 'davfile', encoding: 'binary'
-      tmpfile.write env['rack.input'].read
+  run lambda { |env|
+    request_method = env['REQUEST_METHOD']
+    path = env['PATH_INFO']
+
+    unless @site.owner.supporter?
+      return [
+        402,
+        {
+          'Content-Type' => 'application/xml',
+          'X-Upgrade-Required' => 'https://neocities.org/supporter'
+        },
+        [
+          <<~XML
+            <?xml version="1.0" encoding="utf-8"?>
+            <error xmlns="DAV:">
+              <message>WebDAV access requires a supporter account.</message>
+            </error>
+          XML
+        ]
+      ]
+    end
+
+    case request_method
+    when 'OPTIONS'
+      return [200, {'Allow' => 'OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL, MOVE', 'DAV' => '1,2'}, ['']]
+
+    when 'PUT'
+      tmpfile = Tempfile.new('davfile', encoding: 'binary')
+      tmpfile.write(env['rack.input'].read)
       tmpfile.close
 
-      if @site.file_size_too_large? tmpfile.size
-        return [507, {}, ['']]
-      end
+      return [507, {}, ['']] if @site.file_size_too_large?(tmpfile.size)
 
-      # if Site.valid_file_type?(filename: path, tempfile: tmpfile)
-      if @site.okay_to_upload? filename: path, tempfile: tmpfile
-        @site.store_files [{filename: path, tempfile: tmpfile}]
+      if @site.okay_to_upload?(filename: path, tempfile: tmpfile)
+        @site.store_files([{ filename: path, tempfile: tmpfile }])
         return [201, {}, ['']]
       else
         return [415, {}, ['']]
       end
-    end
 
-    if env['REQUEST_METHOD'] == 'MKCOL'
-      @site.create_directory env['PATH_INFO']
+    when 'MKCOL'
+      @site.create_directory(path)
       return [201, {}, ['']]
-    end
 
-    if env['REQUEST_METHOD'] == 'MOVE'
+    when 'MOVE'
+      destination = env['HTTP_DESTINATION'][/\/webdav(.+)$/i, 1]
+      return [400, {}, ['Bad Request']] unless destination
 
-      destination = env['HTTP_DESTINATION'].match(/^.+\/webdav(.+)$/i).captures.first
+      path.sub!(/^\//, '') # Remove leading slash if present
+      site_file = @site.site_files.find { |s| s.path == path }
+      return [404, {}, ['']] unless site_file
 
-      env['PATH_INFO'] = env['PATH_INFO'][1..env['PATH_INFO'].length] if env['PATH_INFO'][0] == '/'
-
-      site_file = @site.site_files.select {|s| s.path == env['PATH_INFO']}.first
-      res = site_file.rename destination
-
+      site_file.rename(destination)
       return [201, {}, ['']]
-    end
 
-    if env['REQUEST_METHOD'] == 'COPY'
-      return [501, {}, ['']]
-    end
-
-    if env['REQUEST_METHOD'] == 'LOCK'
-      return [501, {}, ['']]
-    end
-
-    if env['REQUEST_METHOD'] == 'UNLOCK'
-      return [501, {}, ['']]
-    end
-
-    if env['REQUEST_METHOD'] == 'PROPPATCH'
-      return [501, {}, ['']]
-    end
-
-    if env['REQUEST_METHOD'] == 'DELETE'
-      @site.delete_file env['PATH_INFO']
+    when 'DELETE'
+      @site.delete_file(path)
       return [201, {}, ['']]
-    end
 
-    res = DAV4Rack::Handler.new(
-      root: @site.files_path,
-      root_uri_path: '/webdav'
-    ).call(env)
+    else
+      unless ['PROPFIND', 'GET', 'HEAD'].include? request_method
+        return [501, {}, ['Not Implemented']]
+      end
+
+      env['PATH_INFO'] = "/#{@site.scrubbed_path(path)}" unless path.empty?
+
+      # Terrible hack to fix WebDAV for the VSC plugin
+      if env['CONTENT_LENGTH'] == "0"
+        env['rack.input'] = StringIO.new('<?xml version="1.0" encoding="utf-8"?>
+<propfind xmlns="DAV:"><prop>
+<getcontentlength xmlns="DAV:"/>
+<getlastmodified xmlns="DAV:"/>
+<resourcetype xmlns="DAV:"/>
+</prop></propfind>')
+        env['CONTENT_LENGTH'] = env['rack.input'].length.to_s
+      end
+
+      DAV4Rack::Handler.new(
+        root: @site.files_path,
+        root_uri_path: '/webdav'
+      ).call(env)
+    end
   }
 end
 
@@ -88,7 +111,7 @@ map '/sidekiq' do
     username == $config['sidekiq_user'] && password == $config['sidekiq_pass']
   end
 
-  use Rack::Session::Cookie, key: 'sidekiq.session', secret: $config['session_secret']
+  use Rack::Session::Cookie, key: 'sidekiq.session', secret: Base64.strict_decode64($config['session_secret'])
   use Rack::Protection::AuthenticityToken
   run Sidekiq::Web
 end

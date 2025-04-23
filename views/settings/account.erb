@@ -24,10 +24,10 @@
       <div class="tabbable" style="margin-top: 20px"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs">
 
-          <li class="active"><a href="#sites" data-toggle="tab">Manage Sites</a></li>
-          <li><a href="#supporter" data-toggle="tab">Supporter Info</a></li>
-          <li><a href="#password" data-toggle="tab">Change Password</a></li>
-          <li><a href="#email" data-toggle="tab">Change Email</a></li>
+          <li class="active"><a href="#sites" data-toggle="tab">Sites</a></li>
+          <li><a href="#supporter" data-toggle="tab">Supporter</a></li>
+          <li><a href="#password" data-toggle="tab">Password</a></li>
+          <li><a href="#email" data-toggle="tab">Email</a></li>
           <% if current_site.stripe_paying_supporter? %>
             <li><a href="#billing" data-toggle="tab">Change Card</a></li>
           <% end %>
@@ -64,7 +64,7 @@
   </article>
 </div>
 
-<div class="modal hide fade" id="deleteSite" tabindex="-1" role="dialog" aria-labelledby="deleteSiteLabel" aria-hidden="true">
+<div class="modal hide" id="deleteSite" tabindex="-1" role="dialog" aria-labelledby="deleteSiteLabel" aria-hidden="true">
   <form method="POST" action="/site/delete">
     <%== csrf_token_input_html %>
     <div class="modal-header">
@@ -72,7 +72,7 @@
       <h3 id="deleteSiteLabel">Permanently Delete Site</h3>
     </div>
     <div class="modal-body">
-      <strong style="color: red">WARNING: This will permanently delete your web site and Neocities account. There is no undo!</strong>
+      <strong style="color: red">WARNING: This will permanently delete your web site and Neocities account. You will not be able to use the same e-mail address to create a new site. There is no undo.</strong>
 
       <p>Delete Site Name: <strong><%= current_site.username %></strong></p>
       <p>Confirm your site name by typing it here:</p>

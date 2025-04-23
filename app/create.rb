@@ -1,7 +1,12 @@
 CREATE_MATCH_REGEX = /^username$|^password$|^email$|^new_tags_string$|^is_education$/
 
+def education_whitelist_required?
+  return true if params[:is_education] == 'true' && $config['education_tag_whitelist']
+  false
+end
+
 def education_whitelisted?
-  return true if params[:is_education] == 'true' && $config['education_tag_whitelist'] && !$config['education_tag_whitelist'].select {|t| params[:new_tags_string].match(t)}.empty?
+  return true if education_whitelist_required? && !$config['education_tag_whitelist'].select {|t| params[:new_tags_string].match(t)}.empty?
   false
 end
 
@@ -9,14 +14,23 @@ post '/create_validate_all' do
   content_type :json
   fields = params.select {|p| p.match CREATE_MATCH_REGEX}
 
-  site = Site.new fields
-
-  if site.valid?
-    return [].to_json if education_whitelisted? || params[:'g-recaptcha-response'] || self.class.test?
-    return [['captcha', 'Please complete the captcha.']].to_json
+  begin
+    site = Site.new fields
+  rescue ArgumentError => e
+    if e.message == 'input string invalid'
+      return {error: 'invalid input'}.to_json
+    else
+      raise e
+    end
   end
 
-  site.errors.collect {|e| [e.first, e.last.first]}.to_json
+  if site.valid?
+    return [].to_json if education_whitelisted?
+  end
+
+  resp = site.errors.collect {|e| [e.first, e.last.first]}
+  resp << ['captcha', 'Please complete the captcha.'] if params[:'h-captcha-response'].empty? && !self.class.test?
+  resp.to_json
 end
 
 post '/create_validate' do
@@ -26,7 +40,16 @@ post '/create_validate' do
     return {error: 'not a valid field'}.to_json
   end
 
-  site = Site.new(params[:field] => params[:value])
+  begin
+    site = Site.new(params[:field] => params[:value])
+  rescue ArgumentError => e
+    if e.message == 'input string invalid'
+      return {error: 'invalid input'}.to_json
+    else
+      raise e
+    end
+  end
+
   site.is_education = params[:is_education]
   site.valid?
 
@@ -41,15 +64,6 @@ end
 
 post '/create' do
   content_type :json
-
-  if banned?(true)
-    signout
-    session[:banned] = true if !session[:banned]
-
-    flash[:error] = 'There was an error, please <a href="/contact">contact support</a> to log in.'
-    redirect '/'
-  end
-
   dashboard_if_signed_in
 
   @site = Site.new(
@@ -62,10 +76,15 @@ post '/create' do
     ga_adgroupid: session[:ga_adgroupid]
   )
 
-  if education_whitelisted?
-    @site.email_confirmed = true
+  if education_whitelist_required?
+    if education_whitelisted?
+      @site.email_confirmed = true
+    else
+      flash[:error] = 'The class tag is invalid.'
+      return {result: 'error'}.to_json
+    end
   else
-    if !recaptcha_valid?
+    if !hcaptcha_valid?
       flash[:error] = 'The captcha was not valid, please try again.'
       return {result: 'error'}.to_json
     end
@@ -80,6 +99,15 @@ post '/create' do
       return {result: 'error'}.to_json
     end
 
+    if defined?(BlackBox.create_disabled?) && BlackBox.create_disabled?(@site, request)
+      flash[:error] = 'Site creation is not currently available from your location, please try again later.'
+      return {result: 'error'}.to_json
+    end
+
+    if defined?(BlackBox.tutorial_required?) && BlackBox.tutorial_required?(@site, request)
+      @site.tutorial_required = true
+    end
+
     if !@site.valid?
       flash[:error] = @site.errors.first.last.first
       return {result: 'error'}.to_json
@@ -87,15 +115,38 @@ post '/create' do
   end
 
   @site.email_confirmed = true if self.class.development?
-  @site.save
+  @site.phone_verified = true if self.class.development?
+
+  begin
+    @site.phone_verification_required = true if self.class.production? && BlackBox.phone_verification_required?(@site)
+  rescue => e
+    EmailWorker.perform_async({
+      from: 'web@neocities.org',
+      to: 'errors@neocities.org',
+      subject: "[Neocities Error] Phone verification exception",
+      body: "#{e.inspect}\n#{e.backtrace}",
+      no_footer: true
+    })
+  end
+
+  begin
+    @site.save
+  rescue Sequel::UniqueConstraintViolation => e
+    if e.message =~ /username.+already exists/
+      flash[:error] = 'Username already exists.'
+      return {result: 'error'}.to_json
+    end
+
+    raise e
+  end
 
   unless education_whitelisted?
+    send_confirmation_email @site
+
     @site.send_email(
       subject: "[Neocities] Welcome to Neocities!",
-      body: Tilt.new('./views/templates/email_welcome.erb', pretty: true).render(self)
+      body: Tilt.new('./views/templates/email/welcome.erb', pretty: true).render(self)
     )
-
-    send_confirmation_email @site
   end
 
   session[:id] = @site.id

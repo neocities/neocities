@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class StatReferrer < Sequel::Model
   many_to_one :site
   RETAINMENT_DAYS = 7

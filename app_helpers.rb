@@ -16,41 +16,33 @@ end
 
 def require_login
   redirect '/' unless signed_in? && current_site
-  enforce_ban if banned?
-  signout if deleted?
 end
 
 def signed_in?
-  !session[:id].nil?
+  return false if current_site.nil?
+  true
+end
+
+def signout
+  @_site = nil
+  @_parent_site = nil
+  session[:id] = nil
 end
 
 def current_site
   return nil if session[:id].nil?
   @_site ||= Site[id: session[:id]]
+  @_parent_site ||= @_site.parent
+
+  if @_site.is_banned || @_site.is_deleted || (@_parent_site && (@_parent_site.is_banned || @_parent_site.is_deleted))
+    signout
+  end
+
+  @_site
 end
 
 def parent_site
-  return nil if current_site.nil?
-  current_site.parent? ? current_site : current_site.parent
-end
-
-def deleted?
-  return true if current_site && current_site.is_deleted
-  false
-end
-
-def banned?(ip_check=false)
-  return true if session[:banned]
-  return true if current_site && (current_site.is_banned || parent_site.is_banned)
-
-  return true if ip_check && Site.banned_ip?(request.ip)
-  false
-end
-
-def enforce_ban
-  signout
-  session[:banned] = true
-  redirect '/'
+  @_parent_site || current_site
 end
 
 def meta_robots(newtag=nil)
@@ -104,12 +96,6 @@ def dont_browser_cache
   @dont_browser_cache = true
 end
 
-def email_not_validated?
-  return false if current_site && current_site.created_at < Site::EMAIL_VALIDATION_CUTOFF_DATE
-
-  current_site && current_site.parent? && !current_site.is_education && !current_site.email_confirmed && !current_site.supporter?
-end
-
 def sanitize_comment(text)
   Rinku.auto_link Sanitize.fragment(text), :all, 'target="_blank" rel="nofollow"'
 end
@@ -118,20 +104,32 @@ def flash_display(opts={})
   erb :'_flash', layout: false, locals: {opts: opts}
 end
 
-def recaptcha_valid?
-  return true if ENV['RACK_ENV'] == 'test' || ENV['TRAVIS']
-  return false unless params[:'g-recaptcha-response']
-  resp = Net::HTTP.get URI(
-    'https://www.google.com/recaptcha/api/siteverify?'+
-    Rack::Utils.build_query(
-      secret: $config['recaptcha_private_key'],
-      response: params[:'g-recaptcha-response']
-    )
-  )
+def hcaptcha_valid?
+  return true if ENV['RACK_ENV'] == 'test' || ENV['CI']
+  return false unless params[:'h-captcha-response']
 
-  if JSON.parse(resp)['success'] == true
+  resp = HTTP.get('https://hcaptcha.com/siteverify', params: {
+    secret: $config['hcaptcha_secret_key'],
+    response: params[:'h-captcha-response']
+  })
+
+  resp = JSON.parse resp
+
+  if resp['success'] == true
     true
   else
     false
   end
+end
+
+JS_ESCAPE_MAP = {"\\" => "\\\\", "</" => '<\/', "\r\n" => '\n', "\n" => '\n', "\r" => '\n', '"' => '\\"', "'" => "\\'", "`" => "\\`", "$" => "\\$"}
+
+def escape_javascript(javascript)
+  javascript = javascript.to_s
+  if javascript.empty?
+    result = ""
+  else
+    result = javascript.gsub(/(\\|<\/|\r\n|\342\200\250|\342\200\251|[\n\r"']|[`]|[$])/u, JS_ESCAPE_MAP)
+  end
+  result
 end

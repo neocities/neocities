@@ -1,3 +1,6 @@
+require 'socket'
+require 'ipaddr'
+
 get '/settings/?' do
   require_login
   @site = parent_site
@@ -15,11 +18,19 @@ def require_ownership_for_settings
   end
 end
 
+get '/settings/invoices/?' do
+  require_login
+  @title = 'Invoices'
+  @invoices = parent_site.stripe_customer_id ? Stripe::Invoice.list(customer: parent_site.stripe_customer_id) : []
+  erb :'settings/invoices'
+end
+
 get '/settings/:username/?' do |username|
   # This is for the email_unsubscribe below
   pass if Site.select(:id).where(username: username).first.nil?
   require_login
   require_ownership_for_settings
+
   @title = "Site settings for #{username}"
   erb :'settings/site'
 end
@@ -53,8 +64,7 @@ post '/settings/:username/profile' do
 
   @site.update(
     profile_comments_enabled: params[:site][:profile_comments_enabled],
-    profile_enabled: params[:site][:profile_enabled],
-    ipfs_archiving_enabled: params[:site][:ipfs_archiving_enabled]
+    profile_enabled: params[:site][:profile_enabled]
   )
   flash[:success] = 'Profile settings changed.'
   redirect "/settings/#{@site.username}#profile"
@@ -89,8 +99,8 @@ post '/settings/:username/change_name' do
     }
 
     old_site.delete_all_thumbnails_and_screenshots
-    old_site.delete_all_cache
-    @site.delete_all_cache
+    old_site.purge_all_cache
+    @site.purge_all_cache
     @site.regenerate_thumbnails_and_screenshots
 
     flash[:success] = "Site/user name has been changed. You will need to use this name to login, <b>don't forget it!</b>"
@@ -144,17 +154,19 @@ post '/settings/:username/custom_domain' do
   end
 
   begin
-    Socket.gethostbyname @site.values[:domain]
-  rescue SocketError => e
-    if e.message =~ /name or service not known/i
-      flash[:error] = 'Domain needs to be valid and already registered.'
+    addr = IPAddr.new @site.values[:domain]
+    if addr.ipv4? || addr.ipv6?
+      flash[:error] = 'IP addresses are not allowed. Please enter a valid domain name.'
       redirect "/settings/#{@site.username}#custom_domain"
-    elsif e.message =~ /No address associated with hostname/i
-      #flash[:error] = "The domain isn't setup to use Neocities yet, cannot add. Please make the A and CNAME record changes where you registered your domain."
-      #redirect "/settings/#{@site.username}#custom_domain"
-    else
-      raise e
     end
+  rescue IPAddr::InvalidAddressError
+  end
+
+  begin
+    Socket.gethostbyname @site.values[:domain]
+  rescue SocketError, ResolutionError => e
+    flash[:error] = "The domain isn't setup to use Neocities yet, cannot add. Please make the A and CNAME record changes where you registered your domain."
+    redirect "/settings/#{@site.username}#custom_domain"
   end
 
   if @site.valid?
@@ -174,15 +186,37 @@ post '/settings/:username/custom_domain' do
   end
 end
 
+post '/settings/:username/bluesky_set_did' do
+  require_login
+  require_ownership_for_settings
+
+  # todo standards based validation
+  if params[:did].length > 50
+    flash[:error] = 'DID provided was too long'
+  elsif !params[:did].match(/^did:plc:([a-z|0-9)]+)$/)
+    flash[:error] = 'DID was invalid'
+  else
+    tmpfile = Tempfile.new 'atproto-did'
+    tmpfile.write params[:did]
+    tmpfile.close
+
+    @site.store_files [{filename: '.well-known/atproto-did', tempfile: tmpfile}]
+    $redis_proxy.hdel "dns-_atproto.#{@site.username}.neocities.org", 'TXT'
+    flash[:success] = 'DID set! You can now verify the handle on the Bluesky app.'
+  end
+
+  redirect "/settings/#{@site.username}#bluesky"
+end
+
 post '/settings/:username/generate_api_key' do
   require_login
   require_ownership_for_settings
-  is_new = current_site.api_key.nil?
-  current_site.generate_api_key!
+  is_new = @site.api_key.nil?
+  @site.generate_api_key!
 
   msg = is_new ? "New API key has been generated." : "API key has been regenerated."
   flash[:success] = msg
-  redirect "/settings/#{current_site.username}#api_key"
+  redirect "/settings/#{@site.username}#api_key"
 end
 
 post '/settings/change_password' do
@@ -275,6 +309,22 @@ post '/settings/change_email_notification' do
   redirect '/settings#email'
 end
 
+post '/settings/change_editor_settings' do
+  require_login
+
+  owner = current_site.owner
+
+  owner.editor_autocomplete_enabled = params[:editor_autocomplete_enabled]
+  owner.editor_font_size = params[:editor_font_size]
+  owner.editor_keyboard_mode = params[:editor_keyboard_mode]
+  owner.editor_tab_width = params[:editor_tab_width]
+  owner.editor_help_tooltips = params[:editor_help_tooltips]
+  owner.save_changes validate: false
+  
+  @filename = params[:path]
+  redirect '/site_files/text_editor?filename=' + Rack::Utils.escape(@filename)
+end
+
 post '/settings/create_child' do
   require_login
 
@@ -323,10 +373,12 @@ post '/settings/update_card' do
 
   begin
     customer.sources.create source: params[:stripe_token]
-  rescue Stripe::InvalidRequestError => e
+  rescue Stripe::InvalidRequestError, Stripe::CardError => e
     if  e.message.match /cannot use a.+token more than once/
       flash[:error] = 'Card is already being used.'
       redirect '/settings#billing'
+    elsif e.message.match /Your card was declined/
+      flash[:error] = 'The card was declined. Please contact your bank.'
     else
       raise e
     end

@@ -2,9 +2,9 @@ development:
   database: 'postgres://localhost/neocities'
   database_pool: 1
   redis_url: "redis://localhost"
-  session_secret: "SECRET GOES HERE"
-  recaptcha_public_key: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-  recaptcha_private_key: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+  session_secret: "SSBqdXN0IHdhbnRlZCB0byBzZWUgd2hhdCB5b3UgbG9va2VkIGxpa2UgaW4gYSBkcmVzcywgRGFkZSBNdXJwaHk="
+  hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
+  hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
   sidekiq_user: "ENTER USER HERE"
   sidekiq_pass: "ENTER PASS HERE"
   stripe_publishable_key: "ENTER KEY HERE"
@@ -18,19 +18,25 @@ development:
   paypal_api_signature: tonz
   letsencrypt_key: ./tests/files/letsencrypt.key
   letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
+  minfraud_account_id: 696969420
+  minfraud_license_key: DERPDERPDERP
   proxy_ips:
     - 10.0.0.1
     - 10.0.0.2
   education_tag_whitelist:
     - mrteacher
-  screenshots_url: http://screenshots:derp@127.0.0.1:12345
+  screenshot_urls:
+    - http://screenshots:derp@127.0.0.1:12345
   stop_forum_spam_api_key: testkey
+  google_custom_search_key: herpderp
+  google_custom_search_cx: herpderp
+  google_custom_search_query_limit: 69
 test:
   database: 'postgres://localhost/neocities_test'
   database_pool: 1
-  session_secret: "SECRET GOES HERE"
-  recaptcha_public_key: "ENTER PUBLIC KEY HERE"
-  recaptcha_private_key: "ENTER PRIVATE KEY HERE"
+  session_secret: "SSBqdXN0IHdhbnRlZCB0byBzZWUgd2hhdCB5b3UgbG9va2VkIGxpa2UgaW4gYSBkcmVzcywgRGFkZSBNdXJwaHk="
+  hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
+  hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
   sidekiq_user: "ENTER USER HERE"
   sidekiq_pass: "ENTER PASS HERE"
   stripe_publishable_key: "ENTER KEY HERE"
@@ -49,7 +55,16 @@ test:
   education_tag_whitelist:
     - mrteacher
   stop_forum_spam_api_key: testkey
-  screenshots_url: http://screenshots:derp@screenshotssite.com
+  screenshot_urls:
+    - http://screenshots:derp@screenshotssite.com
   cache_control_ips:
     - 1.2.3.4
     - 4.5.6.7
+  twilio_account_sid: ACEDERPDERP
+  twilio_auth_token: derpderpderp
+  twilio_service_sid: VADERPDERPDERP
+  minfraud_account_id: 696969420
+  minfraud_license_key: DERPDERPDERP
+  google_custom_search_key: herpderp
+  google_custom_search_cx: herpderp
+  google_custom_search_query_limit: 69

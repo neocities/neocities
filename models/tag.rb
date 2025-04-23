@@ -1,6 +1,8 @@
+# frozen_string_literal: true
 class Tag < Sequel::Model
 	NAME_LENGTH_MAX = 25
 	NAME_WORDS_MAX = 1
+  INVALID_TAG_REGEX = /[^a-zA-Z0-9 ]/
   many_to_many :sites
 
   def before_create
@@ -15,7 +17,11 @@ class Tag < Sequel::Model
   def self.create_unless_exists(name)
     name = clean_name name
     return nil if name == '' || name.nil?
-    dataset.filter(name: name).first || create(name: name)
+    begin
+      dataset.filter(name: name).first || create(name: name)
+    rescue Sequel::UniqueConstraintViolation
+      dataset.filter(name: name).first
+    end
   end
 
   def self.autocomplete(name, limit=3)
@@ -24,7 +30,7 @@ class Tag < Sequel::Model
 
   def self.popular_names(limit=10)
 		cache_key = "tag_popular_names_#{limit}".to_sym
-		cache = $redis_cache[cache_key]
+		cache = $redis_cache.get cache_key
     if cache.nil?
       res = DB["select tags.name,count(*) as c from sites_tags inner join tags on tags.id=sites_tags.tag_id where tags.name != '' and tags.is_nsfw='f' group by tags.name having count(*) > 1 order by c desc LIMIT ?", limit].all
       $redis_cache.set cache_key, res.to_msgpack

@@ -139,7 +139,7 @@
         <h2>
           Total Visitors
           <small>
-            <% if params[:days].blank? %>
+            <% if params[:days].to_s.blank? %>
               last <%= @default_stat_points %> days
             <% elsif params[:days] == 'sincethebigbang' %>
               all time
@@ -160,7 +160,7 @@
               <li><a href="?days=sincethebigbang">All time</a></li>
             </ul>
           <% else %>
-            <p>(<a href="/supporter">Upgrade</a> to see up to see stats for all time)</p>
+            <p>Stats for free sites are retained for <%= Stat::FREE_RETAINMENT_DAYS %> days. <a href="/supporter">Become a supporter</a> to start retaining stats for all time.</p>
           <% end %>
         <% end %>
 
@@ -173,6 +173,22 @@
           </div>
         </div>
         <% end %>
+
+        <div class="row">
+          <div class="col col-100">
+            <h3>What are these numbers?</h3>
+            <p>
+              <strong>Hits</strong> occur each time our servers send a file. For example, if a webpage consists of an HTML file, three images, and two JavaScript files, accessing this page would result in six hits. 
+            </p>
+            <p>
+              <strong>Visits</strong> are a count of unique IP addresses requesting pages from a web site per hour, regardless of how many requests that IP address makes. Visits generally give a more accurate representation of website traffic in terms of real users.
+            </p>
+
+            <p>
+              Due to bots, search engine crawlers, and proxy servers these numbers should not be considered completely accurate.
+            </p>
+          </div>
+        </div>
 
         <!--
         <div class="row">
@@ -252,7 +268,7 @@
           <div class="stats">
             <div class="col col-50">
               <% if site.updated_at %>
-                Last updated<br><strong><%= site.updated_at.ago %></strong>
+                Last updated<br><strong class="local-date-title" data-timestamp="<%= site.site_updated_at.to_i %>"><%= site.site_updated_at.ago %></strong>
               <% else %>
                 Your new website!<br><strong><a href="/dashboard"><i class="fa fa-edit" title="Edit"></i> Start Building</a></strong>
               <% end %>
@@ -276,7 +292,7 @@
 </div>
 
 <!-- <script src="//www.webglearth.com/v2/api.js"></script> -->
-<script src="/js/Chart.min.js"></script>
+<script src="/js/chart.js"></script>
 <script>
   //OpenGL globe
   $(document).ready(function() {
@@ -324,39 +340,75 @@
     });
     */
 
-    //chart.js
-    var data = {
+    const data = {
       labels: <%== @stats[:stat_days].collect {|s| s.created_at.strftime("%b %-d, %Y")}.to_json %>,
       datasets: [
         {
-          label: "Hits",
-          fillColor: "rgba(220,220,220,0.2)",
-          strokeColor: "rgba(220,220,220,1)",
-          pointColor: "rgba(220,220,220,1)",
-          pointStrokeColor: "#fff",
-          pointHighlightFill: "#fff",
-          pointHighlightStroke: "rgba(220,220,220,1)",
+          label: 'Hits',
+          backgroundColor: 'rgba(220,220,220,0.2)',
+          fill: true,
+          borderColor: 'rgba(220,220,220,1)',
+          pointBackgroundColor: 'rgba(220,220,220,1)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgba(220,220,220,1)',
           data: <%== @stats[:stat_days].collect {|s| s.hits}.to_json %>
         },
         {
-          label: "Unique Visits",
-          fillColor: "rgba(151,187,205,0.2)",
-          strokeColor: "rgba(151,187,205,1)",
-          pointColor: "rgba(151,187,205,1)",
-          pointStrokeColor: "#fff",
-          pointHighlightFill: "#fff",
-          pointHighlightStroke: "rgba(151,187,205,1)",
+          label: 'Visits',
+          backgroundColor: 'rgba(151,187,205,0.2)',
+          fill: true,
+          borderColor: 'rgba(151,187,205,1)',
+          pointBackgroundColor: 'rgba(151,187,205,1)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgba(151,187,205,1)',
           data: <%== @stats[:stat_days].collect {|s| s.views}.to_json %>
         }
       ]
-    }
-    // Get context with jQuery - using jQuery's .get() method.
-    var ctx = $("#myChart").get(0).getContext("2d")
-    // This will get the first returned node in the jQuery collection.
-    //var myNewChart = new Chart(ctx);
-    var myLineChart = new Chart(ctx).Line(data, {
-      bezierCurve: false,
-      multiTooltipTemplate: "<%== @multi_tooltip_template %>"
-    })
-  })
-</script>
+    };
+
+    const ctx = $("#myChart").get(0).getContext("2d");
+
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            beginAtZero: true
+          },
+          y: {
+            beginAtZero: true
+          }
+        },
+        plugins: {
+          tooltip: {
+            mode: "index",
+            intersect: false,
+            bodyFont: {
+              size: 14,
+            },
+            bodyAlign: 'right',
+            titleFont: {
+              size: 14,
+            },
+            callbacks: {
+              afterTitle: function(context) {
+                let tooltipData = [];
+                if (context.length > 0) {
+                  const index = context[0].dataIndex;
+                }
+                return tooltipData;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    const myLineChart = new Chart(ctx, config);
+  });
+
+  </script>

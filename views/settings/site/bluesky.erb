@@ -1,0 +1,26 @@
+<h2>Bluesky Integration</h2>
+
+<p>
+  You can now verify control of your site on Neocities to create a domain based handle on <a href="https://bsky.app/">Bluesky</a>.
+</p>
+
+<p>
+  <strong>Bluesky App <i class="fa fa-arrow-right"></i> "Settings" <i class="fa fa-arrow-right"></i> "Account" <i class="fa fa-arrow-right"></i> "@ Handle"</strong>
+</p>
+
+<p>
+  Domain: <span style="color: gray">@</span><strong><%= @site.host %></strong>
+</p>
+
+<p>
+  Select <strong>No DNS Panel</strong>
+</p>
+
+<p>Paste the DID here:</p>
+
+<form method="POST" action="/settings/<%= @site.username %>/bluesky_set_did">
+  <%== csrf_token_input_html %>
+  <input name="did" type="text" style="width: 50%" placeholder="did:plc:somethingexamplesomething">
+  <br>
+  <input class="btn-Action" type="submit" value="Update DID">
+</form>

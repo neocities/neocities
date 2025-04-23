@@ -8,7 +8,7 @@ get '/dashboard' do
     current_site.save_changes validate: false
   end
 
-  erb :'dashboard'
+  erb :'dashboard/index'
 end
 
 def dashboard_init
@@ -29,4 +29,12 @@ def dashboard_init
 
   @dir = params[:dir]
   @file_list = current_site.file_list @dir
+end
+
+get '/dashboard/files' do
+  require_login
+  dashboard_init
+  dont_browser_cache
+
+  erb :'dashboard/files', layout: false
 end

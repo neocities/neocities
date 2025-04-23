@@ -4,7 +4,35 @@
   </li>
 <% end %>
   <li>
-    <a href="/browse">Websites</a>
+    <a href="/browse" id="browse-link">Websites</a>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const browseLink = document.getElementById('browse-link');
+
+        if (window.location.pathname === '/browse') {
+          const params = new URLSearchParams(window.location.search);
+          const persistParams = new URLSearchParams();
+          const validPattern = /^[a-zA-Z0-9 ]+$/;
+
+          ['sort_by', 'tag'].forEach(key => {
+            if (params.has(key)) {
+              const value = params.get(key);
+              if (value.length <= <%= Tag::NAME_LENGTH_MAX %> && validPattern.test(value)) {
+                persistParams.set(key, value);
+              }
+            }
+          });
+
+          localStorage.setItem('browseQuery', persistParams.toString());
+        }
+
+        const savedQuery = localStorage.getItem('browseQuery');
+
+        if (savedQuery) {
+          browseLink.href = `/browse?${savedQuery}`;
+        }
+      });
+    </script>
   </li>
   <% unless is_education? %>
   <li>

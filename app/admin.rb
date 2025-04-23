@@ -250,7 +250,8 @@ post '/admin/banhammer' do
       StopForumSpamWorker.perform_async(
         username: site.username,
         email: site.email,
-        ip: site.ip
+        ip: site.ip,
+        classifier: params[:classifier]
       )
     end
   end
@@ -300,5 +301,9 @@ get '/admin/masquerade/:username' do
 end
 
 def require_admin
-  redirect '/' unless signed_in? && current_site.is_admin
+  redirect '/' unless is_admin?
+end
+
+def is_admin?
+  signed_in? && current_site.is_admin
 end

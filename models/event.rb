@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Event < Sequel::Model
   include Sequel::ParanoidDelete
 
@@ -12,55 +13,32 @@ class Event < Sequel::Model
   many_to_one :site
   many_to_one :actioning_site, key: :actioning_site_id, class: :Site
 
-  DEFAULT_GLOBAL_LIMIT = 300
-  GLOBAL_VIEWS_MINIMUM = 5
-  GLOBAL_VIEWS_SITE_CHANGE_MINIMUM = 3_000
+  PAGINATION_LENGTH = 10
+  GLOBAL_PAGINATION_LENGTH = 20
+  GLOBAL_SCORE_LIMIT = 2
+  ACTIVITY_TAG_SCORE_LIMIT = 0.2
 
   def undeleted_comments_count
     comments_dataset.exclude(is_deleted: true).count
   end
 
-  def undeleted_comments
-    comments_dataset.exclude(is_deleted: true).order(:created_at).all
+  def undeleted_comments(exclude_ids=nil)
+    ds = comments_dataset.exclude(is_deleted: true).order(:created_at)
+    if exclude_ids
+      ds = ds.exclude actioning_site_id: exclude_ids
+    end
+    ds.all
   end
 
   def self.news_feed_default_dataset
-    if SimpleCache.expired?(:excluded_actioning_site_ids)
-      res = DB[%{select distinct(actioning_site_id) from events join sites on actioning_site_id=sites.id where sites.is_banned='t' or sites.is_nsfw='t' or sites.is_deleted='t'}].all.collect {|r| r[:actioning_site_id]}
-      excluded_actioning_site_ids = SimpleCache.store :excluded_actioning_site_ids, res, 10.minutes
-    else
-      excluded_actioning_site_ids = SimpleCache.get :excluded_actioning_site_ids
-    end
-
-    ds = select_all(:events).
-      order(:created_at.desc).
-      join_table(:inner, :sites, id: :site_id).
-      exclude(Sequel.qualify(:sites, :is_deleted) => true).
-      exclude(Sequel.qualify(:events, :is_deleted) => true).
-      exclude(is_banned: true)
-
-    unless excluded_actioning_site_ids.empty?
-      return ds.where("actioning_site_id is null or actioning_site_id not in ?", excluded_actioning_site_ids)
-    end
-
-    ds
-  end
-
-  def self.global_dataset(current_page=1, limit=DEFAULT_GLOBAL_LIMIT)
-    news_feed_default_dataset.
-      paginate(current_page, 100).
-      exclude(is_nsfw: true).
-      exclude(is_crashing: true).
-      where{views > GLOBAL_VIEWS_MINIMUM}.
-      where(site_change_id: nil)
-  end
-
-  def self.global_site_changes_dataset
-    news_feed_default_dataset.
-      where{views > GLOBAL_VIEWS_SITE_CHANGE_MINIMUM}.
-      exclude(is_nsfw: true).
-      exclude(is_crashing: true).
-      exclude(site_change_id: nil)
+    select(:events.*).
+    left_join(:sites, id: :site_id).
+    left_join(Sequel[:sites].as(:actioning_sites), id: :events__actioning_site_id).
+    exclude(sites__is_deleted: true).
+    exclude(actioning_sites__is_deleted: true).
+    exclude(events__is_deleted: true).
+    where(follow_id: nil).
+    order(:events__created_at.desc)
   end
 
   def created_by?(site)
@@ -104,5 +82,13 @@ class Event < Sequel::Model
       site_like site
       true
     end
+  end
+
+  def name
+    return 'follow' if follow_id
+    return 'tip' if tip_id
+    return 'tag' if tag_id
+    return 'site change' if site_change_id
+    return 'comment' if profile_comment_id
   end
 end

@@ -1,11 +1,25 @@
+# frozen_string_literal: true
+
 require 'sanitize'
 
 class SiteFile < Sequel::Model
-  CLASSIFIER_LIMIT = 1_000_000.freeze
-  CLASSIFIER_WORD_LIMIT = 25.freeze
+  CLASSIFIER_LIMIT = 1_000_000
+  CLASSIFIER_WORD_LIMIT = 25
+  FILE_PATH_CHARACTER_LIMIT = 1200
+  FILE_NAME_CHARACTER_LIMIT = 200
   unrestrict_primary_key
   plugin :update_primary_key
   many_to_one :site
+
+  def self.path_too_long?(filename)
+    return true if filename.length > FILE_PATH_CHARACTER_LIMIT
+    false
+  end
+
+  def self.name_too_long?(filename)
+    return true if filename.length > FILE_NAME_CHARACTER_LIMIT
+    false
+  end
 
   def before_destroy
     if is_directory
@@ -17,7 +31,10 @@ class SiteFile < Sequel::Model
       end
 
       site.site_files_dataset.where(path: /^#{Regexp.quote path}\//, is_directory: false).all.each do |site_file|
-        site_file.destroy
+        begin
+          site_file.destroy
+        rescue Sequel::NoExistingObject
+        end
       end
 
       begin
@@ -44,6 +61,18 @@ class SiteFile < Sequel::Model
     current_path = self.path
     new_path = site.scrubbed_path new_path
 
+    if new_path.length > FILE_PATH_CHARACTER_LIMIT
+      return false, 'new path too long'
+    end
+
+    if File.basename(new_path).length > FILE_NAME_CHARACTER_LIMIT
+      return false, 'new filename too long'
+    end
+
+    if new_path == ''
+      return false, 'cannot rename to empty path'
+    end
+
     if current_path == 'index.html'
       return false, 'cannot rename or move root index.html'
     end
@@ -52,11 +81,18 @@ class SiteFile < Sequel::Model
       return false, "#{is_directory ? 'directory' : 'file'} already exists"
     end
 
-    unless is_directory
+    if is_directory
+      if new_path.match(/\.html?$/)
+        return false, 'directory name cannot end with .htm or .html'
+      end
+
+    else # a file
       mime_type = Magic.guess_file_mime_type site.files_path(self.path)
       extname = File.extname new_path
 
-      return false, 'unsupported file type' unless site.class.valid_file_mime_type_and_ext?(mime_type, extname)
+      unless site.supporter? || site.class.valid_file_mime_type_and_ext?(mime_type, extname)
+        return false, 'unsupported file type'
+      end
     end
 
     begin
@@ -73,8 +109,6 @@ class SiteFile < Sequel::Model
     DB.transaction do
       self.path = new_path
       self.save_changes
-      site.purge_cache current_path
-      site.purge_cache new_path
 
       if is_directory
         site_files_in_dir = site.site_files.select {|sf| sf.path =~ /^#{current_path}\//}
@@ -87,6 +121,9 @@ class SiteFile < Sequel::Model
           site.purge_cache site_file.path
           site.purge_cache original_site_file_path
         end
+      else
+        site.purge_cache new_path
+        site.purge_cache current_path
       end
     end
 
@@ -99,7 +136,7 @@ class SiteFile < Sequel::Model
       DB['update sites set space_used=space_used-? where id=?', size, site_id].first
     end
 
-    site.delete_cache site.files_path(path)
+    site.purge_cache site.files_path(path)
     SiteChangeFile.filter(site_id: site_id, filename: path).delete
   end
 end

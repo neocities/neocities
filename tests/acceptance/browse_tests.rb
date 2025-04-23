@@ -2,6 +2,7 @@ require_relative './environment.rb'
 
 describe '/browse' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
 =begin
   describe 'as admin' do

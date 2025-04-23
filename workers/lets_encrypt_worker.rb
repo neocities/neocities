@@ -32,7 +32,7 @@ class LetsEncryptWorker
     end
 
     site = Site[site_id]
-    return if site.domain.blank? || site.is_deleted || site.is_banned
+    return if site.domain.blank? || site.is_deleted
 
     return if site.values[:domain].match /\.neocities\.org$/i
 
@@ -64,7 +64,11 @@ class LetsEncryptWorker
       puts "testing #{challenge_url}"
 
       begin
-        res = HTTP.timeout(connect: 10, write: 10, read: 10).follow.get(challenge_url)
+        # Some dumb letsencrypt related cert expiration issue hotfix
+        ctx = OpenSSL::SSL::SSLContext.new
+        ctx.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+        res = HTTP.timeout(connect: 10, write: 10, read: 10).follow.get(challenge_url, ssl_context: ctx)
       rescue => e
         puts e.inspect
         puts "error with #{challenge_url}"
@@ -183,10 +187,27 @@ class LetsEncryptWorker
   end
 
   def clean_wellknown_turds(site)
-    wellknown_path = File.join(site.base_files_path, '.well-known')
+    wellknown_path = File.join site.base_files_path, '.well-known'
+    acme_challenge_path = File.join wellknown_path, 'acme-challenge'
 
-    if File.exist?(wellknown_path)
-      FileUtils.rm_rf wellknown_path
+    site.site_files_dataset.where(Sequel.like(:path, '.well-known/acme-challenge%')).each do |s|
+      s.destroy
+    end
+
+    Dir.glob(File.join(acme_challenge_path, '*')).each do |f|
+      FileUtils.rm f
+    end
+
+    if Dir.exist?(acme_challenge_path)
+      Dir.rmdir acme_challenge_path
+    end
+
+    # .well-known was not created by user, removing to prevent confusion
+    if site.site_files_dataset.where(path: '.well-known').count == 0
+      begin
+        Dir.rmdir wellknown_path
+      rescue Errno::ENOTEMPTY, Errno::ENOENT
+      end
     end
   end
 end

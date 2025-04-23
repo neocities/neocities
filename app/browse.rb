@@ -1,9 +1,11 @@
 get '/browse/?' do
-  @surfmode = false
-  @page = params[:page].to_i
-  @page = 1 if @page == 0
+  @page = params[:page]
+  @page = 1 if @page.not_an_integer?
 
-  params.delete 'tag' if params[:tag].nil? || params[:tag].strip.empty?
+  if params[:tag]
+    params[:tag] = params[:tag].gsub(Tag::INVALID_TAG_REGEX, '').gsub(/\s+/, '').slice(0, Tag::NAME_LENGTH_MAX)
+    @title = "Sites tagged #{params[:tag]}"
+  end
 
   if is_education?
     ds = education_sites_dataset
@@ -11,7 +13,7 @@ get '/browse/?' do
     ds = browse_sites_dataset
   end
 
-  ds = ds.paginate @page, Site::BROWSE_PAGINATION_LENGTH
+  ds = ds.paginate @page.to_i, Site::BROWSE_PAGINATION_LENGTH
   @pagination_dataset = ds
   @sites = ds.all
 
@@ -21,10 +23,6 @@ get '/browse/?' do
   @site_tags = {}
   site_ids.each do |site_id|
     @site_tags[site_id] = tags.select {|t| t[:site_id] == site_id}.collect {|t| t[:name]}
-  end
-
-  if params[:tag]
-    @title = "Sites tagged #{params[:tag]}"
   end
 
   erb :browse
@@ -55,41 +53,50 @@ def browse_sites_dataset
     end
   end
 
+  if current_site && current_site.is_admin && params[:sites]
+    ds = ds.where sites__username: params[:sites].split(',')
+    return ds
+  end
+
+  params[:sort_by] ||= 'special_sauce'
+
   case params[:sort_by]
     when 'special_sauce'
-      ds = ds.exclude score: nil
-      ds = ds.order :score.desc
-    when 'followers'
-      ds = ds.order :follow_count.desc, :updated_at.desc
-    when 'supporters'
-      ds = ds.where id: Site.supporter_ids
-      ds = ds.order :follow_count.desc, :views.desc, :site_updated_at.desc
+      ds = ds.where{score > 1} unless params[:tag]
+      ds = ds.order :score.desc, :follow_count.desc, :views.desc, :site_updated_at.desc
+    when 'random'
+      ds = ds.where{score > 3} unless params[:tag]
+      ds = ds.order(Sequel.lit('RANDOM()'))
+    when 'most_followed'
+      ds = ds.where{views > Site::BROWSE_MINIMUM_FOLLOWER_VIEWS}
+      ds = ds.where{follow_count > Site::BROWSE_FOLLOWER_MINIMUM_FOLLOWS}
+      ds = ds.where{updated_at > Site::BROWSE_FOLLOWER_UPDATED_AT_CUTOFF.ago} unless params[:tag]
+      ds = ds.order :follow_count.desc, :score.desc, :updated_at.desc
+    when 'last_updated'
+      ds = ds.where{score > 3} unless params[:tag]
+      ds = ds.exclude site_updated_at: nil
+      ds = ds.order :site_updated_at.desc
+    when 'newest'
+      ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS} unless is_admin?
+      ds = ds.exclude site_updated_at: nil
+      ds = ds.order :created_at.desc, :views.desc
+    when 'oldest'
+      ds = ds.where{score > 0.4} unless params[:tag]
+      ds = ds.exclude site_updated_at: nil
+      ds = ds.order(:created_at, :views.desc)
+    when 'hits'
+      ds = ds.where{score > 1}
+      ds = ds.order(:hits.desc, :site_updated_at.desc)
+    when 'views'
+      ds = ds.where{score > 3}
+      ds = ds.order(:views.desc, :site_updated_at.desc)
     when 'featured'
       ds = ds.exclude featured_at: nil
       ds = ds.order :featured_at.desc
-    when 'hits'
-      ds = ds.where{views > 100}
-      ds = ds.order(:hits.desc, :site_updated_at.desc)
-    when 'views'
-      ds = ds.where{views > 100}
-      ds = ds.order(:views.desc, :site_updated_at.desc)
-    when 'newest'
-      ds = ds.order(:created_at.desc, :views.desc)
-    when 'oldest'
-      ds = ds.where{views > 100}
-      ds = ds.order(:created_at, :views.desc)
-    when 'random'
-      ds = ds.where{views > 100}
-      ds = ds.where 'random() < 0.01'
-    when 'last_updated'
-      ds = ds.where{views > 100}
-      params[:sort_by] = 'last_updated'
-      ds = ds.exclude(site_updated_at: nil)
-      ds = ds.order(:site_updated_at.desc, :views.desc)
     when 'tipping_enabled'
       ds = ds.where tipping_enabled: true
       ds = ds.where("(tipping_paypal is not null and tipping_paypal != '') or (tipping_bitcoin is not null and tipping_bitcoin != '')")
-      ds = ds.where{views > 10_000}
+      ds = ds.where{score > 1} unless params[:tag]
       ds = ds.group :sites__id
       ds = ds.order :follow_count.desc, :views.desc, :updated_at.desc
     when 'blocks'
@@ -98,10 +105,6 @@ def browse_sites_dataset
       ds = ds.inner_join :blocks, :site_id => :id
       ds = ds.group :sites__id
       ds = ds.order :total.desc
-    else
-      params[:sort_by] = 'followers'
-      ds = ds.where{views > 10_000}
-      ds = ds.order :follow_count.desc, :views.desc, :updated_at.desc
   end
 
   ds = ds.where ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
@@ -115,4 +118,72 @@ def browse_sites_dataset
   end
 
   ds
+end
+
+def daily_search_max?
+  query_count = $redis_cache.get('search_query_count').to_i
+  query_count >= $config['google_custom_search_query_limit']
+end
+
+get '/browse/search' do
+  @title = 'Site Search'
+
+  @daily_search_max_reached = daily_search_max?
+
+  if @daily_search_max_reached
+    params[:q] = nil
+  end
+
+  if !params[:q].blank?
+    created = $redis_cache.set('search_query_count', 1, nx: true, ex: 86400)
+    $redis_cache.incr('search_query_count') unless created
+
+    @start = params[:start].to_i
+    @start = 0 if @start < 0
+
+    @resp = JSON.parse HTTP.get('https://www.googleapis.com/customsearch/v1', params: {
+      key: $config['google_custom_search_key'],
+      cx: $config['google_custom_search_cx'],
+      safe: 'active',
+      start: @start,
+      q: Rack::Utils.escape(params[:q]) + ' -filetype:pdf -filetype:txt site:*.neocities.org'
+    })
+
+    @items = []
+
+    if @total_results != 0 && @resp['error'].nil? && @resp['searchInformation']['totalResults'] != "0"
+      @total_results = @resp['searchInformation']['totalResults'].to_i
+      @resp['items'].each do |item|
+        link = Addressable::URI.parse(item['link'])
+        unencoded_path = Rack::Utils.unescape(Rack::Utils.unescape(link.path)) # Yes, it needs to be decoded twice
+        item['unencoded_link'] = unencoded_path == '/' ? link.host : link.host+unencoded_path
+        item['link'] = link
+
+        next if link.host == 'neocities.org'
+
+        username = link.host.split('.').first
+        site = Site[username: username]
+        next if site.nil? || site.is_deleted || site.is_nsfw
+
+        screenshot_path = unencoded_path
+
+        screenshot_path << 'index' if screenshot_path[-1] == '/'
+
+        ['.html', '.htm'].each do |ext|
+          if site.screenshot_exists?(screenshot_path + ext, '540x405')
+            screenshot_path += ext
+            break
+          end
+        end
+
+        item['screenshot_url'] = site.screenshot_url(screenshot_path, '540x405')
+        @items << item
+      end
+    end
+  else
+    @items = nil
+    @total_results = 0
+  end
+
+  erb :'search'
 end

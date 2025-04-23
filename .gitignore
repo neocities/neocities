@@ -20,6 +20,7 @@ files/sslsites.zip
 .vagrant
 public/banned_sites
 public/deleted_sites
+files/disposable_email_whitelist.conf
 files/disposable_email_blacklist.conf
 files/banned_email_blacklist.conf
 files/letsencrypt.key

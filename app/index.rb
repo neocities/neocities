@@ -1,27 +1,21 @@
 get '/?' do
-  if params[:_ga_adgroupid]
-    session[:ga_adgroupid] = params[:_ga_adgroupid]
-  end
-
   if current_site
     require_login
 
     redirect '/dashboard' if current_site.is_education
 
-    @page = params[:page].to_i
-    @page = 1 if @page == 0
+    @page = params[:page]
+    @page = 1 if @page.not_an_integer?
 
     if params[:activity] == 'mine'
-      events_dataset = current_site.latest_events(@page, 10)
+      events_dataset = current_site.latest_events(@page)
     elsif params[:event_id]
       event = Event.select(:id).where(id: params[:event_id]).first
       not_found if event.nil?
       not_found if event.is_deleted
       events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
-    elsif params[:activity] == 'global'
-      events_dataset = Event.global_dataset @page
     else
-      events_dataset = current_site.news_feed(@page, 10)
+      events_dataset = current_site.news_feed(@page)
     end
 
     @pagination_dataset = events_dataset
@@ -62,6 +56,7 @@ get '/?' do
 
   @changed_count ||= 0
 
+=begin
   if SimpleCache.expired?(:blog_feed_html)
     @blog_feed_html = ''
 
@@ -79,6 +74,18 @@ get '/?' do
   else
     @blog_feed_html = SimpleCache.get :blog_feed_html
   end
+=end
+
+@blog_feed_html = 'The latest news on Neocities can be found on our blog.'
+
+  if SimpleCache.expired?(:featured_sites)
+    @featured_sites = Site.order(:score.desc).exclude(is_nsfw: true).exclude(is_deleted: true).limit(1000).all.sample(12).collect {|s| {screenshot_url: s.screenshot_url('index.html', '540x405'), uri: s.uri, title: s.title}}
+    SimpleCache.store :featured_sites, @featured_sites, 1.hour
+  else
+    @featured_sites = SimpleCache.get :featured_sites
+  end
+
+  @create_disabled = false
 
   erb :index, layout: :index_layout
 end
@@ -118,15 +125,6 @@ end
 get '/legal/?' do
   @title = 'Legal Guide to Neocities'
   erb :'legal'
-end
-
-get '/permanent-web' do
-  redirect '/distributed-web'
-end
-
-get '/distributed-web' do
-  @title = 'The Distributed Web'
-  erb :'distributed_web'
 end
 
 get '/thankyou' do

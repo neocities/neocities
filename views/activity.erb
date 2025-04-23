@@ -1,10 +1,27 @@
-<div class="header-Outro">
-  <div class="row content single-Col">
-    <h1>Latest Activity on Neocities</h1>
+<div class="header-Outro with-columns browse-page">
+  <div class="row content">
+    <div class="col col-100">
+      <% if params[:tag] %>
+        <h1><a href="/activity">Latest Activity</a> > <%= params[:tag] %></h1>
+        <h4><a href="/browse?tag=<%= params[:tag]%>">Sites</a></h4>
+      <% else %>
+        <h1>Latest Activity on Neocities</h1>
+      <% end %>
+    </div>
+
+    <div class="col col-100 filter">
+      <form action="/activity" method="GET">
+      <fieldset class="grouping">
+        <label class="text-Label" for="tag"><span class="hide-on-mobile">Filter by </span>Tag:</label>
+        <input class="input-Area typeahead" id="tag" name="tag" type="text" placeholder="pokemon" value="<%= params[:tag] %>" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" dir="auto">
+        <input style="vertical-align: -4px;margin-left: 4px;" type="submit" class="btn-Action" value="Filter">
+      </fieldset>
+      </form>
+    </div>
   </div>
 </div>
-<div style="margin-left:auto; margin-right:auto; max-width:800px;">
-  <div class="content single-Col misc-page" style="float:left;">
+<div>
+  <div class="content single-Col misc-page">
       <% if !signed_in? %>
       <div class="welcome">
         <h4>All the latest Neocities site news!</h4>
@@ -14,6 +31,7 @@
       </div>
     <% end %>
 
-    <%== erb :'_news', locals: {current_site: nil, events: @events} %>
+    <%== erb :'_news', layout: false, locals: {current_site: current_site, events: @events} %>
+    <%== erb :'_browse_tags', layout: false %>
   </div>
 </div>

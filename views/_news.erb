@@ -1,8 +1,3 @@
-<script type="text/javascript">
-  function getPage(currentPage) {
-    document.location.href = '?current_page='+currentPage+'&activity=<%= Rack::Utils.escape(params[:activity]) %>'
-  }
-</script>
 <script src="/js/news/template.js"></script>
 <script src="/js/news/like.js"></script>
 <script src="/js/news/comment.js"></script>
@@ -10,51 +5,42 @@
 <script src="/js/news/event.js"></script>
 <script src="/js/news/site.js"></script>
 
+<% if defined?(site) && !params[:event_id] && (params[:page].blank? || params[:page] == '1') %>
+  <% follow_events = site.newest_follows %>
+  <% unless follow_events.empty? %>
+    <div class="news-item follow">
+      <div class="icon"><a href="/site/<%= site.username %>" title="<%= site.username %>" class="avatar" style="background-image: url(<%= site.screenshot_url 'index.html', '50x50' %>);"></a></div>
+
+      <div class="text">
+        <strong>New Followers</strong>
+      </div>
+
+      <div class="content">
+        <% follow_events.first.site.newest_follows.each_with_index do |event,i| %>
+          <a href="/site/<%= event.actioning_site.username %>" class="user" title="<%= event.actioning_site.title %>"><i class="fa fa-user"><% if event.actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event.actioning_site.username %></a><% unless follow_events.length == i+1 %>, <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<% if events.empty? %>
+  <% if current_site && defined?(site) && site.owned_by?(parent_site) %>
+    <p>
+      No feed news yet, you should <a href="/dashboard">update your site</a>!
+    </p>
+  <% else %>
+    <p>No feed news yet, check back later!</p>
+  <% end %>
+<% end %>
+
 <% events.each do |event| %>
   <% if event.profile_comment_id %>
     <div class="news-item comment" id="event_<%= event.id %>">
       <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment, event: event} %>
   <% elsif event.tip_id %>
-    <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
-    <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
-    <% tip = event.tip %>
-    <div class="news-item tip">
-      <div class="title">
-        <div class="icon">
-          <% if actioning_site %>
-          <a href="/site/<%= actioning_site.username %>" title="<%= actioning_site.username %>" class="avatar" style="background-image: url(<%= actioning_site.screenshot_url 'index.html', '50x50' %>);"></a>
-          <% end %>
-        </div>
-
-        <div class="text">
-          <div class="headline">
-            <% if actioning_site %>
-              <% if current_site && current_site.id == actioning_site.id %>
-                <a href="/site/<%= current_site.username %>" class="you">You</a>
-              <% else %>
-                <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"><% if actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
-              <% end %>
-            <% else %>
-              An anonymous donor
-            <% end %>
-
-            sent a <strong><%= tip.amount_string %></strong> tip to
-
-            <% if current_site && event_site.id == current_site.id %>
-              <a href="/site/<%= current_site.username %>" class="you">you</a>!
-            <% else %>
-              <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a>!
-            <% end %>
-          </div>
-
-          <span class="comment"><%= tip.message %></span>
-        </div>
-
-        <span class="date">
-          <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
-        </span>
-      </div>
-
+    <div class="news-item comment" id="event_<%= event.id %>">
+    <%== erb :'_news_tip', layout: false, locals: {tip: event.tip, event: event} %>
   <% elsif event.follow_id %>
     <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
     <% next if actioning_site.nil? %>
@@ -81,24 +67,25 @@
       </div>
 
       <span class="date">
-        <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
+        <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>" class="local-date-title" data-timestamp="<%= event.created_at.to_i %>"><%= event.created_at.ago %></a>
       </span>
     </div>
   <% elsif event.site_change_id %>
+    <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
     <% site_change_filenames = event.site_change.site_change_filenames %>
     <div class="news-item update">
       <div class="title">
-        <div class="icon"></div>
+        <div class="icon"><a href="/site/<%= event_site.username %>" title="<%= event_site.username %>" class="avatar" style="background-image: url(<%= event_site.screenshot_url 'index.html', '50x50' %>);"></a></div>
         <div class="text">
           <% event_site = event.site_dataset.select(:id, :username, :title, :domain, :plan_type).first %>
           <% if current_site && event_site.id == current_site.id %>
             You updated your site.
           <% else %>
-            <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(45) %></a> was updated.
+            <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a> updated <a href="https://<%= event_site.host %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(45) %></a>
           <% end %>
         </div>
         <span class="date">
-          <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>"><%= event.created_at.ago %></a>
+            <a href="/site/<%= event_site.username %>?event_id=<%= event.id %>" class="local-date-title" data-timestamp="<%= event.created_at.to_i %>"><%= event.created_at.ago %></a>
         </span>
       </div>
 
@@ -143,14 +130,14 @@
   <% if event.undeleted_comments_count > 0 %>
     <div class="content">
       <div class="comments">
-        <% event.undeleted_comments.each do |comment| %>
+        <% event.undeleted_comments(current_site ? current_site.blocking_site_ids : nil).each do |comment| %>
           <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <% comment_event_site = comment.event.site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <div class="comment" id="comment_<%= comment.id %>">
             <a href="/site/<%= comment_actioning_site.username %>"><img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>"></a>
             <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><i class="fa fa-user"><% if comment_actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= comment_actioning_site.username %></a>
             <span class="date">
-              <a href="/site/<%= comment_event_site.username %>?event_id=<%= event.id %>"><%= comment.created_at.ago %></a>
+              <a href="/site/<%= comment_event_site.username %>?event_id=<%= event.id %>" class="local-date-title" data-timestamp="<%= comment.created_at.to_i %>"><%= comment.created_at.ago %></a>
             </span>
             <p><%== sanitize_comment comment.message %></p>
           </div>
@@ -179,10 +166,12 @@
 
 <% end %>
 
-<% if params[:activity] != 'global' %>
-  <div class="content">
-    <%== erb :_pagination, layout: false %>
-  </div>
-<% end %>
+<div class="content">
+  <%== erb :_pagination, layout: false %>
+</div>
 
 <%== erb :'_news_templates', layout: false %>
+
+<script>
+
+</script>

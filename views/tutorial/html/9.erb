@@ -18,27 +18,40 @@
     $('h3#sitePreview').css('display', 'none')
     $('.preview').css('margin-top', '20px')
 
-    $('#saveToSite').on('click', function() {
+    $('#saveToSite').on('click', function(event) {
+      event.preventDefault()
+
+      var formData = new FormData()
+      var fileContent = sessionStorage.getItem('tutorialHtml')
+      formData.append('index.html', new File([fileContent], 'index.html', { type: 'text/html' }))
+      formData.append('csrf_token', '<%= escape_javascript csrf_token %>')
+      formData.append('username', '<%= escape_javascript current_site.username %>')
+
       $.ajax({
-        url: '/site_files/save/index.html?csrf_token=<%= Rack::Utils.escape csrf_token %>',
-        data: sessionStorage.getItem('tutorialHtml'),
+        url: '/api/upload',
+        data: formData,
         processData: false,
         contentType: false,
         type: 'POST',
         error: function(jqXHR, textStatus, errorThrown) {
-          alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
-        },
-        success: function(response){
-          if(response == 'ok') {
-            window.location = '/tutorial/html/10'
-          } else {
-            alert('There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!')
+          var errorMessage = 'There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!'
+
+          if(jqXHR.responseText) {
+            try {
+              // Attempt to parse the JSON responseText to get the error message
+              var parsedResponse = JSON.parse(jqXHR.responseText);
+              errorMessage += ' ERROR MESSAGE: ' + parsedResponse.message;
+              alert(errorMessage)
+            } catch (error) {
+            }
           }
+
+          alert(errorMessage)
+        },
+        success: function(response, textStatus, xhr){
+          window.location = '/tutorial/html/10'
         }
       })
-
-      return false
     })
-
   })
 </script>

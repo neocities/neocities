@@ -22,16 +22,42 @@
   .footer-Base {
     display: none;
   }
+
+  .ace_tooltip a {
+    color: #e93250;
+  }
+
+  .ace_tooltip code {
+    border-left: 0px;
+    border: 0px;
+  }
+
+  .ace_tooltip {
+    border: 0;
+  }
+
+  .ace_tooltip li {
+    line-height: normal;
+    margin: 0px;
+  }
+
+  .ace_tooltip div {
+    margin: 5px;
+  }
+
+  .ace_tooltip.ace_dark {
+    background: rgb(48, 66, 75);
+  }
 </style>
 
 <div class="header-Outro editor">
   <div class="row content">
     <div class="breadcrumbs">
-      <a href="/dashboard">Dashboard</a> >
+      <a href="/dashboard"><strong>Dashboard</strong></a> >
       <span class="filename">
         <% dir_array = Pathname(@filename).dirname.to_s.split '/' %>
         <% dir_array = [] if dir_array == ['.'] %>
-        <% dir_array.each_with_index do |dir,i| %><a href="/dashboard?dir=<%= Rack::Utils.escape dir_array[0..i].join('/') %>"><%= dir %></a>/<% end %><%= Pathname(@filename).basename %>
+        <% dir_array.each_with_index do |dir,i| %><a href="/dashboard?dir=<%= Rack::Utils.escape dir_array[0..i].join('/') %>"><%= dir %></a> / <% end %><%= Pathname(@filename).basename %>
       </span>
     </div>
     <div class="tools">
@@ -40,32 +66,45 @@
         <select id="theme" size="1" onchange="setTheme();" onkeyup="setTheme();">
           <optgroup label="Bright">
             <option value="ace/theme/chrome">Chrome</option>
+            <option value="ace/theme/cloud_editor">Cloud Editor</option>
             <option value="ace/theme/clouds">Clouds</option>
             <option value="ace/theme/crimson_editor">Crimson Editor</option>
             <option value="ace/theme/dawn">Dawn</option>
             <option value="ace/theme/dreamweaver">Dreamweaver</option>
             <option value="ace/theme/eclipse">Eclipse</option>
             <option value="ace/theme/github">GitHub</option>
+            <option value="ace/theme/iplastic">I-Plastic</option>
+            <option value="ace/theme/katzenmilch">Katzen Milch</option>
+            <option value="ace/theme/kuroir">Kuroir</option>
             <option value="ace/theme/solarized_light">Solarized Light</option>
-            <option value="ace/theme/textmate">TextMate</option>
+            <option value="ace/theme/sqlserver">SQL Server</option>
+            <option value="ace/theme/textmate">Text Mate</option>
             <option value="ace/theme/tomorrow">Tomorrow</option>
             <option value="ace/theme/xcode">XCode</option>
           </optgroup>
           <optgroup label="Dark">
             <option value="ace/theme/ambiance">Ambiance</option>
             <option value="ace/theme/chaos">Chaos</option>
+            <option value="ace/theme/cloud_editor_dark">Cloud Editor Dark</option>
             <option value="ace/theme/clouds_midnight">Clouds Midnight</option>
             <option value="ace/theme/cobalt">Cobalt</option>
-            <option value="ace/theme/idle_fingers">idleFingers</option>
-            <option value="ace/theme/kr_theme">krTheme</option>
+            <option value="ace/theme/dracula">Dracula</option>
+            <option value="ace/theme/github_dark">GitHub Dark</option>
+            <option value="ace/theme/gob">Green on Black</option>
+            <option value="ace/theme/gruvbox">Gruvbox</option>
+            <option value="ace/theme/idle_fingers">Idle Fingers</option>
+            <option value="ace/theme/kr_theme">KR Theme</option>
             <option value="ace/theme/merbivore">Merbivore</option>
             <option value="ace/theme/merbivore_soft">Merbivore Soft</option>
             <option value="ace/theme/mono_industrial">Mono Industrial</option>
             <option value="ace/theme/monokai">Monokai</option>
+            <option value="ace/theme/nord_dark">Nord Dark</option>
+            <option value="ace/theme/one_dark">One Dark</option>
             <option value="ace/theme/pastel_on_dark">Pastel on dark</option>
             <option value="ace/theme/solarized_dark">Solarized Dark</option>
+            <option value="ace/theme/sunburst" selected>Sunburst</option>
             <option value="ace/theme/terminal">Terminal</option>
-            <option value="ace/theme/tomorrow_night" selected="selected">Tomorrow Night</option>
+            <option value="ace/theme/tomorrow_night">Tomorrow Night</option>
             <option value="ace/theme/tomorrow_night_blue">Tomorrow Night Blue</option>
             <option value="ace/theme/tomorrow_night_bright">Tomorrow Night Bright</option>
             <option value="ace/theme/tomorrow_night_eighties">Tomorrow Night 80s</option>
@@ -76,8 +115,9 @@
       </div>
       <a id="saveButton" class="btn-Action" href="#" onclick="saveTextFile(false); return false" style="opacity: 0.5"><span class="hide-on-mobile"><i class="fa fa-save"></i></span>Save</a>
       <span class="hide-on-mobile">
-        <a class="btn-Action" href="<%= current_site.uri %>/<%= @filename == 'index.html' ? '' : @filename %>" target="_blank">View</a>
-        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'>Share</a>
+        <a class="btn-Action" href="<%= current_site.uri @filename %>" target="_blank"><i class="fa fa-globe"></i> View</a>
+        <a href="#" id="shareButton" class="btn-Action" data-container="body" data-toggle="popover" data-placement="bottom" data-content='<%== erb :'_share', layout: false, locals: {site: current_site, page_uri: "#{current_site.uri}/#{@filename}"} %>'><i class="fa fa-share-alt chat-button"></i> Share</a><!-- <% if current_site.supporter? %><a class="btn-Action" id="chatButton"><i class="fa fa-comments"></i> Penelope <span style="font-size: 8pt">(beta)</span></a><% end %> -->
+        <a id="settingsButton" class="btn-Action" href="#settings" data-toggle="modal"><i class="fa fa-gear"></i> Settings</a>
       </span>
     <!-- <a id="saveAndExitButton" class="btn-Action" href="#" onclick="saveTextFile(true); return false" style="opacity: 0.5"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and Exit</a> -->
       <div id="editorUpdates" class="tooltip fade bottom in hidden" style="top: 90px;right: 12.5em;">
@@ -90,13 +130,101 @@
   </div>
 </div>
 
+<script src="/js/purify.min.js"></script>
+<script src="/js/marked.min.js"></script>
+<script src="/js/sse.min.js"></script>
+<!--
+<% if current_site.supporter? %>
+  <script src="/js/chat.js"></script>
+<% end %>
+-->
 <div class="row editor">
-  <div class="col col-100">
+  <div class="col left-col" style="display: <% current_site.supporter? ? 'none' : 'block' %>; margin-left: 20px;">
     <div id="editor"><h3>Loading...</h3></div>
+  </div>
+  <div class="col right-col chat-container" style="display: none">
+    <div class="resize-handle"></div>
+    <div id="chat-box" class="chat-box">
+      <div class="bot-message message">
+        <img src="/img/heartcat.png" style="width: 30px; margin-bottom: 10px;">
+        <p>I'm Penelope, your coding assistant! I'm here to help you with your web site.</p>
+        <p>I'm good at coding but can be wrong on general knowledge, <strong>so be sure to verify facts I give you</strong>.</p>
+        <p>How can I help you today?</p>
+      </div>
+    </div>
+      <div id="chat-form">
+        <form>
+          <input name="csrf_token" value="<%= csrf_token %>" type="hidden">
+          <input type="text" id="chat-input" placeholder="Ask a coding question..." autocomplete="off">
+          <button type="submit" class="btn-Action">Send</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 
+<div class="modal hide" id="settings" tabindex="-1" role="dialog" aria-labelledby="settingsLabel" aria-hidden="true">
+  <form method="POST" action="/settings/change_editor_settings">
+    <input type="hidden" name="path" value="<%= @filename %>">
+    <%== csrf_token_input_html %>
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+      <h3 id="blockLabel">Editor Settings</h3>
+    </div>
+    <div class="modal-body">
+      <p>
+        Enable Code Autocomplete:
+        <input name="editor_autocomplete_enabled" type="hidden" value="false">
+        <input name="editor_autocomplete_enabled" type="checkbox" value="true"
+          <% if current_site.owner.editor_autocomplete_enabled %>
+            checked
+          <% end %>
+        >
+      </p>
+      <p>
+        Enable MDN Help:
+        <input name="editor_help_tooltips" type="hidden" value="false">
+        <input name="editor_help_tooltips" type="checkbox" value="true"
+          <% if current_site.owner.editor_help_tooltips %>
+            checked
+          <% end %>
+        >
+      </p>
+      <p>
+        Font Size:
+        <select name="editor_font_size">
+          <option value="12" <% if current_site.owner.editor_font_size == 12 %>selected<% end %>>Small</option>
+          <option value="14" <% if current_site.owner.editor_font_size == 14 %>selected<% end %>>Medium</option>
+          <option value="18" <% if current_site.owner.editor_font_size == 18 %>selected<% end %>>Large</option>
+        </select> 
+      </p>
+      <p>
+        Tab Width:
+        <select name="editor_tab_width">
+          <option value="2" <% if current_site.owner.editor_tab_width == 2 %>selected<% end %>>Two Spaces</option>
+          <option value="4" <% if current_site.owner.editor_tab_width == 4 %>selected<% end %>>Four Spaces</option>
+        </select> 
+      </p>
+      <p>
+        Keyboard Mode:
+        <select name="editor_keyboard_mode">
+          <option value="" <% if current_site.owner.editor_keyboard_mode.blank? %>selected<% end %>>Default</option>
+          <option value="vim" <% if current_site.owner.editor_keyboard_mode == 'vim' %>selected<% end %>>Vim</option>
+          <option value="emacs" <% if current_site.owner.editor_keyboard_mode == 'emacs' %>selected<% end %>>Emacs</option>
+          <option value="vscode" <% if current_site.owner.editor_keyboard_mode == 'vscode' %>selected<% end %>>VSCode</option>
+        </select> 
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn-Action">Save Settings</button>
+    </div>
+  </form>
+</div>
+
 <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/ace-linters/build/ace-linters.js"></script>
 
 <script>
   var unsavedChanges = false
@@ -119,17 +247,31 @@
   function saveTextFile(quit) {
     if(unsavedChanges == false)
       return
+
+    var formData = new FormData();
+    var fileContent = editor.getValue();
+    formData.append('<%== escape_javascript @filename %>', new File([fileContent], '<%== escape_javascript @filename %>', { type: 'text/html' }));
+    formData.append('csrf_token', '<%== escape_javascript csrf_token %>');
+    formData.append('username', '<%== escape_javascript current_site.username %>');
+
     $.ajax({
-      url: "/site_files/upload?csrf_token=<%= Rack::Utils.escape csrf_token %>&filename=<%= Rack::Utils.escape @filename %>&site_id=<%= current_site.id %>",
-      data: editor.getValue(),
+      url: '/api/upload',
+      data: formData,
       processData: false,
       contentType: false,
       type: 'POST',
       error: function(jqXHR, textStatus, errorThrown) {
-        var errorMessage = 'There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!'
+        //var errorMessage = 'There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!'
+        var errorMessage = 'Due to a one-time Neocities session change, you have been logged out and your file was not saved. Open a new tab, log back in, then come back and click save. We apologize for the inconvenience.'
 
-        if(jqXHR.responseText)
-          errorMessage += ' ERROR MESSAGE: '+jqXHR.responseText
+        if(jqXHR.responseText) {
+          try {
+            // Attempt to parse the JSON responseText to get the error message
+            var parsedResponse = JSON.parse(jqXHR.responseText);
+            errorMessage += ' ERROR MESSAGE: ' + parsedResponse.message;
+          } catch (error) {
+          }
+        }
 
         $('#saveButton').tooltip('show')
         $('#editorUpdates span').text(errorMessage)
@@ -163,41 +305,67 @@
 
   var editor = {}
 
+
   $(document).ready(function() {
-    $.get("/site_files/download/<%= Addressable::URI.parse(@filename).normalized_path.to_s %>", function(resp) {
-      editor = ace.edit("editor")
-      setTheme()
-      <% if @ace_mode %>
-        editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
-      <% end %>
-      editor.getSession().setTabSize(2)
-      editor.getSession().setUseWrapMode(true)
-      editor.setFontSize(14)
-      editor.setShowPrintMargin(false)
-      editor.setOptions({
-        maxLines: Infinity,
-        autoScrollEditorIntoView: true
-      })
+    $.ajax({
+      url: "/site_files/download/<%= Site.escape_path(@filename) %>",
+      cache: false,
+      success: function(resp) {
+        ace.require("ace/ext/language_tools");
 
-      // Disable autocomplete
-      editor.setBehavioursEnabled(false)
+        editor = ace.edit("editor")
+        setTheme()
+        <% if @ace_mode %>
+          editor.getSession().setMode("ace/mode/<%= @ace_mode %>")
+        <% end %>
+        editor.getSession().setTabSize(<%= current_site.owner.editor_tab_width %>)
+        editor.getSession().setUseWrapMode(true)
+        editor.setFontSize(<%= current_site.owner.editor_font_size %>)
+        editor.setShowPrintMargin(false)
+        editor.setOptions({
+          maxLines: Infinity,
+          autoScrollEditorIntoView: true,
+          // settings based options here
+          <% if current_site.owner.editor_autocomplete_enabled %>
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            behavioursEnabled: true,
+          <% else %>
+            behavioursEnabled: false,
+          <% end %>
+          enableSnippets: true,
+        })
+        <% if current_site.owner.editor_keyboard_mode == 'vim' %>
+        editor.setKeyboardHandler("ace/keyboard/vim");
+        <% elsif current_site.owner.editor_keyboard_mode == 'emacs' %>
+        editor.setKeyboardHandler("ace/keyboard/emacs");
+        <% elsif current_site.owner.editor_keyboard_mode == 'vscode' %>
+        editor.setKeyboardHandler("ace/keyboard/vscode");
+        <% end %>
 
-      editor.setValue(resp, -1)
+        <% if current_site.owner.editor_help_tooltips %>
+          var provider = LanguageProvider.fromCdn(window.location.origin + "/js/ace-linters/build");
+          provider.registerEditor(editor);
+        <% end %>
 
-      editor.on('change', function(obj) {
-        $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
-        unsavedChanges = true
-      })
+        editor.setValue(resp, -1)
+        editor.getSession().setUndoManager(new ace.UndoManager())
 
-      editor.commands.addCommand({
-          name: 'saveCommand',
-          bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-          exec: function(editor) {
-            saveTextFile(false)
-          }
-      })
-    })
-  })
+        editor.on('change', function(obj) {
+          $('a#saveButton,a#saveAndExitButton').css('opacity', 1)
+          unsavedChanges = true
+        })
+
+        editor.commands.addCommand({
+            name: 'saveCommand',
+            bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+            exec: function(editor) {
+              saveTextFile(false)
+            }
+        })
+      }
+    });
+  });
 
   window.onbeforeunload = function() {
     if(unsavedChanges == true)

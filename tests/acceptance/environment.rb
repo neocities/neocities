@@ -1,38 +1,17 @@
 require_relative '../environment'
 
+require 'capybara'
 require 'capybara/minitest'
 require 'capybara/minitest/spec'
 require 'rack_session_access/capybara'
-require 'capybara/apparition'
 
 Capybara.app = Sinatra::Application
-
-include Capybara::Minitest::Assertions
 Capybara.default_max_wait_time = 5
 
-#Capybara.register_driver :apparition do |app|
-#  Capybara::Apparition::Driver.new(app, headless: false)
-#end
+Capybara.register_driver :selenium_chrome_headless_largewindow do |app|
+  options = ::Selenium::WebDriver::Chrome::Options.new
+  options.add_argument('--headless')
+  options.add_argument('--window-size=1280,800') # Set your desired window size
 
-=begin
-def setup
-  Capybara.current_driver = :apparition
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
 end
-
-def teardown
-  Capybara.reset_sessions!
-  Capybara.use_default_driver
-end
-=end
-=begin
-require 'capybara'
-require 'capybara/dsl'
-require 'capybara/poltergeist'
-require 'rack_session_access/capybara'
-
-Capybara.app = Sinatra::Application
-
-def teardown
-  Capybara.reset_sessions!
-end
-=end

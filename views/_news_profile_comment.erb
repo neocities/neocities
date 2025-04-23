@@ -18,7 +18,7 @@
   </div>
 
   <span class="date">
-    <a href="/site/<%= site.username %>?event_id=<%= profile_comment.event.id %>"><%= profile_comment.created_at.ago %></a>
+    <a href="/site/<%= site.username %>?event_id=<%= profile_comment.event.id %>" class="local-date-title" data-timestamp="<%= profile_comment.created_at.to_i %>"><%= profile_comment.created_at.ago %></a>
   </span>
 </div>
 <div class="content"><%== sanitize_comment profile_comment.message %></div>

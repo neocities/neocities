@@ -76,4 +76,8 @@ class Numeric
   def to_space_pretty
     to_bytes_pretty
   end
+
+  def not_an_integer?
+    !self.integer?
+  end
 end

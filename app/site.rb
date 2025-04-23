@@ -1,13 +1,14 @@
 get '/site/:username.rss' do |username|
   site = Site[username: username]
+  halt 404 if site.nil? || (current_site && site.is_blocking?(current_site))
   content_type :xml
-  site.to_rss.to_xml
+  site.to_rss
 end
 
 get '/site/:username/?' do |username|
   site = Site[username: username]
   # TODO: There should probably be a "this site was deleted" page.
-  not_found if site.nil? || site.is_banned || site.is_deleted
+  not_found if site.nil? || site.is_banned || site.is_deleted || (current_site && site.is_blocking?(current_site))
 
   redirect '/' if site.is_education
 
@@ -16,16 +17,19 @@ get '/site/:username/?' do |username|
   @title = site.title
 
   @page = params[:page]
-  @page = @page.to_i
-  @page = 1 if @page == 0
+  @page = 1 if @page.not_an_integer?
 
   if params[:event_id]
-    not_found unless params[:event_id].is_integer?
-    event = Event.select(:id).where(id: params[:event_id]).first
+    not_found if params[:event_id].not_an_integer?
+    event = Event.where(id: params[:event_id]).exclude(is_deleted: true).first
     not_found if event.nil?
+    event_site = event.site
+    event_actioning_site = event.actioning_site
+    not_found if current_site && event_site && event_site.is_blocking?(current_site)
+    not_found if current_site && event_actioning_site && event_actioning_site.is_blocking?(current_site)
     events_dataset = Event.where(id: params[:event_id]).paginate(1, 1)
   else
-    events_dataset = site.latest_events(@page, 10)
+    events_dataset = site.latest_events(@page, current_site)
   end
 
   @page_count = events_dataset.page_count || 1
@@ -37,19 +41,11 @@ get '/site/:username/?' do |username|
   erb :'site', locals: {site: site, is_current_site: site == current_site}
 end
 
-get '/site/:username/archives' do
-  @site = Site[username: params[:username]]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted || !@site.ipfs_archiving_enabled
-  @title = "Site archives for #{@site.title}"
-  @archives = @site.archives_dataset.limit(300).order(:updated_at.desc).all
-  erb :'site/archives'
-end
-
 MAX_STAT_POINTS = 30
 get '/site/:username/stats' do
   @default_stat_points = 7
   @site = Site[username: params[:username]]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted
+  not_found if @site.nil? || @site.is_banned || @site.is_deleted || (current_site && @site.is_blocking?(current_site))
 
   @title = "Site stats for #{@site.host}"
 
@@ -90,7 +86,7 @@ get '/site/:username/stats' do
 
   if @site.supporter?
     unless params[:days].to_s == 'sincethebigbang'
-      if params[:days] && params[:days].to_i != 0
+      unless params[:days].not_an_integer?
         stats_dataset = stats_dataset.limit params[:days]
       else
         params[:days] = @default_stat_points
@@ -116,9 +112,7 @@ get '/site/:username/stats' do
   end
 
   if stats.length > MAX_STAT_POINTS
-    puts stats.length
     stats = stats.select.with_index {|a, i| (i % (stats.length / MAX_STAT_POINTS.to_f).round) == 0}
-    puts stats.length
   end
 
   @stats[:stat_days] = stats
@@ -137,16 +131,22 @@ end
 get '/site/:username/follows' do |username|
   @title = "Sites #{username} follows"
   @site = Site[username: username]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted
-  @sites = @site.followings.collect {|f| f.site}
+  not_found if @site.nil? || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
+
+  params[:page] ||= "1"
+
+  @pagination_dataset = @site.followings_dataset.paginate(params[:page].to_i, Site::FOLLOW_PAGINATION_LIMIT)
   erb :'site/follows'
 end
 
 get '/site/:username/followers' do |username|
   @title = "Sites that follow #{username}"
   @site = Site[username: username]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted
-  @sites = @site.follows.collect {|f| f.actioning_site}
+  not_found if @site.nil? || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
+
+  params[:page] ||= "1"
+
+  @pagination_dataset = @site.follows_dataset.paginate(params[:page].to_i, Site::FOLLOW_PAGINATION_LIMIT)
   erb :'site/followers'
 end
 
@@ -154,6 +154,8 @@ post '/site/:username/comment' do |username|
   require_login
 
   site = Site[username: username]
+
+  redirect request.referer if current_site && (site.is_blocking?(current_site) || current_site.is_blocking?(site))
 
   last_comment = site.profile_comments_dataset.order(:created_at.desc).first
 
@@ -183,6 +185,7 @@ post '/site/:site_id/toggle_follow' do |site_id|
   require_login
   content_type :json
   site = Site[id: site_id]
+  return 403 if site.is_blocking?(current_site)
   {result: (current_site.toggle_follow(site) ? 'followed' : 'unfollowed')}.to_json
 end
 
@@ -282,4 +285,103 @@ post '/site/:username/block' do |username|
   else
     redirect request.referer
   end
+end
+
+get '/site/:username/unblock' do |username|
+  require_login
+  site = Site[username: username]
+
+  if site.nil? || current_site.id == site.id
+    redirect request.referer
+  end
+
+  current_site.unblock! site
+  redirect request.referer
+end
+
+get '/site/:username/confirm_phone' do
+  require_login
+  redirect '/' unless current_site.phone_verification_needed?
+  @title = 'Verify your Phone Number'
+  erb :'site/confirm_phone'
+end
+
+def restart_phone_verification
+  current_site.phone_verification_sent_at = nil
+  current_site.phone_verification_sid = nil
+  current_site.save_changes validate: false
+  redirect "/site/#{current_site.username}/confirm_phone"
+end
+
+post '/site/:username/confirm_phone' do
+  require_login
+  redirect '/' unless current_site.phone_verification_needed?
+
+  if params[:phone_intl]
+    phone = Phonelib.parse params[:phone_intl]
+
+    if !phone.valid?
+      flash[:error] = "Invalid phone number, please try again."
+      redirect "/site/#{current_site.username}/confirm_phone"
+    end
+
+    if phone.types.include?(:premium_rate) || phone.types.include?(:shared_cost)
+      flash[:error] = 'Neocities does not support this type of number, please use another number.'
+      redirect "/site/#{current_site.username}/confirm_phone"
+    end
+
+    current_site.phone_verification_sent_at = Time.now
+    current_site.phone_verification_attempts += 1
+
+    if current_site.phone_verification_attempts > Site::PHONE_VERIFICATION_LOCKOUT_ATTEMPTS
+      flash[:error] = 'You have exceeded the number of phone verification attempts allowed.'
+      redirect "/site/#{current_site.username}/confirm_phone"
+    end
+
+    current_site.save_changes validate: false
+
+    verification = $twilio.verify
+                          .v2
+                          .services($config['twilio_service_sid'])
+                          .verifications
+                          .create(to: phone.e164, channel: 'sms')
+
+    current_site.phone_verification_sid = verification.sid
+    current_site.save_changes validate: false
+
+    flash[:success] = 'Validation message sent! Check your phone and enter the code below.'
+  else
+
+    restart_phone_verification if current_site.phone_verification_sent_at < Time.now - Site::PHONE_VERIFICATION_EXPIRATION_TIME
+    minutes_remaining = ((current_site.phone_verification_sent_at - (Time.now - Site::PHONE_VERIFICATION_EXPIRATION_TIME))/60).round
+
+    begin
+      # Check code
+      vc = $twilio.verify
+                  .v2
+                  .services($config['twilio_service_sid'])
+                  .verification_checks
+                  .create(verification_sid: current_site.phone_verification_sid, code: params[:code])
+
+      # puts vc.status (pending if failed, approved if it passed)
+      if vc.status == 'approved'
+        current_site.phone_verified = true
+        current_site.save_changes validate: false
+      else
+        flash[:error] = "Code was not correct, please try again. If the phone number you entered was incorrect, you can re-enter the number after #{minutes_remaining} more minutes have passed."
+      end
+
+    rescue Twilio::REST::RestError => e
+      if e.message =~ /60202/
+        flash[:error] = "You have exhausted your check attempts. Please try again in #{minutes_remaining} minutes."
+      elsif e.message =~ /20404/ # Unable to create record
+        restart_phone_verification
+      else
+        raise e
+      end
+    end
+  end
+
+  # Will redirect to / automagically if phone was verified
+  redirect "/site/#{current_site.username}/confirm_phone"
 end

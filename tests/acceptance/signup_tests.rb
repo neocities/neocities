@@ -2,10 +2,11 @@ require_relative './environment.rb'
 
 describe 'signup' do
   include Capybara::DSL
+  include Capybara::Minitest::Assertions
 
   def fill_in_valid
     @site = Fabricate.attributes_for(:site)
-    page.must_have_content 'Sign up for free'
+    _(page).must_have_content 'Sign up for free'
     fill_in 'username', with: @site[:username]
     fill_in 'password', with: @site[:password]
     fill_in 'email',    with: @site[:email]
@@ -16,7 +17,7 @@ describe 'signup' do
   end
 
   def site_created?
-    page.must_have_content 'Welcome to Neocities'
+    _(page).must_have_content 'Welcome to Neocities'
   end
 
   def visit_signup
@@ -24,9 +25,20 @@ describe 'signup' do
   end
 
   before do
-    Capybara.default_driver = :apparition
+    reset_signup
+  end
+
+  def reset_signup
+    Capybara.default_driver = :selenium_chrome_headless_largewindow
     Capybara.reset_sessions!
     visit_signup
+  
+    # This fixes up flaky tests
+    page.driver.browser.manage.delete_all_cookies # Explicitly delete cookies
+    page.evaluate_script('window.localStorage.clear()') # Clear local storage
+    page.evaluate_script('window.sessionStorage.clear()') # Clear session storage
+    visit_signup # Ensure we revisit after clearing storage
+    _(page).must_have_content 'Sign up for free' # Ensure we're back on signup page
   end
 
   after do
@@ -39,24 +51,23 @@ describe 'signup' do
     fill_in_valid
     click_signup_button
     site_created?
-
     click_link 'Continue'
-    page.must_have_content /almost ready!/
+    _(current_path).must_equal "/site/#{@site[:username]}/confirm_email"
+    _(page).must_have_content /almost ready!/
     fill_in 'token', with: Site[username: @site[:username]].email_confirmation_token
     click_button 'Confirm Email'
-    current_path.must_equal '/tutorial'
-    page.must_have_content /Let's Get Started/
-
+    _(page).must_have_content /Let's Get Started/
+    _(current_path).must_equal '/tutorial'
     index_file_path = File.join Site::SITE_FILES_ROOT, Site.sharding_dir(@site[:username]), @site[:username], 'index.html'
-    File.exist?(index_file_path).must_equal true
+    _(File.exist?(index_file_path)).must_equal true
 
     site = Site[username: @site[:username]]
-    site.site_files.length.must_equal 4
-    site.site_changed.must_equal false
-    site.site_updated_at.must_be_nil
-    site.is_education.must_equal false
+    _(site.site_files.length).must_equal 5
+    _(site.site_changed).must_equal false
+    _(site.site_updated_at).must_be_nil
+    _(site.is_education).must_equal false
 
-    site.ip.must_equal '127.0.0.1'
+    _(site.ip).must_equal '127.0.0.1'
   end
 
   it 'fails if site with same ip has been banned' do
@@ -65,9 +76,9 @@ describe 'signup' do
     fill_in_valid
     click_signup_button
     site = Site[username: @site[:username]]
-    Site[username: @site[:username]].must_be_nil
-    current_path.must_equal '/'
-    page.wont_have_content 'Welcome to Neocities'
+    _(Site[username: @site[:username]]).must_be_nil
+    _(current_path).must_equal '/'
+    _(page).wont_have_content 'Welcome to Neocities'
     @banned_site.update ip: nil
   end
 
@@ -75,9 +86,9 @@ describe 'signup' do
     DB[:blocked_ips].insert(ip: '127.0.0.1', created_at: Time.now)
     fill_in_valid
     click_signup_button
-    Site[username: @site[:username]].must_be_nil
-    current_path.must_equal '/'
-    page.wont_have_content 'Welcome to Neocities'
+    _(Site[username: @site[:username]]).must_be_nil
+    _(current_path).must_equal '/'
+    _(page).wont_have_content 'Welcome to Neocities'
   end
 
   it 'fails to create for existing site' do
@@ -85,41 +96,45 @@ describe 'signup' do
     fill_in_valid
     fill_in 'username', with: @existing_site.username
     click_signup_button
-    page.must_have_content 'already taken'
+    _(page).must_have_content 'already taken'
   end
 
   it 'fails with missing password' do
     fill_in_valid
     fill_in 'password', with: ''
     click_signup_button
-    page.must_have_content 'Password must be at least 5 characters'
+    _(page).must_have_content 'Password must be at least 5 characters'
   end
 
   it 'fails with short password' do
     fill_in_valid
     fill_in 'password', with: 'derp'
     click_signup_button
-    page.must_have_content 'Password must be at least 5 characters'
+    _(page).must_have_content 'Password must be at least 5 characters'
   end
 
   it 'fails with invalid hostname for username' do
     fill_in_valid
     fill_in 'username', with: '|\|0p|E'
     click_signup_button
-    page.must_have_content 'Usernames can only contain'
+    _(page).must_have_content 'Usernames can only contain'
+    reset_signup
+    fill_in_valid
     fill_in 'username', with: 'nope-'
     click_signup_button
-    page.must_have_content 'A valid user/site name is required'
+    _(page).must_have_content 'Usernames can only contain'
+    reset_signup
+    fill_in_valid
     fill_in 'username', with: '-nope'
     click_signup_button
-    page.must_have_content 'A valid user/site name is required'
+    _(page).must_have_content 'Usernames can only contain'
   end
 
   it 'fails with username greater than 32 characters' do
     fill_in_valid
     fill_in 'username', with: SecureRandom.hex+'1'
     click_signup_button
-    page.must_have_content 'cannot exceed 32 characters'
+    _(page).must_have_content 'cannot exceed 32 characters'
   end
 
   it 'fails with existing email' do
@@ -127,13 +142,13 @@ describe 'signup' do
     fill_in_valid
     fill_in 'email', with: email
     click_signup_button
-    site_created?.must_equal true
+    _(site_created?).must_equal true
     Capybara.reset_sessions!
     visit_signup
     fill_in_valid
     fill_in 'email', with: email
     click_signup_button
-    page.must_have_content /email.+exists/
+    _(page).must_have_content /email.+exists/
   end
 
   it 'fails with existing email even if case sensitive' do
@@ -141,71 +156,79 @@ describe 'signup' do
     fill_in_valid
     fill_in 'email', with: email
     click_signup_button
-    site_created?.must_equal true
+    _(site_created?).must_equal true
     Capybara.reset_sessions!
     visit_signup
     fill_in_valid
     fill_in 'email', with: email.upcase
     click_signup_button
-    page.must_have_content /email.+exists/
+    _(page).must_have_content /email.+exists/
   end
 
   it 'succeeds with no tags' do
     fill_in_valid
     fill_in 'new_tags_string', with: ''
     click_signup_button
-    site_created?.must_equal true
+    _(site_created?).must_equal true
   end
 
   it 'succeeds with a single tag' do
     fill_in_valid
     fill_in 'new_tags_string', with: 'derpie'
     click_signup_button
-    site_created?.must_equal true
-    Site.last.tags.first.name.must_equal 'derpie'
+    _(site_created?).must_equal true
+    _(Site.last.tags.first.name).must_equal 'derpie'
   end
 
   it 'succeeds with valid tags' do
     fill_in_valid
     fill_in 'new_tags_string', with: 'derpie, shoujo'
     click_signup_button
-    site_created?.must_equal true
-    Site.last.tags.collect {|t| t.name}.must_equal ['derpie', 'shoujo']
+    _(site_created?).must_equal true
+    _(Site.last.tags.collect {|t| t.name}).must_equal ['derpie', 'shoujo']
+  end
+
+  it 'succeeds with extra space in tags' do
+    fill_in_valid
+    fill_in 'new_tags_string', with: 'blinkies, music, programming, '
+    click_signup_button
+    _(site_created?).must_equal true
+    _(Site.last.tags.collect {|t| t.name}).must_equal ['blinkies', 'music', 'programming']
   end
 
   it 'fails with invalid tag chars' do
     fill_in_valid
     fill_in 'new_tags_string', with: '$POLICE OFFICER$$$$$, derp'
     click_signup_button
-    page.must_have_content /Tag.+can only contain/
+    _(page).must_have_content /Tag.+can only contain/
   end
 
   it 'fails for tag with too many spaces' do
     fill_in_valid
     fill_in 'new_tags_string', with: 'police    officer, hi'
     click_signup_button
-    page.must_have_content /Tag.+cannot have spaces/
+    _(page).must_have_content /Tag.+cannot have spaces/
   end
 
   it 'fails for tag with too many words' do
     fill_in_valid
     fill_in 'new_tags_string', with: 'police officer'
     click_signup_button
-    page.must_have_content /Tag.+cannot be more than #{Tag::NAME_WORDS_MAX} word/
+    _(page).must_have_content /Tag.+cannot be more than #{Tag::NAME_WORDS_MAX} word/
   end
 
   it "fails for tag longer than #{Tag::NAME_LENGTH_MAX} characters" do
     fill_in_valid
     fill_in 'new_tags_string', with: SecureRandom.hex(Tag::NAME_LENGTH_MAX)
     click_signup_button
-    page.must_have_content /cannot be longer than #{Tag::NAME_LENGTH_MAX}/
+    _(page).must_have_content /cannot be longer than #{Tag::NAME_LENGTH_MAX}/
   end
 
   it 'fails for too many tags' do
     fill_in_valid
     fill_in 'new_tags_string', with: 'one, two, three, four, five, six'
     click_signup_button
-    page.must_have_content /Cannot have more than \d tags for your site/
+    _(page).must_have_content /Cannot have more than \d tags for your site/
   end
 
   it 'does not duplicate tags' do
@@ -213,10 +236,10 @@ describe 'signup' do
     fill_in 'new_tags_string', with: 'one, one'
     click_signup_button
 
-    page.must_have_content /Welcome to Neocities/
+    _(page).must_have_content /Welcome to Neocities/
 
     site = Site[username: @site[:username]]
-    site.tags.length.must_equal 1
-    site.tags.first.name.must_equal 'one'
+    _(site.tags.length).must_equal 1
+    _(site.tags.first.name).must_equal 'one'
   end
 end

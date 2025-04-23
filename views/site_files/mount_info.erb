@@ -10,42 +10,35 @@
     <h1>About</h1>
 
     <p>
-      Neocities supports <strong>WebDAV</strong>, which allows you to mount your Neocities share on your computer.
+      Neocities supports <strong>WebDAV</strong>, which allows you to mount your Neocities share on your computer, or use a client on your computer to manage your site.
     </p>
 
-    <% if current_site.nil? %>
+    <% if current_site.nil? || !current_site.supporter? %>
       <p>
-        This feature requires a supporter account.
-      </p>
-    <% elsif !current_site.supporter? %>
-      <p>
-        This feature requires a supporter account. <a href="/supporter">Click here</a> to become a supporter.
+        This feature requires a <a href="/supporter">supporter account</a>.
       </p>
     <% else %>
-      <h2>Instructions per operating system</h2>
-
-      <h3>Windows</h3>
+      <h2>Instructions</h2>
 
       <p>
-        Unfortunately, the WebDAV that comes with Windows file manager has issues with SSL,
-        and the problem has not yet been fixed. We recommend using a client like <a href="https://cyberduck.io">Cyberduck</a> with Windows, which is free and has
-        WebDAV support. You can also try <a href="https://mountainduck.io/">Mountain Duck</a>
-        which will allow you to mount your Neocities site as a hard drive on your computer.
+        Due to the variable quality of other WebDAV clients, we strongly recommend using <a href="https://cyberduck.io">Cyberduck</a> or <a href="https://winscp.net/eng/index.php">WinSCP</a> for a WebDAV client, or <a href="https://mountainduck.io/">Mountain Duck</a> for mounting the site as a hard drive on your computer, and may not be able to provide support for other clients.
       </p>
 
-      <h3>macOS</h3>
-
+      <h4>Cyberduck</h4>
       <p>
-        <a href="https://support.apple.com/en-us/guide/mac-help/connect-to-a-webdav-server-mchlp1546/mac">Use these instructions</a>, and use this URL to connect: <strong>https://neocities.org/webdav</strong>
+        In Cyberduck, click "Open Connection", select "WebDAV (HTTPS), add neocities.org, username, and password. Then click "More Options", and add <code>/webdav</code> for the path.
         <br>
-        Enter login info when requested.
+        <img src="/img/webdav/cyberduck.png" style="width: 30em;">
       </p>
 
+      <h4>WinSCP</h4>
       <p>
-        You can also try out <a href="https://cyberduck.io">Cyberduck</a> or <a href="https://mountainduck.io/">Mountain Duck</a> if you run into any issues.
+        When creating a connetion, choose "WebDAV" for protocol, select "SSL" for encryption, then enter neocities.org for server name, port 443, username and password. Before connecting, click "Advanced", select "Directories" and add <code>/webdav</code> to the Remote directory input.
+        <br><br>
+        <img src="/img/webdav/winscp1.png" style="width: 30em;"><br><br><img src="/img/webdav/winscp2.png" style="width: 30em";>
       </p>
 
-      <h3>Linux (Gnome)</h3>
+      <h3>Linux (GUI)</h3>
 
       <p>
         <ol>
@@ -56,6 +49,9 @@
         </ol>
       </p>
 
+      <h4>Linux (command line)</h4>
+      <p><a href="https://manpages.ubuntu.com/manpages/en/man1/cadaver.1.html">cadaver</a> is an excellent command line client for WebDAV and is available through apt with Ubuntu.
+
       <h4>Linux (mount as filesystem)</h4>
 
       <p>
@@ -65,13 +61,8 @@
       <h2>Accessing multiple sites</h2>
 
       <p>
-        By default you can use your username/password combination to access your parent site via WebDAV (This is <code><%= current_site.parent? ? current_site.username : current_site.parent.username %></code>). In case you want to access any other sites you only need to use the site's subdomain name as the username (with the same password for your account).
+        By default you can use your username/password combination to access your parent site via WebDAV. In case you want to access your child sites with WebDAV, you only need to use the site's subdomain name as the username (with the same password for your parent account).
       </p>
-
-      <p>
-        You can see a list of your sites in <a href="/settings">your settings page</a>.
-      </p>
-
     <% end %>
   </article>
 </div>

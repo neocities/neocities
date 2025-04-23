@@ -14,7 +14,6 @@ end
 
 post '/supporter/update' do
   require_login
-
   plan_type = 'supporter'
 
   if is_special_upgrade
@@ -40,19 +39,29 @@ post '/supporter/update' do
         customer.sources.create source: params[:stripe_token]
       end
 
-      subscription = customer.subscriptions.create plan: plan_type
+      begin
+        subscription = customer.subscriptions.create plan: plan_type
+      rescue Stripe::CardError => e
+        flash[:error] = "Error: #{Rack::Utils.escape_html e.message}"
+        redirect '/supporter'
+      end
 
       site.plan_ended = false
       site.plan_type = plan_type
       site.stripe_subscription_id = subscription.id
       site.save_changes validate: false
     else
-      customer = Stripe::Customer.create(
-        source: params[:stripe_token],
-        description: "#{site.username} - #{site.id}",
-        email: site.email,
-        plan: plan_type
-      )
+      begin
+        customer = Stripe::Customer.create(
+          source: params[:stripe_token],
+          description: "#{site.username} - #{site.id}",
+          email: site.email,
+          plan: plan_type
+        )
+      rescue Stripe::CardError => e
+        flash[:error] = "Error: #{Rack::Utils.escape_html e.message} This is likely caused by incorrect information, or an issue with your credit card. Please try again, or contact your bank."
+        redirect '/supporter'
+      end
 
       site.stripe_customer_id = customer.id
       site.stripe_subscription_id = customer.subscriptions.first.id
@@ -74,7 +83,7 @@ post '/supporter/update' do
 
     site.send_email(
       subject: "[Neocities] You've become a supporter!",
-      body: Tilt.new('./views/templates/email_subscription.erb', pretty: true).render(
+      body: Tilt.new('./views/templates/email/subscription.erb', pretty: true).render(
         self, {
           username:   site.username,
           plan_name:  Site::PLAN_FEATURES[params[:plan_type].to_sym][:name],
@@ -93,6 +102,7 @@ post '/supporter/update' do
 end
 
 get '/supporter/thanks' do
+  @title = 'Supporter Confirmation'
   require_login
   erb :'supporter/thanks'
 end

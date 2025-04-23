@@ -1,0 +1,31 @@
+database: 'postgres://postgres:citestpassword@localhost/ci_test'
+database_pool: 1
+session_secret: 'SSBqdXN0IHdhbnRlZCB0byBzZWUgd2hhdCB5b3UgbG9va2VkIGxpa2UgaW4gYSBkcmVzcywgRGFkZSBNdXJwaHk='
+email_unsubscribe_token: "somethingrandomderrrrp"
+paypal_api_username: derp
+paypal_api_password: ing
+paypal_api_signature: tonz
+logs_path: "/tmp/neocitiestestlogs"
+letsencrypt_key: ./tests/files/letsencrypt.key
+letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
+proxy_ips:
+  - 10.0.0.1
+  - 10.0.0.2
+education_tag_whitelist:
+  - mrteacher
+stop_forum_spam_api_key: testkey
+screenshot_urls:
+  - http://screenshots:derp@screenshotssite.com
+cache_control_ips:
+  - 1.2.3.4
+  - 4.5.6.7
+hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
+hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
+twilio_account_sid: ACEDERPDERP
+twilio_auth_token: derpderpderp
+twilio_service_sid: VADERPDERPDERP
+minfraud_account_id: 696969420
+minfraud_license_key: DERPDERPDERP
+google_custom_search_key: herpderp
+google_custom_search_cx: herpderp
+google_custom_search_query_limit: 69

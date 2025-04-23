@@ -31,6 +31,7 @@ get '/api/list' do
     new_file[:path] = file[:path]
     new_file[:is_directory] = file[:is_directory]
     new_file[:size] = file[:size] unless file[:is_directory]
+    new_file[:created_at] = file[:created_at].rfc2822
     new_file[:updated_at] = file[:updated_at].rfc2822
     new_file[:sha1_hash] = file[:sha1_hash] unless file[:is_directory]
     files << new_file
@@ -41,14 +42,55 @@ get '/api/list' do
   api_success files: files
 end
 
+def extract_files(params, files = [])
+  # Check if the entire input is directly an array of files
+  if params.is_a?(Array)
+    params.each do |item|
+      # Call extract_files on each item if it's an Array or Hash to handle nested structures
+      if item.is_a?(Array) || item.is_a?(Hash)
+        extract_files(item, files)
+      end
+    end
+  elsif params.is_a?(Hash)
+    params.each do |key, value|
+      # If the value is a Hash and contains a :tempfile key, it's considered an uploaded file.
+      if value.is_a?(Hash) && value.has_key?(:tempfile) && !value[:tempfile].nil?
+        files << {filename: value[:name], tempfile: value[:tempfile]}
+      elsif value.is_a?(Array)
+        value.each do |val|
+          if val.is_a?(Hash) && val.has_key?(:tempfile) && !val[:tempfile].nil?
+            # Directly add the file info if it's an uploaded file within an array
+            files << {filename: val[:name], tempfile: val[:tempfile]}
+          elsif val.is_a?(Hash) || val.is_a?(Array)
+            # Recursively search for more files if the element is a Hash or Array
+            extract_files(val, files)
+          end
+        end
+      elsif value.is_a?(Hash)
+        # Recursively search for more files if the value is a Hash
+        extract_files(value, files)
+      end
+    end
+  end
+  files
+end
+
 post '/api/upload' do
   require_api_credentials
+  files = extract_files params
 
-  files = []
-  params.each do |k,v|
-    next unless v.is_a?(Hash) && v[:tempfile]
-    path = k.to_s
-    files << {filename: k || v[:filename], tempfile: v[:tempfile]}
+  if !params[:username].blank?
+    site = Site[username: params[:username]]
+
+    if site.nil? || site.is_deleted
+      api_error 400, 'site_not_found', "could not find site"
+    end
+
+    if site.owned_by?(current_site)
+      @_site = site
+    else
+      api_error 400, 'site_not_allowed', "not allowed to change this site with your current logged in site"
+    end
   end
 
   api_error 400, 'missing_files', 'you must provide files to upload' if files.empty?
@@ -60,16 +102,29 @@ post '/api/upload' do
   end
 
   if current_site.too_many_files?(files.length)
-    api_error 400, 'too_many_files', "cannot exceed the maximum site files limit (#{current_site.plan_feature(:maximum_site_files)}), #{current_site.supporter? ? 'please contact support' : 'please upgrade to a supporter account'}"
+    api_error 400, 'too_many_files', "cannot exceed the maximum site files limit (#{current_site.plan_feature(:maximum_site_files)})"
   end
 
   files.each do |file|
+    file[:filename] = Rack::Utils.unescape file[:filename]
     if !current_site.okay_to_upload?(file)
-      api_error 400, 'invalid_file_type', "#{file[:filename]} is not a valid file type (or contains not allowed content) for this site, files have not been uploaded"
+      api_error 400, 'invalid_file_type', "#{file[:filename]} is not an allowed file type for free sites, supporter required"
     end
 
     if File.directory? file[:filename]
-      api_error 400, 'directory_exists', 'this name is being used by a directory, cannot continue'
+      api_error 400, 'directory_exists', "#{file[:filename]} being used by a directory"
+    end
+
+    if current_site.file_size_too_large? file[:tempfile].size
+      api_error 400, 'file_too_large' "#{file[:filename]} is too large"
+    end
+
+    if SiteFile.path_too_long? file[:filename]
+      api_error 400, 'file_path_too_long', "#{file[:filename]} path is too long"
+    end
+
+    if SiteFile.name_too_long? file[:filename]
+      api_error 400, 'file_name_too_long', "#{file[:filename]} filename is too long (exceeds #{SiteFile::FILE_NAME_CHARACTER_LIMIT} characters)"
     end
   end
 
@@ -167,8 +222,7 @@ def api_info_for(site)
       created_at: site.created_at.rfc2822,
       last_updated: site.site_updated_at ? site.site_updated_at.rfc2822 : nil,
       domain: site.domain,
-      tags: site.tags.collect {|t| t.name},
-      latest_ipfs_hash: site.latest_archive ? site.latest_archive.ipfs_hash : nil
+      tags: site.tags.collect {|t| t.name}
     }
   }
 end
@@ -184,9 +238,10 @@ post '/api/:name' do
 end
 
 def require_api_credentials
+  return true if current_site && csrf_safe?
+
   if !request.env['HTTP_AUTHORIZATION'].nil?
     init_api_credentials
-    api_error(403, 'email_not_validated', 'you need to validate your email address before using the API') if email_not_validated?
   else
     api_error_invalid_auth
   end
@@ -214,7 +269,7 @@ def init_api_credentials
     api_error_invalid_auth
   end
 
-  if site.nil? || site.is_banned || site.is_deleted
+  if site.nil? || site.is_banned || site.is_deleted || !(site.required_validations_met?)
     api_error_invalid_auth
   end
 

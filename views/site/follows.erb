@@ -7,7 +7,7 @@
 </div>
 
 <div class="browse-page">
-  <% if @sites.length == 0 %>
+  <% if @pagination_dataset.length == 0 %>
     <div class="row website-Gallery content int-Gall" style="padding-left: 30px;">
       <h3>No follows yet.</h3>
       <% if current_site == @site %>
@@ -16,7 +16,7 @@
     </div>
   <% else %>
     <ul class="row website-Gallery content int-Gall">
-      <% @sites.each_with_index do |site| %>
+      <% @pagination_dataset.collect {|f| f.site}.each_with_index do |site| %>
         <li>
           <a href="<%= site.uri %>" class="neo-Screen-Shot" title="<%= site.title %>">
             <span class="img-Holder" style="background:url(<%= site.screenshot_url('index.html', '540x405') %>) no-repeat;">
@@ -74,3 +74,5 @@
     </ul>
   <% end %>
 </div>
+
+<%== erb :'_pagination', layout: false %>

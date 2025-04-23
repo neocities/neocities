@@ -19,7 +19,7 @@
   <% end %>
 <% end %>
 
-<div class="modal hide fade" id="addTag" tabindex="-1" role="dialog" aria-labelledby="addTagLabel" aria-hidden="true">
+<div class="modal hide" id="addTag" tabindex="-1" role="dialog" aria-labelledby="addTagLabel" aria-hidden="true">
   <form method="POST" action="/tags/add">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <div class="modal-header">
@@ -39,7 +39,7 @@
   </form>
 </div>
 
-<div class="modal hide fade" id="removeTag" tabindex="-1" role="dialog" aria-labelledby="removeTagLabel" aria-hidden="true">
+<div class="modal hide" id="removeTag" tabindex="-1" role="dialog" aria-labelledby="removeTagLabel" aria-hidden="true">
   <form method="POST" action="/tags/remove">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
     <div class="modal-header">

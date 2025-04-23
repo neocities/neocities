@@ -12,16 +12,16 @@ describe ScreenshotWorker do
         base_host += ":#{uri.port}"
       end
 
-      stub_request(:get, "#{base_host}/?url=#{site.uri}/#{path}&wait_time=#{ScreenshotWorker::PAGE_WAIT_TIME}").
+      stub_request(:get, "#{base_host}/?url=#{site.uri(path)}&wait_time=#{ScreenshotWorker::PAGE_WAIT_TIME}").
         with(basic_auth: [uri.user, uri.password]).
-        to_return(status: 200, headers: {}, body: File.read('tests/files/img/test.jpg'))
+        to_return(status: 200, headers: {}, body: File.read('tests/files/img/screenshot.png'))
 
       ScreenshotWorker.new.perform site.username, path
 
       Site::SCREENSHOT_RESOLUTIONS.each do |r|
-        File.exists?(File.join(Site::SCREENSHOTS_ROOT, Site.sharding_dir(site.username), site.username, "#{path}.#{r}.jpg")).must_equal true
-        site.screenshot_url(path, r).must_equal(
-          File.join(Site::SCREENSHOTS_URL_ROOT, Site.sharding_dir(site.username), site.username, "#{path}.#{r}.jpg")
+        _(File.exists?(File.join(Site::SCREENSHOTS_ROOT, Site.sharding_dir(site.username), site.username, "#{path}.#{r}.webp"))).must_equal true
+        _(site.screenshot_url(path, r)).must_equal(
+          File.join(Site::SCREENSHOTS_URL_ROOT, Site.sharding_dir(site.username), site.username, "#{path}.#{r}.webp")
         )
       end
     end

@@ -1,20 +1,9 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <title><%= title %></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- <link rel="manifest" href="/manifest.json"> -->
-    <meta itemprop="name"           content="Neocities.org">
-    <meta itemprop="description"    content="Free web hosting and tools that allow anyone to create a website. Join our community today!">
-    <meta name="description"        content="Free web hosting and tools that allow anyone to create a website. Join our community today!">
-    <meta name="keywords"           content="free website, html, css, learn to code, free hosting, build a website, create a web page">
-    <meta property="og:title"       content="Neocities">
-    <meta property="og:site_name"   content="Neocities | neocities.org">
-    <meta property="og:type"        content="website">
-    <meta property="og:image"       content="/img/cat-larger.png">
-    <meta property="og:url"         content="https://www.neocities.org">
-    <meta property="og:description" content="Neocities is the new Geocities. Create your own free home page, and do whatever you want with it.">
-    <meta name="referrer"           content="no-referrer-when-downgrade">
+
+    <%== erb :'_meta' %>
 
     <% if meta_robots %>
       <meta name="robots" content="<%= meta_robots %>">
@@ -22,28 +11,29 @@
 
     <link href="/css/neo.css" rel="stylesheet" type="text/css" media="all">
 
-    <link href="/favicon.ico?v=4" rel="shortcut icon" type="image/ico">
-
-    <!-- Mobile Meta -->
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized"  content="320">
-    <meta name="viewport"         content="width=device-width, minimum-scale=1, initial-scale=1">
-
     <% if @dont_browser_cache %>
       <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
       <meta http-equiv="Pragma" content="no-cache">
       <meta http-equiv="Expires" content="0">
     <% end %>
 
-    <!--[if lt IE 9]>
-      <script type="text/javascript" src="/js/html5.min.js"></script>
-    <![endif]-->
-
     <script src="/js/jquery-1.11.0.min.js"></script>
 
-    <script src="/js/highlight.pack.js"></script>
+    <script src="/js/highlight/highlight.min.js"></script>
     <link rel="stylesheet" href="/css/highlight/styles/tomorrow-night.css">
-    <script>hljs.initHighlightingOnLoad()</script>
+    <script>
+      hljs.highlightAll()
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var eventDateElements = document.querySelectorAll('.local-date-title');
+        eventDateElements.forEach(function(element) {
+          var timestamp = element.getAttribute('data-timestamp');
+          var date = dayjs.unix(timestamp);
+          var formattedDate = date.format('MMMM D, YYYY [at] h:mm A');
+          element.title = formattedDate;
+        });
+      });
+    </script>
   </head>
 
   <body class="interior">
@@ -59,7 +49,8 @@
     <script src="/js/nav.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/typeahead.bundle.js"></script>
-
+    <script src="/js/dayjs.min.js"></script>
+    
     <script>
       $("a#like").tooltip({html: true})
       $("a.comment_like").tooltip({html: true})

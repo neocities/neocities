@@ -9,7 +9,11 @@ post '/contact' do
     @errors << 'Please fill out all fields'
   end
 
-  if !recaptcha_valid?
+  if params[:faq_check] == 'no'
+    @errors << 'Please check Frequently Asked Questions before sending a contact message'
+  end
+
+  unless hcaptcha_valid?
     @errors << 'Captcha was not filled out (or was filled out incorrectly)'
   end
 

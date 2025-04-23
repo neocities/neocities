@@ -15,8 +15,9 @@
       } else {
         for(var i=0; i<errors.length;i++) {
           if(errors[i][0] == 'captcha') {
-            var captchaDiv = $('#captcha-input')
+            var captchaDiv = $('#captcha_input')
             captchaDiv.attr('data-original-title', errors[i][1])
+            captchaDiv.attr('data-placement', 'left')
             captchaDiv.tooltip('show')
           } else {
             var ele = $('input[name='+errors[i][0]+']')
@@ -29,7 +30,7 @@
   })
 
   $('input[type=text],input[type=password],input[type=email]').on('change focusout', function(obj) {
-    $.post('/create_validate', {field: obj.target.name, value: obj.target.value, is_education: $('input[name=is_education]')[0].value, csrf_token: '<%= csrf_token %>'}, function(res) {
+    $.post('/create_validate', {field: obj.target.name, value: obj.target.value, is_education: $('input[name=is_education]')[0].value}, function(res) {
       if(res.result == 'ok') {
         return $(obj.target).tooltip('hide')
       }

@@ -53,14 +53,15 @@
   <div class="col intro">
     <h2 class="section-header">Create your own free website.<br>Unlimited creativity, zero ads.</h2>
     <p class="intro-text">
-     Neocities is a social network of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> web sites</a> that are bringing back the lost individual creativity of the web. We offer free static web hosting and tools that allow you to create your own web site. Join us!
+      Neocities is a social network of <a href="/browse"><%= @sites_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse %> web sites</a> that are bringing back the lost individual creativity of the web. We offer free static web hosting and tools that allow you to create your own web site. Join us!
     </p>
     <ul class="intro-List">
       <li class="intro-Tools">
         <span class="intro-Icon"></span>
         <h3 class="delta">Powerful features to help you build</h3>
         <p class="base">
-          We’ve made it easy to build your web site and explore other sites. Neocities features an in-browser HTML editor, a <a href="/cli">command line tool</a>, custom domain support, fast site performance, easy file uploading, RSS feeds, folder support, and so much more.
+          We’ve made it easy to build your web site and explore other sites. Neocities features an in-browser HTML editor, a <a href="/cli">command line tool</a>, custom domain support, fast site performance, easy file uploading, RSS feeds, and so much more.
+        </p>
       </li>
 
       <li class="intro-Social">
@@ -90,61 +91,60 @@
       </div>
     <% else %>
       <form id="createSiteForm" class="signup-Form" onsubmit="return false">
-        <input type="hidden" name="csrf_token" value="<%= csrf_token %>">
         <input type="hidden" name="is_education" value="false">
         <fieldset class="content">
           <h2 class="gamma">Sign up for free</h2>
           <hr />
-          <div class="siteCreateInputs">
-            <label for="create-Input">Username</label>
-            <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" style="position:absolute; top:-2000px; left:-2000px;" />
-            <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" style="position:absolute; top:-2000px; left:-2000px;" />
-            <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
-            <label for="create-Input" id="domain-name">.neocities.org</label>
+          <% if @create_disabled %>
+            <p>Sign up is not currently available, please try again later.</p>
+          <% else %>
+            <div class="siteCreateInputs">
+              <label for="create-Input">Username</label>
+              <input type="text" name="prevent_autofill_username" id="prevent_autofill_username" value="" style="position:absolute; top:-2000px; left:-2000px;" />
+              <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" value="" style="position:absolute; top:-2000px; left:-2000px;" />
+              <input type="text" class="input-Area" id="create-Input" name="username" placeholder="my-site-name" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <label for="create-Input" id="domain-name">.neocities.org</label>
 
-            <label for="tags-input">Tags (your interests, site topics)</label>
-            <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
+              <label for="tags-input">Tags (your interests, site topics)</label>
+              <input type="text" class="input-Area" id="tags-input" name="new_tags_string" placeholder="art, videogames, food, music, programming, gardening, cats" data-placement="left" data-trigger="manual" autocapitalize="off" autocorrect="off" autocomplete="off" />
 
-            <div class="col col-50" style="padding-left:0;">
-              <label for="password-input">
-                Password
-              </label>
-              <input type="password" class="input-Area" id="password-input"
-                      name="password" placeholder="password"
-                      data-placement="left" data-trigger="manual"
-                      autocapitalize="off" autocorrect="off" autocomplete="off" />
-            </div>
+              <div class="col col-50" style="padding-left:0;">
+                <label for="password-input">
+                  Password
+                </label>
+                <input type="password" class="input-Area" id="password-input"
+                        name="password" placeholder="password"
+                        data-placement="left" data-trigger="manual"
+                        autocapitalize="off" autocorrect="off" autocomplete="off" />
+              </div>
 
-            <div class="col col-50">
-              <label for="email-input">
-                Email
-              </label>
-              <input type="email" class="input-Area"
-                     id="email-input" name="email"
-                     placeholder="me@example.com" data-placement="left"
-                     data-trigger="manual" autocapitalize="off"
-                     autocorrect="off" autocomplete="off" />
-            </div>
+              <div class="col col-50">
+                <label for="email-input">
+                  Email
+                </label>
+                <input type="email" class="input-Area"
+                      id="email-input" name="email"
+                      placeholder="me@example.com" data-placement="left"
+                      data-trigger="manual" autocapitalize="off"
+                      autocorrect="off" autocomplete="off" />
+              </div>
 
-            <div class="col col-50" style="padding-left:0;">
-              <label>
-                Confirm you are human
-              </label>
-              <div id="captcha-input" class="g-recaptcha"
-                   data-sitekey="<%= $config['recaptcha_public_key'] %>"
-                   data-theme="dark" data-placement="left" data-trigger="manual">
+              <div class="col col-50" style="padding-left:0">
+                <label>
+                  Confirm you are human
+                </label>
+                <%== hcaptcha_input %>
+              </div>
+
+              <div class="col col-50">
+                <div style="margin-top: 15px">
+                  <input type="submit" value="Create My Site" class="btn-Action float-Right" />
+                </div>
               </div>
             </div>
-
-            <div class="col col-50">
-              <div style="margin-top: 15px">
-                <input type="submit" value="Create My Site" class="btn-Action float-Right" />
-              </div>
-            </div>
-          </div>
+          <% end %>
         </fieldset>
       </form>
-
     <% end %>
 
   </div> <!-- end .col-50 -->
@@ -163,10 +163,10 @@
 <div class="nav prev"></div>
 -->
 <ul class="website-Gallery hp-Gallery">
-  <% Site.featured.each do |site| %>
+  <% @featured_sites.each do |site| %>
     <li>
-      <a href="<%= site.uri %>" title="<%= site.title %>" target="_blank">
-        <img src="<%= site.screenshot_url 'index.html', '210x158' %>" class="neo-SS" alt="<%= site.title %>" />
+      <a href="<%= site[:uri] %>" title="<%= site[:title] %>" target="_blank">
+        <img src="<%= site[:screenshot_url] %>" class="neo-SS" alt="<%= site[:title] %>" />
       </a>
     </li>
   <% end %>
@@ -174,7 +174,7 @@
 <!--
 <div class="nav next"></div>
 -->
-<a href="/browse" class="btn-Action float-Right">Browse all sites</a>
+<a href="/browse" class="btn-Action float-Right">Browse more sites</a>
 </div>
 
 <div class="section previews">
@@ -193,7 +193,7 @@
   <div class="col col-50"><div class="screenshot" style="background-image:url(/img/front-browse-screenshot.jpg);"></div></div>
   <div class="col col-50 text">
     <h3><i class="fa fa-globe"></i> Welcome back, web surfing</h3>
-    <p>All Neocities sites are viewable in our <a href="/browse">website gallery</a>. And it's easy to browse sites with our optional surf bar.</p>
+    <p>All Neocities sites are viewable and easily surfable in our <a href="/browse">website gallery</a>.</p>
     <p>Using tags (our version of Web Rings) you can easily discover new sites related to your interests.</p>
   </div>
 </div>
@@ -219,22 +219,22 @@
   <div class="row">
     <div class="col col-50">
       <h3>
-        <i class="fa fa-eye-slash"></i>Zero advertising
+        <i class="fa fa-eye-slash"></i>Zero Advertising, Zero AI Data Selling
       </h3>
       <p>
-        <strong>Neocities will never sell your personal data or put advertising on your site.</strong> Instead, we are funded directly by people just like you with <a href="/supporter">supporter accounts</a> and <a href="/donate">donations</a>.
+        <strong>Neocities will never sell your data for AI training or put advertising on your site.</strong> Instead, we are funded directly by people just like you with <a href="/supporter">supporter accounts</a> and <a href="/donate">donations</a>.
       </p>
     </div>
 
     <div class="col col-50">
-      <h3><i class="fa fa-tachometer"></i>Blazing Fast Performance</h3>
-      <p>Unlike many other web hosts, we don't skimp on infrastructure. Neocities operates our own caching CDN in 11 datacenters all over the world to quickly serve your site. We also force 100% strong SSL on all sites, and have full support for HTTP/2. Because of our commitment to quality, we routinely out-perform the pricey cloud services on reliability, speed and uptime. Whether it’s your personal home page or a busy professional site, <strong>your site loads fast</strong>.</p>
+      <h3><i class="fa fa-tachometer"></i>Fast Site Loading</h3>
+      <p>Neocities operates our own caching anycast CDN in over a dozen datacenters all over the world to quickly serve your site to visitors with strong SSL and support for HTTP/2. Our strict focus on static web hosting allows us to routinely out-perform the pricey cloud services on reliability, speed and uptime.</p>
     </div>
   </div>
 
   <div class="row">
     <div class="col col-50">
-      <h3><i class="fa fa-wrench"></i>Developer tools</h3>
+      <h3><i class="fa fa-wrench"></i>Developer Tools</h3>
       <p>Our fast static hosting comes with a great in-browser HTML editor, easy file uploading, a <a href="/cli">command line tool</a>, RSS feeds for every site, <a href="/api">APIs</a> for building developer applications, and much more!
     </div>
 
@@ -261,18 +261,11 @@
   </div>
 
   <div class="col col-100">
-    <div class="row press">
-      <a href="http://www.wired.com/2013/07/neocities/" class="logo wired"></a>
-      <a href="http://www.fastcodesign.com/3037028/why-the-internet-is-time-traveling-back-to-1994" class="logo fastco"></a>
-      <a href="http://motherboard.vice.com/blog/neocities-is-recreating-the-garish-web-10-creativity-of-geocities" class="logo vice"></a>
-      <a href="http://arstechnica.com/tech-policy/2014/05/web-host-gives-fcc-a-28-8kbps-slow-lane-in-net-neutrality-protest/" class="logo ars"></a>
-      <!--<a href="/press" class="more">See all press »</a>-->
-    </div>
     <div class="row quote">
         <h3>
-          "Designed as a 21st century reincarnation of GeoCities, Neocities lets you make your own site for free. <strong>And it just might spark a renaissance of creativity online.</strong>"
+          Rather than a constantly rushing river of information, Neocities sites are like homes where users fix them up, spend time on them, and invite others to visit.
           <br />
-          <cite>— Matthew Guay, <a href="http://web.appstorm.net/reviews/web-dev/neocities-the-free-place-to-code-your-own-site-from-scratch" target="_blank">AppStorm</a>. <a href="/press">View All Press »</a></cite>
+          <cite>— Rosy Hearts, <a href="https://www.polygon.com/23024357/neocities-social-media-alternative" target="_blank">Polygon</a>. <a href="/press">View All Press »</a></cite>
         </h3>
     </div>
   </div>
@@ -284,17 +277,6 @@
   <h2>What are you waiting for? <a href="#new">Start building your website now!</a></h2>
 </section>
 
-<!--
-<section class="section thankyou">
-  <div class="row">
-    <p>Sponsored by</p>
-    <h2>Your Company Name Here</h2>
-    <p>Interested in sponsoring Neocities? <a href="https://neocities.org/contact">Let's get in touch.</a></p>
-  </div>
-</section>
-</main>
--->
-
 <footer class="footer-Base" role="contentinfo">
   <div class="footer-Intro">
     <div class="footer-Content">
@@ -304,9 +286,9 @@
             <span class="footer-icon"></span>
             <h2 class="delta">Support Us</h2>
             <p class="tiny">
-              Neocities is 100% powered by <a href="/supporter">supporters</a> and <a href="/donate">contributions</a> from amazing people just like you.
+              Neocities doesn't have investors. Since 2013, we have been 100% powered by <a href="/supporter">supporters</a> and <a href="/donate">donations</a> from people just like you.
             </p>
-            <a href="/donate" title="Donate to Neocities" class="action-Link">Contribute Today</a>
+            <a href="/donate" title="Donate to Neocities" class="action-Link">Donate</a>
           </div>
         </div>
         <div class="col col-33">
@@ -323,13 +305,7 @@
         <div class="col col-33">
           <div class="f-Col f-Col-3 clearfix">
             <span class="footer-icon"></span>
-            <h2 class="delta">From Our Blog</h2>
-            <!--
-            <p class="tiny">
-              <a href="#">Neocities now has SSL Sites</a><br>
-              The latest news on Neocities can be found on our blog.
-            </p>
-          -->
+            <h2 class="delta">News</h2>
             <p class="tiny">
               <%== @blog_feed_html %>
             </p>

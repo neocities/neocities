@@ -1,5 +1,3 @@
-<script src='https://www.google.com/recaptcha/api.js'></script>
-
 <div class="header-Outro">
   <div class="row content single-Col">
   <h1>Contact Us</h1>
@@ -15,15 +13,74 @@
     </div>
   <% end %>
 
-  <h2>Contact</h2>
-
   <p>
-    Please note that we can only respond to english inquiries.
+    Please note that we can only respond to messages in english and klingon. Thank you!
   </p>
 
-  <p>
-    Frequently asked questions:
-  </p>
+  <h2>Frequently Asked Questions</h2>
+
+  <h3>Email</h3>
+
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" href="#cemailresetnotfound">
+        I didn't receive my password reset email.
+      </a>
+    </div>
+    <div id="cemailresetnotfound" class="accordion-body collapse">
+      <div class="accordion-inner">
+        <p>
+          Did you use a different email address to create the site? Also, check the spam folder of your email.
+        </p>
+        <p>
+          This is also a great opportunity to talk about password managers. A password manager keeps a database of randomized strong passwords for all of your sites for you, so you only need to remember
+          one password which then controls all of the other ones. This reduces the chances of forgetting your password and having to reset it. Popular options include <a href="https://bitwarden.com/">BitWarden</a> and <a href="https://1password.com/">1Password</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" href="#ctwo">
+        I lost my email address, can you reset the password?
+      </a>
+    </div>
+    <div id="ctwo" class="accordion-body collapse">
+      <div class="accordion-inner">
+        <p>
+          For security reasons, we cannot reset your password if you don't have control of your email address, because there is no way to know if you're the legitimate owner or an attacker. You will have to make a new site (don’t worry, it’s free!). If you didn’t get an email from the password reset form, check your spam folder.
+        </p>
+        <p>
+          This is also a great opportunity to talk about password managers. A password manager keeps a database of randomized strong passwords for all of your sites for you, so you only need to remember
+          one password which then controls all of the other ones. This reduces the chances of forgetting your password and having to reset it. Popular options include <a href="https://bitwarden.com/">BitWarden</a> and <a href="https://1password.com/">1Password</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <h3>HTML Editing</h3>
+
+  <div class="accordion">
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#ccsp">
+          "Content-Security-Policy: The page's settings blocked the loading of a resource"
+        </a>
+      </div>
+      <div id="ccsp" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            To prevent phishing attacks, Neocities does not allow sending data to external servers after page load with newer free plans (older sites have legacy support for it). Content can be loaded on page load via HTML, but JavaScript is not allowed to send arbitary requests to external servers after page load. If you would like to enable this functionality, you will need to upgrade to <a href="/supporter">supporter</a>.
+          </p>
+
+          <p>
+            If you are having trouble with content not loading, the solution is to include that content as part of your site on Neocities by including the files you are trying to load directly with your site hosted on Neocities. This is almost always the correct way to do it anyways, because it makes your site faster and more reliable, and future proofs your site against the content being removed from the external server (which if the history of the 90s web is any indication, is very likely to happen).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="accordion">
     <div class="accordion-group">
@@ -40,6 +97,23 @@
         </div>
       </div>
     </div>
+
+  <div class="accordion">
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#editingissues">
+          I'm having issues using the editor, it is behaving strangly or redirecting instead of saving.
+        </a>
+      </div>
+      <div id="editingissues" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            This can sometimes be caused by ad blockers or other browser extensions. Try disabling them for Neocities and try again (you won't need them here anyways since we don't do any advertising).
+          </p>
+        </div>
+      </div>
+    </div>
+
 
     <div class="accordion-group">
       <div class="accordion-heading">
@@ -77,29 +151,14 @@
 
     <div class="accordion-group">
       <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#ctwo">
-          I didn't enter an email for my site, can you reset the password?
-        </a>
-      </div>
-      <div id="ctwo" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            For security reasons, we cannot reset your password if you did not enter an email for your site. You will have to make a new site (don’t worry, it’s free!). If you didn’t get an email from the password reset form, you didn’t enter an email (or it’s in your spam folder). Again you will have to make a new site; we cannot help you for security reasons.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" href="#cthree">
-          Do you support FTP?
+          Do you support FTP for editing?
         </a>
       </div>
       <div id="cthree" class="accordion-body collapse">
         <div class="accordion-inner">
           <p>
-            We don't support FTP, sorry! Aside from security problems with FTP, it isn't used by many people anymore. We need to stay focused on what we work on, so we only support ways to upload content that most people use these days.
+            We don't support FTP, apologies! Aside from security problems with FTP, it isn't used by many people anymore. We need to stay focused on what we work on, so we only support ways to upload content that most people use these days.
           </p>
 
           <p>
@@ -130,14 +189,14 @@
 
     <div class="accordion-group">
       <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#cfive">
-          I want to take down someone's Neocities site.
+        <a class="accordion-toggle" data-toggle="collapse" href="#cfiles">
+          Do you support WASM / MP3 / MP4/ ZIP for free sites?
         </a>
       </div>
-      <div id="cfive" class="accordion-body collapse">
+      <div id="cfiles" class="accordion-body collapse">
         <div class="accordion-inner">
           <p>
-            We will not remove a site unless it is violating our <a href="/terms">Terms of Service</a> or breaking the law. Chances are, it isn't. And the First Amendment of the United States Constitution defends our right to do this. If you'd like a more in-depth explanation of our policies, see our <a href="/legal">legal guide for Neocities</a>.
+            We don't currently support certain types of files, particularly multimedia files and WebASM with free sites because of persistent issues with abuse (piracy, bitcoin mining, excessive bandwidth usage). In general, these files are not conducive to Neocities' mission of bringing back personal home pages vs being a piracy and webapp hosting platform. You can embed audio and videos through other providers like YouTube, which is preferred because they will automatically provide the streaming media in formats that work better for your specific users' devices (such as mobile phones).
           </p>
         </div>
       </div>
@@ -145,52 +204,21 @@
 
     <div class="accordion-group">
       <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#csix">
-          I want to sue you.
+        <a class="accordion-toggle" data-toggle="collapse" href="#cfilesizes">
+          Can I upload very large files to Neocities?
         </a>
       </div>
-      <div id="csix" class="accordion-body collapse">
+      <div id="cfilesizes" class="accordion-body collapse">
         <div class="accordion-inner">
           <p>
-            Cool.
+            We currently have a file size limit for very large files on Neocities, including supporter sites. This is mainly because our CDN (content delivery network) is optimized for lots of small files (the kind that web sites use), and also because large files tend to be easily abused (think piracy). Files used to make web pages will not hit these limits, but things like very large zipballs are more likely to. These also tend to be the file types that lead to abuse and would make Neocities unsustainable to operate in the long run (piracy, malware, etc), another reason we're hesitant to add support for them.
           </p>
           <p>
-            Please consult our <a href="/legal">legal guide for Neocities</a> for more information.
+            Even if we supported this, it wouldn't work very well because HTTP servers are not good at this anyways and there are almost always better alternatives for very large file distribution. For example if you need to upload a video, YouTube or Vimeo are better because they automatically format in the different file types that different browsers support, or if you are releasing a large game, it's probably better to release it through a game platform like Steam. Using BitTorrent is also a really effective way to have your site visitors help distribute your content quickly (provided it's legal!)
           </p>
         </div>
       </div>
     </div>
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#cseven">
-          I want to file a DMCA Takedown Notice with Neocities.
-        </a>
-      </div>
-      <div id="cseven" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            See our <a href="/dmca">DMCA</a> page.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="accordion-group">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" href="#ceight">
-          "Site creation has been banned due to ToS violation/spam."
-        </a>
-      </div>
-      <div id="ceight" class="accordion-body collapse">
-        <div class="accordion-inner">
-          <p>
-            If you are a new user, this message means that your IP address has been flagged by our IP database for posting spam. We share this list with other sites, so another site may have added your IP address. We recommend running an anti-virus program on your computer—it is possible that something on your machine is posting spam on other sites (or ours).
-          </p>
-        </div>
-      </div>
-    </div>
-
 
     <div class="accordion-group">
       <div class="accordion-heading">
@@ -201,20 +229,52 @@
       <div id="cnine" class="accordion-body collapse">
         <div class="accordion-inner">
           <p>
-            No. And we don't intend to.
+            Neocities does not support .htaccess files. This is an Apache HTTP server specific file type, and we don't use Apache for our backend. In addition, we generally don't add features to Neocities that make the functionality of sites depend on custom backend functionality (the sole exception being that we make sure "page not found" goes to "not_found.html" so you can create a custom 404.)
           </p>
 
           <p>
-            The .htaccess file is an Apache specific thing, and we don't use Apache for our backend. In addition, we generally don't add features to Neocities that make the functionality of sites depend on custom backend functionality (the sole exception being that we make sure "page not found" goes to "not_found.html" so you can create a custom 404.)
-          </p>
-
-          <p>
-            Finally, we sometimes see people trying to use .htaccess for authentication (with usernames and passwords). Neocities is only for sites and information you want to make public, and it is dangerous to use it for private sites! We make backups of your site and attackers can easily find any information you're trying to hide using our archivers. Our goal is to make sure your sites stay up for a long time and persist, not to enforce secrecy zones on your site. If you want to make a controlled access site, Neocities is not for you.
+            Finally, we sometimes see people trying to use .htaccess for authentication (with usernames and passwords). Neocities is only for sites and information you want to make public, and it is dangerous to use it for private sites! We make backups of your site and attackers can easily find any information you're trying to hide using our archivers. Our goal is to make sure your sites stay up for a long time and persist, not to enforce secrecy zones on your site. If you want to make a controlled access site, Neocities is probably not what you're looking for.
           </p>
         </div>
       </div>
     </div>
 
+
+    <h3>Site</h3>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#ceight">
+          "Site creation is not currently available from your location, please try again later."
+        </a>
+      </div>
+      <div id="ceight" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            If you are a new user, this message means that your IP address, browser, or some other characteristic of your session has been flagged by our monitoring for potential spam/abuse. This is a collaborative list we maintain with other sites, so another site may have added your IP address. If you are using a VPN, try disabling that. You could also consider running an anti-virus scan on your computer, as it may be infected with malware that is causing this.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#hitsviews">
+          What is the difference between hits and views in the site stats?
+        </a>
+      </div>
+      <div id="hitsviews" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            <strong>Hits</strong> are number of requests for any file on a site, <strong>views</strong> count for one unique IP address per hour. Views provide better insight into how many individuals (or search engines, etc) are looking at your site. There is no such thing as perfectly accurate stats, so this doesn't necessarily reflect how many actual people are viewing your site, but it does provide a rough way to see how popular your site is becoming. If you put a hit counter on your site, it may give a different number than what Neocities records and that is expected.
+          </p>
+
+          <p>We don't provide a way to look at individual visitor records on Neocities, the main reason being that the information isn't very useful anymore, since most sources block HTTP Referer headers, making it difficult to determine origin.</p>
+
+          <p>As of Feb 21, 2024, we have deployed code that will detect and not count views from known bots and crawlers, which should make the views count much more accurate for showing organic traffic. You may observe a drop in views before and after this time.</p>
+        </div>
+      </div>
+    </div>
 
     <div class="accordion-group">
       <div class="accordion-heading">
@@ -235,7 +295,128 @@
       </div>
     </div>
 
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#csitebackup">
+          Site backup downloading is not working
+        </a>
+      </div>
+      <div id="csitebackup" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            Site downloading issues are almost always related to the internet connectivity issues. If your download is continuing to get cancelled or interrupted, check your WiFi router, or try plugging in directly to the router to see if that resolves it. You could also try downloading from a local library or coffee shop and see if you have the same issue. If you're having trouble with the download link, you can also try <a href="https://melonking.net/free/software/neocities-downloader">SAve MY nEOCiTy!</a>, which is a third party downloading tool for Neocities sites.
+          </p>
+        </div>
+      </div>
+    </div>
 
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#csitename">
+          A site name is taken but is not being actively used or is not found, can I take it over?
+        </a>
+      </div>
+      <div id="csitename" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            Neocities does not have a policy of transferring inactive sites to different owners and can't make manual exceptions at the moment. This is a tricky subject because we don't have a way to be sure if a user has actually abandoned their site, even if it's just the default "new site" template. We may have a different policy in the future regarding this.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#ctags">
+          Why can't I add more tags to my site profile?
+        </a>
+      </div>
+      <div id="ctags" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            There is a limit of <%= Site::MAXIMUM_TAGS.to_s %> per site, so try removing a tag and then you will be able to add another.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cinvoices">
+          Where can I find invoices for supporter membership?
+        </a>
+      </div>
+      <div id="cinvoices" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            Invoices are available for download as PDF files <a href="/settings/invoices">here</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#celeven">
+          How can I load Neocities sites on old web browsers?
+        </a>
+      </div>
+      <div id="celeven" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            We recommend using an "old web browser" proxy server like <a href="https://github.com/atauenis/webone">WebOne</a> or <a href="https://github.com/tenox7/wrp">WRP</a>. These translate between modern browser
+            standards and old browser standards, allowing for us to provide the speed and security of the new web without compromising the ability to use old browsers.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Legal</h3>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cseven">
+          I want to file a DMCA Takedown Notice with Neocities.
+        </a>
+      </div>
+      <div id="cseven" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            See our <a href="/dmca">DMCA</a> page.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#cfive">
+          I want to take down someone's Neocities site.
+        </a>
+      </div>
+      <div id="cfive" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            We will not remove a site unless it is violating our <a href="/terms">Terms of Service</a> or breaking the law. Chances are, it isn't. And the laws in place defend our right to do this. If you'd like a more in-depth explanation of our policies, see our <a href="/legal">legal guide for Neocities</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" href="#csix">
+          I don't like something you're hosting and I'm going to sue you!
+        </a>
+      </div>
+      <div id="csix" class="accordion-body collapse">
+        <div class="accordion-inner">
+          <p>
+            Cool! Please consult our <a href="/legal">legal guide for Neocities</a> for more information on why this is a really bad idea.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <h2>Contact Form</h2>
@@ -249,14 +430,20 @@
       <label for="email_subject">Subject</label>
       <input type="text" id="email_subject" name="subject" placeholder="Subject" class="col-50" value="<%= params[:subject] %>">
 
-      <label for="your_comments">Comments</label>
+      <label for="your_comments">Message</label>
+      <small>Being simple but descriptive is helpful. For example, provide the site name, domain, or file path that is causing the issues in question.</small>
       <textarea name="body" id="your_comments" class="col-75" rows="10"><%= params[:body] %></textarea>
 
-      <label>Fill out the captcha so we know you’re not a robot:</label>
-      <div id="captcha-input" class="g-recaptcha"
-           data-sitekey="<%= $config['recaptcha_public_key'] %>"
-           data-theme="light" data-placement="left" data-trigger="manual">
+      <label class="text-Label" for="faq_check">We may not be able to respond to questions that are already answered.<br>Did you check the Frequently Asked Questions to see if it answered your question?</label>
+      <div class="select-Container" style="width: 100px; float: none">
+        <select name="faq_check" id="faq_check" class="input-Select">
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
       </div>
+
+      <label>Fill out the captcha so we know you’re not a robot:</label>
+      <%== hcaptcha_input %>
 
       <input class="btn-Action" type="submit" value="Send">
     </fieldset>

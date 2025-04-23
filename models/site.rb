@@ -1,5 +1,5 @@
+# frozen_string_literal: true
 require 'tilt'
-require 'rss'
 require 'nokogiri'
 require 'pathname'
 require 'zlib'
@@ -8,46 +8,55 @@ class Site < Sequel::Model
   include Sequel::ParanoidDelete
 
   VALID_MIME_TYPES = %w{
-    text/plain
-    text/html
-    text/css
-    application/javascript
-    image/png
-    image/jpeg
-    image/gif
-    image/svg
-    image/svg+xml
-    application/vnd.ms-fontobject
-    application/x-font-ttf
-    application/vnd.ms-opentype
-    application/octet-stream
-    text/csv
-    text/tsv
-    text/cache-manifest
-    image/x-icon
-    application/pdf
-    application/pgp-keys
-    application/pgp
-    text/xml
-    application/xml
-    audio/midi
-    text/cache-manifest
-    application/rss+xml
-    application/x-elc
-    image/webp
-    image/x-xcf
+    application/atom+xml
     application/epub
     application/epub+zip
+    application/json
+    application/octet-stream
+    application/opensearchdescription+xml
+    application/pdf
+    application/pgp
+    application/pgp-keys
+    application/pgp-signature
+    application/rss+xml
+    application/vnd.ms-fontobject
+    application/vnd.ms-opentype
+    application/xml
+    audio/midi
+    font/otf
+    font/sfnt
+    font/ttf
+    font/woff
+    font/woff2
+    image/apng
+    image/avif
+    image/gif
+    image/jpeg
+    image/png
+    image/svg
+    image/svg+xml
+    image/vnd.microsoft.icon
+    image/webp
+    image/x-icon
+    image/x-xcf
     message/rfc822
-    application/font-sfnt
+    model/gltf-binary
+    text/cache-manifest
+    text/css
+    text/csv
+    text/html
+    text/javascript
+    text/plain
+    text/tsv
+    text/xml
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp xcf epub gltf bin webmanifest knowl atom opml rdf
+    html htm txt text css js jpg jpeg png apng gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle pls yaml yml toml osdx mjs cjs ts glb py
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
-    html htm txt js css scss md manifest less webmanifest xml json opml rdf
+    html htm txt js css scss md manifest less webmanifest xml json opml rdf svg gpg pgp resolveHandle pls yaml yml toml osdx mjs cjs ts py rss
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
@@ -72,14 +81,20 @@ class Site < Sequel::Model
   INDEX_HTML_REGEX       = /\/?index.html$/
   ROOT_INDEX_HTML_REGEX  = /^\/?index.html$/
   MAX_COMMENT_SIZE       = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
+  MAX_FOLLOWS            = 2000
+
+  BROWSE_MINIMUM_VIEWS   = 100
+  BROWSE_MINIMUM_FOLLOWER_VIEWS = 10_000
+  BROWSE_FOLLOWER_UPDATED_AT_CUTOFF = 9.months
+  BROWSE_FOLLOWER_MINIMUM_FOLLOWS = 0
+
+  FOLLOW_PAGINATION_LIMIT = 100
 
   SCREENSHOT_DELAY_SECONDS = 30
   SCREENSHOT_RESOLUTIONS   = ['540x405', '210x158', '100x100', '50x50']
   THUMBNAIL_RESOLUTIONS    = ['210x158']
 
-  MAX_FILE_SIZE = 10**8 # 100 MB
-  MAX_SITE_DOWNLOAD_SIZE = 200_000_000 # 200MB
-  MAX_SITE_FILES_DOWNLOAD = 500
+  MAX_FILE_SIZE = 10**8 # 100 MB, change dashboard.js dropzone file size limit if you change this
 
   CLAMAV_THREAT_MATCHES = [
     /^VBS/,
@@ -99,7 +114,7 @@ class Site < Sequel::Model
   COMMENTING_ALLOWED_UPDATED_COUNT = 2
 
   SUGGESTIONS_LIMIT = 30
-  SUGGESTIONS_VIEWS_MIN = 500
+  SUGGESTIONS_VIEWS_MIN = 10000
   CHILD_SITES_MAX = 30
 
   IP_CREATE_LIMIT = 1000
@@ -136,10 +151,12 @@ class Site < Sequel::Model
   EMAIL_VALIDATION_CUTOFF_DATE = Time.parse('May 16, 2016')
   DISPOSABLE_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_blacklist.conf')
   BANNED_EMAIL_BLACKLIST_PATH = File.join(DIR_ROOT, 'files', 'banned_email_blacklist.conf')
+  DISPOSABLE_EMAIL_WHITELIST_PATH = File.join(DIR_ROOT, 'files', 'disposable_email_whitelist.conf')
 
-  BLOCK_JERK_THRESHOLD = 4
+  BLOCK_JERK_PERCENTAGE = 30
+  BLOCK_JERK_THRESHOLD = 25
   MAXIMUM_TAGS = 5
-  MAX_USERNAME_LENGTH = 32.freeze
+  MAX_USERNAME_LENGTH = 32
 
   LEGACY_SUPPORTER_PRICES = {
     plan_one: 1,
@@ -159,8 +176,15 @@ class Site < Sequel::Model
   end
 
   MAXIMUM_EMAIL_CONFIRMATIONS = 20
-  MAX_COMMENTS_PER_DAY = 5
-  SANDBOX_TIME = 2.days
+  MAX_COMMENTS_PER_DAY = 10
+  SANDBOX_TIME = 14.days
+  BLACK_BOX_WAIT_TIME = 10.seconds
+  MAX_DISPLAY_FOLLOWS = 56*3
+
+  PHONE_VERIFICATION_EXPIRATION_TIME = 10.minutes
+  PHONE_VERIFICATION_LOCKOUT_ATTEMPTS = 3
+
+  PASSWORD_RESET_EXPIRATION_TIME = 24.hours
 
   many_to_many :tags
 
@@ -182,8 +206,6 @@ class Site < Sequel::Model
   one_to_many :reports
   one_to_many :reportings, key: :reporting_site_id, class: :Report
 
-  one_to_many :stats
-
   one_to_many :events
 
   one_to_many :site_changes
@@ -197,8 +219,6 @@ class Site < Sequel::Model
   one_to_many :stat_referrers
   one_to_many :stat_locations
   one_to_many :stat_paths
-
-  one_to_many :archives
 
   def self.supporter_ids
     parent_supporters = DB[%{SELECT id FROM sites WHERE plan_type IS NOT NULL AND plan_type != 'free'}].all.collect {|s| s[:id]}
@@ -308,6 +328,7 @@ class Site < Sequel::Model
     end
 
     def get_with_identifier(username_or_email)
+      return nil if username_or_email.nil? || username_or_email.empty?
       if username_or_email =~ /@/
         site = get_with_email username_or_email
       else
@@ -380,9 +401,11 @@ class Site < Sequel::Model
   end
 
   def toggle_follow(site)
+    return false if followings_dataset.count > MAX_FOLLOWS
     if is_following? site
       DB.transaction do
         follow = followings_dataset.filter(site_id: site.id).first
+        return false if follow.nil?
         site.events_dataset.filter(follow_id: follow.id).delete
         follow.delete
         # FIXME This is a being abused somehow. A weekly script now computes this.
@@ -391,10 +414,13 @@ class Site < Sequel::Model
       false
     else
       DB.transaction do
-        follow = add_following site_id: site.id
-        # FIXME see above.
-        # DB['update sites set follow_count=follow_count+1 where id=?', site.id].first if scorable_follow?(site)
-        Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
+        begin
+          follow = add_following site_id: site.id
+          # FIXME see above.
+          # DB['update sites set follow_count=follow_count+1 where id=?', site.id].first if scorable_follow?(site)
+          Event.create site_id: site.id, actioning_site_id: self.id, follow_id: follow.id
+        rescue Sequel::UniqueConstraintViolation
+        end
       end
 
       true
@@ -467,6 +493,11 @@ class Site < Sequel::Model
     FileUtils.cp template_file_path('neocities.png'), tmpfile.path
     files << {filename: 'neocities.png', tempfile: tmpfile}
 
+    tmpfile = Tempfile.new 'robots.txt'
+    tmpfile.close
+    FileUtils.cp template_file_path('robots.txt'), tmpfile.path
+    files << {filename: 'robots.txt', tempfile: tmpfile}
+
     store_files files, new_install: true
   end
 
@@ -495,6 +526,7 @@ class Site < Sequel::Model
 
   def after_destroy
     update_redis_proxy_record
+    purge_all_cache
   end
 
   def undelete!
@@ -507,12 +539,9 @@ class Site < Sequel::Model
       save_changes
     }
 
-    delete_all_cache
+    update_redis_proxy_record
+    purge_all_cache
     true
-  end
-
-  def is_banned?
-    is_banned
   end
 
   def unban!
@@ -533,8 +562,7 @@ class Site < Sequel::Model
     self.banned_at = Time.now
     save validate: false
     destroy
-
-    delete_all_cache
+    account_sites_dataset.exclude(id: self.id).all.each {|s| s.ban!}
   end
 
   def ban_all_sites_on_account!
@@ -561,8 +589,8 @@ class Site < Sequel::Model
     follows_dataset.all
   end
 
-  def profile_follows_actioning_ids
-    follows_dataset.select(:actioning_site_id).exclude(:sites__site_changed => false).all
+  def profile_follows_actioning_ids(limit=nil)
+    follows_dataset.select(:actioning_site_id).exclude(:sites__site_changed => false).limit(limit).all
   end
 
 =begin
@@ -584,15 +612,15 @@ class Site < Sequel::Model
 
   def commenting_allowed?
     return false if owner.commenting_banned == true
-    return true if owner.commenting_allowed
+    return false if owner.commenting_too_much?
 
     if owner.supporter?
       set commenting_allowed: true
       save_changes validate: false
       return true
-    else
-      return false if owner.commenting_too_much?
     end
+
+    return true if owner.commenting_allowed
 
     if (account_sites_events_dataset.exclude(site_change_id: nil).count >= COMMENTING_ALLOWED_UPDATED_COUNT || (created_at < Date.new(2014, 12, 25).to_time && changed_count >= COMMENTING_ALLOWED_UPDATED_COUNT )) &&
        created_at < Time.now - 604800
@@ -613,17 +641,45 @@ class Site < Sequel::Model
   end
 
   def is_a_jerk?
-    blocks_dataset.count >= BLOCK_JERK_THRESHOLD
+    blocks_count = blocks_dataset.count
+    blockings_count = blockings_dataset.count
+    follows_count = follows_dataset.count
+    return true if blocks_count > BLOCK_JERK_THRESHOLD * 2
+    return true if blockings_count > BLOCK_JERK_THRESHOLD * 4
+    blocks_count >= BLOCK_JERK_THRESHOLD && ((blocks_count / follows_count.to_f) * 100) > BLOCK_JERK_PERCENTAGE && blocks_count > 60
   end
 
   def blocking_site_ids
     @blocking_site_ids ||= blockings_dataset.select(:site_id).all.collect {|s| s.site_id}
   end
 
+  def block_site_ids
+    @block_site_ids ||= blocks_dataset.select(:actioning_site_id).all.collect {|s| s.actioning_site_id}
+  end
+
+  def unfollow_blocked_sites!
+    blockings.each do |blocking|
+      follows.each do |follow|
+        follow.destroy if follow.actioning_site_id == blocking.site_id
+      end
+
+      followings.each do |following|
+        following.destroy if following.site_id == blocking.site_id
+      end
+    end
+  end
+
   def block!(site)
     block = blockings_dataset.filter(site_id: site.id).first
     return true if block
     add_blocking site: site
+    unfollow_blocked_sites!
+  end
+
+  def unblock!(site)
+    block = blockings_dataset.filter(site_id: site.id).first
+    return true if block.nil?
+    block.destroy
   end
 
   def is_blocking?(site)
@@ -632,7 +688,11 @@ class Site < Sequel::Model
   end
 
   def self.valid_username?(username)
-    !username.empty? && username.match(/^[a-zA-Z0-9_\-]+$/i)
+    !username.empty? && username.match(/^[a-z0-9]([a-z0-9_\-]{0,}[a-z0-9])?$/) != nil
+  end
+
+  def self.disposable_email_domains_whitelist
+    File.readlines(DISPOSABLE_EMAIL_WHITELIST_PATH).collect {|d| d.strip}
   end
 
   def self.disposable_email_domains
@@ -644,6 +704,9 @@ class Site < Sequel::Model
   end
 
   def self.disposable_mx_record?(email)
+    return false unless File.exist?(DISPOSABLE_EMAIL_BLACKLIST_PATH)
+    return false unless File.exist?(DISPOSABLE_EMAIL_WHITELIST_PATH)
+
     email_domain = email.match(/@(.+)/).captures.first
 
     begin
@@ -654,15 +717,21 @@ class Site < Sequel::Model
       return false
     end
 
+    return false if disposable_email_domains_whitelist.include? email_root_domain
     return true if disposable_email_domains.include? email_root_domain
     false
   end
 
   def self.disposable_email?(email)
     return false unless File.exist?(DISPOSABLE_EMAIL_BLACKLIST_PATH)
+    return false unless File.exist?(DISPOSABLE_EMAIL_WHITELIST_PATH)
     return false if email.blank?
 
     email.strip!
+
+    disposable_email_domains_whitelist.each do |whitelisted_disposable_email_domain|
+      return false if email.match /@#{whitelisted_disposable_email_domain}$/i
+    end
 
     disposable_email_domains.each do |disposable_email_domain|
       return true if email.match /@#{disposable_email_domain}$/i
@@ -690,11 +759,12 @@ class Site < Sequel::Model
   end
 
   def self.valid_file_mime_type_and_ext?(mime_type, extname)
-    unless (Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/ || mime_type =~ /inode\/x-empty/) &&
-           Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
-      return false
+    valid_mime_type = Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/ || mime_type =~ /inode\/x-empty/
+    valid_extension = Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
+    unless valid_extension
+      return true if mime_type =~ /text/ || mime_type == 'application/json'
     end
-    true
+    valid_mime_type && valid_extension
   end
 
   def self.valid_file_type?(uploaded_file)
@@ -708,8 +778,8 @@ class Site < Sequel::Model
 
     return false unless valid_file_mime_type_and_ext?(mime_type, extname)
 
-    # clamdscan doesn't work on travis for testing
-    return true if ENV['TRAVIS'] == 'true'
+    # clamdscan doesn't work on continuous integration for testing
+    return true if ENV['CI'] == 'true'
 
     File.chmod 0666, uploaded_file[:tempfile].path
     line = Terrapin::CommandLine.new(
@@ -738,91 +808,31 @@ class Site < Sequel::Model
   def purge_cache(path)
     relative_path = path.gsub base_files_path, ''
 
-    # We gotta flush the dirname too if it's an index file.
-    if relative_path != '' && relative_path.match(/\/$|index\.html?$/i)
-      PurgeCacheWorker.perform_async username, relative_path
+    if relative_path[0] != '/'
+      relative_path = '/' + relative_path
+    end
 
+    # We gotta flush the dirname too if it's an index file.
+    if relative_path != '' && relative_path.match(/\/$|\/index\.html?$/i)
       purge_file_path = Pathname(relative_path).dirname.to_s
       purge_file_path = '' if purge_file_path == '.'
       purge_file_path += '/' if purge_file_path != '/'
 
-      PurgeCacheWorker.perform_async username, '/?surf=1' if purge_file_path == '/'
       PurgeCacheWorker.perform_async username, purge_file_path
     else
-      PurgeCacheWorker.perform_async username, relative_path
+      html = relative_path.match(/(.*)\.html?$/)
+      if html
+        PurgeCacheWorker.perform_async username, html.captures.first
+      else
+        PurgeCacheWorker.perform_async username, relative_path
+      end
     end
   end
 
-  def delete_all_cache
+  def purge_all_cache
     site_files.each do |site_file|
-      delete_cache site_file.path
+      purge_cache site_file.path
     end
-  end
-
-  def delete_cache(path)
-    purge_cache path
-  end
-
-  Rye::Cmd.add_command :ipfs
-
-  def add_to_ipfs
-    # Not ideal. An SoA version is in progress.
-
-    if archives_dataset.count > Archive::MAXIMUM_ARCHIVES_PER_SITE
-      archives_dataset.order(:updated_at).first.destroy
-    end
-
-    if $config['ipfs_ssh_host'] && $config['ipfs_ssh_user']
-      rbox = Rye::Box.new $config['ipfs_ssh_host'], user: $config['ipfs_ssh_user']
-      begin
-        cidv0    = rbox.ipfs(:add, :r, :Q, "sites/#{sharding_dir}/#{self.username.gsub(/\/|\.\./, '')}").first
-        cidv1b32 = rbox.ipfs(:cid, :base32, cidv0).first
-      ensure
-        rbox.disconnect
-      end
-    else
-      line = Terrapin::CommandLine.new('ipfs', 'add -r -Q :path')
-      response = line.run(path: files_path).strip
-      line = Terrapin::CommandLine.new('ipfs', 'cid base32 :hash')
-      cidv1b32 = line.run(hash: response).strip
-    end
-
-    cidv1b32
-  end
-
-  def purge_old_archives
-    archives_dataset.order(:updated_at).offset(Archive::MAXIMUM_ARCHIVES_PER_SITE).all.each do |archive|
-      archive.destroy
-    end
-  end
-
-  def archive!
-    ipfs_hash = add_to_ipfs
-
-    archive = archives_dataset.where(ipfs_hash: ipfs_hash).first
-    if archive
-      archive.updated_at = Time.now
-      archive.save_changes
-    else
-      begin
-        add_archive ipfs_hash: ipfs_hash, updated_at: Time.now
-      rescue Sequel::UniqueConstraintViolation
-        # Record already exists, update timestamp
-        archives_dataset.where(ipfs_hash: ipfs_hash).first.update updated_at: Time.now
-      end
-    end
-
-    add_redis_proxy_dnslink
-  end
-
-  def add_redis_proxy_dnslink
-    if host =~ /(.+)\.neocities\.org/ && latest_archive
-      $redis_proxy.hset "dns-#{host}", 'TXT', "dnslink=/ipfs/#{latest_archive.ipfs_hash}"
-    end
-  end
-
-  def latest_archive
-    @latest_archive ||= archives_dataset.order(:updated_at.desc).first
   end
 
   def is_directory?(path)
@@ -833,7 +843,11 @@ class Site < Sequel::Model
     path = scrubbed_path path
     relative_path = files_path path
 
-    if Dir.exists?(relative_path) || File.exist?(relative_path)
+    if SiteFile.path_too_long?(relative_path)
+      return 'Directory path is too long.'
+    end
+
+    if Dir.exist?(relative_path) || File.exist?(relative_path)
       return 'Directory (or file) already exists.'
     end
 
@@ -866,33 +880,6 @@ class Site < Sequel::Model
     true
   end
 
-  def files_zip
-    zip_name = "neocities-#{username}"
-
-    tmpfile = Tempfile.new 'neocities-site-zip'
-    tmpfile.close
-
-    begin
-      Zip::Archive.open(tmpfile.path, Zip::CREATE) do |ar|
-        ar.add_dir(zip_name)
-
-        Dir.glob("#{base_files_path}/**/*").each do |path|
-          relative_path = path.gsub(base_files_path+'/', '')
-          if File.directory?(path)
-            ar.add_dir(zip_name+'/'+relative_path)
-          else
-            ar.add_file(zip_name+'/'+relative_path, path) # add_file(<entry name>, <source path>)
-          end
-        end
-      end
-    rescue => e
-      tmpfile.unlink
-      raise e
-    end
-
-    tmpfile.path
-  end
-
   def move_files_from(oldusername)
     FileUtils.mkdir_p self.class.sharding_base_path(username)
     FileUtils.mkdir_p self.class.sharding_screenshots_path(username)
@@ -909,7 +896,6 @@ class Site < Sequel::Model
     tmpfile.write render_template('index.erb')
     tmpfile.close
     store_files [{filename: path, tempfile: tmpfile}]
-    purge_cache path
     tmpfile.unlink
   end
 
@@ -934,7 +920,7 @@ class Site < Sequel::Model
   end
 
   def add_tag_name(name)
-    add_tag Tag[name: name] || Tag.create(name: name)
+    add_tag Tag.create_unless_exists(name)
   end
 
   def before_create
@@ -958,7 +944,7 @@ class Site < Sequel::Model
       raise ArgumentError, "argument missing: #{a}" if args[a].nil?
     end
 
-    if email && can_email?(args[:col])
+    if owner.email && can_email?(args[:col])
       EmailWorker.perform_async({
         from: FROM_EMAIL,
         to: owner.email,
@@ -972,11 +958,6 @@ class Site < Sequel::Model
     parent_site_id.nil?
   end
 
-#  def after_destroy
-#    FileUtils.rm_rf files_path
-#    super
-#  end
-
   def ssl_installed?
     !domain.blank? && !ssl_key.blank? && !ssl_cert.blank?
   end
@@ -986,35 +967,50 @@ class Site < Sequel::Model
   end
 
   def update_redis_proxy_record
-    user_record = {}
-    domain_record = {}
+    u_key = "u-#{username}"
+
+    if supporter?
+      $redis_proxy.hset u_key, 'is_supporter', '1'
+    else
+      $redis_proxy.hdel u_key, 'is_supporter'
+    end
+
+    if sandboxed?
+      $redis_proxy.hset u_key, 'is_sandboxed', '1'
+    else
+      $redis_proxy.hdel u_key, 'is_sandboxed'
+    end
 
     if values[:domain]
-      domain_record[:username] = username
+      d_root_key = "d-#{values[:domain]}"
+      d_www_key  = "d-www.#{values[:domain]}"
+
+      $redis_proxy.hset u_key, 'domain', values[:domain]
+      $redis_proxy.hset d_root_key, 'username', username
+      $redis_proxy.hset d_www_key, 'username', username
 
       if ssl_installed?
-        domain_record[:ssl_cert] = ssl_cert
-        domain_record[:ssl_key]  = ssl_key
+        $redis_proxy.hset d_root_key, 'ssl_cert', ssl_cert
+        $redis_proxy.hset d_root_key, 'ssl_key',  ssl_key
+        $redis_proxy.hset d_www_key,  'ssl_cert', ssl_cert
+        $redis_proxy.hset d_www_key,  'ssl_key',  ssl_key
       end
-    end
 
-    user_record[:is_sandboxed] = '1' if sandboxed?
-    user_record[:is_supporter] = '1' if supporter?
-
-    unless user_record.empty?
-      user_record[:domain] = values[:domain]
-      $redis_proxy.mapped_hmset "u-#{username}", user_record
-    end
-
-    unless domain_record.empty?
-      $redis_proxy.mapped_hmset "d-#{values[:domain]}", domain_record
-      $redis_proxy.mapped_hmset "d-www.#{values[:domain]}", domain_record
+      if is_deleted
+        $redis_proxy.del d_root_key
+        $redis_proxy.del d_www_key
+      end
+    else
+      $redis_proxy.hdel u_key, 'domain'
     end
 
     $redis_proxy.del "u-#{@old_username}" if @old_username
     $redis_proxy.del "d-#{@old_domain}" if @old_domain
     $redis_proxy.del "d-www.#{@old_domain}" if @old_domain
-    $redis_proxy.del "u-#{username}" if is_deleted
+
+    if is_deleted
+      $redis_proxy.del u_key
+    end
 
     true
   end
@@ -1043,7 +1039,7 @@ class Site < Sequel::Model
     super
 
     if !self.class.valid_username?(values[:username])
-      errors.add :username, 'Usernames can only contain letters, numbers, and hyphens.'
+      errors.add :username, 'Usernames can only contain letters, numbers, and hyphens, and cannot start or end with a hyphen.'
     end
 
     if !values[:username].blank?
@@ -1093,7 +1089,7 @@ class Site < Sequel::Model
       errors.add :tipping_paypal, 'A valid PayPal tipping email address is required.'
     end
 
-    if !values[:tipping_bitcoin].blank? && !BitcoinValidator.valid_address?(values[:tipping_bitcoin])
+    if !values[:tipping_bitcoin].blank? && !AdequateCryptoAddress.valid?(values[:tipping_bitcoin], 'BTC')
       errors.add :tipping_bitcoin, 'Bitcoin tipping address is not valid.'
     end
 
@@ -1126,7 +1122,7 @@ class Site < Sequel::Model
     end
 
     if @new_tags_string
-      new_tags = @new_tags_string.split ','
+      new_tags = @new_tags_string.strip.split ','
       new_tags.compact!
       @new_filtered_tags = []
 
@@ -1148,7 +1144,7 @@ class Site < Sequel::Model
 
       new_tags.each do |tag|
         tag.strip!
-        if tag.match(/[^a-zA-Z0-9 ]/)
+        if tag.match(Tag::INVALID_TAG_REGEX)
           errors.add :new_tags_string, "Tag \"#{tag}\" can only contain letters (A-Z) and numbers (0-9)."
           break
         end
@@ -1256,10 +1252,12 @@ class Site < Sequel::Model
   end
 
   def file_list(path='')
-    list = Dir.glob(File.join(files_path(path), '*')).collect do |file_path|
+    list = Dir.glob(File.join(files_path(path), '*'), File::FNM_DOTMATCH).reject { |entry| File.basename(entry) == '.' || File.basename(entry) == '..' }.collect do |file_path|
       extname = File.extname file_path
+      path = file_path.gsub(base_files_path+'/', '')
       file = {
-        path: file_path.gsub(base_files_path+'/', ''),
+        path: path,
+        uri: uri(path),
         name: File.basename(file_path),
         ext: extname.gsub('.', ''),
         is_directory: File.directory?(file_path),
@@ -1270,12 +1268,13 @@ class Site < Sequel::Model
 
       if site_file
         file[:size] = site_file.size unless file[:is_directory]
-        file[:updated_at] = site_file.updated_at
+        file[:created_at] = site_file.created_at
+        file[:updated_at] = site_file.updated_at ? site_file.updated_at : site_file.created_at
       end
 
       file[:is_html] = !(extname.match(HTML_REGEX)).nil?
       file[:is_image] = !(file[:ext].match IMAGE_REGEX).nil?
-      file[:is_editable] = !(file[:ext].match EDITABLE_FILE_EXT).nil?
+      file[:is_editable] = !(file[:ext].match EDITABLE_FILE_EXT).nil? || file[:ext].empty?
 
       file
     end
@@ -1325,10 +1324,6 @@ class Site < Sequel::Model
     ((total_space_used.to_f / maximum_space) * 100).round(1)
   end
 
-  def too_big_to_download?
-    space_used > MAX_SITE_DOWNLOAD_SIZE || site_files_dataset.count > MAX_SITE_FILES_DOWNLOAD
-  end
-
   # Note: Change Stat#prune! and the nginx map compiler if you change this business logic.
   def supporter?
     owner.plan_type != 'free'
@@ -1360,6 +1355,25 @@ class Site < Sequel::Model
     if stripe_paying_supporter?
       customer = Stripe::Customer.retrieve stripe_customer_id
       subscription = customer.subscriptions.retrieve stripe_subscription_id
+
+      if is_banned
+        latest_invoice = Stripe::Invoice.retrieve subscription.latest_invoice
+
+        payment_intent_id = latest_invoice.payment_intent
+        if payment_intent_id
+          payment_intent = Stripe::PaymentIntent.retrieve(payment_intent_id)
+
+          if payment_intent.charges.data.any?
+            charge_id = payment_intent.charges.data.first.id
+            begin
+              Stripe::Refund.create({ charge: charge_id })
+            rescue Stripe::InvalidRequestError => e
+              raise e unless e.message =~ /has already been refunded/
+            end
+          end
+        end
+      end
+
       subscription.delete
 
       self.plan_type = nil
@@ -1405,20 +1419,33 @@ class Site < Sequel::Model
     super val
   end
 
-  def latest_events(current_page=1, limit=10)
+  def latest_events(current_page=1, current_site=nil, limit=Event::PAGINATION_LENGTH)
     site_id = self.id
-    Event.news_feed_default_dataset.where{Sequel.|({site_id: site_id}, {actioning_site_id: site_id})}.
-    order(:created_at.desc).
-    paginate(current_page, limit)
+    ds = Event.news_feed_default_dataset.where{Sequel.|({site_id: site_id}, {actioning_site_id: site_id})}
+
+    if current_site
+      ds = ds.where(
+        Sequel.|(
+          {events__actioning_site_id: nil},
+          Sequel.~(events__actioning_site_id: current_site.block_site_ids)
+        )
+      )
+    end
+
+    ds.paginate(current_page.to_i, limit.to_i)
   end
 
-  def news_feed(current_page=1, limit=10)
+  def news_feed(current_page=1, limit=Event::PAGINATION_LENGTH)
     following_ids = self.followings_dataset.select(:site_id).all.collect {|f| f.site_id}
     search_ids = following_ids+[self.id]
 
-    Event.news_feed_default_dataset.where{Sequel.|({site_id: search_ids}, {actioning_site_id: search_ids})}.
-    order(:created_at.desc).
-    paginate(current_page, limit)
+    Event.news_feed_default_dataset.
+    where{Sequel.|({events__site_id: search_ids, events__actioning_site_id: nil}, {events__actioning_site_id: search_ids})}.
+    paginate(current_page.to_i, limit.to_i)
+  end
+
+  def newest_follows
+    follows_dataset.where(:follows__created_at => (1.month.ago..Time.now)).order(:follows__created_at.desc).all
   end
 
   def host
@@ -1430,13 +1457,24 @@ class Site < Sequel::Model
     'https'
   end
 
-  def uri
-    "#{default_schema}://#{host}"
+  def self.escape_path(val)
+    Rack::Utils.escape_path(val).gsub('?', '%3F')
   end
 
-  def file_uri(path)
-    path = '/' + path unless path[0] == '/'
-    uri + (path =~ ROOT_INDEX_HTML_REGEX ? '/' : path)
+  def uri(path=nil)
+    uri = "#{default_schema}://#{host}"
+
+    return uri unless path
+
+    path = '' if path == '/' || path =~ ROOT_INDEX_HTML_REGEX
+    path = path.sub(%r{^/}, '').sub(%r{/index\.html?$}, '/').sub(/\.html?$/, '')
+
+    unless path.empty?
+      escaped_path = self.class.escape_path path
+      uri += "/#{escaped_path}"
+    end
+
+    uri
   end
 
   def title
@@ -1470,42 +1508,143 @@ class Site < Sequel::Model
   end
 
   def self.compute_scores
-    select(:id, :username, :created_at, :updated_at, :views, :featured_at, :changed_count, :api_calls).exclude(is_banned: true).exclude(is_crashing: true).exclude(is_nsfw: true).exclude(updated_at: nil).where(site_changed: true).all.each do |s|
-      s.score = s.compute_score
-      s.save_changes validate: false
+    sites = select(:id, :username, :created_at, :updated_at, :views, :featured_at, :changed_count, :api_calls, :follow_count, :score)
+            .exclude(is_deleted: true)
+            .exclude(is_crashing: true)
+            .exclude(updated_at: nil)
+            .where(site_changed: true)
+            #.all
+            #.where { changed_count > 25 }
+            #.where { created_at < 1.week.ago }
+            #.where { follow_count > 4 }
+            #.where { views > 10_000 }
+            .all
+
+    site_ids = sites.map(&:id)
+
+    likes_counts = DB[:events]
+                   .join(:likes, event_id: :id)
+                   .where(site_id: site_ids)
+                   .group_and_count(:site_id)
+                   .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    profile_comments_counts = DB[:events]
+                              .exclude(profile_comment_id: nil)
+                              .exclude(is_deleted: true)
+                              .where(site_id: site_ids)
+                              .group_and_count(:site_id)
+                              .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    comment_counts = DB[:comments]
+                     .where(actioning_site_id: site_ids)
+                     .exclude(is_deleted: true)
+                     .group_and_count(:actioning_site_id)
+                     .map { |r| [r[:actioning_site_id], r[:count]] }.to_h
+
+    blocks_counts = DB[:blocks]
+                    .where(site_id: site_ids)
+                    .group_and_count(:site_id)
+                    .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    follow_counts = DB[:follows]
+                    .join(:sites, id: :actioning_site_id  )
+                    .where(site_id: site_ids)
+                    .exclude(Sequel[:sites][:is_deleted] => true)
+                    .exclude(Sequel[:sites][:profile_enabled] => false)
+                    .group_and_count(:site_id)
+                    .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    followings_counts = DB[:follows]
+                    .join(:sites, id: :site_id)
+                    .where(actioning_site_id: site_ids)
+                    .exclude(Sequel[:sites][:is_deleted] => true)
+                    .exclude(Sequel[:sites][:profile_enabled] => false)
+                    .group_and_count(:actioning_site_id)
+                    .map { |r| [r[:actioning_site_id], r[:count]] }.to_h
+
+    site_files_counts = DB[:site_files]
+                        .where(site_id: site_ids)
+                        .group_and_count(:site_id)
+                        .map { |r| [r[:site_id], r[:count]] }.to_h
+
+    updates = []
+
+    max_points = 100
+
+    follow_count_weight     = 30
+    views_weight            = 20
+    feature_bonus_weight    = 20
+    likes_weight            = 20
+    profile_comments_weight = 10
+
+    follow_count_factor = 0.1
+    views_factor = 0.0001
+    profile_comments_factor = 0.01
+    likes_factor = 0.01
+
+    sites.each do |site|
+      points = 0
+
+      #$debug = true if site.username == 'username'
+
+      points += [(site.follow_count || 0) * follow_count_factor, follow_count_weight].min
+      puts "follows #{points}" if $debug
+      points += [(site.views * views_factor).to_i, views_weight].min
+      puts "views #{points}" if $debug
+      points += feature_bonus_weight if !site.featured_at.nil?
+      puts "featured #{points}" if $debug
+
+      likes_count = likes_counts[site.id] || 0
+      points += [likes_count * likes_factor, likes_weight].min
+      puts "likes #{points}" if $debug
+
+      profile_comments_count = profile_comments_counts[site.id] || 0
+      points += [profile_comments_count * profile_comments_factor, profile_comments_weight].min
+      puts "profile_comments #{points}" if $debug
+
+      blocks_count = blocks_counts[site.id] || 0
+      follow_count = follow_counts[site.id] || 0
+      followings_count = followings_counts[site.id] || 0
+      site_files_count = site_files_counts[site.id] || 0
+
+      if (site.api_calls && site.api_calls > 500_000) || follow_count == 0 && blocks_count > 5 || ((blocks_count / follow_count.to_f) > 0.06)
+        points *= 0.1
+      end
+
+      puts "api_call, blocks #{points}" if $debug
+
+      if followings_count < 5 || site_files_count < 10
+        points *= 0.5
+      end
+
+      comment_count = comment_counts[site.id] || 0
+      points *= 0.5 if comment_count < 20
+      puts "comment_count #{points}" if $debug
+
+      time_score_gravity = 0.3
+      time_factor = ((Time.now - site.updated_at) / 1.days)
+
+      points = (points / (time_factor**time_score_gravity)) if time_factor > 0
+      puts "time #{points}" if $debug
+
+      points = [points, max_points].min
+      puts "max_points #{points}" if $debug
+
+      score = [0, points].max
+
+      exit if $debug
+
+      if score != site.score
+        updates << { id: site.id, score: score }
+      end
+    end
+
+    DB.synchronize do |conn|
+      updates.each do |update|
+        conn.async_exec_params("UPDATE sites SET score = $1 WHERE id = $2", [update[:score], update[:id]])
+      end
     end
   end
-
-  SCORE_GRAVITY = 1.8
-
-  def compute_score
-    points = 0
-    points += (follow_count || 0) * 30
-    points += profile_comments_dataset.count * 1
-    points += views / 1000
-    points += 20 if !featured_at.nil?
-
-    # penalties
-    points = 0 if changed_count < 2
-    points = 0 if api_calls && api_calls > 1000
-
-    (points / ((Time.now - updated_at) / 7.days)**SCORE_GRAVITY).round(4)
-  end
-
-=begin
-  def compute_score
-    score = 0
-    score += (Time.now - created_at) / 1.day
-    score -= ((Time.now - updated_at) / 1.day) * 2
-    score += 500 if (updated_at > 1.week.ago)
-    score -= 1000 if
-    score -= 1000 if follow_count == 0
-    score += follow_count * 100
-    score += profile_comments_dataset.count * 5
-    score += profile_commentings_dataset.count
-    score.to_i
-  end
-=end
 
   def self.browse_dataset
     dataset.select(:id,:username,:hits,:views,:created_at,:plan_type,:parent_site_id,:domain,:score,:title).
@@ -1513,22 +1652,22 @@ class Site < Sequel::Model
   end
 
   def suggestions(limit=SUGGESTIONS_LIMIT, offset=0)
-    suggestions_dataset = Site.exclude(id: id).exclude(is_deleted: true).exclude(is_nsfw: true).exclude(profile_enabled: false).order(:views.desc, :updated_at.desc)
+    suggestions_dataset = Site.exclude(id: id).exclude(is_deleted: true).exclude(is_nsfw: true).exclude(profile_enabled: false).exclude(site_changed: false).order(:score.desc, :views.desc, :updated_at.desc)
     suggestions = suggestions_dataset.where(tags: tags).limit(limit, offset).all
 
     return suggestions if suggestions.length == limit
 
     ds = self.class.browse_dataset
     ds = ds.select_all :sites
-    ds = ds.order :follow_count.desc, :updated_at.desc
+    ds = ds.order :score.desc, :updated_at.desc
     ds = ds.where Sequel.lit("views >= #{SUGGESTIONS_VIEWS_MIN}")
     ds = ds.limit limit - suggestions.length
 
-    suggestions += ds.all
+    suggestions += ds.all.shuffle
   end
 
   def screenshot_path(path, resolution)
-    File.join base_screenshots_path, "#{path}.#{resolution}.jpg"
+    File.join base_screenshots_path, "#{path}.#{resolution}.webp"
   end
 
   def base_screenshots_path(name=username)
@@ -1542,14 +1681,18 @@ class Site < Sequel::Model
   end
 
   def screenshot_exists?(path, resolution)
-    File.exist? File.join(base_screenshots_path, "#{path}.#{resolution}.jpg")
+    File.exist? File.join(base_screenshots_path, "#{path}.#{resolution}.webp")
+  end
+
+  def sharing_screenshot_url
+    'https://neocities.org'+base_screenshots_url+'/index.html.jpg'
   end
 
   def screenshot_url(path, resolution)
     path[0] = '' if path[0] == '/'
     out = ''
     out = 'https://neocities.org' if ENV['RACK_ENV'] == 'development'
-    out+"#{base_screenshots_url}/#{path}.#{resolution}.jpg"
+    out+"#{base_screenshots_url}/#{self.class.escape_path path}.#{resolution}.webp"
   end
 
   def base_thumbnails_path(name=username)
@@ -1558,8 +1701,7 @@ class Site < Sequel::Model
   end
 
   def thumbnail_path(path, resolution)
-    ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    File.join base_thumbnails_path, "#{path}.#{resolution}.#{ext}"
+    File.join base_thumbnails_path, "#{path}.#{resolution}.webp"
   end
 
   def thumbnail_exists?(path, resolution)
@@ -1572,27 +1714,36 @@ class Site < Sequel::Model
 
   def thumbnail_url(path, resolution)
     path[0] = '' if path[0] == '/'
-    ext = File.extname(path).gsub('.', '').match(LOSSY_IMAGE_REGEX) ? 'jpg' : 'png'
-    "#{THUMBNAILS_URL_ROOT}/#{sharding_dir}/#{values[:username]}/#{path}.#{resolution}.#{ext}"
+    "#{THUMBNAILS_URL_ROOT}/#{sharding_dir}/#{values[:username]}/#{path}.#{resolution}.webp"
   end
 
   def to_rss
-    RSS::Maker.make("atom") do |maker|
-      maker.channel.title   = title
-      maker.channel.updated = updated_at
-      maker.channel.author  = username
-      maker.channel.id      = "#{username}.neocities.org"
+    site_change_events = events_dataset.exclude(is_deleted: true).exclude(site_change_id: nil).order(:created_at.desc).limit(10).all
 
-      latest_events.each do |event|
-        if event.site_change_id
-          maker.items.new_item do |item|
-            item.link = "https://#{host}"
-            item.title = "#{title} has been updated"
-            item.updated = event.site_change.created_at
+    Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
+      xml.rss('version' => '2.0') {
+        xml.channel {
+          xml.title title
+          xml.link uri
+          xml.description "Site feed for #{title}"
+          xml.image {
+            xml.url sharing_screenshot_url
+            xml.title title
+            xml.link uri
+          }
+
+          site_change_events.each do |event|
+            event_link = "https://neocities.org/site/#{username}?event_id=#{event.id.to_s}"
+            xml.item {
+              xml.title "#{title} has been updated."
+              xml.link event_link
+              xml.pubDate event.created_at.rfc822
+              xml.guid event_link
+            }
           end
-        end
-      end
-    end
+        }
+      }
+    end.to_xml
   end
 
   def empty_index?
@@ -1654,7 +1805,6 @@ class Site < Sequel::Model
 
     files.each do |file|
       existing_size = 0
-
       site_file = site_files_dataset.where(path: scrubbed_path(file[:filename])).first
 
       if site_file
@@ -1687,10 +1837,6 @@ class Site < Sequel::Model
           time,
           self.id
         ].first
-
-        if ipfs_archiving_enabled == true
-          ArchiveWorker.perform_in Archive::ARCHIVE_WAIT_TIME, self.id
-        end
       end
 
       reload
@@ -1765,6 +1911,31 @@ class Site < Sequel::Model
     end
   end
 
+  def phone_verification_needed?
+    return true if phone_verification_required && !phone_verified
+    false
+  end
+
+  def email_not_validated?
+    return false if created_at < EMAIL_VALIDATION_CUTOFF_DATE
+    parent? && !is_education && !email_confirmed && !supporter?
+  end
+
+  def required_validations_met?
+    return false if phone_verification_needed? || tutorial_required || email_not_validated?
+    true
+  end
+
+  def maximum_monthly_bandwidth
+    PLAN_FEATURES[(parent? ? self : parent).plan_type.to_sym][:bandwidth].to_i
+  end
+
+  def monthly_bandwidth_used
+    stat = stats_dataset.order(:created_at.desc).select(:bandwidth).first
+    return 0 if stat.nil?
+    stat[:bandwidth]
+  end
+
   private
 
   def store_file(path, uploaded, opts={})
@@ -1781,10 +1952,7 @@ class Site < Sequel::Model
     end
 
     if pathname.extname.match(HTML_REGEX) && defined?(BlackBox)
-      begin
-        BlackBox.tos_violation_check self, uploaded
-      rescue
-      end
+      BlackBoxWorker.perform_in BLACK_BOX_WAIT_TIME, values[:id], relative_path
     end
 
     relative_path_dir = Pathname(relative_path).dirname
@@ -1798,7 +1966,7 @@ class Site < Sequel::Model
       rescue NoMethodError => e
       else
         if new_title.length < TITLE_MAX
-          self.title = new_title
+          self.title = new_title.force_encoding('UTF-8')
           save_changes validate: false
         end
       end
@@ -1822,3 +1990,4 @@ class Site < Sequel::Model
     true
   end
 end
+

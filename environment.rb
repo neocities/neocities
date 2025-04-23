@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+RubyVM::YJIT.enable
 ENV['RACK_ENV'] ||= 'development'
 ENV['TZ'] = 'UTC'
 DIR_ROOT = File.expand_path File.dirname(__FILE__)
@@ -11,14 +13,21 @@ require 'logger'
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
 
-require 'tilt/erubis'
-require 'active_support/core_ext/integer/time'
+require 'tilt/erubi'
+require 'active_support'
+require 'active_support/time'
+
+class File
+  def self.exists?(val)
+    self.exist?(val)
+  end
+end
 
 Dir['./ext/**/*.rb'].each {|f| require f}
 
 # :nocov:
-if ENV['TRAVIS']
-  $config = YAML.load_file File.join(DIR_ROOT, 'config.yml.travis')
+if ENV['CI']
+  $config = YAML.load_file File.join(DIR_ROOT, 'config.yml.ci')
 else
   begin
     $config = YAML.load_file(File.join(DIR_ROOT, 'config.yml'))[ENV['RACK_ENV']]
@@ -33,6 +42,7 @@ DB = Sequel.connect $config['database'], sslmode: 'disable', max_connections: $c
 DB.extension :pagination
 DB.extension :auto_literal_strings
 Sequel.split_symbols = true
+Sidekiq.strict_args!(false)
 
 require 'will_paginate/sequel'
 
@@ -47,9 +57,13 @@ end
 =end
 # :nocov:
 
-Sidekiq::Logging.logger = nil unless ENV['RACK_ENV'] == 'production'
+unless ENV['RACK_ENV'] == 'production'
+  Sidekiq.configure_server do |config|
+    config.logger = nil
+  end
+end
 
-sidekiq_redis_config = {namespace: 'neocitiesworker'}
+sidekiq_redis_config = {}
 sidekiq_redis_config[:url] = $config['sidekiq_url'] if $config['sidekiq_url']
 
 # :nocov:
@@ -114,14 +128,6 @@ Dir.glob('workers/*.rb').each {|w| require File.join(DIR_ROOT, "/#{w}") }
 DB.loggers << Logger.new(STDOUT) if ENV['RACK_ENV'] == 'development'
 
 Mail.defaults do
-  #options = { :address => "smtp.gmail.com",
-  # :port => 587,
-  # :domain => 'your.host.name',
-  # :user_name => '<username>',
-  # :password => '<password>',
-  # :authentication => 'plain',
-  # :enable_starttls_auto => true }
-
   options = {}
   delivery_method :sendmail, options
 end
@@ -163,3 +169,30 @@ $gandi = Gandi::Session.new $config['gandi_api_key'], gandi_opts
 $image_optim = ImageOptim.new pngout: false, svgo: false
 
 Money.locale_backend = nil
+Money.default_currency = Money::Currency.new("USD")
+Money.rounding_mode = BigDecimal::ROUND_HALF_UP
+
+$twilio = Twilio::REST::Client.new $config['twilio_account_sid'], $config['twilio_auth_token']
+
+Minfraud.configure do |c|
+  c.account_id  = $config['minfraud_account_id']
+  c.license_key = $config['minfraud_license_key']
+  c.enable_validation = true
+end
+
+
+Airbrake.configure do |c|
+  c.project_id = $config['airbrake_project_id']
+  c.project_key = $config['airbrake_project_key']
+end
+
+Airbrake.add_filter do |notice|
+  if notice[:params][:password]
+    # Filter out password.
+    notice[:params][:password] = '[Filtered]'
+  end
+
+  notice.ignore! if notice.stash[:exception].is_a?(Sinatra::NotFound)
+end
+
+Airbrake.add_filter Airbrake::Sidekiq::RetryableJobsFilter.new

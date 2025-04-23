@@ -1,0 +1,108 @@
+<div id="uploadingOverlay" class="uploading-overlay" style="display: none">
+  <div class="uploading">
+      <p>Uploading, please wait...</p>
+      <p id="uploadFileName"></p>
+    <!-- <div id="progressBar" class="progress-bar" style="display: none"><div id="uploadingProgress" class="progress" style="width: 0%"></div></div> -->
+  </div>
+</div>
+<div id="movingOverlay" class="uploading-overlay" style="display: none">
+  <div class="uploading">
+      <p>Moving file, please wait...</p>
+  </div>
+</div>
+<div class="header">
+  <div class="btn-group" role="group" aria-label="...">
+    <button type="button" class="btn btn-default iconview-button" title="Icon View" onclick="iconView()"><i class="fa fa-th"></i></button>
+    <button type="button" class="btn btn-default listview-button" title="List View" onclick="listView()"><i class="fa fa-list"></i></button>
+  </div>
+  <div class="breadcrumbs">
+    <% if params[:dir].nil? || params[:dir].empty? || params[:dir] == '/' %>
+      Home
+    <% else %>
+      <a href="/dashboard">Home</a>
+    <% end %>
+
+    <% if @dir %>
+      <% dir_array = @dir.split '/' %>
+      <% dir_array.each_with_index do |dir,i| %>
+        <% if i+1 < dir_array.length %>
+          <a href="/dashboard?dir=<%= Rack::Utils.escape dir_array[1..i].join('/') %>"><%= dir %></a> <i class="fa fa-angle-right"></i>
+        <% else %>
+          <%= dir %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="actions">
+    <a href="#createFile" class="btn-Action" data-toggle="modal"><i class="fa fa-file"></i> New File</a>
+    <a href="#createDir" class="btn-Action" data-toggle="modal"><i class="fa fa-folder"></i> New Folder</a>
+    <a href="#" id="uploadButton" class="btn-Action"><i class="fa fa-arrow-circle-up"></i> Upload</a>
+  </div>
+</div>
+<div class="list">
+  <form action="/site_files/upload" class="dropzone" id="uploads">
+    <div class="dz-message" style="display: none"></div>
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <input name="dir" type="hidden" value="<%= @dir %>" id="dir">
+    <div class="upload-Boundary with-instruction">
+      <% @file_list.each do |file| %>
+        <div class="file filehover">
+          <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '210x158') %>
+            <div class="html-thumbnail html fileimagehover">
+              <img src="<%= current_site.screenshot_url(file[:path], '210x158') %>" alt="">
+              <div class="overlay"></div>
+            </div>
+          <% elsif file[:is_image] && current_site.thumbnail_exists?(file[:path], '210x158') %>
+            <div class="html-thumbnail image fileimagehover">
+              <img src="<%= current_site.thumbnail_url(file[:path], '210x158') %>" alt="">
+              <div class="overlay"></div>
+            </div>
+          <% elsif file[:is_directory] %>
+            <div class="html-thumbnail folder fileimagehover" ondrop="moveFileToFolder(event)">
+              <div class="folder-icon"></div>
+              <div class="overlay"></div>
+            </div>
+          <% else %>
+            <div class="html-thumbnail misc fileimagehover">
+              <div class="misc-icon"><%= file[:ext][0..3] %></div>
+              <div class="overlay"></div>
+            </div>
+          <% end %>
+
+          <a class="title">
+            <%= file[:name] %>
+          </a>
+          <div class="column size">
+            <% if file[:size] %>
+              <%= file[:size].to_bytes_pretty %>
+            <% end %>
+          </div>
+          <div class="column updated">
+            <% if file[:updated_at] %>
+              <%= file[:updated_at].ago %>
+            <% end %>
+          </div>
+
+          <div class="overlay">
+            <div id="<%= Digest::SHA256.hexdigest file[:path] %>" style="display: none"><%= file[:path] %></div>
+            <% if file[:is_editable] && !file[:is_directory] %>
+              <a href="/site_files/text_editor?filename=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
+            <% end %>
+            <% if file[:is_directory] %>
+              <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
+            <% end %>
+            <% if !file[:is_root_index] %>
+              <a href="#" onclick="confirmFileRename($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-file" title="Rename"></i> Rename</a>
+              <a href="#" onclick="confirmFileDelete($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-trash" title="Delete"></i> Delete</a>
+            <% end %>
+            <% if file[:is_directory] %>
+            <a class="link-overlay" href="?dir=<%= Rack::Utils.escape file[:path] %>" title="View <%= file[:path] %>"></a>
+            <% else %>
+            <a class="link-overlay" href="<%= file[:uri] %>" title="View <%= file[:path] %>" target="_blank"></a>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </form>
+</div>

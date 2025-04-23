@@ -143,7 +143,7 @@ def stripe_get_site_from_event(event)
     site_where = {username: desc_split.first}
   end
 
-  if desc_split.last.to_i == 0
+  if desc_split.last.not_an_integer?
     site_where = {username: desc_split.first}
   else
     site_where = {id: desc_split.last}

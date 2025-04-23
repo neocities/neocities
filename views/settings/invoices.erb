@@ -1,0 +1,65 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>Account Settings</h1>
+    <h3 class="subtitle">Manage the account for your sites</h3>
+  </div>
+</div>
+
+<div class="content single-Col misc-page txt-Center">
+  <article>
+    <section>
+      <div class="txt-Center">
+        <% if flash[:success] %>
+          <div class="alert alert-block alert-success" style="margin-top: 20px">
+            <%== flash[:success] %>
+          </div>
+        <% end %>
+
+        <% if flash[:error] %>
+          <div class="alert alert-block alert-error" style="margin-top: 20px">
+            <%== flash[:error] %>
+          </div>
+        <% end %>
+      </div>
+
+      <h2>Generated Invoices</h2>
+      
+      <% if @invoices.empty? && !current_site.paypal_profile_id %>
+       <p>No generated invoices.</p>
+      <% else %>
+        <p>
+          <% @invoices.each do |invoice| %>
+            <%= Time.at(invoice.date).strftime('%m/%d/%y') %> - <a href="<%= invoice.invoice_pdf %>">PDF</a><br>
+          <% end %>
+        </p>
+      <% end %>
+
+      <% if current_site.paypal_profile_id %>
+        <p>PayPal invoices are available on their <a href="https://paypal.com">web site</a>.</p>
+      <% end %>
+
+      <p><a href="/settings">Back</a></p>
+    </section>
+  </article>
+</div>
+
+<div class="modal hide" id="deleteSite" tabindex="-1" role="dialog" aria-labelledby="deleteSiteLabel" aria-hidden="true">
+  <form method="POST" action="/site/delete">
+    <%== csrf_token_input_html %>
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+      <h3 id="deleteSiteLabel">Permanently Delete Site</h3>
+    </div>
+    <div class="modal-body">
+      <strong style="color: red">WARNING: This will permanently delete your web site and Neocities account. There is no undo!</strong>
+
+      <p>Delete Site Name: <strong><%= current_site.username %></strong></p>
+      <p>Confirm your site name by typing it here:</p>
+      <input class="input-Area" name="username" type="text">
+    </div>
+    <div class="modal-footer">
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn-Action">Permanently Delete Site</button>
+    </div>
+  </form>
+</div>
