@@ -6,11 +6,6 @@ require 'airbrake/sidekiq'
 use Airbrake::Rack::Middleware
 
 map('/') do
-  use(Rack::Cache,
-    verbose: false,
-    metastore: 'file:/tmp/neocitiesrackcache/meta',
-    entitystore: 'file:/tmp/neocitiesrackcache/body'
-  )
   run Sinatra::Application
 end
 

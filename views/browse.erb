@@ -176,16 +176,17 @@
   }
 </script>
 
-
-<script>
-  function banSite(usernames, classifier, el) {
-    $.post('/admin/banhammer', {
-      usernames: usernames,
-      classifier: classifier,
-      csrf_token: '<%= csrf_token %>'
-    }, function(data) {
-      $(el).css('color', '#3eff00')
-    })
-    return false;
-  }
-</script>
+<% if signed_in? && current_site.is_admin %>
+  <script>
+    function banSite(usernames, classifier, el) {
+      $.post('/admin/banhammer', {
+        usernames: usernames,
+        classifier: classifier,
+        csrf_token: '<%= csrf_token %>'
+      }, function(data) {
+        $(el).css('color', '#3eff00')
+      })
+      return false;
+    }
+  </script>
+<% end %>

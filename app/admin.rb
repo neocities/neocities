@@ -75,7 +75,6 @@ end
 
 get '/admin/stats' do
   require_admin
-  # expires 14400, :public, :must_revalidate if self.class.production? # 4 hours
 
   @stats = {
     total_hosted_site_hits: DB['SELECT SUM(hits) FROM sites'].first[:sum],

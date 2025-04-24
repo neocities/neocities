@@ -170,8 +170,6 @@
   <%== erb :_pagination, layout: false %>
 </div>
 
-<%== erb :'_news_templates', layout: false %>
-
-<script>
-
-</script>
+<% if current_site %>
+  <%== erb :'_news_templates', layout: false %>
+<% end %>

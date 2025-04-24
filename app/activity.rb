@@ -1,6 +1,4 @@
 get '/activity' do
-  #expires 7200, :public, :must_revalidate if self.class.production? # 2 hours
-
   @page = params[:page] || 1
 
   if params[:tag]

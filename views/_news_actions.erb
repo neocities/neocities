@@ -20,18 +20,20 @@
   <% end %>
 </div>
 
-<div class="modal hide" id="deleteEvent<%= event.id %>" tabindex="-1" role="dialog" aria-labelledby="deleteEventLabel<%= event.id %>" aria-hidden="true">
-  <div class="modal-header">
-    <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-    <h3 id="addTagLabel">Delete</h3>
+<% if current_site %>
+  <div class="modal hide" id="deleteEvent<%= event.id %>" tabindex="-1" role="dialog" aria-labelledby="deleteEventLabel<%= event.id %>" aria-hidden="true">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+      <h3 id="addTagLabel">Delete</h3>
+    </div>
+    <div class="modal-body">
+      <p>
+        Are you sure you want to remove this <%= event.name %> from the news feed?
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <button type="submit" class="btn-Action" onclick="Event.delete(<%= event.id %>, '<%= csrf_token %>'); return false">Delete</button>
+    </div>
   </div>
-  <div class="modal-body">
-    <p>
-      Are you sure you want to remove this <%= event.name %> from the news feed?
-    </p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button type="submit" class="btn-Action" onclick="Event.delete(<%= event.id %>, '<%= csrf_token %>'); return false">Delete</button>
-  </div>
-</div>
+<% end %>
