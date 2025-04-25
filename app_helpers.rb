@@ -27,6 +27,9 @@ def signout
   @_site = nil
   @_parent_site = nil
   session[:id] = nil
+  session.clear
+  response.delete_cookie 'neocities', path: '/'
+  request.env['rack.session.options'][:drop] = true
 end
 
 def current_site
