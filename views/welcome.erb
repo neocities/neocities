@@ -1,5 +1,7 @@
 <section class="section plans welcome">
-  <%== flash_display centered: true %>
+  <% if current_site %>
+    <%== flash_display centered: true %>
+  <% end %>
 
   <% if request.path == '/welcome' %>
     <h2>Welcome to Neocities, <%= current_site.username %>!</h2>
@@ -72,7 +74,7 @@
               <%== csrf_token_input_html %>
               <input type="hidden" value="supporter" name="plan_type">
               <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
-              <%== erb :'_card'%>
+              <%== erb :'_card' %>
               <div id="upgradeDiv" class="row content txt-Center">
                 <a id="upgradeLink" href="/" class="btn-Action" onclick="$('#upgradeForm').submit(); return false">
                   Upgrade for $<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo
