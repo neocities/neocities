@@ -1,5 +1,5 @@
 <div class="header-Outro with-site-image">
-  <% if flash.keys.length > 0 %>
+  <% if current_site && flash.keys.length > 0 %>
     <div class="row content">
       <div class="alert txt-Center">
           <% flash.keys.each do |key| %>
@@ -90,28 +90,30 @@
 </div></div>
 </div>
 
-<div class="modal hide" id="block" tabindex="-1" role="dialog" aria-labelledby="blockLabel" aria-hidden="true">
-  <form method="POST" action="/site/<%= site.username %>/block">
-    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-    <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-      <h3 id="blockLabel">Block Site</h3>
-    </div>
-    <div class="modal-body">
-      <p>You are going to block this site. This will do the following:</p>
+<% if current_site %>
+  <div class="modal hide" id="block" tabindex="-1" role="dialog" aria-labelledby="blockLabel" aria-hidden="true">
+    <form method="POST" action="/site/<%= site.username %>/block">
+      <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+        <h3 id="blockLabel">Block Site</h3>
+      </div>
+      <div class="modal-body">
+        <p>You are going to block this site. This will do the following:</p>
 
-      <ul>
-        <li>You will no longer see this site in searches.</li>
-        <li>Site will no longer see your site in searches.</li>
-        <li>Site will not be able to comment on your site profile.</li>
-        <li>Any comments this site has posted to your profile will not be displayed.</li>
-      </ul>
+        <ul>
+          <li>You will no longer see this site in searches.</li>
+          <li>Site will no longer see your site in searches.</li>
+          <li>Site will not be able to comment on your site profile.</li>
+          <li>Any comments this site has posted to your profile will not be displayed.</li>
+        </ul>
 
-      <p>Are you sure you want to do this?</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button type="submit" class="btn-Action">Block Site</button>
-    </div>
-  </form>
-</div>
+        <p>Are you sure you want to do this?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button type="submit" class="btn-Action">Block Site</button>
+      </div>
+    </form>
+  </div>
+<% end %>

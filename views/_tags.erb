@@ -19,45 +19,47 @@
   <% end %>
 <% end %>
 
-<div class="modal hide" id="addTag" tabindex="-1" role="dialog" aria-labelledby="addTagLabel" aria-hidden="true">
-  <form method="POST" action="/tags/add">
-    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-    <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-      <h3 id="addTagLabel">Add a Tag</h3>
-    </div>
-    <div class="modal-body">
-      <p>
-        A tag can only be a single word, and can only contain letters and numbers.
-      </p>
-      <input type="text" name="tags" class="typeahead">
-    </div>
-    <div class="modal-footer">
-      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button type="submit" class="btn-Action">Add Tag</button>
-    </div>
-  </form>
-</div>
+<% if current_site && current_site == site %>
+  <div class="modal hide" id="addTag" tabindex="-1" role="dialog" aria-labelledby="addTagLabel" aria-hidden="true">
+    <form method="POST" action="/tags/add">
+      <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+        <h3 id="addTagLabel">Add a Tag</h3>
+      </div>
+      <div class="modal-body">
+        <p>
+          A tag can only be a single word, and can only contain letters and numbers.
+        </p>
+        <input type="text" name="tags" class="typeahead">
+      </div>
+      <div class="modal-footer">
+        <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button type="submit" class="btn-Action">Add Tag</button>
+      </div>
+    </form>
+  </div>
 
-<div class="modal hide" id="removeTag" tabindex="-1" role="dialog" aria-labelledby="removeTagLabel" aria-hidden="true">
-  <form method="POST" action="/tags/remove">
-    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-    <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-      <h3 id="removeTagLabel">Remove Tags</h3>
-    </div>
-    <div class="modal-body">
-      <p>
-        Select the tags you would like to remove:
-      </p>
-      <% site.tags.each do |tag| %>
-        <input name="tags[]" type="checkbox" value="<%= tag.name %>"> <%= tag.name %>
-        <br>
-      <% end %>
-    </div>
-    <div class="modal-footer">
-      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button type="submit" class="btn-Action">Remove Tag(s)</button>
-    </div>
-  </form>
-</div>
+  <div class="modal hide" id="removeTag" tabindex="-1" role="dialog" aria-labelledby="removeTagLabel" aria-hidden="true">
+    <form method="POST" action="/tags/remove">
+      <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+        <h3 id="removeTagLabel">Remove Tags</h3>
+      </div>
+      <div class="modal-body">
+        <p>
+          Select the tags you would like to remove:
+        </p>
+        <% site.tags.each do |tag| %>
+          <input name="tags[]" type="checkbox" value="<%= tag.name %>"> <%= tag.name %>
+          <br>
+        <% end %>
+      </div>
+      <div class="modal-footer">
+        <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button type="submit" class="btn-Action">Remove Tag(s)</button>
+      </div>
+    </form>
+  </div>
+<% end %>
