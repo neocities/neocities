@@ -2,10 +2,10 @@
 <form method="POST" action="/settings/<%= @site.username %>/change_name">
   <%== csrf_token_input_html %>
   <p class="tiny">
-    <strong>Warning: It is not advised to change your username</strong>, as this breaks search engines and will reduce the amount of visitors to your site.
+    <strong>Warning:</strong>  It is very damaging to change your site name after it is already established, as this breaks search engine links to your site and will reduce your amount of site visitors. Unless you made a typo when editing your site, you really don't want to do this!
   </p>
   <p class="tiny">
-    It cannot contain spaces, and can only use the following characters: a-z A-Z 0-9 _ -
+    It cannot contain spaces, cannot start or end with a hyphen (-), and can only use the following characters: a-z A-Z 0-9 -
   </p>
 
   <p>
