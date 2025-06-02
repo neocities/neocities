@@ -261,8 +261,7 @@
       contentType: false,
       type: 'POST',
       error: function(jqXHR, textStatus, errorThrown) {
-        //var errorMessage = 'There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!'
-        var errorMessage = 'Due to a one-time Neocities session change, you have been logged out and your file was not saved. Open a new tab, log back in, then come back and click save. We apologize for the inconvenience.'
+        var errorMessage = 'There has been an error saving your file, please try again. If it continues to fail, make a copy of the file locally so you don\'t lose your changes!'
 
         if(jqXHR.responseText) {
           try {
