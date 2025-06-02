@@ -67,7 +67,7 @@
   <h3>Examples</h3>
   <h6>Using cURL</h6>
   <p>Upload a single local file (<strong>local.html</strong>), which will be named <strong>hello.html</strong> on your site:</p>
-  <pre><code class="bash">$ curl -F "hello.html=@local.html" "https://USER:PASS@neocities.org/api/upload"</code></pre>
+  <pre><code class="bash">$ curl -u "USER:PASS" -F "hello.html=@local.html" "https://neocities.org/api/upload"</code></pre>
 
   <h6>Using Node.js</h6>
   <p>This example uses the <a href="https://github.com/neocities/neocities-node" target="_blank">neocities</a> module. You can install it by running <strong>npm install neocities --global</strong> in your terminal.</p>
@@ -93,7 +93,7 @@ api.upload([
   <p>
     Delete <strong>img1.jpg</strong> and <strong>img2.jpg</strong> from your site:
   </p>
-  <pre><code class="bash">curl -d "filenames[]=img1.jpg" -d "filenames[]=img2.jpg" \<br>"https://YOURUSER:YOURPASS@neocities.org/api/delete"</code></pre>
+  <pre><code class="bash">curl -u "USER:PASS" -d "filenames[]=img1.jpg" -d "filenames[]=img2.jpg" \<br>"https://neocities.org/api/delete"</code></pre>
 
   <h6>Using Node.js</h6>
   <pre><code class="javascript">var neocities = require('neocities')
@@ -108,7 +108,7 @@ api.delete(['img1.jpg', 'img2.jpg'], function(resp) {
   </p>
   <h3>Examples</h3>
   <h6>Using cURL</h6>
-  <pre><code class="bash">$ curl "https://USER:PASS@neocities.org/api/list"
+  <pre><code class="bash">$ curl -u "USER:PASS" "https://neocities.org/api/list"
 {
   "result": "success",
   "files": [
@@ -142,7 +142,7 @@ api.delete(['img1.jpg', 'img2.jpg'], function(resp) {
 }
 </code></pre>
 
-<pre><code class="bash">$ curl "https://USER:PASS@neocities.org/api/list?path=images"
+<pre><code class="bash">$ curl -u "USER:PASS" "https://neocities.org/api/list?path=images"
 {
   "result": "success",
   "files": [
@@ -176,7 +176,7 @@ api.delete(['img1.jpg', 'img2.jpg'], function(resp) {
   }
 }</code></pre>
   <p>Getting your own site's info:</p>
-  <pre><code class="bash">$ curl "https://YOURUSER:YOURPASS@neocities.org/api/info"</code></pre>
+  <pre><code class="bash">$ curl -u "USER:PASS" "https://neocities.org/api/info"</code></pre>
   <h6>Using Node.js</h6>
   <p>Your site:</p>
   <pre><code class="javascript">var neocities = require('neocities')
@@ -205,7 +205,7 @@ api.info('madamfrp', function(resp) {
 </p>
 <h3>Examples</h3>
 <h6>Using cURL</h6>
-<pre><code class="bash">$ curl "https://USER:PASS@neocities.org/api/key"
+<pre><code class="bash">$ curl -u "USER:PASS" "https://neocities.org/api/key"
 {
   "result": "success",
   "api_key": "da77c3530c30593663bf7b797323e48c"
