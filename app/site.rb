@@ -186,6 +186,7 @@ post '/site/:site_id/toggle_follow' do |site_id|
   require_login
   content_type :json
   site = Site[id: site_id]
+  return 404 if site.nil?
   return 403 if site.is_blocking?(current_site)
   {result: (current_site.toggle_follow(site) ? 'followed' : 'unfollowed')}.to_json
 end
