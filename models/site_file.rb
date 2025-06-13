@@ -87,7 +87,12 @@ class SiteFile < Sequel::Model
       end
 
     else # a file
-      mime_type = Magic.guess_file_mime_type site.files_path(self.path)
+      begin
+        mime_type = Magic.guess_file_mime_type site.files_path(self.path)
+      rescue Errno::ENOENT
+        return false, 'file to rename not found'
+      end
+
       extname = File.extname new_path
 
       unless site.supporter? || site.class.valid_file_mime_type_and_ext?(mime_type, extname)
