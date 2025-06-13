@@ -80,7 +80,12 @@ end
 if ENV['RACK_ENV'] == 'test'
   $redis = MockRedis.new
 else
-  $redis = Redis.new url: $config['redis_url']
+  $redis = Redis.new(
+    url: $config['redis_url'],
+    read_timeout: 5.0,
+    write_timeout: 5.0,
+    connect_timeout: 5.0
+  )
 end
 
 $redis_cache = Redis::Namespace.new :cache, redis: $redis
@@ -88,7 +93,12 @@ $redis_cache = Redis::Namespace.new :cache, redis: $redis
 if ENV['RACK_ENV'] == 'test'
   $redis_proxy = MockRedis.new
 else
-  $redis_proxy = Redis.new url: $config['redis_proxy']
+  $redis_proxy = Redis.new(
+    url: $config['redis_proxy'],
+    read_timeout: 5.0,
+    write_timeout: 5.0,
+    connect_timeout: 5.0
+  )
 end
 
 # :nocov:
