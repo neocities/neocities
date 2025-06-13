@@ -1973,8 +1973,7 @@ class Site < Sequel::Model
       end
     end
 
-    FileUtils.cp uploaded.path, path
-    File.chmod 0640, path
+    FileUtils.install uploaded.path, path, mode: 0640
 
     SiteChange.record self, relative_path if !opts[:new_install] && File.extname(relative_path).match(HTML_REGEX)
 

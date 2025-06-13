@@ -58,8 +58,7 @@ post '/site_files/create' do
     end
   else
     file_path = current_site.files_path(name)
-    FileUtils.touch file_path
-    File.chmod 0640, file_path
+    File.open(file_path, 'a', 0640) {}
 
     site_file ||= SiteFile.new site_id: current_site.id, path: name
 
