@@ -85,10 +85,10 @@ def browse_sites_dataset
       ds = ds.exclude site_updated_at: nil
       ds = ds.order(:created_at, :views.desc)
     when 'hits'
-      ds = ds.where{score > 1}
+      ds = ds.where{score > 5}
       ds = ds.order(:hits.desc, :site_updated_at.desc)
     when 'views'
-      ds = ds.where{score > 3}
+      ds = ds.where{score > 5}
       ds = ds.order(:views.desc, :site_updated_at.desc)
     when 'featured'
       ds = ds.exclude featured_at: nil
