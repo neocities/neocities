@@ -16,7 +16,7 @@ post '/signin' do
       redirect '/signin'
     end
 
-    if site.is_deleted
+    if site.is_deleted && !site.is_banned
       session[:deleted_site_id] = site.id
       redirect '/signin/restore'
     end
@@ -47,12 +47,13 @@ end
 post '/signin/restore' do
   redirect '/' unless session[:deleted_site_id]
   @site = Site[session[:deleted_site_id]]
+
   session[:deleted_site_id] = nil
 
-  if @site.undelete!
-    session[:id] = @site.id
-  else
+  if @site.is_banned || !@site.undelete!
     flash[:error] = "Sorry, we cannot restore this account."
+  else
+    session[:id] = @site.id
   end
 
   redirect '/'
