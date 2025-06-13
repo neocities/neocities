@@ -9,6 +9,13 @@ post '/api/upload_hash' do
   require_api_credentials
   res = {}
   files = []
+
+  params.each do |path, sha1_hash|
+    unless sha1_hash.is_a?(String)
+      api_error 400, 'nested_parameters_not_allowed', 'nested parameters are not allowed; each path must directly map to a SHA-1 hash string'
+    end
+  end
+
   params.each do |k,v|
     res[k] = current_site.sha1_hash_match? k, v
   end

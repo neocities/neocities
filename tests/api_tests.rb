@@ -241,6 +241,24 @@ describe 'api' do
       _(res[:files][:'test.jpg']).must_equal true
       _(res[:files][:'test2.jpg']).must_equal false
     end
+
+    it 'rejects nested parameter structures' do
+      create_site
+      basic_authorize @user, @pass
+
+      post '/api/upload_hash', {
+        "one/two" => {
+          "three" => {
+            ".jpg" => "196b99a0ab80d1fc2e7caf49d98e8dd76db25c72"
+          }
+        }
+      }
+
+      _(last_response.status).must_equal 400
+      _(res[:result]).must_equal 'error'
+      _(res[:error_type]).must_equal 'nested_parameters_not_allowed'
+      _(res[:message]).must_equal 'nested parameters are not allowed; each path must directly map to a SHA-1 hash string'
+    end
   end
 
   describe 'rename' do
