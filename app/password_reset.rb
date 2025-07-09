@@ -12,6 +12,13 @@ post '/send_password_reset' do
 
   sites = Site.get_recovery_sites_with_email params[:email]
 
+  sites.each do |site|
+    if site.is_banned
+      flash[:error] = 'Sorry, we cannot restore this account.'
+      redirect '/'
+    end
+  end
+
   if sites.length > 0
     token = SecureRandom.uuid.gsub('-', '')+'-'+Time.now.to_i.to_s
     sites.each do |site|
@@ -70,9 +77,14 @@ get '/password_reset_confirm' do
     redirect '/'
   end
 
+  if reset_site.is_banned
+    flash[:error] = 'Sorry, we cannot restore this account.'
+    redirect '/'
+  end
+
   if reset_site.is_deleted
     unless reset_site.undelete!
-      flash[:error] = "Sorry, we cannot restore this account."
+      flash[:error] = 'Sorry, we cannot restore this account.'
       redirect '/'
     end
   end
