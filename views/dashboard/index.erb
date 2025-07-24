@@ -115,6 +115,13 @@
         </form>
       </div>
 
+      <form id="moveFileForm" method="post" action="/site_files/rename">
+          <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+          <input type="hidden" value="<%= @dir %>" name="dir">
+          <input type="hidden" id="moveCurrentPath" name="path">
+          <input type="hidden" id="moveNewPath" name="new_path">
+      </form>
+
 
 <div class="site-actions" style="margin-bottom:25px">
   <% if !current_site.plan_feature(:no_file_restrictions) %>
