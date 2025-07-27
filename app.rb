@@ -125,16 +125,6 @@ not_found do
 end
 
 error do
-=begin
-  EmailWorker.perform_async({
-    from: 'web@neocities.org',
-    to: 'errors@neocities.org',
-    subject: "[Neocities Error] #{env['sinatra.error'].class}: #{env['sinatra.error'].message}",
-    body: erb(:'templates/email/error', layout: false),
-    no_footer: true
-  })
-=end
-
   if @api
     api_error 500, 'server_error', 'there has been an unknown server error, please try again later'
   end

@@ -85,7 +85,7 @@ def send_confirmation_email(site=current_site)
 
   EmailWorker.perform_async({
     from: 'web@neocities.org',
-    reply_to: 'contact@neocities.org',
+    reply_to: 'noreply@neocities.org',
     to: site.email,
     subject: "[Neocities] Confirm your email address",
     body: Tilt.new('./views/templates/email/confirm.erb', pretty: true).render(self, site: site)

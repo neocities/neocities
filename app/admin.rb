@@ -194,7 +194,7 @@ post '/admin/email' do
 
     queued_sites.each do |site|
       EmailWorker.perform_at((day.days.from_now + seconds), {
-        from: 'Kyle from Neocities <kyle@neocities.org>',
+        from: Site::FROM_EMAIL,
         to: site.email,
         subject: params[:subject],
         body: params[:body]

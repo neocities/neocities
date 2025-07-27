@@ -36,9 +36,9 @@ post '/contact' do
     end
 
     EmailWorker.perform_async({
-      from: 'web@neocities.org',
+      from: Site::FROM_EMAIL,
       reply_to: params[:email],
-      to: 'contact@neocities.org',
+      to: $config['support_email'],
       subject: subject,
       body: body,
       no_footer: true

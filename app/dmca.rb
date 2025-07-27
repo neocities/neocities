@@ -24,7 +24,7 @@ post '/dmca/contact' do
     erb :'dmca'
   else
     EmailWorker.perform_async({
-      from: 'web@neocities.org',
+      from: Site::FROM_EMAIL,
       reply_to: params[:email],
       to: 'dmca@neocities.org',
       subject: "[Neocities DMCA Notice]: #{params[:subject]}",

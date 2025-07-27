@@ -1,12 +1,4 @@
 post '/webhooks/paypal' do
-  EmailWorker.perform_async({
-    from: 'web@neocities.org',
-    to: 'errors@neocities.org',
-    subject: "[Neocities Paypal Webhook] Received a Webhook from Paypal",
-    body: params.inspect,
-    no_footer: true
-  })
-
   'ok'
 end
 
@@ -57,7 +49,7 @@ post '/webhooks/paypal/tipping_notify' do
   )
 
   EmailWorker.perform_async({
-    from: 'web@neocities.org',
+    from: Site::FROM_EMAIL,
     to: params[:payer_email],
     subject: "You sent a #{@tip.amount_string} tip!",
     body: Tilt.new('./views/templates/email/tip_sent.erb', pretty: true).render(self)
@@ -66,24 +58,12 @@ end
 
 post '/webhooks/stripe' do
   event = JSON.parse request.body.read
-  if event['type'] == 'customer.created'
-    username  = event['data']['object']['description'].split(' - ').first
-    email     = event['data']['object']['email']
-
-    EmailWorker.perform_async({
-      from:    'web@neocities.org',
-      to:      'contact@neocities.org',
-      subject: "[Neocities] New customer: #{username}",
-      body:    "#{username}\n#{email}\n#{Site[username: username].uri}",
-      no_footer: true
-    })
-  end
 
   if event['type'] == 'charge.failed'
     site = stripe_get_site_from_event event
 
     EmailWorker.perform_async({
-      from:    'web@neocities.org',
+      from:    Site::FROM_EMAIL,
       to:      site.email,
       subject: "[Neocities] There was an issue charging your card",
       body:    Tilt.new('./views/templates/email/charge_failure.erb', pretty: true).render(self)
@@ -98,7 +78,7 @@ post '/webhooks/stripe' do
     site.save_changes validate: false
 
     EmailWorker.perform_async({
-      from:    'web@neocities.org',
+      from:    Site::FROM_EMAIL,
       to:      site.email,
       subject: "[Neocities] Supporter plan has ended",
       body:    Tilt.new('./views/templates/email/supporter_ended.erb', pretty: true).render(self)
@@ -112,7 +92,7 @@ post '/webhooks/stripe' do
       invoice_obj = event['data']['object']
 
       EmailWorker.perform_async({
-        from:    'web@neocities.org',
+        from:    Site::FROM_EMAIL,
         to:      site.email,
         subject: "[Neocities] Invoice",
         body:    Tilt.new('./views/templates/email/invoice.erb', pretty: true).render(
@@ -126,7 +106,6 @@ post '/webhooks/stripe' do
       })
     end
   end
-
 
   'ok'
 end

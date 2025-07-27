@@ -31,6 +31,7 @@ development:
   google_custom_search_key: herpderp
   google_custom_search_cx: herpderp
   google_custom_search_query_limit: 69
+  support_email: derp@example.com
 test:
   database: 'postgres://localhost/neocities_test'
   database_pool: 1
@@ -68,3 +69,4 @@ test:
   google_custom_search_key: herpderp
   google_custom_search_cx: herpderp
   google_custom_search_query_limit: 69
+  support_email: derp@example.com

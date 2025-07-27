@@ -169,7 +169,7 @@ the Neocities Cat
     body.strip!
 
     EmailWorker.perform_async({
-      from: 'web@neocities.org',
+      from: Site::FROM_EMAIL,
       to: params[:email],
       subject: '[Neocities] Username lookup',
       body: body

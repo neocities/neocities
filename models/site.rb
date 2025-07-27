@@ -121,7 +121,7 @@ class Site < Sequel::Model
   IP_CREATE_LIMIT = 1000
   TOTAL_IP_CREATE_LIMIT = 10000
 
-  FROM_EMAIL = 'noreply@neocities.org'
+  FROM_EMAIL = 'Neocities <noreply@neocities.org>'
 
   PLAN_FEATURES = {}
 

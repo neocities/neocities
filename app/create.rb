@@ -121,7 +121,7 @@ post '/create' do
     @site.phone_verification_required = true if self.class.production? && BlackBox.phone_verification_required?(@site)
   rescue => e
     EmailWorker.perform_async({
-      from: 'web@neocities.org',
+      from: Site::FROM_EMAIL,
       to: 'errors@neocities.org',
       subject: "[Neocities Error] Phone verification exception",
       body: "#{e.inspect}\n#{e.backtrace}",
