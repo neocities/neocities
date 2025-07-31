@@ -1,6 +1,8 @@
 get '/activity' do
   @page = params[:page] || 1
 
+  halt 404 if params[:event_id]
+
   if params[:tag]
     query1 = Event
       .join(:sites, id: :site_id)
