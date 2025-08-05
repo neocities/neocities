@@ -1932,9 +1932,21 @@ class Site < Sequel::Model
   end
 
   def monthly_bandwidth_used
-    stat = stats_dataset.order(:created_at.desc).select(:bandwidth).first
-    return 0 if stat.nil?
-    stat[:bandwidth]
+    current_month_start = Date.new(Date.today.year, Date.today.month, 1)
+    next_month_start = current_month_start.next_month
+
+    result = stats_dataset
+      .where(created_at: current_month_start...next_month_start)
+      .sum(:bandwidth)
+
+    return result || 0
+  end
+
+  def bandwidth_percentage_used
+    used = monthly_bandwidth_used
+    max = maximum_monthly_bandwidth
+    return 0 if max == 0 || used == 0
+    ((used.to_f / max) * 100).round(1)
   end
 
   private
