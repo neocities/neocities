@@ -78,7 +78,7 @@ describe '/admin' do
 
         relevant_jobs.each do |job|
           args = job['args'].first
-          _(args['from']).must_equal 'Kyle from Neocities <kyle@neocities.org>'
+          _(args['from']).must_equal 'Neocities <noreply@neocities.org>'
           _(args['subject']).must_equal 'Subject Test'
           _(args['body']).must_equal 'Body Test'
         end
