@@ -151,7 +151,7 @@ task :generate_sitemap => [:environment] do
   site_files = []
 
   sites.each do |site|
-    site.site_files_dataset.exclude(path: 'not_found.html').where(path: /\.html?$/).all.each do |site_file|
+    site.site_files_dataset.exclude(path: 'not_found.html').exclude(path: '404.html').where(path: /\.html?$/).all.each do |site_file|
 
       if site.uri(site_file.path) == site.uri
         priority = 0.5
