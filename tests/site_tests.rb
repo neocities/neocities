@@ -16,6 +16,83 @@ describe Site do
     end
   end
 
+  describe 'email validation' do
+    it 'accepts valid email addresses' do
+      valid_emails = [
+        'user@example.com',
+        'test.email@domain.org',
+        'user+tag@example.com',
+        'user_name@domain.co.uk',
+        'user-name@example-domain.com',
+        'user@xn--1lqs71d.xn--wgv71a',
+        'a.very.long.email.address@long-domain-name.example.com'
+      ]
+
+      valid_emails.each do |email|
+        site = Fabricate.build(:site, email: email)
+        site.valid?
+        email_errors = site.errors[:email] || []
+        format_errors = email_errors.select { |e| e.include?('valid email') }
+        _(format_errors).must_be_empty
+      end
+    end
+
+    it 'rejects invalid email addresses' do
+      invalid_emails = [
+        'user@domain.com💩💩💩',
+        'user@domain.com extra text',
+        'user @domain.com',
+        'user@domain',
+        'user@domain.',
+        '@domain.com',
+        'user@',
+        'plaintext',
+      ]
+
+      invalid_emails.each do |email|
+        site = Fabricate.build(:site, email: email)
+        site.valid?
+        email_errors = site.errors[:email] || []
+        format_errors = email_errors.select { |e| e.include?('valid email') }
+        _(format_errors).wont_be_empty
+      end
+    end
+
+    it 'rejects emails that exceed byte length limit' do
+      long_email = 'user@example.com' + 'a' * 300 # Will exceed 254 byte limit
+      site = Fabricate.build(:site, email: long_email)
+      site.valid?
+
+      email_errors = site.errors[:email] || []
+      length_errors = email_errors.select { |e| e.include?('too long') }
+      _(length_errors).wont_be_empty
+    end
+
+    it 'rejects emails with unicode padding that exceed byte limit' do
+      unicode_email = 'user@example.com' + '⠀' * 100 # Braille blank chars
+      _(unicode_email.bytesize).must_be :>, Site::MAX_EMAIL_LENGTH
+
+      site = Fabricate.build(:site, email: unicode_email)
+      site.valid?
+
+      email_errors = site.errors[:email] || []
+      length_errors = email_errors.select { |e| e.include?('too long') }
+      _(length_errors).wont_be_empty
+    end
+
+    it 'accepts emails just under the byte limit' do
+      under_limit_email = 'a' * (Site::MAX_EMAIL_LENGTH - 15) + '@example.com'
+      _(under_limit_email.bytesize).must_be :<=, Site::MAX_EMAIL_LENGTH
+
+      site = Fabricate.build(:site, email: under_limit_email)
+      site.valid?
+
+      email_errors = site.errors[:email] || []
+      length_errors = email_errors.select { |e| e.include?('too long') }
+      _(length_errors).must_be_empty
+    end
+  end
+
   describe 'banning' do
     it 'still makes files available' do
       site = Fabricate :site

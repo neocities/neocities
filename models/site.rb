@@ -107,7 +107,8 @@ class Site < Sequel::Model
 
   EMPTY_FILE_HASH = Digest::SHA1.hexdigest ''
 
-  EMAIL_SANITY_REGEX = /.+@.+\..+/i
+  EMAIL_SANITY_REGEX = /\A[\x21-\x7E&&[^\s@]]+@[\x21-\x7E&&[^\s@]]+\.[\x21-\x7E&&[^\s@]]+\z/i
+  MAX_EMAIL_LENGTH = 254 # RFC 5321 maximum email address length
   EDITABLE_FILE_EXT = /#{VALID_EDITABLE_EXTENSIONS.join('|')}/i
   BANNED_TIME = 2592000 # 30 days in seconds
   TITLE_MAX = 100
@@ -1086,8 +1087,16 @@ class Site < Sequel::Model
       errors.add :email, 'A valid email address is required.'
     end
 
+    if parent? && values[:email] && values[:email].bytesize > MAX_EMAIL_LENGTH
+      errors.add :email, 'Email address is too long.'
+    end
+
     if !values[:tipping_paypal].blank? && (values[:tipping_paypal] =~ EMAIL_SANITY_REGEX).nil?
       errors.add :tipping_paypal, 'A valid PayPal tipping email address is required.'
+    end
+
+    if !values[:tipping_paypal].blank? && values[:tipping_paypal].bytesize > MAX_EMAIL_LENGTH
+      errors.add :tipping_paypal, 'PayPal email address is too long.'
     end
 
     if !values[:tipping_bitcoin].blank? && !AdequateCryptoAddress.valid?(values[:tipping_bitcoin], 'BTC')
