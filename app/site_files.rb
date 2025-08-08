@@ -191,6 +191,12 @@ get '/site_files/text_editor' do
   dont_browser_cache
 
   @filename = params[:filename]
+
+  if @filename.nil? || @filename.strip.empty?
+    flash[:error] = 'No filename specified.'
+    redirect '/dashboard'
+  end
+
   extname = File.extname @filename
 
   @ace_mode = case extname
