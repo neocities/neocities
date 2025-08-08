@@ -116,10 +116,10 @@ class SiteFile < Sequel::Model
       self.save_changes
 
       if is_directory
-        site_files_in_dir = site.site_files.select {|sf| sf.path =~ /^#{current_path}\//}
+        site_files_in_dir = site.site_files.select {|sf| sf.path =~ /^#{Regexp.quote(current_path)}\//}
         site_files_in_dir.each do |site_file|
           original_site_file_path = site_file.path
-          site_file.path = site_file.path.gsub(/^#{current_path}\//, "#{new_path}\/")
+          site_file.path = site_file.path.gsub(/^#{Regexp.quote(current_path)}\//, "#{Regexp.quote(new_path)}\/")
           site_file.save_changes
           site.delete_thumbnail_or_screenshot original_site_file_path
           site.generate_thumbnail_or_screenshot site_file.path

@@ -282,7 +282,7 @@ post '/site/:username/block' do |username|
 
   current_site.block! site
 
-  if request.referer.match /\/site\/#{username}/i
+  if request.referer.match /\/site\/#{Regexp.quote(username)}/i
     redirect '/'
   else
     redirect request.referer

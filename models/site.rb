@@ -731,11 +731,11 @@ class Site < Sequel::Model
     email.strip!
 
     disposable_email_domains_whitelist.each do |whitelisted_disposable_email_domain|
-      return false if email.match /@#{whitelisted_disposable_email_domain}$/i
+      return false if email.match /@#{Regexp.quote(whitelisted_disposable_email_domain)}$/i
     end
 
     disposable_email_domains.each do |disposable_email_domain|
-      return true if email.match /@#{disposable_email_domain}$/i
+      return true if email.match /@#{Regexp.quote(disposable_email_domain)}$/i
     end
 
     false
@@ -748,7 +748,7 @@ class Site < Sequel::Model
     email.strip!
 
     banned_email_domains.each do |banned_email_domain|
-      return true if email.match /@*#{banned_email_domain}$/i
+      return true if email.match /@*#{Regexp.quote(banned_email_domain)}$/i
     end
 
     false

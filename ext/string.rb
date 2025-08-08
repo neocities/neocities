@@ -9,7 +9,7 @@ class String
   end
 
   def unindent
-    gsub /^#{scan(/^\s*/).min_by{|l|l.length}}/, ""
+    gsub /^#{Regexp.quote(scan(/^\s*/).min_by{|l|l.length})}/, ""
   end
 
   def blank?

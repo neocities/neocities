@@ -6,7 +6,7 @@ def education_whitelist_required?
 end
 
 def education_whitelisted?
-  return true if education_whitelist_required? && !$config['education_tag_whitelist'].select {|t| params[:new_tags_string].match(t)}.empty?
+  return true if education_whitelist_required? && !$config['education_tag_whitelist'].select {|t| params[:new_tags_string].match(Regexp.quote(t))}.empty?
   false
 end
 
