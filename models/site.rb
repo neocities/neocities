@@ -1229,7 +1229,8 @@ class Site < Sequel::Model
 
   # https://practicingruby.com/articles/implementing-an-http-file-server?u=dc2ab0f9bb
   def scrubbed_path(path='')
-    path ||= ''
+    path = path.to_s
+
     clean = []
 
     parts = path.to_s.split '/'

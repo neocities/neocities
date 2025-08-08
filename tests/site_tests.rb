@@ -143,6 +143,49 @@ describe Site do
     end
   end
 
+  describe 'scrubbed_path' do
+    it 'preserves literal percent characters without URL decoding' do
+      site = Fabricate :site
+
+      test_paths = [
+        '100% awesome.jpg',
+        'derpking/70%off.png',
+        '50% sale.txt',
+        'discount%special.png',
+        'garfield is 100% sexy.jpg',
+        'path/with/100%valid.txt'
+      ]
+
+      test_paths.each do |path|
+        scrubbed = site.scrubbed_path(path)
+        _(scrubbed).must_equal path  # Should be exactly the same - no URL decoding
+      end
+    end
+
+    it 'still handles path traversal and other security issues' do
+      site = Fabricate :site
+
+      # Should still block path traversal
+      _(site.scrubbed_path('../../../etc/passwd')).must_equal 'etc/passwd'
+      _(site.scrubbed_path('../../test')).must_equal 'test'
+
+      # Should still remove empty components and dots
+      _(site.scrubbed_path('/./test/./file.txt')).must_equal 'test/file.txt'
+      _(site.scrubbed_path('test//file.txt')).must_equal 'test/file.txt'
+
+      # But percent characters should be preserved
+      _(site.scrubbed_path('test/70%off.png')).must_equal 'test/70%off.png'
+    end
+
+    it 'raises error for control characters' do
+      site = Fabricate :site
+
+      # Should still raise error for control characters (below ASCII 32)
+      _(proc { site.scrubbed_path("test\x00file.txt") }).must_raise ArgumentError
+      _(proc { site.scrubbed_path("test\x1Ffile.txt") }).must_raise ArgumentError
+    end
+  end
+
   describe 'custom_max_space' do
     it 'should use the custom max space if it is more' do
       site = Fabricate :site

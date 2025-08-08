@@ -347,6 +347,31 @@ describe 'api' do
       _(site_file_exists?('te[s]t.jpg')).must_equal true
     end
 
+    it 'succeeds with percent character in filename' do
+      create_site
+      @site.generate_api_key!
+      header 'Authorization', "Bearer #{@site.api_key}"
+
+      test_filenames = [
+        '100% awesome.jpg',
+        'dsfds/50%off.png',
+        '50% sale.txt',
+        'discount%special.png'
+      ]
+
+      test_filenames.each do |filename|
+        post '/api/upload', filename => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+        _(res[:result]).must_equal 'success'
+        _(site_file_exists?(filename)).must_equal true
+
+        # Verify the filename was stored literally, not URL-decoded
+        @site.reload  # Reload to get fresh site_files
+        site_file = @site.site_files.find { |f| f.path == filename }
+        _(site_file).wont_be_nil
+        _(site_file.path).must_equal filename  # Should be exactly as uploaded
+      end
+    end
+
     it 'succeeds with valid user session' do
       create_site
       post '/api/upload',
