@@ -1725,7 +1725,7 @@ class Site < Sequel::Model
 
   def thumbnail_url(path, resolution)
     path[0] = '' if path[0] == '/'
-    "#{THUMBNAILS_URL_ROOT}/#{sharding_dir}/#{values[:username]}/#{path}.#{resolution}.webp"
+    "#{THUMBNAILS_URL_ROOT}/#{sharding_dir}/#{values[:username]}/#{self.class.escape_path(path)}.#{resolution}.webp"
   end
 
   def to_rss
