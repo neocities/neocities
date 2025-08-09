@@ -36,6 +36,20 @@ describe 'site_files' do
       _(PurgeCacheWorker.jobs.length).must_equal 1
       _(PurgeCacheWorker.jobs.first['args'].last).must_equal '/test'
     end
+
+    it 'rejects filenames that exceed the character limit' do
+      long_filename = 'a' * (SiteFile::FILE_NAME_CHARACTER_LIMIT + 1) + '.html'
+
+      post '/site_files/create', {filename: long_filename, csrf_token: 'abcd'}, {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+
+      _(last_response.status).must_equal 302
+      _(last_response.headers['Location']).must_match /dashboard/
+
+      # Check for error message by following the redirect
+      get '/dashboard', {}, {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+      _(last_response.body).must_match /file name is too long/i
+      _(last_response.body).must_match /exceeds #{SiteFile::FILE_NAME_CHARACTER_LIMIT} characters/
+    end
   end
 
   describe 'rename' do

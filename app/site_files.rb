@@ -37,6 +37,11 @@ post '/site_files/create' do
     redirect redirect_uri
   end
 
+  if SiteFile.name_too_long?(name)
+    flash[:error] = "File name is too long (exceeds #{SiteFile::FILE_NAME_CHARACTER_LIMIT} characters)."
+    redirect redirect_uri
+  end
+
   extname = File.extname name
 
   unless extname.empty? || extname.match(/^\.#{Site::EDITABLE_FILE_EXT}/i)
