@@ -11,6 +11,6 @@ class PurgeCacheWorker
   end
 
   def perform(username, path)
-    $redis_proxy.xadd(PURGE_STREAM_KEY, {u: username, p: path}, maxlen: ['~', STREAM_MAX_LENGTH])
+    $redis_proxy.xadd(PURGE_STREAM_KEY, {u: username, p: path}, maxlen: STREAM_MAX_LENGTH, approximate: true)
   end
 end
