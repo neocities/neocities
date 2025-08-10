@@ -467,11 +467,21 @@ describe 'api' do
       _(res[:error_type]).must_equal 'invalid_file_type'
     end
 
-    it 'fails for file with no extension' do
+    it 'succeeds for plain text file with no extension' do
       create_site
       basic_authorize @user, @pass
       post '/api/upload', {
-        'derpie' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+        'LICENSE' => Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')
+      }
+      _(res[:result]).must_equal 'success'
+      _(site_file_exists?('LICENSE')).must_equal true
+    end
+
+    it 'fails for non-text file with no extension' do
+      create_site
+      basic_authorize @user, @pass
+      post '/api/upload', {
+        'binaryfile' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       }
       _(res[:error_type]).must_equal 'invalid_file_type'
     end

@@ -761,6 +761,11 @@ class Site < Sequel::Model
   end
 
   def self.valid_file_mime_type_and_ext?(mime_type, extname)
+    # For files with no extension, only check mime type
+    if extname == ''
+      return mime_type =~ /text/ || mime_type == 'application/json' || mime_type =~ /inode\/x-empty/
+    end
+
     valid_mime_type = Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/ || mime_type =~ /inode\/x-empty/
     valid_extension = Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
     unless valid_extension
@@ -772,11 +777,6 @@ class Site < Sequel::Model
   def self.valid_file_type?(uploaded_file)
     mime_type = Magic.guess_file_mime_type uploaded_file[:tempfile].path
     extname = File.extname uploaded_file[:filename]
-
-    # Possibly needed logic for .dotfiles
-    #if extname == ''
-    #  extname = uploaded_file[:filename]
-    #end
 
     return false unless valid_file_mime_type_and_ext?(mime_type, extname)
 

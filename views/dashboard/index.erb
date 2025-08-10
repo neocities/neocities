@@ -155,22 +155,24 @@
 </div>
 
 <div class="modal hide" id="createFile" tabindex="-1" role="dialog" aria-labelledby="createFileLabel" aria-hidden="true">
-  <form method="post" action="/site_files/create">
-    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-    <input type="hidden" value="<%= @dir %>" name="dir">
+  <form id="createFileForm" onsubmit="return false;">
+    <input type="hidden" value="<%= csrf_token %>" name="csrf_token" id="createFileCSRFToken">
+    <input type="hidden" value="<%= @dir %>" name="dir" id="createFileDir">
     <div class="modal-header">
       <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
       <h3 id="createFileLabel">Create New File</h3>
     </div>
     <div class="modal-body">
+      <div id="createFileError" class="alert alert-error" style="display: none; margin-bottom: 15px;"></div>
       <input id="newFileInput" name="filename" type="text" placeholder="newfile.html">
       <p>Note: We will automatically scrub any characters not matching: a-z A-Z 0-9 _ - .</p>
+      <p>Allowed file types: html, htm, txt, js, css, md, json, xml, py, and others. Must be an editable file type.</p>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button type="submit" class="btn-Action">Create</button>
+      <button type="button" class="btn-Action" onclick="handleCreateFile()">Create</button>
     </div>
   </form>
 </div>
 
-<script src="/js/dashboard.js"><script>
+<script src="/js/dashboard.js"></script>

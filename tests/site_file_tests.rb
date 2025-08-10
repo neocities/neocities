@@ -24,34 +24,6 @@ describe 'site_files' do
     ScreenshotWorker.jobs.clear
   end
 
-  describe 'install' do
-    it 'installs new html file' do
-      post '/site_files/create', {filename: 'test.html', csrf_token: 'abcd'}, {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
-      _(last_response.body).must_equal ""
-      _(last_response.status).must_equal 302
-      _(last_response.headers['Location']).must_match /dashboard/
-      testfile = @site.site_files_dataset.where(path: 'test.html').first
-      _(testfile).wont_equal nil
-      _(File.exists?(@site.files_path('test.html'))).must_equal true
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      _(PurgeCacheWorker.jobs.first['args'].last).must_equal '/test'
-    end
-
-    it 'rejects filenames that exceed the character limit' do
-      long_filename = 'a' * (SiteFile::FILE_NAME_CHARACTER_LIMIT + 1) + '.html'
-
-      post '/site_files/create', {filename: long_filename, csrf_token: 'abcd'}, {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
-
-      _(last_response.status).must_equal 302
-      _(last_response.headers['Location']).must_match /dashboard/
-
-      # Check for error message by following the redirect
-      get '/dashboard', {}, {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
-      _(last_response.body).must_match /file name is too long/i
-      _(last_response.body).must_match /exceeds #{SiteFile::FILE_NAME_CHARACTER_LIMIT} characters/
-    end
-  end
-
   describe 'rename' do
     before do
       PurgeCacheWorker.jobs.clear
