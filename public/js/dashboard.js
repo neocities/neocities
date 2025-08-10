@@ -30,6 +30,28 @@ function hideUploadProgress() {
   $('#uploadingOverlay').css('display', 'none')
 }
 
+function showMovingProgress() {
+  $('#movingOverlay').css('display', 'block');
+}
+
+function hideMovingProgress() {
+  $('#movingOverlay').css('display', 'none');
+}
+
+function moveFileToFolder(event, folderName) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const fullUrl = event.dataTransfer.getData('text/uri-list');
+  const url = new URL(fullUrl);
+  let fileName = url.pathname;
+
+  $('#moveCurrentPath').val(fileName.slice(1));
+  fileName = fileName.split('/').pop(); 
+  $('#moveNewPath').val(folderName + '/' + fileName);
+  $('#moveFileForm').submit();
+}
+
 $('#createDir').on('shown', function () {
   $('#newDirInput').focus();
 })

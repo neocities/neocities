@@ -19,14 +19,16 @@
     <% if params[:dir].nil? || params[:dir].empty? || params[:dir] == '/' %>
       Home
     <% else %>
-      <a href="/dashboard">Home</a>
+      <a href="/dashboard" ondrop="moveFileToFolder(event, '')" ondragover="event.preventDefault()">Home</a>
     <% end %>
 
     <% if @dir %>
       <% dir_array = @dir.split '/' %>
       <% dir_array.each_with_index do |dir,i| %>
         <% if i+1 < dir_array.length %>
-          <a href="/dashboard?dir=<%= Rack::Utils.escape dir_array[1..i].join('/') %>"><%= dir %></a> <i class="fa fa-angle-right"></i>
+          <a href="/dashboard?dir=<%= Rack::Utils.escape dir_array[1..i].join('/') %>" 
+           ondrop="moveFileToFolder(event, '<%= dir_array[1..i].join('/') %>')" 
+           ondragover="event.preventDefault()"><%= dir %></a> <i class="fa fa-angle-right"></i>
         <% else %>
           <%= dir %>
         <% end %>
@@ -58,7 +60,7 @@
               <div class="overlay"></div>
             </div>
           <% elsif file[:is_directory] %>
-            <div class="html-thumbnail folder fileimagehover" ondrop="moveFileToFolder(event)">
+            <div class="html-thumbnail folder fileimagehover" ondrop="moveFileToFolder(event, '<%= file[:path] %>')" ondragover="event.preventDefault()">
               <div class="folder-icon"></div>
               <div class="overlay"></div>
             </div>
