@@ -50,12 +50,4 @@
       <input class="btn-Action" type="submit" value="Send">
     </fieldset>
   </form>
-
-  <div id="contactInfo"></div>
 </div>
-
-<script>
-  $.get('/dmca/contact_info', function(res) {
-    $('#contactInfo').html(res.data)
-  })
-</script>

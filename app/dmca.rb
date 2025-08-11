@@ -3,11 +3,6 @@ get '/dmca' do
   erb :'dmca'
 end
 
-get '/dmca/contact_info' do
-  content_type :json
-  {data: erb(:'dmca/contact_info', layout: false)}.to_json
-end
-
 post '/dmca/contact' do
   @title = 'DMCA'
   @errors = []
