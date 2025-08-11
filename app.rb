@@ -22,6 +22,10 @@ helpers do
     %{<input name="csrf_token" type="hidden" value="#{csrf_token}">}
   end
 
+  def require_admin
+    redirect '/' unless signed_in? && current_site.is_admin
+  end
+
   def hcaptcha_input
     %{
       <script src="https://hcaptcha.com/1/api.js" async defer></script>
@@ -77,6 +81,8 @@ before do
     content_type :json
   elsif request.path.match /^\/webhooks\//
     # Skips the CSRF/validation check for stripe web hooks
+  elsif request.path.match /^\/admin/
+    require_admin
   elsif current_site && current_site.email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/welcome|^\/supporter|^\/signout/)
     redirect "/site/#{current_site.username}/confirm_email"
   elsif current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/signout/)

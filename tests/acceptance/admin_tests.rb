@@ -4,11 +4,9 @@ describe '/admin' do
   include Capybara::DSL
   include Capybara::Minitest::Assertions
 
-
   before do
     Capybara.reset_sessions!
     @admin = Fabricate :site, is_admin: true
-    @site = Fabricate :site
     page.set_rack_session id: @admin.id
     visit '/admin'
   end
@@ -17,13 +15,42 @@ describe '/admin' do
     include Capybara::DSL
 
     it 'works for admin site' do
-      _(page.body).must_match /Administration/
+      _(page.body).must_match /Admin/
     end
 
-    it 'fails for site without admin' do
-      page.set_rack_session id: @site.id
+    it 'blocks all /admin paths for non-admin users' do
+      non_admin_site = Fabricate :site
+      page.set_rack_session id: non_admin_site.id
+      
+      # Test GET routes
+      ['/admin', '/admin/reports', '/admin/usage', '/admin/email', '/admin/stats', '/admin/masquerade/test'].each do |path|
+        visit path
+        _(page.current_path).must_equal '/', "Failed to block GET #{path}"
+      end
+      
+      # Test POST routes
+      ['/admin/reports', '/admin/ban', '/admin/unban', '/admin/mark_nsfw', '/admin/feature', '/admin/email'].each do |path|
+        page.driver.post path, {}
+        _(page.driver.status_code).must_equal 302, "Expected redirect for POST #{path}"
+        
+        # Follow the redirect and verify we end up at home page (blocked)
+        visit page.driver.response_headers['Location'] if page.driver.response_headers['Location']
+        _(page.current_path).must_equal '/', "POST #{path} should redirect to home page, not #{page.current_path}"
+      end
+    end
+
+    it 'blocks /admin paths for signed out users' do
+      page.set_rack_session id: nil
+      
       visit '/admin'
       _(page.current_path).must_equal '/'
+      
+      page.driver.post '/admin/ban', {usernames: 'test'}
+      _(page.driver.status_code).must_equal 302
+      
+      # Follow the redirect and verify we end up at home page (blocked)
+      visit page.driver.response_headers['Location'] if page.driver.response_headers['Location']
+      _(page.current_path).must_equal '/', "Signed out user POST should redirect to home page"
     end
   end
 
@@ -31,20 +58,147 @@ describe '/admin' do
     include Capybara::DSL
 
     it 'works for valid site' do
+      site = Fabricate :site
+
       within(:css, '#upgradeToSupporter') do
-        fill_in 'username', with: @site.username
+        fill_in 'username', with: site.username
         click_button 'Upgrade to Supporter'
-        @site.reload
-        _(@site.stripe_customer_id).wont_be_nil
-        _(@site.stripe_subscription_id).wont_be_nil
-        _(@site.values[:plan_type]).must_equal 'special'
-        _(@site.supporter?).must_equal true
+        site.reload
+        _(site.stripe_customer_id).wont_be_nil
+        _(site.stripe_subscription_id).wont_be_nil
+        _(site.values[:plan_type]).must_equal 'special'
+        _(site.supporter?).must_equal true
       end
     end
 
   end
 
+  describe 'ban site form' do
+    include Capybara::DSL
 
+    it 'bans single site successfully' do
+      site_to_ban = Fabricate :site
+      
+      fill_in 'usernames', with: site_to_ban.username
+      # select 'Spam', from: 'classifier'
+      click_button 'Ban'
+      
+      site_to_ban.reload
+      _(site_to_ban.is_banned).must_equal true
+      _(page.body).must_match(/sites have been banned/)
+    end
+
+    it 'bans multiple sites successfully' do
+      site1 = Fabricate :site
+      site2 = Fabricate :site
+      
+      fill_in 'usernames', with: "#{site1.username}\n#{site2.username}"
+      #select 'Phishing', from: 'classifier'
+      click_button 'Ban'
+      
+      site1.reload
+      site2.reload
+      _(site1.is_banned).must_equal true
+      _(site2.is_banned).must_equal true
+      _(page.body).must_match(/sites have been banned/)
+    end
+
+    it 'bans sites using IP when checkbox is checked' do
+      ip_address = '192.168.1.1'
+      site1 = Fabricate :site, ip: ip_address
+      site2 = Fabricate :site, ip: ip_address
+      
+      fill_in 'usernames', with: site1.username
+      check 'ban_using_ips'
+      select 'Spam', from: 'classifier'
+      click_button 'Ban'
+      
+      site1.reload
+      site2.reload
+      _(site1.is_banned).must_equal true
+      _(site2.is_banned).must_equal true
+    end
+  end
+
+  describe 'unban site form' do
+    include Capybara::DSL
+
+    before do
+      @banned_site = Fabricate :site, is_banned: true
+    end
+
+    it 'unbans site successfully' do
+      within(:css, 'form[action="/admin/unban"]') do
+        fill_in 'username', with: @banned_site.username
+        click_button 'Unban'
+      end
+      
+      @banned_site.reload
+      _(@banned_site.is_banned).must_equal false
+      _(page.body).must_match(/was unbanned/)
+    end
+
+    it 'handles non-existent username gracefully' do
+      within(:css, 'form[action="/admin/unban"]') do
+        fill_in 'username', with: 'nonexistent_user'
+        click_button 'Unban'
+      end
+      
+      _(page.body).must_match(/User not found/)
+    end
+  end
+
+  describe 'mark as NSFW form' do
+    include Capybara::DSL
+
+    it 'marks site as NSFW successfully' do
+      site_to_mark = Fabricate :site
+      
+      within(:css, 'form[action="/admin/mark_nsfw"]') do
+        fill_in 'username', with: site_to_mark.username
+        click_button 'Mark NSFW'
+      end
+      
+      site_to_mark.reload
+      _(site_to_mark.is_nsfw).must_equal true
+      _(page.body).must_match(/MISSION ACCOMPLISHED/)
+    end
+
+    it 'handles non-existent username gracefully' do
+      within(:css, 'form[action="/admin/mark_nsfw"]') do
+        fill_in 'username', with: 'nonexistent_user'
+        click_button 'Mark NSFW'
+      end
+      
+      _(page.body).must_match(/User not found/)
+    end
+  end
+
+  describe 'feature site form' do
+    include Capybara::DSL
+
+    it 'features site successfully' do
+      site_to_feature = Fabricate :site
+      
+      within(:css, '#featureSite') do
+        fill_in 'username', with: site_to_feature.username
+        click_button 'Feature Site'
+      end
+      
+      site_to_feature.reload
+      _(site_to_feature.featured_at).wont_be_nil
+      _(page.body).must_match(/Site has been featured/)
+    end
+
+    it 'handles non-existent username gracefully' do
+      within(:css, '#featureSite') do
+        fill_in 'username', with: 'nonexistent_user'
+        click_button 'Feature Site'
+      end
+      
+      _(page.body).must_match(/User not found/)
+    end
+  end
 
   describe 'email blasting' do
     before do

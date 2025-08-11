@@ -1,18 +1,15 @@
 get '/admin' do
-  require_admin
   @banned_sites = Site.select(:username).filter(is_banned: true).order(:username).all
   @nsfw_sites = Site.select(:username).filter(is_nsfw: true).order(:username).all
   erb :'admin'
 end
 
 get '/admin/reports' do
-  require_admin
   @reports = Report.order(:created_at.desc).all
   erb :'admin/reports'
 end
 
 get '/admin/site/:username' do |username|
-  require_admin
   @site = Site[username: username]
   not_found if @site.nil?
   @title = "Site Inspector - #{@site.username}"
@@ -20,11 +17,9 @@ get '/admin/site/:username' do |username|
 end
 
 post '/admin/reports' do
-
 end
 
 post '/admin/site_files/train' do
-  require_admin
   site = Site[params[:site_id]]
   site_file = site.site_files_dataset.where(path: params[:path]).first
   not_found if site_file.nil?
@@ -34,7 +29,6 @@ post '/admin/site_files/train' do
 end
 
 get '/admin/usage' do
-  require_admin
   today = Date.today
   current_month = Date.new today.year, today.month, 1
 
@@ -69,12 +63,10 @@ get '/admin/usage' do
 end
 
 get '/admin/email' do
-  require_admin
   erb :'admin/email'
 end
 
 get '/admin/stats' do
-  require_admin
 
   @stats = {
     total_hosted_site_hits: DB['SELECT SUM(hits) FROM sites'].first[:sum],
@@ -171,8 +163,6 @@ get '/admin/stats' do
 end
 
 post '/admin/email' do
-  require_admin
-
   %i{subject body}.each do |k|
     if params[k].nil? || params[k].empty?
       flash[:error] = "#{k.capitalize} is missing."
@@ -209,9 +199,7 @@ post '/admin/email' do
   redirect '/'
 end
 
-post '/admin/banhammer' do
-  require_admin
-
+post '/admin/ban' do
   if params[:usernames].empty?
     flash[:error] = 'no usernames provided'
     redirect '/admin'
@@ -259,8 +247,26 @@ post '/admin/banhammer' do
   redirect '/admin'
 end
 
+post '/admin/unban' do
+  site = Site[username: params[:username]]
+
+  if site.nil?
+    flash[:error] = 'User not found'
+    redirect '/admin'
+  end
+
+  if !site.is_banned
+    flash[:error] = 'Site is not banned'
+    redirect '/admin'
+  end
+
+  site.unban!
+
+  flash[:success] = "Site #{site.username} was unbanned."
+  redirect '/admin'
+end
+
 post '/admin/mark_nsfw' do
-  require_admin
   site = Site[username: params[:username]]
 
   if site.nil?
@@ -277,7 +283,6 @@ post '/admin/mark_nsfw' do
 end
 
 post '/admin/feature' do
-  require_admin
   site = Site[username: params[:username]]
 
   if site.nil?
@@ -292,17 +297,9 @@ post '/admin/feature' do
 end
 
 get '/admin/masquerade/:username' do
-  require_admin
   site = Site[username: params[:username]]
   not_found if site.nil?
   session[:id] = site.id
   redirect '/'
 end
 
-def require_admin
-  redirect '/' unless is_admin?
-end
-
-def is_admin?
-  signed_in? && current_site.is_admin
-end
