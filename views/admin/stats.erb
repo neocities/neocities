@@ -23,6 +23,14 @@
         <td><strong>Site Updates</strong></td>
         <td><strong><%= @stats[:total_site_changes].to_comma_separated %></strong></td>
       </tr>
+      <tr>
+        <td><strong>Current Supporters</strong></td>
+        <td><strong><%= @stats[:current_supporters].to_comma_separated %></strong></td>
+      </tr>
+      <tr>
+        <td><strong>Support Rate</strong></td>
+        <td><strong><%= @stats[:supporter_percentage] %>%</strong></td>
+      </tr>
     </table>
 
     <h2>Monthly Statistics</h2>

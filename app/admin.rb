@@ -67,7 +67,6 @@ get '/admin/email' do
 end
 
 get '/admin/stats' do
-
   @stats = {
     total_hosted_site_hits: DB['SELECT SUM(hits) FROM sites'].first[:sum],
     total_hosted_site_views: DB['SELECT SUM(views) FROM sites'].first[:sum],
@@ -76,88 +75,48 @@ get '/admin/stats' do
   }
 
   # Start with the date of the first created site
-
   start = Site.select(:created_at).
                exclude(created_at: nil).
                order(:created_at).
                first[:created_at].to_date
 
   runner = start
-
   monthly_stats = []
-
   now = Date.today
 
   while Date.new(runner.year, runner.month, 1) <= Date.new(now.year, now.month, 1)
+    # Get sites created in this time range
+    sites_in_range = Site.where(created_at: runner..runner.next_month)
+    sites_from_start = Site.where(created_at: start..runner.next_month)
+    
+    supporters_count = Site.where(created_at: start..runner.next_month, parent_site_id: nil)
+                          .where(
+                            Sequel.|(
+                              ~{stripe_customer_id: nil} & ~{stripe_subscription_id: nil} & {plan_ended: [false, nil]} & ~{plan_type: ['free', 'special']},
+                              {paypal_active: true}
+                            )
+                          ).count
+    
     monthly_stats.push(
       date: runner,
-      sites_created: Site.where(created_at: runner..runner.next_month).count,
-      total_from_start: Site.where(created_at: start..runner.next_month).count,
-      supporters: Site.where(created_at: start..runner.next_month).exclude(stripe_customer_id: nil).count,
+      sites_created: sites_in_range.count,
+      total_from_start: sites_from_start.count,
+      supporters: supporters_count,
     )
 
     runner = runner.next_month
   end
 
   @stats[:monthly_stats] = monthly_stats
-
-  if $stripe_cache && Time.now < $stripe_cache[:time] + 14400
-    customers = $stripe_cache[:customers]
-  else
-    customers = Stripe::Customer.all limit: 100000
-    $stripe_cache = {
-      customers: customers,
-      time: Time.now
-    }
-  end
-
-  @stats[:monthly_revenue] = 0.0
-
-  subscriptions = []
-  @stats[:cancelled_subscriptions] = 0
-
-  customers.each do |customer|
-    sub = {created_at: Time.at(customer.created)}
-
-    if customer[:subscriptions][:data].empty?
-      @stats[:cancelled_subscriptions] += 1
-      next
-    end
-
-    next if customer[:subscriptions][:data].first[:plan][:amount] == 0
-
-    sub[:status] = 'active'
-    plan = customer[:subscriptions][:data].first[:plan]
-
-    sub[:amount_without_fees] = (plan[:amount] / 100.0).round(2)
-    sub[:percentage_fee] = (sub[:amount_without_fees]/(100/2.9)).ceil_to(2)
-    sub[:fixed_fee] = 0.30
-    sub[:amount] = sub[:amount_without_fees] - sub[:percentage_fee] - sub[:fixed_fee]
-
-    if(plan[:interval] == 'year')
-      sub[:amount] = (sub[:amount] / 12).round(2)
-    end
-
-    @stats[:monthly_revenue] += sub[:amount]
-
-    subscriptions.push sub
-  end
-
-  @stats[:subscriptions] = subscriptions
-
-  # Hotwired for now
-  @stats[:expenses] = 300.0 #/mo
-  @stats[:percent_until_profit] = (
-    (@stats[:monthly_revenue].to_f / @stats[:expenses]) * 100
-  )
-
-  @stats[:poverty_threshold] = 11_945
-  @stats[:poverty_threshold_percent] = (@stats[:monthly_revenue].to_f / ((@stats[:poverty_threshold]/12) + @stats[:expenses])) * 100
-
-  # http://en.wikipedia.org/wiki/Poverty_threshold
-
-  @stats[:average_developer_salary] = 93_280.00 # google "average developer salary"
-  @stats[:percent_until_developer_salary] = (@stats[:monthly_revenue].to_f / ((@stats[:average_developer_salary]/12) + @stats[:expenses])) * 100
+  
+  @stats[:current_supporters] = Site.where(parent_site_id: nil)
+                                    .where(
+                                      Sequel.|(
+                                        ~{stripe_customer_id: nil} & ~{stripe_subscription_id: nil} & {plan_ended: [false, nil]} & ~{plan_type: ['free', 'special']},
+                                        {paypal_active: true}
+                                      )
+                                    ).count
+  @stats[:supporter_percentage] = (@stats[:current_supporters].to_f / @stats[:total_sites] * 100).round(2)
 
   erb :'admin/stats'
 end
