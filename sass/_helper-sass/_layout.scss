@@ -66,6 +66,6 @@
 // The main purpose of a class like this is to apply to an inner HTML element of the column structure
 // so we can apply styling to the columns.
 .block{
-	background:#ccc; color:#333; padding:$spacing;
+	background: $c-Brand-3; color: $c-Dark; padding:$spacing;
 	& > :last-child{margin-bottom:0}
 }

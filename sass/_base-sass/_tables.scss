@@ -2,7 +2,7 @@
 // Tables
 // ----------------------------------------------------------------
 
-$table-Border: 1px solid #ccc; // sets consistent boarder styling for table elements
+$table-Border: 1px solid #ddd; // sets consistent boarder styling for table elements
 
 // Removes most of the table spacing issues
 table{
@@ -12,40 +12,79 @@ table{
 }
 
 .table-Base{
-	background:#fafafa;
+	background: #fff; // white background for table body
 	font-size:$base;
 	width:100%; // make tables always take up the entire width of their containing parent.
+	border-radius: $radius;
+	overflow: hidden;
+	box-shadow: 0 2px 4px rgba(0,0,0,.1);
 	
 	th, 
 	td{
-  	padding:$spacing; 
+  	padding:$spacing*3; 
   	text-align:left;
+  	border-bottom: 1px solid lighten($c-Brand-1, 40%);
+  	vertical-align: top;
+	}
+	
+	th {
+		background: $c-Brand-1; // vibrant pink/red header
+		font-weight: 600;
+		color: #fff; // white text on pink
+		border-bottom: 2px solid darken($c-Brand-1, 10%);
+	}
+	
+	tr:last-child td {
+		border-bottom: none;
+	}
+	
+	tr:hover {
+		background: lighten($c-Brand-1, 45%);
 	}
 }
 
 .table-Header{
-	background:#eee;
-}
-
-.table-Body{
-	// style?
+	background: $c-Brand-1;
+	color: #fff;
+	
+	th {
+		background: $c-Brand-1;
+		color: #fff;
+		border-bottom-color: darken($c-Brand-1, 10%);
+	}
 }
 
 .table-Footer{
-	background:#e3e3e3;
+	background: darken($c-Brand-3, 10%);
+	
+	td {
+		background: darken($c-Brand-3, 10%);
+		font-weight: 500;
+	}
 }
 
 .table-Border{
 	@extend .table-Base;
-	border-bottom:$table-Border;
-	border-right:$table-Border;
+	border: 1px solid $c-Brand-1;
 	
-	tr{border-top:$table-Border}
-	th, td{border-left:$table-Border}
+	th, td {
+		border-right: 1px solid lighten($c-Brand-1, 35%);
+	}
+	
+	th:last-child,
+	td:last-child {
+		border-right: none;
+	}
 }
 
 .table-Stripe{
 	@extend .table-Base;
 	
-	tr:nth-child(2n){background:$c-Light}
+	tr:nth-child(even) {
+		background: lighten($c-Brand-1, 47%);
+	}
+	
+	tr:nth-child(even):hover {
+		background: lighten($c-Brand-1, 42%);
+	}
 }
