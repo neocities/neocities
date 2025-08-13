@@ -55,7 +55,7 @@
             </div>
             <% if signed_in? && current_site.is_admin %>
               <div class="admin">
-                <form action="/admin/banhammer" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
+                <form action="/admin/ban" target="_blank" method="POST" onsubmit="return confirm('Confirm ban of <%= site.username %>');">
                   <%== csrf_token_input_html %>
                   <input type="hidden" name="username" value="<%= site.username %>">
                   <button>Ban</button>

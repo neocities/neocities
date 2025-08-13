@@ -180,7 +180,7 @@
 <% if signed_in? && current_site.is_admin %>
   <script>
     function banSite(usernames, classifier, el) {
-      $.post('/admin/banhammer', {
+      $.post('/admin/ban', {
         usernames: usernames,
         classifier: classifier,
         csrf_token: '<%= csrf_token %>'
