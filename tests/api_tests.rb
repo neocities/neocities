@@ -562,7 +562,7 @@ describe 'api' do
     it 'succeeds for unwhitelisted file on supported plans' do
       no_file_restriction_plans = Site::PLAN_FEATURES.select {|p,v| v[:no_file_restrictions] == true}
       no_file_restriction_plans.each do |plan_type,hash|
-        create_site plan_type: plan_type
+        create_site plan_type: plan_type.to_s
         basic_authorize @user, @pass
         post '/api/upload', 'flowercrime.wav' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
         _(res[:result]).must_equal 'success'

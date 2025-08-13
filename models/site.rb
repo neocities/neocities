@@ -1427,7 +1427,7 @@ class Site < Sequel::Model
 
   def plan_type=(val)
     @redis_proxy_change = true
-    super val
+    super val&.dup
   end
 
   def latest_events(current_page=1, current_site=nil, limit=Event::PAGINATION_LENGTH)
