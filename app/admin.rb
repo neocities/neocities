@@ -277,6 +277,26 @@ post '/admin/feature' do
   redirect request.referrer
 end
 
+post '/admin/verify_email' do
+  require_admin
+  site = Site[username: params[:username]]
+
+  if site.nil?
+    flash[:error] = 'User not found'
+    redirect request.referrer
+  end
+
+  if site.email_confirmed
+    flash[:error] = 'Email is already confirmed'
+    redirect request.referrer
+  end
+
+  site.email_confirmed = true
+  site.save_changes(validate: false)
+  flash[:success] = "Email for #{site.username} has been manually verified."
+  redirect request.referrer
+end
+
 get '/admin/masquerade/:username' do
   require_admin
   site = Site[username: params[:username]]

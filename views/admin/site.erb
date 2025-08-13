@@ -37,10 +37,6 @@
               <td><%= @site.email %></td>
             </tr>
             <tr>
-              <td>Email Confirmed</td>
-              <td><%= @site.email_confirmed ? '✓ Yes' : '✗ No' %></td>
-            </tr>
-            <tr>
               <td>IP Address</td>
               <td style="overflow-wrap: anywhere;"><%= @site.ip || 'Unknown' %></td>
             </tr>
@@ -125,6 +121,21 @@
             <tr>
               <td>Blackbox Whitelisted</td>
               <td><%= @site.blackbox_whitelisted ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>Email Confirmed</td>
+              <td>
+                <%= @site.email_confirmed ? '✓ Yes' : '✗ No' %>
+                <% unless @site.email_confirmed %>
+                  <form action="/admin/verify_email" method="POST" style="display: inline-block; margin-left: 10px;">
+                    <input type="hidden" name="username" value="<%= @site.username %>">
+                    <input type="hidden" name="_token" value="<%= csrf_token %>">
+                    <button type="submit" class="btn btn-Action" style="font-size: 12px; padding: 3px 8px;" onclick="return confirm('Are you sure you want to manually verify this email?');">
+                      Verify Manually
+                    </button>
+                  </form>
+                <% end %>
+              </td>
             </tr>
           </table>
           
