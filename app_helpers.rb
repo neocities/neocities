@@ -58,9 +58,19 @@ end
 
 def title
   out = "Neocities"
-  return out                  if request.path == '/'
-  return "#{out} - #{@title}" if @title
-  "#{out} - #{request.path.gsub('/', '').capitalize}"
+  return out if request.path == '/'
+  
+  full_title = if @title
+    "#{out} - #{@title}"
+  else
+    "#{out} - #{request.path.gsub('/', '').capitalize}"
+  end
+  
+  if full_title.length >= 70
+    full_title[0..65] + "..."
+  else
+    full_title
+  end
 end
 
 def encoding_fix(file)
