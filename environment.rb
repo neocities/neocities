@@ -17,6 +17,8 @@ require 'tilt/erubi'
 require 'active_support'
 require 'active_support/time'
 
+ActiveSupport.to_time_preserves_timezone = :zone
+
 class File
   def self.exists?(val)
     self.exist?(val)
