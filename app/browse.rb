@@ -77,7 +77,7 @@ def browse_sites_dataset
       ds = ds.exclude site_updated_at: nil
       ds = ds.order :site_updated_at.desc
     when 'newest'
-      ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS} unless is_admin?
+      ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS} unless current_site && current_site.is_admin
       ds = ds.exclude site_updated_at: nil
       ds = ds.order :created_at.desc, :views.desc
     when 'oldest'

@@ -111,10 +111,11 @@
               <button onclick="banSite('<%= site.username.gsub('\'', '') %>', '', this); ">Ban</button>
               <button onclick="banSite('<%= site.username.gsub('\'', '') %>', 'spam', this)">Spam</button>
               <button onclick="banSite('<%= site.username.gsub('\'', '') %>', 'phishing', this)">Phishing</button>
+              <button onclick="window.location='/admin/site/<%= site.username %>'">Info</button>
               <form action="/admin/mark_nsfw" target="_blank" method="POST" onsubmit="return confirm('Confirm NSFW marking of <%= site.username %>');">
                 <%== csrf_token_input_html %>
                 <input type="hidden" name="username" value="<%= site.username %>">
-                <button>Mark NSFW</button>
+                <button>NSFW</button>
               </form>
 
               <% if params[:sort_by] == 'blocks' %>
