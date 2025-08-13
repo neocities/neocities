@@ -137,6 +137,7 @@ end
 
 desc 'generate_sitemap'
 task :generate_sitemap => [:environment] do
+=begin
   sorted_sites = {}
 
   # We pop off array, so highest scores go last.
@@ -165,10 +166,12 @@ task :generate_sitemap => [:environment] do
 
   sites = nil
   GC.start
+=end
 
   sitemap_root = File.join Site::PUBLIC_ROOT, 'sitemap'
   FileUtils.mkdir_p sitemap_root
 
+=begin
   index = 0
   until site_files.empty?
     sfs = site_files.pop 50000
@@ -188,7 +191,7 @@ task :generate_sitemap => [:environment] do
 
     index += 1
   end
-
+=end
 
   # Set basic neocities.org root paths
   builder = Nokogiri::XML::Builder.new { |xml|
@@ -208,7 +211,6 @@ task :generate_sitemap => [:environment] do
     gz.write builder.to_xml(encoding: 'UTF-8')
   end
 
-
   # Tagged sites sitemap
   builder = Nokogiri::XML::Builder.new { |xml|
     xml.urlset(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
@@ -226,16 +228,18 @@ task :generate_sitemap => [:environment] do
     gz.write builder.to_xml(encoding: 'UTF-8')
   end
 
-
   # Final index.xml.gz entrypoint
   Zlib::GzipWriter.open File.join(sitemap_root, 'index.xml.gz') do |gz|
     gz.write %{<?xml version="1.0" encoding="UTF-8"?>\n}
     gz.write %{<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n}
     gz.write %{<sitemap><loc>https://neocities.org/sitemap/root.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
     gz.write %{<sitemap><loc>https://neocities.org/sitemap/tags.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
+
+=begin
     0.upto(index-1).each do |i|
       gz.write %{<sitemap><loc>https://neocities.org/sitemap/sites-#{i}.xml.gz</loc><lastmod>#{Time.now.utc.iso8601}</lastmod></sitemap>\n}
     end
+=end
     gz.write %{</sitemapindex>}
   end
 end
