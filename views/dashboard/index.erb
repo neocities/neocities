@@ -39,7 +39,7 @@
     <li>Using <strong><%= current_site.space_percentage_used %>% (<%= current_site.total_space_used.to_space_pretty %>)</strong> of your <strong><%= current_site.maximum_space.to_space_pretty %></strong> storage.
     <br>
     <li>
-      Used <strong><%= current_site.bandwidth_percentage_used %>% (<%= current_site.monthly_bandwidth_used.to_bytes_pretty %>)</strong> of your <strong><%= current_site.maximum_monthly_bandwidth.to_bytes_pretty %></strong> bandwidth this month.
+      Used <%= current_site.monthly_bandwidth_used.to_bytes_pretty %> of bandwidth this month.
       <br>
       <% unless current_site.is_education || current_site.supporter? %>Need more space? <a href="/supporter">Become a Supporter!</a><% end %>
     </li>
