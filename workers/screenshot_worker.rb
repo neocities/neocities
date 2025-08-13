@@ -56,7 +56,7 @@ class ScreenshotWorker
 
       # We only need the full PNG for the main index right now
       if path.match /^\/index.html?$/
-        ImageOptimizer.new(base_image_tmpfile_path, level: 1).optimize
+        #ImageOptimizer.new(base_image_tmpfile_path, level: 1).optimize
         FileUtils.cp base_image_tmpfile_path, File.join(user_screenshots_path, "#{path}.png")
       end
 
