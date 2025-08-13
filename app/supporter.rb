@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 get '/supporter/?' do
   @title = 'Become a Supporter'
   erb :'welcome'

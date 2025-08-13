@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative './environment.rb'
 
 STAT_LOGS_PATH = 'tests/stat_logs'

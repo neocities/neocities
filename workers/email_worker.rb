@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class EmailWorker
   include Sidekiq::Worker
   sidekiq_options queue: :emails, retry: 10, backtrace: true

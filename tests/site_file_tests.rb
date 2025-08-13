@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative './environment.rb'
 require 'rack/test'
 
@@ -71,7 +72,7 @@ describe 'site_files' do
     it 'renames nonstandard file type for supporters' do
       no_file_restriction_plans = Site::PLAN_FEATURES.select {|p,v| v[:no_file_restrictions] == true}
       no_file_restriction_plans.each do |plan_type,hash|
-        @site = Fabricate :site, plan_type: plan_type
+        @site = Fabricate :site, plan_type: plan_type.to_s
         upload 'flowercrime.wav' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
         testfile = @site.site_files_dataset.where(path: 'flowercrime.wav').first
         res = testfile.rename('flowercrime.exe')
@@ -436,7 +437,7 @@ describe 'site_files' do
     it 'succeeds for unwhitelisted file on supporter plans' do
       no_file_restriction_plans = Site::PLAN_FEATURES.select {|p,v| v[:no_file_restrictions] == true}
       no_file_restriction_plans.each do |plan_type,hash|
-        @site = Fabricate :site, plan_type: plan_type
+        @site = Fabricate :site, plan_type: plan_type.to_s
         upload 'flowercrime.wav' => Rack::Test::UploadedFile.new('./tests/files/flowercrime.wav', 'audio/x-wav')
         _(last_response.body).must_match /successfully uploaded/i
         _(File.exists?(@site.files_path('flowercrime.wav'))).must_equal true

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require './environment.rb'
 require './app_helpers.rb'
 
