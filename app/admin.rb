@@ -1,25 +1,22 @@
 get '/admin' do
+  require_admin
   @banned_sites = Site.select(:username).filter(is_banned: true).order(:username).all
   @nsfw_sites = Site.select(:username).filter(is_nsfw: true).order(:username).all
   erb :'admin'
 end
 
 get '/admin/reports' do
+  require_admin
   @reports = Report.order(:created_at.desc).all
   erb :'admin/reports'
 end
 
-get '/admin/site/:username' do |username|
-  @site = Site[username: username]
-  not_found if @site.nil?
-  @title = "Site Inspector - #{@site.username}"
-  erb :'admin/site'
-end
-
 post '/admin/reports' do
+  require_admin
 end
 
 post '/admin/site_files/train' do
+  require_admin
   site = Site[params[:site_id]]
   site_file = site.site_files_dataset.where(path: params[:path]).first
   not_found if site_file.nil?
@@ -29,6 +26,7 @@ post '/admin/site_files/train' do
 end
 
 get '/admin/usage' do
+  require_admin
   today = Date.today
   current_month = Date.new today.year, today.month, 1
 
@@ -63,10 +61,12 @@ get '/admin/usage' do
 end
 
 get '/admin/email' do
+  require_admin
   erb :'admin/email'
 end
 
 get '/admin/stats' do
+  require_admin
   @stats = {
     total_hosted_site_hits: DB['SELECT SUM(hits) FROM sites'].first[:sum],
     total_hosted_site_views: DB['SELECT SUM(views) FROM sites'].first[:sum],
@@ -122,6 +122,7 @@ get '/admin/stats' do
 end
 
 post '/admin/email' do
+  require_admin
   %i{subject body}.each do |k|
     if params[k].nil? || params[k].empty?
       flash[:error] = "#{k.capitalize} is missing."
@@ -159,9 +160,10 @@ post '/admin/email' do
 end
 
 post '/admin/ban' do
+  require_admin
   if params[:usernames].empty?
     flash[:error] = 'no usernames provided'
-    redirect '/admin'
+    redirect request.referrer
   end
 
   usernames = params[:usernames].split("\n").collect {|u| u.strip}
@@ -203,34 +205,36 @@ post '/admin/ban' do
   end
 
   flash[:success] = "#{ip_deleted_count + deleted_count} sites have been banned, including #{ip_deleted_count} matching IPs."
-  redirect '/admin'
+  redirect request.referrer
 end
 
 post '/admin/unban' do
+  require_admin
   site = Site[username: params[:username]]
 
   if site.nil?
     flash[:error] = 'User not found'
-    redirect '/admin'
+    redirect request.referrer
   end
 
   if !site.is_banned
     flash[:error] = 'Site is not banned'
-    redirect '/admin'
+    redirect request.referrer
   end
 
   site.unban!
 
   flash[:success] = "Site #{site.username} was unbanned."
-  redirect '/admin'
+  redirect request.referrer
 end
 
 post '/admin/mark_nsfw' do
+  require_admin
   site = Site[username: params[:username]]
 
   if site.nil?
     flash[:error] = 'User not found'
-    redirect '/admin'
+    redirect request.referrer
   end
 
   site.is_nsfw = true
@@ -238,27 +242,70 @@ post '/admin/mark_nsfw' do
   site.save_changes validate: false
 
   flash[:success] = 'MISSION ACCOMPLISHED'
-  redirect '/admin'
+  redirect request.referrer
 end
 
-post '/admin/feature' do
+post '/admin/unmark_nsfw' do
+  require_admin
   site = Site[username: params[:username]]
 
   if site.nil?
     flash[:error] = 'User not found'
-    redirect '/admin'
+    redirect request.referrer
+  end
+
+  site.is_nsfw = false
+  site.admin_nsfw = false
+  site.save_changes validate: false
+
+  flash[:success] = 'Site unmarked as NSFW'
+  redirect request.referrer
+end
+
+post '/admin/feature' do
+  require_admin
+  site = Site[username: params[:username]]
+
+  if site.nil?
+    flash[:error] = 'User not found'
+    redirect request.referrer
   end
 
   site.featured_at = Time.now
   site.save_changes(validate: false)
   flash[:success] = 'Site has been featured.'
-  redirect '/admin'
+  redirect request.referrer
 end
 
 get '/admin/masquerade/:username' do
+  require_admin
   site = Site[username: params[:username]]
   not_found if site.nil?
   session[:id] = site.id
   redirect '/'
 end
 
+get '/admin/site/:username_or_email' do
+  require_admin
+  ident = params[:username_or_email]
+
+  if ident.blank?
+    flash[:error] = 'username or email required'
+    redirect '/admin'
+  end
+
+  if ident =~ /@/
+    @site = Site[email: ident]
+  else
+    @site = Site[username: ident]
+  end
+
+  if @site.nil?
+    flash[:error] = "site not found"
+    redirect request.referrer
+  end
+
+  @title = "Site Info - #{@site.username}"
+
+  erb :'admin/site'
+end

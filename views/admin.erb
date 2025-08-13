@@ -20,7 +20,7 @@
       <h2>Ban Site</h2>
       <form action="/admin/ban" method="POST">
         <%== csrf_token_input_html %>
-        <textarea name="usernames" cols="10" rows="5" autocapitalize="off" autocorrect="off"></textarea>
+        <textarea name="usernames" cols="10" rows="5" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false"></textarea>
         <div class="select-Container" style="display: block; width: 100px; float: none; margin: 0 auto;">
           <select name="classifier" class="input-Select">
             <option value=""></option>
@@ -37,7 +37,7 @@
       <form action="/admin/unban" method="POST">
         <%== csrf_token_input_html %>
         <p>
-          <input type="text" name="username" placeholder="" autocapitalize="off" autocorrect="off">
+          <input type="text" name="username" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
         </p>
         <p><input class="btn-Action" type="submit" value="Unban"></p>
       </form>
@@ -50,9 +50,18 @@
       <form action="/admin/mark_nsfw" method="POST">
         <%== csrf_token_input_html %>
         <p>
-          <input type="text" name="username" placeholder="" autocapitalize="off" autocorrect="off">
+          <input type="text" name="username" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
         </p>
         <p><input class="btn-Action" type="submit" value="Mark NSFW"></p>
+      </form>
+    </div>
+    <div class="col col-50">
+      <h2>Site Info</h2>
+      <form action="/admin/site" method="GET" onsubmit="this.action = '/admin/site/' + this.username_or_email.value; return true;">
+        <p>
+          <input type="text" name="username_or_email" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" placeholder="username or email">
+        </p>
+        <p><input class="btn-Action" type="submit" value="Lookup"></p>
       </form>
     </div>
   </div>
@@ -63,7 +72,7 @@
       <form id="upgradeToSupporter" action="/supporter/update" method="POST">
         <input type="hidden" name="plan_type" value="special">
         <%== csrf_token_input_html %>
-        <p><input type="text" name="username" placeholder="" autocapitalize="off" autocorrect="off"></p>
+        <p><input type="text" name="username" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false"></p>
         <p><input class="btn-Action" type="submit" value="Upgrade to Supporter"></p>
       </form>
     </div>
@@ -72,7 +81,7 @@
       <h2>Feature Site</h2>
       <form id="featureSite" action="/admin/feature" method="POST">
         <%== csrf_token_input_html %>
-        <p><input type="text" name="username" placeholder="" autocapitalize="off" autocorrect="off"></p>
+        <p><input type="text" name="username" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false"></p>
         <p><input class="btn-Action" type="submit" value="Feature Site"></p>
       </form>
     </div>

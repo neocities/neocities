@@ -1,80 +1,422 @@
 <div class="header-Outro">
   <div class="row content single-Col">
-    <h1>Site Inspector</h1>
-    <h2 class="subtitle"><%= @site.username %></h2>
+    <div class="col col-50">
+      <h1>Site Info: <%= @site.username %></h1>
+    </div>
+    <div class="col col-50" style="text-align: right; padding-top: 10px;">
+      <form action="/admin/site/" method="get" style="display: inline-block;" onsubmit="this.action = '/admin/site/' + this.username.value; return true;">
+        <input type="text" name="username" placeholder="Enter username..." class="input-Area" style="width: 200px; margin-bottom: 0; margin-right: 10px; display: inline-block;" required>
+        <button type="submit" class="btn btn-Action" style="margin-bottom: 0; display: inline-block;">Go</button>
+      </form>
+    </div>
   </div>
 </div>
 
-<div class="content misc-page single-Col txt-Center" style="padding-top: 20px;">
+<div class="content single-Col misc-page">
+  <article>
+    <%== flash_display %>
+    <div class="row">
+      <div class="col col-50">
+        <div class="block">
+          <h3>🏠 Info</h3>
+          <table class="table-Border">
+            <tr>
+              <td>Username</td>
+              <td><strong><%= @site.username %></strong></td>
+            </tr>
+            <tr>
+              <td>Title</td>
+              <td><%= (@site.title && !@site.title.empty?) ? @site.title : 'No title' %></td>
+            </tr>
+            <tr>
+              <td>Domain</td>
+              <td><%= (@site.domain && !@site.domain.empty?) ? @site.domain : 'None' %></td>
+            </tr>
+            <tr>
+              <td>Email</td>
+              <td><%= @site.email %></td>
+            </tr>
+            <tr>
+              <td>Email Confirmed</td>
+              <td><%= @site.email_confirmed ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>IP Address</td>
+              <td style="overflow-wrap: anywhere;"><%= @site.ip || 'Unknown' %></td>
+            </tr>
+          </table>
+        </div>
+      </div>
 
-  <div style="float: left;">
-    <form action="/admin/banhammer" target="_blank" method="POST">
-      <%== csrf_token_input_html %>
-      <input type="hidden" name="username" value="<%= @site.username %>">
-      <p><input class="btn-Action" type="submit" value="Ban"></p>
-    </form>
+      <div class="col col-50">
+        <div class="block">
+          <h3>📊 Stats</h3>
+          <table class="table-Border">
+            <tr>
+              <td>Views</td>
+              <td><strong><%= (@site.views || 0).to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse %></strong></td>
+            </tr>
+            <tr>
+              <td>Hits</td>
+              <td><strong><%= (@site.hits || 0).to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse %></strong></td>
+            </tr>
+            <tr>
+              <td>Changed Count</td>
+              <td><%= @site.changed_count || 0 %></td>
+            </tr>
+            <tr>
+              <td>Monthly Bandwidth Used</td>
+              <td><strong><%= @site.monthly_bandwidth_used.to_bytes_pretty %></strong></td>
+            </tr>
+            <tr>
+              <td>Monthly Bandwidth Limit</td>
+              <td><%= @site.maximum_monthly_bandwidth.to_bytes_pretty %></td>
+            </tr>
+            <tr>
+              <td>Bandwidth Usage</td>
+              <td><%= @site.bandwidth_percentage_used %>%</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
 
-    <form action="/admin/mark_nsfw" method="POST">
-      <%== csrf_token_input_html %>
-      <input type="hidden" name="username" value="<%= @site.username %>">
-      <p><input class="btn-Action" type="submit" value="Mark NSFW"></p>
-    </form>
-  </div>
+    <div class="row">
+      <div class="col col-50">
+        <div class="block">
+          <h3>⏰ Time</h3>
+          <table class="table-Border">
+            <tr>
+              <td>Created At</td>
+              <td><%= (@site.created_at && @site.created_at.respond_to?(:strftime)) ? @site.created_at.strftime('%B %d, %Y at %H:%M %Z') : 'Unknown' %></td>
+            </tr>
+            <tr>
+              <td>Updated At</td>
+              <td><%= (@site.updated_at && @site.updated_at.respond_to?(:strftime)) ? @site.updated_at.strftime('%B %d, %Y at %H:%M %Z') : 'Unknown' %></td>
+            </tr>
+            <tr>
+              <td>Banned At</td>
+              <td><%= (@site.banned_at && @site.banned_at.respond_to?(:strftime)) ? @site.banned_at.strftime('%B %d, %Y at %H:%M %Z') : 'Not banned' %></td>
+            </tr>
+          </table>
+        </div>
+      </div>
 
-  <div style="float: right;">
-    <form method="GET" onsubmit="window.location.href = '/admin/site/'+$('#sitename').val(); return false">
-      <input id="sitename" type="text" placeholder="sitename" autocomplete="off"><br>
-      <input type="submit" class="btn-Action" value="Lookup">
-    </form>
-  </div>
+      <div class="col col-50">
+        <div class="block">
+          <h3>🛡️ Moderation</h3>
+          <table class="table-Border">
+            <tr>
+              <td>Deleted</td>
+              <td><%= @site.is_deleted ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>Banned</td>
+              <td><%= @site.is_banned ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>NSFW</td>
+              <td><%= @site.is_nsfw ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>Admin NSFW</td>
+              <td><%= @site.admin_nsfw ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>Blackbox Whitelisted</td>
+              <td><%= @site.blackbox_whitelisted ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+          </table>
+          
+          <div style="margin-top: 15px;">
+            <% if @site.is_banned %>
+              <form action="/admin/unban" method="POST" style="display: inline-block; margin-right: 10px;">
+                <input type="hidden" name="username" value="<%= @site.username %>">
+                <input type="hidden" name="_token" value="<%= csrf_token %>">
+                <button type="submit" class="btn btn-Action" onclick="return confirm('Are you sure you want to unban this site?');">
+                  Unban Site
+                </button>
+              </form>
+            <% else %>
+              <form action="/admin/ban" method="POST" style="display: inline-block; margin-right: 10px;">
+                <input type="hidden" name="usernames" value="<%= @site.username %>">
+                <input type="hidden" name="_token" value="<%= csrf_token %>">
+                <button type="submit" class="btn btn-Action" onclick="return confirm('Are you sure you want to ban this site?');">
+                  Ban Site
+                </button>
+              </form>
+            <% end %>
+            
+            <% if @site.is_nsfw %>
+              <form action="/admin/unmark_nsfw" method="POST" style="display: inline-block;">
+                <input type="hidden" name="username" value="<%= @site.username %>">
+                <input type="hidden" name="_token" value="<%= csrf_token %>">
+                <button type="submit" class="btn btn-Action" onclick="return confirm('Are you sure you want to unmark this site as NSFW?');">
+                  Unmark NSFW
+                </button>
+              </form>
+            <% else %>
+              <form action="/admin/mark_nsfw" method="POST" style="display: inline-block;">
+                <input type="hidden" name="username" value="<%= @site.username %>">
+                <input type="hidden" name="_token" value="<%= csrf_token %>">
+                <button type="submit" class="btn btn-Action" onclick="return confirm('Are you sure you want to mark this site as NSFW?');">
+                  Mark NSFW
+                </button>
+              </form>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div style="clear: both"></div>
+    <div class="row">
+      <div class="col col-50">
+        <div class="block">
+          <h3>💳 Supporter</h3>
+          <table class="table-Border">
+            <tr>
+              <td>Supporter</td>
+              <td><%= @site.supporter? ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>Paying Supporter</td>
+              <td><%= @site.paying_supporter? ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>Plan Ended</td>
+              <td><%= (@site.plan_ended && @site.plan_ended.respond_to?(:strftime)) ? @site.plan_ended.strftime('%B %d, %Y') : 'Active/None' %></td>
+            </tr>
+            <tr>
+              <td>Stripe Customer ID</td>
+              <td>
+                <% if (@site.stripe_customer_id && !@site.stripe_customer_id.empty?) %>
+                  <a href="https://dashboard.stripe.com/customers/<%= @site.stripe_customer_id %>" target="_blank"><%= @site.stripe_customer_id %></a>
+                <% else %>
+                  None
+                <% end %>
+              </td>
+            </tr>
+            <tr>
+              <td>PayPal Active</td>
+              <td><%= @site.paypal_active ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>PayPal Profile ID</td>
+              <td>
+                <% if (@site.paypal_profile_id && !@site.paypal_profile_id.empty?) %>
+                  <a href="https://www.paypal.com/billing/subscriptions/<%= @site.paypal_profile_id %>" target="_blank"><%= @site.paypal_profile_id %></a>
+                  <small><a href="https://www.paypal.com/mep/unifiedtransactions?filter=0&query=<%= @site.paypal_profile_id %>" target="_blank">(view transactions)</a></small>
+                <% else %>
+                  None
+                <% end %>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
 
-  <h3>Site Pages</h3>
+      <div class="col col-50">
 
-  <table>
-    <% @site.site_files_dataset.where(path: /\.html/).all.each do |site_file| %>
-      <tr style="outline: thin solid black;">
-        <td><img src="<%= @site.screenshot_url(site_file.path, '210x158') %>"></td>
-        <td>
-          <p><strong><a href="<%= @site.uri + '/' + site_file.path %>"><%= site_file.path %></a></strong></p>
-          <% if !site_file.classifier.blank? %>
-            <p>
-              <% if site_file.classifier == 'ham' %>
-                <span style="color: green"><%= site_file.classifier %></span>
-              <% else %>
-                <span style="color: red"><strong><%= site_file.classifier %></strong></span>
+        <div class="block">
+          <h3>🌐 Site Relationships</h3>
+          <table class="table-Border">
+            <tr>
+              <td>Site Type</td>
+              <td>
+                <% if @site.parent? %>
+                  <strong>Parent Account</strong>
+                  <% if @site.children_dataset.where(is_deleted: false).count > 0 %>
+                    (has <%= @site.children_dataset.where(is_deleted: false).count %> child site<%= @site.children_dataset.where(is_deleted: false).count == 1 ? '' : 's' %>)
+                  <% end %>
+                <% else %>
+                  <strong>Child Site</strong>
+                <% end %>
+              </td>
+            </tr>
+            <% if @site.parent? && @site.children_dataset.where(is_deleted: false).count > 0 %>
+              <tr>
+                <td>Child Sites</td>
+                <td>
+                  <% @site.children_dataset.where(is_deleted: false).order(:username).each_with_index do |child, index| %>
+                    <% if index > 0 %>, <% end %>
+                    <a href="/admin/site/<%= child.username %>" target="_blank"><%= child.username %></a>
+                    <% if child.is_banned %>
+                      <span style="color: red;">(banned)</span>
+                    <% end %>
+                  <% end %>
+                </td>
+              </tr>
+            <% elsif !@site.parent? %>
+              <tr>
+                <td>Parent Site</td>
+                <td>
+                  <a href="/admin/site/<%= @site.parent.username %>" target="_blank"><%= @site.parent.username %></a>
+                  <% if @site.parent.is_banned %>
+                    <span style="color: red;">(banned)</span>
+                  <% end %>
+                </td>
+              </tr>
+              <% if @site.parent.children_dataset.where(is_deleted: false).exclude(id: @site.id).count > 0 %>
+                <tr>
+                  <td>Sibling Sites</td>
+                  <td>
+                    <% @site.parent.children_dataset.where(is_deleted: false).exclude(id: @site.id).order(:username).each_with_index do |sibling, index| %>
+                      <% if index > 0 %>, <% end %>
+                      <a href="/admin/site/<%= sibling.username %>" target="_blank"><%= sibling.username %></a>
+                      <% if sibling.is_banned %>
+                        <span style="color: red;">(banned)</span>
+                      <% end %>
+                    <% end %>
+                  </td>
+                </tr>
               <% end %>
-            </p>
+            <% end %>
+            <tr>
+              <td>All Account Sites</td>
+              <td>
+                <strong><%= @site.account_sites_dataset.where(is_deleted: false).count %></strong> total sites 
+                (<%= @site.account_sites_dataset.where(is_deleted: false, is_banned: false).count %> active, 
+                <%= @site.account_sites_dataset.where(is_deleted: false, is_banned: true).count %> banned)
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col col-100">
+        <div class="block">
+          <h3>📄 Pages</h3>
+          <% if @site.site_files_dataset.where(path: /\.html/).count > 0 %>
+            <div class="row">
+              <% @site.site_files_dataset.where(path: /\.html/).order(:path).all.each do |site_file| %>
+                <div class="col col-33">
+                  <div class="block">
+                    <div class="center">
+                      <a href="<%= @site.uri + '/' + site_file.path %>" target="_blank">
+                        <img src="<%= @site.screenshot_url(site_file.path, '540x405') %>">
+                      </a>
+                    </div>
+                    <h4 class="center">
+                      <a href="<%= @site.uri + '/' + site_file.path %>" target="_blank">
+                        <%= site_file.path %>
+                      </a>
+                    </h4>
+                    <div class="row">
+                      <div class="col col-50 center">
+                        <% if site_file.size %>
+                          <small><%= site_file.size.to_bytes_pretty %></small>
+                        <% else %>
+                          <small>Size: Unknown</small>
+                        <% end %>
+                      </div>
+                      <div class="col col-50 center">
+                        <% if site_file.updated_at %>
+                          <small>Updated: <%= site_file.updated_at.strftime('%m/%d/%Y') %></small>
+                        <% else %>
+                          <small>Updated: Unknown</small>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
           <% else %>
-            <p>Not Classified</p>
+            <div class="center">
+              <p><em>No HTML pages found on this site.</em></p>
+            </div>
           <% end %>
+        </div>
+      </div>
+    </div>
 
-          <form action="/admin/site_files/train" target="_blank" method="POST">
-            <%== csrf_token_input_html %>
-            <input type="hidden" name="site_id" value="<%= @site.id %>">
-            <input type="hidden" name="path" value="<%= site_file.path %>">
-            <input type="hidden" name="classifier" value="ham">
-            <button>Ham</button>
-          </form>
-
-          <form action="/admin/site_files/train" target="_blank" method="POST">
-            <%== csrf_token_input_html %>
-            <input type="hidden" name="site_id" value="<%= @site.id %>">
-            <input type="hidden" name="path" value="<%= site_file.path %>">
-            <input type="hidden" name="classifier" value="spam">
-            <button>Spam</button>
-          </form>
-
-          <form action="/admin/site_files/train" target="_blank" method="POST">
-            <%== csrf_token_input_html %>
-            <input type="hidden" name="site_id" value="<%= @site.id %>">
-            <input type="hidden" name="path" value="<%= site_file.path %>">
-            <input type="hidden" name="classifier" value="phishing">
-            <button>Phishing</button>
-          </form>
-        </td>
-      </tr>
-    <% end %>
-  </table>
+    <div class="row">
+      <div class="col col-100">
+        <div class="block">
+          <h3>📁 Site Files</h3>
+          <% if @site.site_files_dataset.count > 0 %>
+            <table class="table-Border">
+              <thead>
+                <tr>
+                  <th>File Path</th>
+                  <th>Size</th>
+                  <th>Type</th>
+                  <th>Updated</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @site.site_files_dataset.order(:path).all.each do |site_file| %>
+                  <tr>
+                    <td>
+                      <strong>
+                        <a href="<%= @site.uri + '/' + site_file.path %>" target="_blank" style="overflow-wrap: anywhere;">
+                          <%= site_file.path %>
+                        </a>
+                      </strong>
+                    </td>
+                    <td>
+                      <% if site_file.is_directory %>
+                        
+                      <% elsif site_file.size %>
+                        <%= site_file.size.to_space_pretty %>
+                      <% else %>
+                        Unknown
+                      <% end %>
+                    </td>
+                    <td>
+                      <% 
+                        if site_file.is_directory
+                          file_type = '📁 Directory'
+                        else
+                          ext = File.extname(site_file.path).downcase
+                          case ext
+                          when '.html', '.htm'
+                            file_type = '🌐 HTML'
+                          when '.css'
+                            file_type = '🎨 CSS'
+                          when '.js'
+                            file_type = '⚡ JavaScript'
+                          when '.jpg', '.jpeg', '.png', '.gif', '.webp'
+                            file_type = '🖼️ Image'
+                          when '.txt'
+                            file_type = '📄 Text'
+                          when '.md'
+                            file_type = '📝 Markdown'
+                          when '.json'
+                            file_type = '📊 JSON'
+                          when '.xml'
+                            file_type = '📋 XML'
+                          else
+                            file_type = '📄 ' + (ext.empty? ? 'File' : ext.upcase.sub('.', ''))
+                          end
+                        end
+                      %>
+                      <%= file_type %>
+                    </td>
+                    <td>
+                      <% if site_file.updated_at %>
+                        <%= site_file.updated_at.strftime('%m/%d/%Y %H:%M') %>
+                      <% else %>
+                        Unknown
+                      <% end %>
+                    </td>
+                    <td>
+                      TODO
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <div class="center">
+              <p><em>No files found on this site.</em></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </article>
 </div>
