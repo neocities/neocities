@@ -49,12 +49,12 @@
         <div class="file filehover">
           <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '210x158') %>
             <div class="html-thumbnail html fileimagehover">
-              <img src="<%= current_site.screenshot_url(file[:path], '210x158') %>" alt="">
+              <img src="<%= current_site.screenshot_url(file[:path], '210x158') %>" alt="Website screenshot">
               <div class="overlay"></div>
             </div>
           <% elsif file[:is_image] && current_site.thumbnail_exists?(file[:path], '210x158') %>
             <div class="html-thumbnail image fileimagehover">
-              <img src="<%= current_site.thumbnail_url(file[:path], '210x158') %>" alt="">
+              <img src="<%= current_site.thumbnail_url(file[:path], '210x158') %>" alt="Image thumbnail">
               <div class="overlay"></div>
             </div>
           <% elsif file[:is_directory] %>

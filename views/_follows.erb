@@ -6,7 +6,7 @@
       <p>You are not following any sites yet. Add some by <a href="/browse">browsing sites</a> or looking at your tags.
     <% else %>
       <% site.followings_dataset.select(:site_id).limit(Site::MAX_DISPLAY_FOLLOWS).each do |following| %>
-        <a href="/site/<%= following.site_dataset.select(:username).first.username %>" title="<%= following.site.title %>"><img src="<%= following.site.screenshot_url 'index.html', '50x50' %>" class="avatar"></a>
+        <a href="/site/<%= following.site_dataset.select(:username).first.username %>" title="<%= following.site.title %>"><img src="<%= following.site.screenshot_url 'index.html', '50x50' %>" alt="<%= following.site.title %> avatar" class="avatar"></a>
       <% end %>
 
       <% if Site::MAX_DISPLAY_FOLLOWS < site_followings_count %>
@@ -26,7 +26,7 @@
       <% site_profile_follows_actioning_ids = site.profile_follows_actioning_ids %>
       <% site_profile_follows_actioning_ids[0...Site::MAX_DISPLAY_FOLLOWS].each do |follow| %>
         <% follow_actioning_site = follow.actioning_site_dataset.select(:username).first %>
-        <a href="/site/<%= follow_actioning_site.username %>" title="<%= follow_actioning_site.title %>"><img src="<%= follow_actioning_site.screenshot_url 'index.html', '50x50' %>" class="avatar" onerror="this.src='/img/50x50.png'"></a>
+        <a href="/site/<%= follow_actioning_site.username %>" title="<%= follow_actioning_site.title %>"><img src="<%= follow_actioning_site.screenshot_url 'index.html', '50x50' %>" alt="<%= follow_actioning_site.title %> avatar" class="avatar" onerror="this.src='/img/50x50.png'"></a>
       <% end %>
 
       <% if Site::MAX_DISPLAY_FOLLOWS < site_profile_follows_actioning_ids.count %>

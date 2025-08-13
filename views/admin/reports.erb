@@ -19,7 +19,7 @@
           <td>
             <a href="<%= report.site.uri %>"><%= report.site.title %></a>
             <br>
-            <img src="<%= report.site.screenshot_url('/index.html', '540x405') %>">
+            <img src="<%= report.site.screenshot_url('/index.html', '540x405') %>" alt="Reported site screenshot">
             <br>
             Reported <%= report.created_at.ago %>
             <% if report.reporting_site %>

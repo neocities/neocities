@@ -97,7 +97,7 @@
                 <div class="html-thumbnail <%= site_change_file_display_class f %>">
                   <a href="https://<%= event_site.host %><%= f == 'index.html' ? '' : "/#{f}" %>">
                     <% if site_change_file_display_class(f) == 'html' %>
-                      <img src="<%= event_site.screenshot_url(f, '540x405') %>">
+                      <img src="<%= event_site.screenshot_url(f, '540x405') %>" alt="Website screenshot">
                     <% elsif site_change_file_display_class(f) == 'image' %>
                       <!-- <span class="image-container"><img src="<%= event_site.thumbnail_url(f, '210x158') %>"></span> -->
                     <% elsif site_change_file_display_class(f) == 'misc' %>
@@ -134,7 +134,7 @@
           <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <% comment_event_site = comment.event.site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <div class="comment" id="comment_<%= comment.id %>">
-            <a href="/site/<%= comment_actioning_site.username %>"><img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>"></a>
+            <a href="/site/<%= comment_actioning_site.username %>"><img class="avatar" src="<%= comment_actioning_site.screenshot_url('index.html', '50x50') %>" alt="<%= comment_actioning_site.username %>'s avatar"></a>
             <a href="/site/<%= comment_actioning_site.username %>" class="user" title="<%= comment_actioning_site.title %>"><i class="fa fa-user"><% if comment_actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= comment_actioning_site.username %></a>
             <span class="date">
               <a href="/site/<%= comment_event_site.username %>?event_id=<%= event.id %>" class="local-date-title" data-timestamp="<%= comment.created_at.to_i %>"><%= comment.created_at.ago %></a>
