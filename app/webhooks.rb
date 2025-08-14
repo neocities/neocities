@@ -113,7 +113,19 @@ end
 def stripe_get_site_from_event(event)
   customer_id = event['data']['object']['customer']
   halt 'ok' if customer_id.nil? # Likely a fraudulent card report
-  customer = Stripe::Customer.retrieve customer_id
+
+  retries = 0
+  begin
+    customer = Stripe::Customer.retrieve customer_id
+  rescue Stripe::APIConnectionError, Stripe::RateLimitError => e
+    retries += 1
+    if retries <= 3
+      sleep(2 ** retries) # exponential backoff: 2s, 4s, 8s
+      retry
+    else
+      raise e
+    end
+  end
 
   # Some old accounts only have a username for the desc
   desc_split = customer.description.split(' - ')
