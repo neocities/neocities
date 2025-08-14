@@ -374,14 +374,26 @@ post '/settings/update_card' do
   begin
     customer.sources.create source: params[:stripe_token]
   rescue Stripe::InvalidRequestError, Stripe::CardError => e
-    if  e.message.match /cannot use a.+token more than once/
-      flash[:error] = 'Card is already being used.'
-      redirect '/settings#billing'
-    elsif e.message.match /Your card was declined/
-      flash[:error] = 'The card was declined. Please contact your bank.'
+    case e.message
+    when /cannot use a.+token more than once/
+      flash[:error] = 'This card is already being used.'
+    when /Your card has expired/
+      flash[:error] = 'Your card has expired. Please try a different card.'
+    when /Your card was declined/
+      flash[:error] = 'Your card was declined. Please contact your bank or try a different card.'
+    when /security code is incorrect/
+      flash[:error] = 'The security code (CVV) you entered is incorrect. Please try again.'
+    when /card number is incorrect/
+      flash[:error] = 'The card number you entered is incorrect. Please check and try again.'
+    when /insufficient funds/
+      flash[:error] = 'Your card has insufficient funds. Please try a different card.'
+    when /does not support this type of purchase/
+      flash[:error] = 'Your card does not support online purchases. Please try a different card.'
     else
-      raise e
+      # Fallback to Stripe's message for uncommon errors
+      flash[:error] = e.message
     end
+    redirect '/settings#billing'
   end
 
   old_card_ids.each do |card_id|
