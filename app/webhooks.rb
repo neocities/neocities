@@ -13,9 +13,29 @@ end
 
 post '/webhooks/paypal/tipping_notify' do
   return 403 unless valid_paypal_webhook_source?
-  payload = JSON.parse Base64.strict_decode64(params[:custom]), symbolize_names: true
 
-  site = Site[payload[:site_id]]
+  # Handle missing custom parameter (this seems to happen with recurring donations)
+  if params[:custom].nil? || params[:custom].strip.empty?
+    # Try to extract username from product_name like "Site Donation for Two-reeler (USERNAME_HERE)"
+    if params[:product_name] && params[:product_name].match(/\((.+)\)$/)
+      username = params[:product_name].match(/\((.+)\)$/)[1]
+      site = Site.where(username: username).first
+    end
+
+    # If no site found by username, try to find by payer email
+    if params[:payer_email]
+      actioning_site = Site.where(email: params[:payer_email]).first
+    end
+
+    # Create payload structure for anonymous tip
+    payload = {
+      site_id: site.id,
+      actioning_site_id: (actioning_site ? actioning_site : nil)
+    }
+  else
+    payload = JSON.parse Base64.strict_decode64(params[:custom]), symbolize_names: true
+    site = Site[payload[:site_id]]
+  end
 
   @tip_hash = {
     message: (params[:memo] ? params[:memo] : nil),
