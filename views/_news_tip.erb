@@ -17,7 +17,7 @@
         <a href="/site/<%= actioning_site.username %>" class="user" title="<%= actioning_site.title %>"><i class="fa fa-user"><% if actioning_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= actioning_site.username %></a>
       <% end %>
     <% else %>
-      An anonymous donor
+      A donor
     <% end %>
 
     sent a <strong style="color: #229954 !important;"><%= tip.amount_string %></strong> tip to
