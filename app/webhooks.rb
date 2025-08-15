@@ -3,12 +3,15 @@ post '/webhooks/paypal' do
 end
 
 def valid_paypal_webhook_source?
-  # https://www.paypal.com/us/smarthelp/article/what-are-the-ip-addresses-for-live-paypal-servers-ts1056
-  request_ip = IPAddress::IPv4.new request.ip
-  ['127.0.0.1', '66.211.170.66', '173.0.81.0/24'].each do |ip|
-    return true if IPAddress::IPv4.new(ip).include? request_ip
+  return true if request.ip == '127.0.0.1'
+
+  # Use DNS to resolve notify.paypal.com as PayPal recommends
+  begin
+    resolved_ips = Resolv.getaddresses 'notify.paypal.com'
+    return resolved_ips.include?(request.ip)
+  rescue Resolv::ResolvError
+    return false
   end
-  false
 end
 
 post '/webhooks/paypal/tipping_notify' do
