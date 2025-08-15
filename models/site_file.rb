@@ -23,16 +23,19 @@ class SiteFile < Sequel::Model
 
   def before_destroy
     if is_directory
-      site.site_files_dataset.where(path: /^#{Regexp.quote path}\//, is_directory: true).all.each do |site_file|
-        begin
-          site_file.destroy
-        rescue Sequel::NoExistingObject
-        end
-      end
+      # Get all child SiteFile objects and destroy them properly
+      # Use reverse order to delete deeper files first
+      # Beware of deadlocks if you change this code
+      child_site_files = site.site_files_dataset
+        .where(path: /^#{Regexp.quote path}\//)
+        .order(Sequel.desc(:path))
+        .all
 
-      site.site_files_dataset.where(path: /^#{Regexp.quote path}\//, is_directory: false).all.each do |site_file|
+      child_site_files.each do |child_site_file|
         begin
-          site_file.destroy
+          DB.transaction do
+            child_site_file.destroy
+          end
         rescue Sequel::NoExistingObject
         end
       end

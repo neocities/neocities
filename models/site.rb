@@ -1819,7 +1819,7 @@ class Site < Sequel::Model
       site_file = site_files_dataset.where(path: scrubbed_path(file[:filename])).first
 
       if site_file
-        existing_size = site_file.size
+        existing_size = site_file.size || 0
       end
 
       res = store_file(file[:filename], file[:tempfile], file[:opts] || opts)

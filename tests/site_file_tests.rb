@@ -251,6 +251,45 @@ describe 'site_files' do
       delete_file filename: 'test.jpg'
       _(last_response.headers['Location']).must_equal "http://example.org/dashboard"
     end
+
+    it 'deletes complex nested directory structure correctly' do
+      upload 'complex/level1/level2/file1.txt' => Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')
+      upload 'complex/level1/level2/file2.txt' => Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')
+      upload 'complex/level1/file3.txt' => Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')
+      upload 'complex/level1/alt/file4.txt' => Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')
+      upload 'complex/file5.txt' => Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')
+
+      @site.reload
+      complex_files = @site.site_files.select { |f| f.path.start_with?('complex') }
+      _(complex_files.length).must_equal 9
+
+      complex_dir = @site.site_files_dataset.where(path: 'complex').first
+      complex_dir.destroy
+
+      @site.reload
+      remaining_files = @site.site_files.select { |f| f.path.start_with?('complex') }
+      _(remaining_files.length).must_equal 0
+    end
+
+    it 'handles multiple destroy calls on same directory gracefully' do
+      upload 'multitest/sub1/file1.txt' => Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')
+      upload 'multitest/sub2/file2.txt' => Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')
+
+      @site.reload
+      test_dir = @site.site_files_dataset.where(path: 'multitest').first
+      _(test_dir).wont_be_nil
+
+      initial_files = @site.site_files.select { |f| f.path.start_with?('multitest') }
+      _(initial_files.length).must_equal 5
+
+      test_dir.destroy
+
+      @site.reload
+      remaining_files = @site.site_files.select { |f| f.path.start_with?('multitest') }
+      _(remaining_files.length).must_equal 0
+
+      _(proc { test_dir.destroy }).must_raise Sequel::NoExistingObject
+    end
   end
 
   describe 'upload' do
