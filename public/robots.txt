@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://neocities.org/sitemap/index.xml.gz
+
+Sitemap: https://neocities.org/sitemap.xml
