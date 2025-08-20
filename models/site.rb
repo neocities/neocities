@@ -1250,6 +1250,22 @@ class Site < Sequel::Model
     clean_path
   end
 
+  def invalid_path?(path)
+    return true if path.nil? || path.to_s.strip.empty?
+
+    # control characters brotherrrr
+    path.to_s.each_codepoint do |c|
+      return true if c < 32
+    end
+
+    parts = path.to_s.split '/'
+    return true if parts.any? { |part| part == '..' }
+    valid_parts = parts.reject { |part| part.empty? || part == '.' }
+    return true if valid_parts.empty?
+
+    false
+  end
+
   def current_files_path(path='')
     File.join current_base_files_path, scrubbed_path(path)
   end

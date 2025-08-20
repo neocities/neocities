@@ -444,9 +444,9 @@ describe 'api' do
       post '/api/upload', {
         '../lol.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       }
-      _(res[:result]).must_equal 'success'
-      _(File.exist?(File.join(Site::SITE_FILES_ROOT, Site.sharding_dir(@site.username), @site.username, 'lol.jpg'))).must_equal true
-      _(@site.reload.api_calls).must_equal 1
+      _(res[:result]).must_equal 'error'
+      _(res[:error_type]).must_equal 'invalid_filename'
+      _(File.exist?(File.join(Site::SITE_FILES_ROOT, Site.sharding_dir(@site.username), @site.username, 'lol.jpg'))).must_equal false
     end
 
     it 'scrubs root path slash' do
@@ -465,7 +465,7 @@ describe 'api' do
       post '/api/upload', {
         '/' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       }
-      _(res[:error_type]).must_equal 'invalid_file_type'
+      _(res[:error_type]).must_equal 'invalid_filename'
     end
 
     it 'succeeds for plain text file with no extension' do
@@ -520,6 +520,20 @@ describe 'api' do
       _(res[:error_type]).must_equal 'invalid_file_type'
       _(site_file_exists?('test.jpg')).must_equal false
       _(site_file_exists?('nord.avi')).must_equal false
+    end
+
+    it 'fails for invalid filenames' do
+      create_site
+      basic_authorize @user, @pass
+
+      ['.', '..', '/.', '/..'].each do |invalid_filename|
+        post '/api/upload', {
+          invalid_filename => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+        }
+        _(res[:result]).must_equal 'error'
+        _(res[:error_type]).must_equal 'invalid_filename'
+        _(res[:message]).must_include invalid_filename
+      end
     end
 
     it 'succeeds with single file' do
