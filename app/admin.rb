@@ -7,12 +7,25 @@ end
 
 get '/admin/reports' do
   require_admin
-  @reports = Report.order(:created_at.desc).all
+  @page = params[:page] ? params[:page].to_i : 1
+  @page = 1 if @page < 1
+  @per_page = 51
+  
+  @reports = Report.join(:sites, id: :site_id).where(sites__is_deleted: false, sites__is_banned: false).order(:reports__created_at.desc).select_all(:reports).paginate(@page, @per_page)
+  @pagination_dataset = @reports
+  
   erb :'admin/reports'
 end
 
-post '/admin/reports' do
+post '/admin/reports/:report_id/dismiss' do
   require_admin
+  content_type :json
+  
+  report = Report[params[:report_id]]
+  return {success: false, error: 'Report not found'}.to_json if report.nil?
+  
+  report.destroy
+  {success: true, message: 'Report dismissed'}.to_json
 end
 
 post '/admin/site_files/train' do
