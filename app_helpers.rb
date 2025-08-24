@@ -86,6 +86,9 @@ def encoding_fix(file)
 end
 
 def send_confirmation_email(site=current_site)
+  # Child sites don't need email confirmation - they use parent site's email
+  return if !site.parent?
+
   if site.email_confirmation_count > Site::MAXIMUM_EMAIL_CONFIRMATIONS
     flash[:error] = 'You sent too many email confirmation requests, cannot continue.'
     redirect request.referrer

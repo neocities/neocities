@@ -17,6 +17,20 @@ describe Site do
     end
   end
 
+  describe 'child sites' do
+    it 'child sites do not require email validation' do
+      parent_site = Fabricate :site, email: 'parent@example.com', email_confirmed: false
+      child_site = Fabricate :site, parent_site_id: parent_site.id, email: nil
+
+      _(parent_site.parent?).must_equal true
+      _(child_site.parent?).must_equal false
+      
+      # Parent site needs email validation, child site does not
+      _(parent_site.email_not_validated?).must_equal true
+      _(child_site.email_not_validated?).must_equal false
+    end
+  end
+
   describe 'email validation' do
     it 'accepts valid email addresses' do
       valid_emails = [
