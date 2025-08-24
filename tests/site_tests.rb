@@ -142,6 +142,13 @@ describe Site do
       res = site.create_directory long_path_string
       _(res).must_equal 'Directory path is too long.'
     end
+
+    it 'blocks individual directory names that are too long' do
+      site = Fabricate :site
+      long_dir_name = 'a' * (SiteFile::FILE_NAME_CHARACTER_LIMIT + 1)
+      res = site.create_directory "somedir/#{long_dir_name}/anotherdir"
+      _(res).must_match /name is too long/i
+    end
   end
 
   describe 'scrubbed_path' do

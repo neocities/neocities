@@ -855,6 +855,13 @@ class Site < Sequel::Model
 
     path_dirs = path.to_s.split('/').select {|p| ![nil, '.', ''].include?(p) }
 
+    # Check each directory component for length limits
+    path_dirs.each do |dir_name|
+      if SiteFile.name_too_long?(dir_name)
+        return 'Directory name is too long.'
+      end
+    end
+
     path_site_file = ''
 
     until path_dirs.empty?
