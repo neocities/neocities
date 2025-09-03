@@ -247,6 +247,136 @@ describe '/admin' do
     end
   end
 
+  describe '/admin/reports' do
+    include Capybara::DSL
+
+    before do
+      Capybara.current_driver = :selenium_chrome_headless_largewindow
+      
+      @admin = Fabricate :site, is_admin: true
+      page.set_rack_session id: @admin.id
+      
+      @reported_site = Fabricate :site
+      @reporting_site = Fabricate :site
+      @report = Report.create(
+        site: @reported_site,
+        reporting_site: @reporting_site,
+        type: 'inappropriate',
+        comments: 'Test report comment',
+        site_file_path: 'test.html'
+      )
+    end
+
+    after do
+      Capybara.use_default_driver
+    end
+
+    it 'displays reports page' do
+      visit '/admin/reports'
+      _(page.body).must_match /Site Reports/
+      _(page.body).must_match @reported_site.username
+      _(page.body).must_match /inappropriate/i
+      _(page.body).must_match /Test report comment/
+    end
+
+    it 'displays anonymous reports without reporter' do
+      # Clear existing reports to avoid interference
+      Report.where(site: @reported_site).destroy
+      
+      anonymous_report = Report.create(
+        site: @reported_site,
+        reporting_site: nil,
+        type: 'spam',
+        comments: 'Anonymous report unique text'
+      )
+
+      visit '/admin/reports'
+      _(page.body).must_match /Anonymous report unique text/
+      
+      within("#report-#{anonymous_report.id}") do
+        _(page).wont_have_content 'reported by'
+      end
+    end
+
+    it 'handles reports without site_file_path (defaults to index.html)' do
+      no_path_report = Report.create(
+        site: @reported_site,
+        reporting_site: @reporting_site,
+        type: 'phishing',
+        comments: 'No specific file path',
+        site_file_path: nil
+      )
+
+      visit '/admin/reports'
+      _(page.body).must_match /No specific file path/
+      _(page.body).must_match /index\.html/
+    end
+
+    it 'handles reports with empty site_file_path' do
+      empty_path_report = Report.create(
+        site: @reported_site,
+        reporting_site: @reporting_site,
+        type: 'malware',
+        comments: 'Empty file path',
+        site_file_path: ''
+      )
+
+      visit '/admin/reports'
+      _(page.body).must_match /Empty file path/
+      _(page.body).must_match /index\.html/
+    end
+
+    it 'filters out banned sites' do
+      banned_site = Fabricate :site, is_banned: true
+      banned_report = Report.create(
+        site: banned_site,
+        reporting_site: @reporting_site,
+        type: 'spam',
+        comments: 'Should not appear'
+      )
+
+      visit '/admin/reports'
+      _(page.body).wont_match banned_site.username
+      _(page.body).wont_match /Should not appear/
+    end
+
+    it 'filters out deleted sites' do
+      deleted_site = Fabricate :site, is_deleted: true
+      deleted_report = Report.create(
+        site: deleted_site,
+        reporting_site: @reporting_site,
+        type: 'phishing',
+        comments: 'Should not appear either'
+      )
+
+      visit '/admin/reports'
+      _(page.body).wont_match deleted_site.username
+      _(page.body).wont_match /Should not appear either/
+    end
+
+    it 'shows action buttons for each report' do
+      visit '/admin/reports'
+      
+      within("#report-#{@report.id}") do
+        _(page).must_have_button 'Ban Site'
+        _(page).must_have_button 'Mark NSFW'
+        _(page).must_have_button 'Dismiss'
+      end
+    end
+
+    it 'hides Mark NSFW button for already NSFW sites' do
+      @reported_site.update(is_nsfw: true)
+      
+      visit '/admin/reports'
+      
+      within("#report-#{@report.id}") do
+        _(page).must_have_button 'Ban Site'
+        _(page).wont_have_button 'Mark NSFW'
+        _(page).must_have_button 'Dismiss'
+      end
+    end
+  end
+
 
 
 
