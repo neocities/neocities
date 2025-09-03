@@ -27,7 +27,7 @@ get '/api/list' do
 
   files = []
 
-  if params[:path].nil? || params[:path].empty?
+  if params[:path].nil? || params[:path].empty? || params[:path] == '/'
     file_list = current_site.site_files
   else
     file_list = current_site.file_list params[:path]

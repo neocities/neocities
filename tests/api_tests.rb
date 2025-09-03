@@ -72,6 +72,23 @@ describe 'api' do
       _(file[:path]).must_equal 'derp/test.html'
       _(file[:updated_at]).must_equal @site.site_files.select {|s| s.path == 'derp/test.html'}.first.updated_at.rfc2822
     end
+
+    it 'returns all files when path is /' do
+      create_site
+      basic_authorize @user, @pass
+      get '/api/list', path: '/'
+
+      _(res[:result]).must_equal 'success'
+      _(res[:files].length).must_equal @site.site_files.length
+
+      res[:files].each do |file|
+        site_file = @site.site_files.select {|s| s[:path] == file[:path]}.first
+        _(site_file[:is_directory]).must_equal file[:is_directory]
+        _(site_file[:size]).must_equal file[:size]
+        _(site_file[:updated_at].rfc2822).must_equal file[:updated_at]
+        _(site_file[:sha1_hash]).must_equal file[:sha1_hash]
+      end
+    end
   end
 
   describe 'info' do
