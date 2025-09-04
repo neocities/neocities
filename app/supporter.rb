@@ -37,11 +37,11 @@ post '/supporter/update' do
       customer = Stripe::Customer.retrieve site.stripe_customer_id
       customer.cards.each {|card| card.delete}
 
-      if !params[:stripe_token].blank?
-        customer.sources.create source: params[:stripe_token]
-      end
-
       begin
+        if !params[:stripe_token].blank?
+          customer.sources.create source: params[:stripe_token]
+        end
+
         subscription = customer.subscriptions.create plan: plan_type
       rescue Stripe::CardError => e
         flash[:error] = "Error: #{Rack::Utils.escape_html e.message}"
