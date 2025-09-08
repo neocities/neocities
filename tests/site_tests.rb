@@ -232,6 +232,38 @@ describe Site do
     end
   end
 
+  describe 'title extraction from HTML' do
+    before do
+      @site = Fabricate :site
+    end
+
+    it 'extracts valid UTF-8 titles correctly' do
+      valid_html = '<html><head><title>Valid Title</title></head></html>'
+      tempfile = Tempfile.new(['test', '.html'])
+      tempfile.write(valid_html)
+      tempfile.rewind
+      
+      original_title = @site.title
+      @site.send(:store_file, 'index.html', tempfile, {})
+      
+      _(@site.title).must_equal 'Valid Title'
+      tempfile.unlink
+    end
+
+    it 'handles invalid UTF-8 bytes gracefully' do
+      invalid_html = "<html><head><title>Invalid\x83Title</title></head></html>"
+      tempfile = Tempfile.new(['test', '.html'])
+      tempfile.write(invalid_html)
+      tempfile.rewind
+      
+      original_title = @site.title
+      @site.send(:store_file, 'index.html', tempfile, {})
+      
+      _(@site.title).must_equal 'InvalidTitle'
+      tempfile.unlink
+    end
+  end
+
   describe 'send_email' do
     before do
       EmailWorker.jobs.clear

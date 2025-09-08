@@ -2010,9 +2010,11 @@ class Site < Sequel::Model
       begin
         new_title = Nokogiri::HTML(File.read(uploaded.path)).css('title').first.text
       rescue NoMethodError => e
+      rescue EncodingError => e
       else
-        if new_title.length < TITLE_MAX
-          self.title = new_title.force_encoding('UTF-8')
+        if new_title && new_title.length < TITLE_MAX
+          sanitized_title = new_title.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+          self.title = sanitized_title
           save_changes validate: false
         end
       end
