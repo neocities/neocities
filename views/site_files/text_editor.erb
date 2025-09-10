@@ -307,7 +307,7 @@
 
   $(document).ready(function() {
     $.ajax({
-      url: "/site_files/download/<%= Site.escape_path(@filename) %>",
+      url: "/site_files/download/<%== escape_javascript Site.escape_path(@filename) %>",
       cache: false,
       success: function(resp) {
         ace.require("ace/ext/language_tools");
