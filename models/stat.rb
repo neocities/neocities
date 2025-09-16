@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'resolv'
 require 'zlib'
+require 'set'
 
 class Stat < Sequel::Model
   FREE_RETAINMENT_DAYS = 30
@@ -50,7 +51,7 @@ class Stat < Sequel::Model
               hits: 0,
               views: 0,
               bandwidth: 0,
-              view_ips: [],
+              view_ips: Set.new,
               referrers: {},
               paths: {}
             } unless site_logs[log_time][username]
@@ -72,7 +73,7 @@ class Stat < Sequel::Model
 
               total_site_stats[log_time][:views] += 1
 
-              site_logs[log_time][username][:view_ips] << ip
+              site_logs[log_time][username][:view_ips].add(ip)
 
               if referrer != '-' && !referrer.nil?
                 site_logs[log_time][username][:referrers][referrer] ||= 0
