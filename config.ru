@@ -2,6 +2,8 @@ require 'rubygems'
 require './app.rb'
 require 'sidekiq/web'
 require 'airbrake/sidekiq'
+require 'dav4rack'
+require 'dav4rack/resources/file_resource'
 
 use Airbrake::Rack::Middleware
 
@@ -10,6 +12,21 @@ map('/') do
 end
 
 map '/webdav' do
+  # Custom resource class to prevent .attrib_store file creation
+  class NeocitiesWebDAVResource < DAV4Rack::FileResource
+    def custom_props(element)
+      {}
+    end
+
+    def set_property(name, value)
+      true
+    end
+
+    def remove_property(element)
+      true
+    end
+  end
+
   use Rack::Auth::Basic do |username, password|
     @site = Site.get_site_from_login(username, password)
     @site ? true : false
@@ -47,6 +64,11 @@ map '/webdav' do
       tmpfile.close
 
       return [507, {}, ['']] if @site.file_size_too_large?(tmpfile.size)
+      return [400, {}, ['Invalid path']] if @site.invalid_path?(path)
+      return [400, {}, ['Path too long']] if SiteFile.path_too_long?(path)
+      return [400, {}, ['Filename too long']] if SiteFile.name_too_long?(path)
+      return [409, {}, ['Path conflicts with existing directory']] if File.directory?(@site.files_path(path))
+      return [507, {}, ['Too many files']] if @site.too_many_files?(1)
 
       if @site.okay_to_upload?(filename: path, tempfile: tmpfile)
         @site.store_files([{ filename: path, tempfile: tmpfile }])
@@ -56,6 +78,10 @@ map '/webdav' do
       end
 
     when 'MKCOL'
+      return [400, {}, ['Invalid path']] if @site.invalid_path?(path)
+      return [400, {}, ['Path too long']] if SiteFile.path_too_long?(path)
+      return [409, {}, ['Already exists']] if @site.file_exists?(path)
+
       @site.create_directory(path)
       return [201, {}, ['']]
 
@@ -67,13 +93,25 @@ map '/webdav' do
       site_file = @site.site_files.find { |s| s.path == path }
       return [404, {}, ['']] unless site_file
 
-      site_file.rename(destination)
-      return [201, {}, ['']]
+      return [400, {}, ['Invalid destination path']] if @site.invalid_path?(destination)
+      return [400, {}, ['Destination path too long']] if SiteFile.path_too_long?(destination)
+      return [400, {}, ['Destination filename too long']] if SiteFile.name_too_long?(destination)
+      return [403, {}, ['Cannot rename to index.html at root']] if destination == '/index.html' && path != '/index.html'
+
+      res = site_file.rename(destination)
+      if res.first == true
+        return [201, {}, ['']]
+      else
+        return [400, {}, [res.last]]
+      end
 
     when 'DELETE'
+      return [403, {}, ['Cannot delete index.html']] if path == '/index.html' || path == 'index.html'
+      return [403, {}, ['Cannot delete root directory']] if @site.files_path(path) == @site.files_path
+      return [404, {}, ['File not found']] unless @site.file_exists?(path)
+
       @site.delete_file(path)
       return [201, {}, ['']]
-
     else
       unless ['PROPFIND', 'GET', 'HEAD'].include? request_method
         return [501, {}, ['Not Implemented']]
@@ -94,7 +132,8 @@ map '/webdav' do
 
       DAV4Rack::Handler.new(
         root: @site.files_path,
-        root_uri_path: '/webdav'
+        root_uri_path: '/webdav',
+        resource_class: NeocitiesWebDAVResource
       ).call(env)
     end
   }
