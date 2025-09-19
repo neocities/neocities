@@ -42,32 +42,81 @@ get '/admin/usage' do
   require_admin
   today = Date.today
   current_month = Date.new today.year, today.month, 1
+  start_month = Date.new(2016, 2, 1)
 
-  @monthly_stats = []
-
+  # Build date range for batch query
+  months = []
   month = current_month
-
-  until month.year == 2016 && month.month == 2 do
-
-    stats = DB["select sum(views) as views, sum(hits) as hits,sum(bandwidth) as bandwidth from daily_site_stats where created_at::text LIKE '#{month.year}-#{month.strftime('%m')}-%'"].first
-
-    stats.keys.each do |key|
-      stats[key] ||= 0
-    end
-
-    stats.collect {|s| s == 0}.uniq
-
-    if stats[:views] != 0 && stats[:hits] != 0 && stats[:bandwidth] != 0
-      popular_sites = DB[
-        'select sum(bandwidth) as bandwidth,username from stats left join sites on sites.id=stats.site_id where stats.created_at >= ? and stats.created_at < ? group by username order by bandwidth desc limit 50',
-        month,
-        month.next_month
-      ].all
-
-      @monthly_stats.push stats.merge(date: month).merge(popular_sites: popular_sites)
-    end
-
+  until month < start_month
+    months << month
     month = month.prev_month
+  end
+
+  # Batch query for all monthly stats at once using proper date comparisons
+  monthly_stats_query = <<-SQL
+    SELECT
+      DATE_TRUNC('month', created_at) as month,
+      SUM(views) as views,
+      SUM(hits) as hits,
+      SUM(bandwidth) as bandwidth
+    FROM daily_site_stats
+    WHERE created_at >= ?
+      AND created_at <= ?
+    GROUP BY DATE_TRUNC('month', created_at)
+    ORDER BY month DESC
+  SQL
+
+  monthly_data = DB[monthly_stats_query, start_month, current_month.next_month].all
+
+  # Convert to hash for easy lookup
+  stats_by_month = {}
+  monthly_data.each do |row|
+    month_key = row[:month].to_date
+    stats_by_month[month_key] = {
+      views: row[:views] || 0,
+      hits: row[:hits] || 0,
+      bandwidth: row[:bandwidth] || 0
+    }
+  end
+
+  # Batch query for all popular sites data at once
+  popular_sites_query = <<-SQL
+    SELECT
+      DATE_TRUNC('month', stats.created_at) as month,
+      sites.username,
+      SUM(stats.bandwidth) as bandwidth
+    FROM stats
+    LEFT JOIN sites ON sites.id = stats.site_id
+    WHERE stats.created_at >= ?
+      AND stats.created_at <= ?
+      AND sites.username IS NOT NULL
+    GROUP BY DATE_TRUNC('month', stats.created_at), sites.username
+  SQL
+
+  all_popular_sites = DB[popular_sites_query, start_month, current_month.next_month].all
+
+  # Group popular sites by month and get top 50 for each
+  popular_by_month = {}
+  all_popular_sites.group_by { |row| row[:month].to_date }.each do |month_key, sites|
+    popular_by_month[month_key] = sites
+      .sort_by { |s| -(s[:bandwidth] || 0) }
+      .take(50)
+      .map { |s| { username: s[:username], bandwidth: s[:bandwidth] } }
+  end
+
+  # Combine the results
+  @monthly_stats = []
+  months.each do |month|
+    stats = stats_by_month[month]
+    next unless stats && stats[:views] != 0 && stats[:hits] != 0 && stats[:bandwidth] != 0
+
+    @monthly_stats.push({
+      views: stats[:views],
+      hits: stats[:hits],
+      bandwidth: stats[:bandwidth],
+      date: month,
+      popular_sites: popular_by_month[month] || []
+    })
   end
 
   erb :'admin/usage'
