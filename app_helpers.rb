@@ -61,9 +61,14 @@ def title
   return out if request.path == '/'
   
   full_title = if @title
-    "#{out} - #{@title}"
+    "#{out} - #{Rack::Utils.escape_html(@title)}"
   else
-    "#{out} - #{request.path.gsub('/', '').capitalize}"
+    path_parts = request.path.split('/').reject(&:empty?)
+    formatted_parts = path_parts.map do |part|
+      escaped_part = Rack::Utils.escape_html(part)
+      escaped_part.split(/[_\-]/).map(&:capitalize).join(' ')
+    end
+    "#{out} - #{formatted_parts.join(' - ')}"
   end
   
   if full_title.length >= 70
