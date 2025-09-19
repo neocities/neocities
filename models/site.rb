@@ -1161,6 +1161,9 @@ class Site < Sequel::Model
 
       new_tags.each do |tag|
         tag.strip!
+        
+        next if tag.empty?
+        
         if tag.match(Tag::INVALID_TAG_REGEX)
           errors.add :new_tags_string, "Tag \"#{tag}\" can only contain letters (A-Z) and numbers (0-9)."
           break

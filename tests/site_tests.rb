@@ -31,6 +31,22 @@ describe Site do
     end
   end
 
+  describe 'tags' do
+    it 'should handle empty tags in comma-separated list' do
+      site = Fabricate.build :site, new_tags_string: 'art, , Seancore, microlables'
+      _(site.valid?).must_equal true
+      site.save
+      _(site.tags.map(&:name).sort).must_equal ['art', 'microlables', 'seancore']
+    end
+
+    it 'should handle multiple empty tags' do
+      site = Fabricate.build :site, new_tags_string: ', art, , , test, '
+      _(site.valid?).must_equal true
+      site.save
+      _(site.tags.map(&:name).sort).must_equal ['art', 'test']
+    end
+  end
+
   describe 'email validation' do
     it 'accepts valid email addresses' do
       valid_emails = [
