@@ -134,6 +134,20 @@ get '/admin/stats' do
   erb :'admin/stats'
 end
 
+get '/admin/ban_history' do
+  require_admin
+
+  @title = 'Ban History'
+  @page = params[:page] ? params[:page].to_i : 1
+  @page = 1 if @page < 1
+  @per_page = 51
+
+  @sites = Site.where(is_banned: true).order(:banned_at.desc).exclude(banned_at: nil).  paginate(@page, @per_page)
+  @pagination_dataset = @sites
+
+  erb :'admin/ban_history'
+end
+
 post '/admin/email' do
   require_admin
   %i{subject body}.each do |k|

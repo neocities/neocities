@@ -1,0 +1,89 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <h1>Banned Sites</h1>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <article>
+    <%== flash_display %>
+    
+    <% if @sites.empty? %>
+      <div style="text-align: center; padding: 40px;">
+        <p><em>No sites found.</em></p>
+      </div>
+    <% else %>
+      <div class="row">
+        <% @sites.each_with_index do |site, index| %>
+          <div class="col col-33" id="site-<%= site.id %>">
+            <div class="block" style="height: 100%; display: flex; flex-direction: column;">
+              
+              <div style="position: relative; margin-bottom: 10px;">
+                <a href="<%= site.uri %>" target="_blank">
+                  <img src="<%= site.screenshot_url('index.html', '540x405') %>"
+                       style="width: 100%; height: auto; border: 1px solid #ddd;">
+                </a>
+              </div>
+              
+              <h4><%= site.username %></h4>
+              
+              <small style="word-break: break-all; display: block; margin-bottom: 10px;">
+                <a href="<%= site.uri %>" target="_blank"><%= site.uri %></a>
+              </small>
+              
+              <small style="line-height: 1.4; display: block; margin-bottom: 10px;">
+                <a href="/admin/site/<%= site.username %>" target="_blank">Site Info</a> • 
+                <a href="/site/<%= site.username %>" target="_blank">Site Profile</a> • 
+                <a href="<%= site.uri %>" target="_blank">Site Root</a>
+              </small>
+              
+              <p><strong>Banned:</strong> <%= site.banned_at ? site.banned_at.ago : '' %></p>
+
+              <div style="background: #f9f9f9; padding: 8px; margin-bottom: 10px; border-left: 3px solid #ddd; font-size: 12px; height: 60px; overflow-y: auto;">
+                <% if site.deleted_reason && !site.deleted_reason.empty? %>
+                  <%= site.deleted_reason %>
+                <% else %>
+                  <span style="color: #999; font-style: italic;">No reason</span>
+                <% end %>
+              </div>
+              
+              <small style="color: #666; margin-bottom: 15px; display: block; flex-grow: 1;">
+                <%= site.views.format_large_number %> views
+              </small>
+              
+              <div id="actions-<%= site.id %>">
+                <button class="btn btn-Action" onclick="unbanSite('<%= site.username %>')" style="margin-right: 5px;">
+                  Unban Site
+                </button>
+              </div>
+              
+            </div>
+          </div>
+          
+          <% if (index + 1) % 3 == 0 && index != @sites.length - 1 %>
+            </div><div class="row">
+          <% end %>
+        <% end %>
+
+        <%== erb :'_pagination', layout: false %>
+      </div>
+    <% end %>
+  </article>
+</div>
+
+<script>
+  function unbanSite(username) {
+    var formData = new FormData();
+    formData.append('username', username);
+    formData.append('csrf_token', '<%= csrf_token %>');
+    
+    fetch('/admin/unban', {
+      method: 'POST',
+      body: formData
+    }).then(function() {
+      window.location.reload();
+    }).catch(function(error) {
+      alert('Error: ' + error);
+    });
+  }
+</script>
