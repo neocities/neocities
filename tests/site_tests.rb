@@ -280,6 +280,21 @@ describe Site do
     end
   end
 
+  describe 'directory conflict handling' do
+    it 'rejects file upload when directory exists with same name' do
+      @site = Fabricate :site
+      @site.create_directory('test.html')
+      
+      tmpfile = Tempfile.new
+      tmpfile.write 'test'
+      tmpfile.close
+      
+      results = @site.store_files [{filename: 'test.html', tempfile: tmpfile}]
+      
+      _(results.first[:error]).must_include 'directory with the same name'
+    end
+  end
+
   describe 'send_email' do
     before do
       EmailWorker.jobs.clear

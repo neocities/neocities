@@ -121,12 +121,12 @@ post '/api/upload' do
       api_error 400, 'invalid_file_type', "#{file[:filename]} is not an allowed file type for free sites, supporter required"
     end
 
-    if File.directory? file[:filename]
-      api_error 400, 'directory_exists', "#{file[:filename]} being used by a directory"
+    if current_site.is_directory?(file[:filename])
+      api_error 400, 'directory_exists', "#{file[:filename]} conflicts with an existing directory"
     end
 
     if current_site.file_size_too_large? file[:tempfile].size
-      api_error 400, 'file_too_large' "#{file[:filename]} is too large"
+      api_error 400, 'file_too_large', "#{file[:filename]} is too large"
     end
 
     if SiteFile.path_too_long? file[:filename]

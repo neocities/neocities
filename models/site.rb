@@ -1840,6 +1840,14 @@ class Site < Sequel::Model
       return results
     end
 
+    # Check for directory conflicts before processing any files
+    files.each do |file|
+      if is_directory?(file[:filename])
+        results << {error: "Cannot upload file '#{file[:filename]}': a directory with the same name already exists"}
+        return results
+      end
+    end
+
     files.each do |file|
       existing_size = 0
       site_file = site_files_dataset.where(path: scrubbed_path(file[:filename])).first
@@ -2006,6 +2014,11 @@ class Site < Sequel::Model
 
     relative_path_dir = Pathname(relative_path).dirname
     create_directory relative_path_dir unless relative_path_dir == '.'
+
+    # Reject if destination exists as a directory
+    if File.directory?(path)
+      return false
+    end
 
     uploaded_size = uploaded.size
 

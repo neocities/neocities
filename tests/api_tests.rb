@@ -581,6 +581,26 @@ describe 'api' do
       _(site_file_exists?('test2.jpg')).must_equal true
     end
 
+    it 'fails when file conflicts with existing directory' do
+      create_site
+      
+      # Create a directory at the target path
+      @site.create_directory('test.html')
+
+      basic_authorize @user, @pass
+      post '/api/upload', {
+        'test.html' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
+      }
+
+      # Should return error
+      _(res[:result]).must_equal 'error'
+      _(res[:error_type]).must_equal 'directory_exists'
+      _(res[:message]).must_match /conflicts with an existing directory/
+      
+      # Directory should still exist
+      _(@site.is_directory?('test.html')).must_equal true
+    end
+
     it 'fails with unwhitelisted file' do
       create_site
       basic_authorize @user, @pass
