@@ -89,6 +89,10 @@ class SiteFile < Sequel::Model
         return false, 'directory name cannot end with .htm or .html'
       end
 
+      if new_path.start_with?(current_path + '/')
+        return false, 'cannot move directory into itself'
+      end
+
     else # a file
       begin
         mime_type = Magic.guess_file_mime_type site.files_path(self.path)
