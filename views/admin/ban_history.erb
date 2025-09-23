@@ -9,51 +9,55 @@
     <%== flash_display %>
     
     <% if @sites.empty? %>
-      <div style="text-align: center; padding: 40px;">
+      <div class="empty-state">
         <p><em>No sites found.</em></p>
       </div>
     <% else %>
       <div class="row">
         <% @sites.each_with_index do |site, index| %>
-          <div class="col col-33" id="site-<%= site.id %>">
-            <div class="block" style="height: 100%; display: flex; flex-direction: column;">
+          <div class="col col-33">
+            <div class="site-card" data-site-id="<%= site.id %>" data-username="<%= site.username %>" data-banned="<%= site.is_banned %>">
               
-              <div style="position: relative; margin-bottom: 10px;">
+              <div class="site-thumbnail">
                 <a href="<%= site.uri %>" target="_blank">
-                  <img src="<%= site.screenshot_url('index.html', '540x405') %>"
-                       style="width: 100%; height: auto; border: 1px solid #ddd;">
+                  <img src="<%= site.screenshot_url('index.html', '540x405') %>" alt="<%= site.username %> screenshot">
                 </a>
               </div>
               
-              <h4><%= site.username %></h4>
-              
-              <small style="word-break: break-all; display: block; margin-bottom: 10px;">
-                <a href="<%= site.uri %>" target="_blank"><%= site.uri %></a>
-              </small>
-              
-              <small style="line-height: 1.4; display: block; margin-bottom: 10px;">
-                <a href="/admin/site/<%= site.username %>" target="_blank">Site Info</a> • 
-                <a href="/site/<%= site.username %>" target="_blank">Site Profile</a> • 
-                <a href="<%= site.uri %>" target="_blank">Site Root</a>
-              </small>
-              
-              <p><strong>Banned:</strong> <%= site.banned_at ? site.banned_at.ago : '' %></p>
+              <div class="site-info">
+                <h4 class="site-username"><%= site.username %></h4>
+                
+                <div class="site-url">
+                  <a href="<%= site.uri %>" target="_blank"><%= site.uri %></a>
+                </div>
+                
+                <div class="site-links">
+                  <a href="/admin/site/<%= site.username %>" target="_blank">Site Info</a> • 
+                  <a href="/site/<%= site.username %>" target="_blank">Site Profile</a> • 
+                  <a href="<%= site.uri %>" target="_blank">Site Root</a>
+                </div>
+                
+                <div class="ban-status">
+                  <strong>Banned:</strong> 
+                  <span class="ban-time"><%= site.banned_at ? site.banned_at.ago : 'Unknown' %></span>
+                </div>
 
-              <div style="background: #f9f9f9; padding: 8px; margin-bottom: 10px; border-left: 3px solid #ddd; font-size: 12px; height: 60px; overflow-y: auto;">
-                <% if site.deleted_reason && !site.deleted_reason.empty? %>
-                  <%= site.deleted_reason %>
-                <% else %>
-                  <span style="color: #999; font-style: italic;">No reason</span>
-                <% end %>
+                <div class="ban-reason">
+                  <% if site.deleted_reason && !site.deleted_reason.empty? %>
+                    <%= site.deleted_reason %>
+                  <% else %>
+                    <span class="no-reason">No reason provided</span>
+                  <% end %>
+                </div>
+                
+                <div class="site-stats">
+                  <%= site.views.format_large_number %> views
+                </div>
               </div>
               
-              <small style="color: #666; margin-bottom: 15px; display: block; flex-grow: 1;">
-                <%= site.views.format_large_number %> views
-              </small>
-              
-              <div id="actions-<%= site.id %>">
-                <button class="btn btn-Action" onclick="unbanSite('<%= site.username %>')" style="margin-right: 5px;">
-                  Unban Site
+              <div class="site-actions">
+                <button class="btn btn-Action ban-toggle" data-action="<%= site.is_banned ? 'unban' : 'ban' %>">
+                  <span class="btn-text"><%= site.is_banned ? 'Unban' : 'Ban' %> Site</span>
                 </button>
               </div>
               
@@ -64,26 +68,154 @@
             </div><div class="row">
           <% end %>
         <% end %>
-
-        <%== erb :'_pagination', layout: false %>
       </div>
+      
+      <%== erb :'_pagination', layout: false %>
     <% end %>
   </article>
 </div>
 
-<script>
-  function unbanSite(username) {
-    var formData = new FormData();
-    formData.append('username', username);
-    formData.append('csrf_token', '<%= csrf_token %>');
-    
-    fetch('/admin/unban', {
-      method: 'POST',
-      body: formData
-    }).then(function() {
-      window.location.reload();
-    }).catch(function(error) {
-      alert('Error: ' + error);
-    });
+<style>
+  .empty-state {
+    text-align: center;
+    padding: 40px;
   }
+  
+  .site-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 15px;
+    background: #fff;
+    margin-bottom: 20px;
+  }
+  
+  .site-thumbnail {
+    position: relative;
+    margin-bottom: 15px;
+  }
+  
+  .site-thumbnail img {
+    width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+  
+  .site-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .site-username {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+  }
+  
+  .site-url {
+    word-break: break-all;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  .site-links {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 15px;
+  }
+  
+  .ban-status {
+    margin-bottom: 10px;
+  }
+  
+  .ban-reason {
+    background: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-left: 3px solid #ddd;
+    font-size: 13px;
+    min-height: 60px;
+    max-height: 80px;
+    overflow-y: auto;
+    border-radius: 2px;
+  }
+  
+  .ban-reason .no-reason {
+    color: #999;
+    font-style: italic;
+  }
+  
+  .site-stats {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 15px;
+    margin-top: auto;
+  }
+  
+  .site-actions {
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  .ban-toggle {
+    width: 100%;
+  }
+  
+  .ban-toggle[data-action="ban"] {
+    background: #dc3545;
+  }
+</style>
+
+<script>
+  $(document).ready(function() {
+    $('.ban-toggle').on('click', function(e) {
+      e.preventDefault();
+      
+      var $button = $(this);
+      var $card = $button.closest('.site-card');
+      var username = $card.data('username');
+      var siteId = $card.data('site-id');
+      var action = $button.data('action');
+      
+      $button.prop('disabled', true);
+      
+      var endpoint = action === 'unban' ? '/admin/unban' : '/admin/ban';
+      var postData = {
+        csrf_token: '<%= csrf_token %>'
+      };
+      
+      if (action === 'unban') {
+        postData.username = username;
+      } else {
+        postData.usernames = username;
+        postData.classifier = '';
+      }
+      
+      $.post(endpoint, postData)
+        .done(function(data) {
+          if (action === 'unban') {
+            $button.data('action', 'ban').attr('data-action', 'ban');
+            $button.find('.btn-text').text('Ban Site');
+            $card.data('banned', false).attr('data-banned', 'false');
+            $card.find('.ban-time').text('Unbanned');
+            $card.find('.ban-reason').html('<span class="no-reason">Site has been unbanned</span>');
+          } else {
+            $button.data('action', 'unban').attr('data-action', 'unban');
+            $button.find('.btn-text').text('Unban Site');
+            $card.data('banned', true).attr('data-banned', 'true');
+            $card.find('.ban-time').text('Just now');
+            $card.find('.ban-reason').html('<span class="no-reason">Banned via admin panel</span>');
+          }
+        })
+        .fail(function(xhr) {
+          alert('Action failed: ' + (xhr.responseText || 'Unknown error'));
+        })
+        .always(function() {
+          $button.prop('disabled', false);
+        });
+    });
+  });
 </script>
