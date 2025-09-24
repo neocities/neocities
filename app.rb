@@ -28,6 +28,7 @@ helpers do
   end
 
   def hcaptcha_input
+    return '' if ENV['RACK_ENV'] == 'test'
     %{
       <script src="https://hcaptcha.com/1/api.js" async defer></script>
       <div id="captcha_input" class="h-captcha" data-sitekey="#{$config['hcaptcha_site_key']}"></div>
