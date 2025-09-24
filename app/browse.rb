@@ -80,6 +80,10 @@ def browse_sites_dataset
       ds = ds.where{views > Site::BROWSE_MINIMUM_VIEWS} unless current_site && current_site.is_admin
       ds = ds.exclude site_updated_at: nil
       ds = ds.order :created_at.desc, :views.desc
+    when 'moderation'
+      not_found unless current_site && current_site.is_admin
+      ds = ds.where(needs_moderation: true, site_changed: true)
+      ds = ds.order :created_at.desc
     when 'oldest'
       ds = ds.where{score > 0.4} unless params[:tag]
       ds = ds.exclude site_updated_at: nil
@@ -105,6 +109,8 @@ def browse_sites_dataset
       ds = ds.inner_join :blocks, :site_id => :id
       ds = ds.group :sites__id
       ds = ds.order :total.desc
+    else
+      not_found
   end
 
   ds = ds.where ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]

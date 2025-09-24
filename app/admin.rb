@@ -338,6 +338,24 @@ post '/admin/unmark_nsfw' do
   redirect request.referrer
 end
 
+post '/admin/mark_moderated' do
+  require_admin
+
+  not_found if params[:site_id].blank?
+  site = Site[params[:site_id]]
+  not_found if site.nil?
+
+  site_ids = Site.select(:id).where(needs_moderation: true, site_changed: true).exclude(is_deleted: true).where{created_at >= site.created_at}.all.collect {|s| s.id}
+
+  DB[:sites].where(id: site_ids).update(needs_moderation: false)
+
+  uri = Addressable::URI.parse request.referer
+  query = Rack::Utils.parse_query uri.query
+  query.delete 'page'
+  uri.query = query.empty? ? nil : Rack::Utils.build_query(query)
+  redirect uri.to_s
+end
+
 post '/admin/feature' do
   require_admin
   site = Site[username: params[:username]]
