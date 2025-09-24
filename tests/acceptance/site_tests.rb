@@ -143,4 +143,13 @@ describe 'site page' do
     _(page.status_code).must_equal 404
     _(page).must_have_content /not found/i
   end
+
+  describe 'stats page' do
+    it 'handles large days parameter without exception' do
+      site = Fabricate :site
+      page.set_rack_session id: site.id
+      visit "/site/#{site.username}/stats?days=3000000000000000000000000000"
+      _(page.status_code).must_equal 200
+    end
+  end
 end

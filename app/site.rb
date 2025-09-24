@@ -88,7 +88,12 @@ get '/site/:username/stats' do
   if @site.supporter?
     unless params[:days].to_s == 'sincethebigbang'
       unless params[:days].not_an_integer?
-        stats_dataset = stats_dataset.limit params[:days]
+        days_param = params[:days].to_i
+        if days_param < 9000
+          stats_dataset = stats_dataset.limit days_param
+        else
+          params[:days] = 'sincethebigbang'
+        end
       else
         params[:days] = @default_stat_points
         stats_dataset = stats_dataset.limit @default_stat_points
