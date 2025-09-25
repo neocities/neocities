@@ -7,12 +7,21 @@ require 'capybara/minitest/spec'
 require 'rack_session_access/capybara'
 
 Capybara.app = Sinatra::Application
-Capybara.default_max_wait_time = 5
+Capybara.default_max_wait_time = 10
 
 Capybara.register_driver :selenium_chrome_headless_largewindow do |app|
   options = ::Selenium::WebDriver::Chrome::Options.new
   options.add_argument('--headless')
   options.add_argument('--window-size=1280,800') # Set your desired window size
+  options.add_argument('--no-sandbox')
+  options.add_argument('--disable-dev-shm-usage')
+  options.add_argument('--disable-features=VizDisplayCompositor') # Prevents DOM inspector issues
+  options.add_argument('--host-resolver-rules=MAP * 127.0.0.1') # Block external requests
+  options.add_argument('--disable-background-networking') # Prevent background network activity
 
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+  client = Selenium::WebDriver::Remote::Http::Default.new
+  client.read_timeout = 120
+  client.open_timeout = 120
+
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options, http_client: client)
 end
