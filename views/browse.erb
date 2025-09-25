@@ -122,7 +122,7 @@
               </form>
               
               <% if params[:sort_by] == 'moderation' %>
-                <form action="/admin/mark_moderated" method="POST" onsubmit="return confirm('Confirm moderation until <%= site.username %>');">
+                <form action="/admin/mark_moderated" method="POST" onsubmit="return confirm('Confirm moderation after <%= site.username %>');">
                   <%== csrf_token_input_html %>
                   <input type="hidden" name="site_id" value="<%= site.id %>">
                   <button>Moderated</button>

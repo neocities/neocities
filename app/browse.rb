@@ -82,7 +82,7 @@ def browse_sites_dataset
       ds = ds.order :created_at.desc, :views.desc
     when 'moderation'
       not_found unless current_site && current_site.is_admin
-      ds = ds.where(needs_moderation: true, site_changed: true)
+      ds = Site.moderation_dataset
       ds = ds.order :created_at.desc
     when 'oldest'
       ds = ds.where{score > 0.4} unless params[:tag]
@@ -113,7 +113,9 @@ def browse_sites_dataset
       not_found
   end
 
-  ds = ds.where ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
+  unless params[:sort_by] == 'moderation'
+    ds = ds.where ['sites.is_nsfw = ?', (params[:is_nsfw] == 'true' ? true : false)]
+  end
 
   if params[:tag]
     ds = ds.select_all :sites

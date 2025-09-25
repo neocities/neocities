@@ -345,14 +345,19 @@ post '/admin/mark_moderated' do
   site = Site[params[:site_id]]
   not_found if site.nil?
 
-  site_ids = Site.select(:id).where(needs_moderation: true, site_changed: true).exclude(is_deleted: true).where{created_at >= site.created_at}.all.collect {|s| s.id}
+  site_ids = Site.moderation_dataset.select(:id).where{created_at <= site.created_at}.all.collect {|s| s.id}
 
   DB[:sites].where(id: site_ids).update(needs_moderation: false)
 
+  remaining_ds = Site.moderation_dataset.order(:created_at.desc)
+  remaining_ds = remaining_ds.paginate(1, Site::BROWSE_PAGINATION_LENGTH)
+  last_page = remaining_ds.page_count
+  last_page = 1 if last_page < 1
+
   uri = Addressable::URI.parse request.referer
   query = Rack::Utils.parse_query uri.query
-  query.delete 'page'
-  uri.query = query.empty? ? nil : Rack::Utils.build_query(query)
+  query['page'] = last_page.to_s
+  uri.query = Rack::Utils.build_query(query)
   redirect uri.to_s
 end
 

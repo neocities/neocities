@@ -1688,6 +1688,10 @@ class Site < Sequel::Model
       where(is_deleted: false, is_banned: false, is_crashing: false, site_changed: true)
   end
 
+  def self.moderation_dataset
+    where(needs_moderation: true, site_changed: true).exclude(is_deleted: true)
+  end
+
   def suggestions(limit=SUGGESTIONS_LIMIT, offset=0)
     suggestions_dataset = Site.exclude(id: id).exclude(is_deleted: true).exclude(is_nsfw: true).exclude(profile_enabled: false).exclude(site_changed: false).order(:score.desc, :views.desc, :updated_at.desc)
     suggestions = suggestions_dataset.where(tags: tags).limit(limit, offset).all
