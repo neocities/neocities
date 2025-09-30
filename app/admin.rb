@@ -404,17 +404,19 @@ get '/admin/masquerade/:username' do
   redirect '/'
 end
 
-get '/admin/site/:username_or_email' do
+get '/admin/site/:username_or_email_or_domain' do
   require_admin
-  ident = params[:username_or_email]
+  ident = params[:username_or_email_or_domain]
 
   if ident.blank?
-    flash[:error] = 'username or email required'
+    flash[:error] = 'username or email or domain required'
     redirect '/admin'
   end
 
   if ident =~ /@/
     @site = Site[email: ident]
+  elsif ident =~ /.+\..+$/
+    @site = Site.where(domain: ident.downcase).first
   else
     @site = Site[username: ident]
   end

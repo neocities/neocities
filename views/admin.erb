@@ -58,9 +58,9 @@
     </div>
     <div class="col col-50">
       <h2>Site Info</h2>
-      <form action="/admin/site" method="GET" onsubmit="this.action = '/admin/site/' + this.username_or_email.value; return true;">
+      <form action="/admin/site" method="GET" onsubmit="this.action = '/admin/site/' + this.username_or_email_or_domain.value; this.username_or_email_or_domain.name = ''; return true;">
         <p>
-          <input type="text" name="username_or_email" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" placeholder="username or email">
+          <input type="text" name="username_or_email_or_domain" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" placeholder="username/email/domain">
         </p>
         <p><input class="btn-Action" type="submit" value="Lookup"></p>
       </form>
