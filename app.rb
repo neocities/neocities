@@ -85,7 +85,7 @@ before do
     # Skips the CSRF/validation check for stripe web hooks
   elsif request.path.match /^\/admin/
     require_admin
-  elsif current_site && current_site.email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/welcome|^\/supporter|^\/signout/)
+  elsif current_site && current_site.email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/welcome|^\/supporter|^\/signout|^\/contact/)
     redirect "/site/#{current_site.username}/confirm_email"
   elsif current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/signout/)
     redirect  "/site/#{current_site.username}/confirm_phone"
