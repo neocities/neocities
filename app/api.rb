@@ -100,46 +100,21 @@ post '/api/upload' do
     end
   end
 
-  api_error 400, 'missing_files', 'you must provide files to upload' if files.empty?
-
-  uploaded_size = files.collect {|f| f[:tempfile].size}.inject{|sum,x| sum + x }
-
-  if current_site.file_size_too_large? uploaded_size
-    api_error 400, 'too_large', 'files are too large to fit in your space, try uploading smaller (or less) files'
-  end
-
-  if current_site.too_many_files?(files.length)
-    api_error 400, 'too_many_files', "cannot exceed the maximum site files limit (#{current_site.plan_feature(:maximum_site_files)})"
-  end
-
-  files.each do |file|
-    if current_site.invalid_path?(file[:filename])
-      api_error 400, 'invalid_filename', "#{file[:filename]} is not a valid filename"
-    end
-
-    if !current_site.okay_to_upload?(file)
-      api_error 400, 'invalid_file_type', "#{file[:filename]} is not an allowed file type for free sites, supporter required"
-    end
-
-    if current_site.is_directory?(file[:filename])
-      api_error 400, 'directory_exists', "#{file[:filename]} conflicts with an existing directory"
-    end
-
-    if current_site.file_size_too_large? file[:tempfile].size
-      api_error 400, 'file_too_large', "#{file[:filename]} is too large"
-    end
-
-    if SiteFile.path_too_long? file[:filename]
-      api_error 400, 'file_path_too_long', "#{file[:filename]} path is too long"
-    end
-
-    if SiteFile.name_too_long? file[:filename]
-      api_error 400, 'file_name_too_long', "#{file[:filename]} filename is too long (exceeds #{SiteFile::FILE_NAME_CHARACTER_LIMIT} characters)"
-    end
-  end
-
   results = current_site.store_files files
-  api_success 'your file(s) have been successfully uploaded'
+
+  if results.is_a?(Hash) && results[:error]
+    api_error 400, results[:error_type], results[:message]
+  end
+
+  if results.is_a?(Array) && results.include?(false)
+    if results.count(false) == results.length
+      api_error 500, 'upload_failed', 'all files failed to upload'
+    else
+      api_success "#{results.count(true)} of #{results.length} file(s) have been successfully uploaded"
+    end
+  else
+    api_success 'your file(s) have been successfully uploaded'
+  end
 end
 
 post '/api/rename' do

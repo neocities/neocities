@@ -63,19 +63,24 @@ map '/webdav' do
       tmpfile.write(env['rack.input'].read)
       tmpfile.close
 
-      return [507, {}, ['']] if @site.file_size_too_large?(tmpfile.size)
-      return [400, {}, ['Invalid path']] if @site.invalid_path?(path)
-      return [400, {}, ['Path too long']] if SiteFile.path_too_long?(path)
-      return [400, {}, ['Filename too long']] if SiteFile.name_too_long?(path)
-      return [409, {}, ['Path conflicts with existing directory']] if File.directory?(@site.files_path(path))
-      return [507, {}, ['Too many files']] if @site.too_many_files?(1)
+      result = @site.store_files([{ filename: path, tempfile: tmpfile }])
 
-      if @site.okay_to_upload?(filename: path, tempfile: tmpfile)
-        @site.store_files([{ filename: path, tempfile: tmpfile }])
-        return [201, {}, ['']]
-      else
-        return [415, {}, ['']]
+      if result.is_a?(Hash) && result[:error]
+        # Map error types to appropriate HTTP status codes
+        status_code = case result[:error_type]
+        when 'too_large', 'file_too_large', 'too_many_files'
+          507  # Insufficient Storage
+        when 'directory_exists'
+          409  # Conflict
+        when 'invalid_file_type'
+          415  # Unsupported Media Type
+        else
+          400  # Bad Request
+        end
+        return [status_code, {}, [result[:message]]]
       end
+
+      return [201, {}, ['']]
 
     when 'MKCOL'
       return [400, {}, ['Invalid path']] if @site.invalid_path?(path)

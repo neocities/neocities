@@ -1839,19 +1839,57 @@ class Site < Sequel::Model
     results = []
     new_size = 0
 
-    if too_many_files?(files.length)
-      results << false
-      return results
+    if files.nil? || files.empty?
+      return {error: true, error_type: 'missing_files', message: 'you must provide files to upload'}
     end
 
-    # Check for directory conflicts before processing any files
+    # Calculate total uploaded size (use inject with initial value to avoid nil on empty array)
+    uploaded_size = files.collect {|f| f[:tempfile].size}.inject(0, :+)
+
+    if file_size_too_large? uploaded_size
+      return {error: true, error_type: 'too_large', message: 'files are too large to fit in your space, try uploading smaller (or less) files'}
+    end
+
+    if too_many_files?(files.length)
+      return {error: true, error_type: 'too_many_files', message: "cannot exceed the maximum site files limit (#{plan_feature(:maximum_site_files)})"}
+    end
+
+    # Validate each file before processing
     files.each do |file|
-      if is_directory?(file[:filename])
-        results << {error: "Cannot upload file '#{file[:filename]}': a directory with the same name already exists"}
-        return results
+      # First check for directory traversal attempts in the original path
+      if file[:filename].to_s.include?('..') || invalid_path?(file[:filename])
+        return {error: true, error_type: 'invalid_filename', message: "#{file[:filename]} is not a valid filename"}
+      end
+
+      scrubbed = scrubbed_path(file[:filename])
+
+      file_with_scrubbed = {filename: scrubbed, tempfile: file[:tempfile]}
+      if !okay_to_upload?(file_with_scrubbed)
+        return {error: true, error_type: 'invalid_file_type', message: "#{file[:filename]} is not an allowed file type for free sites, supporter required"}
+      end
+
+      # Check for directory conflicts (use scrubbed path)
+      if is_directory?(scrubbed)
+        return {error: true, error_type: 'directory_exists', message: "#{file[:filename]} conflicts with an existing directory"}
+      end
+
+      # Check individual file size
+      if file_size_too_large? file[:tempfile].size
+        return {error: true, error_type: 'file_too_large', message: "#{file[:filename]} is too large"}
+      end
+
+      # Check path length (use scrubbed path)
+      if SiteFile.path_too_long? scrubbed
+        return {error: true, error_type: 'file_path_too_long', message: "#{file[:filename]} path is too long"}
+      end
+
+      # Check name length (use scrubbed path)
+      if SiteFile.name_too_long? scrubbed
+        return {error: true, error_type: 'file_name_too_long', message: "#{file[:filename]} filename is too long (exceeds #{SiteFile::FILE_NAME_CHARACTER_LIMIT} characters)"}
       end
     end
 
+    # Process files after all validation passes
     files.each do |file|
       existing_size = 0
       site_file = site_files_dataset.where(path: scrubbed_path(file[:filename])).first
@@ -1868,6 +1906,13 @@ class Site < Sequel::Model
       end
 
       results << res
+    end
+
+    # Check if any files failed to store
+    failed_count = results.count(false)
+    if failed_count > 0 && results.count(true) == 0
+      # All files failed
+      return {error: true, error_type: 'store_failed', message: 'failed to store files'}
     end
 
     if results.include? true

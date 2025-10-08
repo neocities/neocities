@@ -284,14 +284,16 @@ describe Site do
     it 'rejects file upload when directory exists with same name' do
       @site = Fabricate :site
       @site.create_directory('test.html')
-      
+
       tmpfile = Tempfile.new
       tmpfile.write 'test'
       tmpfile.close
-      
+
       results = @site.store_files [{filename: 'test.html', tempfile: tmpfile}]
-      
-      _(results.first[:error]).must_include 'directory with the same name'
+
+      _(results[:error]).must_equal true
+      _(results[:error_type]).must_equal 'directory_exists'
+      _(results[:message]).must_include 'conflicts with an existing directory'
     end
   end
 
