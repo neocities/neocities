@@ -25,3 +25,18 @@ Capybara.register_driver :selenium_chrome_headless_largewindow do |app|
 
   Capybara::Selenium::Driver.new(app, browser: :chrome, options: options, http_client: client)
 end
+
+# Work around Chrome intermittently reporting stale DOM nodes as UnknownError.
+module Neocities
+  module CapybaraStaleNodePatch
+    def visible_text(...)
+      super
+    rescue Selenium::WebDriver::Error::UnknownError => e
+      raise unless e.message.include?('Node with given id does not belong to the document')
+
+      raise Selenium::WebDriver::Error::StaleElementReferenceError, e.message
+    end
+  end
+end
+
+Capybara::Selenium::Node.prepend(Neocities::CapybaraStaleNodePatch)
