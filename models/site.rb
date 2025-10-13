@@ -1944,8 +1944,19 @@ class Site < Sequel::Model
   def delete_file(path)
     return false if files_path(path) == files_path
     path = scrubbed_path path
-    site_file = site_files_dataset.where(path: path).first
-    site_file.destroy if site_file
+    attempts = 0
+
+    begin
+      DB.transaction do
+        site_file = site_files_dataset.where(path: path).for_update.first
+        site_file&.destroy(transaction: false)
+      end
+    rescue Sequel::SerializationFailure
+      attempts += 1
+      retry if attempts < 3
+      raise
+    end
+
     true
   end
 
@@ -2103,4 +2114,3 @@ class Site < Sequel::Model
     true
   end
 end
-
