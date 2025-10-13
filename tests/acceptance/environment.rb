@@ -29,10 +29,22 @@ end
 # Work around Chrome intermittently reporting stale DOM nodes as UnknownError.
 module Neocities
   module CapybaraStaleNodePatch
-    def visible_text(...)
-      super
+    STALE_NODE_MESSAGE = 'Node with given id does not belong to the document'
+
+    def visible?(*args, &block)
+      with_stale_node_retry { super(*args, &block) }
+    end
+
+    def visible_text(*args, &block)
+      with_stale_node_retry { super(*args, &block) }
+    end
+
+    private
+
+    def with_stale_node_retry
+      yield
     rescue Selenium::WebDriver::Error::UnknownError => e
-      raise unless e.message.include?('Node with given id does not belong to the document')
+      raise unless e.message&.include?(STALE_NODE_MESSAGE)
 
       raise Selenium::WebDriver::Error::StaleElementReferenceError, e.message
     end
