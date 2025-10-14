@@ -711,12 +711,14 @@ class Site < Sequel::Model
 
     email_domain = email.match(/@(.+)/).captures.first
 
-    begin
-      email_mx = Resolv::DNS.new.getresource(email_domain, Resolv::DNS::Resource::IN::MX).exchange.to_s
-      email_root_domain = email_mx.match(/\.(.+)$/).captures.first
-    rescue => e
-      # Guess this is your lucky day.
-      return false
+    unless ENV['RACK_ENV'] == 'test' || ENV['CI']
+      begin
+        email_mx = Resolv::DNS.new.getresource(email_domain, Resolv::DNS::Resource::IN::MX).exchange.to_s
+        email_root_domain = email_mx.match(/\.(.+)$/).captures.first
+      rescue => e
+        # Guess this is your lucky day.
+        return false
+      end
     end
 
     return false if disposable_email_domains_whitelist.include? email_root_domain

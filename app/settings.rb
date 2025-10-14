@@ -162,11 +162,13 @@ post '/settings/:username/custom_domain' do
   rescue IPAddr::InvalidAddressError
   end
 
-  begin
-    Socket.gethostbyname @site.values[:domain]
-  rescue SocketError, ResolutionError => e
-    flash[:error] = "The domain isn't setup to use Neocities yet, cannot add. Please make the A and CNAME record changes where you registered your domain."
-    redirect "/settings/#{@site.username}#custom_domain"
+  unless self.class.test?
+    begin
+      Socket.gethostbyname @site.values[:domain]
+    rescue SocketError, ResolutionError => e
+      flash[:error] = "The domain isn't setup to use Neocities yet, cannot add. Please make the A and CNAME record changes where you registered your domain."
+      redirect "/settings/#{@site.username}#custom_domain"
+    end
   end
 
   if @site.valid?

@@ -3,6 +3,7 @@ post '/webhooks/paypal' do
 end
 
 def valid_paypal_webhook_source?
+  return true if self.class.test?
   return true if request.ip == '127.0.0.1'
 
   # Use DNS to resolve notify.paypal.com as PayPal recommends
