@@ -1,65 +1,26 @@
-<% if (!is_current_site && site.tags_dataset.count > 0) || is_current_site %>
-  <h3>Tags</h3>
-  <% if is_current_site && site.tags_dataset.count == 0 %>
-    <p>You don't have any tags yet. <a href="#addTag" data-toggle="modal">Add some!</a>
+<% tags_count = site.tags_dataset.count %>
+<% show_tags = (!is_current_site && tags_count > 0) || is_current_site %>
+<% edit_tags_path = "/settings/#{site.username}#tags" %>
+
+<% if show_tags %>
+  <h3>
+    Tags
+    <% if is_current_site %>
+      <small style="font-size: 60%; font-weight: normal">
+        <a href="<%= edit_tags_path %>">Edit</a>
+      </small>
+    <% end %>
+  </h3>
+
+  <% if tags_count.zero? %>
+    <% if is_current_site %>
+      <p>You don't have any tags yet. <a href="<%= edit_tags_path %>">Add some from your site settings</a>.</p>
+    <% else %>
+      <p>This site hasn't added any tags yet.</p>
+    <% end %>
   <% else %>
     <% site.tags.each do |tag| %>
       <a class="tag" href="/browse?tag=<%== Rack::Utils.escape tag.name %>"><%= tag.name %></a>
     <% end %>
-
-    <% if is_current_site && request.path != '/' %>
-      <div class="clear">
-        <% if is_current_site && current_site.tags_dataset.count < Site::MAXIMUM_TAGS %>
-          <a href="#addTag" data-toggle="modal">Add</a>
-        <% end %>
-        &nbsp;&nbsp;&nbsp;
-        <a href="#removeTag" data-toggle="modal">Remove</a>
-      </div>
-    <% end %>
   <% end %>
-<% end %>
-
-<% if current_site && current_site == site %>
-  <div class="modal hide" id="addTag" tabindex="-1" role="dialog" aria-labelledby="addTagLabel" aria-hidden="true">
-    <form method="POST" action="/tags/add">
-      <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-      <div class="modal-header">
-        <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-        <h3 id="addTagLabel">Add a Tag</h3>
-      </div>
-      <div class="modal-body">
-        <p>
-          A tag can only be a single word, and can only contain letters and numbers.
-        </p>
-        <input type="text" name="tags" class="typeahead">
-      </div>
-      <div class="modal-footer">
-        <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-        <button type="submit" class="btn-Action">Add Tag</button>
-      </div>
-    </form>
-  </div>
-
-  <div class="modal hide" id="removeTag" tabindex="-1" role="dialog" aria-labelledby="removeTagLabel" aria-hidden="true">
-    <form method="POST" action="/tags/remove">
-      <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-      <div class="modal-header">
-        <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-        <h3 id="removeTagLabel">Remove Tags</h3>
-      </div>
-      <div class="modal-body">
-        <p>
-          Select the tags you would like to remove:
-        </p>
-        <% site.tags.each do |tag| %>
-          <input name="tags[]" type="checkbox" value="<%= tag.name %>"> <%= tag.name %>
-          <br>
-        <% end %>
-      </div>
-      <div class="modal-footer">
-        <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-        <button type="submit" class="btn-Action">Remove Tag(s)</button>
-      </div>
-    </form>
-  </div>
 <% end %>

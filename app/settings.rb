@@ -70,6 +70,45 @@ post '/settings/:username/profile' do
   redirect "/settings/#{@site.username}#profile"
 end
 
+post '/settings/:username/tags/add' do
+  require_login
+  require_ownership_for_settings
+
+  @site.new_tags_string = params[:tags]
+
+  if @site.valid?
+    @site.save_tags
+    flash[:success] = 'Tags updated.'
+  else
+    flash[:error] = @site.errors.first.last.first
+  end
+
+  redirect "/settings/#{@site.username}#tags"
+end
+
+post '/settings/:username/tags/remove' do
+  require_login
+  require_ownership_for_settings
+
+  removed = false
+
+  if params[:tags].is_a?(Array)
+    DB.transaction {
+      params[:tags].each do |tag|
+        tag_to_remove = @site.tags.detect {|t| t.name == tag }
+        if tag_to_remove
+          @site.remove_tag(tag_to_remove)
+          removed = true
+        end
+      end
+    }
+  end
+
+  flash[:success] = removed ? 'Tags updated.' : 'No tags selected.'
+
+  redirect "/settings/#{@site.username}#tags"
+end
+
 post '/settings/:username/change_name' do
   require_login
   require_ownership_for_settings

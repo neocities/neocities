@@ -92,6 +92,51 @@ describe 'site/settings' do
     end
   end
 
+  describe 'tags tab' do
+    before do
+      Capybara.reset_sessions!
+      @site = Fabricate :site
+      page.set_rack_session id: @site.id
+    end
+
+    it 'adds tags via the settings form' do
+      visit "/settings/#{@site.username}#tags"
+
+      within "form[action='/settings/#{@site.username}/tags/add']" do
+        find("input[name='tags']").set 'art, coding'
+        click_button 'Add Tag(s)'
+      end
+
+      @site.reload
+      tag_names = @site.tags_dataset.map(&:name)
+
+      _(tag_names.sort).must_equal %w[art coding]
+      _(page).must_have_content 'Tags updated.'
+      _(page.current_url).must_match /#tags$/
+    end
+
+    it 'removes only the selected tags' do
+      visit "/settings/#{@site.username}#tags"
+
+      within "form[action='/settings/#{@site.username}/tags/add']" do
+        find("input[name='tags']").set 'art,coding'
+        click_button 'Add Tag(s)'
+      end
+
+      within "form[action='/settings/#{@site.username}/tags/remove']" do
+        find("input[name='tags[]'][value='art']").set(true)
+        click_button 'Remove Selected'
+      end
+
+      @site.reload
+      tag_names = @site.tags_dataset.map(&:name)
+
+      _(tag_names).must_equal ['coding']
+      _(page).must_have_content 'Tags updated.'
+      _(page.current_url).must_match /#tags$/
+    end
+  end
+
   describe 'delete' do
     before do
       Capybara.reset_sessions!

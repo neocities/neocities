@@ -90,3 +90,100 @@ a{
   background: none;
   padding: 0 23px 19px 0;
 }
+
+.settings-tags {
+  text-align: center;
+
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  .tag-card {
+    background: #fff;
+    border: 1px solid #e6e9ef;
+    border-radius: 14px;
+    margin: 0 auto 25px auto;
+    max-width: 780px;
+    padding: 24px;
+    text-align: left;
+  }
+
+  .tag-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .tag-pill {
+    background: #eef4ff;
+    border-radius: 999px;
+    color: #2d4a8c;
+    display: inline-block;
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+
+  .tag-panel-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 980px;
+  }
+
+  .tag-panel {
+    background: #fff;
+    border: 1px solid #e6e9ef;
+    border-radius: 14px;
+    display: flex;
+    flex: 1 1 360px;
+    flex-direction: column;
+    min-height: 285px;
+    padding: 24px;
+    text-align: left;
+  }
+
+  .tag-panel h3 {
+    margin-top: 0;
+  }
+
+  .tag-form {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tag-form .input-Area {
+    width: 100%;
+  }
+
+  .tag-form .btn-Action {
+    align-self: flex-start;
+    margin-top: auto;
+  }
+
+  .tag-chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tag-chip {
+    align-items: center;
+    background: #f8fbff;
+    border: 1px solid #dfe6f5;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 12px;
+    gap: 6px;
+    padding: 4px 12px 4px 8px;
+  }
+
+  .tag-chip input {
+    margin: 0;
+  }
+}

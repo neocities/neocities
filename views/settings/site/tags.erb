@@ -1,0 +1,70 @@
+<% tags_count = @site.tags_dataset.count %>
+<% tags_remaining = Site::MAXIMUM_TAGS - tags_count %>
+
+<div class="settings-tags" id="settings-tags">
+  <h2>Tags</h2>
+  <p class="tiny">
+    Tags help people find your site on <a href="/browse">Browse</a>. Use short, descriptive keywords (letters and numbers only) so visitors can discover you more easily.
+  </p>
+
+  <div class="tag-card tag-card-summary">
+    <strong>Current tags (<%= tags_count %>/<%= Site::MAXIMUM_TAGS %>)</strong>
+    <% if tags_count.zero? %>
+      <p style="margin: 12px 0 0 0">You haven't added any tags yet.</p>
+    <% else %>
+      <div class="tag-pill-row">
+        <% @site.tags.each do |tag| %>
+          <span class="tag-pill"><%= tag.name %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="tag-panel-row">
+    <div class="tag-panel">
+      <h3>Add Tags</h3>
+      <% if tags_count >= Site::MAXIMUM_TAGS %>
+        <p class="tiny">You've reached the maximum number of tags. Remove one before adding another.</p>
+      <% else %>
+        <p class="tiny">
+          Separate multiple tags with commas.
+          <br>
+          <em><%= tags_remaining %> tag<%= tags_remaining == 1 ? '' : 's' %> remaining.</em>
+        </p>
+        <form method="POST" action="/settings/<%= @site.username %>/tags/add" class="tag-form">
+          <%== csrf_token_input_html %>
+          <input type="text"
+                 name="tags"
+                 class="input-Area typeahead"
+                 placeholder="art, music, personal"
+                 autocapitalize="off"
+                 autocorrect="off"
+                 autocomplete="off"
+                 spellcheck="false">
+          <button class="btn-Action" type="submit">Add Tag(s)</button>
+        </form>
+      <% end %>
+    </div>
+
+    <div class="tag-panel">
+      <h3>Remove Tags</h3>
+      <% if tags_count.zero? %>
+        <p class="tiny">Nothing to remove yet.</p>
+      <% else %>
+        <p class="tiny">Select one or more tags to remove, then click the button below.</p>
+        <form method="POST" action="/settings/<%= @site.username %>/tags/remove" class="tag-form">
+          <%== csrf_token_input_html %>
+          <div class="tag-chip-grid">
+            <% @site.tags.each do |tag| %>
+              <label class="tag-chip">
+                <input name="tags[]" type="checkbox" value="<%= tag.name %>">
+                <span><%= tag.name %></span>
+              </label>
+            <% end %>
+          </div>
+          <button class="btn-Action" type="submit">Remove Selected</button>
+        </form>
+      <% end %>
+    </div>
+  </div>
+</div>
