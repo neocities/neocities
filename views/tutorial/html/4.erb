@@ -17,7 +17,7 @@
   function checkHomework() {
     var html = editor.getValue()
 
-    if(html.match(/<p>\S.+<\/p>/) === null) {
+    if(html.match(/<p>\s*\S[\s\S]*<\/p>/i) === null) {
       notok("I don't see a &lt;p&gt;paragraph with text in it&lt;/p&gt; anywhere! Try again.")
     } else {
       sessionStorage.setItem('tutorialHtml', html)
