@@ -344,6 +344,30 @@ describe 'api' do
       _(site_file_exists?('test.jpg')).must_equal true
     end
 
+    it 'reports unchanged files without failing' do
+      create_site
+      basic_authorize @user, @pass
+
+      post '/api/upload', 'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      _(res[:result]).must_equal 'success'
+      _(res[:message]).must_equal 'your file(s) have been successfully uploaded'
+      _(site_file_exists?('test.jpg')).must_equal true
+
+      basic_authorize @user, @pass
+      post '/api/upload', 'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+      _(res[:result]).must_equal 'success'
+      _(res[:message]).must_equal 'no changes, files already up to date'
+      _(site_file_exists?('test.jpg')).must_equal true
+
+      basic_authorize @user, @pass
+      post '/api/upload',
+           'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg'),
+           'notindex.html' => Rack::Test::UploadedFile.new('./tests/files/notindex.html', 'text/html')
+      _(res[:result]).must_equal 'success'
+      _(res[:message]).must_equal '1 file(s) uploaded, 1 already up to date'
+      _(site_file_exists?('notindex.html')).must_equal true
+    end
+
     it 'fails api_key auth unless controls site' do
       create_site
       @site.generate_api_key!

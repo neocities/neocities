@@ -1912,12 +1912,15 @@ class Site < Sequel::Model
 
     # Check if any files failed to store
     failed_count = results.count(false)
-    if failed_count > 0 && results.count(true) == 0
+    success_count = results.count(true)
+    unchanged_count = results.count(:unchanged)
+
+    if failed_count > 0 && success_count == 0 && unchanged_count == 0
       # All files failed
       return {error: true, error_type: 'store_failed', message: 'failed to store files'}
     end
 
-    if results.include? true
+    if success_count > 0
 
       DB["update sites set space_used=space_used#{new_size < 0 ? new_size.to_s : '+'+new_size.to_s} where id=?", self.id].first
 
@@ -2067,7 +2070,7 @@ class Site < Sequel::Model
     uploaded_sha1 = Digest::SHA1.file(uploaded.path).hexdigest
 
     if site_file && site_file.sha1_hash == uploaded_sha1
-      return false
+      return :unchanged
     end
 
     if pathname.extname.match(HTML_REGEX) && defined?(BlackBox)

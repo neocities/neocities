@@ -106,11 +106,32 @@ post '/api/upload' do
     api_error 400, results[:error_type], results[:message]
   end
 
-  if results.is_a?(Array) && results.include?(false)
-    if results.count(false) == results.length
+  if results.is_a?(Array)
+    success_count = results.count(true)
+    unchanged_count = results.count(:unchanged)
+    failure_count = results.count(false)
+    total = results.length
+    change_attempts = total - unchanged_count
+
+    if failure_count == total
       api_error 500, 'upload_failed', 'all files failed to upload'
+    elsif failure_count > 0
+      message_parts = []
+      if success_count > 0
+        denominator = change_attempts.zero? ? total : change_attempts
+        message_parts << "#{success_count} of #{denominator} file(s) uploaded"
+      end
+      message_parts << "#{unchanged_count} file(s) already up to date" if unchanged_count > 0
+      message_parts << "#{failure_count} file(s) failed" if failure_count > 0
+      api_success message_parts.join(', ')
+    elsif success_count > 0
+      if unchanged_count > 0
+        api_success "#{success_count} file(s) uploaded, #{unchanged_count} already up to date"
+      else
+        api_success 'your file(s) have been successfully uploaded'
+      end
     else
-      api_success "#{results.count(true)} of #{results.length} file(s) have been successfully uploaded"
+      api_success 'no changes, files already up to date'
     end
   else
     api_success 'your file(s) have been successfully uploaded'
