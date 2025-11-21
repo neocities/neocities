@@ -249,7 +249,9 @@ map '/webdav' do
         return [400, {}, ['Invalid destination path']]
       end
 
-      path.sub!(/^\//, '') # Remove leading slash if present
+      # Remove leading and trailing slashes if present
+      path.sub!(/^\//, '')
+      path.sub!(/\/$/, '')
       site_file = @site.site_files.find { |s| s.path == path }
       return [404, {}, ['']] unless site_file
 
