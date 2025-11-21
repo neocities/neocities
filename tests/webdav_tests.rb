@@ -113,6 +113,16 @@ describe 'webdav' do
     _(site.file_exists?('renamed.txt')).must_equal true
   end
 
+  it 'strips leading and trailing slashes when moving files' do
+    auth_put 'slashy.txt', 'content'
+
+    auth_move 'slashy.txt/', '/renamed.txt/'
+    _(last_response.status).must_equal 201
+    site = Site[@site.id]
+    _(site.file_exists?('slashy.txt')).must_equal false
+    _(site.file_exists?('renamed.txt')).must_equal true
+  end
+
   it 'fails MOVE when destination header is empty' do
     auth_put 'move.txt', 'body'
     basic_authorize @site.username, 'abcde'
