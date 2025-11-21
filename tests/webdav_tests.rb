@@ -70,6 +70,19 @@ describe 'webdav' do
     _(Site[@site.id].file_exists?('create.txt')).must_equal true
   end
 
+  it 'decodes percent-encoded paths when storing files' do
+    encoded_path = 'Alien%20%281%29.jpg'
+    decoded_path = 'Alien (1).jpg'
+
+    auth_put encoded_path, 'image data'
+    _(last_response.status).must_equal 201
+
+    site = Site[@site.id]
+    _(site.file_exists?(decoded_path)).must_equal true
+    _(site.site_files_dataset.where(path: decoded_path).count).must_equal 1
+    _(site.site_files_dataset.where(path: encoded_path).count).must_equal 0
+  end
+
   it 'reads files via GET' do
     auth_put 'read.txt', 'read me'
     auth_get 'read.txt'

@@ -20,7 +20,11 @@ map '/webdav' do
 
   run lambda { |env|
     request_method = env['REQUEST_METHOD']
-    path = env['PATH_INFO']
+    begin
+      path = Rack::Utils.unescape_path(env['PATH_INFO'])
+    rescue ArgumentError
+      return [400, {}, ['Invalid path']]
+    end
 
     unless @site.owner.supporter?
       return [
@@ -238,6 +242,12 @@ map '/webdav' do
     when 'MOVE'
       destination = env['HTTP_DESTINATION'][/\/webdav(.+)$/i, 1]
       return [400, {}, ['Bad Request']] unless destination
+
+      begin
+        destination = Rack::Utils.unescape_path(destination)
+      rescue ArgumentError
+        return [400, {}, ['Invalid destination path']]
+      end
 
       path.sub!(/^\//, '') # Remove leading slash if present
       site_file = @site.site_files.find { |s| s.path == path }
