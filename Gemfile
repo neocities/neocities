@@ -7,7 +7,7 @@ gem 'redis-namespace'
 gem 'bcrypt'
 gem 'sinatra-flash',      require: 'sinatra/flash'
 gem 'sinatra-xsendfile',  require: 'sinatra/xsendfile'
-gem 'puma', '< 7',      require: nil
+gem 'puma',               require: nil
 gem 'sidekiq', '~> 7'
 gem 'mail'
 gem 'tilt'
