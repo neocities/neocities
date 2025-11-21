@@ -8,10 +8,11 @@ Encoding.default_external = 'UTF-8'
 
 require 'yaml'
 require 'json'
-require 'logger'
 
 Bundler.require
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
+
+require 'logger'
 
 require 'tilt/erubi'
 require 'active_support'
