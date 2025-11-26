@@ -69,6 +69,30 @@ describe 'signup' do
     _(site.ip).must_equal '127.0.0.1'
   end
 
+  it 'allows resending the confirmation email after signup' do
+    fill_in_valid
+    click_signup_button
+    site_created?
+    click_link 'Continue'
+
+    EmailWorker.jobs.clear
+
+    site = Site[username: @site[:username]]
+    token = site.email_confirmation_token
+
+    click_button 'Resend Confirmation Email'
+
+    _(page).must_have_content /confirmation email re-sent/i
+
+    site.reload
+    _(EmailWorker.jobs.length).must_equal 1
+    args = EmailWorker.jobs.first['args'].first
+    _(args['subject']).must_match /confirm your email address/i
+    _(args['body']).must_match /#{token}/
+    _(site.email_confirmation_token).must_equal token
+    _(site.email_confirmation_count).must_equal 2
+  end
+
   it 'fails if site with same ip has been banned' do
     @banned_site = Fabricate :site, ip: '127.0.0.1'
     @banned_site.ban!
