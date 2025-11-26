@@ -8,7 +8,7 @@
 
     We sent an email to <strong><%= current_site.email %></strong> to make sure it's correct.<br>
     Please check your email, and enter the confirmation code here.<br>
-    If you don't see the email in your inbox, try looking in the spam folder.
+    If you don't see the email in your inbox, check your spam folder.
   </h3>
 
   <div class="row">
@@ -33,6 +33,14 @@
           <input name="token" type="text" class="input-Area" autofill="off" autocapitalize="off" autocorrect="off" value="<%= flash[:token] %>" style="width: 290px">
         </fieldset>
         <input class="btn-Action" type="submit" value="Confirm Email">
+      </form>
+
+      <h2 style="margin-top: 30px">Didn't get the email?</h2>
+      <h3 class="subtitle">Click below to re-send the confirmation email.</h3>
+
+      <form method="POST" action="/site/<%= current_site.username %>/confirm_email/resend" class="content">
+        <%== csrf_token_input_html %>
+        <input class="btn-Action" type="submit" value="Resend Confirmation Email">
       </form>
 
       <h2 style="margin-top: 30px">Wrong email?</h2>

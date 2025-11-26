@@ -246,6 +246,18 @@ get '/site/:username/confirm_email' do
   erb :'site/confirm_email'
 end
 
+post '/site/:username/confirm_email/resend' do
+  require_login
+
+  redirect '/' if current_site.username != params[:username] || !current_site.parent? || current_site.email_confirmed
+
+  request.env['HTTP_REFERER'] ||= "/site/#{current_site.username}/confirm_email"
+
+  send_confirmation_email current_site
+  flash[:success] = 'Confirmation email re-sent.'
+  redirect "/site/#{current_site.username}/confirm_email"
+end
+
 post '/site/:username/confirm_email' do
   require_login
 
