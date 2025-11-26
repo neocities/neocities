@@ -1,10 +1,10 @@
 get '/contact' do
+  @show_contact_form = params[:show_contact_form] == 'yes'
   erb :'contact'
 end
 
 post '/contact' do
   @errors = []
-
   if params[:email].empty? || params[:subject].empty? || params[:body].empty?
     @errors << 'Please fill out all fields'
   end
