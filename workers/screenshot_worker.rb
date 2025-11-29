@@ -66,6 +66,8 @@ class ScreenshotWorker
       image.save File.join(user_screenshots_path, "#{path}.jpg"), quality: 85
       ImageOptimizer.new(File.join(user_screenshots_path, "#{path}.jpg")).optimize
 
+      ScreenshotBlackBoxWorker.perform_in 30.minutes, site.id, path
+
       Site::SCREENSHOT_RESOLUTIONS.each do |res|
         width, height = res.split('x').collect {|r| r.to_i}
         full_screenshot_path = File.join(user_screenshots_path, "#{path}.#{res}.webp")

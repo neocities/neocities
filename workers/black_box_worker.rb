@@ -8,6 +8,3 @@ class BlackBoxWorker
     BlackBox.new(site, path).tos_violation_check!
   end
 end
-
-
-# BlackBox.tos_violation_check self, uploaded
