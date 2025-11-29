@@ -1,14 +1,3 @@
-GIT
-  remote: https://github.com/neocities/dav4rack.git
-  revision: 1bf1975c613d4f14d00f1e70ce7e0bb9e2e6cd9b
-  ref: 1bf1975c613d4f14d00f1e70ce7e0bb9e2e6cd9b
-  specs:
-    dav4rack (0.3.0)
-      nokogiri (>= 1.4.2)
-      rack (~> 3.0)
-      uuidtools (~> 2.1.1)
-      webrick
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -375,7 +364,6 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uri (1.0.3)
-    uuidtools (2.1.5)
     webmock (3.25.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
@@ -413,7 +401,6 @@ DEPENDENCIES
   certified
   coveralls_reborn
   csv
-  dav4rack!
   dnsbl-client
   erubi
   fabrication
