@@ -45,7 +45,7 @@ class LetsEncryptWorker
     domains.each_with_index do |domain, index|
       puts "verifying accessability of test file on #{domain}"
       challenge_base_path = File.join '.well-known', 'acme-challenge'
-      testfile_name, testfile_key = "test#{UUIDTools::UUID.random_create}", SecureRandom.hex
+      testfile_name, testfile_key = "test#{SecureRandom.uuid}", SecureRandom.hex
       testfile_fs_path = File.join site.base_files_path, challenge_base_path
 
       begin
