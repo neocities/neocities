@@ -50,6 +50,8 @@
       <fieldset>
         <label for="your_email">Email address</label>
         <input type="email" id="your_email" name="email" placeholder="me@example.com" class="col-50" value="<%= params[:email] %>">
+        <label for="confirm_your_email">Confirm email address</label>
+        <input type="email" id="confirm_your_email" name="confirm_email" placeholder="me@example.com" class="col-50" value="<%= params[:confirm_email] %>">
 
         <label for="email_subject">Subject</label>
         <input type="text" id="email_subject" name="subject" placeholder="Subject" class="col-50" value="<%= params[:subject] %>">
@@ -279,6 +281,11 @@
           id: 'performance',
           question: 'How can I improve my site’s performance?',
           answer: `<p>Compress and resize images, minify CSS/JS, avoid oversized single-page payloads, and reduce external dependencies. Use consistent casing and clean paths to prevent 404s and extra requests.</p>`
+        },
+        {
+          id: 'backups',
+          question: 'I accidentally deleted a file or overwrote it, is there a way to restore a lost file from a backup?',
+          answer: '<p>Unfortunately there is no way to do this at this moment, we cannot restore deleted files.</p>'
         }
       ];
 

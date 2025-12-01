@@ -9,6 +9,10 @@ post '/contact' do
     @errors << 'Please fill out all fields'
   end
 
+  if params[:email] != params[:confirm_email]
+    @errors << 'Email addresses do not match'
+  end
+
   if params[:faq_check] == 'no'
     @errors << 'Please check Frequently Asked Questions before sending a contact message'
   end
