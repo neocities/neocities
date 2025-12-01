@@ -53,7 +53,7 @@ class Site < Sequel::Model
   }
 
   VALID_EXTENSIONS = %w{
-    html htm txt text css js jpg jpeg png apng gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle pls yaml yml toml osdx mjs cjs ts glb py glsl
+    html htm txt text css js jpg jpeg jxl png apng gif svg md markdown eot ttf woff woff2 json geojson csv tsv mf ico pdf asc key pgp xml mid midi manifest otf webapp less sass rss kml dae obj mtl scss webp avif xcf epub gltf bin webmanifest knowl atom opml rdf map gpg resolveHandle pls yaml yml toml osdx mjs cjs ts glb py glsl
   }
 
   VALID_EDITABLE_EXTENSIONS = %w{
