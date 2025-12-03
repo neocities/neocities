@@ -404,19 +404,32 @@ get '/admin/masquerade/:username' do
   redirect '/'
 end
 
-get '/admin/site/:username_or_email_or_domain' do
+get %r{/admin/site/(.+)} do |username_or_email_or_domain|
   require_admin
-  ident = params[:username_or_email_or_domain]
+  ident = request.path_info.sub(%r{\A/admin/site/}, '')
 
   if ident.blank?
     flash[:error] = 'username or email or domain required'
     redirect '/admin'
   end
 
+  ident = ident.to_s.strip
+  ident = ident.sub(%r{\A(https?):/+}, '\1://')
+
+  begin
+    parsed_ident = Addressable::URI.parse(ident)
+    ident = parsed_ident.host if parsed_ident.host
+  rescue Addressable::URI::InvalidURIError
+  end
+
+  ident = ident.split('/').first.to_s.downcase
+
   if ident =~ /@/
     @site = Site[email: ident]
+  elsif ident.end_with?('.neocities.org')
+    @site = Site[username: ident.sub(/\.neocities\.org\z/, '')]
   elsif ident =~ /.+\..+$/
-    @site = Site.where(domain: ident.downcase).first
+    @site = Site.where(domain: ident).first
   else
     @site = Site[username: ident]
   end

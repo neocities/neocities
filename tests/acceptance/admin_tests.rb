@@ -201,6 +201,29 @@ describe '/admin' do
     end
   end
 
+  describe 'site info lookup' do
+    include Capybara::DSL
+
+    it 'finds sites by username, email, domain, and urls' do
+      username_site = Fabricate :site, username: 'plainuser'
+      email_site = Fabricate :site, username: 'emailuser', email: 'user@gmail.com'
+      domain_site = Fabricate :site, username: 'domainsite', domain: 'domain.com'
+      neocities_site = Fabricate :site, username: 'derp'
+
+      [
+        ['plainuser', username_site.username],
+        ['user@gmail.com', email_site.username],
+        ['derp.neocities.org', neocities_site.username],
+        ['domain.com', domain_site.username],
+        ['https://domain.com/some/path', domain_site.username],
+        ['https://derp.neocities.org/anything', neocities_site.username]
+      ].each do |input, expected_username|
+        visit "/admin/site/#{input}"
+        _(page.body).must_match(/Site Info: #{Regexp.quote(expected_username)}/, "input #{input} current_path #{page.current_path}")
+      end
+    end
+  end
+
   describe 'email blasting' do
     before do
       EmailWorker.jobs.clear
