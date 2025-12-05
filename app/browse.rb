@@ -163,7 +163,12 @@ get '/browse/search' do
       @total_results = @resp['searchInformation']['totalResults'].to_i
       @resp['items'].each do |item|
         link = Addressable::URI.parse(item['link'])
-        unencoded_path = Rack::Utils.unescape(Rack::Utils.unescape(link.path)) # Yes, it needs to be decoded twice
+        path = link.path || '/'
+        unencoded_path = begin
+          Rack::Utils.unescape(Rack::Utils.unescape(path)) # Yes, it needs to be decoded twice
+        rescue ArgumentError
+          path # Fall back when the path includes invalid %-encoding
+        end
         item['unencoded_link'] = unencoded_path == '/' ? link.host : link.host+unencoded_path
         item['link'] = link
 
