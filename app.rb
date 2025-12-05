@@ -85,11 +85,11 @@ before do
     # Skips the CSRF/validation check for stripe web hooks
   elsif request.path.match /^\/admin/
     require_admin
-  elsif current_site && current_site.email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/welcome|^\/supporter|^\/signout|^\/contact/)
+  elsif current_site && current_site.email_not_validated? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/welcome|^\/supporter|^\/signout|^\/contact|^\/aup|^\/terms/)
     redirect "/site/#{current_site.username}/confirm_email"
-  elsif current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/signout/)
+  elsif current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/signout|^\/aup|^\/terms/)
     redirect  "/site/#{current_site.username}/confirm_phone"
-  elsif current_site && current_site.tutorial_required && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/tutorial\/.+/)
+  elsif current_site && current_site.tutorial_required && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/tutorial\/.+|^\/aup|^\/terms/)
     redirect '/tutorial/html/1'
   else
     content_type :html, 'charset' => 'utf-8'
