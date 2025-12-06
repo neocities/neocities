@@ -109,11 +109,6 @@ get '/supporter/thanks' do
   erb :'supporter/thanks'
 end
 
-get '/supporter/bitcoin/?' do
-  @title = 'Bitcoin Supporter'
-  erb :'supporter/bitcoin'
-end
-
 get '/supporter/paypal' do
   require_login
   redirect '/supporter' if parent_site.supporter?
