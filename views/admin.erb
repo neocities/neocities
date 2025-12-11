@@ -8,9 +8,7 @@
 
   <div class="row">
     <div class="col col-100">
-      <a href="/admin/reports">Site Reports</a><br>
-      <a href="/admin/usage">Site Bandwidth Usage</a><br>
-      <a href="/admin/ban_history">Site Ban History</a>
+      <a href="/admin/reports">Site Reports</a> | <a href="/admin/usage">Site Bandwidth Usage</a> | <a href="/admin/ban_history">Site Ban History</a>
     </div>
   </div>
 
@@ -34,13 +32,12 @@
       </form>
     </div>
     <div class="col col-50">
-      <h2>Unban Site</h2>
-      <form action="/admin/unban" method="POST">
-        <%== csrf_token_input_html %>
+      <h2>Site Info</h2>
+      <form action="/admin/site" method="GET" onsubmit="this.action = '/admin/site/' + this.username_or_email_or_domain.value; this.username_or_email_or_domain.name = ''; return true;">
         <p>
-          <input type="text" name="username" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
+          <input type="text" name="username_or_email_or_domain" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" placeholder="username/email/domain">
         </p>
-        <p><input class="btn-Action" type="submit" value="Unban"></p>
+        <p><input class="btn-Action" type="submit" value="Lookup"></p>
       </form>
     </div>
   </div>
@@ -57,12 +54,13 @@
       </form>
     </div>
     <div class="col col-50">
-      <h2>Site Info</h2>
-      <form action="/admin/site" method="GET" onsubmit="this.action = '/admin/site/' + this.username_or_email_or_domain.value; this.username_or_email_or_domain.name = ''; return true;">
+      <h2>Unban Site</h2>
+      <form action="/admin/unban" method="POST">
+        <%== csrf_token_input_html %>
         <p>
-          <input type="text" name="username_or_email_or_domain" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" placeholder="username/email/domain">
+          <input type="text" name="username" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
         </p>
-        <p><input class="btn-Action" type="submit" value="Lookup"></p>
+        <p><input class="btn-Action" type="submit" value="Unban"></p>
       </form>
     </div>
   </div>
