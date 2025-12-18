@@ -16,6 +16,7 @@
   <article>
     <%== flash_display %>
     <div class="row">
+
       <div class="col col-50">
         <div class="block">
           <h3>🏠 Info</h3>
@@ -38,7 +39,9 @@
             </tr>
             <tr>
               <td>IP Address</td>
-              <td style="overflow-wrap: anywhere;"><%= @site.ip || 'Unknown' %></td>
+              <td style="overflow-wrap: anywhere;">
+                <%= @site.ip || 'Unknown' %>
+              </td>
             </tr>
           </table>
         </div>
@@ -106,6 +109,13 @@
               <td>Deleted</td>
               <td><%= @site.is_deleted ? '✓ Yes' : '✗ No' %></td>
             </tr>
+            <% if @site.deleted_reason %>
+              <tr>
+                <td>Deleted Reason</td>
+                <td><%= @site.deleted_reason %></td>
+              </tr>
+            <% end %>
+
             <tr>
               <td>Banned</td>
               <td><%= @site.is_banned ? '✓ Yes' : '✗ No' %></td>
@@ -117,6 +127,10 @@
             <tr>
               <td>Admin NSFW</td>
               <td><%= @site.admin_nsfw ? '✓ Yes' : '✗ No' %></td>
+            </tr>
+            <tr>
+              <td>Is A Jerk?</td>
+              <td><%= @site.is_a_jerk? ? '✓ Yes' : '✗ No' %></td>
             </tr>
             <tr>
               <td>Blackbox Whitelisted</td>

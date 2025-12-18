@@ -193,7 +193,6 @@ Minfraud.configure do |c|
   c.enable_validation = true
 end
 
-
 Airbrake.configure do |c|
   c.project_id = $config['airbrake_project_id']
   c.project_key = $config['airbrake_project_key']
