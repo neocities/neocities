@@ -46,7 +46,7 @@ map '/webdav' do
 
     case request_method
     when 'OPTIONS'
-      return [200, {'Allow' => 'OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL, MOVE', 'DAV' => '1,2'}, ['']]
+      return [200, {'Allow' => 'OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL, MOVE', 'DAV' => '1'}, ['']]
 
     when 'GET', 'HEAD'
       begin
@@ -85,6 +85,10 @@ map '/webdav' do
         'Content-Length' => content_length.to_s,
         'Last-Modified' => last_modified.httpdate
       }
+
+      if site_file&.sha1_hash
+        headers['ETag'] = %("#{site_file.sha1_hash}")
+      end
 
       if request_method == 'HEAD'
         return [200, headers, []]
@@ -205,7 +209,7 @@ map '/webdav' do
         </D:multistatus>
       XML
 
-      return [207, {'Content-Type' => 'application/xml; charset=utf-8', 'DAV' => '1,2'}, [xml]]
+      return [207, {'Content-Type' => 'application/xml; charset=utf-8', 'DAV' => '1'}, [xml]]
 
     when 'PUT'
       tmpfile = Tempfile.new('davfile', encoding: 'binary')
