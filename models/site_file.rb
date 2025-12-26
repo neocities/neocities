@@ -40,7 +40,7 @@ class SiteFile < Sequel::Model
 
       begin
         FileUtils.remove_dir site.files_path(path)
-      rescue Errno::ENOENT
+      rescue Errno::ENOENT, Errno::ENOTDIR
       end
 
     else

@@ -26,6 +26,7 @@ Bundler.require :test
 
 #require 'minitest/pride'
 require 'minitest/autorun'
+Minitest.load_plugins
 require 'webmock'
 include WebMock::API
 require 'webmock/minitest'
@@ -49,7 +50,19 @@ end
 
 Site.bcrypt_cost = BCrypt::Engine::MIN_COST
 
-Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
+class SpecDescriptionReporter < Minitest::Reporters::SpecReporter
+  private
+
+  def record_print_status(test)
+    test_name = test.name.sub(/^test_\d+_/, '')
+    print pad_test(test_name)
+    print_colored_status(test)
+    print(" (%.2fs)" % test.time) unless test.time.nil?
+    puts
+  end
+end
+
+Minitest::Reporters.use! SpecDescriptionReporter.new
 
 # Bootstrap the database
 Sequel.extension :migration

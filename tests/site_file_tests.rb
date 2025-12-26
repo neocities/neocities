@@ -112,13 +112,13 @@ describe 'site_files' do
       dir = @site.site_files_dataset.where(path: 'dir').first
       res = dir.rename('dir/newdir')
       _(res).must_equal [false, 'cannot move directory into itself']
-      _(@site.site_files_dataset.where(path: 'dir').first).wont_equal nil
-      _(@site.site_files_dataset.where(path: 'dir/newdir').first).must_equal nil
+      _(@site.site_files_dataset.where(path: 'dir').first).wont_be_nil
+      _(@site.site_files_dataset.where(path: 'dir/newdir').first).must_be_nil
 
       res = dir.rename('dir/sub/dir')
       _(res).must_equal [false, 'cannot move directory into itself']
-      _(@site.site_files_dataset.where(path: 'dir').first).wont_equal nil
-      _(@site.site_files_dataset.where(path: 'dir/sub/dir').first).must_equal nil
+      _(@site.site_files_dataset.where(path: 'dir').first).wont_be_nil
+      _(@site.site_files_dataset.where(path: 'dir/sub/dir').first).must_be_nil
     end
 
     it 'wont set an empty directory' do
