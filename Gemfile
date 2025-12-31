@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'uri', '1.0.3' # Load dep error with uri
+gem 'uri'
 gem 'logger', '1.6.5' # Fixes a load dep error where 1.7.0 breaks init, probably change in the future
 gem 'sinatra'
 gem 'redis'
