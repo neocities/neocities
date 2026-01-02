@@ -19,7 +19,6 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.8)
       public_suffix (>= 2.0.2, < 8.0)
-    adequate_crypto_address (0.1.0)
     airbrake (13.0.5)
       airbrake-ruby (~> 6.0)
     airbrake-ruby (6.2.2)
@@ -377,7 +376,6 @@ DEPENDENCIES
   acme-client (~> 2.0.0)
   activesupport
   addressable (>= 2.8.0)
-  adequate_crypto_address
   airbrake
   bcrypt
   capybara

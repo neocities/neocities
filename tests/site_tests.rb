@@ -124,6 +124,34 @@ describe Site do
     end
   end
 
+  describe 'bitcoin address validation' do
+    it 'accepts valid bitcoin addresses' do
+      valid_addresses = [
+        '1BoatSLRHtKNngkdXEeobR76b53LETtpyT',
+        '3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy',
+        'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kygt080',
+        'BC1TESTADDRESS'
+      ]
+
+      valid_addresses.each do |address|
+        _(Site.valid_bitcoin_address?(address)).must_equal true
+      end
+    end
+
+    it 'rejects invalid bitcoin addresses' do
+      invalid_addresses = [
+        'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kg3g4ty',
+        'bcrt1q4d4v8g4qv9nwx7v6p5d3y8d6p8ygj5y0yl9q9',
+        'mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn',
+        'notabitcoinaddress'
+      ]
+
+      invalid_addresses.each do |address|
+        _(Site.valid_bitcoin_address?(address)).must_equal false
+      end
+    end
+  end
+
   describe 'banning' do
     it 'still makes files available' do
       site = Fabricate :site

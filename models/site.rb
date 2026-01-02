@@ -690,6 +690,15 @@ class Site < Sequel::Model
     !username.empty? && username.match(/^[a-z0-9]([a-z0-9_\-]{0,}[a-z0-9])?$/) != nil
   end
 
+  def self.valid_bitcoin_address?(address)
+    return false if address.blank?
+
+    address = address.strip
+    return false if address.empty?
+
+    address.start_with?('1', '3') || address.downcase.start_with?('bc1')
+  end
+
   def self.disposable_email_domains_whitelist
     File.readlines(DISPOSABLE_EMAIL_WHITELIST_PATH).collect {|d| d.strip}
   end
@@ -1105,7 +1114,7 @@ class Site < Sequel::Model
       errors.add :tipping_paypal, 'PayPal email address is too long.'
     end
 
-    if !values[:tipping_bitcoin].blank? && !AdequateCryptoAddress.valid?(values[:tipping_bitcoin], 'BTC')
+    if !values[:tipping_bitcoin].blank? && !self.class.valid_bitcoin_address?(values[:tipping_bitcoin])
       errors.add :tipping_bitcoin, 'Bitcoin tipping address is not valid.'
     end
 
