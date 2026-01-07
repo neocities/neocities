@@ -34,10 +34,12 @@ post '/contact' do
     end
 
     if current_site && current_site.supporter?
-      subject = "[Neocities Supporter Contact]: #{params[:subject]}"
+      subject = "#{params[:subject]} [Supporter]"
     else
-      subject = "[Neocities Contact]: #{params[:subject]}"
+      subject = params[:subject]
     end
+
+    subject += " [#{SecureRandom.hex[0..3]}]"
 
     EmailWorker.perform_async({
       from: Site::FROM_EMAIL,
