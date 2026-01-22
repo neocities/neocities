@@ -26,6 +26,21 @@ get '/?' do
     halt erb :'home', locals: {site: current_site}
   end
 
+  com_preview = (params[:index_com] == '1' || params[:index_com] == 'true') &&
+                ENV['RACK_ENV'] != 'production'
+
+  if request.host == 'neocities.com' || request.host == 'www.neocities.com' || com_preview
+    @canonical_host = 'https://neocities.com'
+    @canonical_path = request.path_info
+    if SimpleCache.expired?(:index_com_html)
+      index_com_html = SimpleCache.store :index_com_html, erb(:index_com, layout: :index_layout), 1.hour
+    else
+      index_com_html = SimpleCache.get :index_com_html
+    end
+
+    halt index_com_html
+  end
+
   if SimpleCache.expired?(:sites_count)
     @sites_count = SimpleCache.store :sites_count, Site.count.roundup(100), 4.hours
   else
@@ -88,6 +103,16 @@ get '/?' do
   @create_disabled = false
 
   erb :index, layout: :index_layout
+end
+
+get '/sitemap.xml' do
+  content_type 'application/xml', charset: 'UTF-8'
+
+  if request.host == 'neocities.com' || request.host == 'www.neocities.com'
+    erb :sitemap_com, layout: false
+  else
+    erb :sitemap_org, layout: false
+  end
 end
 
 get '/welcome' do

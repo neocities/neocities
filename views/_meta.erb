@@ -1,11 +1,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="description"        content="Create and surf awesome websites for free.">
 
-<link rel="canonical" href="https://neocities.org<%= request.fullpath %>">
+<% canonical_host = @canonical_host || 'https://neocities.org' %>
+<% canonical_path = @canonical_path || request.fullpath %>
+<link rel="canonical" href="<%= canonical_host %><%= canonical_path %>">
 
 <meta property="og:title"       content="Neocities">
 <meta property="og:type"        content="website">
-<meta property="og:image"       content="https://neocities.org/img/neocities-front-screenshot.jpg">
+<meta property="og:image"       content="<%= canonical_host %>/img/neocities-front-screenshot.jpg">
 <meta property="og:description" content="Create and surf awesome websites for free.">
 
 <link rel="icon" type="image/x-icon" href="/img/favicon.png">
