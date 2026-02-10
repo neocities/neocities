@@ -1,6 +1,7 @@
 get '/signin/?' do
   dashboard_if_signed_in
   @title = 'Sign In'
+  @description = 'Sign in to your Neocities account.'
   erb :'signin/index'
 end
 

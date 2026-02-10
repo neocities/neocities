@@ -131,16 +131,19 @@ end
 
 get '/site_files/allowed_types' do
   @title = 'Allowed File Types'
+  @description = 'See which file types can be uploaded to Neocities sites.'
   erb :'site_files/allowed_types'
 end
 
 get '/site_files/hotlinking' do
   @title = 'Hotlinking Information'
+  @description = 'Learn how hotlinking works on Neocities.'
   erb :'site_files/hotlinking'
 end
 
 get '/site_files/mount_info' do
   @title = 'Site Mount Information'
+  @description = 'Read how to mount and manage your Neocities site files.'
   erb :'site_files/mount_info'
 end
 

@@ -1,10 +1,12 @@
 get '/browse/?' do
   @page = params[:page]
   @page = 1 if @page.not_an_integer?
+  @description = 'Browse Neocities websites by tags, popularity, and recent updates.'
 
   if params[:tag]
     params[:tag] = params[:tag].gsub(Tag::INVALID_TAG_REGEX, '').gsub(/\s+/, '').slice(0, Tag::NAME_LENGTH_MAX)
     @title = "Sites tagged #{params[:tag]}"
+    @description = "Browse Neocities websites tagged #{params[:tag]}."
   end
 
   if is_education?
@@ -135,6 +137,7 @@ end
 
 get '/browse/search' do
   @title = 'Site Search'
+  @description = 'Search websites hosted on Neocities.'
 
   @daily_search_max_reached = daily_search_max?
 

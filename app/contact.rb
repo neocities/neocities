@@ -1,5 +1,6 @@
 get '/contact' do
   @show_contact_form = params[:show_contact_form] == 'yes'
+  @description = 'Contact Neocities support and get help with your account or site.'
   erb :'contact'
 end
 

@@ -1,5 +1,6 @@
 get '/dmca' do
   @title = 'DMCA'
+  @description = 'Submit a DMCA notice and review copyright policy information for Neocities.'
   erb :'dmca'
 end
 

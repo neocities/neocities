@@ -2,6 +2,7 @@ require 'base64'
 
 get '/api' do
   @title = 'Developers API'
+  @description = 'Use the Neocities API to upload files and manage your site programmatically.'
   erb :'api'
 end
 

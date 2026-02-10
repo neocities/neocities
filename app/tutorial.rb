@@ -14,6 +14,7 @@ EOT
 end
 
 get '/tutorials' do
+  @description = 'Start web development tutorials on Neocities.'
   erb :'tutorials'
 end
 

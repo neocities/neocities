@@ -1,9 +1,11 @@
 get '/activity' do
   @page = params[:page] || 1
+  @description = 'See recent activity from Neocities websites.'
 
   halt 404 if params[:event_id]
 
   if params[:tag]
+    @description = "See recent activity from Neocities websites tagged #{params[:tag]}."
     query1 = Event
       .join(:sites, id: :site_id)
       .join(:sites_tags, site_id: :id)

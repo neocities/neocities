@@ -56,6 +56,17 @@ def meta_robots(newtag=nil)
   @_meta_robots
 end
 
+def meta_description(new_description=nil)
+  if new_description
+    @_meta_description = new_description
+  end
+
+  description = @_meta_description || @description
+  return nil if description.nil? || description.strip.empty?
+
+  Rack::Utils.escape_html(description)
+end
+
 def title
   out = "Neocities"
   return out if request.path == '/'

@@ -101,6 +101,7 @@ get '/?' do
   end
 
   @create_disabled = false
+  @description = 'Create and surf awesome websites for free.'
 
   erb :index, layout: :index_layout
 end
@@ -124,46 +125,56 @@ end
 
 get '/education' do
   redirect '/' if signed_in?
+  @description = 'Learn how educators and students use Neocities to build websites in class.'
   erb :education, layout: :index_layout
 end
 
 get '/donate' do
+  @description = 'Support Neocities and help keep independent web publishing open to everyone.'
   erb :'donate'
 end
 
 get '/about' do
+  @description = 'Read about the Neocities mission and the team building a better web.'
   erb :'about'
 end
 
 get '/terms' do
+  @description = 'Review the Neocities Terms of Service.'
   erb :'terms'
 end
 
 get '/privacy' do
+  @description = 'Review the Neocities Privacy Policy.'
   erb :'privacy'
 end
 
 get '/press' do
+  @description = 'Press resources, facts, and media information about Neocities.'
   erb :'press'
 end
 
 get '/legal/?' do
   @title = 'Legal Guide to Neocities'
+  @description = 'Browse legal information and policy guidance for Neocities.'
   erb :'legal'
 end
 
 get '/thankyou' do
   @title = 'Thank you!'
+  @description = 'Thank you for supporting Neocities.'
   erb :'thankyou'
 end
 
 get '/cli' do
   @title = 'Command Line Interface'
+  @description = 'Use the Neocities command line tool to deploy and manage your site from terminal.'
   erb :'cli'
 end
 
 get '/forgot_username' do
   @title = 'Forgot Username'
+  @description = 'Recover the username for your Neocities account.'
   erb :'forgot_username'
 end
 

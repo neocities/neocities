@@ -15,6 +15,7 @@ get '/site/:username/?' do |username|
   redirect site.uri unless site.profile_enabled
 
   @title = site.title
+  @description = "#{site.username}'s Neocities site profile, updates, and comments."
 
   @page = params[:page]
   @page = 1 if @page.not_an_integer?
@@ -49,6 +50,7 @@ get '/site/:username/stats' do
   not_found if @site.nil? || @site.is_banned || @site.is_deleted || (current_site && @site.is_blocking?(current_site))
 
   @title = "Site stats for #{@site.host}"
+  @description = "Traffic and engagement stats for #{@site.username}'s Neocities site."
 
   @stats = {}
 
@@ -136,6 +138,7 @@ end
 
 get '/site/:username/follows' do |username|
   @title = "Sites #{username} follows"
+  @description = "See which Neocities sites #{username} follows."
   @site = Site[username: username]
   not_found if @site.nil? || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
 
@@ -147,6 +150,7 @@ end
 
 get '/site/:username/followers' do |username|
   @title = "Sites that follow #{username}"
+  @description = "See which Neocities sites follow #{username}."
   @site = Site[username: username]
   not_found if @site.nil? || @site.is_deleted || (current_site && (@site.is_blocking?(current_site) || current_site.is_blocking?(@site)))
 

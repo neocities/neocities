@@ -1,5 +1,6 @@
 get '/password_reset' do
   @title = 'Password Reset'
+  @description = 'Reset your Neocities account password.'
   redirect '/' if signed_in?
   erb :'password_reset'
 end
