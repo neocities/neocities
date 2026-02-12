@@ -528,7 +528,7 @@ class Site < Sequel::Model
 
   def after_destroy
     update_redis_proxy_record
-    purge_all_cache
+    purge_all_cache unless @skip_cache_purge_on_destroy
   end
 
   def undelete!
@@ -554,7 +554,7 @@ class Site < Sequel::Model
     save validate: false
   end
 
-  def ban!
+  def ban!(should_purge_cache=true)
     if username.nil? || username.empty?
       raise 'username is missing'
     end
@@ -563,8 +563,13 @@ class Site < Sequel::Model
     self.is_banned = true
     self.banned_at = Time.now
     save validate: false
-    destroy
-    account_sites_dataset.exclude(id: self.id).all.each {|s| s.ban!}
+    begin
+      @skip_cache_purge_on_destroy = !should_purge_cache
+      destroy
+    ensure
+      @skip_cache_purge_on_destroy = nil
+    end
+    account_sites_dataset.exclude(id: self.id).all.each {|s| s.ban!(should_purge_cache)}
   end
 
   def ban_all_sites_on_account!

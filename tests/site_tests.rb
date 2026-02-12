@@ -159,6 +159,31 @@ describe Site do
       _(File.exist?(site.current_files_path('index.html'))).must_equal true
       _(site.current_files_path('index.html')).must_equal File.join(Site::DELETED_SITES_ROOT, Site.sharding_dir(site.username), site.username, 'index.html')
     end
+
+    it 'purges cache by default' do
+      site = Fabricate :site
+      PurgeCacheWorker.jobs.clear
+      $redis_proxy.del(PurgeCacheWorker::PURGE_STREAM_KEY)
+
+      expected_purges = site.site_files_dataset.count
+      site.ban!
+      PurgeCacheWorker.drain
+
+      stream_length = $redis_proxy.xlen(PurgeCacheWorker::PURGE_STREAM_KEY)
+      _(stream_length).must_equal expected_purges
+    end
+
+    it 'can skip cache purge' do
+      site = Fabricate :site
+      PurgeCacheWorker.jobs.clear
+      $redis_proxy.del(PurgeCacheWorker::PURGE_STREAM_KEY)
+
+      site.ban!(false)
+      PurgeCacheWorker.drain
+
+      stream_length = $redis_proxy.xlen(PurgeCacheWorker::PURGE_STREAM_KEY)
+      _(stream_length).must_equal 0
+    end
   end
 
   describe 'unban' do
