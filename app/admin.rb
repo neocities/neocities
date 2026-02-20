@@ -27,7 +27,7 @@ post '/admin/reports/:report_id/dismiss' do
   report.destroy
 
   # Dismiss any other reports for the site
-  DB[:reports].where(site_id: report.site_id).destroy
+  DB[:reports].where(site_id: report.site_id).delete
 
   {success: true, message: 'Report dismissed'}.to_json
 end
