@@ -38,7 +38,7 @@
                 <% end %>
               </div>
               
-              <h4><%= report.site.username %></h4>
+              <h4><%== report.site.supporter? ? '<i class="fa fa-heart"></i>' : '' %><%= report.site.username %></h4>
               
               <small style="word-break: break-all; display: block; margin-bottom: 10px;">
                 <a href="<%= report.site.uri + '/' + screenshot_path %>" target="_blank"><%= report.site.uri + '/' + screenshot_path %></a>
