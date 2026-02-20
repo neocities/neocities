@@ -23,8 +23,12 @@ post '/admin/reports/:report_id/dismiss' do
   
   report = Report[params[:report_id]]
   return {success: false, error: 'Report not found'}.to_json if report.nil?
-  
+
   report.destroy
+
+  # Dismiss any other reports for the site
+  DB[:reports].where(site_id: report.site_id).destroy
+
   {success: true, message: 'Report dismissed'}.to_json
 end
 
