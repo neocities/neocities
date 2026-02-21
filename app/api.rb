@@ -262,7 +262,7 @@ def init_api_credentials
       api_key = bearer_match.captures.first
       api_error_invalid_auth if api_key.nil? || api_key.empty?
     else
-      user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':')
+      user, pass = Base64.decode64(auth.match(/Basic (.+)/)[1]).split(':', 2)
     end
   rescue
     api_error_invalid_auth
