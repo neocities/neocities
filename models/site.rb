@@ -1773,7 +1773,7 @@ class Site < Sequel::Model
   end
 
   def to_rss
-    site_change_events = events_dataset.exclude(is_deleted: true).exclude(site_change_id: nil).order(:created_at.desc).limit(10).all
+    site_change_events = Event.news_feed_default_dataset.where(events__site_id: id).limit(10).all
 
     Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
       xml.rss('version' => '2.0') {
@@ -1789,12 +1789,22 @@ class Site < Sequel::Model
 
           site_change_events.each do |event|
             event_link = "https://neocities.org/site/#{username}?event_id=#{event.id.to_s}"
-            xml.item {
-              xml.title "#{title} has been updated."
-              xml.link event_link
-              xml.pubDate event.created_at.rfc822
-              xml.guid event_link
-            }
+            if event.profile_comment_id
+              xml.item {
+                xml.title "#{event.actioning_site.username} has left a comment."
+                xml.description event.profile_comment.message
+                xml.link event_link
+                xml.pubDate event.created_at.rfc822
+                xml.guid event_link
+              }
+            else
+              xml.item {
+                xml.title "#{title} has been updated."
+                xml.link event_link
+                xml.pubDate event.created_at.rfc822
+                xml.guid event_link
+              }
+            end
           end
         }
       }
