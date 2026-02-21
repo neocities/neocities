@@ -1008,8 +1008,11 @@ a.tag:hover {
     }
   }
   &:first-child .html-thumbnail.html img {
-    width: 540px;
-    height: 405px;
+    aspect-ratio: 540 / 405;
+    height: auto;
+    max-width: 540px;
+    width: 52vw;
+    float: left;
     @media (max-device-width:480px), screen and (max-width:800px) {
       width: 270px;
       height: 202px;
