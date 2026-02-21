@@ -92,8 +92,8 @@
       <% unless site_change_filenames.empty? %>
         <div class="content">
           <div class="files">
-            <% site_change_filenames.each do |f| %>
-              <div class="file">
+            <% site_change_filenames.each.with_index do |f, i| %>
+              <div class="file <%= i == 0 && site_change_filenames.length <= 6 ? 'big-file' : '' %>">
                 <div class="html-thumbnail <%= site_change_file_display_class f %>">
                   <a href="https://<%= event_site.host %><%= f == 'index.html' ? '' : "/#{f}" %>">
                     <% if site_change_file_display_class(f) == 'html' %>
