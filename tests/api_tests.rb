@@ -311,6 +311,28 @@ describe 'api' do
       post '/api/rename', path: 'derpiedir', new_path: 'notderpiedir'
       _(res[:result]).must_equal 'success'
     end
+
+    it 'does not leave escaped phantom paths after renaming dot-prefixed directories' do
+      post '/api/upload', {
+        'trash/2024/index.html' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html'),
+        'trash/boilerplate/not_found.html' => Rack::Test::UploadedFile.new('./tests/files/notindex.html', 'text/html')
+      }
+      _(res[:result]).must_equal 'success'
+
+      post '/api/rename', path: 'trash', new_path: '.trash'
+      _(res[:result]).must_equal 'success'
+
+      post '/api/rename', path: '.trash', new_path: 'trash'
+      _(res[:result]).must_equal 'success'
+
+      get '/api/list', path: '/'
+      _(res[:result]).must_equal 'success'
+
+      listed_paths = res[:files].map {|file| file[:path]}
+      _(listed_paths.select {|path| path.start_with?('\\.trash')}).must_equal []
+      _(listed_paths.include?('trash/2024/index.html')).must_equal true
+      _(listed_paths.include?('trash/boilerplate/not_found.html')).must_equal true
+    end
   end
 
   describe 'upload' do

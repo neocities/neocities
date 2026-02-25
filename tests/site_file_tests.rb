@@ -147,6 +147,27 @@ describe 'site_files' do
       _(PurgeCacheWorker.jobs.collect {|p| p['args'].last}.sort).must_equal ["/test/", "/test/test.jpg", "/test2/", "/test2/test.jpg",].sort
     end
 
+    it 'does not rewrite real escaped sibling directories when renaming dot-prefixed directories' do
+      @site.store_files [
+        {filename: 'trash/2024/index.html', tempfile: Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')},
+        {filename: '\\.trash/keep/file.txt', tempfile: Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')}
+      ]
+
+      _(@site.site_files_dataset.where(path: '.trash').first).must_be_nil
+      _(@site.site_files_dataset.where(path: '\\.trash').first).wont_be_nil
+
+      trash_dir = @site.site_files_dataset.where(path: 'trash').first
+      _(trash_dir.rename('.trash')).must_equal [true, nil]
+
+      dot_trash_dir = @site.site_files_dataset.where(path: '.trash').first
+      _(dot_trash_dir.rename('trash')).must_equal [true, nil]
+
+      _(@site.site_files_dataset.where(path: '\\.trash').first).wont_be_nil
+      _(@site.site_files_dataset.where(path: '\\.trash/keep/file.txt').first).wont_be_nil
+      _(@site.site_files_dataset.where(path: 'trash/keep/file.txt').first).must_be_nil
+      _(File.exist?(@site.files_path('\\.trash/keep/file.txt'))).must_equal true
+    end
+
     it 'doesnt wipe out existing file' do
       upload 'test/test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       upload 'test/index.html' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'image/jpeg')
