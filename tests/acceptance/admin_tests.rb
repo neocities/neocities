@@ -222,6 +222,26 @@ describe '/admin' do
         _(page.body).must_match(/Site Info: #{Regexp.quote(expected_username)}/, "input #{input} current_path #{page.current_path}")
       end
     end
+
+    it 'shows deleted and banned child sites in relationships' do
+      parent_site = Fabricate :site
+      active_child = Fabricate :site, parent_site_id: parent_site.id
+      deleted_child = Fabricate :site, parent_site_id: parent_site.id, is_deleted: true
+      banned_child = Fabricate :site, parent_site_id: parent_site.id, is_deleted: true, is_banned: true
+
+      visit "/admin/site/#{parent_site.username}"
+
+      _(page.body).must_match(/has 3 child sites/)
+      _(page.body).must_match(/#{Regexp.escape(active_child.username)}/)
+      _(page.body).must_match(/#{Regexp.escape(deleted_child.username)}/)
+      _(page.body).must_match(/#{Regexp.escape(banned_child.username)}/)
+      _(page.body).must_match(/\(deleted\)/)
+      _(page.body).must_match(/\(banned\)/)
+      _(page.body).must_match(/<strong>\s*4\s*<\/strong>\s*total sites/)
+      _(page.body).must_match(/\b2 active\b/)
+      _(page.body).must_match(/\b1 banned\b/)
+      _(page.body).must_match(/\b1 deleted\b/)
+    end
   end
 
   describe 'email blasting' do

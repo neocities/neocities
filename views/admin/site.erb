@@ -250,23 +250,26 @@
               <td>
                 <% if @site.parent? %>
                   <strong>Parent Account</strong>
-                  <% if @site.children_dataset.where(is_deleted: false).count > 0 %>
-                    (has <%= @site.children_dataset.where(is_deleted: false).count %> child site<%= @site.children_dataset.where(is_deleted: false).count == 1 ? '' : 's' %>)
+                  <% if @site.children_dataset.count > 0 %>
+                    (has <%= @site.children_dataset.count %> child site<%= @site.children_dataset.count == 1 ? '' : 's' %>)
                   <% end %>
                 <% else %>
                   <strong>Child Site</strong>
                 <% end %>
               </td>
             </tr>
-            <% if @site.parent? && @site.children_dataset.where(is_deleted: false).count > 0 %>
+            <% if @site.parent? && @site.children_dataset.count > 0 %>
               <tr>
                 <td>Child Sites</td>
                 <td>
-                  <% @site.children_dataset.where(is_deleted: false).order(:username).each_with_index do |child, index| %>
+                  <% @site.children_dataset.order(:username).each_with_index do |child, index| %>
                     <% if index > 0 %>, <% end %>
                     <a href="/admin/site/<%= child.username %>" target="_blank"><%= child.username %></a>
                     <% if child.is_banned %>
                       <span style="color: red;">(banned)</span>
+                    <% end %>
+                    <% if child.is_deleted %>
+                      <span style="color: #8b5a2b;">(deleted)</span>
                     <% end %>
                   <% end %>
                 </td>
@@ -281,15 +284,18 @@
                   <% end %>
                 </td>
               </tr>
-              <% if @site.parent.children_dataset.where(is_deleted: false).exclude(id: @site.id).count > 0 %>
+              <% if @site.parent.children_dataset.exclude(id: @site.id).count > 0 %>
                 <tr>
                   <td>Sibling Sites</td>
                   <td>
-                    <% @site.parent.children_dataset.where(is_deleted: false).exclude(id: @site.id).order(:username).each_with_index do |sibling, index| %>
+                    <% @site.parent.children_dataset.exclude(id: @site.id).order(:username).each_with_index do |sibling, index| %>
                       <% if index > 0 %>, <% end %>
                       <a href="/admin/site/<%= sibling.username %>" target="_blank"><%= sibling.username %></a>
                       <% if sibling.is_banned %>
                         <span style="color: red;">(banned)</span>
+                      <% end %>
+                      <% if sibling.is_deleted %>
+                        <span style="color: #8b5a2b;">(deleted)</span>
                       <% end %>
                     <% end %>
                   </td>
@@ -299,9 +305,15 @@
             <tr>
               <td>All Account Sites</td>
               <td>
-                <strong><%= @site.account_sites_dataset.where(is_deleted: false).count %></strong> total sites 
-                (<%= @site.account_sites_dataset.where(is_deleted: false, is_banned: false).count %> active, 
-                <%= @site.account_sites_dataset.where(is_deleted: false, is_banned: true).count %> banned)
+                <% account_sites = Site.where(Sequel.|({id: @site.owner.id}, {parent_site_id: @site.owner.id})) %>
+                <% total_sites_count = account_sites.count %>
+                <% active_sites_count = account_sites.where(is_deleted: false, is_banned: false).count %>
+                <% banned_sites_count = account_sites.where(is_banned: true).count %>
+                <% deleted_sites_count = account_sites.where(is_deleted: true, is_banned: false).count %>
+                <strong><%= total_sites_count %></strong> total sites
+                (<%= active_sites_count %> active,
+                <%= banned_sites_count %> banned,
+                <%= deleted_sites_count %> deleted)
               </td>
             </tr>
           </table>
