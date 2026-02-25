@@ -855,6 +855,10 @@ class Site < Sequel::Model
   end
 
   def create_directory(path)
+    if path.to_s.include?('\\')
+      return 'Directory path contains invalid characters.'
+    end
+
     path = scrubbed_path path
     relative_path = files_path path
 
@@ -1280,6 +1284,8 @@ class Site < Sequel::Model
     path.to_s.each_codepoint do |c|
       return true if c < 32
     end
+
+    return true if path.to_s.include?('\\')
 
     parts = path.to_s.split '/'
     return true if parts.any? { |part| part == '..' }

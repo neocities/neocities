@@ -149,9 +149,39 @@ describe 'site_files' do
 
     it 'does not rewrite real escaped sibling directories when renaming dot-prefixed directories' do
       @site.store_files [
-        {filename: 'trash/2024/index.html', tempfile: Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')},
-        {filename: '\\.trash/keep/file.txt', tempfile: Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')}
+        {filename: 'trash/2024/index.html', tempfile: Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')}
       ]
+
+      escaped_sibling_source = './tests/files/text-file'
+      escaped_dir_path = '\\.trash'
+      escaped_nested_dir_path = '\\.trash/keep'
+      escaped_file_path = '\\.trash/keep/file.txt'
+
+      FileUtils.mkdir_p @site.files_path(escaped_nested_dir_path)
+      FileUtils.cp escaped_sibling_source, @site.files_path(escaped_file_path)
+
+      SiteFile.create(
+        site_id: @site.id,
+        path: escaped_dir_path,
+        is_directory: true,
+        created_at: Time.now,
+        updated_at: Time.now
+      )
+      SiteFile.create(
+        site_id: @site.id,
+        path: escaped_nested_dir_path,
+        is_directory: true,
+        created_at: Time.now,
+        updated_at: Time.now
+      )
+      SiteFile.create(
+        site_id: @site.id,
+        path: escaped_file_path,
+        size: File.size(escaped_sibling_source),
+        sha1_hash: '0' * 40,
+        created_at: Time.now,
+        updated_at: Time.now
+      )
 
       _(@site.site_files_dataset.where(path: '.trash').first).must_be_nil
       _(@site.site_files_dataset.where(path: '\\.trash').first).wont_be_nil
@@ -328,6 +358,20 @@ describe 'site_files' do
   end
 
   describe 'upload' do
+    it 'fails for filenames containing backslashes' do
+      results = @site.store_files [
+        {
+          filename: 'bad\\name.jpg',
+          tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
+        }
+      ]
+
+      _(results[:error]).must_equal true
+      _(results[:error_type]).must_equal 'invalid_filename'
+      _(results[:message]).must_match /bad\\name.jpg is not a valid filename/
+      _(@site.site_files_dataset.where(path: 'bad\\name.jpg').count).must_equal 0
+    end
+
     it 'works with empty files' do
       upload 'empty.js' => Rack::Test::UploadedFile.new('./tests/files/empty.js', 'text/javascript')
       _(File.exists?(@site.files_path('empty.js'))).must_equal true

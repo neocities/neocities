@@ -312,6 +312,13 @@ describe 'api' do
       _(res[:result]).must_equal 'success'
     end
 
+    it 'fails when new path contains backslashes' do
+      post '/api/rename', path: 'testdir/test.jpg', new_path: 'testdir\\test2.jpg'
+      _(res[:result]).must_equal 'error'
+      _(res[:error_type]).must_equal 'rename_error'
+      _(res[:message]).must_equal 'filename cannot contain backslashes'
+    end
+
     it 'does not leave escaped phantom paths after renaming dot-prefixed directories' do
       post '/api/upload', {
         'trash/2024/index.html' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html'),

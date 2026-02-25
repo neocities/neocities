@@ -232,6 +232,13 @@ describe Site do
       res = site.create_directory "somedir/#{long_dir_name}/anotherdir"
       _(res).must_match /name is too long/i
     end
+
+    it 'blocks directory names with backslashes' do
+      site = Fabricate :site
+      res = site.create_directory 'bad\\dir'
+      _(res).must_equal 'Directory path contains invalid characters.'
+      _(site.site_files_dataset.where(path: 'bad\\dir').count).must_equal 0
+    end
   end
 
   describe 'scrubbed_path' do
