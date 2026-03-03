@@ -234,6 +234,12 @@ def api_info_for(site)
   }
 end
 
+get '/api/supporter_status' do
+  require_api_credentials
+
+  api_success supporter: current_site.supporter?
+end
+
 # Catch-all for missing api calls
 
 get '/api/:name' do
