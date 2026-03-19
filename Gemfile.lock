@@ -25,7 +25,7 @@ GEM
       rbtree3 (~> 0.6)
     ansi (1.5.0)
     base64 (0.3.0)
-    bcrypt (3.1.20)
+    bcrypt (3.1.22)
     bigdecimal (4.0.1)
     builder (3.3.0)
     capybara (3.40.0)
