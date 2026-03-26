@@ -328,11 +328,12 @@
           <% if @site.site_files_dataset.where(path: /\.html/).count > 0 %>
             <div class="row">
               <% @site.site_files_dataset.where(path: /\.html/).order(:path).all.each do |site_file| %>
+                <% blur_sensitive_screenshot = @moderation_blur_paths.include?(site_file.path) %>
                 <div class="col col-33">
                   <div class="block">
                     <div class="center">
                       <a href="<%= @site.uri + '/' + site_file.path %>" target="_blank">
-                        <img src="<%= @site.screenshot_url(site_file.path, '540x405') %>" alt="Site file screenshot">
+                        <img src="<%= @site.screenshot_url(site_file.path, '540x405') %>" alt="Site file screenshot" data-site-file-path="<%= site_file.path %>" style="<%= blur_sensitive_screenshot ? 'filter: blur(4px);' : '' %>">
                       </a>
                     </div>
                     <h4 class="center">

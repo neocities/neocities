@@ -243,6 +243,48 @@ describe '/admin' do
       _(page.body).must_match(/\b1 deleted\b/)
     end
 
+    it 'blurs page screenshots only for reported blur-category paths on the current site' do
+      site = Fabricate :site
+      reporting_site = Fabricate :site
+      other_site = Fabricate :site
+      blur_category = Array($config['moderation_blur_categories']).first
+
+      site.store_files [
+        {filename: 'flagged.html', tempfile: Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')},
+        {filename: 'clear.html', tempfile: Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')}
+      ]
+
+      Report.create(
+        site: site,
+        reporting_site: reporting_site,
+        type: blur_category,
+        comments: 'Blur this page',
+        site_file_path: 'flagged.html'
+      )
+      Report.create(
+        site: site,
+        reporting_site: reporting_site,
+        type: 'phishing',
+        comments: 'Do not blur this page',
+        site_file_path: 'clear.html'
+      )
+      Report.create(
+        site: other_site,
+        reporting_site: reporting_site,
+        type: blur_category,
+        comments: 'Different site should not affect current page',
+        site_file_path: 'clear.html'
+      )
+
+      visit "/admin/site/#{site.username}"
+
+      blurred_image = find("img[data-site-file-path='flagged.html']")
+      clear_image = find("img[data-site-file-path='clear.html']")
+
+      _(blurred_image[:style].to_s).must_match(/filter:\s*blur\(4px\)/)
+      _(clear_image[:style].to_s).wont_match(/filter:\s*blur\(4px\)/)
+    end
+
   end
 
   describe 'email blasting' do

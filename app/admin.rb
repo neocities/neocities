@@ -446,6 +446,15 @@ get %r{/admin/site/(.+)} do |username_or_email_or_domain|
   end
 
   @title = "Site Info - #{@site.username}"
+  @moderation_blur_categories = Array($config['moderation_blur_categories'])
+  @moderation_blur_paths = Report
+    .where(site_id: @site.id, type: @moderation_blur_categories)
+    .all
+    .map do |report|
+      path = report.site_file_path.to_s.sub(%r{\A/+}, '')
+      path.empty? ? 'index.html' : path
+    end
+    .uniq
 
   erb :'admin/site'
 end
