@@ -152,30 +152,31 @@
     <a href="/browse?sort_by=random&tag=<%= Rack::Utils.escape params[:tag] %>" class="btn-Action txt-Center" style="margin: 0 auto;">More</a>
   </div>
 <% end %>
+  <% if params[:sort_by] != 'moderation' %>
+    <% unless is_education? %>
+      <div class="row content misc txt-Center">
+        <h3>Site Search</h3>
 
-<% unless is_education? %>
-<div class="row content misc txt-Center">
-  <h3>Site Search</h3>
-
-  <% if !daily_search_max? %>
-    <form method="GET" action="/browse/search">
-      <fieldset>
-        <input name="q" type="text" placeholder="keywords" class="input-Area" autocapitalize="off" autocorrect="off" style="width: 300px;">
-        <input class="btn btn-Action" type="submit" value="Search">
-      </fieldset>
-    </form>
-  <% else %>
-    <form id="searchForm" method="GET" action="https://duckduckgo.com" class="content" onsubmit="return addSiteToSearch()">
-      <fieldset>
-        <input id="searchQuery" name="q" type="text" placeholder="keywords" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= flash[:username] %>" style="width: 50%">
-        <input class="btn btn-Action" type="submit" value="Search">
-      </fieldset>
-    </form>
-    <p>Search powered by <a href="https://duckduckgo.com/">Duck Duck Go</a></p>
+        <% if !daily_search_max? %>
+          <form method="GET" action="/browse/search">
+            <fieldset>
+              <input name="q" type="text" placeholder="keywords" class="input-Area" autocapitalize="off" autocorrect="off" style="width: 300px;">
+              <input class="btn btn-Action" type="submit" value="Search">
+            </fieldset>
+          </form>
+        <% else %>
+          <form id="searchForm" method="GET" action="https://duckduckgo.com" class="content" onsubmit="return addSiteToSearch()">
+            <fieldset>
+              <input id="searchQuery" name="q" type="text" placeholder="keywords" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= flash[:username] %>" style="width: 50%">
+              <input class="btn btn-Action" type="submit" value="Search">
+            </fieldset>
+          </form>
+          <p>Search powered by <a href="https://duckduckgo.com/">Duck Duck Go</a></p>
+        <% end %>
+      </div>
+      <%== erb :_browse_tags, layout: false %>
+    <% end %>
   <% end %>
-</div>
-<%== erb :_browse_tags, layout: false %>
-<% end %>
 </div>
 
 <script>
