@@ -10,6 +10,8 @@ get '/admin/reports' do
   @page = params[:page] ? params[:page].to_i : 1
   @page = 1 if @page < 1
   @per_page = 51
+
+  @moderation_blur_categories = $config['moderation_blur_categories']
   
   @reports = Report.join(:sites, id: :site_id).where(sites__is_deleted: false, sites__is_banned: false).order(:reports__created_at.desc).select_all(:reports).paginate(@page, @per_page)
   @pagination_dataset = @reports

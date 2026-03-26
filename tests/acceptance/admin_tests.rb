@@ -242,6 +242,7 @@ describe '/admin' do
       _(page.body).must_match(/\b1 banned\b/)
       _(page.body).must_match(/\b1 deleted\b/)
     end
+
   end
 
   describe 'email blasting' do

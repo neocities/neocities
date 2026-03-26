@@ -30,3 +30,4 @@ google_custom_search_key: herpderp
 google_custom_search_cx: herpderp
 google_custom_search_query_limit: 69
 support_email: derp@example.com
+moderation_blur_categories: [ cats, dogs ]

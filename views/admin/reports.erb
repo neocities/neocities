@@ -24,12 +24,14 @@
                 else
                   screenshot_path = 'index.html'
                 end
+
+                blur_sensitive_screenshot = @moderation_blur_categories.include?(report.type)
               %>
               
               <div style="position: relative; margin-bottom: 10px;">
                 <a href="<%= report.site.uri + '/' + screenshot_path %>" target="_blank">
                   <img src="<%= report.site.screenshot_url(screenshot_path, '540x405') %>"
-                       style="width: 100%; height: auto; border: 1px solid #ddd;">
+                       style="width: 100%; height: auto; border: 1px solid #ddd;<%= ' filter: blur(4px);' if blur_sensitive_screenshot %>">
                 </a>
                 <% if report.type && !report.type.empty? %>
                   <span class="alert-error" style="position: absolute; top: 5px; right: 5px; padding: 2px 6px; font-size: 11px; border-radius: 3px;">
