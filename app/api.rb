@@ -245,7 +245,10 @@ post '/api/:name' do
 end
 
 def require_api_credentials
-  return true if current_site && csrf_safe?
+  if current_site && csrf_safe?
+    api_error_invalid_auth unless current_site.required_validations_met?
+    return true
+  end
 
   if !request.env['HTTP_AUTHORIZATION'].nil?
     init_api_credentials

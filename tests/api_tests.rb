@@ -455,6 +455,28 @@ describe 'api' do
       _(site_file_exists?('test.jpg')).must_equal true
     end
 
+    it 'fails session auth when required validations are not met' do
+      invalid_site_states = [
+        {email_confirmed: false, created_at: Site::EMAIL_VALIDATION_CUTOFF_DATE + 1},
+        {phone_verification_required: true, phone_verified: false},
+        {tutorial_required: true}
+      ]
+
+      invalid_site_states.each do |site_state|
+        create_site(site_state)
+
+        post '/api/upload',
+             {'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg'),
+              'csrf_token' => 'abcd'},
+             {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+
+        _(res[:result]).must_equal 'error'
+        _(res[:error_type]).must_equal 'invalid_auth'
+        _(last_response.status).must_equal 403
+        _(site_file_exists?('test.jpg')).must_equal false
+      end
+    end
+
     it 'succeeds with valid user session controlled site' do
       create_site
       @other_site = Fabricate :site, parent_site_id: @site.id
