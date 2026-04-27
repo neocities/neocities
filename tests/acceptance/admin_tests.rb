@@ -53,6 +53,17 @@ describe '/admin' do
       visit page.driver.response_headers['Location'] if page.driver.response_headers['Location']
       _(page.current_path).must_equal '/', "Signed out user POST should redirect to home page"
     end
+
+    it 'requires csrf token for admin POST routes' do
+      site_to_ban = Fabricate :site
+
+      page.driver.post '/admin/ban', {usernames: site_to_ban.username}
+      _(page.driver.status_code).must_equal 302
+      _(page.driver.response_headers['Location']).must_equal '/'
+
+      site_to_ban.reload
+      _(site_to_ban.is_banned).must_equal false
+    end
   end
 
   describe 'supporter upgrade' do
