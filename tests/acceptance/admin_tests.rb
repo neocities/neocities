@@ -19,6 +19,20 @@ describe '/admin' do
       _(page.body).must_match /Admin/
     end
 
+    it 'requires csrf tokens for admin post routes' do
+      site_to_ban = Fabricate :site
+
+      page.driver.post '/admin/ban', {
+        usernames: site_to_ban.username,
+        classifier: '',
+        ban_using_ips: ''
+      }
+
+      _(page.driver.status_code).must_equal 302
+      site_to_ban.reload
+      _(site_to_ban.is_banned).must_equal false
+    end
+
     it 'blocks all /admin paths for non-admin users' do
       non_admin_site = Fabricate :site
       page.set_rack_session id: non_admin_site.id

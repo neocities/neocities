@@ -143,7 +143,7 @@
                 <% unless @site.email_confirmed %>
                   <form action="/admin/verify_email" method="POST" style="display: inline-block; margin-left: 10px;">
                     <input type="hidden" name="username" value="<%= @site.username %>">
-                    <input type="hidden" name="_token" value="<%= csrf_token %>">
+                    <%== csrf_token_input_html %>
                     <button type="submit" class="btn btn-Action" style="font-size: 12px; padding: 3px 8px;" onclick="return confirm('Are you sure you want to manually verify this email?');">
                       Verify Manually
                     </button>
@@ -157,7 +157,7 @@
             <% if @site.is_banned %>
               <form action="/admin/unban" method="POST" style="display: inline-block; margin-right: 10px;">
                 <input type="hidden" name="username" value="<%= @site.username %>">
-                <input type="hidden" name="_token" value="<%= csrf_token %>">
+                <%== csrf_token_input_html %>
                 <button type="submit" class="btn btn-Action" onclick="return confirm('Are you sure you want to unban this site?');">
                   Unban Site
                 </button>
@@ -165,7 +165,7 @@
             <% else %>
               <form action="/admin/ban" method="POST" style="display: inline-block; margin-right: 10px;">
                 <input type="hidden" name="usernames" value="<%= @site.username %>">
-                <input type="hidden" name="_token" value="<%= csrf_token %>">
+                <%== csrf_token_input_html %>
                 <button type="submit" class="btn btn-Action" onclick="return confirm('Are you sure you want to ban this site?');">
                   Ban Site
                 </button>
@@ -175,7 +175,7 @@
             <% if @site.is_nsfw %>
               <form action="/admin/unmark_nsfw" method="POST" style="display: inline-block;">
                 <input type="hidden" name="username" value="<%= @site.username %>">
-                <input type="hidden" name="_token" value="<%= csrf_token %>">
+                <%== csrf_token_input_html %>
                 <button type="submit" class="btn btn-Action" onclick="return confirm('Are you sure you want to unmark this site as NSFW?');">
                   Unmark NSFW
                 </button>
@@ -183,7 +183,7 @@
             <% else %>
               <form action="/admin/mark_nsfw" method="POST" style="display: inline-block;">
                 <input type="hidden" name="username" value="<%= @site.username %>">
-                <input type="hidden" name="_token" value="<%= csrf_token %>">
+                <%== csrf_token_input_html %>
                 <button type="submit" class="btn btn-Action" onclick="return confirm('Are you sure you want to mark this site as NSFW?');">
                   Mark NSFW
                 </button>
