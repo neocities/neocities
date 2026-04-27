@@ -13,12 +13,18 @@ map('/') do
 end
 
 map '/webdav' do
-  use Rack::Auth::Basic do |username, password|
-    @site = Site.get_site_from_login(username, password)
-    @site ? true : false
-  end
-
   run lambda { |env|
+    auth = Rack::Auth::Basic::Request.new(env)
+    unless auth.provided? && auth.basic? && auth.credentials
+      return [401, { 'WWW-Authenticate' => 'Basic realm="Restricted Area"' }, ['Not authorized']]
+    end
+
+    username, password = auth.credentials
+    site = Site.get_site_from_login(username, password)
+    unless site
+      return [401, { 'WWW-Authenticate' => 'Basic realm="Restricted Area"' }, ['Not authorized']]
+    end
+
     request_method = env['REQUEST_METHOD']
     begin
       path = Rack::Utils.unescape_path(env['PATH_INFO'])
@@ -26,7 +32,7 @@ map '/webdav' do
       return [400, {}, ['Invalid path']]
     end
 
-    unless @site.owner.supporter?
+    unless site.owner.supporter?
       return [
         402,
         {
@@ -50,19 +56,19 @@ map '/webdav' do
 
     when 'GET', 'HEAD'
       begin
-        scrubbed_path = @site.scrubbed_path(path)
+        scrubbed_path = site.scrubbed_path(path)
       rescue ArgumentError
         return [400, {}, ['Invalid path']]
       end
 
-      if scrubbed_path.empty? || @site.is_directory?(scrubbed_path)
+      if scrubbed_path.empty? || site.is_directory?(scrubbed_path)
         return [403, {}, ['Cannot download a directory']]
       end
 
-      return [404, {}, ['']] unless @site.file_exists?(scrubbed_path)
+      return [404, {}, ['']] unless site.file_exists?(scrubbed_path)
 
-      site_file = @site.site_files_dataset.where(path: scrubbed_path).first
-      file_path = @site.files_path(scrubbed_path)
+      site_file = site.site_files_dataset.where(path: scrubbed_path).first
+      file_path = site.files_path(scrubbed_path)
 
       begin
         file_stat = File.stat(file_path)
@@ -99,7 +105,7 @@ map '/webdav' do
 
     when 'PROPFIND'
       begin
-        scrubbed_path = @site.scrubbed_path(path)
+        scrubbed_path = site.scrubbed_path(path)
       rescue ArgumentError
         return [400, {}, ['Invalid path']]
       end
@@ -108,14 +114,14 @@ map '/webdav' do
 
       site_file =
         unless target_is_root
-          @site.site_files_dataset.where(path: scrubbed_path).first
+          site.site_files_dataset.where(path: scrubbed_path).first
         end
 
       if !target_is_root && site_file.nil?
         return [404, {}, ['']]
       end
 
-      if site_file && !site_file.is_directory && !@site.file_exists?(scrubbed_path)
+      if site_file && !site_file.is_directory && !site.file_exists?(scrubbed_path)
         return [404, {}, ['']]
       end
 
@@ -169,8 +175,8 @@ map '/webdav' do
           {
             is_directory: true,
             size: 0,
-            created_at: @site.created_at,
-            updated_at: @site.site_updated_at || @site.updated_at,
+            created_at: site.created_at,
+            updated_at: site.site_updated_at || site.updated_at,
             content_type: nil,
             etag: nil
           }
@@ -188,7 +194,7 @@ map '/webdav' do
       add_response_for.call(scrubbed_path, target_info)
 
       if depth > 0 && (target_is_root || target_info[:is_directory])
-        @site.file_list(scrubbed_path).each do |entry|
+        site.file_list(scrubbed_path).each do |entry|
           child_info = {
             is_directory: entry[:is_directory],
             size: entry[:is_directory] ? 0 : entry[:size].to_i,
@@ -216,7 +222,7 @@ map '/webdav' do
       tmpfile.write(env['rack.input'].read)
       tmpfile.close
 
-      result = @site.store_files([{ filename: path, tempfile: tmpfile }])
+      result = site.store_files([{ filename: path, tempfile: tmpfile }])
 
       if result.is_a?(Hash) && result[:error]
         # Map error types to appropriate HTTP status codes
@@ -236,11 +242,11 @@ map '/webdav' do
       return [201, {}, ['']]
 
     when 'MKCOL'
-      return [400, {}, ['Invalid path']] if @site.invalid_path?(path)
+      return [400, {}, ['Invalid path']] if site.invalid_path?(path)
       return [400, {}, ['Path too long']] if SiteFile.path_too_long?(path)
-      return [409, {}, ['Already exists']] if @site.file_exists?(path)
+      return [409, {}, ['Already exists']] if site.file_exists?(path)
 
-      @site.create_directory(path)
+      site.create_directory(path)
       return [201, {}, ['']]
 
     when 'MOVE'
@@ -256,10 +262,10 @@ map '/webdav' do
       # Remove leading and trailing slashes if present
       path.sub!(/^\//, '')
       path.sub!(/\/$/, '')
-      site_file = @site.site_files.find { |s| s.path == path }
+      site_file = site.site_files.find { |s| s.path == path }
       return [404, {}, ['']] unless site_file
 
-      return [400, {}, ['Invalid destination path']] if @site.invalid_path?(destination)
+      return [400, {}, ['Invalid destination path']] if site.invalid_path?(destination)
       return [400, {}, ['Destination path too long']] if SiteFile.path_too_long?(destination)
       return [400, {}, ['Destination filename too long']] if SiteFile.name_too_long?(destination)
       return [403, {}, ['Cannot rename to index.html at root']] if destination == '/index.html' && path != '/index.html'
@@ -273,10 +279,10 @@ map '/webdav' do
 
     when 'DELETE'
       return [403, {}, ['Cannot delete index.html']] if path == '/index.html' || path == 'index.html'
-      return [403, {}, ['Cannot delete root directory']] if @site.files_path(path) == @site.files_path
-      return [404, {}, ['File not found']] unless @site.file_exists?(path)
+      return [403, {}, ['Cannot delete root directory']] if site.files_path(path) == site.files_path
+      return [404, {}, ['File not found']] unless site.file_exists?(path)
 
-      @site.delete_file(path)
+      site.delete_file(path)
       return [201, {}, ['']]
     else
       return [501, {}, ['Not Implemented']]
