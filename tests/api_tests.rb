@@ -91,6 +91,85 @@ describe 'api' do
     end
   end
 
+  describe 'download' do
+    def upload_api_download_file(path='docs/hello.txt', content='hello through api download')
+      tempfile = Tempfile.new
+      tempfile.binmode
+      tempfile.write content
+      tempfile.close
+      @site.store_files [{filename: path, tempfile: tempfile}]
+      tempfile.unlink
+      @site.reload
+      @site.site_files_dataset.where(path: path).first
+    end
+
+    it 'fails with no or bad auth' do
+      get '/api/download', path: 'index.html'
+      _(res[:error_type]).must_equal 'invalid_auth'
+
+      create_site
+      basic_authorize 'derp', 'fake'
+      get '/api/download', path: 'index.html'
+      _(res[:error_type]).must_equal 'invalid_auth'
+    end
+
+    it 'downloads a file with metadata headers' do
+      create_site
+      site_file = upload_api_download_file
+      basic_authorize @user, @pass
+      get '/api/download', path: 'docs/hello.txt'
+
+      _(last_response.status).must_equal 200
+      _(last_response.body).must_equal 'hello through api download'
+      _(last_response.headers['Content-Length']).must_equal '26'
+      _(last_response.headers['Last-Modified']).wont_be_nil
+      _(last_response.headers['ETag']).must_equal %("#{site_file.sha1_hash}")
+      _(last_response.headers['Content-Type']).must_match %r{text/plain}
+    end
+
+    it 'supports bearer auth' do
+      create_site
+      upload_api_download_file('bearer.txt', 'bearer auth works')
+      @site.generate_api_key!
+      header 'Authorization', "Bearer #{@site.api_key}"
+      get '/api/download', path: 'bearer.txt'
+
+      _(last_response.status).must_equal 200
+      _(last_response.body).must_equal 'bearer auth works'
+    end
+
+    it 'fails for missing files and directories' do
+      create_site
+      upload_api_download_file('docs/hello.txt', 'hello')
+      basic_authorize @user, @pass
+
+      get '/api/download', path: 'docs/missing.txt'
+      _(last_response.status).must_equal 400
+      _(res[:error_type]).must_equal 'missing_file'
+
+      get '/api/download', path: 'docs'
+      _(last_response.status).must_equal 400
+      _(res[:error_type]).must_equal 'cannot_download_directory'
+    end
+
+    it 'rejects unsafe paths before filesystem access' do
+      create_site
+      basic_authorize @user, @pass
+
+      get '/api/download', path: '../../config.yml'
+      _(last_response.status).must_equal 400
+      _(res[:error_type]).must_equal 'bad_path'
+
+      get '/api/download', path: "index.html\x00"
+      _(last_response.status).must_equal 400
+      _(res[:error_type]).must_equal 'bad_path'
+
+      get '/api/download', path: 'bad\\path.txt'
+      _(last_response.status).must_equal 400
+      _(res[:error_type]).must_equal 'bad_path'
+    end
+  end
+
   describe 'info' do
     it 'fails for no input' do
       get '/api/info'

@@ -1,4 +1,5 @@
 require 'base64'
+require 'rack/mime'
 
 get '/api' do
   @title = 'Developers API'
@@ -48,6 +49,34 @@ get '/api/list' do
   files.each {|f| f[:path].sub!(/^\//, '')}
 
   api_success files: files
+end
+
+get '/api/download' do
+  require_api_credentials
+
+  api_error 400, 'missing_path', 'you must provide path' if params[:path].blank?
+  api_error 400, 'bad_path', 'path must be a string' unless params[:path].is_a?(String)
+  api_error 400, 'bad_path', 'path is not valid' if params[:path].include?('..') || current_site.invalid_path?(params[:path])
+
+  begin
+    path = current_site.scrubbed_path params[:path]
+  rescue ArgumentError
+    api_error 400, 'bad_path', 'path is not valid'
+  end
+
+  site_file = current_site.site_files_dataset.where(path: path).first
+  api_error 400, 'missing_file', "could not find #{path}" if site_file.nil?
+  api_error 400, 'cannot_download_directory', 'cannot download a directory' if site_file.is_directory
+
+  file_path = current_site.files_path path
+  api_error 400, 'missing_file', "could not find #{path}" unless File.file?(file_path)
+
+  last_modified = site_file.updated_at || site_file.created_at || File.mtime(file_path)
+  headers 'Last-Modified' => last_modified.httpdate,
+          'ETag' => %("#{site_file.sha1_hash}"),
+          'Cache-Control' => 'private, no-store'
+
+  send_file file_path, type: Rack::Mime.mime_type(File.extname(path), 'application/octet-stream')
 end
 
 def extract_files(params, files = [])
