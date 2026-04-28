@@ -258,6 +258,7 @@ def api_info_for(site)
       created_at: site.created_at.rfc2822,
       last_updated: site.site_updated_at ? site.site_updated_at.rfc2822 : nil,
       domain: site.domain,
+      supporter: site.supporter?,
       tags: site.tags.collect {|t| t.name}
     }
   }

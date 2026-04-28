@@ -198,6 +198,7 @@ describe 'api' do
       _(res[:info][:hits]).must_equal 31337
       _(res[:info][:created_at]).must_equal @site.created_at.rfc2822
       _(res[:info][:last_updated]).must_be_nil
+      _(res[:info][:supporter]).must_equal false
       _(res[:info][:domain]).must_equal 'derp.com'
       _(res[:info][:tags]).must_equal ['derpie', 'man']
       _(@site.reload.api_calls).must_equal 0
