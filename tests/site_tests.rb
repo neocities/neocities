@@ -170,7 +170,8 @@ describe Site do
       PurgeCacheWorker.drain
 
       stream_length = $redis_proxy.xlen(PurgeCacheWorker::PURGE_STREAM_KEY)
-      _(stream_length).must_equal expected_purges
+      expected_stream_entries = expected_purges * (PurgeCacheWorker::FOLLOWUP_PURGE_DELAYS.length + 1)
+      _(stream_length).must_equal expected_stream_entries
     end
 
     it 'can skip cache purge' do
@@ -425,82 +426,104 @@ describe Site do
       @site = Fabricate :site
       PurgeCacheWorker.jobs.clear
     end
+
+    it 'schedules follow-up purge jobs' do
+      before_purge = Time.now.to_f
+      @site.purge_cache '/file.png'
+      after_purge = Time.now.to_f
+
+      _(PurgeCacheWorker.jobs.length).must_equal PurgeCacheWorker::FOLLOWUP_PURGE_DELAYS.length + 1
+      _(purge_cache_immediate_jobs.length).must_equal 1
+
+      scheduled_jobs = purge_cache_scheduled_jobs.sort_by { |job| job['at'] }
+      _(scheduled_jobs.length).must_equal PurgeCacheWorker::FOLLOWUP_PURGE_DELAYS.length
+      scheduled_jobs.each do |job|
+        _(job['args']).must_equal [@site.username, '/file.png']
+      end
+
+      PurgeCacheWorker::FOLLOWUP_PURGE_DELAYS.each_with_index do |delay, index|
+        delay_seconds = delay.to_i
+        _(scheduled_jobs[index]['at']).must_be :>=, before_purge + delay_seconds
+        _(scheduled_jobs[index]['at']).must_be :<=, after_purge + delay_seconds
+      end
+    end
+
     it 'works for /index.html' do
       @site.purge_cache '/index.html'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/'
     end
 
     it 'works for /dir/index.html' do
       @site.purge_cache '/dir/index.html'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/dir/'
     end
 
     it 'works for /test.html' do
       @site.purge_cache '/test.html'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/test'
     end
 
     it 'works for /newdir/index.html' do
       @site.purge_cache '/newdir/test.html'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/newdir/test'
     end
 
     it 'works for /file.png' do
       @site.purge_cache '/file.png'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/file.png'
     end
 
     it 'works for /testdir/file.png' do
       @site.purge_cache '/testdir/file.png'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/testdir/file.png'
     end
 
     it 'works for /notindex.html' do
       @site.purge_cache '/notindex.html'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/notindex'
     end
 
     it 'works for index.html missing forward slash' do
       @site.purge_cache 'index.html'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/'
     end
 
     it 'works for photo.png missing forward slash' do
       @site.purge_cache 'photo.png'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/photo.png'
     end
 
     it 'works for testdir/photo.png missing forward slash' do
       @site.purge_cache 'testdir/photo.png'
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      args = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      args = purge_cache_immediate_jobs.first['args']
       _(args.first).must_equal @site.username
       _(args.last).must_equal '/testdir/photo.png'
     end

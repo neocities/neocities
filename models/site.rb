@@ -833,13 +833,13 @@ class Site < Sequel::Model
       purge_file_path = '' if purge_file_path == '.'
       purge_file_path += '/' if purge_file_path != '/'
 
-      PurgeCacheWorker.perform_async username, purge_file_path
+      PurgeCacheWorker.enqueue_purge username, purge_file_path
     else
       html = relative_path.match(/(.*)\.html?$/)
       if html
-        PurgeCacheWorker.perform_async username, html.captures.first
+        PurgeCacheWorker.enqueue_purge username, html.captures.first
       else
-        PurgeCacheWorker.perform_async username, relative_path
+        PurgeCacheWorker.enqueue_purge username, relative_path
       end
     end
   end

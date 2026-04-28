@@ -36,8 +36,8 @@ describe 'site_files' do
       PurgeCacheWorker.jobs.clear
       testfile = @site.site_files_dataset.where(path: 'notindex.html').first
       testfile.rename 'notindex2.html'
-      _(PurgeCacheWorker.jobs.length).must_equal 2
-      _(PurgeCacheWorker.jobs.collect {|p| p['args'].last}.sort).must_equal ["/notindex", "/notindex2"]
+      _(purge_cache_immediate_jobs.length).must_equal 2
+      _(purge_cache_immediate_jobs.collect {|p| p['args'].last}.sort).must_equal ["/notindex", "/notindex2"]
     end
 
     it 'renames in same path' do
@@ -48,7 +48,7 @@ describe 'site_files' do
       _(testfile).wont_equal nil
       testfile.rename 'derp.jpg'
       _(@site.site_files_dataset.where(path: 'derp.jpg').first).wont_equal nil
-      _(PurgeCacheWorker.jobs.first['args'].last).must_equal '/test.jpg'
+      _(purge_cache_immediate_jobs.first['args'].last).must_equal '/test.jpg'
       _(File.exist?(@site.files_path('derp.jpg'))).must_equal true
     end
 
@@ -144,7 +144,7 @@ describe 'site_files' do
       _(@site.site_files.select {|sf| sf.path =~ /test2\/test.jpg/}.length).must_equal 1
       _(@site.site_files.select {|sf| sf.path =~ /test\/test.jpg/}.length).must_equal 0
 
-      _(PurgeCacheWorker.jobs.collect {|p| p['args'].last}.sort).must_equal ["/test/", "/test/test.jpg", "/test2/", "/test2/test.jpg",].sort
+      _(purge_cache_immediate_jobs.collect {|p| p['args'].last}.sort).must_equal ["/test/", "/test/test.jpg", "/test2/", "/test2/test.jpg",].sort
     end
 
     it 'does not rewrite real escaped sibling directories when renaming dot-prefixed directories' do
@@ -257,7 +257,7 @@ describe 'site_files' do
       _(@site.reload.space_used).must_equal initial_space_used
       _(@site.actual_space_used).must_equal @site.space_used
 
-      args = PurgeCacheWorker.jobs.first['args']
+      args = purge_cache_immediate_jobs.first['args']
       _(args[0]).must_equal @site.username
       _(args[1]).must_equal '/test.jpg'
     end
@@ -413,9 +413,9 @@ describe 'site_files' do
 
     it 'purges cache for html file with extension removed' do
       upload 'notindex.html' => Rack::Test::UploadedFile.new('./tests/files/notindex.html', 'text/html')
-      _(PurgeCacheWorker.jobs.length).must_equal 1
+      _(purge_cache_immediate_jobs.length).must_equal 1
       PurgeCacheWorker.new.perform @site.username, '/notindex.html'
-      _(PurgeCacheWorker.jobs.first['args'].last).must_equal '/notindex'
+      _(purge_cache_immediate_jobs.first['args'].last).must_equal '/notindex'
     end
 
     it 'succeeds with index.html file' do
@@ -432,8 +432,8 @@ describe 'site_files' do
       _(@site.site_changed).must_equal true
       _(@site.title).must_equal 'Hello?'
 
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      first_purge = PurgeCacheWorker.jobs.first
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      first_purge = purge_cache_immediate_jobs.first
 
       username, pathname = first_purge['args']
       _(username).must_equal @site.username
@@ -465,7 +465,7 @@ describe 'site_files' do
       upload(
         'subdir/index.html' => Rack::Test::UploadedFile.new('./tests/files/index.html', 'text/html')
       )
-      _(PurgeCacheWorker.jobs.select {|j| j['args'].last == '/subdir/'}.length).must_equal 1
+      _(purge_cache_immediate_jobs.select {|j| j['args'].last == '/subdir/'}.length).must_equal 1
     end
 
     it 'succeeds with multiple files' do
@@ -487,7 +487,7 @@ describe 'site_files' do
       _(last_response.body).must_match /successfully uploaded/i
       _(File.exists?(@site.files_path('test.jpg'))).must_equal true
 
-      username, path = PurgeCacheWorker.jobs.first['args']
+      username, path = purge_cache_immediate_jobs.first['args']
       _(username).must_equal @site.username
       _(path).must_equal '/test.jpg'
 
@@ -513,7 +513,7 @@ describe 'site_files' do
         upload file.original_filename => file
         _(last_response.body).must_match /successfully uploaded/i
         _(File.exists?(@site.files_path(file.original_filename))).must_equal true
-        username, path = PurgeCacheWorker.jobs.last['args']
+        username, path = purge_cache_immediate_jobs.last['args']
         _(username).must_equal @site.username
         _(path).must_equal '/'+file.original_filename
       end
@@ -578,8 +578,8 @@ describe 'site_files' do
       _(last_response.body).must_match /successfully uploaded/i
       _(File.exists?(@site.files_path('derpie/derptest/test.jpg'))).must_equal true
 
-      _(PurgeCacheWorker.jobs.length).must_equal 1
-      username, path = PurgeCacheWorker.jobs.first['args']
+      _(purge_cache_immediate_jobs.length).must_equal 1
+      username, path = purge_cache_immediate_jobs.first['args']
       _(username).must_equal @site.username
       _(path).must_equal '/derpie/derptest/test.jpg'
 

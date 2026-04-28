@@ -64,6 +64,18 @@ end
 
 Minitest::Reporters.use! SpecDescriptionReporter.new
 
+module PurgeCacheTestHelpers
+  def purge_cache_immediate_jobs
+    PurgeCacheWorker.jobs.reject { |job| job.key?('at') }
+  end
+
+  def purge_cache_scheduled_jobs
+    PurgeCacheWorker.jobs.select { |job| job.key?('at') }
+  end
+end
+
+Minitest::Spec.include PurgeCacheTestHelpers
+
 # Bootstrap the database
 Sequel.extension :migration
 
