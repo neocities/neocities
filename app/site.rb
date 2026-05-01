@@ -200,19 +200,6 @@ post '/site/:site_id/toggle_follow' do |site_id|
   {result: (current_site.toggle_follow(site) ? 'followed' : 'unfollowed')}.to_json
 end
 
-post '/site/create_directory' do
-  require_login
-
-  path = "#{params[:dir] || ''}/#{params[:name]}"
-  result = current_site.create_directory path
-
-  if result != true
-    flash[:error] = result
-  end
-
-  redirect "/dashboard?dir=#{Rack::Utils.escape params[:dir]}"
-end
-
 get '/site/:username/confirm_email/:token' do
   @title = 'Confirm email'
 

@@ -232,6 +232,37 @@ post '/api/delete' do
   api_success 'file(s) have been deleted'
 end
 
+post '/api/create_directory' do
+  dashboard_request = params[:from_dashboard] == 'true' && current_site && csrf_safe?
+
+  require_api_credentials
+
+  if params[:path].blank? && !dashboard_request
+    api_error 400, 'missing_path', 'you must provide path'
+  end
+
+  path = if dashboard_request
+    "#{params[:dir] || ''}/#{params[:name]}"
+  else
+    params[:path]
+  end
+  result = current_site.create_directory path
+
+  if dashboard_request
+    dashboard_dir = current_site.scrubbed_path(params[:dir])
+
+    @api = false
+    flash[:error] = result unless result == true
+    redirect "/dashboard?dir=#{Rack::Utils.escape dashboard_dir}"
+  end
+
+  if result == true
+    api_success 'directory has been created'
+  else
+    api_error 400, 'create_directory_error', result
+  end
+end
+
 get '/api/info' do
   if params[:sitename]
     site = Site[username: params[:sitename]]

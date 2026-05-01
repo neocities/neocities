@@ -24,14 +24,26 @@ describe 'dashboard' do
         _(@site.reload.dashboard_accessed).must_equal true
       end
 
-      it 'creates a base directory' do
+      it 'creates a top-level directory' do
         visit '/dashboard'
         click_link 'New Folder'
-        fill_in 'name', with: 'testimages'
+        fill_in 'name', with: 'testdir'
         #click_button 'Create'
         all('#createDir button[type=submit]').first.click
-        _(page).must_have_content /testimages/
-        _(File.directory?(@site.files_path('testimages'))).must_equal true
+        _(page).must_have_content /testdir/
+        _(File.directory?(@site.files_path('testdir'))).must_equal true
+      end
+
+      it 'creates a nested directory' do
+        @site.create_directory 'testdirone'
+        visit '/dashboard'
+        click_link 'testdirone'
+        click_link 'New Folder'
+        _(find('#newDirInput').value.to_s).must_equal ''
+        fill_in 'name', with: 'testdirtwo'
+        all('#createDir button[type=submit]').first.click
+        _(page).must_have_content /testdirtwo/
+        _(File.directory?(@site.files_path('testdirone/testdirtwo'))).must_equal true
       end
 
       it 'creates a new file' do

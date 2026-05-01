@@ -137,8 +137,9 @@
 </form>
 
 <div class="modal hide" id="createDir" tabindex="-1" role="dialog" aria-labelledby="createDirLabel" aria-hidden="true">
-  <form method="post" action="/site/create_directory">
+  <form method="post" action="/api/create_directory">
     <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
+    <input type="hidden" value="true" name="from_dashboard">
     <input type="hidden" value="<%= @dir %>" name="dir">
     <div class="modal-header">
       <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>

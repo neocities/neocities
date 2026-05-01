@@ -80,6 +80,27 @@ api.upload([
   console.log(resp)
 })</code></pre>
 
+  <h2>POST /api/create_directory</h2>
+  <p>
+    Creates a directory on your site. Provide a <strong>path</strong> argument with the directory path you want to create. Nested directories will be created as needed. The request will fail if a directory or file already exists at that path.
+  </p>
+
+  <h3>Examples</h3>
+  <h6>Using cURL</h6>
+  <p>
+    Create a top-level directory named <strong>images</strong>:
+  </p>
+  <pre><code class="bash">$ curl -u "USER:PASS" -d "path=images" "https://neocities.org/api/create_directory"
+{
+  "result": "success",
+  "message": "directory has been created"
+}</code></pre>
+
+  <p>
+    Create a nested directory:
+  </p>
+  <pre><code class="bash">$ curl -u "USER:PASS" -d "path=images/cats" "https://neocities.org/api/create_directory"</code></pre>
+
   <h2>POST /api/delete</h2>
   <p>
     Deletes files from your site. Provide a <strong>filenames</strong> argument with an array of filenames you wish to delete. You can delete any files except index.html.

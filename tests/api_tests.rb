@@ -297,6 +297,103 @@ describe 'api' do
     end
   end
 
+  describe 'create_directory' do
+    it 'fails with no or bad auth' do
+      post '/api/create_directory', path: 'images'
+      _(res[:error_type]).must_equal 'invalid_auth'
+
+      create_site
+      basic_authorize 'derp', 'fake'
+      post '/api/create_directory', path: 'images'
+      _(res[:error_type]).must_equal 'invalid_auth'
+    end
+
+    it 'fails with missing path arguments' do
+      create_site
+      basic_authorize @user, @pass
+      post '/api/create_directory'
+      _(last_response.status).must_equal 400
+      _(res[:error_type]).must_equal 'missing_path'
+    end
+
+    it 'creates a directory with api auth' do
+      create_site
+      basic_authorize @user, @pass
+      post '/api/create_directory', path: 'images/cats'
+      _(last_response.status).must_equal 200
+      _(res[:result]).must_equal 'success'
+      _(File.directory?(@site.files_path('images/cats'))).must_equal true
+    end
+
+    it 'creates a top-level directory from path' do
+      create_site
+      basic_authorize @user, @pass
+      post '/api/create_directory', path: 'testdir'
+
+      _(last_response.status).must_equal 200
+      _(res[:result]).must_equal 'success'
+      _(File.directory?(@site.files_path('testdir'))).must_equal true
+      _(File.directory?(@site.files_path('test/dir'))).must_equal false
+    end
+
+    it 'returns existing directory errors from the model' do
+      create_site
+      basic_authorize @user, @pass
+      post '/api/create_directory', path: 'images/cats'
+      post '/api/create_directory', path: 'images/cats'
+
+      _(last_response.status).must_equal 400
+      _(res[:error_type]).must_equal 'create_directory_error'
+      _(res[:message]).must_equal 'Directory (or file) already exists.'
+    end
+
+    it 'returns api errors for invalid directories' do
+      create_site
+      basic_authorize @user, @pass
+      post '/api/create_directory', path: 'bad\\dir'
+      _(last_response.status).must_equal 400
+      _(res[:error_type]).must_equal 'create_directory_error'
+      _(res[:message]).must_equal 'Directory path contains invalid characters.'
+    end
+
+    it 'redirects dashboard forms with session auth' do
+      create_site
+      post '/api/create_directory',
+           {'dir' => 'blog', 'name' => 'images', 'from_dashboard' => 'true', 'csrf_token' => 'abcd'},
+           {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+
+      _(last_response.status).must_equal 302
+      _(last_response.headers['Location']).must_equal 'http://example.org/dashboard?dir=blog'
+      _(File.directory?(@site.files_path('blog/images'))).must_equal true
+    end
+
+    it 'redirects dashboard forms with missing names' do
+      create_site
+      post '/api/create_directory',
+           {'dir' => '', 'name' => '', 'from_dashboard' => 'true', 'csrf_token' => 'abcd'},
+           {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+
+      _(last_response.status).must_equal 302
+      _(last_response.headers['Location']).must_equal 'http://example.org/dashboard?dir='
+      follow_redirect!
+      _(last_response.body).must_include 'Directory (or file) already exists.'
+    end
+
+    it 'does not convert api key auth into a dashboard session' do
+      create_site
+      @site.generate_api_key!
+      header 'Authorization', "Bearer #{@site.api_key}"
+
+      post '/api/create_directory', path: 'images', from_dashboard: 'true'
+
+      _(last_response.status).must_equal 200
+      _(res[:result]).must_equal 'success'
+      _(last_response.headers['Location']).must_be_nil
+      _(last_response.headers['Set-Cookie']).must_be_nil
+      _(File.directory?(@site.files_path('images'))).must_equal true
+    end
+  end
+
   describe 'key' do
     it 'generates new key with valid login' do
       create_site
