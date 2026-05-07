@@ -91,6 +91,41 @@ describe 'dashboard' do
         _(File.exist?(@site.files_path('bulk-one.txt'))).must_equal false
         _(File.exist?(@site.files_path('bulk-two.txt'))).must_equal false
       end
+
+      it 'shows bulk delete progress and blocks duplicate submissions' do
+        Capybara.default_driver = :selenium_chrome_headless_largewindow
+        @site.store_files [
+          {filename: 'pending-one.txt', tempfile: Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')},
+          {filename: 'pending-two.txt', tempfile: Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')}
+        ]
+
+        page.set_rack_session id: @site.id
+        visit '/dashboard'
+
+        click_button 'Select'
+        find('.bulk-select-control[title="Select pending-one.txt"]').click
+        find('.bulk-select-control[title="Select pending-two.txt"]').click
+        click_button 'Delete selected'
+
+        _(page).must_have_css('#deleteConfirmModal', visible: true)
+        page.execute_script <<~JS
+          window.deleteRequestCount = 0;
+          $.ajax = function(options) {
+            window.deleteRequestCount += 1;
+            window.pendingDeleteRequest = options;
+          };
+        JS
+
+        within '#deleteConfirmModal' do
+          click_button 'Delete'
+        end
+
+        _(page).must_have_css('#deleteConfirmButton[disabled]', text: 'Deleting...')
+        _(page).must_have_css('#deleteProgressMessage', text: 'Deleting 2 items...', visible: true)
+
+        page.execute_script('fileDelete()')
+        _(page.evaluate_script('window.deleteRequestCount')).must_equal 1
+      end
     end
   end
 end

@@ -79,17 +79,18 @@
 
       <div class="modal hide" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
         <div class="modal-header">
-          <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+          <button class="close" id="deleteConfirmCloseButton" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
           <h3 id="deleteConfirmModalLabel">Confirm deletion</h3>
         </div>
         <div class="modal-body">
           <p id="deleteSingleMessage">You are about to delete <strong><span id="deleteFileName"></span></strong>. Are you sure?</p>
           <p id="deleteMultipleMessage" style="display: none">You are about to delete <strong><span id="deleteFileCount">0</span> items</strong>. Are you sure?</p>
           <ul id="deleteFileList" class="delete-file-list"></ul>
+          <p id="deleteProgressMessage" class="delete-progress-message" style="display: none"><i class="fa fa-spinner fa-spin"></i><span id="deleteProgressText">Deleting selected files...</span></p>
         </div>
         <div class="modal-footer">
-          <button class="btn cancel" data-dismiss="modal" aria-hidden="true" type="button">Cancel</button>
-          <button class="btn-Action btn-danger" type="button" onclick="fileDelete()"><i class="fa fa-trash" title="Delete"></i>Delete</button>
+          <button class="btn cancel" id="deleteCancelButton" data-dismiss="modal" aria-hidden="true" type="button">Cancel</button>
+          <button class="btn-Action btn-danger" id="deleteConfirmButton" type="button" onclick="fileDelete()"><i class="fa fa-trash" title="Delete"></i>Delete</button>
         </div>
       </div>
 

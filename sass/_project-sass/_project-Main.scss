@@ -559,6 +559,28 @@
     word-break: break-word;
   }
 }
+.delete-progress-message {
+  background: #F6F0E6;
+  border-left: 4px solid #5E95A1;
+  color: #30424B;
+  font-weight: bold;
+  margin: 14px 0 0;
+  padding: 10px 12px;
+
+  .fa {
+    color: #5E95A1;
+    margin-right: 6px;
+  }
+}
+#deleteConfirmButton[disabled],
+#deleteCancelButton[disabled],
+#deleteConfirmCloseButton[disabled] {
+  cursor: not-allowed;
+  opacity: .65;
+}
+#deleteConfirmButton[disabled] {
+  cursor: wait;
+}
 .html-thumbnail {
   font-size: 11px;
   margin-top: 5px;

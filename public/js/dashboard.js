@@ -8,6 +8,7 @@ function confirmFileRename(path) {
 }
 
 function confirmFileDelete(name) {
+  resetDeleteConfirmModal();
   $('#deleteConfirmModal').data('delete-paths', [name]);
   $('#deleteFileName').text(name);
   $('#deleteFileCount').text('1');
@@ -17,11 +18,42 @@ function confirmFileDelete(name) {
   $('#deleteConfirmModal').modal();
 }
 
-function fileDelete() {
-  var paths = $('#deleteConfirmModal').data('delete-paths') || [$('#deleteFileName').text()];
-  var deleteButton = $('#deleteConfirmModal .btn-danger');
+function setDeletePending(pending) {
+  var modal = $('#deleteConfirmModal');
+  var deleteButton = $('#deleteConfirmButton');
+  var cancelButton = $('#deleteCancelButton');
+  var closeButton = $('#deleteConfirmCloseButton');
+  var paths = modal.data('delete-paths') || [];
+  var deleteLabel = paths.length === 1 ? 'Deleting file...' : 'Deleting ' + paths.length + ' items...';
 
-  deleteButton.prop('disabled', true);
+  modal.data('delete-pending', pending);
+  deleteButton.prop('disabled', pending);
+  cancelButton.prop('disabled', pending);
+  closeButton.prop('disabled', pending);
+
+  if (pending) {
+    deleteButton.html('<i class="fa fa-spinner fa-spin"></i>Deleting...');
+    $('#deleteProgressText').text(deleteLabel);
+    $('#deleteProgressMessage').show();
+  } else {
+    deleteButton.html('<i class="fa fa-trash" title="Delete"></i>Delete');
+    $('#deleteProgressMessage').hide();
+  }
+}
+
+function resetDeleteConfirmModal() {
+  setDeletePending(false);
+}
+
+function fileDelete() {
+  var modal = $('#deleteConfirmModal');
+  var paths = modal.data('delete-paths') || [$('#deleteFileName').text()];
+
+  if (modal.data('delete-pending')) {
+    return;
+  }
+
+  setDeletePending(true);
 
   $.ajax({
     url: '/api/delete',
@@ -31,7 +63,8 @@ function fileDelete() {
       filenames: paths
     },
     success: function() {
-      $('#deleteConfirmModal').modal('hide');
+      setDeletePending(false);
+      modal.modal('hide');
       setBulkSelectMode(false);
       alertClear();
       alertType('success');
@@ -55,10 +88,11 @@ function fileDelete() {
       alertClear();
       alertType('error');
       alertAdd($('<div>').text(message).html());
-      $('#deleteConfirmModal').modal('hide');
+      setDeletePending(false);
+      modal.modal('hide');
     },
     complete: function() {
-      deleteButton.prop('disabled', false);
+      setDeletePending(false);
     }
   });
 }
@@ -123,6 +157,7 @@ function confirmBulkDelete() {
     return;
   }
 
+  resetDeleteConfirmModal();
   $('#deleteConfirmModal').data('delete-paths', paths);
   $('#deleteFileName').text(paths[0]);
   $('#deleteFileCount').text(paths.length);
@@ -136,6 +171,10 @@ function confirmBulkDelete() {
   $('#deleteMultipleMessage').toggle(paths.length > 1);
   $('#deleteConfirmModal').modal();
 }
+
+$('#deleteConfirmModal').on('hide', function() {
+  return !$(this).data('delete-pending');
+});
 
 function initBulkFileSelection() {
   $('.bulk-select-checkbox').off('change.bulk').on('change.bulk', updateBulkActions);
