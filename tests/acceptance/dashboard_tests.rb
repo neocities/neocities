@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require_relative './environment.rb'
+require 'rack/test'
 
 describe 'dashboard' do
   describe 'create directory' do
@@ -62,6 +63,33 @@ describe 'dashboard' do
         # Wait for the file to appear in the listing
         _(page).must_have_content(/#{Regexp.escape(random)}\.html/)
         _(File.exist?(@site.files_path("#{random}.html"))).must_equal true
+      end
+
+      it 'deletes multiple files through the API from the dashboard' do
+        Capybara.default_driver = :selenium_chrome_headless_largewindow
+        @site.store_files [
+          {filename: 'bulk-one.txt', tempfile: Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')},
+          {filename: 'bulk-two.txt', tempfile: Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')}
+        ]
+
+        page.set_rack_session id: @site.id
+        visit '/dashboard'
+
+        click_button 'Select'
+        find('.bulk-select-control[title="Select bulk-one.txt"]').click
+        find('.bulk-select-control[title="Select bulk-two.txt"]').click
+        click_button 'Delete selected'
+
+        _(page).must_have_css('#deleteConfirmModal', visible: true)
+        within '#deleteConfirmModal' do
+          click_button 'Delete'
+        end
+
+        _(page).must_have_content('2 items have been deleted.')
+        _(page).wont_have_content('bulk-one.txt')
+        _(page).wont_have_content('bulk-two.txt')
+        _(File.exist?(@site.files_path('bulk-one.txt'))).must_equal false
+        _(File.exist?(@site.files_path('bulk-two.txt'))).must_equal false
       end
     end
   end

@@ -1,19 +1,3 @@
-post '/site_files/delete' do
-  require_login
-  path = HTMLEntities.new.decode params[:filename]
-  begin
-    current_site.delete_file path
-  rescue Sequel::NoExistingObject
-    # the deed was presumably already done
-  end
-  flash[:success] = "Deleted #{Rack::Utils.escape_html params[:filename]}."
-
-  dirname = Pathname(path).dirname
-  dir_query = dirname.nil? || dirname.to_s == '.' ? '' : "?dir=#{Rack::Utils.escape dirname}"
-
-  redirect "/dashboard#{dir_query}"
-end
-
 post '/site_files/rename' do
   require_login
   path = HTMLEntities.new.decode params[:path]

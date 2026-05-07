@@ -203,6 +203,7 @@ post '/api/delete' do
   require_api_credentials
 
   api_error 400, 'missing_filenames', 'you must provide files to delete' if params[:filenames].nil? || params[:filenames].empty?
+  api_error 400, 'bad_filename', 'filenames must be an array, canceled deleting' unless params[:filenames].is_a?(Array)
 
   paths = []
   params[:filenames].each do |path|
@@ -210,16 +211,28 @@ post '/api/delete' do
       api_error 400, 'bad_filename', "#{path} is not a valid filename, canceled deleting"
     end
 
-    if current_site.files_path(path) == current_site.files_path
+    submitted_path = path
+
+    begin
+      path = current_site.scrubbed_path submitted_path
+    rescue ArgumentError
+      api_error 400, 'bad_filename', "#{submitted_path} is not a valid filename, canceled deleting"
+    end
+
+    if path.empty?
       api_error 400, 'cannot_delete_site_directory', 'cannot delete the root directory of the site'
+    end
+
+    if current_site.invalid_path?(submitted_path) || current_site.invalid_path?(path)
+      api_error 400, 'bad_filename', "#{submitted_path} is not a valid filename, canceled deleting"
+    end
+
+    if path == 'index.html'
+      api_error 400, 'cannot_delete_index', 'you cannot delete your index.html file, canceled deleting'
     end
 
     if !current_site.file_exists?(path)
       api_error 400, 'missing_files', "#{path} was not found on your site, canceled deleting"
-    end
-
-    if path == 'index.html' || path == '/index.html'
-      api_error 400, 'cannot_delete_index', 'you cannot delete your index.html file, canceled deleting'
     end
 
     paths << path

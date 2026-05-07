@@ -236,11 +236,39 @@ describe 'api' do
       _(res[:error_type]).must_equal 'missing_filenames'
     end
 
+    it 'rejects a non-array filenames argument' do
+      create_site
+      basic_authorize @user, @pass
+      @site.store_files [{filename: 'deletable.txt', tempfile: Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')}]
+
+      post '/api/delete', filenames: 'deletable.txt'
+      _(last_response.status).must_equal 400
+      _(res[:error_type]).must_equal 'bad_filename'
+      _(site_file_exists?('deletable.txt')).must_equal true
+    end
+
     it 'fails to delete index.html' do
       create_site
       basic_authorize @user, @pass
       post '/api/delete', filenames: ['index.html']
       _(res[:error_type]).must_equal 'cannot_delete_index'
+    end
+
+    it 'rejects unsafe delete paths before scrubbing' do
+      create_site
+      basic_authorize @user, @pass
+      @site.store_files [{filename: 'deletable.txt', tempfile: Rack::Test::UploadedFile.new('./tests/files/text-file', 'text/plain')}]
+
+      post '/api/delete', filenames: ['../index.html']
+      _(res[:error_type]).must_equal 'bad_filename'
+      _(site_file_exists?('index.html')).must_equal true
+
+      post '/api/delete', filenames: ['../deletable.txt']
+      _(res[:error_type]).must_equal 'bad_filename'
+      _(site_file_exists?('deletable.txt')).must_equal true
+
+      post '/api/delete', filenames: ['bad\path.txt']
+      _(res[:error_type]).must_equal 'bad_filename'
     end
 
     it 'succeeds with weird filenames' do
@@ -279,10 +307,10 @@ describe 'api' do
       basic_authorize @user, @pass
       post '/api/delete', filenames: ["../#{@other_site.username}"]
       _(File.exist?(@other_site.base_files_path)).must_equal true
-      _(res[:error_type]).must_equal 'missing_files'
+      _(res[:error_type]).must_equal 'bad_filename'
       post '/api/delete', filenames: ["../#{@other_site.username}/index.html"]
       _(File.exist?(@other_site.base_files_path+'/index.html')).must_equal true
-      _(res[:error_type]).must_equal 'missing_files'
+      _(res[:error_type]).must_equal 'bad_filename'
     end
 
     it 'succeeds with valid filenames' do
@@ -291,6 +319,20 @@ describe 'api' do
       @site.store_files [{filename: 'test.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
       @site.store_files [{filename: 'test2.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
       post '/api/delete', filenames: ['test.jpg', 'test2.jpg']
+      _(res[:result]).must_equal 'success'
+      _(site_file_exists?('test.jpg')).must_equal false
+      _(site_file_exists?('test2.jpg')).must_equal false
+    end
+
+    it 'succeeds with valid user session' do
+      create_site
+      @site.store_files [{filename: 'test.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
+      @site.store_files [{filename: 'test2.jpg', tempfile: Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')}]
+
+      post '/api/delete',
+           {filenames: ['test.jpg', 'test2.jpg'], csrf_token: 'abcd'},
+           {'rack.session' => {'id' => @site.id, '_csrf_token' => 'abcd'}}
+
       _(res[:result]).must_equal 'success'
       _(site_file_exists?('test.jpg')).must_equal false
       _(site_file_exists?('test2.jpg')).must_equal false

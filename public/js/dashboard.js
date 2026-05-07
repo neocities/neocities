@@ -8,13 +8,157 @@ function confirmFileRename(path) {
 }
 
 function confirmFileDelete(name) {
+  $('#deleteConfirmModal').data('delete-paths', [name]);
   $('#deleteFileName').text(name);
+  $('#deleteFileCount').text('1');
+  $('#deleteFileList').empty();
+  $('#deleteSingleMessage').show();
+  $('#deleteMultipleMessage').hide();
   $('#deleteConfirmModal').modal();
 }
 
 function fileDelete() {
-  $('#deleteFilenameInput').val($('#deleteFileName').html());
-  $('#deleteFilenameForm').submit();
+  var paths = $('#deleteConfirmModal').data('delete-paths') || [$('#deleteFileName').text()];
+  var deleteButton = $('#deleteConfirmModal .btn-danger');
+
+  deleteButton.prop('disabled', true);
+
+  $.ajax({
+    url: '/api/delete',
+    type: 'POST',
+    data: {
+      csrf_token: $('#deleteCSRFToken').val(),
+      filenames: paths
+    },
+    success: function() {
+      $('#deleteConfirmModal').modal('hide');
+      setBulkSelectMode(false);
+      alertClear();
+      alertType('success');
+
+      if (paths.length === 1) {
+        alertAdd($('<div>').text(paths[0]).html() + ' has been deleted.');
+      } else {
+        alertAdd(paths.length + ' items have been deleted.');
+      }
+
+      reloadDashboardFiles();
+    },
+    error: function(xhr) {
+      var message = 'Failed to delete file(s).';
+
+      try {
+        message = JSON.parse(xhr.responseText).message || message;
+      } catch(e) {
+      }
+
+      alertClear();
+      alertType('error');
+      alertAdd($('<div>').text(message).html());
+      $('#deleteConfirmModal').modal('hide');
+    },
+    complete: function() {
+      deleteButton.prop('disabled', false);
+    }
+  });
+}
+
+function selectedFilePaths() {
+  return $('.bulk-select-checkbox:checked').map(function() {
+    return $(this).val();
+  }).get();
+}
+
+function updateBulkActions() {
+  var checkboxes = $('.bulk-select-checkbox');
+  var checked = $('.bulk-select-checkbox:checked');
+  var count = checked.length;
+  var selectAll = $('#bulkSelectAll').get(0);
+
+  $('#selectedFileCount').text(count);
+  $('#bulkDeleteButton').prop('disabled', count === 0);
+
+  checkboxes.each(function() {
+    $(this).closest('.file').toggleClass('bulk-selected', $(this).prop('checked'));
+  });
+
+  if (selectAll) {
+    selectAll.checked = count > 0 && count === checkboxes.length;
+    selectAll.indeterminate = count > 0 && count < checkboxes.length;
+  }
+}
+
+function setBulkSelectMode(enabled) {
+  $('#filesDisplay').toggleClass('bulk-selecting', enabled);
+
+  if (!enabled) {
+    $('.bulk-select-checkbox').prop('checked', false);
+  }
+
+  updateBulkActions();
+}
+
+function toggleBulkSelect(event) {
+  if (event) {
+    event.preventDefault();
+  }
+
+  setBulkSelectMode(!$('#filesDisplay').hasClass('bulk-selecting'));
+}
+
+function clearFileSelection() {
+  $('.bulk-select-checkbox').prop('checked', false);
+  updateBulkActions();
+}
+
+function toggleSelectAllFiles(checked) {
+  $('.bulk-select-checkbox').prop('checked', checked);
+  updateBulkActions();
+}
+
+function confirmBulkDelete() {
+  var paths = selectedFilePaths();
+
+  if (paths.length === 0) {
+    return;
+  }
+
+  $('#deleteConfirmModal').data('delete-paths', paths);
+  $('#deleteFileName').text(paths[0]);
+  $('#deleteFileCount').text(paths.length);
+  $('#deleteFileList').empty();
+
+  paths.forEach(function(path) {
+    $('<li>').text(path).appendTo('#deleteFileList');
+  });
+
+  $('#deleteSingleMessage').toggle(paths.length === 1);
+  $('#deleteMultipleMessage').toggle(paths.length > 1);
+  $('#deleteConfirmModal').modal();
+}
+
+function initBulkFileSelection() {
+  $('.bulk-select-checkbox').off('change.bulk').on('change.bulk', updateBulkActions);
+
+  $('.file').off('click.bulk').on('click.bulk', function(event) {
+    if (!$('#filesDisplay').hasClass('bulk-selecting')) {
+      return;
+    }
+
+    if ($(event.target).closest('a, button, label').length > 0) {
+      return;
+    }
+
+    var checkbox = $(this).find('.bulk-select-checkbox');
+    if (checkbox.length === 0) {
+      return;
+    }
+
+    checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+    event.preventDefault();
+  });
+
+  updateBulkActions();
 }
 
 function clickUploadFiles() {
@@ -189,12 +333,16 @@ function reInitDashboardFiles() {
   document.getElementById('uploadButton').addEventListener('click', function(event) {
       event.preventDefault();
   });
+
+  initBulkFileSelection();
 }
 
 function reloadDashboardFiles() {
   var dir = $('#uploads input[name="dir"]').val();
+  var bulkSelecting = $('#filesDisplay').hasClass('bulk-selecting');
   $.get('/dashboard/files?dir='+encodeURIComponent(dir), function(data) {
     $('#filesDisplay').html(data);
+    $('#filesDisplay').toggleClass('bulk-selecting', bulkSelecting);
     reInitDashboardFiles();
   });
 }

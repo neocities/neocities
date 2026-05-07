@@ -13,8 +13,8 @@ describe 'site_files' do
     post '/api/upload', hash.merge(csrf_token: 'abcd'), {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
   end
 
-  def delete_file(hash)
-    post '/site_files/delete', hash.merge(csrf_token: 'abcd'), {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+  def delete_file(filename)
+    @site.delete_file filename
   end
 
   before do
@@ -250,7 +250,7 @@ describe 'site_files' do
       _(@site.actual_space_used).must_equal @site.space_used
       file_path = @site.files_path 'test.jpg'
       _(File.exists?(file_path)).must_equal true
-      delete_file filename: 'test.jpg'
+      delete_file 'test.jpg'
 
       _(File.exists?(file_path)).must_equal false
       _(SiteFile[site_id: @site.id, path: 'test.jpg']).must_be_nil
@@ -264,14 +264,14 @@ describe 'site_files' do
 
     it 'property deletes directories with regexp special chars in them' do
       upload '8)/test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
-      delete_file filename: '8)'
+      delete_file '8)'
       _(@site.reload.site_files.select {|f| f.path =~ /#{Regexp.quote '8)'}/}.length).must_equal 0
     end
 
     it 'deletes with escaped apostrophe' do
       upload "test'ing/test.jpg" => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
       _(@site.reload.site_files.select {|s| s.path == "test'ing"}.length).must_equal 1
-      delete_file filename: "test'ing"
+      delete_file "test'ing"
       _(@site.reload.site_files.select {|s| s.path == "test'ing"}.length).must_equal 0
     end
 
@@ -280,7 +280,7 @@ describe 'site_files' do
       upload 'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
 
       space_used = @site.reload.space_used
-      delete_file filename: 'test'
+      delete_file 'test'
 
       _(@site.reload.space_used).must_equal(space_used - File.size('./tests/files/test.jpg'))
 
@@ -298,23 +298,13 @@ describe 'site_files' do
         _(@site.site_files.select {|f| f.path == path}.length).must_equal 1
       end
 
-      delete_file filename: 'derp'
+      delete_file 'derp'
 
       @site.reload
 
       expected_site_file_paths.each do |path|
         _(@site.site_files.select {|f| f.path == path}.length).must_equal 0
       end
-    end
-
-    it 'goes back to deleting directory' do
-      upload 'test/test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
-      delete_file filename: 'test/test.jpg'
-      _(last_response.headers['Location']).must_equal "http://example.org/dashboard?dir=test"
-
-      upload 'test.jpg' => Rack::Test::UploadedFile.new('./tests/files/test.jpg', 'image/jpeg')
-      delete_file filename: 'test.jpg'
-      _(last_response.headers['Location']).must_equal "http://example.org/dashboard"
     end
 
     it 'deletes complex nested directory structure correctly' do

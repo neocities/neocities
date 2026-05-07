@@ -34,9 +34,19 @@
     <% end %>
   </div>
   <div class="actions">
+    <button type="button" id="selectFilesButton" class="btn-Action select-files-button" onclick="toggleBulkSelect(event)"><i class="fa fa-check-square-o"></i> Select</button>
     <a href="#createFile" class="btn-Action" data-toggle="modal"><i class="fa fa-file"></i> New File</a>
     <a href="#createDir" class="btn-Action" data-toggle="modal"><i class="fa fa-folder"></i> New Folder</a>
     <a href="#" id="uploadButton" class="btn-Action"><i class="fa fa-arrow-circle-up"></i> Upload</a>
+  </div>
+  <div id="bulkActions" class="bulk-actions">
+    <label class="bulk-select-all">
+      <input type="checkbox" id="bulkSelectAll" onchange="toggleSelectAllFiles(this.checked)">
+      <span>Select all</span>
+    </label>
+    <strong><span id="selectedFileCount">0</span> selected</strong>
+    <button type="button" class="btn bulk-clear" onclick="clearFileSelection()">Clear</button>
+    <button type="button" class="btn-Action btn-danger bulk-delete" id="bulkDeleteButton" onclick="confirmBulkDelete()" disabled><i class="fa fa-trash"></i> Delete selected</button>
   </div>
 </div>
 <div class="list">
@@ -46,6 +56,7 @@
     <input name="dir" type="hidden" value="<%= @dir %>" id="dir">
     <div class="upload-Boundary with-instruction">
       <% @file_list.each do |file| %>
+        <% file_dom_id = Digest::SHA256.hexdigest file[:path] %>
         <div class="file filehover">
           <% if file[:is_html] && current_site.screenshot_exists?(file[:path], '210x158') %>
             <div class="html-thumbnail html fileimagehover">
@@ -69,6 +80,13 @@
             </div>
           <% end %>
 
+          <% if !file[:is_root_index] %>
+            <label class="bulk-select-control" title="Select <%= file[:path] %>">
+              <input type="checkbox" class="bulk-select-checkbox" value="<%= file[:path] %>" aria-label="Select <%= file[:path] %>">
+              <span class="bulk-select-box"><i class="fa fa-check"></i></span>
+            </label>
+          <% end %>
+
           <a class="title">
             <%= file[:name] %>
           </a>
@@ -84,7 +102,7 @@
           </div>
 
           <div class="overlay">
-            <div id="<%= Digest::SHA256.hexdigest file[:path] %>" style="display: none"><%= file[:path] %></div>
+            <div id="<%= file_dom_id %>" style="display: none"><%= file[:path] %></div>
             <% if file[:is_editable] && !file[:is_directory] %>
               <a href="/site_files/text_editor?filename=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
             <% end %>
@@ -92,8 +110,8 @@
               <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
             <% end %>
             <% if !file[:is_root_index] %>
-              <a href="#" onclick="confirmFileRename($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-file" title="Rename"></i> Rename</a>
-              <a href="#" onclick="confirmFileDelete($('#<%= Digest::SHA256.hexdigest file[:path] %>').text())"><i class="fa fa-trash" title="Delete"></i> Delete</a>
+              <a href="#" onclick="confirmFileRename($('#<%= file_dom_id %>').text())"><i class="fa fa-file" title="Rename"></i> Rename</a>
+              <a href="#" onclick="confirmFileDelete($('#<%= file_dom_id %>').text())"><i class="fa fa-trash" title="Delete"></i> Delete</a>
             <% end %>
             <% if file[:is_directory] %>
             <a class="link-overlay" href="?dir=<%= Rack::Utils.escape file[:path] %>" title="View <%= file[:path] %>"></a>
