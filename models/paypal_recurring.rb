@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 require 'net/https'
+require 'timeout'
 require 'uri'
 
 class PayPalRecurring
   API_VERSION = '72.0'
   USER_AGENT = 'Neocities PayPalRecurring'
+  OPEN_TIMEOUT = 5
+  READ_TIMEOUT = 10
+  WRITE_TIMEOUT = 10
 
   ENDPOINTS = {
     sandbox: {
@@ -40,6 +44,18 @@ class PayPalRecurring
     monthly: 'Month',
     yearly:  'Year'
   }.freeze
+
+  NETWORK_ERRORS = [
+    Errno::ECONNREFUSED,
+    Errno::ECONNRESET,
+    Errno::EHOSTUNREACH,
+    Errno::ENETUNREACH,
+    Net::OpenTimeout,
+    Net::ReadTimeout,
+    OpenSSL::SSL::SSLError,
+    SocketError,
+    Timeout::Error
+  ].freeze
 
   class << self
     attr_accessor :sandbox
@@ -165,6 +181,8 @@ class PayPalRecurring
 
   def run(method, params)
     Response.new(post(default_params.merge(params).merge('METHOD' => method)))
+  rescue *NETWORK_ERRORS => e
+    Response.new(nil, error: e)
   end
 
   def post(params)
@@ -182,6 +200,9 @@ class PayPalRecurring
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER if http.use_ssl?
       http.cert_store = OpenSSL::X509::Store.new if http.use_ssl?
       http.cert_store&.set_default_paths
+      http.open_timeout = OPEN_TIMEOUT
+      http.read_timeout = READ_TIMEOUT
+      http.write_timeout = WRITE_TIMEOUT if http.respond_to?(:write_timeout=)
     end
   end
 
@@ -214,12 +235,16 @@ class PayPalRecurring
 
   class Response
     attr_reader :http_response
+    attr_reader :error
 
-    def initialize(http_response)
+    def initialize(http_response, error: nil)
       @http_response = http_response
+      @error = error
     end
 
     def params
+      return {} if http_response.nil?
+
       @params ||= URI.decode_www_form(http_response.body.to_s).each_with_object({}) do |(name, value), parsed|
         parsed[name] = value
       end
@@ -258,10 +283,16 @@ class PayPalRecurring
     end
 
     def valid?
-      errors.empty? && success?
+      !network_error? && errors.empty? && success?
+    end
+
+    def network_error?
+      !error.nil?
     end
 
     def errors
+      return [{code: 'network_error', messages: [error.message]}] if network_error?
+
       @errors ||= begin
         index = 0
         [].tap do |results|

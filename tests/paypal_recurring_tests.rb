@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 require_relative './environment.rb'
+require 'rack/test'
 
-describe PayPalRecurring do
-  before do
+module PayPalRecurringTestHelpers
+  def configure_test_paypal
     @paypal_config = {
       sandbox: PayPalRecurring.sandbox,
       username: PayPalRecurring.username,
@@ -19,13 +20,48 @@ describe PayPalRecurring do
     end
   end
 
-  after do
+  def restore_paypal_config
     PayPalRecurring.configure do |config|
       config.sandbox = @paypal_config[:sandbox]
       config.username = @paypal_config[:username]
       config.password = @paypal_config[:password]
       config.signature = @paypal_config[:signature]
     end
+  end
+
+  def stub_paypal_response(expected_params, body)
+    stub_request(:post, PayPalRecurring.api_endpoint).with do |request|
+      params = URI.decode_www_form(request.body).to_h
+      expected_params.all? { |name, value| params[name] == value }
+    end.to_return(status: 200, body: body)
+  end
+
+  def recurring_params
+    {
+      ipn_url:     'https://neocities.org/webhooks/paypal',
+      description: 'Neocities Supporter - Monthly',
+      amount:      '5.0',
+      currency:    'USD'
+    }
+  end
+
+  def authorization_params
+    recurring_params.merge(
+      return_url: 'https://neocities.org/supporter/paypal/return',
+      cancel_url: 'https://neocities.org/supporter'
+    )
+  end
+end
+
+describe PayPalRecurring do
+  include PayPalRecurringTestHelpers
+
+  before do
+    configure_test_paypal
+  end
+
+  after do
+    restore_paypal_config
   end
 
   it 'starts an express checkout recurring billing agreement' do
@@ -140,26 +176,91 @@ describe PayPalRecurring do
     _(client.cert_store).must_be_instance_of OpenSSL::X509::Store
   end
 
-  def stub_paypal_response(expected_params, body)
-    stub_request(:post, PayPalRecurring.api_endpoint).with do |request|
-      params = URI.decode_www_form(request.body).to_h
-      expected_params.all? { |name, value| params[name] == value }
-    end.to_return(status: 200, body: body)
+  it 'sets explicit network timeouts' do
+    client = PayPalRecurring.new.send(:http_client, URI(PayPalRecurring.api_endpoint))
+
+    _(client.open_timeout).must_equal PayPalRecurring::OPEN_TIMEOUT
+    _(client.read_timeout).must_equal PayPalRecurring::READ_TIMEOUT
+    _(client.write_timeout).must_equal PayPalRecurring::WRITE_TIMEOUT
   end
 
-  def recurring_params
-    {
-      ipn_url:     'https://neocities.org/webhooks/paypal',
-      description: 'Neocities Supporter - Monthly',
-      amount:      '5.0',
-      currency:    'USD'
-    }
+  it 'returns an invalid response for network errors' do
+    stub_request(:post, PayPalRecurring.api_endpoint).to_timeout
+
+    response = PayPalRecurring.new(profile_id: 'I-123').cancel
+
+    _(response.valid?).must_equal false
+    _(response.network_error?).must_equal true
+    _(response.errors.first[:code]).must_equal 'network_error'
+  end
+end
+
+describe 'PayPal supporter routes' do
+  include Rack::Test::Methods
+  include PayPalRecurringTestHelpers
+
+  def app
+    Sinatra::Application
   end
 
-  def authorization_params
-    recurring_params.merge(
-      return_url: 'https://neocities.org/supporter/paypal/return',
-      cancel_url: 'https://neocities.org/supporter'
+  before do
+    configure_test_paypal
+    @site = Fabricate :site
+  end
+
+  after do
+    restore_paypal_config
+  end
+
+  it 'does not upgrade the site when recurring profile creation fails' do
+    stub_paypal_response({
+      'METHOD' => 'DoExpressCheckoutPayment',
+      'TOKEN' => 'EC-123',
+      'PAYERID' => 'PAYER-123'
+    }, 'ACK=Success&PAYMENTINFO_0_ACK=Success&PAYMENTINFO_0_PAYMENTSTATUS=Completed')
+    stub_paypal_response({
+      'METHOD' => 'CreateRecurringPaymentsProfile',
+      'TOKEN' => 'EC-123',
+      'PAYERID' => 'PAYER-123'
+    }, 'ACK=Failure&L_ERRORCODE0=10001&L_SHORTMESSAGE0=Internal%20Error')
+
+    get '/supporter/paypal/return',
+      {token: 'EC-123', PayerID: 'PAYER-123'},
+      {'rack.session' => {'id' => @site.id}}
+
+    _(last_response.status).must_equal 302
+    _(last_response.headers['Location']).must_equal 'http://example.org/supporter'
+    @site.reload
+    _(@site.values[:paypal_active]).wont_equal true
+    _(@site.paypal_profile_id).must_be_nil
+    _(@site.plan_type).must_equal 'free'
+  end
+
+  it 'does not clear local PayPal membership when cancellation fails' do
+    @site.update(
+      paypal_active: true,
+      paypal_profile_id: 'I-123',
+      paypal_token: 'EC-123',
+      plan_type: 'supporter',
+      plan_ended: false
     )
+    stub_paypal_response({
+      'METHOD' => 'ManageRecurringPaymentsProfileStatus',
+      'ACTION' => 'Cancel',
+      'PROFILEID' => 'I-123'
+    }, 'ACK=Failure&L_ERRORCODE0=10001&L_SHORTMESSAGE0=Internal%20Error')
+
+    post '/supporter/end',
+      {csrf_token: 'abcd'},
+      {'rack.session' => {'id' => @site.id, '_csrf_token' => 'abcd'}}
+
+    _(last_response.status).must_equal 302
+    _(last_response.headers['Location']).must_equal 'http://example.org/settings'
+    @site.reload
+    _(@site.paypal_active).must_equal true
+    _(@site.paypal_profile_id).must_equal 'I-123'
+    _(@site.paypal_token).must_equal 'EC-123'
+    _(@site.plan_type).must_equal 'supporter'
+    _(@site.plan_ended).must_equal false
   end
 end

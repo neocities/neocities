@@ -1438,7 +1438,7 @@ class Site < Sequel::Model
       self.plan_ended = true
     elsif paypal_paying_supporter?
       ppr = PayPalRecurring.new profile_id: paypal_profile_id
-      ppr.cancel
+      return false unless ppr.cancel.valid?
 
       self.plan_type = nil
       self.paypal_active = false

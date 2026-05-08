@@ -8,7 +8,11 @@ end
 post '/supporter/end' do
   require_login
   redirect '/' unless parent_site.paying_supporter?
-  parent_site.end_supporter_membership!
+
+  unless parent_site.end_supporter_membership!
+    flash[:error] = 'There was an issue cancelling your supporter membership. Please try again or contact support.'
+    redirect '/settings'
+  end
 
   flash[:success] = "Your supporter membership has been cancelled. We're sorry to see you go, but thanks again for your support! Remember, you can always become a supporter again in the future."
   redirect '/supporter'
@@ -136,6 +140,7 @@ get '/supporter/paypal/return' do
 
   if params[:token].nil? || params[:PayerID].nil?
     flash[:error] = 'Unknown error, could not complete the request. Please contact Neocities support.'
+    redirect '/supporter'
   end
 
   ppr = PayPalRecurring.new(paypal_recurring_hash.merge(
@@ -163,6 +168,10 @@ get '/supporter/paypal/return' do
   ))
 
   paypal_response = ppr.create_recurring_profile
+  unless paypal_response.valid? && !paypal_response.profile_id.blank?
+    flash[:error] = 'Unknown error, could not complete the request. Please contact Neocities support.'
+    redirect '/supporter'
+  end
 
   site.paypal_token = params[:token]
   site.paypal_profile_id = paypal_response.profile_id
