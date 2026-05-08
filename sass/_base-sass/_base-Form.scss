@@ -23,7 +23,19 @@ input[readonly]{background:$c-Disabled}
 input[type='search']::-webkit-search-decoration{-webkit-appearance:none} 
 
 // Removes inner padding & border in Firefox 4+
-buton::-moz-focus-inner, input::-moz-focus-inner{border:0; padding:0}
+button::-moz-focus-inner, input::-moz-focus-inner{border:0; padding:0}
 
 // Makes sure that overflow shows and text is aligned to top of area
 textarea{overflow:auto; vertical-align:top; border: 2px solid #DCE4EC;}
+
+$form-control-selector: 'select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input';
+
+#{$form-control-selector}{
+  color:#000;
+  height:auto!important;
+  line-height:inherit;
+}
+
+textarea{margin-bottom:10px}
+
+input[type=submit]{margin-top:10px}

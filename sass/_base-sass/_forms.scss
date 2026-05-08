@@ -30,6 +30,7 @@ legend, .legend{
 .input-Area, %input-Area{
     background:#fff;
     border:2px solid $c-Border;
+    @include border-radius(4px);
     font-family:$arial;
     line-height:1.25; 
     margin-bottom:$spacing*2;
@@ -37,8 +38,8 @@ legend, .legend{
     width:80%;
     &:focus{
       background:$c-Lighter;
-      border:2px solid #50B6D5;
-      @include box-shadow($bs-2)
+      border:2px solid $c-Focus;
+      @include box-shadow(0 0 0 3px rgba(80,182,213,.18))
     }
 }
 

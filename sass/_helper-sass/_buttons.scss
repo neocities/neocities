@@ -3,8 +3,9 @@
 // ----------------------------------------------------------------
 .btn, %btn{
     background:$c-Dark; 
-    @include border-radius($radius*6);
-    @include box-shadow($bs-1);
+    border:1px solid rgba(0,0,0,.12);
+    @include border-radius(5px);
+    @include box-shadow(0 1px 2px rgba(0,0,0,.18));
     color:$c-Lighter!important;
     cursor:pointer;
     display:inline-block;
@@ -14,7 +15,7 @@
     text-align:center;
     text-decoration:none!important; // set to !important so that if used inside of a .nav, no decoration doesn't get overridden
     text-shadow:0 1px 1px rgba(0,0,0,.4);
-    @include vendor(transition, none!important);
+    @include vendor(transition, background .15s ease, box-shadow .15s ease, transform .15s ease);
     vertical-align:middle;
     -webkit-appearance:none;
     
@@ -25,6 +26,10 @@
     &:hover, &:active{
         background:$c-Darker; 
         color:$c-Lighter;
+    }
+
+    &:focus{
+        @include box-shadow(0 0 0 3px rgba(80,182,213,.35));
     }
     
     &:visited{color:$c-Lighter;}
@@ -78,10 +83,10 @@
 // ----------------------------------------------------------------
 .btn-Action{@extend %btn; 
   background:$c-Btn-1;
-  @include linear-gradient(top, #e93250, #b11f36);
+  @include linear-gradient(top, #ee405c, #b51f38);
 
   &:hover, &:active {
-    @include linear-gradient(top, #d51c3a, #841526);
+    @include linear-gradient(top, #d92745, #8f182d);
   }
   .fa {
     margin-right:5px;

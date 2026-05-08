@@ -6,9 +6,15 @@ $c-Brand-1:		#e93250;  //pink/red
 $c-Brand-2:		#daeea5;  // green
 $c-Brand-3:		#f6f0e6;    // tan
 
-// 2f4149 dark blue
-// lighter blue 65a0ad
-// nav bg blue 5e95a1
+$c-Teal:       #5e95a1;
+$c-Teal-Light: #6ba8b4;
+$c-Teal-Dark:  #30424b;
+$c-Teal-Deeper:#263840;
+$c-Burgundy:   #971d31;
+$c-Burgundy-Dark:#7e1728;
+$c-Warm-Panel: #fbf7f0;
+$c-Warm-Page:  #f7f1e8;
+$c-Focus:      #50b6d5;
 
 // Base Darker Colors
 $c-Dark:      #343434;
@@ -22,7 +28,7 @@ $c-Lighter:   #f8f8f8;
 $c-Body-Copy:	$c-Dark;
 $c-Heading:		$c-Brand-1;
 
-$c-BG:			  $c-Lighter;
+$c-BG:			  $c-Warm-Page;
 
 $c-Link:		  $c-Brand-1;
 
@@ -96,6 +102,7 @@ $bs-3:		$bs-1, $bs-1 inset;
 $bs-4:		0 8px 8px -8px rgba(0,0,0,.2);
 $bs-5:		$bs-4, 0 0 6px rgba(0,0,0,.75) inset;
 $bs-6:		0 0 6px rgba(255,255,255,.5) inset;
+$bs-Panel: 0 1px 2px rgba(0,0,0,.08), 0 8px 22px rgba(48,66,75,.08);
 
 $outroShadow:inset 0 7px 10px 0 rgba(0, 0, 0, 0.10);
 $signupShadow: 1px 2px 12px 2px rgba(0, 0, 0, 0.15);

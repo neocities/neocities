@@ -1,14 +1,17 @@
 // ----------------------------------------------------------------
 //		Project Specific Extended HTML Stylings
 // ----------------------------------------------------------------
-body{background:#CCDF9B}
+body{background:darken($c-Brand-2, 7%)}
 
 // Highlight Text Selection
 ::-moz-selection  {background:$c-Brand-1; color:$c-Light; text-shadow:none}
 ::selection       {background:$c-Brand-1; color:$c-Light; text-shadow:none}
 
 // Full container for the entire page.  
-.page{min-height:600px;
+.page{
+  background:$c-BG;
+  min-height:600px;
+
   @media (max-device-width:480px), screen and (max-width:800px){
     min-height:25px;
   }  
@@ -60,7 +63,7 @@ a{
 @import 'project-Footer';		// Project Specific Footer Styling
 
 .alert-error {
-   background-color:#f39c12; color:#fff;
+   background-color:#d9820f; color:#fff;
 }
 
 .modal {
@@ -70,12 +73,13 @@ a{
   form {
     margin-bottom: 0;
   }
-  @include border-radius(20px 20px 6px 6px);
+  @include border-radius(8px);
+  @include box-shadow($bs-Panel);
 }
 .modal-header {
-  background: #5e95a1;
+  background: $c-Teal;
   padding: 12px 16px 9px 23px;
-  @include border-radius(6px 6px 0px 0px);
+  @include border-radius(8px 8px 0px 0px);
   
   h3 {
     color: white;
