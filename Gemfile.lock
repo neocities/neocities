@@ -351,10 +351,11 @@ GEM
     sinatra-xsendfile (0.4.2)
       sinatra (>= 0.9.1)
     stripe (5.55.0)
-    stripe-ruby-mock (3.1.0)
+    stripe-ruby-mock (5.0.0)
       dante (>= 0.2.0)
+      drb (>= 2.0.4, < 3)
       multi_json (~> 1.0)
-      stripe (> 5, < 6)
+      stripe (> 5, < 14)
     sync (0.5.0)
     term-ansicolor (1.11.3)
       tins (~> 1)
@@ -472,7 +473,7 @@ DEPENDENCIES
   sinatra-flash
   sinatra-xsendfile
   stripe
-  stripe-ruby-mock (~> 3.1.0.rc3)
+  stripe-ruby-mock (~> 5.0.0)
   terrapin
   thread
   tilt

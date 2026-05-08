@@ -84,7 +84,7 @@ group :test do
   gem 'selenium-webdriver'
   gem 'rack_session_access',              require: nil
   gem 'webmock',                          require: nil
-  gem 'stripe-ruby-mock', '~> 3.1.0.rc3', require: 'stripe_mock'
+  gem 'stripe-ruby-mock', '~> 5.0.0',     require: 'stripe_mock'
   gem 'timecop'
   gem 'mock_redis'
   gem 'simplecov',                        require: nil
