@@ -119,7 +119,7 @@ get '/supporter/paypal' do
     hash.merge! token: parent_site.paypal_token
   end
 
-  ppr = PayPal::Recurring.new hash
+  ppr = PayPalRecurring.new hash
 
   paypal_response = ppr.checkout
 
@@ -138,7 +138,7 @@ get '/supporter/paypal/return' do
     flash[:error] = 'Unknown error, could not complete the request. Please contact Neocities support.'
   end
 
-  ppr = PayPal::Recurring.new(paypal_recurring_hash.merge(
+  ppr = PayPalRecurring.new(paypal_recurring_hash.merge(
     token:    params[:token],
     payer_id: params[:PayerID]
   ))
@@ -151,7 +151,7 @@ get '/supporter/paypal/return' do
 
   site = current_site.parent || current_site
 
-  ppr = PayPal::Recurring.new(paypal_recurring_authorization_hash.merge(
+  ppr = PayPalRecurring.new(paypal_recurring_authorization_hash.merge(
     frequency:   1,
     token:       params[:token],
     period:      :monthly,

@@ -1437,7 +1437,7 @@ class Site < Sequel::Model
       self.stripe_subscription_id = nil
       self.plan_ended = true
     elsif paypal_paying_supporter?
-      ppr = PayPal::Recurring.new profile_id: paypal_profile_id
+      ppr = PayPalRecurring.new profile_id: paypal_profile_id
       ppr.cancel
 
       self.plan_type = nil
