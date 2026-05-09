@@ -65,6 +65,39 @@ describe 'dashboard' do
         _(File.exist?(@site.files_path("#{random}.html"))).must_equal true
       end
 
+      it 'blocks duplicate new file submissions while create is pending' do
+        Capybara.default_driver = :selenium_chrome_headless_largewindow
+        random = SecureRandom.uuid.gsub('-', '')
+
+        page.set_rack_session id: @site.id
+        visit '/dashboard'
+        click_link 'New File'
+        _(page).must_have_css('#createFile', visible: true)
+        fill_in 'filename', with: "#{random}.html"
+
+        page.execute_script <<~JS
+          window.createFileRequestCount = 0;
+          $.ajax = function(options) {
+            window.createFileRequestCount += 1;
+            window.pendingCreateFileRequest = options;
+          };
+        JS
+
+        find('#createFileSubmitButton').click
+        _(page).must_have_css('#createFileSubmitButton[disabled]')
+
+        page.execute_script('handleCreateFile(); handleCreateFile();')
+        _(page.evaluate_script('window.createFileRequestCount')).must_equal 1
+
+        page.execute_script <<~JS
+          window.pendingCreateFileRequest.error({
+            responseText: JSON.stringify({message: 'Failed to create file'})
+          });
+        JS
+
+        _(page).wont_have_css('#createFileSubmitButton[disabled]')
+      end
+
       it 'deletes multiple files through the API from the dashboard' do
         Capybara.default_driver = :selenium_chrome_headless_largewindow
         @site.store_files [

@@ -259,6 +259,12 @@ $('#newFileInput').on('keypress', function(e) {
 })
 
 function handleCreateFile() {
+  if (createFileSubmitting) {
+    return;
+  }
+
+  setCreateFileSubmitting(true);
+
   var filename = $('#newFileInput').val();
   var dir = $('#createFileDir').val();
   var csrfToken = $('#createFileCSRFToken').val();
@@ -303,6 +309,12 @@ function alertType(type){
 var processedFiles = 0;
 var uploadedFiles = 0;
 var uploadedFileErrors = 0;
+var createFileSubmitting = false;
+
+function setCreateFileSubmitting(submitting) {
+  createFileSubmitting = submitting;
+  $('#createFileSubmitButton').prop('disabled', submitting);
+}
 
 function joinPaths(...paths) {
   return paths
@@ -394,6 +406,7 @@ function createFileViaAPI(filename, dir, csrfToken) {
   
   if (!filename || filename.trim() === '') {
     hideUploadProgress();
+    setCreateFileSubmitting(false);
     showCreateFileError('You must provide a file name.');
     return;
   }
@@ -412,6 +425,7 @@ function createFileViaAPI(filename, dir, csrfToken) {
     
     if (validExtensions.indexOf(extension) === -1) {
       hideUploadProgress();
+      setCreateFileSubmitting(false);
       showCreateFileError('Must be an editable file type (' + validExtensions.join(', ') + ') or a file with no extension.');
       return;
     }
@@ -423,6 +437,7 @@ function createFileViaAPI(filename, dir, csrfToken) {
   // Check if file already exists
   if (fileExists(fullPath)) {
     hideUploadProgress();
+    setCreateFileSubmitting(false);
     showCreateFileError('A file with this name already exists. Please choose a different name.');
     return;
   }
@@ -460,6 +475,7 @@ function createFileViaAPI(filename, dir, csrfToken) {
     contentType: false,
     success: function(response) {
       hideUploadProgress();
+      setCreateFileSubmitting(false);
       alertClear();
       alertType('success');
       var escapedName = $('<div>').text(fullPath).html(); // HTML escape
@@ -469,6 +485,7 @@ function createFileViaAPI(filename, dir, csrfToken) {
     },
     error: function(xhr) {
       hideUploadProgress();
+      setCreateFileSubmitting(false);
       try {
         var errorData = JSON.parse(xhr.responseText);
         showCreateFileError(errorData.message || 'Failed to create file');
