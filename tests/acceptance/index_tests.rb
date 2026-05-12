@@ -42,6 +42,21 @@ describe '/' do
       visit "/?event_id=#{@followed_site.events.first.id}"
       _(find('.news-item').text).must_match /you followed #{@followed_site.username}/i
     end
+
+    it 'renders site update previews with plain copy and clean paths' do
+      @updated_site = Fabricate :site
+      @site.toggle_follow @updated_site
+      SiteChange.record @updated_site, 'derp/derp.html'
+      SiteChange.record @updated_site, 'index.html'
+
+      visit '/'
+
+      update = find('.news-item.update', match: :first)
+      _(update).must_have_content "#{@updated_site.username} updated their site."
+      _(update).wont_have_link 'their site'
+      _(update).must_have_link 'derp/derp', href: "https://#{@updated_site.host}/derp/derp.html"
+      _(update).must_have_link 'index', href: "https://#{@updated_site.host}"
+    end
   end
 
   describe 'static pages' do

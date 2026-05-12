@@ -64,7 +64,7 @@ def meta_description(new_description=nil)
   description = @_meta_description || @description
   return nil if description.nil? || description.strip.empty?
 
-  Rack::Utils.escape_html(description)
+  description
 end
 
 def title
@@ -72,12 +72,11 @@ def title
   return out if request.path == '/'
   
   full_title = if @title
-    "#{out} - #{Rack::Utils.escape_html(@title)}"
+    "#{out} - #{@title}"
   else
     path_parts = request.path.split('/').reject(&:empty?)
     formatted_parts = path_parts.map do |part|
-      escaped_part = Rack::Utils.escape_html(part)
-      escaped_part.split(/[_\-]/).map(&:capitalize).join(' ')
+      part.split(/[_\-]/).map(&:capitalize).join(' ')
     end
     "#{out} - #{formatted_parts.join(' - ')}"
   end

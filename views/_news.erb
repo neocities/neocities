@@ -9,10 +9,12 @@
   <% follow_events = site.newest_follows %>
   <% unless follow_events.empty? %>
     <div class="news-item follow">
-      <div class="icon"><a href="/site/<%= site.username %>" title="<%= site.username %>" class="avatar" style="background-image: url(<%= site.screenshot_url 'index.html', '50x50' %>);"></a></div>
+      <div class="title">
+        <div class="icon"><a href="/site/<%= site.username %>" title="<%= site.username %>" class="avatar" style="background-image: url(<%= site.screenshot_url 'index.html', '50x50' %>);"></a></div>
 
-      <div class="text">
-        <strong>New Followers</strong>
+        <div class="text">
+          <strong>New Followers</strong>
+        </div>
       </div>
 
       <div class="content">
@@ -39,7 +41,7 @@
     <div class="news-item comment" id="event_<%= event.id %>">
       <%== erb :'_news_profile_comment', layout: false, locals: {profile_comment: event.profile_comment, event: event} %>
   <% elsif event.tip_id %>
-    <div class="news-item comment" id="event_<%= event.id %>">
+    <div class="news-item comment tip" id="event_<%= event.id %>">
     <%== erb :'_news_tip', layout: false, locals: {tip: event.tip, event: event} %>
   <% elsif event.follow_id %>
     <% actioning_site = event.actioning_site_dataset.select(:id, :username, :title, :domain, :stripe_customer_id, :plan_type).first %>
@@ -81,7 +83,7 @@
           <% if current_site && event_site.id == current_site.id %>
             You updated your site.
           <% else %>
-            <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a> updated <a href="https://<%= event_site.host %>" class="user" title="<%= event_site.title %>"><%= event_site.title.shorten(45) %></a>
+            <a href="/site/<%= event_site.username %>" class="user" title="<%= event_site.title %>"><i class="fa fa-user"><% if event_site.supporter? %><i class="fa fa-heart"></i><% end %></i><%= event_site.username %></a> updated their site.
           <% end %>
         </div>
         <span class="date">
@@ -93,27 +95,21 @@
         <div class="content">
           <div class="files">
             <% site_change_filenames.each do |f| %>
-              <div class="file">
-                <div class="html-thumbnail <%= site_change_file_display_class f %>">
+              <% display_class = site_change_file_display_class f %>
+              <% display_name = site_change_file_display_name f %>
+              <div class="file <%= display_class %>">
+                <div class="html-thumbnail <%= display_class %>">
                   <a href="https://<%= event_site.host %><%= f == 'index.html' ? '' : "/#{f}" %>">
-                    <% if site_change_file_display_class(f) == 'html' %>
-                      <img src="<%= event_site.screenshot_url(f, '540x405') %>" alt="Website screenshot">
-                    <% elsif site_change_file_display_class(f) == 'image' %>
-                      <!-- <span class="image-container"><img src="<%= event_site.thumbnail_url(f, '210x158') %>"></span> -->
-                    <% elsif site_change_file_display_class(f) == 'misc' %>
-                      <!--
+                    <% if display_class == 'html' %>
+                      <img src="<%= event_site.screenshot_url(f, '540x405') %>" alt="<%= display_name %> screenshot">
+                    <% elsif display_class == 'image' %>
+                      <span class="image-container"><img src="<%= event_site.thumbnail_url(f, '210x158') %>" alt="<%= display_name %>"></span>
+                    <% elsif display_class == 'misc' %>
                       <span class="misc-icon">
                         <%= File.extname(f).sub('.', '') %>
                       </span>
-                      -->
                     <% end %>
-                      <span class="title" title="<%= f %>">
-                        <% if f == 'index.html' %>
-                          <%= event_site.title %>
-                        <% else %>
-                          <%= f %>
-                        <% end %>
-                      </span>
+                    <span class="title" title="<%= display_name %>"><%= display_name %></span>
                   </a>
                 </div>
               </div>

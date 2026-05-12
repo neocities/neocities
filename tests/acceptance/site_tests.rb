@@ -65,6 +65,17 @@ describe 'site page' do
     _(page).must_have_content /#{site.username}/
   end
 
+  it 'does not double escape titles in the document head' do
+    site = Fabricate :site
+    site.update title: "alice's alcove"
+
+    visit "/site/#{site.username}"
+
+    _(page.title).must_equal "Neocities - alice's alcove"
+    _(page.html).wont_include 'alice&amp;#39;s alcove'
+    _(page.html).wont_include "#{site.username}&amp;#39;s Neocities site profile"
+  end
+
 
   describe 'blocking' do
     before do

@@ -19,6 +19,13 @@ helpers do
     'misc'
   end
 
+  def site_change_file_display_name(filename)
+    path = filename.to_s.sub(%r{\A/+}, '')
+    path = path.sub(%r{/index\.html?\z}, '')
+    path = path.sub(/\.html?\z/, '')
+    path.empty? ? 'index' : path
+  end
+
   def csrf_token_input_html
     %{<input name="csrf_token" type="hidden" value="#{csrf_token}">}
   end
