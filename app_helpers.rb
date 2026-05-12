@@ -131,6 +131,23 @@ def sanitize_comment(text)
   Rinku.auto_link Sanitize.fragment(text), :all, 'target="_blank" rel="nofollow"'
 end
 
+def normalize_comment_message(message)
+  message.to_s.gsub(/\r\n?/, "\n").gsub(/\n{3,}/, "\n\n").strip
+end
+
+def valid_comment_message?(message)
+  return false if message.empty? || message.length > Site::MAX_COMMENT_SIZE
+
+  lines = message.split("\n")
+  return false if lines.length > Site::MAX_COMMENT_LINES
+
+  return true if lines.length < Site::MULTILINE_COMMENT_AVERAGE_LINE_THRESHOLD
+
+  nonblank_lines = lines.map(&:strip).reject(&:empty?)
+  average_line_length = nonblank_lines.sum(&:length).to_f / nonblank_lines.length
+  average_line_length >= Site::MIN_MULTILINE_COMMENT_AVERAGE_LINE_LENGTH
+end
+
 def flash_display(opts={})
   erb :'_flash', layout: false, locals: {opts: opts}
 end

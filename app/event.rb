@@ -17,16 +17,17 @@ post '/event/:event_id/comment' do |event_id|
   return 403 if event.actioning_site && event.actioning_site.is_blocking?(current_site)
 
   site = event.site
+  message = normalize_comment_message(params[:message])
 
   if(site.is_blocking?(current_site) ||
      site.profile_comments_enabled == false ||
      current_site.commenting_allowed? == false ||
      (current_site.is_a_jerk? && event.site_id != current_site.id && !site.is_following?(current_site)) ||
-     params[:message].length > Site::MAX_COMMENT_SIZE)
+     !valid_comment_message?(message))
     return {result: 'error'}.to_json
   end
 
-  event.add_site_comment current_site, params[:message]
+  event.add_site_comment current_site, message
   {result: 'success'}.to_json
 end
 
@@ -34,10 +35,11 @@ post '/event/:event_id/update_profile_comment' do |event_id|
   require_login
   content_type :json
   event = Event[id: event_id]
+  message = normalize_comment_message(params[:message])
   return {result: 'error'}.to_json unless (current_site.id == event.profile_comment.actioning_site_id &&
-                                           params[:message].length <= Site::MAX_COMMENT_SIZE)
+                                           valid_comment_message?(message))
 
-  event.profile_comment.update message: params[:message]
+  event.profile_comment.update message: message
   return {result: 'success'}.to_json
 end
 

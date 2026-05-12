@@ -1344,6 +1344,8 @@ a.tag:hover {
   margin-bottom: .4em;
   margin-top: .15em;
   font-size: 1em;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 .news-item .actions {
   font-size: 11px;
@@ -1380,9 +1382,11 @@ a.tag:hover {
 .news-item .actions form {
   margin-top: 10px;
 }
-.news-item .actions form input[name="comment"] {
+.news-item .actions form textarea[name="comment"] {
   box-sizing: border-box;
   margin-bottom: 8px;
+  min-height: 64px;
+  resize: vertical;
 }
 .news-item .content {
   padding: 0;
@@ -1431,6 +1435,9 @@ a.tag:hover {
 }
 .news-item > .title + .content {
   margin-top: 6px;
+}
+.news-item.comment > .title + .content {
+  white-space: pre-wrap;
 }
 .news-item > .title + .actions {
   margin-top: 8px;
@@ -1732,20 +1739,29 @@ a.tag:hover {
 .post-comment {
   background: #DAEEA5;
   width: 100%;
-  padding: 20px 0 15px 30px;
+  box-sizing: border-box;
+  padding: 16px 18px;
   margin: 0 0 3px 0;
 
-  input {
-    width: 86%;
-    float: left;
+  form {
+    margin: 0;
+  }
 
-    @media (max-width:950px) {
-      width: 82%;
-    }
+  textarea {
+    box-sizing: border-box;
+    display: block;
+    min-height: 72px;
+    margin-bottom: 10px;
+    resize: vertical;
+    width: 100%;
+    float: none;
   }
   .btn-Action {
-    margin-left: 10px;
-    margin-top: 4px;
+    margin: 0;
+  }
+
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    padding: 14px;
   }
 }
 .comment-policy {

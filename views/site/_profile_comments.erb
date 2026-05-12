@@ -2,13 +2,13 @@
   <div class="post-comment">
     <form method="POST" action="/site/<%= site.username %>/comment">
       <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
-      <input name="message"
-             type="text"
-             placeholder="<% if current_site == site %>Post a message...<% else %>Post a message... (be nice!)<% end %>"
-             autocomplete="off"
-             maxlength="<%= Site::MAX_COMMENT_SIZE %>"
-             <% unless current_site.commenting_allowed? %>disabled<% end %>
-      >
+      <textarea name="message"
+                placeholder="<% if current_site == site %>Post a message...<% else %>Post a message... (be nice!)<% end %>"
+                autocomplete="off"
+                maxlength="<%= Site::MAX_COMMENT_SIZE %>"
+                rows="3"
+                <% unless current_site.commenting_allowed? %>disabled<% end %>
+      ></textarea>
       <button class="btn-Action"
               <% unless current_site.commenting_allowed? %>disabled<% end %>
       >Post</button>

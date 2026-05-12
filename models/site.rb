@@ -82,6 +82,9 @@ class Site < Sequel::Model
   INDEX_HTML_REGEX       = /\/?index.html$/
   ROOT_INDEX_HTML_REGEX  = /^\/?index.html$/
   MAX_COMMENT_SIZE       = 420 # Used to be the limit for Facebook.. no comment (PUN NOT INTENDED).
+  MAX_COMMENT_LINES      = 10
+  MIN_MULTILINE_COMMENT_AVERAGE_LINE_LENGTH = 3
+  MULTILINE_COMMENT_AVERAGE_LINE_THRESHOLD = 5
   MAX_FOLLOWS            = 2000
 
   BROWSE_MINIMUM_VIEWS   = 100

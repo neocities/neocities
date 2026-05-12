@@ -164,18 +164,18 @@ post '/site/:username/comment' do |username|
   require_login
 
   site = Site[username: username]
+  message = normalize_comment_message(params[:message])
 
   redirect request.referer if current_site && (site.is_blocking?(current_site) || current_site.is_blocking?(site))
 
   last_comment = site.profile_comments_dataset.order(:created_at.desc).first
 
-  if last_comment && last_comment.message == params[:message] && last_comment.created_at > 2.hours.ago
+  if last_comment && last_comment.message == message && last_comment.created_at > 2.hours.ago
     redirect request.referer
   end
 
   if site.profile_comments_enabled == false ||
-     params[:message].empty? ||
-     params[:message].length > Site::MAX_COMMENT_SIZE ||
+     !valid_comment_message?(message) ||
      site.is_blocking?(current_site) ||
      current_site.is_blocking?(site) ||
      current_site.commenting_allowed? == false ||
@@ -185,7 +185,7 @@ post '/site/:username/comment' do |username|
 
   site.add_profile_comment(
     actioning_site_id: current_site.id,
-    message: params[:message]
+    message: message
   )
 
   redirect request.referrer
