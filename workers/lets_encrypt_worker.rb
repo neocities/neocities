@@ -1,9 +1,15 @@
+require 'digest'
+
 class LetsEncryptWorker
   class VerificationTimeoutError < StandardError; end
   class FinalizeTimeoutError < StandardError; end
 
   include Sidekiq::Worker
   sidekiq_options queue: :lets_encrypt_worker, retry: 10, backtrace: true
+
+  CERT_RENEWAL_WINDOW = 30.days
+  ACME_RATE_LIMIT_KEY_PREFIX = 'lets_encrypt_worker:rate_limited'
+  ACME_RATE_LIMIT_RETRY_JITTER = 30.minutes
 
   sidekiq_retry_in do |count|
     5.minutes.to_i * count
@@ -115,71 +121,95 @@ class LetsEncryptWorker
       return
     end
 
+    if active_certificate_covers?(site, verified_domains)
+      puts "existing certificate covers #{verified_domains.join(', ')}, skipping cert setup"
+      if site.domain_fail_count.to_i > 0
+        site.domain_fail_count = 0
+        site.save_changes validate: false
+      end
+      clean_wellknown_turds site
+      return
+    end
+
+    if (retry_at = acme_rate_limited_until(verified_domains))
+      puts "ACME order for #{verified_domains.join(', ')} rate limited until #{retry_at.utc}"
+      schedule_acme_rate_limited_retry site, verified_domains, retry_at
+      clean_wellknown_turds site
+      return
+    end
+
     finalized_domains = []
 
-    order = letsencrypt.new_order identifiers: verified_domains
-    order.authorizations.each do |authorization|
-      challenge = authorization.http
+    begin
+      order = letsencrypt.new_order identifiers: verified_domains
+      order.authorizations.each do |authorization|
+        challenge = authorization.http
 
-      if challenge.nil?
-        puts "challenge object is nil, going to next domain"
-        next
+        if challenge.nil?
+          puts "challenge object is nil, going to next domain"
+          next
+        end
+
+        begin
+          FileUtils.mkdir_p File.join(site.base_files_path, File.dirname(challenge.filename))
+          File.write File.join(site.base_files_path, challenge.filename), challenge.file_content
+        rescue => e
+          puts "FAILED TO WRITE CHALLENGE: #{site.domain} #{challenge.filename}"
+          # A verification needs to be attempted anyways, otherwise 300 of them will jam up the system for a week
+        end
+
+        challenge.request_validation
+
+        sleep 1
+        attempts = 0
+
+        while true
+          result = challenge.status
+          puts "#{authorization.domain} : #{result}"
+
+          if result == 'valid'
+            puts "VALIDATED: #{authorization.domain}"
+            clean_wellknown_turds site
+            finalized_domains.push authorization.domain
+            break
+          end
+
+          raise VerificationTimeoutError if attempts == 60
+
+          if result == 'invalid'
+            puts "returned invalid (#{authorization.domain}, walking away"
+            clean_wellknown_turds site
+            break
+          end
+
+          attempts += 1
+          challenge.reload
+          sleep 2
+        end
       end
 
-      begin
-        FileUtils.mkdir_p File.join(site.base_files_path, File.dirname(challenge.filename))
-        File.write File.join(site.base_files_path, challenge.filename), challenge.file_content
-      rescue => e
-        puts "FAILED TO WRITE CHALLENGE: #{site.domain} #{challenge.filename}"
-        # A verification needs to be attempted anyways, otherwise 300 of them will jam up the system for a week
-      end
+      clean_wellknown_turds site
+      csr = Acme::Client::CertificateRequest.new names: finalized_domains
+      order.finalize csr: csr
 
-      challenge.request_validation
-
-      sleep 1
       attempts = 0
-
-      while true
-        result = challenge.status
-        puts "#{authorization.domain} : #{result}"
-
-        if result == 'valid'
-          puts "VALIDATED: #{authorization.domain}"
-          clean_wellknown_turds site
-          finalized_domains.push authorization.domain
-          break
-        end
-
-        raise VerificationTimeoutError if attempts == 60
-
-        if result == 'invalid'
-          puts "returned invalid (#{authorization.domain}, walking away"
-          clean_wellknown_turds site
-          break
-        end
-
+      while order.status == 'processing'
+        raise FinalizeTimeoutError if attempts > 60
         attempts += 1
-        challenge.reload
-        sleep 2
+        sleep 1
       end
+
+      site.ssl_key = csr.private_key.to_pem
+      site.ssl_cert = order.certificate
+      site.cert_updated_at = Time.now
+      site.domain_fail_count = 0
+      site.save_changes validate: false
+    rescue Acme::Client::Error::RateLimited => e
+      puts "ACME order for #{verified_domains.join(', ')} rate limited: #{e.message}"
+      schedule_acme_rate_limited_retry site, verified_domains, e.retry_after_time
+      clean_wellknown_turds site
+      return
     end
-
-    clean_wellknown_turds site
-    csr = Acme::Client::CertificateRequest.new names: finalized_domains
-    order.finalize csr: csr
-
-    attempts = 0
-    while order.status == 'processing'
-      raise FinalizeTimeoutError if attempts > 60
-      attempts += 1
-      sleep 1
-    end
-
-    site.ssl_key = csr.private_key.to_pem
-    site.ssl_cert = order.certificate
-    site.cert_updated_at = Time.now
-    site.domain_fail_count = 0
-    site.save_changes validate: false
 
     # Refresh the cert periodically, current expire time is 90 days
     # We're going for a cron task for this now, so this is commented out.
@@ -209,5 +239,68 @@ class LetsEncryptWorker
       rescue Errno::ENOTEMPTY, Errno::ENOENT
       end
     end
+  end
+
+  def active_certificate_covers?(site, domains)
+    return false if site.ssl_cert.blank?
+
+    certificate = OpenSSL::X509::Certificate.new site.ssl_cert
+    return false if certificate.not_after <= Time.now + CERT_RENEWAL_WINDOW
+
+    domains.all? do |domain|
+      certificate_names(certificate).any? {|name| certificate_name_matches_domain?(name, domain) }
+    end
+  rescue OpenSSL::X509::CertificateError
+    false
+  end
+
+  def certificate_names(certificate)
+    names = []
+
+    certificate.extensions.each do |extension|
+      next unless extension.oid == 'subjectAltName'
+
+      names.concat extension.value.split(',').map { |value|
+        value.strip[/\ADNS:(.+)\z/, 1]
+      }.compact
+    end
+
+    common_name = certificate.subject.to_a.find {|name, _, _| name == 'CN' }
+    names << common_name[1] if common_name
+    names.map(&:downcase).uniq
+  end
+
+  def certificate_name_matches_domain?(certificate_name, domain)
+    certificate_name = certificate_name.downcase
+    domain = domain.downcase
+
+    return true if certificate_name == domain
+    return false unless certificate_name.start_with?('*.')
+
+    suffix = certificate_name[1..]
+    domain.end_with?(suffix) && domain.count('.') == certificate_name.count('.')
+  end
+
+  def acme_rate_limited_until(domains)
+    retry_at = $redis.get(acme_rate_limit_key(domains)).to_f
+    return if retry_at <= Time.now.to_f
+
+    Time.at retry_at
+  end
+
+  def schedule_acme_rate_limited_retry(site, domains, retry_at)
+    retry_at ||= Time.now + 10.minutes
+    delay_seconds = [(retry_at - Time.now).ceil, 60].max
+    delay_seconds += rand(ACME_RATE_LIMIT_RETRY_JITTER.to_i)
+    key = acme_rate_limit_key domains
+
+    return unless $redis.set(key, retry_at.to_f, nx: true, ex: delay_seconds + 1.hour.to_i)
+
+    LetsEncryptWorker.perform_in delay_seconds, site.id
+  end
+
+  def acme_rate_limit_key(domains)
+    digest = Digest::SHA256.hexdigest domains.map(&:downcase).sort.join(',')
+    "#{ACME_RATE_LIMIT_KEY_PREFIX}:#{digest}"
   end
 end
