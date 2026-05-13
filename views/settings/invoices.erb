@@ -8,20 +8,6 @@
 <div class="content single-Col misc-page txt-Center">
   <article>
     <section>
-      <div class="txt-Center">
-        <% if flash[:success] %>
-          <div class="alert alert-block alert-success" style="margin-top: 20px">
-            <%== flash[:success] %>
-          </div>
-        <% end %>
-
-        <% if flash[:error] %>
-          <div class="alert alert-block alert-error" style="margin-top: 20px">
-            <%== flash[:error] %>
-          </div>
-        <% end %>
-      </div>
-
       <h2>Generated Invoices</h2>
       
       <% if @invoices.empty? && !current_site.paypal_profile_id %>

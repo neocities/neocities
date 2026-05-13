@@ -165,21 +165,27 @@ post '/site/:username/comment' do |username|
 
   site = Site[username: username]
   message = normalize_comment_message(params[:message])
+  message_error = comment_message_error(message)
 
-  redirect request.referer if current_site && (site.is_blocking?(current_site) || current_site.is_blocking?(site))
+  if current_site && (site.is_blocking?(current_site) || current_site.is_blocking?(site))
+    flash[:error] = comment_unavailable_message(site)
+    redirect request.referer
+  end
 
   last_comment = site.profile_comments_dataset.order(:created_at.desc).first
 
   if last_comment && last_comment.message == message && last_comment.created_at > 2.hours.ago
+    flash[:error] = 'You already posted that comment.'
     redirect request.referer
   end
 
   if site.profile_comments_enabled == false ||
-     !valid_comment_message?(message) ||
+     message_error ||
      site.is_blocking?(current_site) ||
      current_site.is_blocking?(site) ||
      current_site.commenting_allowed? == false ||
      (current_site.is_a_jerk? && site.id != current_site.id && !site.is_following?(current_site))
+    flash[:error] = message_error || comment_unavailable_message(site)
     redirect request.referrer
   end
 

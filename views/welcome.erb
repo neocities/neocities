@@ -1,8 +1,4 @@
 <section class="section plans welcome">
-  <% if current_site %>
-    <%== flash_display centered: true %>
-  <% end %>
-
   <% if request.path == '/welcome' %>
     <h2>Welcome to Neocities, <%= current_site.username %>!</h2>
   <% elsif parent_site && parent_site.supporter? %>

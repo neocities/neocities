@@ -9,18 +9,6 @@
 
   <div class="row">
     <div class="col col-100 txt-Center" style="margin-top: 10px;">
-        <% if flash[:success] %>
-          <div class="alert alert-block alert-success" style="margin-top: 20px">
-            <%== flash[:success] %>
-          </div>
-        <% end %>
-
-        <% if flash[:error] %>
-          <div class="alert alert-block alert-error" style="margin-top: 20px">
-            <%== flash[:error] %>
-          </div>
-        <% end %>
-
       <form method="POST" action="/site/<%= current_site.username %>/confirm_phone" class="content">
         <%== csrf_token_input_html %>
 

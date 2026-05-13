@@ -61,15 +61,7 @@
 </div>
 <% end %>
 
-<% if flash.keys.length > 0 %>
-  <div id="alertDialogue" class="alert alert-block alert-<%= flash.keys.first %>" style="display: block; max-height: 200px; overflow-y: auto;">
-    <% flash.keys.select {|k| [:success, :error, :errors].include?(k)}.each do |key| %>
-      <%== flash[key] %>
-    <% end %>
-  </div>
-<% else %>
-  <div id="alertDialogue" class="alert alert-block alert-<%= flash.keys.first || 'success' %>" style="display: none; max-height: 200px; overflow-y: auto;"></div>
-<% end %>
+<div id="alertDialogue" class="alert alert-block alert-success" style="display: none; max-height: 200px; overflow-y: auto;"></div>
 
 <div id="filesDisplay" class="files">
   <%== erb :'dashboard/files' %>

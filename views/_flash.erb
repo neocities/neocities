@@ -1,15 +1,19 @@
-<% if @error %>
-  <div class="alert alert-block alert-error">
-    <p><%== @error %></p>
-  </div>
-<% end %>
-
-<% if flash.keys.length > 0 %>
-  <div class="alert alert-block alert-<%= flash.keys.first %> <%= opts[:centered] ? 'txt-Center' : '' %>">
-    <p>
-      <% flash.keys.select {|k| [:success, :error, :errors].include?(k)}.each do |key| %>
-        <%== flash[key] %>
-      <% end %>
-    </p>
+<% opts ||= {} %>
+<% messages = flash_message_entries %>
+<% if messages.any? %>
+  <div class="flash-Messages <%= opts[:centered] ? 'flash-Messages--centered' : '' %>">
+    <% messages.each do |entry| %>
+      <div class="flash-Message flash-Message--<%= entry[:type] %>" role="<%= entry[:type] == 'error' ? 'alert' : 'status' %>">
+        <div class="flash-MessageIcon" aria-hidden="true">
+          <i class="fa fa-<%= entry[:type] == 'error' ? 'exclamation-circle' : 'check-circle' %>"></i>
+        </div>
+        <div class="flash-MessageText">
+          <p><%== entry[:message] %></p>
+        </div>
+        <button class="flash-MessageClose" type="button" aria-label="Dismiss message" onclick="var message=this.parentNode; message.className += ' is-hidden'; var group=message.parentNode; if(!group.querySelector('.flash-Message:not(.is-hidden)')) group.className += ' is-hidden'; return false">
+          <i class="fa fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+    <% end %>
   </div>
 <% end %>

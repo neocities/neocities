@@ -131,21 +131,66 @@ def sanitize_comment(text)
   Rinku.auto_link Sanitize.fragment(text), :all, 'target="_blank" rel="nofollow"'
 end
 
+def flash_message_keys
+  flash.keys.select {|k| [:success, :error, :errors].include?(k) && !flash[k].to_s.empty?}
+end
+
+def flash_message_entries
+  entries = []
+
+  Array(@error).each do |message|
+    entries << {type: 'error', message: message} unless message.to_s.empty?
+  end
+
+  flash_message_keys.each do |key|
+    type = key == :success ? 'success' : 'error'
+
+    Array(flash[key]).each do |message|
+      entries << {type: type, message: message} unless message.to_s.empty?
+    end
+  end
+
+  entries
+end
+
 def normalize_comment_message(message)
   message.to_s.gsub(/\r\n?/, "\n").gsub(/\n{3,}/, "\n\n").strip
 end
 
-def valid_comment_message?(message)
-  return false if message.empty? || message.length > Site::MAX_COMMENT_SIZE
+def comment_message_error(message)
+  return 'Comment cannot be empty.' if message.empty?
+  return "Comments must be #{Site::MAX_COMMENT_SIZE} characters or fewer." if message.length > Site::MAX_COMMENT_SIZE
 
   lines = message.split("\n")
-  return false if lines.length > Site::MAX_COMMENT_LINES
+  return "Comments must be #{Site::MAX_COMMENT_LINES} lines or fewer." if lines.length > Site::MAX_COMMENT_LINES
 
-  return true if lines.length < Site::MULTILINE_COMMENT_AVERAGE_LINE_THRESHOLD
+  return nil if lines.length < Site::MULTILINE_COMMENT_AVERAGE_LINE_THRESHOLD
 
   nonblank_lines = lines.map(&:strip).reject(&:empty?)
+  return 'Comment cannot be empty.' if nonblank_lines.empty?
+
   average_line_length = nonblank_lines.sum(&:length).to_f / nonblank_lines.length
-  average_line_length >= Site::MIN_MULTILINE_COMMENT_AVERAGE_LINE_LENGTH
+  return nil if average_line_length >= Site::MIN_MULTILINE_COMMENT_AVERAGE_LINE_LENGTH
+
+  'Multiline comments need a little more text on each line.'
+end
+
+def valid_comment_message?(message)
+  comment_message_error(message).nil?
+end
+
+def comment_unavailable_message(site=nil)
+  return 'Comments are disabled for this site.' if site && site.profile_comments_enabled == false
+
+  if current_site && !current_site.commenting_allowed?
+    if current_site.commenting_too_much?
+      return "To prevent spam, comments are limited to #{Site::MAX_COMMENTS_PER_DAY} per day. Please try again tomorrow."
+    end
+
+    return "To prevent spam, you cannot comment until you have updated your site #{Site::COMMENTING_ALLOWED_UPDATED_COUNT} times on separate days, and your account is one week old."
+  end
+
+  'You cannot comment on this right now.'
 end
 
 def flash_display(opts={})

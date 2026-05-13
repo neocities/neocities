@@ -6,8 +6,11 @@
 </div>
 
 <div id="comment-edit-template" style="display: none">
-  <form onsubmit="ProfileComment.update({{ eventId }}, '<%= csrf_token %>'); return false">
-      <textarea rows="5" style="width: 100%" maxlength="<%= Site::MAX_COMMENT_SIZE %>">{{ content }}</textarea>
-      <button class="btn-Action">Save</button> <a href="#" onclick="ProfileComment.cancelEditor({{ eventId }}); return false">Cancel</a>
+  <form class="profile-comment-editor" onsubmit="ProfileComment.update({{ eventId }}, '<%= csrf_token %>'); return false">
+    <textarea rows="3" maxlength="<%= Site::MAX_COMMENT_SIZE %>">{{ content }}</textarea>
+    <div class="profile-comment-editor-actions">
+      <button class="btn-Action">Save</button>
+      <a href="#" onclick="ProfileComment.cancelEditor({{ eventId }}); return false">Cancel</a>
+    </div>
   </form>
 </div>
