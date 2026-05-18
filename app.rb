@@ -82,7 +82,7 @@ def redirect_to_internet_archive_for_geocities_sites
   end
 end
 
-WHITELISTED_POST_PATHS = ['/create_validate_all', '/create_validate', '/create'].freeze
+WHITELISTED_POST_PATHS = ['/create_validate_all', '/create_validate', '/create', '/search', '/search/'].freeze
 
 before do
   if request.path.match /^\/api\//i

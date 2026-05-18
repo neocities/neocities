@@ -1,58 +1,83 @@
-<div class="header-Outro with-columns browse-page browse-search-page">
-  <div class="row content">
-    <div class="col col-100">
-      <h1>Site Search</h1>
-    </div>
+<% if @items.nil? && !@daily_search_max_reached %>
+  <div class="browse-search-page search-home-page">
+    <div class="content search-home-content">
+      <div class="search-home">
+        <h1 class="hidden">Neocities Search</h1>
+        <img class="search-mascot" src="/img/hotcat.svg" alt="Hot Cat">
+        <p class="search-tagline">Search the handmade web</p>
 
-    <div class="col col-100 filter">
-      <form id="search_criteria" class="browse-search-form" action="/browse/search" method="GET">
-        <fieldset class="grouping">
-          <input name="q" type="text" class="input-Area" value="<%= params[:q] %>"  placeholder="keywords">
-          <button type="submit" class="btn-Action">Search</button>
-        </fieldset>
-      </form>
+        <form id="search_criteria" class="browse-search-form search-home-form" action="/search" method="GET">
+          <fieldset class="grouping">
+            <div class="search-home-field">
+              <i class="fa fa-search" aria-hidden="true"></i>
+              <input name="q" type="text" class="input-Area" value="<%= Rack::Utils.escape_html(@query) %>" placeholder="keywords" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" autofocus>
+            </div>
+            <div class="search-home-actions">
+              <button type="submit" class="btn-Action">Search</button>
+              <a href="/browse?sort_by=random" class="btn-Action btn-Secondary">Random Site</a>
+            </div>
+          </fieldset>
+        </form>
+      </div>
     </div>
   </div>
-</div>
+<% else %>
+  <div class="header-Outro with-columns browse-page browse-search-page">
+    <div class="row content">
+      <div class="col col-100">
+        <span class="search-results-mascot-frame">
+          <img class="search-results-mascot" src="/img/hotcat.svg" alt="Hot Cat">
+        </span>
+      </div>
 
-<div class="content single-Col misc-page browse-search-page">
-  <% if @daily_search_max_reached %>
-    Search temporarily unavailable, please try again tomorrow.
-  <% elsif @items == [] %>
-    No results.
-  <% elsif !@items.nil? %>
-    <div class="search-results">
-      <% @items.each do |item| %>
-        <div class="result-item">
-          <a class="result-screenshot" href="<%= item['link'] %>"><img src="<%= item['screenshot_url'] %>" alt="<%= item['title'] %>"></a>
-          <div class="result-details">
-            <h3 class="result-title">
-              <a href="<%= item['link'] %>"><%= item['title'] %></a>
-            </h3>
+      <div class="col col-100 filter">
+        <form id="search_criteria" class="browse-search-form" action="/search" method="GET">
+          <fieldset class="grouping">
+            <input name="q" type="text" class="input-Area" value="<%= Rack::Utils.escape_html(@query) %>" placeholder="keywords" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
+            <button type="submit" class="btn-Action">Search</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
 
-            <div class="result-url">
-              <a href="<%= item['link'] %>"><%= item['unencoded_link'] %></a>
+  <div class="content single-Col misc-page browse-search-page">
+    <% if @daily_search_max_reached %>
+      <p class="search-message">Search temporarily unavailable, please try again tomorrow.</p>
+    <% elsif @items == [] %>
+      <p class="search-message">No results.</p>
+    <% elsif !@items.nil? %>
+      <div class="search-results">
+        <% @items.each do |item| %>
+          <div class="result-item">
+            <a class="result-screenshot" href="<%= item['link'] %>"><img src="<%= item['screenshot_url'] %>" alt="<%= item['title'] %>"></a>
+            <div class="result-details">
+              <h3 class="result-title">
+                <a href="<%= item['link'] %>"><%= item['title'] %></a>
+              </h3>
+
+              <div class="result-url">
+                <a href="<%= item['link'] %>"><%= item['unencoded_link'] %></a>
+              </div>
+
+              <p class="result-snippet">
+                <%== item['htmlSnippet'] %>
+              </p>
             </div>
-
-            <p class="result-snippet">
-              <%== item['htmlSnippet'] %>
-            </p>
           </div>
-        </div>
-      <% end %>
-    </div>
+        <% end %>
+      </div>
 
-    <div class="txt-Center">
-      <h2>
-        <% if @start > 0 %>
-          <a href="?q=<%= Rack::Utils.escape params[:q] %>&start=<%= [@start-10, 0].max %>"><i class="fa fa-arrow-left arrow">&nbsp;&nbsp;</i></a>
-        <% end %>
-        <% if @total_results > @start+10 && @start+10 < 100 %>
-          <a href="?q=<%= Rack::Utils.escape params[:q] %>&start=<%= @start+10 %>"><i class="fa fa-arrow-right arrow"></i></a>
-        <% end %>
-      </h2>
-    </div>
-  <% else %>
-    Enter some keywords to begin searching.
-  <% end %>
-</div>
+      <div class="txt-Center">
+        <h2>
+          <% if @start > 0 %>
+            <a href="?q=<%= Rack::Utils.escape @query %>&start=<%= [@start-10, 0].max %>"><i class="fa fa-arrow-left arrow">&nbsp;&nbsp;</i></a>
+          <% end %>
+          <% if @total_results > @start+10 && @start+10 < 100 %>
+            <a href="?q=<%= Rack::Utils.escape @query %>&start=<%= @start+10 %>"><i class="fa fa-arrow-right arrow"></i></a>
+          <% end %>
+        </h2>
+      </div>
+    <% end %>
+  </div>
+<% end %>

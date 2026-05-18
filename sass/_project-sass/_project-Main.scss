@@ -2674,6 +2674,60 @@ a.tag:hover {
 .browse-search-page .filter {
   width: 100%;
 }
+.search-home-page {
+  align-items: center;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(123, 202, 197, .32), rgba(123, 202, 197, 0) 260px),
+    linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,0) 64%);
+  display: flex;
+  min-height: 535px;
+  padding: 54px 0 70px 0;
+}
+.search-home-content {
+  box-sizing: border-box;
+  padding-bottom: 0;
+  padding-top: 0;
+  width: 100%;
+}
+.search-home {
+  margin: 0 auto;
+  max-width: 720px;
+  text-align: center;
+}
+.search-mascot {
+  display: block;
+  filter: drop-shadow(0 10px 18px rgba(58, 71, 71, .13));
+  height: auto;
+  margin: 0 auto 12px auto;
+  max-width: 360px;
+  width: 66%;
+}
+.search-results-mascot-frame {
+  display: block;
+  height: 62px;
+  margin: 0 0 6px 0;
+  overflow: hidden;
+  position: relative;
+  width: 230px;
+}
+.search-results-mascot {
+  display: block;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.18));
+  height: auto;
+  left: 50%;
+  max-width: none;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 230px;
+  z-index: 1;
+}
+.search-tagline {
+  color: #425c5a;
+  font-size: 1.28em;
+  margin: 0 0 28px 0;
+  text-shadow: 0 1px 0 rgba(255,255,255,.75);
+}
 .browse-search-form {
   margin: 0;
 
@@ -2705,6 +2759,88 @@ a.tag:hover {
     min-width: 92px;
     padding: 0 18px;
   }
+}
+.search-home-form {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 650px;
+
+  fieldset {
+    display: grid;
+    gap: 18px;
+    justify-items: center;
+  }
+}
+.search-home-field {
+  position: relative;
+  width: 100%;
+
+  .fa {
+    color: #6a9a96;
+    font-size: 1.25em;
+    left: 19px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+
+  .input-Area {
+    background: rgba(255,255,255,.94);
+    border: 2px solid rgba(104, 184, 178, .6);
+    border-radius: 30px;
+    box-shadow: 0 8px 24px rgba(33, 64, 61, .12), 0 1px 0 rgba(255,255,255,.95) inset;
+    box-sizing: border-box;
+    color: #333;
+    font-size: 1.2em;
+    height: 56px!important;
+    line-height: 24px;
+    margin: 0;
+    padding: 12px 18px 12px 52px;
+    width: 100%;
+
+    &:focus {
+      border-color: #42b7ae;
+      box-shadow: 0 10px 28px rgba(33, 64, 61, .16), 0 0 0 3px rgba(66, 183, 174, .18);
+    }
+  }
+}
+.search-home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+
+  .btn-Action {
+    height: 42px;
+    line-height: 42px;
+    margin: 0;
+    min-width: 152px;
+    padding: 0 18px;
+  }
+
+  .btn-Secondary {
+    background: #f7fbfa;
+    border: 1px solid rgba(88, 163, 157, .55);
+    box-shadow: 0 2px 5px rgba(0,0,0,.08);
+    color: #3e6864!important;
+    text-shadow: none;
+
+    &:hover,
+    &:focus {
+      background: #e8f4f2;
+      border-color: rgba(66, 183, 174, .85);
+      color: #284f4b!important;
+    }
+
+    &:visited {
+      color: #3e6864!important;
+    }
+  }
+}
+.search-message {
+  font-size: 1.1em;
+  margin: 0;
 }
 .browse-search-page .search-results {
   background: #fff;
@@ -2780,8 +2916,17 @@ a.tag:hover {
   }
 
   .browse-search-page .row.content {
+    box-sizing: border-box;
     padding-bottom: 16px;
+    padding-left: 5.4%;
+    padding-right: 5.4%;
     padding-top: 14px;
+  }
+
+  .interior .header-Outro.with-columns.browse-search-page .col {
+    box-sizing: border-box;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .browse-search-page h1 {
@@ -2790,12 +2935,47 @@ a.tag:hover {
     margin-bottom: 16px;
   }
 
+  .search-home-page {
+    min-height: 390px;
+    padding-bottom: 44px;
+    padding-top: 44px;
+  }
+
+  .search-mascot {
+    max-width: 280px;
+    width: 82%;
+  }
+
+  .search-results-mascot-frame {
+    height: 56px;
+    margin: 0 auto 6px auto;
+    width: 205px;
+  }
+
+  .search-results-mascot {
+    width: 205px;
+  }
+
+  .search-tagline {
+    font-size: 1.05em;
+    margin-bottom: 18px;
+  }
+
+  .search-home-field .input-Area {
+    height: 50px!important;
+    padding-left: 46px;
+  }
+
   .browse-search-form {
+    width: 100%;
+
     fieldset {
       align-items: stretch;
+      box-sizing: border-box;
       display: grid;
       gap: 10px;
       justify-items: center;
+      width: 100%;
     }
 
     .input-Area {
@@ -2819,6 +2999,11 @@ a.tag:hover {
       padding-right: 20px;
       width: auto;
     }
+  }
+
+  .search-home-form .search-home-field .input-Area {
+    height: 50px!important;
+    padding-left: 46px;
   }
 
   .browse-search-page .result-item {
