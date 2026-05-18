@@ -66,6 +66,70 @@ describe 'tipping' do
   end
 end
 
+describe 'paypal supporter IPN' do
+  include Rack::Test::Methods
+
+  def app
+    Sinatra::Application
+  end
+
+  before do
+    EmailWorker.jobs.clear
+    @site = Fabricate :site
+    @site.update(
+      paypal_active: true,
+      paypal_profile_id: 'I-123',
+      paypal_token: 'EC-123',
+      plan_type: 'supporter',
+      plan_ended: false
+    )
+  end
+
+  it 'ends a PayPal supporter membership when PayPal cancels the recurring profile' do
+    post '/webhooks/paypal', paypal_supporter_ipn_hash
+
+    _(last_response.status).must_equal 200
+    @site.reload
+    _(@site.values[:paypal_active]).must_equal false
+    _(@site.paypal_profile_id).must_be_nil
+    _(@site.paypal_token).must_be_nil
+    _(@site.values[:plan_type]).must_be_nil
+    _(@site.plan_ended).must_equal true
+
+    _(EmailWorker.jobs.length).must_equal 1
+    args = EmailWorker.jobs.first['args'].first
+    _(args['to']).must_equal @site.email
+    _(args['subject']).must_equal '[Neocities] Supporter plan has ended'
+  end
+
+  it 'clears stale PayPal fields without ending an active Stripe membership' do
+    @site.update(
+      stripe_customer_id: 'cus_123',
+      stripe_subscription_id: 'sub_123',
+      plan_type: 'supporter',
+      plan_ended: false
+    )
+
+    post '/webhooks/paypal', paypal_supporter_ipn_hash
+
+    _(last_response.status).must_equal 200
+    @site.reload
+    _(@site.values[:paypal_active]).must_equal false
+    _(@site.paypal_profile_id).must_be_nil
+    _(@site.paypal_token).must_be_nil
+    _(@site.values[:plan_type]).must_equal 'supporter'
+    _(@site.plan_ended).must_equal false
+    _(EmailWorker.jobs.length).must_equal 0
+  end
+end
+
+def paypal_supporter_ipn_hash(opts={})
+  {
+    txn_type: 'recurring_payment_profile_cancel',
+    recurring_payment_id: 'I-123'
+  }.merge(opts)
+end
+
 def paypal_tip_webhook_hash(opts={})
   {
     :transaction_subject=>"customvarlol",

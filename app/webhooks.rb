@@ -1,5 +1,58 @@
 post '/webhooks/paypal' do
+  return 403 unless valid_paypal_webhook_source?
+
+  if paypal_subscription_ended_ipn?
+    site = paypal_ipn_site
+
+    if site
+      stripe_active = site.stripe_paying_supporter?
+
+      site.paypal_active = false
+      site.paypal_profile_id = nil
+      site.paypal_token = nil
+
+      unless stripe_active
+        site.plan_type = nil
+        site.plan_ended = true
+      end
+
+      site.save_changes validate: false
+
+      unless stripe_active
+        EmailWorker.perform_async({
+          from:    Site::FROM_EMAIL,
+          to:      site.email,
+          subject: '[Neocities] Supporter plan has ended',
+          body:    Tilt.new('./views/templates/email/supporter_ended.erb', pretty: true).render(self)
+        })
+      end
+    end
+  end
+
   'ok'
+end
+
+def paypal_subscription_ended_ipn?
+  %w[
+    recurring_payment_profile_cancel
+    recurring_payment_expired
+    recurring_payment_suspended
+    recurring_payment_suspended_due_to_max_failed_payment
+    subscr_cancel
+    subscr_eot
+  ].include?(params[:txn_type].to_s)
+end
+
+def paypal_ipn_site
+  profile_id = params[:recurring_payment_id] ||
+    params[:recurring_payment_profile_id] ||
+    params[:rp_profile_id] ||
+    params[:profile_id] ||
+    params[:subscr_id]
+
+  return nil if profile_id.blank?
+
+  Site.where(paypal_profile_id: profile_id).first
 end
 
 def valid_paypal_webhook_source?
