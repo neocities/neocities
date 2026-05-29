@@ -10,7 +10,7 @@
           <fieldset class="grouping">
             <div class="search-home-field">
               <i class="fa fa-search" aria-hidden="true"></i>
-              <input name="q" type="text" class="input-Area" value="<%= Rack::Utils.escape_html(@query) %>" placeholder="keywords" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" autofocus>
+              <input name="q" type="text" class="input-Area" value="<%== Rack::Utils.escape_html(@query) %>" placeholder="keywords" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" autofocus>
             </div>
             <div class="search-home-actions">
               <button type="submit" class="btn-Action">Search</button>
@@ -33,7 +33,7 @@
       <div class="col col-100 filter">
         <form id="search_criteria" class="browse-search-form" action="/search" method="GET">
           <fieldset class="grouping">
-            <input name="q" type="text" class="input-Area" value="<%= Rack::Utils.escape_html(@query) %>" placeholder="keywords" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
+            <input name="q" type="text" class="input-Area" value="<%== Rack::Utils.escape_html(@query) %>" placeholder="keywords" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
             <button type="submit" class="btn-Action">Search</button>
           </fieldset>
         </form>
