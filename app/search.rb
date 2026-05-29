@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 def daily_search_max?
+  return false
   query_count = $redis_cache.get('search_query_count').to_i
   query_count >= $config['google_custom_search_query_limit']
 end
@@ -27,7 +28,7 @@ get '/search/?' do
     @start = params[:start].to_i
     @start = 0 if @start < 0
 
-    @resp = JSON.parse HTTP.get('https://www.googleapis.com/customsearch/v1', params: {
+    @resp = JSON.parse HTTP.get('https://search.neocitiesops.net/customsearch/v1', params: {
       key: $config['google_custom_search_key'],
       cx: $config['google_custom_search_cx'],
       safe: 'active',
@@ -60,10 +61,14 @@ get '/search/?' do
 
         screenshot_path << 'index' if screenshot_path[-1] == '/'
 
-        ['.html', '.htm'].each do |ext|
-          if site.screenshot_exists?(screenshot_path + ext, '540x405')
-            screenshot_path += ext
-            break
+        if ENV['RACK_ENV'] == 'development'
+          screenshot_path += '.html'
+        else
+          ['.html', '.htm'].each do |ext|
+            if site.screenshot_exists?(screenshot_path + ext, '540x405')
+              screenshot_path += ext
+              break
+            end
           end
         end
 
