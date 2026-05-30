@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+SEARCH_BACKEND_URL = $config['search_backend_url']
+SEARCH_BACKEND_TIMEOUT = $config['search_backend_timeout']
+
 post '/search/?' do
   query = params[:q].to_s.strip
   redirect query.blank? ? '/search' : "/search?#{Rack::Utils.build_query(q: query)}"
@@ -14,18 +17,20 @@ get '/search/?' do
     @start = params[:start].to_i
     @start = 0 if @start < 0
 
-    @resp = JSON.parse HTTP.get('https://search.neocitiesops.net/customsearch/v1', params: {
-      num: 100,
-      key: $config['google_custom_search_key'],
-      cx: $config['google_custom_search_cx'],
-      safe: 'active',
-      start: @start,
-      q: Rack::Utils.escape(@query) + ' -filetype:pdf -filetype:txt site:*.neocities.org'
-    })
-
     @items = []
+    @total_results = 0
 
-    if @total_results != 0 && @resp['error'].nil? && @resp['searchInformation']['totalResults'] != "0"
+    begin
+      @resp = JSON.parse HTTP.timeout(global: SEARCH_BACKEND_TIMEOUT).get(SEARCH_BACKEND_URL, params: {
+        num: 100,
+        start: @start,
+        q: Rack::Utils.escape(@query) + ' -filetype:pdf -filetype:txt site:*.neocities.org'
+      }).to_s
+    rescue HTTP::Error, JSON::ParserError
+      @resp = {}
+    end
+
+    if @resp.is_a?(Hash) && @resp['error'].nil? && @resp.dig('searchInformation', 'totalResults').to_i != 0
       @total_results = @resp['searchInformation']['totalResults'].to_i
       @resp['items'].each do |item|
         link = Addressable::URI.parse(item['link'])

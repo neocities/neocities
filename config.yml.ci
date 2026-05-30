@@ -31,3 +31,5 @@ google_custom_search_cx: herpderp
 google_custom_search_query_limit: 69
 support_email: derp@example.com
 moderation_blur_categories: [ cats, dogs ]
+search_backend_url: https://example.com/customsearch/v1
+search_backend_timeout: 1
