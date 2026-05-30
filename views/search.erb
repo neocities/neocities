@@ -42,9 +42,7 @@
   </div>
 
   <div class="content single-Col misc-page browse-search-page">
-    <% if @daily_search_max_reached %>
-      <p class="search-message">Search temporarily unavailable, please try again tomorrow.</p>
-    <% elsif @items == [] %>
+    <% if @items == [] %>
       <p class="search-message">No results.</p>
     <% elsif !@items.nil? %>
       <div class="search-results">
@@ -58,6 +56,8 @@
 
               <div class="result-url">
                 <a href="<%= item['link'] %>"><%= item['unencoded_link'] %></a>
+                <br>
+                <small><a href="/site/<%= item['username'] %>">Guestbook</a></small>
               </div>
 
               <p class="result-snippet">
@@ -71,10 +71,10 @@
       <div class="txt-Center">
         <h2>
           <% if @start > 0 %>
-            <a href="?q=<%= Rack::Utils.escape @query %>&start=<%= [@start-10, 0].max %>"><i class="fa fa-arrow-left arrow">&nbsp;&nbsp;</i></a>
+            <a href="?q=<%= Rack::Utils.escape @query %>&start=<%= [@start-100, 0].max %>"><i class="fa fa-arrow-left arrow">&nbsp;&nbsp;</i></a>
           <% end %>
-          <% if @total_results > @start+10 && @start+10 < 100 %>
-            <a href="?q=<%= Rack::Utils.escape @query %>&start=<%= @start+10 %>"><i class="fa fa-arrow-right arrow"></i></a>
+          <% if @total_results > @start+100 %>
+            <a href="?q=<%= Rack::Utils.escape @query %>&start=<%= @start+100 %>"><i class="fa fa-arrow-right arrow"></i></a>
           <% end %>
         </h2>
       </div>

@@ -43,6 +43,7 @@ get '/search/?' do
         username = link.host.split('.').first
         site = Site[username: username]
         next if site.nil? || site.is_deleted || site.is_nsfw
+        item['username'] = username if site.profile_enabled
 
         screenshot_path = unencoded_path
 
