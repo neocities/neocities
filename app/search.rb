@@ -56,6 +56,8 @@ get '/search/?' do
             if site.screenshot_exists?(screenshot_path + ext, '540x405')
               screenshot_path += ext
               break
+            else
+              next
             end
           end
         end
