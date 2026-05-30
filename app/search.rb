@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-def daily_search_max?
-  return false
-  query_count = $redis_cache.get('search_query_count').to_i
-  query_count >= $config['google_custom_search_query_limit']
-end
-
 post '/search/?' do
   query = params[:q].to_s.strip
   redirect query.blank? ? '/search' : "/search?#{Rack::Utils.build_query(q: query)}"
@@ -16,19 +10,12 @@ get '/search/?' do
   @title = @query.blank? ? 'Neocities Search' : 'Site Search'
   @description = 'Search websites hosted on Neocities.'
 
-  @daily_search_max_reached = daily_search_max?
-
-  if @daily_search_max_reached
-    @items = nil
-    @total_results = 0
-  elsif !@query.blank?
-    created = $redis_cache.set('search_query_count', 1, nx: true, ex: 86400)
-    $redis_cache.incr('search_query_count') unless created
-
+  if !@query.blank?
     @start = params[:start].to_i
     @start = 0 if @start < 0
 
     @resp = JSON.parse HTTP.get('https://search.neocitiesops.net/customsearch/v1', params: {
+      num: 100,
       key: $config['google_custom_search_key'],
       cx: $config['google_custom_search_cx'],
       safe: 'active',

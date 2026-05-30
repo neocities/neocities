@@ -76,9 +76,10 @@ describe 'paypal supporter IPN' do
   before do
     EmailWorker.jobs.clear
     @site = Fabricate :site
+    @paypal_profile_id = "I-#{SecureRandom.hex}"
     @site.update(
       paypal_active: true,
-      paypal_profile_id: 'I-123',
+      paypal_profile_id: @paypal_profile_id,
       paypal_token: 'EC-123',
       plan_type: 'supporter',
       plan_ended: false
@@ -126,7 +127,7 @@ end
 def paypal_supporter_ipn_hash(opts={})
   {
     txn_type: 'recurring_payment_profile_cancel',
-    recurring_payment_id: 'I-123'
+    recurring_payment_id: @paypal_profile_id || 'I-123'
   }.merge(opts)
 end
 
