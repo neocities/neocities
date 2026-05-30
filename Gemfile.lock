@@ -158,7 +158,7 @@ GEM
     io-extra (1.5.0)
     ipaddress (0.8.3)
     json (2.19.3)
-    jwt (3.1.2)
+    jwt (3.2.0)
       base64
     llhttp-ffi (0.5.1)
       ffi-compiler (~> 1.0)
