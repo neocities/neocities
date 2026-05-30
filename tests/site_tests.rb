@@ -31,6 +31,16 @@ describe Site do
     end
   end
 
+  describe 'file type validation' do
+    it 'allows css files when libmagic misidentifies them as appleworks' do
+      _(Site.valid_file_mime_type_and_ext?('application/x-appleworks3', '.css')).must_equal true
+    end
+
+    it 'keeps the appleworks exception scoped to css files' do
+      _(Site.valid_file_mime_type_and_ext?('application/x-appleworks3', '.txt')).must_be_nil
+    end
+  end
+
   describe 'tags' do
     it 'should handle empty tags in comma-separated list' do
       site = Fabricate.build :site, new_tags_string: 'art, , Seancore, microlables'

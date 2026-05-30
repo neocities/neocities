@@ -782,6 +782,8 @@ class Site < Sequel::Model
       return mime_type =~ /text/ || mime_type == 'application/json' || mime_type =~ /inode\/x-empty/
     end
 
+    return true if mime_type == 'application/x-appleworks3' && extname.downcase == '.css'
+
     valid_mime_type = Site::VALID_MIME_TYPES.include?(mime_type) || mime_type =~ /text/ || mime_type =~ /inode\/x-empty/
     valid_extension = Site::VALID_EXTENSIONS.include?(extname.sub(/^./, '').downcase)
     unless valid_extension

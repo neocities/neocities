@@ -377,6 +377,12 @@ describe 'site_files' do
       _(File.exists?(@site.files_path('cache.manifest'))).must_equal true
     end
 
+    it 'works with css files libmagic misidentifies as appleworks' do
+      upload 'style.css' => Rack::Test::UploadedFile.new('./tests/files/appleworks_false_positive.css', 'text/css')
+      _(last_response.body).must_match /successfully uploaded/i
+      _(File.exists?(@site.files_path('style.css'))).must_equal true
+    end
+
     it 'fails with filename greater than limit' do
       file_path = './tests/files' + (0...SiteFile::FILE_NAME_CHARACTER_LIMIT+1).map { ('a'..'z').to_a[rand(26)] }.join + '.html'
       begin
