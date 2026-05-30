@@ -51,19 +51,19 @@ get '/search/?' do
 
         if ENV['RACK_ENV'] == 'development'
           screenshot_path += '.html'
+          screenshot_found = true
         else
           ['.html', '.htm'].each do |ext|
             if site.screenshot_exists?(screenshot_path + ext, '540x405')
               screenshot_path += ext
+              screenshot_found = true
               break
-            else
-              next
             end
           end
         end
 
         item['screenshot_url'] = site.screenshot_url(screenshot_path, '540x405')
-        @items << item
+        @items << item if screenshot_found
       end
     end
   else
