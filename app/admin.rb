@@ -407,35 +407,32 @@ post '/admin/site/change_password' do
   site = Site[username: params[:username]]
   not_found if site.nil?
 
-  owner = site.owner
-  new_password = params[:new_password].to_s
-  owner.password = new_password
-  owner.valid?
-
-  if new_password != params[:new_password_confirm].to_s
-    owner.errors.add :password, 'New passwords do not match.'
+  unless site.parent?
+    flash[:error] = 'Password can only be changed on parent sites.'
+    redirect "/admin/site/#{site.username}"
   end
 
-  if owner.errors.empty?
-    DB.transaction do
-      owner.password_reset_token = nil
-      owner.password_reset_confirmed = false
-      owner.save_changes
+  new_password = params[:new_password].to_s
+  site.password = new_password
+  site.valid?
 
-      if site.id != owner.id
-        site.password = new_password
-        site.save_changes validate: false
-      end
-    end
+  if new_password != params[:new_password_confirm].to_s
+    site.errors.add :password, 'New passwords do not match.'
+  end
 
-    owner.send_email(
+  if site.errors.empty?
+    site.password_reset_token = nil
+    site.password_reset_confirmed = false
+    site.save_changes
+
+    site.send_email(
       subject: '[Neocities] Your password has been changed',
       body: Tilt.new('./views/templates/email/password_changed.erb', pretty: true).render(self)
     )
 
     flash[:success] = 'Password changed.'
   else
-    flash[:error] = owner.errors.first.last.first
+    flash[:error] = site.errors.first.last.first
   end
 
   redirect "/admin/site/#{site.username}"

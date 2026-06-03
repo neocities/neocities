@@ -312,7 +312,7 @@ describe '/admin' do
       _(clear_image[:style].to_s).wont_match(/filter:\s*blur\(4px\)/)
     end
 
-    it 'changes a site password' do
+    it 'changes a parent site password' do
       EmailWorker.jobs.clear
       site = Fabricate :site, password: 'oldpass'
 
@@ -331,24 +331,34 @@ describe '/admin' do
       _(EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /password has been changed/i}.length).must_equal 1
     end
 
-    it 'does not leave a selected child site old password valid' do
+    it 'does not show the password form on child site info pages' do
       parent_site = Fabricate :site, password: 'parentold'
       child_site = Fabricate :site, parent_site_id: parent_site.id, password: 'childold'
 
       visit "/admin/site/#{child_site.username}"
 
-      within(:css, 'form[action="/admin/site/change_password"]') do
-        fill_in 'new_password', with: 'newpass'
-        fill_in 'new_password_confirm', with: 'newpass'
-        click_button 'Change Password'
-      end
+      _(page).wont_have_selector('form[action="/admin/site/change_password"]')
+    end
+
+    it 'does not change a password when a child site is posted directly' do
+      parent_site = Fabricate :site, password: 'parentold'
+      child_site = Fabricate :site, parent_site_id: parent_site.id, password: 'childold'
+
+      visit "/admin/site/#{parent_site.username}"
+      token = find('form[action="/admin/site/change_password"] input[name="csrf_token"]', visible: false).value
+
+      page.driver.post '/admin/site/change_password', {
+        username: child_site.username,
+        new_password: 'newpass',
+        new_password_confirm: 'newpass',
+        csrf_token: token
+      }
 
       parent_site.reload
       child_site.reload
-      _(parent_site.valid_password?('parentold')).must_equal false
-      _(child_site.valid_password?('parentold')).must_equal false
-      _(child_site.valid_password?('childold')).must_equal false
-      _(child_site.valid_password?('newpass')).must_equal true
+      _(parent_site.valid_password?('parentold')).must_equal true
+      _(child_site.valid_password?('childold')).must_equal true
+      _(child_site.valid_password?('newpass')).must_equal false
     end
 
     it 'does not change a password when confirmation does not match' do

@@ -44,18 +44,20 @@
             </tr>
           </table>
 
-          <form action="/admin/site/change_password" method="POST" style="margin-top: 15px;">
-            <input type="hidden" name="username" value="<%= @site.username %>">
-            <%== csrf_token_input_html %>
+          <% if @site.parent? %>
+            <form action="/admin/site/change_password" method="POST" style="margin-top: 15px;">
+              <input type="hidden" name="username" value="<%= @site.username %>">
+              <%== csrf_token_input_html %>
 
-            <p>New Password:</p>
-            <input class="input-Area" name="new_password" type="password">
+              <p>New Password:</p>
+              <input class="input-Area" name="new_password" type="password">
 
-            <p>Confirm New Password:</p>
-            <input class="input-Area" name="new_password_confirm" type="password">
+              <p>Confirm New Password:</p>
+              <input class="input-Area" name="new_password_confirm" type="password">
 
-            <p><input class="btn-Action" type="submit" value="Change Password" onclick="return confirm('Are you sure you want to change this password?');"></p>
-          </form>
+              <p><input class="btn-Action" type="submit" value="Change Password" onclick="return confirm('Are you sure you want to change this password?');"></p>
+            </form>
+          <% end %>
         </div>
       </div>
 
