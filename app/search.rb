@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-SEARCH_BACKEND_URL = $config['search_backend_url']
-SEARCH_BACKEND_TIMEOUT = $config['search_backend_timeout']
+SEARCH_URL             = $config['search_url']
+SEARCH_CONNECT_TIMEOUT = $config['search_connect_timeout']
+SEARCH_WRITE_TIMEOUT   = $config['search_write_timeout']
+SEARCH_READ_TIMEOUT    = $config['search_read_timeout']
 
 post '/search/?' do
   query = params[:q].to_s.strip
@@ -21,7 +23,7 @@ get '/search/?' do
     @total_results = 0
 
     begin
-      @resp = JSON.parse HTTP.timeout(global: SEARCH_BACKEND_TIMEOUT).get(SEARCH_BACKEND_URL, params: {
+      @resp = JSON.parse HTTP.timeout(connect: SEARCH_CONNECT_TIMEOUT, write: SEARCH_WRITE_TIMEOUT, read: SEARCH_READ_TIMEOUT).get(SEARCH_URL, params: {
         num: 100,
         start: @start,
         q: Rack::Utils.escape(@query) + ' -filetype:pdf -filetype:txt site:*.neocities.org'

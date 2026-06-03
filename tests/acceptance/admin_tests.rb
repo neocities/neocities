@@ -31,6 +31,19 @@ describe '/admin' do
       _(page.driver.status_code).must_equal 302
       site_to_ban.reload
       _(site_to_ban.is_banned).must_equal false
+
+      site_to_change = Fabricate :site, password: 'oldpass'
+
+      page.driver.post '/admin/site/change_password', {
+        username: site_to_change.username,
+        new_password: 'newpass',
+        new_password_confirm: 'newpass'
+      }
+
+      _(page.driver.status_code).must_equal 302
+      site_to_change.reload
+      _(site_to_change.valid_password?('oldpass')).must_equal true
+      _(site_to_change.valid_password?('newpass')).must_equal false
     end
 
     it 'blocks all /admin paths for non-admin users' do
@@ -44,7 +57,7 @@ describe '/admin' do
       end
       
       # Test POST routes
-      ['/admin/reports', '/admin/ban', '/admin/unban', '/admin/mark_nsfw', '/admin/feature', '/admin/email'].each do |path|
+      ['/admin/reports', '/admin/ban', '/admin/unban', '/admin/mark_nsfw', '/admin/feature', '/admin/email', '/admin/site/change_password'].each do |path|
         page.driver.post path, {}
         _(page.driver.status_code).must_equal 302, "Expected redirect for POST #{path}"
         
@@ -297,6 +310,62 @@ describe '/admin' do
 
       _(blurred_image[:style].to_s).must_match(/filter:\s*blur\(4px\)/)
       _(clear_image[:style].to_s).wont_match(/filter:\s*blur\(4px\)/)
+    end
+
+    it 'changes a site password' do
+      EmailWorker.jobs.clear
+      site = Fabricate :site, password: 'oldpass'
+
+      visit "/admin/site/#{site.username}"
+
+      within(:css, 'form[action="/admin/site/change_password"]') do
+        fill_in 'new_password', with: 'newpass'
+        fill_in 'new_password_confirm', with: 'newpass'
+        click_button 'Change Password'
+      end
+
+      _(page).must_have_content(/Password changed/)
+      site.reload
+      _(site.valid_password?('oldpass')).must_equal false
+      _(site.valid_password?('newpass')).must_equal true
+      _(EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /password has been changed/i}.length).must_equal 1
+    end
+
+    it 'does not leave a selected child site old password valid' do
+      parent_site = Fabricate :site, password: 'parentold'
+      child_site = Fabricate :site, parent_site_id: parent_site.id, password: 'childold'
+
+      visit "/admin/site/#{child_site.username}"
+
+      within(:css, 'form[action="/admin/site/change_password"]') do
+        fill_in 'new_password', with: 'newpass'
+        fill_in 'new_password_confirm', with: 'newpass'
+        click_button 'Change Password'
+      end
+
+      parent_site.reload
+      child_site.reload
+      _(parent_site.valid_password?('parentold')).must_equal false
+      _(child_site.valid_password?('parentold')).must_equal false
+      _(child_site.valid_password?('childold')).must_equal false
+      _(child_site.valid_password?('newpass')).must_equal true
+    end
+
+    it 'does not change a password when confirmation does not match' do
+      site = Fabricate :site, password: 'oldpass'
+
+      visit "/admin/site/#{site.username}"
+
+      within(:css, 'form[action="/admin/site/change_password"]') do
+        fill_in 'new_password', with: 'newpass'
+        fill_in 'new_password_confirm', with: 'different'
+        click_button 'Change Password'
+      end
+
+      _(page).must_have_content(/New passwords do not match/)
+      site.reload
+      _(site.valid_password?('oldpass')).must_equal true
+      _(site.valid_password?('newpass')).must_equal false
     end
 
   end

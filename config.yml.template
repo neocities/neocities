@@ -33,6 +33,10 @@ development:
   google_custom_search_query_limit: 69
   support_email: derp@example.com
   moderation_blur_categories: [ cats, dogs ]
+  search_url: https://example.com/customsearch/v1
+  search_connect_timeout: 1
+  search_read_timeout: 1
+  search_write_timeout: 1
 test:
   database: 'postgres://localhost/neocities_test'
   database_pool: 1
@@ -72,3 +76,7 @@ test:
   google_custom_search_query_limit: 69
   support_email: derp@example.com
   moderation_blur_categories: [ cats, dogs ]
+  search_url: https://example.com/customsearch/v1
+  search_connect_timeout: 1
+  search_read_timeout: 1
+  search_write_timeout: 1
