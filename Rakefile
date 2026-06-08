@@ -261,3 +261,40 @@ task :dedupetags => [:environment] do
     end
   end
 end
+
+desc 'generate html urls'
+task :generatehtmlurls => [:environment] do
+  require 'csv'
+
+  html_files = DB[:site_files].
+    join(:sites, id: :site_id).
+    select(
+      Sequel[:sites][:username],
+      Sequel[:sites][:domain],
+      Sequel[:sites][:score],
+      Sequel[:site_files][:path]
+    ).
+    where(Sequel[:sites][:site_changed] => true).
+    exclude(Sequel[:sites][:updated_at] => nil).
+    exclude(Sequel[:sites][:is_deleted] => true).
+    exclude(Sequel[:sites][:is_nsfw] => true).
+    exclude(Sequel[:site_files][:path] => 'not_found.html').
+    where(Sequel[:site_files][:path] => /\.html?$/).
+    order(Sequel.desc(Sequel[:sites][:score]))
+
+  CSV.open('out.csv', 'w') do |csv|
+    csv << ['url', 'score']
+
+    html_files.each do |row|
+      host = row[:domain].to_s.empty? ? "#{row[:username]}.neocities.org" : row[:domain]
+      path = row[:path]
+      path = '' if path == '/' || path =~ Site::ROOT_INDEX_HTML_REGEX
+      path = path.sub(%r{^/}, '').sub(%r{/index\.html?$}, '/').sub(/\.html?$/, '')
+
+      url = "https://#{host}"
+      url += "/#{Site.escape_path(path)}" unless path.empty?
+
+      csv << [url, row[:score]]
+    end
+  end
+end
