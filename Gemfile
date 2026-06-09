@@ -90,3 +90,5 @@ group :test do
   gem 'simplecov',                        require: nil
   gem 'm'
 end
+
+gem "rackup", "~> 2.3"
