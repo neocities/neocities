@@ -36,13 +36,15 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 COPY . .
+COPY docker/config.yml.docker config.yml
 
 # Ensure gitignored directories and seed files exist in the image layer
 # (the entrypoint also handles this for volume-mounted dev setups)
 RUN mkdir -p public/sites public/site_thumbnails public/site_screenshots \
              public/banned_sites public/deleted_sites \
     && touch files/disposable_email_blacklist.conf \
-             files/disposable_email_whitelist.conf
+             files/disposable_email_whitelist.conf \
+    && chmod +x docker/docker-entrypoint.sh
 
 EXPOSE 9292
 
