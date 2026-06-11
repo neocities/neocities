@@ -453,8 +453,8 @@ DEPENDENCIES
   puma
   rack-test
   rack_session_access
-  rackup (~> 2.3)
   rake (>= 12.3.3)
+  redis
   redis-namespace
   rest-client
   rinku
