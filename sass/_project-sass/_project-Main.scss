@@ -384,12 +384,13 @@
 
     >.btn+.btn {
       margin-left: 0px;
-      border-left: 1px solid rgba(0, 0, 0, 0.1);
+      border-left: 1px solid rgba(0, 0, 0, 0.4);
     }
     .btn {
-      padding: 7px 11px;
+      padding: 5px 12px;
       margin-top: 1px;
       background: #77ABB8;
+      border-color: #48676f;
       @include box-shadow(0 0 5px rgba(0, 0, 0, 0.2));
 
       &:focus, &.active {
@@ -397,11 +398,29 @@
         background: #4F727B;
       }
     }
+    >.btn:first-child {
+      margin-left: 0;
+      -webkit-border-bottom-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      -webkit-border-top-left-radius: 4px;
+      border-top-left-radius: 4px;
+      -moz-border-radius-bottomleft: 4px;
+      -moz-border-radius-topleft: 4px;
+    }
+    >.btn:last-child, >.dropdown-toggle {
+      -webkit-border-top-right-radius: 4px;
+      border-top-right-radius: 4px;
+      -webkit-border-bottom-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+      -moz-border-radius-topright: 4px;
+      -moz-border-radius-bottomright: 4px;
+    }
   }
 }
 .files {
   .btn.iconview-button {
     background: #4F727B;
+    border-right: 0;
   }
   .btn.listview-button {
     background: #77ABB8;
@@ -417,9 +436,9 @@
 }
 #filesDisplay.files {
   background: #efe7dc;
-  border: 1px solid #ded3c4;
+  border: 0;
   @include border-radius(6px);
-  @include box-shadow($bs-Panel);
+  @include box-shadow(0 1px 2px rgba(0, 0, 0, 0.08), 0 8px 22px rgba(48, 66, 75, 0.08), inset 0 0 0 1px #cec0ad);
   overflow: hidden;
 }
 .files .header {
@@ -429,11 +448,15 @@
   float:left;
   width: 100%;
   padding: 10px 20px;
+  border: 1px solid #47757f;
+  @include box-shadow(inset 0 1px #ffffff50);
+  border-radius: 6px 6px 0 0;
 }
 .files .breadcrumbs {
   float: left;
   font-weight:bold;
-  margin-top: 4px;
+  margin-top: 3px;
+  text-shadow: 0 1px 2px #00000050;
   a {
     color: white;
   }
@@ -814,7 +837,8 @@
     width: 100%;
 
     &:nth-child(even) {
-      background: #EFE8DC;
+      background: #f4eee5;
+      @include(box-shadow: inset 1px 0 #cec0ad, inset -1px 0 #cec0ad);
     }
     .title {
       margin: 0;
@@ -1002,6 +1026,7 @@
   width: 100%;
   position: relative;
   border-right: 1px solid #ddd;
+  box-shadow: 1px 0 0 #ffffff85;
   h2 {
     margin-top: 1em;
     float: left;
@@ -1010,6 +1035,7 @@
   }
   @media (max-device-width:480px), screen and (max-width:800px) {
     border: 0;
+    box-shadow: none;
   }
 }
 .content.misc-page .col-33 h3 {
@@ -1106,9 +1132,11 @@
 .interior .header-Outro.with-columns .col-66 {
   width: 67%;
   border-right: 1px solid #0B0F11;
+  box-shadow: 1px 0 0 #ffffff10;
 
   @media (max-device-width:480px), screen and (max-width:800px) {
    border-right: 0;
+   box-shadow: none;
    padding: 15px 0 27px 30px;
   }
 }
@@ -1239,10 +1267,11 @@ a.tag:hover {
   clear: both;
   position: relative;
   box-sizing: border-box;
-  padding: 15px 0 16px 0;
+  padding: 12px 0 14px 0;
   margin: 0;
   background: transparent;
   border-top: 0;
+  border-bottom: 1px solid #eee;
 }
 .news-item, .news-item * {
   box-sizing: border-box;
@@ -1291,7 +1320,7 @@ a.tag:hover {
   padding: 0;
   margin-right: 12px;
   overflow: hidden;
-  @include border-radius(5px);
+  @include border-radius(8px);
   a {
     background-position: center;
     background-repeat: no-repeat;
@@ -1356,7 +1385,7 @@ a.tag:hover {
   padding: 0px;
   margin-bottom: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 .news-item.update .file {
@@ -1466,7 +1495,13 @@ a.tag:hover {
 .news-item .comments .actions, .news-item .comments p {
   margin-left: 47px;
 }
-
+.news-item .comments .actions a:before, .news-item .comments .actions a, .news-item .comments .date a {
+    color: #8a775e !important;
+}
+.news-item .comments .actions a:hover {
+    color: #e93250 !important;
+    text-decoration: none;
+}
 .news-item .comments p {
   margin-bottom: .4em;
   margin-top: .15em;
@@ -1598,20 +1633,27 @@ a.tag:hover {
 }
 .news-item .comments {
   margin-top: .7em;
-  padding: 10px 12px 2px 12px;
+  padding: 10px 12px 12px 12px;
   background: $c-Warm-Panel;
+  box-shadow: 0 2px 4px #4a3c290f, inset 0 1px #fff;
   border: 1px solid #eee2d3;
   @include border-radius(4px);
 }
 .news-item .comments .comment {
   font-size: .9em;
   clear: both;
-  margin-top: 1em;
+  border-top: 1px solid #eee2d3;
+  padding-top: 0.6em;
+  margin-top: 0.6em;
+  box-shadow: inset 0 1px #fff;
   width: 100%;
   float: left;
 }
 .news-item .comments .comment:first-child {
+  border-top: 0;
+  padding-top: 0;
   margin-top: 0;
+  box-shadow: none;
 }
 .news-item .comments .comment .user {
   margin-right: 5px;
@@ -1692,7 +1734,7 @@ a.tag:hover {
     margin-left: 0;
   }
   .news-item > .title + .content, .news-item > .title + .actions, .news-item.comment > .title + .content {
-    margin-top: 8px;
+    margin-top: 2px;
   }
   .news-item .files {
     display: block;
@@ -1893,9 +1935,11 @@ a.tag:hover {
   box-sizing: border-box;
   padding: 16px 18px;
   margin: 0 0 3px 0;
+  border-bottom: 1px solid #ceddba;
 
   form {
     margin: 0;
+    text-align: right;
   }
 
   textarea {
@@ -1906,6 +1950,9 @@ a.tag:hover {
     resize: vertical;
     width: 100%;
     float: none;
+    border: 1px solid #84997E;
+    border-radius: 4px;
+    box-shadow: 0 1px #ffffffaa;
   }
   .btn-Action {
     margin: 0;
