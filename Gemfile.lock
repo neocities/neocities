@@ -276,8 +276,6 @@ GEM
     rack_session_access (0.2.0)
       builder (>= 2.0.0)
       rack (>= 1.0.0)
-    rackup (2.3.1)
-      rack (>= 3)
     rake (13.3.1)
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
@@ -457,7 +455,6 @@ DEPENDENCIES
   rack_session_access
   rackup (~> 2.3)
   rake (>= 12.3.3)
-  redis
   redis-namespace
   rest-client
   rinku
