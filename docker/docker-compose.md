@@ -1,3 +1,6 @@
+# docker-compose.yml
+
+```yaml
 services:
   web:
     container_name: ${WEB_INTERFACE_CONTAINER}
@@ -86,3 +89,4 @@ volumes:
   redis_data:
   site_files:
   clamav_data:
+```
