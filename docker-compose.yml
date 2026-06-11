@@ -1,0 +1,88 @@
+services:
+  web:
+    container_name: ${WEB_INTERFACE_CONTAINER}
+    image: neocities
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "9292:9292"
+    volumes:
+      - .:/app
+      - ./docker/config.yml.docker:/app/config.yml:ro
+      - site_files:/app/public/sites
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/9292' 2>/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+    environment:
+      RACK_ENV: development
+
+  worker:
+    image: neocities
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: worker
+    volumes:
+      - .:/app
+      - ./docker/config.yml.docker:/app/config.yml:ro
+      - site_files:/app/public/sites
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      RACK_ENV: development
+
+  db:
+    container_name: ${DATABASE_CONTAINER}
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  redis:
+    container_name: ${REDIS_CONTAINER}
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "6379:6379"
+
+  # ClamAV is opt-in for dev: docker compose --profile clamav up
+  clamav:
+    image: clamav/clamav:stable
+    volumes:
+      - clamav_data:/var/lib/clamav
+    profiles:
+      - clamav
+
+volumes:
+  postgres_data:
+  redis_data:
+  site_files:
+  clamav_data:
