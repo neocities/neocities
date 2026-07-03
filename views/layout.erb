@@ -9,23 +9,7 @@
       <meta name="robots" content="<%= meta_robots %>">
     <% end %>
 
-    <script>
-      (function() {
-        var storedTheme;
-        try {
-          storedTheme = localStorage.getItem('neocities-theme');
-        } catch (e) {}
-
-        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
-          document.documentElement.className += ' dark-Mode';
-          document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
-      })();
-    </script>
+    <%== erb :'_theme_bootstrap', layout: false %>
 
     <link href="/css/neo.css" rel="stylesheet" type="text/css" media="all">
 

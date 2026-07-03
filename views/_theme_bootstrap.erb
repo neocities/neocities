@@ -1,0 +1,23 @@
+<script>
+  (function() {
+    var themeKey = 'neocities-theme';
+    var storedTheme;
+
+    try {
+      storedTheme = localStorage.getItem(themeKey);
+    } catch (e) {}
+
+    if (storedTheme === 'dark') {
+      document.documentElement.className += ' dark-Mode';
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      if (storedTheme !== 'light') {
+        try {
+          localStorage.setItem(themeKey, 'light');
+        } catch (e) {}
+      }
+
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  })();
+</script>
