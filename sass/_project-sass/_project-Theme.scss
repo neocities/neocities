@@ -50,10 +50,13 @@
     }
 
     &:focus {
-      background: transparent;
       box-shadow: none;
       outline: 0;
       text-decoration: none;
+    }
+
+    &:focus:not(:hover) {
+      background: transparent;
     }
 
     &:focus-visible {
@@ -114,7 +117,7 @@ html.dark-Mode {
       background: rgba(8, 18, 22, .36);
     }
 
-    .theme-Toggle:focus {
+    .theme-Toggle:focus:not(:hover) {
       background: transparent;
     }
 
