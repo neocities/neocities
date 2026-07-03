@@ -197,7 +197,8 @@
 
   fieldset{
     padding: 25px 33px;
-    background:url(/img/sign-up-bg.png) repeat-x center top;
+    background:#354b55;
+    @include linear-gradient(top, #42616e 0%, #354b55 52%, #2e444d 100%);
     border-radius: 4px 4px 0 0;
   }
 
@@ -441,6 +442,7 @@
   padding-top:46px;
 }
 .hp .header-Nav{
+  @include vendor(transition, all 0.35s);
   left:0;
   position:fixed;
   top:0;

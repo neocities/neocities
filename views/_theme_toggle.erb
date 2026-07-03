@@ -1,0 +1,9 @@
+<% icon_only = defined?(icon_only) && icon_only %>
+<li class="theme-NavItem<%= icon_only ? ' theme-NavItem--iconOnly' : '' %>">
+  <button type="button" class="theme-Toggle<%= icon_only ? ' theme-Toggle--iconOnly' : '' %>" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode" title="Switch to dark mode">
+    <i class="fa fa-moon-o" aria-hidden="true"></i>
+    <% unless icon_only %>
+      <span class="theme-ToggleText">Dark Mode</span>
+    <% end %>
+  </button>
+</li>

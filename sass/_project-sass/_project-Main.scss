@@ -1603,6 +1603,11 @@ a.tag:hover {
   border: 1px solid #eee2d3;
   @include border-radius(4px);
 }
+.news-item .comments:after {
+  content: "";
+  clear: both;
+  display: table;
+}
 .news-item .comments .comment {
   font-size: .9em;
   clear: both;
@@ -2673,6 +2678,9 @@ a.tag:hover {
 }
 .browse-search-page .filter {
   width: 100%;
+}
+.interior .header-Outro.browse-search-page {
+  background: transparent;
 }
 .search-home-page {
   align-items: center;

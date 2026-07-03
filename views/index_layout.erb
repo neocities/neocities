@@ -5,6 +5,24 @@
 
   <%== erb :'_meta' %>
 
+  <script>
+    (function() {
+      var storedTheme;
+      try {
+        storedTheme = localStorage.getItem('neocities-theme');
+      } catch (e) {}
+
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+        document.documentElement.className += ' dark-Mode';
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
   <link href="/css/neo.css" rel="stylesheet" type="text/css" media="all">
 
   <!--[if lt IE 9]>

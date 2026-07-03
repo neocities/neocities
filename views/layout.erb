@@ -9,6 +9,24 @@
       <meta name="robots" content="<%= meta_robots %>">
     <% end %>
 
+    <script>
+      (function() {
+        var storedTheme;
+        try {
+          storedTheme = localStorage.getItem('neocities-theme');
+        } catch (e) {}
+
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+          document.documentElement.className += ' dark-Mode';
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+
     <link href="/css/neo.css" rel="stylesheet" type="text/css" media="all">
 
     <% if @dont_browser_cache %>
@@ -51,7 +69,8 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/typeahead.bundle.js"></script>
     <script src="/js/dayjs.min.js"></script>
-    
+    <script src="/js/theme.js"></script>
+
     <script>
       $("a#like").tooltip({html: true})
       $("a.comment_like").tooltip({html: true})

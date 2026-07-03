@@ -31,6 +31,7 @@
           <li>
             <a href="https://neocities.org/#new" class="sign-In">Create Account</a>
           </li>
+          <%== erb :'_theme_toggle', layout: false, locals: {icon_only: true} %>
         </ul>
       </nav>
 
@@ -239,5 +240,6 @@
       </aside>
     </footer>
   </div>
+  <script src="/js/theme.js"></script>
   <script src="/js/app.min.js"></script>
 </body>
