@@ -1,145 +1,292 @@
+<%
+  has_editor = @page < TUTORIAL_PAGE_COUNT
+  review_page = @page == TUTORIAL_COMPLETION_PAGE
+  if @page == TUTORIAL_COMPLETION_PAGE - 1
+    next_url = "/tutorial/#{@section}/#{TUTORIAL_COMPLETION_PAGE}?csrf_token=#{Rack::Utils.escape csrf_token}"
+  else
+    next_url = "/tutorial/#{@section}/#{@page + 1}"
+  end
+%>
 <section class="section tutorial">
-  <div class="row">
-    <% if request.path =~ /\/html\/10?/ %>
-    <div class="col col-100 lesson">
-    <% else %>
-    <div class="col col-60 lesson">
+  <nav class="tutorial-Progress" aria-label="Tutorial progress">
+    <% 1.upto(TUTORIAL_PAGE_COUNT) do |p| %>
+      <% classes = ['tutorial-Step'] %>
+      <% classes << 'is-Current' if p == @page %>
+      <% classes << 'is-Done' if p < @page %>
+      <% if p < @page %>
+        <% step_url = p == TUTORIAL_COMPLETION_PAGE ? "/tutorial/#{@section}/#{p}?csrf_token=#{Rack::Utils.escape csrf_token}" : "/tutorial/#{@section}/#{p}" %>
+        <a href="<%= step_url %>" class="<%= classes.join(' ') %>" title="<%= tutorial_page_title(p) %>"><%= p %></a>
+      <% else %>
+        <span class="<%= classes.join(' ') %>" title="<%= tutorial_page_title(p) %>"<%== p == @page ? ' aria-current="step"' : '' %>><%= p %></span>
+      <% end %>
     <% end %>
-      <h1><%= @section.upcase %> Tutorial</h1>
-      <h2 class="subtitle">Page <%= @page %>/10</h2>
+  </nav>
+
+  <div class="row">
+    <div class="col <%= has_editor ? 'col-50' : 'col-100' %> lesson">
+      <p class="step-Count">HTML Tutorial &middot; Step <%= @page %> of <%= TUTORIAL_PAGE_COUNT %></p>
+      <h1><%= tutorial_page_title(@page) %></h1>
 
       <%== erb "tutorial/#{@section}/#{@page}".to_sym, layout: false %>
-    </div>
 
-    <% if request.path =~ /\/html\/10?/ %>
-    <% else %>
-
-    <div class="col col-40 interact">
-      <% if request.path =~ /\/html\/9/ %>
-      <div style="float: left">
-        <p>Saving your tutorial work will replace anything currently in your <a href="<%= current_site.uri %>/index.html">index.html</a>. If you've modified it before, make sure there isn't anything valuable there before you proceed!</p>
-        <a href="/tutorial/html/10" class="btn cancel float-Left">Don't Save</a>
-        <a href="#" id="saveToSite" class="btn btn-Action float-Left" style="margin-right: 7px">Save to <%= current_site.username %>.neocities.org</a>
-      </div>
-      <% else %>
-      <input id="submit" class="btn btn-Action" type="submit" value="Save">
-      <input id="reset" class="btn cancel" style="margin-right: 7px" type="submit" value="Reset">
+      <% if @page > 1 && has_editor %>
+        <p class="lesson-Nav"><a href="/tutorial/<%= @section %>/<%= @page - 1 %>">&laquo; Back to the previous step</a></p>
       <% end %>
-      <h3 class="editor-heading">HTML</h3>
-
-      <div id="editor" class="editor"><%== encoding_fix default_tutorial_html %></div>
-
-        <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-
-        <script>
-          $(document).ready(function() {
-            editor = ace.edit("editor")
-            editor.setTheme('ace/theme/tomorrow_night')
-            editor.getSession().setMode("ace/mode/html")
-            editor.getSession().setTabSize(2)
-            editor.getSession().setUseWrapMode(true)
-            editor.setFontSize(14)
-            editor.setShowPrintMargin(false)
-            editor.setOptions({
-              maxLines: Infinity,
-              autoScrollEditorIntoView: true
-            })
-
-            // Disable autocomplete
-            editor.setBehavioursEnabled(false)
-
-            editor.on('change', function(obj) {
-              $('.error').css('display', 'none')
-              refreshIframe()
-            })
-
-            editor.commands.addCommand({
-              name: 'saveCommand',
-              bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-              exec: function(editor) {
-                $('#submit').click()
-              }
-            })
-          })
-        </script>
-
-        <div class="error" style="display: none; margin-top: 0"></div>
-
-        <h3 id="sitePreview">Site Preview</h3>
-        <iframe class="preview" style="background: white"></iframe>
-      </div>
     </div>
 
-    <% end %>
+    <% if has_editor %>
+    <div class="col col-50 interact">
+      <% unless review_page %>
+        <div class="interact-Actions">
+          <a href="#" id="checkButton" class="btn btn-Action">Check My Work</a>
+          <a href="#" id="resetButton" class="btn cancel">Reset This Step</a>
+        </div>
 
+        <div id="tutorialFeedback" class="tutorial-Feedback" style="display: none" role="status" aria-live="polite"></div>
+      <% end %>
+
+      <h3 class="editor-heading"><%= review_page ? 'Your finished code' : 'Your code (edit me!)' %></h3>
+      <div id="editor" class="editor"><%= tutorial_starter_html(@page) %></div>
+
+      <h3 class="preview-heading">What visitors will see</h3>
+      <div class="preview-Browser">
+        <div class="preview-Chrome">
+          <span class="preview-Dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="preview-Tab"><i class="fa fa-file-o" aria-hidden="true"></i> <span id="previewTabTitle">Untitled page</span></span>
+        </div>
+        <div class="preview-UrlBar"><i class="fa fa-lock" aria-hidden="true"></i> <%= current_site.host %></div>
+        <iframe id="previewFrame" class="preview" sandbox="allow-same-origin" title="Live preview of your page"></iframe>
+      </div>
+    </div>
+    <% end %>
   </div>
 </section>
 
-<script type="text/javascript">
-  var infoObj = $('.error')
+<% if has_editor %>
+<script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<% end %>
 
-  String.prototype.tutorialMatches = function(regex, opts) {
-    if(!opts)
-      var opts = 'gis'
-
-    var result = this.match(new XRegExp(regex, opts))
-
-    if(result == null)
-      return false
-
-    return true
+<script>
+  var TUTORIAL = {
+    page: <%= @page %>,
+    pageCount: <%= TUTORIAL_PAGE_COUNT %>,
+    nextUrl: '<%== escape_javascript next_url %>',
+    hasEditor: <%= has_editor %>,
+    reviewPage: <%= review_page %>,
+    storageKey: 'neocities_tutorial_html:<%== escape_javascript current_site.username %>'
   }
 
-  function notok(msg) {
-    displayInfo('<i class="fa fa-exclamation-triangle"></i> ' + msg, {
-      background: '#93771B'
-    })
-  }
+  var defaultTutorialHtml = '<%== escape_javascript tutorial_starter_html(@page) %>'
 
-  function ok(msg, path) {
-    displayInfo(msg, {
-      background: '#88d128'
-    })
-
-    setTimeout(function() {
-      window.location.href = path
-    }, 1000)
-  }
-
-  function displayInfo(html, cssOpts) {
-    infoObj.fadeIn('slow')
-    infoObj.css(cssOpts)
-    infoObj.html(html)
-  }
-
-  $('.tutorial #submit').on('click', function() {
-    var result = checkHomework()
-    if(result == true) {
-      window.location.href = '/tutorial/<%= @section %>/<%= @page.to_i+1 %>'
+  function tutorialLoadSavedHtml() {
+    try {
+      return localStorage.getItem(TUTORIAL.storageKey)
+    } catch(e) {
+      return null
     }
-  })
-
-  $('.tutorial #reset').on('click', function() {
-    var editor = $('#editor')
-    editor.val(editor.text())
-  })
-
-  var tutorialHtml = sessionStorage.getItem('tutorialHtml')
-  if(tutorialHtml)
-    $('#editor').text(tutorialHtml)
-
-  function refreshIframe() {
-    if(typeof editor !== 'undefined')
-      $('.tutorial iframe').contents().find('html').html(editor.getValue())
   }
 
-  $(function() {
-    refreshIframe()
-  })
-
-  function preview() {
-    return $('.tutorial iframe').contents()
+  function tutorialSaveHtml(html) {
+    try {
+      localStorage.setItem(TUTORIAL.storageKey, html)
+    } catch(e) {}
   }
 
+  // --- Helpers available to each lesson's check function ---
+
+  function parseHtml(html) {
+    return new DOMParser().parseFromString(html, 'text/html')
+  }
+
+  function bodyText(doc) {
+    return (doc.body ? doc.body.textContent : '').replace(/\s+/g, ' ').trim()
+  }
+
+  // True when there are more opening <tag>s than closing </tag>s,
+  // which almost always means the student forgot a closing tag.
+  function missingClosingTag(html, tag) {
+    var openings = (html.match(new RegExp('<' + tag + '(\\s|>)', 'gi')) || []).length
+    var closings = (html.match(new RegExp('</' + tag + '\\s*>', 'gi')) || []).length
+    return closings < openings
+  }
+
+  function escapeText(text) {
+    return $('<span>').text(text).html()
+  }
+
+  function codeSample(code) {
+    return '<code>' + escapeText(code) + '</code>'
+  }
+
+  // --- Feedback UI ---
+
+  var feedbackObj = $('#tutorialFeedback')
+
+  function hint(messageHtml) {
+    feedbackObj.attr('class', 'tutorial-Feedback is-Hint')
+    feedbackObj.html('<i class="fa fa-lightbulb-o" aria-hidden="true"></i> ' + messageHtml)
+    feedbackObj.fadeIn('fast')
+  }
+
+  function success(messageHtml) {
+    feedbackObj.attr('class', 'tutorial-Feedback is-Success')
+    feedbackObj.html('<i class="fa fa-check-circle" aria-hidden="true"></i> ' + messageHtml +
+      ' <a href="' + TUTORIAL.nextUrl + '" class="feedback-Next">Next step &raquo;</a>')
+    feedbackObj.fadeIn('fast')
+  }
+
+  // --- Editor, preview and homework checking ---
+
+  var editor
+
+  // The preview iframe is sandboxed without scripts, so links inside it can't
+  // open pages themselves - and letting them navigate the iframe broke on
+  // sites that refuse to be framed. Instead, catch clicks from the parent
+  // (the frame is same-origin) and open links in a new tab, resolving
+  // relative addresses against the student's real site like a published
+  // page would.
+  function interceptPreviewLinks() {
+    var frame = document.getElementById('previewFrame')
+    var doc = frame && frame.contentDocument
+    if(!doc)
+      return
+
+    doc.addEventListener('click', function(e) {
+      var target = e.target
+      var link = target.closest ? target.closest('a[href]') : null
+      if(!link)
+        return
+
+      e.preventDefault()
+
+      var href = link.getAttribute('href')
+      if(!href || href.charAt(0) == '#')
+        return
+
+      var url
+      try {
+        url = new URL(href, 'https://<%== escape_javascript current_site.host %>/')
+      } catch(err) {
+        return
+      }
+
+      if(url.protocol == 'http:' || url.protocol == 'https:')
+        window.open(url.href, '_blank', 'noopener')
+    }, true)
+  }
+
+  function refreshPreview() {
+    if(!editor)
+      return
+
+    var html = editor.getValue()
+    var frame = document.getElementById('previewFrame')
+
+    if(frame)
+      frame.srcdoc = html
+
+    var doc = parseHtml(html)
+    var titleTag = doc.querySelector('title')
+    var tabTitle = titleTag ? titleTag.textContent.trim() : ''
+    $('#previewTabTitle').text(tabTitle == '' ? 'Untitled page' : tabTitle)
+  }
+
+  function checkHomework() {
+    if(typeof lessonCheck === 'undefined')
+      return
+
+    var html = editor.getValue()
+    var result = lessonCheck(parseHtml(html), html)
+
+    if(result.ok) {
+      tutorialSaveHtml(html)
+      success(result.message)
+    } else {
+      hint(result.message)
+    }
+  }
+
+  var refreshTimer, saveTimer
+
+  $(document).ready(function() {
+    // hljs.highlightAll() only covers <pre><code> blocks; color the inline
+    // code chips in the lesson too. The tag anatomy diagram is skipped: its
+    // fragments (like a lone opening tag) are too partial for the parser,
+    // so its pieces are hand-colored with anatomy-* classes instead.
+    document.querySelectorAll('.tutorial .lesson code').forEach(function(el) {
+      if(el.closest('.tag-Anatomy') || el.classList.contains('hljs'))
+        return
+      el.classList.add('html')
+      hljs.highlightElement(el)
+    })
+
+    if(!TUTORIAL.hasEditor)
+      return
+
+    editor = ace.edit('editor')
+    editor.setTheme('ace/theme/tomorrow_night')
+    editor.getSession().setMode('ace/mode/html')
+    editor.getSession().setTabSize(2)
+    editor.getSession().setUseWrapMode(true)
+    editor.setFontSize(14)
+    editor.setShowPrintMargin(false)
+    editor.setOptions({
+      maxLines: Infinity,
+      autoScrollEditorIntoView: true
+    })
+
+    // Disable bracket/tag autocompletion - beginners should type both tags themselves
+    editor.setBehavioursEnabled(false)
+
+    var savedHtml = tutorialLoadSavedHtml()
+    if(savedHtml)
+      editor.setValue(savedHtml, -1)
+
+    if(TUTORIAL.reviewPage) {
+      editor.setReadOnly(true)
+    } else {
+      editor.on('change', function() {
+        feedbackObj.fadeOut('fast')
+
+        clearTimeout(refreshTimer)
+        refreshTimer = setTimeout(refreshPreview, 200)
+
+        clearTimeout(saveTimer)
+        saveTimer = setTimeout(function() {
+          tutorialSaveHtml(editor.getValue())
+        }, 500)
+      })
+
+      editor.commands.addCommand({
+        name: 'saveCommand',
+        bindKey: {win: 'Ctrl-S', mac: 'Command-S'},
+        exec: function() {
+          checkHomework()
+        }
+      })
+    }
+
+    var previewFrame = document.getElementById('previewFrame')
+    if(previewFrame)
+      previewFrame.addEventListener('load', interceptPreviewLinks)
+
+    refreshPreview()
+
+    $('#checkButton').on('click', function(e) {
+      e.preventDefault()
+      this.blur()
+      checkHomework()
+    })
+
+    $('#resetButton').on('click', function(e) {
+      e.preventDefault()
+      this.blur()
+      if(confirm('This replaces your work with the example page for this step. Reset?')) {
+        editor.setValue(defaultTutorialHtml, -1)
+        tutorialSaveHtml(defaultTutorialHtml)
+        refreshPreview()
+        feedbackObj.fadeOut('fast')
+      }
+    })
+  })
 </script>
-<script src="/js/xregexp-min.js"></script>

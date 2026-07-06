@@ -3,89 +3,636 @@
 // ----------------------------------------------------------------
 
 .tutorial {
-  p {
-    font-size: 1em;
+  padding-top: 40px;
+
+  // Flat buttons, no gradient. Bootstrap's .btn:focus (imported at the top of
+  // neo.css) shifts background-position -15px, which made the .btn-Action
+  // gradient wrap into a two-tone split on a clicked (still focused) button,
+  // and its outline-offset:-2px drew a dark ring inside the edges. A flat
+  // background has nothing to shift; the resets below cover the rest.
+  .btn {
+    background-image: none;
+
+    &:hover, &:active, &:focus {
+      background-image: none;
+      background-position: 0 0;
+    }
+
+    &:focus {
+      outline: 0;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .18);
+    }
+
+    &.btn-Action {
+      background-color: #e93250;
+
+      &:hover, &:active {
+        background-color: #c01f39;
+      }
+    }
   }
-  .interact {
-    textarea.editor {
-      height: 350px!important;
-      width: 100%;
-      background-color: #1D1F21;
-      color: white;
-      font: 16px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+
+  // Inline code renders as a tidy rounded chip; the base style's green left
+  // bar reads well on block examples but looked odd on inline mentions.
+  // Block examples keep the green bar via their <pre> wrapper.
+  code {
+    border-left: 0;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 0;
+    // The hljs theme sets overflow-x:auto, which shifts an inline-block's
+    // baseline to its bottom edge and threw chips out of line with the text.
+    overflow: visible;
+    padding: 2px 7px;
+    // Bootstrap sets code{white-space:nowrap}, which made long chips overflow
+    // their container instead of wrapping.
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  pre code {
+    border-radius: 0;
+    padding: 0;
+  }
+
+  // --- Progress steps across the top ---
+
+  .tutorial-Progress {
+    text-align: center;
+    margin-bottom: 30px;
+
+    .tutorial-Step {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      line-height: 28px;
+      padding: 0;
+      vertical-align: middle;
+      margin: 0 3px 6px;
+      border-radius: 50%;
+      border: 2px solid #c5d6da;
+      background: #fff;
+      color: #5e95a1;
+      font-size: 13px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+
+      &.is-Done {
+        background: #5e95a1;
+        border-color: #5e95a1;
+        color: #fff;
+
+        &:hover {
+          background: #4a7f8b;
+          border-color: #4a7f8b;
+          text-decoration: none;
+        }
+      }
+
+      &.is-Current {
+        border-color: #e93250;
+        color: #e93250;
+      }
+    }
+  }
+
+  // --- Lesson column ---
+
+  .lesson {
+    .step-Count {
+      color: #5e95a1;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+    }
+
+    h1 {
+      color: #5e95a1;
+      margin-top: 0;
+    }
+
+    pre {
+      margin: 8px 0;
+    }
+
+    .lesson-List li {
+      margin-bottom: 6px;
+    }
+
+    .lesson-Nav {
+      margin-top: 25px;
+    }
+  }
+
+  // --- Penelope speech bubble ---
+
+  .penelope {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+
+    img {
+      width: 90px;
+      height: auto;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .penelope-Bubble {
+      position: relative;
+      background: #eef6f8;
+      border: 2px solid #b8d4da;
+      border-radius: 12px;
+      padding: 12px 16px;
+
+      &:before {
+        content: '';
+        position: absolute;
+        left: -12px;
+        top: 28px;
+        border: 6px solid transparent;
+        border-right-color: #b8d4da;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+  }
+
+  // --- "Your turn" task box ---
+
+  .your-Turn {
+    background: #f4fae8;
+    border: 2px solid #a8cc63;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin: 20px 0;
+
+    h4 {
+      margin: 0 0 10px;
+      color: #5c7d1f;
+    }
+
+    ol {
       margin-bottom: 0;
+
+      li {
+        margin-bottom: 8px;
+      }
+    }
+
+    .btn {
+      margin: 8px 10px 4px 0;
+    }
+
+    .save-Warning {
+      background: #fdf3d7;
+      border-radius: 6px;
+      padding: 8px 12px;
+    }
+  }
+
+  // --- Bonus info box ---
+
+  .bonus-Box {
+    background: #16414c;
+    color: #dcebee;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin: 20px 0;
+
+    h4 {
+      color: #8fd128;
+      margin: 0 0 8px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    a {
+      color: #9fd8e4;
+    }
+
+    code {
+      background: rgba(255, 255, 255, .12);
+      color: #dcebee;
       border: 0;
     }
-    h3.editor-heading {
-      margin-top: 10px;
-    }
-    .preview {
-      height: 300px;
-      width: 100%;
-      background-color: gray;
-    }
-    .btn {
-      float: right;
-    }
-    .error {
-      background: #93771b;
-      color: #fff;
-      padding: 5px 10px;
-      font-size: 14px;
+  }
+
+  // --- Tag anatomy diagram ---
+
+  // A code example taken apart, with a label under each piece. The pieces are
+  // hand-colored via the anatomy-* classes (hljs can't parse the fragments),
+  // so the palette here has light- and dark-mode variants further below.
+  .tag-Anatomy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+    padding: 16px 12px 10px;
+    margin: 15px 0;
+
+    .tag-Part {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 2px 6px;
+
+      code, .tag-Content {
+        font-size: 1em;
+        line-height: 1.5;
+      }
+
+      code {
+        display: inline-block;
+        background: none;
+        border: 0;
+        color: #57606a;
+        margin: 0;
+        padding: 2px 3px;
+      }
+
+      .anatomy-Tag {
+        color: #cf222e;
+      }
+
+      .anatomy-Attr {
+        color: #953800;
+      }
+
+      .anatomy-String {
+        color: #0a3069;
+      }
+
+      .tag-Content {
+        padding: 2px 7px;
+        background: #fdf3d7;
+        color: #333;
+        border-radius: 4px;
+      }
+
+      small {
+        color: #8b959a;
+        font-size: 11px;
+        margin-top: 5px;
+        text-align: center;
+        white-space: nowrap;
+      }
     }
   }
-  .lesson {
-    h1, .subtitle {
+
+  // --- Cheat sheet table ---
+
+  .cheat-Sheet {
+    width: 100%;
+    margin: 10px 0 20px;
+    border-collapse: collapse;
+
+    th, td {
+      text-align: left;
+      padding: 6px 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
       color: #5e95a1;
     }
-    .subtitle {
-      font-size: 14px;
-      margin-top: 0;
-      text-align: left;
-    }
-    .comic {
-      position: relative;
-      background-repeat: no-repeat;
-    }
-    .dialogue {
-      width: 180px;
-      position: absolute;
-      text-align: center;
 
-      &:nth-child(1) {
-        left: 30px;
-        top: 30px;
+    code {
+      display: inline-block;
+      border-left: 0;
+      margin: 0;
+      padding: 2px 6px;
+      white-space: nowrap;
+    }
+  }
+
+  // --- Interactive column: editor, feedback, preview ---
+
+  .interact {
+    .interact-Actions {
+      margin-bottom: 12px;
+
+      .btn {
+        margin-right: 7px;
       }
-      &:nth-child(2) {
-        left: 250px;
-        top: 30px;
+    }
+
+    h3.editor-heading, h3.preview-heading {
+      margin: 12px 0 6px;
+      font-size: 16px;
+    }
+
+    .editor {
+      border-radius: 6px;
+    }
+
+    .tutorial-Feedback {
+      border-radius: 6px;
+      color: #fff;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+
+      &.is-Hint {
+        background: #93771b;
       }
-      &:nth-child(3) {
-        left: 30px;
-        top: 250px;
+
+      &.is-Success {
+        background: #4e9722;
       }
-      &:nth-child(4) {
-        left: 250px;
-        top: 250px;
+
+      a, a:visited {
+        color: #fff;
+        text-decoration: underline;
       }
-      pre, code {
-        padding: 0;
+
+      .feedback-Next {
+        display: inline-block;
+        background: rgba(255, 255, 255, .22);
+        border-radius: 4px;
+        font-weight: bold;
+        margin-left: 6px;
+        padding: 3px 12px;
+        text-decoration: none;
+        white-space: nowrap;
+
+        &:hover {
+          background: rgba(255, 255, 255, .34);
+          text-decoration: none;
+        }
+      }
+
+      code {
+        display: inline-block;
+        background: rgba(0, 0, 0, .28);
+        border: 0;
+        color: #fff;
         margin: 0;
-        background: none;
-        color: #666;
-        border: none;
-        display: block;
-        font-size: 100%;
+        padding: 0 5px;
       }
-      pre {
-        padding-top: .1em;
+    }
+
+    // Fake browser window around the preview
+    .preview-Browser {
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+
+      .preview-Chrome {
+        display: flex;
+        align-items: center;
+        background: #dee3e6;
+        padding: 6px 10px 0;
+
+        .preview-Dots {
+          margin: 0 8px 6px 0;
+          white-space: nowrap;
+
+          i {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #b3bcc1;
+            margin-right: 4px;
+          }
+        }
+
+        .preview-Tab {
+          background: #f6f8f9;
+          border-radius: 8px 8px 0 0;
+          padding: 5px 14px;
+          font-size: 12px;
+          color: #444;
+          max-width: 70%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          .fa {
+            color: #888;
+            margin-right: 4px;
+          }
+        }
+      }
+
+      .preview-UrlBar {
+        background: #f6f8f9;
+        border-bottom: 1px solid #e0e4e6;
+        padding: 5px 12px;
+        font-size: 12px;
+        color: #555;
+
+        .fa {
+          color: #4e9722;
+          margin-right: 6px;
+        }
+      }
+
+      iframe.preview {
+        display: block;
+        width: 100%;
+        height: 360px;
+        border: 0;
+        background: #fff;
       }
     }
   }
-  .welcome {
-    pre, code {
-      background: #16414c;
-      font-size: 100%;
+
+  // --- Finale page ---
+
+  .penelope-Finale img {
+    width: 110px;
+  }
+
+  .published-Notice {
+    background: #f4fae8;
+    border: 2px solid #a8cc63;
+    border-radius: 8px;
+    padding: 12px 16px;
+
+    .fa {
+      color: #4e9722;
+      margin-right: 4px;
+    }
+  }
+
+  .next-Steps {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+
+    .next-Step {
+      flex: 1 1 42%;
+      min-width: 260px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 5px 20px 10px;
+      margin: 10px;
+
+      h3 {
+        font-size: 18px;
+        color: #5e95a1;
+
+        .fa {
+          margin-right: 6px;
+        }
+      }
+
+    }
+  }
+
+  .finale-Footer {
+    margin-top: 20px;
+  }
+
+  // --- Small screens: stack the columns, lesson first ---
+
+  @media (max-device-width: 480px), screen and (max-width: 800px) {
+    .row {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .col.lesson, .col.interact {
+      width: 100%;
+      float: none;
+    }
+
+    .tag-Anatomy .tag-Part small {
+      white-space: normal;
+    }
+  }
+}
+
+// --- Dark mode ---
+
+html.dark-Mode {
+  .tutorial {
+    .tutorial-Progress .tutorial-Step {
+      background: #16262c;
+      border-color: #3a545c;
+      color: #9fc4cc;
+
+      &.is-Done {
+        background: #5e95a1;
+        border-color: #5e95a1;
+        color: #fff;
+      }
+
+      &.is-Current {
+        border-color: #ff6b82;
+        color: #ff6b82;
+      }
+    }
+
+    .lesson h1, .lesson .step-Count {
+      color: #9fc4cc;
+    }
+
+    .penelope .penelope-Bubble {
+      background: #16262c;
+      border-color: #3a545c;
+
+      &:before {
+        border-right-color: #3a545c;
+      }
+    }
+
+    .your-Turn {
+      background: #1c2a14;
+      border-color: #55712d;
+
+      h4 {
+        color: #a8cc63;
+      }
+
+      .save-Warning {
+        background: #33290f;
+      }
+    }
+
+    .tag-Anatomy {
+      background: #16262c;
+      border-color: #3a545c;
+      box-shadow: none;
+
+      .tag-Part {
+        code {
+          color: #c5c8c6;
+        }
+
+        .anatomy-Tag {
+          color: #cc6666;
+        }
+
+        .anatomy-Attr {
+          color: #de935f;
+        }
+
+        .anatomy-String {
+          color: #b5bd68;
+        }
+
+        small {
+          color: #7d949b;
+        }
+      }
+    }
+
+    .cheat-Sheet {
+      th {
+        color: #9fc4cc;
+      }
+
+      th, td {
+        border-bottom-color: #2c3f46;
+      }
+    }
+
+    .interact .preview-Browser {
+      border-color: #3a545c;
+
+      .preview-Chrome {
+        background: #22333a;
+
+        .preview-Tab {
+          background: #16262c;
+          color: #c4d6da;
+        }
+      }
+
+      .preview-UrlBar {
+        background: #16262c;
+        border-bottom-color: #2c3f46;
+        color: #c4d6da;
+      }
+    }
+
+    .published-Notice {
+      background: #1c2a14;
+      border-color: #55712d;
+    }
+
+    .next-Steps .next-Step {
+      background: #16262c;
+      border-color: #3a545c;
+
+      h3 {
+        color: #9fc4cc;
+      }
     }
   }
 }

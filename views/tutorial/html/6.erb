@@ -1,51 +1,64 @@
-<div class="comic" style="height: 600px; background-image: url(/img/tutorial/ch1pg6.png); background-size: 650px">
-  <div class="dialogue" style="top: 115px; left: 20px; width: 240px">
-    Nice job! Links are great for sharing other sites or navigating to other pages on your site.
-    <br>
-    Now let's add an image.
-  </div>
-  <div class="dialogue" style="top: 20px; left: 360px">
-    Your Neocities web directory already includes an image called <strong>neocities.png</strong>.
-  </div>
-  <div class="dialogue" style="top: 145px; left: 360px; width:250px">
-    Add it to your page: <pre><code class="html">&lt;img src="/neocities.png"&gt;</code></pre>
-  </div>
-  <div class="dialogue" style="top: 230px; left: 420px">
-    That's it! No closing tag needed for images.
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Words are great, but you know what your page really needs? A picture of yours truly.</p>
   </div>
 </div>
 
-<div class="welcome">
-  <h4>Links and Images</h4>
-  <p>If the page or image you're referring to is already in your Neocities web directory, you can call it by its filename: for example, <strong>index.html</strong> or <strong>cat.png</strong>.</p>
+<p>Pictures use the <code><%= '<img>' %></code> tag, with two attributes:</p>
 
-  <p>Otherwise, use full URLs like this: <strong>https://neocities.org/img/heartcat.png</strong></p>
+<ul class="lesson-List">
+  <li><strong><code>src</code></strong> (source) &mdash; where the image file lives.</li>
+  <li><strong><code>alt</code></strong> (alternative text) &mdash; a few words describing the picture, for people who can't see it. Screen readers speak it aloud, and browsers show it if the image fails to load.</li>
+</ul>
+
+<pre><code class="html"><%= '<img src="/neocities.png" alt="The Neocities cat">' %></code></pre>
+
+<p>Surprise: <code><%= '<img>' %></code> has <strong>no closing tag</strong>. It doesn't wrap around any content &mdash; the image itself <em>is</em> the content &mdash; so the tag stands alone.</p>
+
+<p>Good news: your Neocities site already comes with an image file called <code>neocities.png</code>, so you have something to show right away.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Below your paragraphs, add: <code><%= '<img src="/neocities.png" alt="The Neocities cat">' %></code></li>
+    <li>Write your own <code>alt</code> description if you like.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Using your own pictures</h4>
+  <p>After the tutorial, you can upload your own images on your <a href="/dashboard">dashboard</a>, then show them with <code><%= 'src="/yourpicture.jpg"' %></code>. The slash at the front means &ldquo;a file on my own site.&rdquo; You can also use a full address to show an image from another site.</p>
 </div>
 
 <script>
-  function checkHomework() {
-    var html = editor.getValue()
+  function lessonCheck(doc, html) {
+    var images = doc.querySelectorAll('body img')
 
-    /* TODO: Make .+ ignore any spaces or newlines or whatever. </a> lol </p> is fine too. */
+    if(images.length == 0)
+      return {ok: false, message: 'I don&rsquo;t see an ' + codeSample('<img>') + ' tag yet. Add ' + codeSample('<img src="/neocities.png" alt="The Neocities cat">') + ' below your paragraphs.'}
 
-    var img = preview().find('img')
+    var problem = null
 
-    if(img.length == 0) {
-      notok("I couldn't find the &lt;img src=\"/cat.png\"&gt; tag, try again!")
-      return
+    for(var i = 0; i < images.length; i++) {
+      var img = images[i]
+      var src = img.getAttribute('src')
+      var alt = img.getAttribute('alt')
+
+      if(src === null || src.trim() == '') {
+        problem = problem || ('Your image tag needs a src attribute so it knows which picture to show: ' + codeSample('src="/neocities.png"'))
+        continue
+      }
+
+      if(alt === null || alt.trim() == '') {
+        problem = problem || ('Almost! Add a few words of alt text, like ' + codeSample('alt="The Neocities cat"') + ' &mdash; it&rsquo;s what people hear if they can&rsquo;t see the picture.')
+        continue
+      }
+
+      return {ok: true, message: 'Picture perfect! And you added alt text like a pro.'}
     }
 
-    if(img.attr('src') === undefined) {
-      notok("There's no src=\"/cat.png\" in the &lt;img&gt; tag, try adding that.")
-      return
-    }
-
-    if(img.attr('src') == '' || img.attr('src').match(/\s+/)) {
-      notok("The src attribute in the &lt;img&gt; tag can't be empty, try it like this: src=\"/cat.png\"")
-      return
-    }
-
-    sessionStorage.setItem('tutorialHtml', html)
-    ok('Great, you did it!', '/tutorial/html/7')
+    return {ok: false, message: problem}
   }
 </script>

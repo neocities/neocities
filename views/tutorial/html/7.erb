@@ -1,53 +1,81 @@
-<div class="comic" style="width: 590px; height: 625px; border-top: 75px solid #fff; background-color: #fff; background-image: url(/img/tutorial/ch1pg7.png); background-size: 515px; margin-top: 1em;">
-  <div class="dialogue" style="left: 0;top:-70px;">
-    Now maybe your website needs a list. Here's how an unordered list looks:
-    <pre style="text-align:left;"><code class="html">&lt;ul&gt;
-  &lt;li&gt;websites&lt;/li&gt;
-  &lt;li&gt;yarn&lt;/li&gt;
-  &lt;li&gt;catnip&lt;/li&gt;
-&lt;/ul&gt;
-    </code></pre>
-  </div>
-  <div class="dialogue" style="left: 300px; top: -10px;">
-    First, add a list to your page, but replace my favorite activities with your own!
-  </div>
-  <div class="dialogue" style="left: 400px; top: 90px;">
-    Second, put an h2 header above the list with some kind of title, like "Interests."
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Favorite foods, top ten movies, links to cool sites&hellip; the classic personal website is full of lists. Let's make you one!</p>
   </div>
 </div>
 
-<div class="welcome">
-  <h4>Lists</h4>
-  <p>You can make an ordered (numbered) list like so:</p>
-  <pre><code class="html"><%= erb :'tutorial/html/code_examples/7_1', layout: false %></code></pre>
+<p>A list is two tags working together, nested one inside the other:</p>
+
+<ul class="lesson-List">
+  <li><strong><code><%= '<ul>' %></code></strong> (unordered list) wraps the whole list.</li>
+  <li><strong><code><%= '<li>' %></code></strong> (list item) wraps each entry inside it.</li>
+</ul>
+
+<pre><code class="html"><%= "<h2>Things I Like</h2>\n<ul>\n  <li>Making websites</li>\n  <li>Cats</li>\n  <li>Naps in sunbeams</li>\n</ul>" %></code></pre>
+
+<p>Notice the <code><%= '<h2>' %></code> above the list &mdash; a smaller heading that introduces this section, since the <code><%= '<h1>' %></code> big-title spot is already taken.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>At the bottom of your page, add an <code><%= '<h2>' %></code> heading like <em>Things I Like</em> &mdash; in your own words.</li>
+    <li>Under it, add a <code><%= '<ul>' %></code> list with at least <strong>two</strong> <code><%= '<li>' %></code> items. Make them true!</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Numbered lists</h4>
+  <p>Swap <code><%= '<ul>' %></code> for <code><%= '<ol>' %></code> (ordered list) and the browser numbers your items automatically. Perfect for rankings and top-ten lists.</p>
 </div>
 
 <script>
-  function checkHomework() {
-    var html = editor.getValue()
+  function lessonCheck(doc, html) {
+    var lists = doc.querySelectorAll('body ul, body ol')
 
-    if(!html.match(new XRegExp('<ul>.+</ul>', 'gis'))) {
-      notok("I don't see the &lt;ul&gt; and &lt;/ul&gt; tag!")
-      return
+    if(lists.length == 0) {
+      if(missingClosingTag(html, 'ul'))
+        return {ok: false, message: 'I see you started a list &mdash; just don&rsquo;t forget the closing ' + codeSample('</ul>') + ' tag at the end.'}
+      return {ok: false, message: 'I don&rsquo;t see a list yet. Start with ' + codeSample('<ul>') + ' on one line and ' + codeSample('</ul>') + ' a few lines below it.'}
     }
 
-    var ul = preview().find('ul')
+    if(missingClosingTag(html, 'ul'))
+      return {ok: false, message: 'Your list is missing its closing ' + codeSample('</ul>') + ' tag.'}
 
-    if(ul.find('li').length == 0) {
-      notok("Okay, I see the <strong>ul</strong>, but no <strong>li</strong>. Try adding a list item to it: &lt;li&gt;Yarn&lt;/li&gt;")
-      return
+    var problem = null
+
+    for(var i = 0; i < lists.length; i++) {
+      var items = lists[i].querySelectorAll('li')
+      var withText = 0
+
+      for(var j = 0; j < items.length; j++) {
+        if(items[j].textContent.trim() != '')
+          withText++
+      }
+
+      if(items.length == 0) {
+        problem = problem || ('I found your ' + codeSample('<ul>') + ', but there&rsquo;s nothing in it. Add items between the tags, like ' + codeSample('<li>Cats</li>'))
+        continue
+      }
+
+      if(withText == 0) {
+        problem = problem || ('Your list items are empty! Put something between each ' + codeSample('<li>') + ' and ' + codeSample('</li>') + '.')
+        continue
+      }
+
+      if(withText < 2) {
+        problem = problem || ('One item down! Add at least one more ' + codeSample('<li>') + ' to your list.')
+        continue
+      }
+
+      var h2 = doc.querySelector('body h2')
+      if(!h2 || h2.textContent.trim() == '')
+        return {ok: false, message: 'Great list! Last touch: add an ' + codeSample('<h2>') + ' heading above it, like ' + codeSample('<h2>Things I Like</h2>') + ', so visitors know what the list is about.'}
+
+      return {ok: true, message: 'A heading and a list &mdash; your page has sections now!'}
     }
 
-    var liText = ul.find('li').first().text()
-
-    if(liText == '') {
-      notok("I don't see any text in the <strong>li</strong>. Try using it like this: <strong>&lt;li&gt;Yarn&lt;/li&gt;</strong>")
-      return
-    }
-
-    if(ul.find('li'))
-
-    sessionStorage.setItem('tutorialHtml', html)
-    ok('Awesome list!', '/tutorial/html/8')
+    return {ok: false, message: problem}
   }
 </script>

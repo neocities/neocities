@@ -1,49 +1,41 @@
-<div class="comic" style="height: 967px; background-image: url(/img/tutorial/ch1pg1.png); background-size: 839px;">
-  <div class="dialogue" style="left: 275px; top:370px;">
-    Oh, a new student!
-  </div>
-  <div class="dialogue" style="left: 590px; top:368px;">
-    Ahem, please come in!
-  </div>
-  <div class="dialogue" style="left: 38px; top:635px;">
-    I'm Penelope, and I'll be your teacher.
-  </div>
-  <div class="dialogue" style="left: 500px; top:643px;">
-    What's your name?
-  </div>
-  <div style="position: absolute; left: 490px; top:865px;">
-    <input id="nameInput" type="text" placeholder="First Name" style="position: relative">
-    <button id="checkButton" class="btn-Action" style="margin-top: -5px">Go</button>
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat, waving hello">
+  <div class="penelope-Bubble">
+    <p>Hi! I'm Penelope, the Neocities cat. I'm going to teach you how to make your very own website. No experience needed &mdash; let's jump right in!</p>
   </div>
 </div>
 
-<div class="nextPanel" style="display: none">
-  <div class="comic" style="height: 300px; background-image: url(/img/tutorial/ch1pg1_2.png);background-size: 839px;">
-    <div class="dialogue" style="left: 194px; top:27px;">
-      Welcome, [NAME]! You're about to embark on a very exciting challenge: creating your first website!
-    </div>
-    <div class="dialogue" style="left: 645px; top:16px;">
-      You've already made the first important step of starting this lesson, so here's a badge for your profile.
-    </div>
-  </div>
+<p>Here's a secret: <strong>every web page is just a text file.</strong> When you visit a website, your browser downloads a text file and follows the instructions inside it to draw the page on your screen.</p>
 
-  <a href="/tutorial/html/2" class="btn-Action">Next</a>
+<p>The box on the right contains a real web page &mdash; a small one, but the same kind of text file that every site on the internet is made of. Below it, you can see how a browser displays it, live.</p>
+
+<p>You don't need to understand everything in the box yet. Just notice the words <strong>Hello World!</strong> in the middle &mdash; that's the part visitors see.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>In the code box, find the words <code>Hello World!</code></li>
+    <li>Replace them with a greeting of your own &mdash; maybe <em>Welcome to my website!</em> or anything you like.</li>
+    <li>Watch the preview underneath update as you type. That's your page changing!</li>
+    <li>When you're happy, click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>What's with the pointy brackets?</h4>
+  <p>The words wrapped in angle brackets, like <code><%= '<body>' %></code>, are called <strong>tags</strong>. They're the instructions that tell the browser what everything is. We'll meet them properly on the next page.</p>
 </div>
 
 <script>
-  sessionStorage.setItem('tutorialHtml', '')
-  $('#checkButton').on('click', function(button) {
-    checkHomework($('#nameInput').val())
-  })
+  function lessonCheck(doc, html) {
+    var text = bodyText(doc)
 
-  function checkHomework(name) {
-    if(name == '' || name == undefined)
-      alert("I need to know your name!")
-    else {
-      sessionStorage.setItem('name', name)
-      var dialogueObj = $('.nextPanel .comic .dialogue')[0]
-      dialogueObj.innerHTML = dialogueObj.innerHTML.replace('[NAME]', name)
-      $('.nextPanel').css('display', 'block')
-    }
+    if(/hello world/i.test(text))
+      return {ok: false, message: 'I still see &ldquo;Hello World!&rdquo; in there. Replace it with your own words, then check again.'}
+
+    if(text == '')
+      return {ok: false, message: 'The page is looking a little empty! Type a greeting between ' + codeSample('<body>') + ' and ' + codeSample('</body>') + ' &mdash; or click Reset This Step to start over.'}
+
+    return {ok: true, message: 'You just edited a real web page!'}
   }
 </script>

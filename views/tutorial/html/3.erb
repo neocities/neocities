@@ -1,35 +1,43 @@
-<div class="comic" style="width: 590px; height: 500px; background-color: #fff; background-image: url(/img/tutorial/ch1pg3.png); background-size: 483px;">
-  <div class="dialogue" style="left: 50px; top: 30px;">
-    Great work! Let's move on to writing your first tag.
-    <!-- Check out your site at <a href="">victoria.neocities.org</a>. -->
-  </div>
-  <div class="dialogue" style="left: 300px; top: 0px; width: 250px">
-    Let's make your name a heading by putting the <strong>h1 tag</strong> around it. This helps to visually separate content on your site.
-  </div>
-  <div class="dialogue" style="left: 330px; top: 100px; width: 250px">
-    Try using an h1 tag by changing the text to something like this: <pre><code class="html"><span id="answer"></span></code></pre>
-    and click save.
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Looking good! But every great page needs a big title at the top &mdash; something that says <em>this is MY website</em>.</p>
   </div>
 </div>
 
-<div class="welcome">
-  <h4>Heading Tags</h4>
-  <p>Here are all the heading tags, for all your needs—from the most important to the least!</p>
+<p>Headings give your page structure, like chapter titles in a book. The tag for the biggest, most important heading is <code><%= '<h1>' %></code>:</p>
 
-  <pre><code class="html"><%= erb :'tutorial/html/code_examples/3', layout: false %></code></pre>
+<pre><code class="html"><%= '<h1>My Website</h1>' %></code></pre>
+
+<p>It works exactly like the paragraph tag &mdash; an opening tag, your words, and a closing tag with a slash. HTML actually has six heading sizes, from <code><%= '<h1>' %></code> (the biggest) down to <code><%= '<h6>' %></code> (the smallest).</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>At the top of your page &mdash; just after the <code><%= '<body>' %></code> line, above your paragraphs &mdash; add a heading with a name for your site: <code><%= '<h1>My Website</h1>' %></code></li>
+    <li>Make the words your own! <em>Sam's Corner</em>, <em>The Mushroom Zone</em>, whatever fits.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Heading rules of thumb</h4>
+  <p>Use just one <code><%= '<h1>' %></code> per page &mdash; it's the main title. If you add sections later, give them <code><%= '<h2>' %></code> headings, then <code><%= '<h3>' %></code> inside those, and so on. We'll use an <code><%= '<h2>' %></code> in a few steps.</p>
 </div>
 
 <script>
-  $('#answer').text('<h1>'+sessionStorage.getItem('name')+'\'s Website</h1>')
+  function lessonCheck(doc, html) {
+    var headings = doc.querySelectorAll('body h1')
 
-  function checkHomework() {
-    var html = editor.getValue()
+    if(headings.length == 0)
+      return {ok: false, message: 'I don&rsquo;t see an ' + codeSample('<h1>') + ' heading yet. Add one above your paragraphs, like ' + codeSample('<h1>My Website</h1>') + '.'}
 
-    if(!html.match(/<h1>.+<\/h1>/)) {
-      notok("That doesn't look like a header! Try again.")
-    } else {
-      sessionStorage.setItem('tutorialHtml', html)
-      ok('Nice header!', '/tutorial/html/4')
-    }
+    if(missingClosingTag(html, 'h1'))
+      return {ok: false, message: 'Your heading is missing its closing ' + codeSample('</h1>') + ' tag. Without it, the browser thinks the whole page is one giant heading!'}
+
+    if(headings[0].textContent.trim() == '')
+      return {ok: false, message: 'Your heading is empty! Put your site&rsquo;s name between ' + codeSample('<h1>') + ' and ' + codeSample('</h1>') + '.'}
+
+    return {ok: true, message: 'A page with a proper title &mdash; nice heading!'}
   }
 </script>

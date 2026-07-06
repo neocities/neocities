@@ -1,65 +1,88 @@
-<div class="comic" style="width: 570px; height: 575px; border-top: 35px solid #fff; background-color: #fff; background-image: url(/img/tutorial/ch1pg5.png); margin-top: 3em; background-size: 476px;">
-  <div class="dialogue" style="left:20px">
-    You're writing HTML! You're doing it! Everything you need to know is just another tag!
-  </div>
-  <div class="dialogue" style="top: -30px; width: 320px">
-    <p>For example, a link to another site looks like this:</p>
-
-    <p><pre><code class="html">&lt;a href="http://neocities.org"&gt;
-Check out Neocities!&lt;/a&gt;</code></pre></p>
-
-    <p>Add a link to your favorite site to<br> the end of the paragraph, right<br> before the &lt;/p&gt; closing tag!</p>
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Time for the superpower that puts the <em>web</em> in <em>website</em>: linking to other pages!</p>
   </div>
 </div>
 
-<div class="welcome">
-  <h4>Link tags</h4>
-  <pre><code class="html"><%= erb '<a href="http://my-favorite-site.com">Click me!</a>', layout: false %></code></pre>
-  <p>The 'a' in a link tag stands for 'anchor'.</p>
-  <p>The 'href' is short for 'hypertext reference' - it's a way to reference another hypertext document, like your favorite website!</p>
-  <br>
+<p>A link uses the <code><%= '<a>' %></code> tag (the <em>a</em> is for <em>anchor</em>). But a link needs to know <em>where to go</em>, so this tag introduces something new &mdash; an <strong>attribute</strong>. Attributes are extra settings written inside the opening tag:</p>
 
-  <h4>Nesting</h4>
-  <p>Tags always need to be nested properly, like Russian dolls. Note that both '<strong>a</strong>' tags are inside the '<strong>p</strong>' tags:</p>
-  <pre><code class="html"><%= erb '<p>Welcome! <a href="http://neocities.org">Link!</a></p>', layout: false %></code></pre>
+<div class="tag-Anatomy" aria-label="The anatomy of a link">
+  <span class="tag-Part"><code class="anatomy-Tag"><%= '<a' %></code><small>opening tag&hellip;</small></span>
+  <span class="tag-Part"><code><span class="anatomy-Attr">href=</span><span class="anatomy-String"><%= '"https://neocities.org"' %></span></code><small>&hellip;with an attribute</small></span>
+  <span class="tag-Part"><code class="anatomy-Tag"><%= '>' %></code><small>&nbsp;</small></span>
+  <span class="tag-Part"><span class="tag-Content">Visit Neocities</span><small>the clickable text</small></span>
+  <span class="tag-Part"><code class="anatomy-Tag"><%= '</a>' %></code><small>closing tag</small></span>
+</div>
 
-  <p>This code is incorrectly nested:</p>
-  <pre><code class="html"><%= erb '<p>Welcome! <a href="http://neocities.org">Link!</p></a>', layout: false %></code></pre>
+<p><code>href</code> holds the web address the link goes to. The address always goes between straight quotation marks, and it needs to start with <code>https://</code>.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Add a new paragraph at the bottom of your page (above <code><%= '</body>' %></code>) with a link to a site you like:
+      <pre><code class="html"><%= '<p>My favorite place on the web is
+  <a href="https://neocities.org">Neocities</a>.</p>' %></code></pre>
+    </li>
+    <li>Swap in your own favorite site's address and your own clickable words. Try clicking your link in the preview &mdash; it opens in a new tab!</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Tags inside tags</h4>
+  <p>Your <code><%= '<a>' %></code> tag lives <em>inside</em> a <code><%= '<p>' %></code> tag. That's called <strong>nesting</strong>, and it's everywhere in HTML. The rule: whatever opens last closes first, like stacking bowls &mdash; <code><%= '<p> <a> </a> </p>' %></code>, never <code><%= '<p> <a> </p> </a>' %></code>.</p>
 </div>
 
 <script>
-  function checkHomework() {
-    var html = editor.getValue()
-    var p = preview().find('p')
+  function lessonCheck(doc, html) {
+    var links = doc.querySelectorAll('body a')
 
-    if(p.length == 0) {
-      notok("Couldn't find a paragraph! Did you accidentally delete it? Add it back or click the reset button to start over.")
-      return
+    if(links.length == 0) {
+      if(missingClosingTag(html, 'a'))
+        return {ok: false, message: 'I can see you started a link, but something&rsquo;s off &mdash; make sure it ends with a closing ' + codeSample('</a>') + ' tag.'}
+      return {ok: false, message: 'I don&rsquo;t see a link yet. Add one like ' + codeSample('<a href="https://neocities.org">Visit Neocities</a>') + ' inside a paragraph.'}
     }
 
-    var a = p.find('a')
+    if(missingClosingTag(html, 'a'))
+      return {ok: false, message: 'One of your links is missing its closing ' + codeSample('</a>') + ' tag.'}
 
-    if(a.length == 0) {
-      notok("Couldn't find an &lt;a&gt; link in your paragraph, try to add it inside the paragraph.")
-      return
+    var problem = null
+
+    for(var i = 0; i < links.length; i++) {
+      var link = links[i]
+      var href = link.getAttribute('href')
+
+      if(href === null) {
+        problem = problem || ('Your link doesn&rsquo;t know where to go yet! Add an href attribute inside the opening tag: ' + codeSample('<a href="https://neocities.org">'))
+        continue
+      }
+
+      href = href.trim()
+
+      if(href == '') {
+        problem = problem || 'The href is empty &mdash; put a web address between the quotes.'
+        continue
+      }
+
+      if(/^www\./i.test(href)) {
+        problem = problem || ('So close! Web addresses in links need to start with ' + codeSample('https://') + ' &mdash; try ' + codeSample('href="https://' + href + '"'))
+        continue
+      }
+
+      if(!/^https?:\/\//i.test(href) && !/^[\/#]/.test(href)) {
+        problem = problem || ('Hmm, ' + codeSample(href) + ' doesn&rsquo;t look like a web address. It should start with ' + codeSample('https://') + ', like ' + codeSample('https://neocities.org'))
+        continue
+      }
+
+      if(link.textContent.trim() == '') {
+        problem = problem || ('Your link works, but there&rsquo;s nothing to click on! Put some words between ' + codeSample('<a href="...">') + ' and ' + codeSample('</a>') + '.')
+        continue
+      }
+
+      return {ok: true, message: 'Your page is officially part of the web now!'}
     }
 
-    if(a.attr('href') === undefined) {
-      notok("Your a tag is missing an href attribute. Try writing it like this: &lt;a href=\"//neocities.org\"&gt; and don't forget the closing &lt;a&gt; tag!")
-      return
-    }
-
-    if(a.attr('href') == '' || a.attr('href').match(/\s+/)) {
-      notok('You need to add a url to the <strong>href</strong>, like this: href="http://neocities.org"')
-      return
-    }
-
-    if(a.text() == '') {
-      notok('You need to add a name for your link, which is the text between the &lt;a&gt; tag, and the closing tag &lt;/a&gt;')
-      return
-    }
-
-    sessionStorage.setItem('tutorialHtml', html)
-    ok('Great, nice link!', '/tutorial/html/6')
+    return {ok: false, message: problem}
   }
 </script>

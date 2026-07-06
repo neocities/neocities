@@ -1,27 +1,55 @@
-<div class="comic" style="width: 489px; height: 500px; margin-top: 2em; border-top: 15px solid #fff; background-image: url(/img/tutorial/ch1pg4.png); background-size: 489px;">
-  <div class="dialogue" style="left: 75px; width: 170px">
-    Now let's add a paragraph of text below the <strong>h1</strong> heading. Perhaps "Welcome to my website" or your favorite quote.
-  </div>
-  <div class="dialogue" style="left: 290px; top: -10px; width:190px">
-    To make a paragraph, surround your text with the <strong>&lt;p&gt;</strong> tag. So it should look something like
-    <pre><code class="html">&lt;p&gt;Welcome!&lt;/p&gt;</code></pre>
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Ready for a secret? Part of your page is <em>invisible</em>. Look at the top of your code &mdash; what's that <code>head</code> thing?</p>
   </div>
 </div>
 
-<div class="welcome">
-  <h4>What do I put on my website?</h4>
-  <p>With HTML, you can make the exact website that you want to make, free from the limits of social networks. It could be a personal page or it could be totally anonymous! You could write about your interests, share artwork, or post photos. You'll learn about adding links and images soon.</p>
+<p>Every web page has two zones:</p>
+
+<ul class="lesson-List">
+  <li><strong><code><%= '<body>' %></code></strong> &mdash; everything visitors see. Your heading and paragraphs live here.</li>
+  <li><strong><code><%= '<head>' %></code></strong> &mdash; information <em>about</em> the page. Nothing in here appears on the page itself.</li>
+</ul>
+
+<p>So what's the head good for? Look inside yours and you'll find this line:</p>
+
+<pre><code class="html"><%= '<title>My First Website</title>' %></code></pre>
+
+<p>The <code><%= '<title>' %></code> is the name of your page. It shows up in the browser tab, in bookmarks, and in search results &mdash; just not on the page itself. Check the little tab at the top of your preview window: it says <em>My First Website</em> right now.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Find the <code><%= '<title>' %></code> line inside your <code><%= '<head>' %></code>.</li>
+    <li>Change <em>My First Website</em> to a title of your own &mdash; your site's name is a great choice.</li>
+    <li>Watch the tab above the preview change, then click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Two tags, one skill</h4>
+  <p>Notice you already knew how to do this &mdash; <code><%= '<title>' %></code> works just like <code><%= '<p>' %></code> and <code><%= '<h1>' %></code>: opening tag, content, closing tag. Most of HTML is this one pattern over and over.</p>
 </div>
 
 <script>
-  function checkHomework() {
-    var html = editor.getValue()
+  function lessonCheck(doc, html) {
+    if(missingClosingTag(html, 'title'))
+      return {ok: false, message: 'Your ' + codeSample('<title>') + ' is missing its closing ' + codeSample('</title>') + ' tag &mdash; without it, the browser thinks your whole page is the title!'}
 
-    if(html.match(/<p>\s*\S[\s\S]*<\/p>/i) === null) {
-      notok("I don't see a &lt;p&gt;paragraph with text in it&lt;/p&gt; anywhere! Try again.")
-    } else {
-      sessionStorage.setItem('tutorialHtml', html)
-      ok('Great, nice paragraph!', '/tutorial/html/5')
-    }
+    var titleTag = doc.querySelector('title')
+
+    if(!titleTag)
+      return {ok: false, message: 'Your page lost its ' + codeSample('<title>') + ' tag! Add ' + codeSample('<title>Your Title Here</title>') + ' inside the ' + codeSample('<head>') + '.'}
+
+    var titleText = titleTag.textContent.trim()
+
+    if(titleText == '')
+      return {ok: false, message: 'Your title is empty. Put your page&rsquo;s name between ' + codeSample('<title>') + ' and ' + codeSample('</title>') + '.'}
+
+    if(titleText == 'My First Website')
+      return {ok: false, message: 'That&rsquo;s still the title I gave you! Change it to something that&rsquo;s yours.'}
+
+    return {ok: true, message: 'Look at the tab above your preview &mdash; that&rsquo;s your title up there!'}
   }
 </script>

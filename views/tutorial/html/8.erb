@@ -1,49 +1,53 @@
-<div class="comic" style="height: 530px; background-image: url(/img/tutorial/ch1pg8.png); background-size: 489px; margin-top:1em">
-  <div class="dialogue" style="top: 25px; left: 0; width: 380px">
-    Now add a link to one of your list items. If nested properly, it should look similar to this:
-    <br>
-    <div class="txt-Left">
-      <pre style="text-align:left;"><code class="html">&lt;li&gt;
-  &lt;a href="http://yarn.com"&gt;Yarn&lt;/a&gt;
-&lt;/li&gt;</code></pre>
-    </div>
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>One last trick, and it's the fun one: let's paint the place!</p>
   </div>
 </div>
 
-<div class="welcome">
-  <h4>Tags so far</h4>
-  <p>Headings: <pre><code class="html"><%= erb "<h1>Title of the page!</h1>\n<h2>Less important title</h2>", layout: false %></pre></code></p>
+<p>HTML describes what's <em>on</em> your page. How it <em>looks</em> &mdash; colors, fonts, layouts &mdash; is the job of a second language called <strong>CSS</strong>. CSS is a whole adventure of its own, but here's a taste right now.</p>
 
-  <p>Paragraphs: <pre><code class="html"><%= erb "<p>Hello! This is a paragraph.</p>", layout: false %></code></pre></p>
+<p>CSS lives inside a <code><%= '<style>' %></code> tag in your page's <code><%= '<head>' %></code> &mdash; remember, the invisible part. This rule tells the browser: <em>make the body's background light sky blue</em>:</p>
 
-  <p>Links: <pre><code class="html"><%= erb "<a href=\"http://wikipedia.org\">Click here!</a>", layout: false %></code></pre></p>
+<pre><code class="html"><%= "<style>\n  body {\n    background-color: lightskyblue;\n  }\n</style>" %></code></pre>
 
-  <p>Images: <pre><code class="html"><%= erb "<img src=\"myimage.jpg\">", layout: false %></code></pre></p>
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>In your <code><%= '<head>' %></code>, on a new line right after the <code><%= '</title>' %></code> line, add the <code><%= '<style>' %></code> block from the example above. (Copying it is allowed &mdash; even professionals copy CSS!)</li>
+    <li>Now the fun part: swap <code>lightskyblue</code> for another color and watch the preview. Try <code>lightpink</code>, <code>palegreen</code>, <code>lavender</code>, <code>moccasin</code>, or even <code>black</code>.</li>
+    <li>Found your color? Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
 
-  <p>Lists</p>
-  <pre><code class="html"><%= erb "<ul>\n  <li>First item</li>\n  <li>Second item</li>\n  <li>Third item</li>\n</ul>", layout: false %></code></pre>
+<div class="bonus-Box">
+  <h4>Going further with color</h4>
+  <p>Browsers understand about 140 color names &mdash; see <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/named-color" target="_blank" rel="noopener">the full list on MDN</a>. And try adding a second rule inside the curly braces: <code>color: white;</code> changes the <em>text</em> color. There's a whole world of CSS waiting after this tutorial.</p>
 </div>
 
 <script>
-  function checkHomework() {
-    var html = editor.getValue()
+  function lessonCheck(doc, html) {
+    if(missingClosingTag(html, 'style'))
+      return {ok: false, message: 'Your ' + codeSample('<style>') + ' tag is missing its closing ' + codeSample('</style>') + ' &mdash; without it, the browser thinks the rest of your page is CSS!'}
 
-    var a = preview().find('li a')
-    if(a.length == 0) {
-      notok("I don't see a link in your &lt;li&gt;&lt;/li&gt;, try adding one.")
-      return
+    var styles = doc.querySelectorAll('style')
+
+    if(styles.length == 0)
+      return {ok: false, message: 'I don&rsquo;t see a ' + codeSample('<style>') + ' tag yet. Copy the example block into your ' + codeSample('<head>') + ', right after the title line.'}
+
+    var css = ''
+    for(var i = 0; i < styles.length; i++)
+      css += styles[i].textContent + '\n'
+
+    if(!/background(-color)?\s*:/i.test(css)) {
+      if(/background(-color)?\s+[a-z#]/i.test(css))
+        return {ok: false, message: 'So close &mdash; don&rsquo;t forget the colon! It should be ' + codeSample('background-color: lightskyblue;')}
+      return {ok: false, message: 'Your style tag is there, but I don&rsquo;t see a background rule inside it yet. Add ' + codeSample('body { background-color: lightskyblue; }')}
     }
 
-    if(a.attr('href') === undefined || a.attr('href') == '') {
-      notok('You need to add an <strong>href</strong> to your <strong>a</strong> tag, like: <strong>href="http://neocities.org"</strong>')
-      return
-    }
-    if(a.text() == '' || !a.text().match(/[^\s]+/)) {
-      notok('You need to add a name for your link, which is the text between the &lt;a&gt; tag, and the closing tag &lt;/a&gt;')
-      return
-    }
+    if(!/background(-color)?\s*:\s*[^;\s}]/i.test(css))
+      return {ok: false, message: 'Your background rule needs a color after the colon, like ' + codeSample('background-color: lavender;')}
 
-    sessionStorage.setItem('tutorialHtml', html)
-    ok('Great, you did it!', '/tutorial/html/9?csrf_token=<%= Rack::Utils.escape csrf_token %>')
+    return {ok: true, message: 'A fresh coat of paint! Your page is one of a kind now.'}
   }
 </script>

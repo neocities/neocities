@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------
 //		Site-Wide Typography Standards
 // ----------------------------------------------------------------
-body{font-family:$brand; font-weight:300}
+body{font-family:$brand; font-size:$body-font-size; font-weight:300}
 h1, h2, h3, h4, h5, h6{font-family:$headings}
 
 .giga                     {font:{size:$giga;    weight:700}}

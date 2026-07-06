@@ -1,15 +1,36 @@
-<div class="comic" style="height: 900px; background-image: url(/img/tutorial/ch1pg10.png); background-size: 800px;">
-  <div class="dialogue" style="top: 35px">
-    And that's it for Chapter One! Congrats on your first ever version of <a href="<%= current_site.uri %>"><%= current_site.username %>.neocities.org</a>!
-  </div>
-  <div class="dialogue" style="top: 50px;left:580px; width:180px;">
-    This is just the beginning. Later you'll learn about adding colors, fonts, layouts, and more. We'll chat again soon!
+<div class="penelope penelope-Finale">
+  <img src="/img/heartcat.png" alt="Penelope the Neocities cat with a heart above her head">
+  <div class="penelope-Bubble">
+    <p>You did it! When you started, you'd never written a line of HTML. Now you've built a whole page &mdash; headings, links, pictures, lists, even a little CSS. I'm one proud cat.</p>
   </div>
 </div>
 
-<div class="welcome">
-  <h4>Thank you!</h4>
-  <p>Thanks for trying out the first edition of the Neocities tutorial! This is a work in progress—<a href="/contact">let us know</a> if you have any questions or suggestions.</p>
-  <p>To continue working on your site, head to the <a href="/dashboard">dashboard</a>!</p>
-  <p>You can also check out all the <a href="/browse">cool sites on Neocities</a> and follow them with your <a href="/">news feed</a>.</p>
+<% if params[:published] %>
+  <p class="published-Notice"><i class="fa fa-check-circle" aria-hidden="true"></i> Your page is live! See it on the real web at <a href="<%= current_site.uri %>" target="_blank" rel="noopener"><%= current_site.host %></a> &mdash; and send the address to a friend while you're at it.</p>
+<% end %>
+
+<h2>Where to go from here</h2>
+
+<div class="next-Steps">
+  <div class="next-Step">
+    <h3><i class="fa fa-wrench" aria-hidden="true"></i> Keep building</h3>
+    <p>Your <a href="/dashboard">dashboard</a> is your workshop. Edit <strong>index.html</strong> anytime, upload your own images, and add more pages &mdash; a new file called <code>about.html</code> becomes a new page at <code><%= current_site.host %>/about</code> (the .html is not needed to load the page), and you already know how to link to it.</p>
+  </div>
+
+  <div class="next-Step">
+    <h3><i class="fa fa-eye" aria-hidden="true"></i> Learn from every site you visit</h3>
+    <p>Here's the best trick in web development: every page on the internet is made of the same HTML you just learned, and browsers let you read it. Right-click any page and choose <strong>View Page Source</strong>. The whole web is an open textbook.</p>
+  </div>
+
+  <div class="next-Step">
+    <h3><i class="fa fa-globe" aria-hidden="true"></i> Explore the neighborhood</h3>
+    <p><a href="/browse">Browse the sites people have built on Neocities</a> &mdash; there are hundreds of thousands of them. Follow your favorites, leave a nice comment, and steal ideas (that's tradition).</p>
+  </div>
+
+  <div class="next-Step">
+    <h3><i class="fa fa-paint-brush" aria-hidden="true"></i> Go deeper with CSS</h3>
+    <p>That splash of color was just the beginning &mdash; CSS can change fonts, add borders, and control your whole layout. Our <a href="/tutorials">learning resources page</a> has great free guides for CSS and beyond.</p>
+  </div>
 </div>
+
+<p class="finale-Footer">You can revisit any part of this tutorial from <a href="/tutorial/html/1">the beginning</a> whenever you like. Now go make something wonderful. The web is yours!</p>
