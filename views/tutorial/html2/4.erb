@@ -1,0 +1,59 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Time to decorate! HTML has a secret menu of symbols &mdash; hearts, stars, arrows &mdash; and old-school website builders have loved them since the nineties.</p>
+  </div>
+</div>
+
+<p>Some characters can't be typed straight into HTML. The angle brackets <code>&lt;</code> and <code>&gt;</code> would look like tags, so writing them (and lots of fancier symbols) uses a special code called an <strong>entity</strong>: an ampersand, a name, and a semicolon.</p>
+
+<table class="cheat-Sheet">
+  <thead>
+    <tr><th>You type</th><th>You get</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&amp;hearts;</code></td><td>&hearts;</td></tr>
+    <tr><td><code>&amp;starf;</code></td><td>&starf;</td></tr>
+    <tr><td><code>&amp;mdash;</code></td><td>&mdash; (a long dash)</td></tr>
+    <tr><td><code>&amp;middot;</code></td><td>&middot; (a dot for separating links)</td></tr>
+    <tr><td><code>&amp;copy;</code></td><td>&copy;</td></tr>
+    <tr><td><code>&amp;lt;</code> and <code>&amp;gt;</code></td><td>&lt; and &gt; (how you show brackets without making a tag)</td></tr>
+  </tbody>
+</table>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>At the very bottom of your page (just above <code><%= '</body>' %></code>), add a little signature line:
+      <code class="html"><%= '<p>Made with &hearts; on Neocities</p>' %></code>
+    </li>
+    <li>Decorate it however you like &mdash; add a <code>&amp;starf;</code> or three.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Emoji work too!</h4>
+  <p>Modern pages can also use emoji typed right into the text &mdash; they're perfectly legal HTML. Entities are still worth knowing: they always display the same everywhere, they're how you show <code>&amp;lt;</code> and <code>&amp;gt;</code> without starting a tag, and spotting <code>&amp;hearts;</code> in someone's source code feels like a secret handshake.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var entities = html.match(/&([a-zA-Z][a-zA-Z0-9]*|#\d+|#x[0-9a-fA-F]+);/g) || []
+    var boring = ['&lt;', '&gt;', '&amp;', '&quot;', '&apos;', '&nbsp;']
+    var decorative = []
+
+    for(var i = 0; i < entities.length; i++) {
+      if(boring.indexOf(entities[i]) == -1)
+        decorative.push(entities[i])
+    }
+
+    if(decorative.length == 0) {
+      if(/&(hearts|starf|mdash|middot|copy)[^;]/i.test(html))
+        return {ok: false, message: 'So close &mdash; an entity needs its semicolon at the end! It&rsquo;s ' + codeSample('&hearts;') + ' with the ' + codeSample(';') + '.'}
+      return {ok: false, message: 'I don&rsquo;t see any special symbols yet. Add a signature line like ' + codeSample('<p>Made with &hearts; on Neocities</p>') + ' at the bottom of your page.'}
+    }
+
+    return {ok: true, message: 'Look at that symbol in the preview &mdash; ' + escapeText(decorative[0]) + ' became the real thing!'}
+  }
+</script>

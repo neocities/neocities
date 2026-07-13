@@ -55,8 +55,8 @@ describe 'signup' do
     _(page).must_have_content /almost ready!/
     fill_in 'token', with: Site[username: @site[:username]].email_confirmation_token
     click_button 'Confirm Email'
-    _(page).must_have_content /Let's Get Started/
-    _(current_path).must_equal '/tutorial'
+    _(page).must_have_content /Learn How to Make Websites/
+    _(current_path).must_equal '/tutorials'
     index_file_path = File.join Site::SITE_FILES_ROOT, Site.sharding_dir(@site[:username]), @site[:username], 'index.html'
     _(File.exist?(index_file_path)).must_equal true
 

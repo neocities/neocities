@@ -1,0 +1,57 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>On a big monitor your text runs aaaaall the way across the screen. Let's give your page a cozy column instead.</p>
+  </div>
+</div>
+
+<p>Two properties team up for the classic centered-column look that almost every nice-looking site uses:</p>
+
+<pre><code class="css">body {
+  max-width: 600px;
+  margin: 0 auto;
+}</code></pre>
+
+<ul class="lesson-List">
+  <li><strong><code>max-width</code></strong> caps how wide the body can get. Around 600&ndash;700px keeps lines short enough to read comfortably.</li>
+  <li><strong><code>margin: 0 auto</code></strong> is the centering spell: zero margin on top and bottom, and <code>auto</code> splits the leftover space evenly between left and right. Split evenly = centered.</li>
+</ul>
+
+<p>Every web developer typed this incantation before they understood it. It's a rite of passage &mdash; say it with me: <em>margin zero auto</em>.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Add <code>max-width: 600px;</code> and <code>margin: 0 auto;</code> to your <code>body</code> rule.</li>
+    <li>While we're centering things: add <code>text-align: center;</code> to your <code>h1</code> rule so the title sits proudly in the middle.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Room at the edges</h4>
+  <p>On a phone, a max-width column can still touch the screen edges. Adding <code>padding: 0 20px;</code> to the body keeps your words off the walls no matter how small the window gets. (Try dragging your browser window narrow and watch the column behave!)</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var css = styleText(doc)
+
+    var hasMaxWidth = /max-width\s*:\s*[^;\s}]/i.test(css)
+    var hasAutoMargin = /margin\s*:\s*[^;}]*auto/i.test(css)
+
+    if(!hasMaxWidth && !hasAutoMargin)
+      return {ok: false, message: 'I don&rsquo;t see the column yet. Add ' + codeSample('max-width: 600px;') + ' and ' + codeSample('margin: 0 auto;') + ' to your body rule.'}
+
+    if(!hasMaxWidth)
+      return {ok: false, message: 'Halfway there &mdash; now cap the width with ' + codeSample('max-width: 600px;') + ' so the centering has something to center.'}
+
+    if(!hasAutoMargin) {
+      if(/margin\s*:\s*auto\s*0/i.test(css))
+        return {ok: false, message: 'Almost! The order matters: it&rsquo;s ' + codeSample('margin: 0 auto;') + ' &mdash; first top and bottom, then the auto left and right.'}
+      return {ok: false, message: 'The width is capped &mdash; now cast the centering spell: ' + codeSample('margin: 0 auto;')}
+    }
+
+    return {ok: true, message: 'A centered column, like a page in a zine. Your site just started looking designed.'}
+  }
+</script>

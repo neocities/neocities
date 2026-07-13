@@ -1,0 +1,53 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>The best personal sites feel a little alive &mdash; like they might do something different next time. Let's add some delightful unpredictability.</p>
+  </div>
+</div>
+
+<p>First, a variable that holds a whole <strong>list</strong>. Square brackets, items separated by commas &mdash; this is called an <em>array</em>:</p>
+
+<pre><code class="js">var greetings = ['Hello!', 'Welcome, traveler!', 'You found my website!']</code></pre>
+
+<p>Each item has a numbered position starting from <strong>zero</strong>: <code>greetings[0]</code> is the first, <code>greetings[1]</code> the second. And <code>greetings.length</code> counts the items.</p>
+
+<p>Then, the dice: <code>Math.random()</code> gives a random decimal between 0 and 1. Multiply by the length, round down with <code>Math.floor</code>, and you get a fair pick of any position:</p>
+
+<pre><code class="js">var greeting = greetings[Math.floor(Math.random() * greetings.length)]
+document.getElementById('greeting').textContent = greeting</code></pre>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Replace your greeting variable with a <code>greetings</code> array holding at least three greetings you'd actually say.</li>
+    <li>Pick one at random with the dice line from the example, and put it on the page like before.</li>
+    <li>The preview re-runs your script as you type &mdash; watch the greeting change! Then click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Random everything</h4>
+  <p>Anything can live in an array: mottos for your blockquote, colors for your sky function, links to a random friend's site. The pattern is always the same &mdash; <code>list[Math.floor(Math.random() * list.length)]</code>. A different page every visit is a very Neocities move.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var js = scriptText(doc)
+
+    var hasArray = /=\s*\[[^\]]+,[^\]]+\]/.test(js)
+
+    if(!hasArray) {
+      if(/=\s*\[[^\]]*\]/.test(js))
+        return {ok: false, message: 'Your array could use more variety &mdash; give it at least three greetings, separated by commas, each in its own quotes.'}
+      return {ok: false, message: 'I don&rsquo;t see an array yet. Make one with square brackets: ' + codeSample("var greetings = ['Hello!', 'Welcome!', 'Hi there!']")}
+    }
+
+    if(!/Math\.random\s*\(\s*\)/.test(js))
+      return {ok: false, message: 'The list is ready &mdash; now roll the dice! Pick a random item with ' + codeSample('greetings[Math.floor(Math.random() * greetings.length)]')}
+
+    if(!/Math\.floor\s*\(/.test(js))
+      return {ok: false, message: 'Almost &mdash; ' + codeSample('Math.random()') + ' gives decimals like 1.7, and list positions are whole numbers. Round down with ' + codeSample('Math.floor( ... )') + ' around the multiplication.'}
+
+    return {ok: true, message: 'Your page rolls dice now! Every visitor gets their own hello.'}
+  }
+</script>

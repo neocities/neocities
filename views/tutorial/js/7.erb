@@ -1,0 +1,99 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Your page needs a cat. And once she's there, she will need to be petted. Can you arrange it?</p>
+  </div>
+</div>
+
+<p>Everything you need, you already know &mdash; this lesson mixes it together. <code class="html">onclick</code> works on more than buttons (pictures too!), variables can hold numbers, and functions can <em>change</em> them:</p>
+
+<pre><code class="js">var pets = 0
+
+function petCat() {
+  pets = pets + 1
+  document.getElementById('pet-count').textContent = pets
+}</code></pre>
+
+<p>That <code>pets = pets + 1</code> line looks odd in math class but is everyday JavaScript: <em>take what's in the box, add one, put it back.</em> Every call counts one more pet.</p>
+
+<p>And ten pets deserve a reaction. Back in step five, your <code>if</code> checked an answer you had stored (<code>night</code>). But <code>if</code> can also ask a <strong>question</strong> on the spot, using a comparison. This goes inside <code>petCat</code>, right after the counting line:</p>
+
+<pre><code class="js">if (pets >= 10) {
+  document.getElementById('cat-mood').textContent = 'purrrrrr...'
+}</code></pre>
+
+<p><code>pets &gt;= 10</code> asks: <em>is pets at least 10?</em> The answer is true or false &mdash; the same kind of answer <code>night</code> held, just computed fresh on every click. Here's the full menu of questions:</p>
+
+<table class="cheat-Sheet">
+  <thead>
+    <tr><th>You write</th><th>It asks</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>pets &lt; 10</code></td><td>less than 10?</td></tr>
+    <tr><td><code>pets &gt; 10</code></td><td>more than 10?</td></tr>
+    <tr><td><code>pets &lt;= 10</code></td><td>10 or fewer?</td></tr>
+    <tr><td><code>pets &gt;= 10</code></td><td>10 or more?</td></tr>
+    <tr><td><code>pets == 10</code></td><td>exactly 10?</td></tr>
+    <tr><td><code>pets != 10</code></td><td>anything but 10?</td></tr>
+  </tbody>
+</table>
+
+<p>Careful with the doubles: one <code>=</code> <em>puts</em> a value in a box, two <code>==</code> <em>asks</em> whether things match. Writing <code>if (pets = 10)</code> accidentally stuffs 10 into the box instead of asking about it &mdash; a legendary bug that has bitten every programmer alive.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Add the cat, trigger included: <code class="html"><%= '<img src="/neocities.png" alt="The Neocities cat" onclick="petCat()">' %></code></li>
+    <li>Under the picture, add a scoreboard and an empty mood line:<br>
+      <pre><code class="html"><%= "<p>Cat pets: <span id=\"pet-count\">0</span></p>\n<p id=\"cat-mood\"></p>" %></code></pre>
+    </li>
+    <li>Add the <code>pets</code> variable and the <code>petCat</code> function to your script &mdash; milestone <code>if</code> included.</li>
+    <li>Now pet the cat in the preview. Ten times, minimum. Then click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Why the &lt;span&gt;?</h4>
+  <p><code class="html"><%= '<span>' %></code> is like a <code class="html"><%= '<div>' %></code>, but for a few words <em>inside</em> a line instead of a whole box. Giving just the number its own id means your script can update it without touching the words around it. Extra challenge: add a second milestone with a rarer question &mdash; maybe something special happens at exactly <code>pets == 100</code>&hellip;</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var js = scriptText(doc)
+
+    var clickable = doc.querySelector('body img[onclick]')
+
+    if(!clickable)
+      return {ok: false, message: 'The cat awaits! Add her with her trigger: ' + codeSample('<img src="/neocities.png" alt="The Neocities cat" onclick="petCat()">')}
+
+    var called = (clickable.getAttribute('onclick') || '').match(/([a-zA-Z_$][\w$]*)\s*\(/)
+
+    if(!called)
+      return {ok: false, message: 'The picture&rsquo;s onclick should call a function, like ' + codeSample('onclick="petCat()"')}
+
+    if(!new RegExp('function\\s+' + called[1] + '\\s*\\(').test(js))
+      return {ok: false, message: 'The picture calls ' + codeSample(called[1] + '()') + ', but your script doesn&rsquo;t define that function yet. Add it, and check the names match exactly.'}
+
+    var lookups = js.match(/getElementById\s*\(\s*['"]([^'"]*)['"]\s*\)/g) || []
+    var missing = null
+    for(var i = 0; i < lookups.length; i++) {
+      var name = lookups[i].replace(/getElementById\s*\(\s*['"]/, '').replace(/['"]\s*\)$/, '')
+      if(!doc.getElementById(name))
+        missing = missing || name
+    }
+
+    if(missing)
+      return {ok: false, message: 'Your script updates ' + codeSample("getElementById('" + missing + "')") + ', but nothing in your HTML has ' + codeSample('id="' + missing + '"') + '. Add the matching element from the example &mdash; and check the spelling matches exactly!'}
+
+    if(!/\+\s*1|\+\+|\+=/.test(js))
+      return {ok: false, message: 'The counter needs to count! Inside the function, add one to the variable: ' + codeSample('pets = pets + 1')}
+
+    if(/if\s*\(\s*[a-zA-Z_$][\w$]*\s*=(?![=<>])/.test(js))
+      return {ok: false, message: 'So close &mdash; one ' + codeSample('=') + ' <em>puts</em> a value in the box. To <em>ask</em> a question, compare instead: ' + codeSample('pets >= 10') + ' or ' + codeSample('pets == 10') + '.'}
+
+    if(!/if\s*\([^)]*(<=|>=|<|>|==|!=)/.test(js))
+      return {ok: false, message: 'The counting works &mdash; now the reaction! Inside ' + codeSample(called[1]) + ', after the counting line, add ' + codeSample('if (pets >= 10) { ... }') + ' that fills your mood line.'}
+
+    return {ok: true, message: 'Ten pets and the cat purrs. Your page counts <em>and</em> judges now &mdash; that&rsquo;s real programming.'}
+  }
+</script>

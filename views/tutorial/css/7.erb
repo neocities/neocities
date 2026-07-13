@@ -1,0 +1,61 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>So far, everything you've styled just sits there. This lesson, your page starts <em>reacting</em> &mdash; watch what happens when the mouse comes close.</p>
+  </div>
+</div>
+
+<p>First, the easy part: links are elements like any other, so an element selector styles them all at once:</p>
+
+<pre><code class="css">a {
+  color: mediumvioletred;
+}</code></pre>
+
+<p>Now the magic part. Adding <code>:hover</code> to a selector makes a rule that only applies <strong>while the mouse is over the element</strong>:</p>
+
+<pre><code class="css">a:hover {
+  background-color: gold;
+}</code></pre>
+
+<p>That's called a <strong>pseudo-class</strong> &mdash; a condition attached to a selector. Move your mouse onto a link, the rule switches on. Move away, it switches off. No programming, just CSS being wonderful.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>First give your page a link or two to style, somewhere in a paragraph: <code class="html"><%= '<a href="https://neocities.org">my favorite place</a>' %></code></li>
+    <li>Add an <code>a</code> rule that gives your links a color you love.</li>
+    <li>Add an <code>a:hover</code> rule that changes something &mdash; a <code>background-color</code>, a different <code>color</code>, anything.</li>
+    <li>Wave your mouse over the links in the preview. Alive! Then click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>More moods for links</h4>
+  <p><code>a:visited</code> styles links the visitor has already clicked, and <code>text-decoration: none;</code> removes the underline (keep <em>some</em> hint that links are links, though!). And <code>:hover</code> isn't just for links &mdash; try a hover rule on <code>img</code> and watch your picture react too.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var css = styleText(doc)
+
+    var linkRule = css.match(/(^|[^\w.#:-])a\s*\{([^}]*)\}/i)
+    var hoverRule = css.match(/a\s*:\s*hover\s*\{([^}]*)\}/i)
+
+    if(!linkRule && !hoverRule)
+      return {ok: false, message: 'I don&rsquo;t see any link styles yet. Start with ' + codeSample('a { color: mediumvioletred; }') + ' &mdash; the selector for every link on the page.'}
+
+    if(!linkRule || !/[a-z-]+\s*:\s*[^;\s}]/i.test(linkRule[2]))
+      return {ok: false, message: 'Give your links their everyday look first: an ' + codeSample('a') + ' rule with a ' + codeSample('color') + ' inside.'}
+
+    if(!hoverRule) {
+      if(/a\s+hover|a\s*hover\s*\{/i.test(css))
+        return {ok: false, message: 'So close &mdash; hover attaches with a colon and no spaces: ' + codeSample('a:hover { ... }')}
+      return {ok: false, message: 'Links look great! Now the magic: add an ' + codeSample('a:hover') + ' rule that changes something while the mouse is on the link.'}
+    }
+
+    if(!/[a-z-]+\s*:\s*[^;\s}]/i.test(hoverRule[1]))
+      return {ok: false, message: 'Your ' + codeSample('a:hover') + ' rule is empty &mdash; put a change inside it, like ' + codeSample('background-color: gold;')}
+
+    return {ok: true, message: 'Wave at your links &mdash; they wave back! Your first interactive style.'}
+  }
+</script>

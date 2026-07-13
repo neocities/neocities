@@ -1,0 +1,77 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Right now <em>you</em> call the function. Let's hand that power to your visitors instead &mdash; with the most satisfying element in all of HTML.</p>
+  </div>
+</div>
+
+<p>The <code class="html"><%= '<button>' %></code> element makes a real, pressable button. Its <code>onclick</code> attribute holds a piece of JavaScript to run when it's clicked &mdash; like calling your function:</p>
+
+<pre><code class="html"><%= '<button onclick="changeSky()">Change the sky</button>' %></code></pre>
+
+<p>This is the moment your two new skills connect: HTML provides the button, JavaScript provides the trick, and <code>onclick</code> ties them together.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Near the top of your <code class="html"><%= '<body>' %></code> &mdash; under your greeting paragraph is nice &mdash; add the button from the example.</li>
+    <li>In your script, <strong>delete the <code>changeSky()</code> line at the bottom</strong>. The button is in charge of calling it now.</li>
+    <li>Click your button in the preview. The sky changes <em>when you say so</em>. Then click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Buttons vs. links</h4>
+  <p>A good rule for your site: links (<code class="html"><%= '<a>' %></code>) <em>take you somewhere</em>, buttons <em>do something here</em>. And notice the button dutifully ignores your click's location, hover state, everything &mdash; it just runs whatever <code>onclick</code> says. Try making a second button that changes the sky to something goofy.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var js = scriptText(doc)
+    var buttons = doc.querySelectorAll('body button')
+
+    if(buttons.length == 0)
+      return {ok: false, message: 'I don&rsquo;t see a ' + codeSample('<button>') + ' yet. Add one like ' + codeSample('<button onclick="changeSky()">Change the sky</button>')}
+
+    var wired = null
+    var unwired = null
+
+    for(var i = 0; i < buttons.length; i++) {
+      var onclick = buttons[i].getAttribute('onclick')
+
+      if(onclick === null || onclick.trim() == '') {
+        unwired = buttons[i]
+        continue
+      }
+
+      var called = onclick.match(/([a-zA-Z_$][\w$]*)\s*\(/)
+
+      if(!called) {
+        unwired = buttons[i]
+        continue
+      }
+
+      if(!new RegExp('function\\s+' + called[1] + '\\s*\\(').test(js))
+        return {ok: false, message: 'Your button calls ' + codeSample(called[1] + '()') + ', but I can&rsquo;t find a function with that name in your script. The names have to match exactly!'}
+
+      wired = buttons[i]
+
+      if(buttons[i].textContent.trim() == '')
+        return {ok: false, message: 'Your button works, but it&rsquo;s blank! Put a label between ' + codeSample('<button ...>') + ' and ' + codeSample('</button>') + '.'}
+    }
+
+    if(!wired) {
+      if(unwired)
+        return {ok: false, message: 'Your button doesn&rsquo;t do anything yet &mdash; give it an ' + codeSample('onclick') + ' attribute that calls your function: ' + codeSample('<button onclick="changeSky()">')}
+      return {ok: false, message: 'Add an ' + codeSample('onclick="changeSky()"') + ' to your button so it calls your function.'}
+    }
+
+    var onclickName = wired.getAttribute('onclick').match(/([a-zA-Z_$][\w$]*)\s*\(/)[1]
+    var callsInScript = (js.match(new RegExp('\\b' + onclickName + '\\s*\\(', 'g')) || []).length
+
+    if(callsInScript >= 2)
+      return {ok: false, message: 'The button works &mdash; but your script still calls ' + codeSample(onclickName + '()') + ' by itself at the bottom. Delete that line, so the sky only changes when a visitor asks for it.'}
+
+    return {ok: true, message: 'Your first interactive control. Click&hellip; new sky. That feeling never gets old.'}
+  }
+</script>

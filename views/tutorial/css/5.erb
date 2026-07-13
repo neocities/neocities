@@ -1,0 +1,72 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Here's a secret about web design: everything on your page is a rectangle. Once you can decorate a rectangle, you can decorate anything.</p>
+  </div>
+</div>
+
+<p>Every element is a box, and CSS gives you dials for each layer of it:</p>
+
+<ul class="lesson-List">
+  <li><strong><code>padding</code></strong> &mdash; breathing room <em>inside</em> the box, between the edge and the content.</li>
+  <li><strong><code>border</code></strong> &mdash; the edge itself. It takes three values at once: how thick, what style, what color.</li>
+  <li><strong><code>margin</code></strong> &mdash; space <em>outside</em> the box, pushing neighbors away.</li>
+  <li><strong><code>border-radius</code></strong> &mdash; how rounded the corners are.</li>
+</ul>
+
+<pre><code class="css">.intro {
+  background-color: white;
+  color: black;
+  border: 2px solid darkslateblue;
+  border-radius: 12px;
+  padding: 15px;
+}</code></pre>
+
+<p>Sizes here are in <code>px</code> (pixels), but there are a few other ways to size things too (we'll leave that as extra credit).</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Grow your class rule to match the example: add a <code>border</code>, a <code>border-radius</code>, and some <code>padding</code>.</li>
+    <li>Now play with the dials! Thicker border, rounder corners, more padding. Try border style <code>dashed</code> or <code>dotted</code>.</li>
+    <li>When your box looks like a box you'd keep things in, click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>The full spa treatment</h4>
+  <p>Two more finishing touches to try: <code>margin: 40px 0;</code> gives the box space above and below (first number: top and bottom, second: left and right), and <code>box-shadow: 0 4px 8px rgba(0,0,0,0.2);</code> makes it float off the page like a sticker.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var css = styleText(doc)
+    var classRules = css.match(/\.[a-zA-Z][\w-]*\s*\{[^}]*\}/g) || []
+
+    if(classRules.length == 0)
+      return {ok: false, message: 'I can&rsquo;t find your class rule from the last step (like ' + codeSample('.intro { ... }') + '). Bring it back &mdash; this lesson builds on it!'}
+
+    var best = null
+    for(var i = 0; i < classRules.length; i++) {
+      var hasBorder = /border\s*:/i.test(classRules[i])
+      var hasPadding = /padding\s*:/i.test(classRules[i])
+
+      if(hasBorder && hasPadding)
+        return {ok: true, message: 'Padding, border, corners &mdash; that plain old div is a proper keepsake box now!'}
+
+      if(hasBorder || hasPadding)
+        best = best || {border: hasBorder, padding: hasPadding}
+    }
+
+    if(best && best.border)
+      return {ok: false, message: 'The border looks sharp! Now give the words inside some breathing room: add ' + codeSample('padding: 15px;') + ' to the same rule.'}
+
+    if(best && best.padding)
+      return {ok: false, message: 'Nice padding! Now draw the box&rsquo;s edge: add ' + codeSample('border: 2px solid darkslateblue;') + ' &mdash; thickness, style, color.'}
+
+    if(/border\s+[0-9]/i.test(css))
+      return {ok: false, message: 'Don&rsquo;t forget the colon: ' + codeSample('border: 2px solid darkslateblue;')}
+
+    return {ok: false, message: 'Your class rule is there, but no box styles yet. Inside it, add ' + codeSample('border: 2px solid darkslateblue;') + ' and ' + codeSample('padding: 15px;')}
+  }
+</script>

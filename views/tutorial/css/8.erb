@@ -1,0 +1,63 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>For the grand finale of your makeover: let's replace that flat background with a whole sky.</p>
+  </div>
+</div>
+
+<p>A <strong>gradient</strong> blends smoothly from one color to another. There's a catch that trips everyone up once: <code>background-color</code> only holds solid colors. Gradients go in the bigger <code>background</code> property:</p>
+
+<pre><code class="css">body {
+  background: linear-gradient(lightskyblue, plum);
+  min-height: 100vh;
+}</code></pre>
+
+<p>First color at the top, fading to the second at the bottom &mdash; a sunset in one line of code. The second line matters too: your body is only as tall as your words, and a gradient that runs out part-way down the window starts over from the top color &mdash; leaving a strange band at the bottom. <code>min-height: 100vh</code> stretches the body to at least the full window (<code>vh</code> is short for <em>viewport height</em>, and 100 is all of it), so the sky always reaches the ground.</p>
+
+<p>You can steer the gradient, too:</p>
+
+<ul class="lesson-List">
+  <li><code>linear-gradient(gold, orangered)</code> &mdash; warm dawn</li>
+  <li><code>linear-gradient(to right, #ffe9f0, #e6e6fa)</code> &mdash; sideways fade</li>
+  <li><code>linear-gradient(midnightblue, black)</code> &mdash; nightfall</li>
+  <li><code>linear-gradient(gold, hotpink, midnightblue)</code> &mdash; the full sunset</li>
+</ul>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>In your <code>body</code> rule, replace the <code>background-color</code> line with a <code>background: linear-gradient( ... );</code> of your own two (or more!) colors, and add <code>min-height: 100vh;</code> so it fills the window.</li>
+    <li>Audition a few skies. Named colors and hex codes both work in there.</li>
+    <li>Found the one? Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Patterns, tiles, and full wallpaper</h4>
+  <p>The <code>background</code> property has more tricks: <code>background: url("/mypattern.png");</code> tiles an image across the page &mdash; the beloved wallpaper look of the classic web. Upload any small image to your site from the dashboard and try it. Gradients not blending? Make sure both colors are inside the parentheses, separated by a comma.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var css = styleText(doc)
+
+    if(/background-color\s*:\s*linear-gradient/i.test(css))
+      return {ok: false, message: 'Ah, the classic trap! ' + codeSample('background-color') + ' only holds solid colors &mdash; use the bigger property: ' + codeSample('background: linear-gradient(lightskyblue, plum);')}
+
+    var gradient = css.match(/background\s*:\s*linear-gradient\s*\(([^)]*)\)/i)
+
+    if(!gradient) {
+      if(/linear\s*-?\s*gradient/i.test(css))
+        return {ok: false, message: 'I can see a gradient forming &mdash; check the spelling and shape: ' + codeSample('background: linear-gradient(lightskyblue, plum);')}
+      return {ok: false, message: 'No gradient yet! In your body rule, swap the background-color line for ' + codeSample('background: linear-gradient(lightskyblue, plum);')}
+    }
+
+    if(gradient[1].indexOf(',') == -1)
+      return {ok: false, message: 'A gradient needs at least two colors to blend between, separated by a comma: ' + codeSample('linear-gradient(lightskyblue, plum)')}
+
+    if(!/min-height\s*:\s*[^;\s}]/i.test(css))
+      return {ok: false, message: 'Gorgeous &mdash; but look at the bottom of a tall window: the sky runs out where your words do, then starts over. Add ' + codeSample('min-height: 100vh;') + ' to the body rule so it always reaches the ground.'}
+
+    return {ok: true, message: 'You painted a sky with one line of CSS, and it goes all the way down. What a finish!'}
+  }
+</script>

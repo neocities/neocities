@@ -1,0 +1,48 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Every personal site needs a motto. A lyric that gets you, a line from a book, something a friend said once&hellip; let's give yours a proper frame.</p>
+  </div>
+</div>
+
+<p>HTML has an element made just for quotations: <code><%= '<blockquote>' %></code>. Browsers set it apart from the rest of your text &mdash; usually indented &mdash; so it reads like something worth pausing on:</p>
+
+<pre><code class="html"><%= '<blockquote>A website is a little home you build for your ideas.</blockquote>' %></code></pre>
+
+<p>It's a regular wrapping element, like <code><%= '<p>' %></code>: opening tag, the quote, closing tag. You can even put paragraphs <em>inside</em> it for longer quotes.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Below your poem, add a <code><%= '<blockquote>' %></code> with words you love &mdash; a quote, a lyric, a motto. (If nothing comes to mind, invent one. It's your site!)</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Saying who said it</h4>
+  <p>A classy touch: credit the author with a <code><%= '<p>' %></code> right after the quote, like <code><%= '<p>&mdash; Penelope the cat</p>' %></code>. (That <code>&amp;mdash;</code> makes a long dash &mdash; more on those special codes next step!)</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    if(missingClosingTag(html, 'blockquote'))
+      return {ok: false, message: 'Your ' + codeSample('<blockquote>') + ' is missing its closing ' + codeSample('</blockquote>') + ' tag &mdash; the browser thinks the rest of your page is part of the quote!'}
+
+    var quotes = doc.querySelectorAll('body blockquote')
+
+    if(quotes.length == 0)
+      return {ok: false, message: 'I don&rsquo;t see a ' + codeSample('<blockquote>') + ' yet. Add one below your poem with words that mean something to you.'}
+
+    var withText = 0
+    for(var i = 0; i < quotes.length; i++) {
+      if(quotes[i].textContent.trim() != '')
+        withText++
+    }
+
+    if(withText == 0)
+      return {ok: false, message: 'Your blockquote is there, but it&rsquo;s empty! Put the quote between ' + codeSample('<blockquote>') + ' and ' + codeSample('</blockquote>') + '.'}
+
+    return {ok: true, message: 'Beautifully quoted. Check how the browser sets it apart in the preview!'}
+  }
+</script>

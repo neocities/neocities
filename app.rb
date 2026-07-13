@@ -97,8 +97,8 @@ before do
     redirect "/site/#{current_site.username}/confirm_email"
   elsif current_site && current_site.phone_verification_needed? && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/signout|^\/aup|^\/terms/)
     redirect  "/site/#{current_site.username}/confirm_phone"
-  elsif current_site && current_site.tutorial_required && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/tutorial\/.+|^\/aup|^\/terms/)
-    redirect '/tutorial/html/1'
+  elsif current_site && current_site.tutorial_required && !(request.path =~ /^\/site\/.+\/confirm_email|^\/settings\/change_email|^\/site\/.+\/confirm_phone|^\/welcome|^\/supporter|^\/tutorial(\/|$)|^\/aup|^\/terms|^\/signout/)
+    redirect '/tutorial'
   else
     content_type :html, 'charset' => 'utf-8'
     redirect '/' if request.post? && !WHITELISTED_POST_PATHS.include?(request.path_info) && !csrf_safe?

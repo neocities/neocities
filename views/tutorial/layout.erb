@@ -1,11 +1,23 @@
 <%
   has_editor = @page < TUTORIAL_PAGE_COUNT
   review_page = @page == TUTORIAL_COMPLETION_PAGE
-  if @page == TUTORIAL_COMPLETION_PAGE - 1
-    next_url = "/tutorial/#{@section}/#{TUTORIAL_COMPLETION_PAGE}?csrf_token=#{Rack::Utils.escape csrf_token}"
-  else
-    next_url = "/tutorial/#{@section}/#{@page + 1}"
-  end
+  next_url = "/tutorial/#{@section}/#{@page + 1}"
+
+  # Everyone advances the tutorial walk by POSTing to the current lesson
+  # (see the tutorial POST route) - pages unlock strictly one at a time.
+  advance_by_post = has_editor && !review_page
+
+  # The js tutorial needs scripts running in the preview. Sandboxed scripts
+  # get a unique origin (allow-same-origin is deliberately NOT combined with
+  # allow-scripts, so pasted code can never reach the neocities.org session),
+  # which also means the parent can't reach into the frame to intercept link
+  # clicks there.
+  scripts_enabled = @section == 'js'
+  code_chip_language = {'css' => 'css', 'js' => 'javascript'}.fetch(@section, 'html')
+
+  # Each tutorial builds one page across its steps, so saved work is
+  # shared by the whole section and flows from page to page.
+  storage_key = "neocities_tutorial_#{@section}:#{escape_javascript current_site.username}"
 %>
 <section class="section tutorial">
   <nav class="tutorial-Progress" aria-label="Tutorial progress">
@@ -14,18 +26,17 @@
       <% classes << 'is-Current' if p == @page %>
       <% classes << 'is-Done' if p < @page %>
       <% if p < @page %>
-        <% step_url = p == TUTORIAL_COMPLETION_PAGE ? "/tutorial/#{@section}/#{p}?csrf_token=#{Rack::Utils.escape csrf_token}" : "/tutorial/#{@section}/#{p}" %>
-        <a href="<%= step_url %>" class="<%= classes.join(' ') %>" title="<%= tutorial_page_title(p) %>"><%= p %></a>
+        <a href="/tutorial/<%= @section %>/<%= p %>" class="<%= classes.join(' ') %>" title="<%= tutorial_page_title(@section, p) %>"><%= p %></a>
       <% else %>
-        <span class="<%= classes.join(' ') %>" title="<%= tutorial_page_title(p) %>"<%== p == @page ? ' aria-current="step"' : '' %>><%= p %></span>
+        <span class="<%= classes.join(' ') %>" title="<%= tutorial_page_title(@section, p) %>"<%== p == @page ? ' aria-current="step"' : '' %>><%= p %></span>
       <% end %>
     <% end %>
   </nav>
 
   <div class="row">
     <div class="col <%= has_editor ? 'col-50' : 'col-100' %> lesson">
-      <p class="step-Count">HTML Tutorial &middot; Step <%= @page %> of <%= TUTORIAL_PAGE_COUNT %></p>
-      <h1><%= tutorial_page_title(@page) %></h1>
+      <p class="step-Count"><%= tutorial_section_title(@section) %> Tutorial &middot; Step <%= @page %> of <%= TUTORIAL_PAGE_COUNT %></p>
+      <h1><%= tutorial_page_title(@section, @page) %></h1>
 
       <%== erb "tutorial/#{@section}/#{@page}".to_sym, layout: false %>
 
@@ -43,10 +54,16 @@
         </div>
 
         <div id="tutorialFeedback" class="tutorial-Feedback" style="display: none" role="status" aria-live="polite"></div>
+
+        <% if advance_by_post %>
+          <form method="POST" action="/tutorial/<%= @section %>/<%= @page %>" id="advanceForm" style="display: none">
+            <%== csrf_token_input_html %>
+          </form>
+        <% end %>
       <% end %>
 
       <h3 class="editor-heading"><%= review_page ? 'Your finished code' : 'Your code (edit me!)' %></h3>
-      <div id="editor" class="editor"><%= tutorial_starter_html(@page) %></div>
+      <div id="editor" class="editor"><%= tutorial_starter_html(@section) %></div>
 
       <h3 class="preview-heading">What visitors will see</h3>
       <div class="preview-Browser">
@@ -55,7 +72,7 @@
           <span class="preview-Tab"><i class="fa fa-file-o" aria-hidden="true"></i> <span id="previewTabTitle">Untitled page</span></span>
         </div>
         <div class="preview-UrlBar"><i class="fa fa-lock" aria-hidden="true"></i> <%= current_site.host %></div>
-        <iframe id="previewFrame" class="preview" sandbox="allow-same-origin" title="Live preview of your page"></iframe>
+        <iframe id="previewFrame" class="preview" sandbox="<%= scripts_enabled ? 'allow-scripts' : 'allow-same-origin' %>" title="Live preview of your page"></iframe>
       </div>
     </div>
     <% end %>
@@ -73,10 +90,12 @@
     nextUrl: '<%== escape_javascript next_url %>',
     hasEditor: <%= has_editor %>,
     reviewPage: <%= review_page %>,
-    storageKey: 'neocities_tutorial_html:<%== escape_javascript current_site.username %>'
+    advanceByPost: <%= advance_by_post %>,
+    scriptsEnabled: <%= scripts_enabled %>,
+    storageKey: '<%== storage_key %>'
   }
 
-  var defaultTutorialHtml = '<%== escape_javascript tutorial_starter_html(@page) %>'
+  var defaultTutorialHtml = '<%== escape_javascript tutorial_starter_html(@section) %>'
 
   function tutorialLoadSavedHtml() {
     try {
@@ -100,6 +119,22 @@
 
   function bodyText(doc) {
     return (doc.body ? doc.body.textContent : '').replace(/\s+/g, ' ').trim()
+  }
+
+  function styleText(doc) {
+    var styles = doc.querySelectorAll('style')
+    var out = ''
+    for(var i = 0; i < styles.length; i++)
+      out += styles[i].textContent + '\n'
+    return out
+  }
+
+  function scriptText(doc) {
+    var scripts = doc.querySelectorAll('script')
+    var out = ''
+    for(var i = 0; i < scripts.length; i++)
+      out += scripts[i].textContent + '\n'
+    return out
   }
 
   // True when there are more opening <tag>s than closing </tag>s,
@@ -132,6 +167,15 @@
     feedbackObj.attr('class', 'tutorial-Feedback is-Success')
     feedbackObj.html('<i class="fa fa-check-circle" aria-hidden="true"></i> ' + messageHtml +
       ' <a href="' + TUTORIAL.nextUrl + '" class="feedback-Next">Next step &raquo;</a>')
+
+    // Advancing the walk happens with a POST (see the layout's hidden form)
+    if(TUTORIAL.advanceByPost) {
+      feedbackObj.find('.feedback-Next').on('click', function(e) {
+        e.preventDefault()
+        document.getElementById('advanceForm').submit()
+      })
+    }
+
     feedbackObj.fadeIn('fast')
   }
 
@@ -144,7 +188,10 @@
   // sites that refuse to be framed. Instead, catch clicks from the parent
   // (the frame is same-origin) and open links in a new tab, resolving
   // relative addresses against the student's real site like a published
-  // page would.
+  // page would. Jump links (#fragment) scroll the preview by hand: the
+  // frame's base URL is this tutorial page, so a native fragment click
+  // would try to load the tutorial page itself into the frame instead of
+  // jumping.
   function interceptPreviewLinks() {
     var frame = document.getElementById('previewFrame')
     var doc = frame && frame.contentDocument
@@ -160,8 +207,23 @@
       e.preventDefault()
 
       var href = link.getAttribute('href')
-      if(!href || href.charAt(0) == '#')
+      if(!href)
         return
+
+      if(href.charAt(0) == '#') {
+        var dest = href.length > 1 ? doc.getElementById(href.slice(1)) : null
+        if(dest && dest.scrollIntoView) {
+          dest.scrollIntoView()
+
+          // A short page has nowhere to scroll, which makes a working jump
+          // link look broken - flash the target so the landing shows
+          // regardless of page height.
+          var previousOutline = dest.style.outline
+          dest.style.outline = '3px solid gold'
+          setTimeout(function() { dest.style.outline = previousOutline }, 900)
+        }
+        return
+      }
 
       var url
       try {
@@ -216,7 +278,8 @@
     document.querySelectorAll('.tutorial .lesson code').forEach(function(el) {
       if(el.closest('.tag-Anatomy') || el.classList.contains('hljs'))
         return
-      el.classList.add('html')
+      if(!el.classList.contains('html') && !el.classList.contains('css') && !el.classList.contains('javascript'))
+        el.classList.add('<%= code_chip_language %>')
       hljs.highlightElement(el)
     })
 
@@ -238,9 +301,87 @@
     // Disable bracket/tag autocompletion - beginners should type both tags themselves
     editor.setBehavioursEnabled(false)
 
+    // Re-indent multi-line pastes to fit where they land: the block is
+    // normalized to column zero (whatever indentation it was copied with),
+    // then every line is re-based on the indentation at the cursor.
+    // Single-line pastes are left alone.
+    editor.on('paste', function(e) {
+      if(e.text.indexOf('\n') == -1)
+        return
+
+      var lines = e.text.replace(/\t/g, '  ').split('\n')
+
+      // The smallest indentation across the block's non-empty lines is
+      // what the whole block gets dedented by.
+      var minIndent = null
+      for(var i = 0; i < lines.length; i++) {
+        if(lines[i].trim() == '')
+          continue
+        var indent = lines[i].match(/^ */)[0].length
+        if(minIndent === null || indent < minIndent)
+          minIndent = indent
+      }
+      minIndent = minIndent || 0
+
+      var cursor = editor.getCursorPosition()
+      var session = editor.session
+      var row = cursor.row
+      var baseLine = session.getLine(row)
+
+      // On a blank line, borrow the indentation of the closest line above
+      // that has any content.
+      while(baseLine.trim() == '' && row > 0)
+        baseLine = session.getLine(--row)
+
+      var baseIndent = baseLine.match(/^ */)[0]
+
+      // A base line that opens a block - an opening tag like <script> or
+      // <style>, or a CSS rule ending in { - means the paste belongs one
+      // indent level deeper than the line itself.
+      var trimmedBase = baseLine.trim()
+      var opensBlock = /\{$/.test(trimmedBase)
+
+      if(!opensBlock) {
+        var tagMatch = trimmedBase.match(/<([a-zA-Z][\w-]*)([^>]*)>$/)
+        var voidTags = ['br', 'hr', 'img', 'input', 'link', 'meta']
+
+        if(tagMatch && !/\/>$/.test(trimmedBase) &&
+           voidTags.indexOf(tagMatch[1].toLowerCase()) == -1 &&
+           trimmedBase.indexOf('</' + tagMatch[1]) == -1)
+          opensBlock = true
+      }
+
+      if(opensBlock)
+        baseIndent += '  '
+
+      var beforeCursor = session.getLine(cursor.row).slice(0, cursor.column)
+
+      for(var i = 0; i < lines.length; i++) {
+        var line = lines[i].slice(minIndent)
+
+        if(line.trim() == '') {
+          lines[i] = ''
+        } else if(i == 0) {
+          if(beforeCursor.trim() != '')
+            lines[i] = line // continuing a line the student already started
+          else
+            lines[i] = baseIndent.slice(beforeCursor.length) + line
+        } else {
+          lines[i] = baseIndent + line
+        }
+      }
+
+      e.text = lines.join('\n')
+    })
+
     var savedHtml = tutorialLoadSavedHtml()
     if(savedHtml)
       editor.setValue(savedHtml, -1)
+
+    // What the editor held when this page was opened. The Reset button
+    // restores this snapshot - the student's own code as it arrived here -
+    // never a canned document.
+    var pageEntryHtml = editor.getValue()
 
     if(TUTORIAL.reviewPage) {
       editor.setReadOnly(true)
@@ -267,7 +408,7 @@
     }
 
     var previewFrame = document.getElementById('previewFrame')
-    if(previewFrame)
+    if(previewFrame && !TUTORIAL.scriptsEnabled)
       previewFrame.addEventListener('load', interceptPreviewLinks)
 
     refreshPreview()
@@ -281,9 +422,9 @@
     $('#resetButton').on('click', function(e) {
       e.preventDefault()
       this.blur()
-      if(confirm('This replaces your work with the example page for this step. Reset?')) {
-        editor.setValue(defaultTutorialHtml, -1)
-        tutorialSaveHtml(defaultTutorialHtml)
+      if(confirm('This puts your code back to how it was when you arrived at this step. Reset?')) {
+        editor.setValue(pageEntryHtml, -1)
+        tutorialSaveHtml(pageEntryHtml)
         refreshPreview()
         feedbackObj.fadeOut('fast')
       }

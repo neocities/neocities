@@ -5,6 +5,15 @@
 .tutorial {
   padding-top: 40px;
 
+  // The global .fa-heart styling shrinks and raises the icon to sit as a
+  // supporter badge after usernames; hearts in lesson content are ordinary
+  // inline icons.
+  .fa-heart {
+    font-size: inherit;
+    vertical-align: baseline;
+    margin-left: 0;
+  }
+
   // Flat buttons, no gradient. Bootstrap's .btn:focus (imported at the top of
   // neo.css) shifts background-position -15px, which made the .btn-Action
   // gradient wrap into a two-tone split on a clicked (still focused) button,
@@ -43,7 +52,7 @@
     // The hljs theme sets overflow-x:auto, which shifts an inline-block's
     // baseline to its bottom edge and threw chips out of line with the text.
     overflow: visible;
-    padding: 2px 7px;
+    padding: 0px 7px;
     // Bootstrap sets code{white-space:nowrap}, which made long chips overflow
     // their container instead of wrapping.
     white-space: normal;
@@ -53,6 +62,11 @@
   pre code {
     border-radius: 0;
     padding: 0;
+    // The chip styles above (inline-block, white-space:normal) are for
+    // inline mentions only; block examples need their line breaks back.
+    display: block;
+    white-space: pre-wrap;
+    word-break: normal;
   }
 
   // --- Progress steps across the top ---
@@ -290,6 +304,126 @@
     }
   }
 
+  // --- Inline color picker (css tutorial, Millions of Colors) ---
+
+  .color-Picker {
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+    padding: 14px;
+    margin: 15px 0;
+
+    .picker-Area {
+      position: relative;
+      height: 170px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 0, 0, .2);
+      cursor: crosshair;
+      touch-action: none;
+
+      &:focus {
+        outline: 2px solid #50b6d5;
+        outline-offset: 2px;
+      }
+    }
+
+    .picker-Thumb {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      margin: -9px 0 0 -9px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(0, 0, 0, .2);
+      pointer-events: none;
+    }
+
+    .picker-Hue {
+      -webkit-appearance: none;
+      appearance: none;
+      display: block;
+      width: 100%;
+      height: 14px;
+      margin: 12px 0 0;
+      border: 1px solid rgba(0, 0, 0, .2);
+      border-radius: 7px;
+      background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+      cursor: pointer;
+
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, .45);
+      }
+
+      &::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, .45);
+      }
+
+      &::-moz-range-track {
+        background: transparent;
+      }
+    }
+
+    .picker-Result {
+      display: flex;
+      align-items: center;
+      margin-top: 12px;
+
+      .picker-Swatch {
+        width: 28px;
+        height: 28px;
+        border: 1px solid rgba(0, 0, 0, .25);
+        border-radius: 6px;
+        margin-right: 10px;
+        flex-shrink: 0;
+      }
+
+      // The hex readout carries .hljs only so the layout's chip highlighter
+      // leaves it alone; restyle it back into a plain light chip here.
+      code {
+        display: inline-block;
+        background: #f4f6f7;
+        border: 1px solid #d5dcdf;
+        border-left: 1px solid #d5dcdf;
+        border-radius: 4px;
+        color: #333;
+        font-size: 15px;
+        margin: 0;
+        padding: 4px 10px;
+        overflow: visible;
+      }
+
+      .picker-Copy {
+        background: #5e95a1;
+        border: 0;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: bold;
+        margin-left: 10px;
+        padding: 6px 14px;
+
+        &:hover {
+          background: #4a7f8b;
+        }
+      }
+    }
+  }
+
   // --- Cheat sheet table ---
 
   .cheat-Sheet {
@@ -485,6 +619,7 @@
       h3 {
         font-size: 18px;
         color: #5e95a1;
+        margin-top: 1em;
 
         .fa {
           margin-right: 6px;
@@ -599,6 +734,24 @@ html.dark-Mode {
 
       th, td {
         border-bottom-color: #2c3f46;
+      }
+    }
+
+    .color-Picker {
+      background: #16262c;
+      border-color: #3a545c;
+      box-shadow: none;
+
+      .picker-Area,
+      .picker-Hue,
+      .picker-Result .picker-Swatch {
+        border-color: rgba(255, 255, 255, .25);
+      }
+
+      .picker-Result code {
+        background: #0f1b20;
+        border-color: #456b75;
+        color: #dbe7e7;
       }
     }
 

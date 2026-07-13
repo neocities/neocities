@@ -1,0 +1,261 @@
+// ----------------------------------------------------------------
+//		Project Specific: Learn page (/tutorials)
+// ----------------------------------------------------------------
+
+.learn-Page {
+  padding: 50px 8% 70px;
+
+  // The global .fa-heart styling shrinks and raises the icon to sit as a
+  // supporter badge after usernames; hearts in page copy are ordinary
+  // inline icons.
+  .fa-heart {
+    font-size: inherit;
+    vertical-align: baseline;
+    margin-left: 0;
+  }
+
+  .learn-Hero,
+  .learn-Path,
+  .learn-Further {
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  h2 {
+    color: $c-Teal;
+    margin-top: 0;
+  }
+
+  // --- Hero ---
+
+  .learn-Hero {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 50px;
+
+    .learn-Cat {
+      width: 230px;
+      flex-shrink: 0;
+      // Cancel the global .welcoming-cat-ish float styles; this is flex now
+      float: none;
+      margin: 0;
+    }
+
+    h1 {
+      color: $c-Teal;
+      margin-top: 0;
+    }
+
+    p {
+      font-size: 1.1em;
+    }
+
+    .learn-Promise {
+      background: #f4fae8;
+      border: 2px solid #a8cc63;
+      border-radius: 8px;
+      display: inline-block;
+      padding: 10px 15px;
+
+      .fa {
+        color: $c-Brand-1;
+        margin-right: 4px;
+      }
+    }
+
+    .learn-Cta-Row {
+      margin-bottom: 8px;
+    }
+
+    .learn-Cta {
+      font-size: 1.1em;
+      padding: 12px 26px;
+    }
+
+    .learn-Cta-Note {
+      margin-left: 10px;
+
+      @media (max-device-width: 480px), screen and (max-width: 800px) {
+        display: block;
+        margin: 8px 0 0;
+      }
+    }
+
+    .learn-Alt {
+      font-size: 1em;
+    }
+
+    @media (max-device-width: 480px), screen and (max-width: 800px) {
+      display: block;
+      text-align: center;
+
+      .learn-Cat {
+        width: 170px;
+        margin-bottom: 10px;
+      }
+
+      .learn-Hero-Copy {
+        text-align: left;
+      }
+    }
+  }
+
+  // --- The numbered path ---
+
+  .learn-Path-Intro {
+    font-size: 1.1em;
+    margin-bottom: 35px;
+  }
+
+  .learn-Stage {
+    margin-bottom: 45px;
+
+    h3 {
+      color: #3f6b76;
+      margin-bottom: 8px;
+    }
+
+    .stage-Num {
+      display: inline-block;
+      width: 34px;
+      height: 34px;
+      line-height: 32px;
+      margin-right: 8px;
+      border-radius: 50%;
+      border: 2px solid $c-Teal;
+      background: $c-Teal;
+      color: #fff;
+      font-size: 17px;
+      text-align: center;
+      vertical-align: 12%;
+    }
+
+    .stage-Intro {
+      margin-bottom: 18px;
+    }
+  }
+
+  .resource-Grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+    gap: 15px;
+  }
+
+  // The learning path shows one card per stage; cap the width so a lone
+  // card reads as a banner instead of stretching across the whole column.
+  .stage-Card {
+    max-width: 620px;
+  }
+
+  .resource-Card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 2px solid #cfdfe3;
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: $c-Body-Copy;
+    text-decoration: none;
+    transition: border-color .12s ease, box-shadow .12s ease;
+
+    &:hover,
+    &:focus {
+      border-color: $c-Teal;
+      box-shadow: 0 2px 8px rgba(48, 66, 75, .14);
+      text-decoration: none;
+
+      h4 {
+        text-decoration: underline;
+      }
+    }
+
+    h4 {
+      color: #3f6b76;
+      margin: 0 0 8px;
+
+      .fa-external-link {
+        font-size: .75em;
+        opacity: .55;
+      }
+    }
+
+    p {
+      font-size: .95em;
+      margin-bottom: 0px;
+    }
+
+    .card-Tags {
+      margin-top: auto;
+    }
+
+    // Inline code mentions render as soft chips instead of the site-wide
+    // dark code block style, which is too heavy inside a small card.
+    code {
+      background: #eef6f8;
+      border: 0;
+      border-radius: 4px;
+      color: #3f6b76;
+      margin: 0;
+      padding: 1px 6px;
+    }
+
+    .card-Tag {
+      display: inline-block;
+      background: #eef6f8;
+      border: 1px solid #b8d4da;
+      border-radius: 20px;
+      color: #3f6b76;
+      font-size: 11px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      padding: 2px 10px;
+      margin: 0 6px 4px 0;
+    }
+
+    &.is-Featured {
+      background: #eef6f8;
+      border-color: $c-Teal;
+
+      .card-Tag {
+        background: #fff;
+      }
+    }
+  }
+
+  // --- Going further ---
+
+  .learn-Further {
+    border-top: 2px solid #cfdfe3;
+    margin-top: 55px;
+    padding-top: 35px;
+
+    .further-Cols {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 25px;
+      margin-top: 25px;
+    }
+
+    .further-Col {
+      h4 {
+        color: #3f6b76;
+        margin: 0 0 6px;
+      }
+
+      p {
+        font-size: .9em;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      li {
+        margin-bottom: 4px;
+      }
+    }
+  }
+}

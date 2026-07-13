@@ -1,0 +1,13 @@
+<% walk = (session[:tutorial_walk] || {})['html'] || 1 %>
+<section class="section tutorial-welcome">
+<h2>Welcome to Neocities!</h2>
+
+<a href="/tutorial/html/<%= walk %>"><img src="/img/welcomingcat.png" alt="Penelope the Neocities cat extending her paws out warmly" class="welcoming-cat" style="margin-top: -20px;"></a>
+
+<div class="option">
+<h3><strong>Your site is ready and waiting! Let's get started.</strong></h3>
+<h3>New sites begin with a quick hands-on tutorial: Penelope the cat teaches you how web pages work by helping you build one, live &mdash; and at the end, you'll publish it as your site's real front page.</h3>
+<p>No experience is needed. When you finish, your dashboard opens up and the site is all yours to build on.</p>
+<p><a href="/tutorial/html/<%= walk %>" class="btn btn-Action"><%= walk > 1 ? 'Continue the tutorial' : 'Start the tutorial' %></a></p>
+</div>
+</section>

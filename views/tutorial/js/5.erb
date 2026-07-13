@@ -1,0 +1,68 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>One small problem: your button paints the same sky every time. Let's make it a proper switch &mdash; day, night, day, night &mdash; by teaching your page to make a decision.</p>
+  </div>
+</div>
+
+<p>Programs choose between paths with <code>if</code> and <code>else</code>: <em>if this is true, do the first thing; otherwise, do the second.</em> Combine that with a true/false variable that remembers which state you're in, and you get a toggle:</p>
+
+<pre><code class="js">var night = false
+
+function changeSky() {
+  document.body.style.minHeight = '100vh'
+  if (night) {
+    document.body.style.background = 'linear-gradient(lightskyblue, plum)'
+    document.body.style.color = 'black'
+    night = false
+  } else {
+    document.body.style.background = 'linear-gradient(midnightblue, black)'
+    document.body.style.color = 'white'
+    night = true
+  }
+}</code></pre>
+
+<p>Walk through a click: <code>night</code> starts <code>false</code>, so the <code>else</code> path runs &mdash; the sky darkens, the words turn white so they stay readable, and <code>night</code> flips to <code>true</code>. Next click, the <code>if</code> path runs and day returns. The variable is the page's <em>memory</em>; the if/else is its <em>choice</em>.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Add <code>var night = false</code> above your function, then rebuild <code>changeSky</code> like the example (keep the <code>minHeight</code> line!). For the daytime colors, match the gradient from your <code class="html"><%= '<style>' %></code> element.</li>
+    <li>Update your button's label to fit its new powers &mdash; maybe <em>Switch day and night</em>.</li>
+    <li>Click it a bunch of times in the preview. Day, night, day, night&hellip; then click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>You just built dark mode</h4>
+  <p>Seriously &mdash; a day/night switch is the same pattern real sites (including Neocities!) use for their theme toggles. And notice your welcome box keeps its dark words even at night: its <code>.intro</code> rule sets its own <code>color</code>, and a direct rule beats an inherited one. That's the cascade quietly doing its job.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var js = scriptText(doc)
+
+    var hasFlag = /\b(var|let)\s+[a-zA-Z_$][\w$]*\s*=\s*(true|false)\b/.test(js)
+    var hasIf = /\bif\s*\(/.test(js)
+    var hasElse = /\belse\b/.test(js)
+
+    if(!hasIf)
+      return {ok: false, message: 'I don&rsquo;t see an ' + codeSample('if') + ' yet. Inside your function, wrap the two paths: ' + codeSample('if (night) { ... } else { ... }')}
+
+    if(!hasElse)
+      return {ok: false, message: 'Your ' + codeSample('if') + ' needs an ' + codeSample('else') + ' &mdash; the other path, for when the answer is false.'}
+
+    if(!hasFlag)
+      return {ok: false, message: 'The page needs its memory: add ' + codeSample('var night = false') + ' <em>above</em> the function, so it remembers which sky is up.'}
+
+    var braces = (js.match(/\{/g) || []).length - (js.match(/\}/g) || []).length
+    if(braces != 0)
+      return {ok: false, message: 'The curly braces are out of balance &mdash; an if/else inside a function needs three closing ' + codeSample('}') + 's in total. Count yours!'}
+
+    var flips = (js.match(/=\s*(true|false)\b/g) || []).length
+    if(flips < 3)
+      return {ok: false, message: 'Almost! Remember to flip the memory in <em>both</em> paths: ' + codeSample('night = true') + ' after turning night on, ' + codeSample('night = false') + ' after turning it off.'}
+
+    return {ok: true, message: 'Click, night. Click, day. Your page remembers and chooses &mdash; that&rsquo;s real programming.'}
+  }
+</script>

@@ -7,7 +7,7 @@
 
 <p>HTML describes what's <em>on</em> your page. How it <em>looks</em> &mdash; colors, fonts, layouts &mdash; is the job of a second language called <strong>CSS</strong>. CSS is a whole adventure of its own, but here's a taste right now.</p>
 
-<p>CSS lives inside a <code><%= '<style>' %></code> tag in your page's <code><%= '<head>' %></code> &mdash; remember, the invisible part. This rule tells the browser: <em>make the body's background light sky blue</em>:</p>
+<p>CSS lives inside a <code><%= '<style>' %></code> element in your page's <code><%= '<head>' %></code> &mdash; remember, the invisible part. This rule tells the browser: <em>make the body's background light sky blue</em>:</p>
 
 <pre><code class="html"><%= "<style>\n  body {\n    background-color: lightskyblue;\n  }\n</style>" %></code></pre>
 
@@ -28,12 +28,12 @@
 <script>
   function lessonCheck(doc, html) {
     if(missingClosingTag(html, 'style'))
-      return {ok: false, message: 'Your ' + codeSample('<style>') + ' tag is missing its closing ' + codeSample('</style>') + ' &mdash; without it, the browser thinks the rest of your page is CSS!'}
+      return {ok: false, message: 'Your ' + codeSample('<style>') + ' element is missing its closing ' + codeSample('</style>') + ' tag &mdash; without it, the browser thinks the rest of your page is CSS!'}
 
     var styles = doc.querySelectorAll('style')
 
     if(styles.length == 0)
-      return {ok: false, message: 'I don&rsquo;t see a ' + codeSample('<style>') + ' tag yet. Copy the example block into your ' + codeSample('<head>') + ', right after the title line.'}
+      return {ok: false, message: 'I don&rsquo;t see a ' + codeSample('<style>') + ' element yet. Copy the example block into your ' + codeSample('<head>') + ', right after the title line.'}
 
     var css = ''
     for(var i = 0; i < styles.length; i++)
@@ -42,7 +42,7 @@
     if(!/background(-color)?\s*:/i.test(css)) {
       if(/background(-color)?\s+[a-z#]/i.test(css))
         return {ok: false, message: 'So close &mdash; don&rsquo;t forget the colon! It should be ' + codeSample('background-color: lightskyblue;')}
-      return {ok: false, message: 'Your style tag is there, but I don&rsquo;t see a background rule inside it yet. Add ' + codeSample('body { background-color: lightskyblue; }')}
+      return {ok: false, message: 'Your style element is there, but I don&rsquo;t see a background rule inside it yet. Add ' + codeSample('body { background-color: lightskyblue; }')}
     }
 
     if(!/background(-color)?\s*:\s*[^;\s}]/i.test(css))

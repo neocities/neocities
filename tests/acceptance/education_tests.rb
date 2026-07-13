@@ -33,13 +33,13 @@ describe 'signup' do
     fill_in 'email',           with: @site[:email]
     fill_in 'new_tags_string', with: 'nope'
     click_button 'Create My Site'
-    _(page).wont_have_content /Let's Get Started/
+    _(Site[username: @site[:username]]).must_be_nil
   end
 
   it 'succeeds with valid data' do
     fill_in_valid
     click_button 'Create My Site'
-    _(page).must_have_content /Let's Get Started/
+    _(page).must_have_content /Learn How to Make Websites/
 
     index_file_path = File.join Site::SITE_FILES_ROOT, Site.sharding_dir(@site[:username]), @site[:username], 'index.html'
     _(File.exist?(index_file_path)).must_equal true

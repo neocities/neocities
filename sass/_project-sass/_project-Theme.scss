@@ -882,9 +882,78 @@ html.dark-Mode {
   }
 
   .section.tutorial,
-  .section.tutorial-welcome {
+  .section.tutorial-welcome,
+  .section.learn-Page {
     background: #101c21;
     color: #dbe7e7;
+  }
+
+  .learn-Page {
+    h2 {
+      color: #9bd4df;
+    }
+
+    .learn-Hero {
+      h1 {
+        color: #9bd4df;
+      }
+
+      .learn-Promise {
+        background: #223418;
+        border-color: #5c7d1f;
+      }
+    }
+
+    .learn-Stage h3,
+    .further-Col h4 {
+      color: #9bd4df;
+    }
+
+    .stage-Num {
+      background: #2d4b55;
+      border-color: #6ba8b4;
+    }
+
+    .resource-Card {
+      background: #17262c;
+      border-color: #2d4b55;
+      color: #dbe7e7;
+
+      &:hover,
+      &:focus {
+        border-color: #6ba8b4;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .4);
+      }
+
+      h4 {
+        color: #9bd4df;
+      }
+
+      .card-Tag {
+        background: #0f1b20;
+        border-color: #456b75;
+        color: #a9ccd3;
+      }
+
+      code {
+        background: #0f1b20;
+        border: 0;
+        color: #a9ccd3;
+      }
+
+      &.is-Featured {
+        background: #1b3038;
+        border-color: #6ba8b4;
+
+        .card-Tag {
+          background: #0f1b20;
+        }
+      }
+    }
+
+    .learn-Further {
+      border-top-color: #2d4b55;
+    }
   }
 
   .section.tutorial-welcome {

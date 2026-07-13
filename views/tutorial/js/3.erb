@@ -1,0 +1,63 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Time to teach your page a trick it can do on command. In JavaScript, a named trick is called a <strong>function</strong>.</p>
+  </div>
+</div>
+
+<p>A function wraps up some commands and gives them a name. Defining it teaches the trick; writing the name with parentheses <strong>performs</strong> it:</p>
+
+<pre><code class="js">function changeSky() {
+  document.body.style.background = 'linear-gradient(moccasin, lavender)'
+  document.body.style.minHeight = '100vh'
+}
+
+changeSky()</code></pre>
+
+<p>A few new things are happening here:</p>
+
+<ul class="lesson-List">
+  <li><code>document.body.style</code> lets JavaScript write CSS onto an element directly &mdash; the first line repaints your background with a fresh gradient, overriding the one from your <code class="html"><%= '<style>' %></code> element. Note the spelling change: CSS names lose their dashes in JavaScript and get a capital instead, so <code class="css">min-height</code> becomes <code>minHeight</code>.</li>
+  <li>The <code>minHeight</code> line stretches the body to at least <code>100vh</code> &mdash; 100% of the <em>viewport height</em>, meaning the window. Without it, the body is only as tall as your words, so on a roomy screen the gradient would run out partway down and start over. This makes the sky fill the whole window.</li>
+  <li>The trick only happens when it's <em>called</em>. Delete the <code>changeSky()</code> line and the function just sits there, knowing the trick, waiting politely.</li>
+</ul>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>In your script, below your greeting lines, teach the trick: define the <code>changeSky</code> function from the example (pick your own colors if you like).</li>
+    <li>Then call it: add <code>changeSky()</code> on its own line at the bottom. Watch the sky change in the preview.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Why bother with the wrapper?</h4>
+  <p>Right now, calling the function once seems like extra steps. But a named trick can be performed <em>whenever something happens</em> &mdash; a click, a keypress, a timer. Next step, we hand the <code>changeSky()</code> call to a button and let your visitors do it.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var js = scriptText(doc)
+
+    var definition = js.match(/function\s+([a-zA-Z_$][\w$]*)\s*\(\s*\)\s*\{/)
+
+    if(!definition) {
+      if(/function/i.test(js))
+        return {ok: false, message: 'A function definition looks like ' + codeSample('function changeSky() {') + ' &mdash; the word function, a name, empty parentheses, then an opening curly brace.'}
+      return {ok: false, message: 'I don&rsquo;t see a function yet. Teach the page a trick: ' + codeSample('function changeSky() { ... }')}
+    }
+
+    var name = definition[1]
+    var uses = js.match(new RegExp('\\b' + name + '\\s*\\(', 'g')) || []
+
+    if(uses.length < 2)
+      return {ok: false, message: 'You taught the trick &mdash; now perform it! Add ' + codeSample(name + '()') + ' on its own line at the bottom of the script.'}
+
+    var braces = (js.match(/\{/g) || []).length - (js.match(/\}/g) || []).length
+    if(braces > 0)
+      return {ok: false, message: 'A curly brace never got closed &mdash; every ' + codeSample('{') + ' needs its ' + codeSample('}') + '. Count yours!'}
+
+    return {ok: true, message: 'Defined, then called &mdash; and the sky obeyed. That&rsquo;s the heart of all programming.'}
+  }
+</script>

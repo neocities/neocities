@@ -1,0 +1,67 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat, waving hello">
+  <div class="penelope-Bubble">
+    <p>Welcome to the final frontier! You've built your page and styled it &mdash; now we teach it to <em>do things</em>. Fair warning: this is where people fall in love with programming.</p>
+  </div>
+</div>
+
+<p>Your site speaks three languages now. <strong>HTML</strong> says what things are. <strong>CSS</strong> says how they look. <strong>JavaScript</strong> &mdash; the third and last &mdash; says what they <em>do</em>. It's a real programming language, and it lives in a <code class="html"><%= '<script>' %></code> element.</p>
+
+<p>The best spot for it is a the bottom of your page, just above <code class="html"><%= '</body>' %></code>. The browser reads your page top to bottom, so by the time it reaches your script, everything above already exists and is ready to be commanded.</p>
+
+<p>Here's your first command. It finds an element by its <code>id</code> &mdash; the same ids you used for jump links! &mdash; and changes the text inside it:</p>
+
+<pre><code class="js">document.getElementById('greeting').textContent = 'This sentence was written by JavaScript!'</code></pre>
+
+<p>Read it right to left: <em>take this sentence, make it the text content of the element named greeting, in the document.</em></p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Right under your <code class="html"><%= '<h1>' %></code> area, add an empty paragraph with an id: <code class="html"><%= '<p id="greeting"></p>' %></code></li>
+    <li>At the bottom of your page, just above <code class="html"><%= '</body>' %></code>, add:
+      <pre><code class="html"><%= "<script>\n  document.getElementById('greeting').textContent = 'This sentence was written by JavaScript!'\n</script>" %></code></pre>
+    </li>
+    <li>Look at the preview: words appeared in a paragraph that's <em>empty</em> in your HTML. That's JavaScript working. Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Picky about punctuation</h4>
+  <p>JavaScript is fussier than HTML: capital letters matter (<code>getElementById</code>), quotes must come in pairs, and the id in your script has to match the id in your HTML <em>exactly</em>. When something doesn't work, a typo in one of those is often a suspect.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var js = scriptText(doc)
+
+    if(js.trim() == '')
+      return {ok: false, message: 'I don&rsquo;t see a script yet. Add a ' + codeSample('<script>') + ' element just above ' + codeSample('</body>') + ' with the command from the example.'}
+
+    var lookups = js.match(/getElementById\s*\(\s*['"]([^'"]*)['"]\s*\)/g)
+
+    if(!lookups) {
+      if(/getelementbyid/i.test(js))
+        return {ok: false, message: 'Check the capital letters &mdash; JavaScript is picky! It&rsquo;s ' + codeSample("getElementById('greeting')") + ' with a lowercase g at the front.'}
+      return {ok: false, message: 'Your script is there, but it doesn&rsquo;t find an element yet. Use ' + codeSample("document.getElementById('greeting')") + ' &mdash; with the id in quotes.'}
+    }
+
+    var missing = null
+    for(var i = 0; i < lookups.length; i++) {
+      var name = lookups[i].replace(/getElementById\s*\(\s*['"]/, '').replace(/['"]\s*\)$/, '')
+      if(!doc.getElementById(name))
+        missing = missing || name
+    }
+
+    if(missing)
+      return {ok: false, message: 'Your script looks for ' + codeSample("getElementById('" + missing + "')") + ', but nothing in your HTML has ' + codeSample('id="' + missing + '"') + '. Add the empty paragraph ' + codeSample('<p id="' + missing + '"></p>') + ' &mdash; and make sure the spelling matches exactly.'}
+
+    if(!/\.textContent\s*=/.test(js)) {
+      if(/\.textcontent\s*=/i.test(js))
+        return {ok: false, message: 'So close &mdash; it&rsquo;s ' + codeSample('.textContent') + ' with a capital C. JavaScript cares about capitals!'}
+      return {ok: false, message: 'You found the element &mdash; now change it! Add ' + codeSample(".textContent = 'your words here'") + ' after the getElementById part.'}
+    }
+
+    return {ok: true, message: 'Words on the page that aren&rsquo;t in the HTML. You just programmed something!'}
+  }
+</script>

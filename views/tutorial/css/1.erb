@@ -1,0 +1,68 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat, waving hello">
+  <div class="penelope-Bubble">
+    <p>Welcome to the styling tutorial! You get a plain little page and the power to dress it up, one step at a time. By the end it'll be unrecognizable.</p>
+  </div>
+</div>
+
+<p>Everything we do in this tutorial happens inside the <code class="html"><%= '<style>' %></code> element in the page's <code class="html"><%= '<head>' %></code> &mdash; that's where <strong>CSS</strong> lives.</p>
+
+<p>This page arrives with one CSS rule: the one painting its background. Every rule in all of CSS has this same shape:</p>
+
+<div class="tag-Anatomy" aria-label="The anatomy of a CSS rule">
+  <span class="tag-Part"><code class="anatomy-Tag">h1</code><small>selector: who to style</small></span>
+  <span class="tag-Part"><code>{</code><small>&nbsp;</small></span>
+  <span class="tag-Part"><code><span class="anatomy-Attr">color</span>: <span class="anatomy-String">darkslateblue</span>;</code><small>property: value;</small></span>
+  <span class="tag-Part"><code>}</code><small>&nbsp;</small></span>
+</div>
+
+<p>Read it out loud: <em>&ldquo;every <code>h1</code> gets its text color set to dark slate blue.&rdquo;</em> The <strong>selector</strong> picks who gets styled &mdash; write an element's name and the rule applies to every one of them on the page. Between the curly braces go as many <code>property: value;</code> lines as you like, each ending with a semicolon.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Inside your <code class="html"><%= '<style>' %></code> element, below the body rule, add a new rule:
+      <pre><code class="css">h1 {
+  color: darkslateblue;
+}</code></pre>
+    </li>
+    <li>Watch your big heading change color in the preview. Try other colors &mdash; <code>crimson</code>, <code>teal</code>, <code>hotpink</code> &mdash; and keep your favorite.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Why &ldquo;cascading&rdquo;?</h4>
+  <p>The C in CSS stands for <em>cascading</em>: styles flow downhill. Set a color on <code>body</code> and everything inside inherits it &mdash; unless a more specific rule (like your <code>h1</code> one) overrides it. Big decisions on <code>body</code>, exceptions where you want them.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    if(missingClosingTag(html, 'style'))
+      return {ok: false, message: 'Your ' + codeSample('<style>') + ' element lost its closing ' + codeSample('</style>') + ' tag &mdash; the browser thinks the rest of the page is CSS!'}
+
+    var css = styleText(doc)
+
+    if(css.trim() == '')
+      return {ok: false, message: 'Your ' + codeSample('<style>') + ' element seems to be missing or empty. It should be in your ' + codeSample('<head>') + ', holding your CSS rules.'}
+
+    var h1Rule = css.match(/(^|[^\w.#-])h1\s*\{([^}]*)\}/i)
+
+    if(!h1Rule) {
+      if(/h1\s*[^{\s]/i.test(css))
+        return {ok: false, message: 'I can see you started an ' + codeSample('h1') + ' rule &mdash; make sure the curly braces are there: ' + codeSample('h1 { color: darkslateblue; }')}
+      return {ok: false, message: 'I don&rsquo;t see an ' + codeSample('h1') + ' rule yet. Add one below your body rule: ' + codeSample('h1 { color: darkslateblue; }')}
+    }
+
+    if(!/color\s*:/i.test(h1Rule[2])) {
+      if(/color\s+[a-z#]/i.test(h1Rule[2]))
+        return {ok: false, message: 'Don&rsquo;t forget the colon between the property and the value: ' + codeSample('color: darkslateblue;')}
+      return {ok: false, message: 'Your ' + codeSample('h1') + ' rule is there, but it doesn&rsquo;t set a color yet. Inside the braces, add ' + codeSample('color: darkslateblue;')}
+    }
+
+    if(!/color\s*:\s*[^;\s}]/i.test(h1Rule[2]))
+      return {ok: false, message: 'Your color property needs a value after the colon, like ' + codeSample('color: teal;')}
+
+    return {ok: true, message: 'Your first hand-written CSS rule! Selector, property, value &mdash; that&rsquo;s the whole grammar.'}
+  }
+</script>

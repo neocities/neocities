@@ -1,0 +1,89 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Remember <code>div</code> and <code>class</code> from the More HTML tutorial? I promised that trick would earn its keep. Today's the day.</p>
+  </div>
+</div>
+
+<p>So far your selectors have named elements: <code>body</code>, <code>h1</code>. But element selectors style <em>every</em> matching element. To style just the things <em>you've</em> named, use a <strong>class selector</strong> &mdash; a dot, then the class name:</p>
+
+<pre><code class="css">.intro {
+  background-color: white;
+  color: black;
+}</code></pre>
+
+<p>That says: <em>&ldquo;everything with <code class="html">class="intro"</code> gets white paper and black ink.&rdquo;</em> (A box that picks its own background should pick its own text color too, so it stays readable no matter what happens around it.) The dot only appears in the CSS &mdash; in the HTML it's still just <code class="html"><%= '<div class="intro">' %></code>.</p>
+
+<p>This is the great team-up of web design: HTML names the parts, CSS styles them by name.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>In your page's body, wrap the paragraph in a named box: <code class="html"><%= '<div class="intro">' %></code> on the line above it, <code class="html"><%= '</div>' %></code> below.</li>
+    <li>In your <code class="html"><%= '<style>' %></code> element, add a rule for it:<br>
+      <pre><code class="css">.intro {
+  background-color: white;
+  color: black;
+}</code></pre>
+    </li>
+    <li>The invisible box just became visible! Try other colors if white's not your thing, then click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Classes go on anything</h4>
+  <p>Not just divs! Give a paragraph <code class="html"><%= '<p class="whisper">' %></code> and style <code>.whisper</code> with a soft gray &mdash; every paragraph you stamp with that class joins in. One class, as many elements as you like.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var css = styleText(doc)
+
+    // Class names used anywhere in the body
+    var classed = doc.querySelectorAll('body [class]')
+    var bodyClasses = []
+    for(var i = 0; i < classed.length; i++) {
+      var names = classed[i].getAttribute('class').split(/\s+/)
+      for(var j = 0; j < names.length; j++) {
+        if(names[j] != '' && bodyClasses.indexOf(names[j]) == -1)
+          bodyClasses.push(names[j])
+      }
+    }
+
+    if(bodyClasses.length == 0)
+      return {ok: false, message: 'Hmm, nothing on your page has a class right now. First wrap your welcome paragraphs in ' + codeSample('<div class="intro">') + ' ... ' + codeSample('</div>') + ', then style it with ' + codeSample('.intro { background-color: white; }')}
+
+    // Class selectors used in the CSS
+    var selectorMatches = css.match(/\.([a-zA-Z][\w-]*)\s*\{/g) || []
+
+    if(selectorMatches.length == 0) {
+      // A rule for a class name written without the dot?
+      for(var i = 0; i < bodyClasses.length; i++) {
+        if(new RegExp('(^|[\\s}])' + bodyClasses[i] + '\\s*\\{').test(css))
+          return {ok: false, message: 'So close! A class selector needs its dot: ' + codeSample('.' + bodyClasses[i] + ' {') + ' &mdash; without it, the browser looks for a ' + codeSample('<' + bodyClasses[i] + '>') + ' element that doesn&rsquo;t exist.'}
+      }
+      return {ok: false, message: 'I don&rsquo;t see a class selector in your CSS yet. Add a rule that starts with a dot: ' + codeSample('.intro { background-color: white; }')}
+    }
+
+    var styledExisting = null
+    var orphan = null
+
+    for(var i = 0; i < selectorMatches.length; i++) {
+      var name = selectorMatches[i].replace(/^\./, '').replace(/\s*\{$/, '')
+      if(bodyClasses.indexOf(name) != -1)
+        styledExisting = styledExisting || name
+      else
+        orphan = orphan || name
+    }
+
+    if(!styledExisting)
+      return {ok: false, message: 'You wrote a rule for ' + codeSample('.' + orphan) + ', but nothing on your page has ' + codeSample('class="' + orphan + '"') + '. Check that the two names match exactly!'}
+
+    var ruleBody = css.match(new RegExp('\\.' + styledExisting + '\\s*\\{([^}]*)\\}'))
+
+    if(!ruleBody || !/[a-z-]+\s*:\s*[^;\s}]/i.test(ruleBody[1]))
+      return {ok: false, message: 'Your ' + codeSample('.' + styledExisting) + ' rule is empty! Give it something to do, like ' + codeSample('background-color: white;')}
+
+    return {ok: true, message: 'You named a part of your page and styled it by name &mdash; that&rsquo;s the whole secret of web design!'}
+  }
+</script>

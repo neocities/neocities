@@ -1,0 +1,73 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Your page is getting long &mdash; that's a good sign! Let's build it a table of contents, so visitors can teleport straight to the good parts.</p>
+  </div>
+</div>
+
+<p>You already know links to <em>other</em> pages. Links can also jump to a spot on the <em>same</em> page &mdash; it takes two steps:</p>
+
+<p><strong>Step one:</strong> give the destination a name, using the <code>id</code> attribute. Any element can have one:</p>
+
+<pre><code class="html"><%= '<h2 id="poem">A Little Poem</h2>' %></code></pre>
+
+<p><strong>Step two:</strong> link to that name with a <code>#</code> in front:</p>
+
+<pre><code class="html"><%= '<a href="#poem">a little poem</a>' %></code></pre>
+
+<p>Clicking it scrolls straight to the heading. The names are up to you &mdash; the only rules are no spaces, and each <code>id</code> can only be used once per page (it's an ID, after all).</p>
+
+<p>One catch: a jump can only <em>scroll</em> if the target is off the screen &mdash; on a short page, there's nowhere to go. The preview flashes the target gold so you can see the link land either way.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Give your poem's <code><%= '<h2>' %></code> an id (<code>id="poem"</code>), and your <code><%= '<h1>' %></code> at the top one too (<code>id="top"</code>).</li>
+    <li>Right under your <code><%= '<h1>' %></code>, add a link that jumps to the poem &mdash; and at the very bottom of the page, the classic return trip:
+      <pre><code class="html"><%= '<p><a href="#poem">skip to the poem</a></p>' %></code></pre>
+      <pre><code class="html"><%= '<p><a href="#top">back to top</a></p>' %></code></pre>
+    </li>
+    <li>Click the links in the preview &mdash; the target flashes gold, and if your page is tall enough, you'll feel the jump. (Too short to scroll? Give your poem a few more lines and try again.) Then click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Remember this trick</h4>
+  <p>That little <code>id</code> attribute is about to become very important: it's also how CSS and JavaScript find specific parts of your page. You'll meet it again in the next two tutorials.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var anchors = doc.querySelectorAll('body a[href^="#"]')
+
+    if(anchors.length == 0)
+      return {ok: false, message: 'I don&rsquo;t see any jump links yet. First give a heading an id like ' + codeSample('<h2 id="poem">') + ', then link to it with ' + codeSample('<a href="#poem">my poem</a>') + '.'}
+
+    var working = 0
+    var broken = null
+
+    for(var i = 0; i < anchors.length; i++) {
+      var name = anchors[i].getAttribute('href').slice(1)
+
+      if(name == '') {
+        broken = broken || ('One of your links is just ' + codeSample('href="#"') + ' &mdash; put the id name after the ' + codeSample('#') + '.')
+        continue
+      }
+
+      if(!doc.getElementById(name)) {
+        broken = broken || ('Your link points to ' + codeSample('#' + name) + ', but nothing on the page has ' + codeSample('id="' + name + '"') + ' yet. Add it to the heading you want to jump to &mdash; and check the spelling matches exactly!')
+        continue
+      }
+
+      working++
+    }
+
+    if(broken)
+      return {ok: false, message: broken}
+
+    if(working < 2)
+      return {ok: false, message: 'One jump link works &mdash; teleportation achieved! Add a second one so your menu covers both sections.'}
+
+    return {ok: true, message: 'A great way to link between parts of your site. Excellent!'}
+  }
+</script>

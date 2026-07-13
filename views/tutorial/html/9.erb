@@ -9,7 +9,7 @@
 
 <table class="cheat-Sheet">
   <thead>
-    <tr><th>Tag</th><th>What it does</th></tr>
+    <tr><th>Element</th><th>What it does</th></tr>
   </thead>
   <tbody>
     <tr><td><code><%= '<h1>' %></code> &hellip; <code><%= '<h6>' %></code></td><td>Headings, from biggest to smallest</td></tr>
@@ -22,15 +22,24 @@
   </tbody>
 </table>
 
-<p>Your Neocities site lives at <a href="<%= current_site.uri %>" target="_blank" rel="noopener"><%= current_site.host %></a>, and the first page visitors see there is a file called <strong>index.html</strong>. Saving your work will publish it as that file &mdash; making it your site's front page, live on the web.</p>
+<% if current_site.site_changed %>
+<p>Your Neocities site lives at <a href="<%= current_site.uri %>" target="_blank" rel="noopener"><%= current_site.host %></a> &mdash; and it looks like you've already built things there, so we won't touch it. Your tutorial page stays saved right here in the editor, ready to copy from whenever you like.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-flag-checkered" aria-hidden="true"></i> Wrap it up</h4>
+  <a href="/tutorial/html/10" class="btn btn-Action">Finish the tutorial</a>
+</div>
+<% else %>
+<p>Your Neocities site lives at <a href="<%= current_site.uri %>" target="_blank" rel="noopener"><%= current_site.host %></a>, and the first page visitors see there is a file called <strong>index.html</strong>. Right now that's the placeholder page every new site starts with &mdash; saving your work will replace it, making this page your site's front page, live on the web.</p>
 
 <div class="your-Turn">
   <h4><i class="fa fa-rocket" aria-hidden="true"></i> Put it on the web</h4>
-  <p class="save-Warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Saving replaces whatever is in your site's <a href="<%= current_site.uri %>/index.html" target="_blank" rel="noopener">index.html</a> right now. If you've already built something there you want to keep, skip this step.</p>
   <a href="#" id="saveToSite" class="btn btn-Action">Save to <%= current_site.host %></a>
   <a href="/tutorial/html/10" class="btn cancel">Skip saving for now</a>
 </div>
+<% end %>
 
+<% if !current_site.site_changed %>
 <script>
   $(document).ready(function() {
     $('#saveToSite').on('click', function(event) {
@@ -76,3 +85,4 @@
     })
   })
 </script>
+<% end %>

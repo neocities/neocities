@@ -15,7 +15,7 @@
   <span class="tag-Part"><code class="anatomy-Tag"><%= '</p>' %></code><small>closing tag</small></span>
 </div>
 
-<p>The <code>p</code> tag means <strong>paragraph</strong>. The closing tag looks just like the opening tag, but with a slash: <code><%= '</p>' %></code>. That slash is how the browser knows the paragraph is over.</p>
+<p>The whole package &mdash; opening tag, content, closing tag &mdash; is called an <strong>element</strong>. This one is a <code>p</code> element, <em>p</em> for <strong>paragraph</strong>. The closing tag looks just like the opening tag, but with a slash: <code><%= '</p>' %></code>. That slash is how the browser knows the paragraph is over.</p>
 
 <div class="your-Turn">
   <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
@@ -53,6 +53,6 @@
     if(withText == 1)
       return {ok: false, message: 'One paragraph down! Now add a second ' + codeSample('<p>') + ' below it with a sentence about you or your site.'}
 
-    return {ok: true, message: 'Two proper paragraphs &mdash; you&rsquo;re writing HTML!'}
+    return {ok: true, message: 'Two proper paragraph elements &mdash; you&rsquo;re writing HTML!'}
   }
 </script>

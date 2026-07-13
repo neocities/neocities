@@ -1,0 +1,67 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Nothing changes a page's whole personality faster than the letters themselves. Bookish? Techy? Playful? Let's pick your voice.</p>
+  </div>
+</div>
+
+<p>The <code>font-family</code> property sets the typeface. You give it a wish list &mdash; the browser uses the first font it has, falling back down the list. Always end with a generic family like <code>serif</code>, <code>sans-serif</code>, or <code>monospace</code> so there's a safety net:</p>
+
+<pre><code class="css">body {
+  font-family: Arial, Helvetica, sans-serif
+}</code></pre>
+
+<p>These wish lists work on every device your visitors might use &mdash; Windows, Mac, Linux, phones. Each starts with a widely-installed font, and the generic family at the end guarantees something in the right spirit everywhere else:</p>
+
+<table class="cheat-Sheet">
+  <thead>
+    <tr><th>Font type</th><th>Looks like</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Arial, Helvetica, sans-serif</code></td><td><span style="font-family:Arial,Helvetica,sans-serif">Clean and modern</span></td></tr>
+    <tr><td><code>Georgia, serif</code></td><td><span style="font-family:Georgia,serif">A well-loved paperback</span></td></tr>
+    <tr><td><code>"Courier New", monospace</code></td><td><span style="font-family:'Courier New',monospace">A typewriter or a terminal</span></td></tr>
+  </tbody>
+</table>
+
+<p>One rule of punctuation: font names with <strong>spaces</strong> in them need quotes, like <code>"Courier New"</code>.</p>
+
+<div class="bonus-Box">
+  <h4>Serif? Sans? Mono?</h4>
+  <ul class="lesson-List">
+    <li style="font-family:Georgia,serif"><strong><span>serif</span></strong> &mdash; has little strokes (&ldquo;serifs&rdquo;) at the ends of letters, like books and newspapers.</li>
+    <li style="font-family:Arial,Helvetica,sans-serif"><strong><span>sans-serif</span></strong> &mdash; without those strokes (<em>sans</em> is French for &ldquo;without&rdquo;). If you're not sure, choose this one.</li>
+    <li style="font-family:'Courier New',monospace"><strong><span>monospace</span></strong> &mdash; every character is the same width, like a typewriter. It's how code is usually shown &mdash; including in this tutorial!</li>
+  </ul>
+</div>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Add a <code>font-family</code> line to your <code>body</code> rule and try each list in the table. It really changes the style of the page, doesn't it?</li>
+    <li>Keep the one that feels right. (Fonts set on <code>body</code> cascade into everything &mdash; one line dresses the whole page.)</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Mix and match</h4>
+  <p>Headings can wear a different font than the rest: add a <code>font-family</code> to your <code>h1</code> rule too. A serif heading over sans-serif text (or the reverse) is a classic look. And <code>font-size: 18px;</code> on the body makes everything comfier to read.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var css = styleText(doc)
+
+    if(/font-family\s+[^:\s]/i.test(css) && !/font-family\s*:/i.test(css))
+      return {ok: false, message: 'Almost &mdash; ' + codeSample('font-family') + ' needs its colon: ' + codeSample('font-family: Georgia, serif;')}
+
+    if(!/font-family\s*:/i.test(css))
+      return {ok: false, message: 'I don&rsquo;t see a ' + codeSample('font-family') + ' yet. Add one to your body rule, like ' + codeSample('font-family: Georgia, serif;')}
+
+    if(!/font-family\s*:\s*[^;\s}]/i.test(css))
+      return {ok: false, message: 'Your ' + codeSample('font-family') + ' needs a value, like ' + codeSample('Georgia, serif') + ' &mdash; don&rsquo;t forget the fallback after the comma!'}
+
+    return {ok: true, message: 'You have begun your exciting journey towards being a typography nerd.'}
+  }
+</script>

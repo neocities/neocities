@@ -1,0 +1,61 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>One last trick for your page: teaching it to know things you never typed &mdash; like what day it is, right now, for whoever's visiting.</p>
+  </div>
+</div>
+
+<p>JavaScript comes with a built-in clock. <code>new Date()</code> hands you the visitor's current date and time, and it can describe itself in words:</p>
+
+<pre><code class="js">var today = new Date()
+document.getElementById('today').textContent = today.toDateString()</code></pre>
+
+<p>That prints something like <em><%= Time.now.strftime('%a %b %d %Y') %></em> &mdash; whatever day it happens to be when the page loads. Your HTML never changes, but the page stays current forever. A date object knows more, too:</p>
+
+<ul class="lesson-List">
+  <li><code>today.getHours()</code> &mdash; the hour, 0 to 23. (Good evening, night owls.)</li>
+  <li><code>today.getFullYear()</code> &mdash; handy for a copyright line that never goes stale.</li>
+  <li><code>today.toLocaleTimeString()</code> &mdash; the current time, nicely formatted.</li>
+</ul>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Near the bottom of your page, add: <code class="html"><%= '<p>Today is <span id="today"></span>.</p>' %></code></li>
+    <li>In your script, create the date and put it on the page with the two lines from the example.</li>
+    <li>Check the preview: your page knows what day it is! Then click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>A page that greets by the hour</h4>
+  <p>Combine today's trick with step seven's comparisons: <code>if (today.getHours() &lt; 12)</code> say good morning, <code>else</code> say good afternoon. Or after dark, start the page in night mode automatically. Your tools stack together now &mdash; that's the sign you're really programming.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var js = scriptText(doc)
+
+    if(!/new\s+Date\s*\(\s*\)/.test(js)) {
+      if(/new\s+date\s*\(/.test(js))
+        return {ok: false, message: 'Capital D! It&rsquo;s ' + codeSample('new Date()') + ' &mdash; JavaScript&rsquo;s built-in names are picky about their capitals.'}
+      return {ok: false, message: 'I don&rsquo;t see the clock yet. Create a date with ' + codeSample('var today = new Date()')}
+    }
+
+    var lookups = js.match(/getElementById\s*\(\s*['"]([^'"]*)['"]\s*\)/g) || []
+    var missing = null
+    for(var i = 0; i < lookups.length; i++) {
+      var name = lookups[i].replace(/getElementById\s*\(\s*['"]/, '').replace(/['"]\s*\)$/, '')
+      if(!doc.getElementById(name))
+        missing = missing || name
+    }
+
+    if(missing)
+      return {ok: false, message: 'Your script writes to ' + codeSample("getElementById('" + missing + "')") + ', but nothing has ' + codeSample('id="' + missing + '"') + '. Add the paragraph with the span from the example!'}
+
+    if(!/\.(toDateString|toLocaleDateString|toLocaleTimeString|getFullYear|getHours)\s*\(/.test(js))
+      return {ok: false, message: 'You have the date &mdash; now ask it to describe itself. Put ' + codeSample('today.toDateString()') + ' on the page with textContent.'}
+
+    return {ok: true, message: 'Your page knows what day it is &mdash; today, tomorrow, and every day after. Time travel, basically.'}
+  }
+</script>

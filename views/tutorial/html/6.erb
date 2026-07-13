@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<p>Pictures use the <code><%= '<img>' %></code> tag, with two attributes:</p>
+<p>Pictures use the <code><%= '<img>' %></code> element, with two attributes:</p>
 
 <ul class="lesson-List">
   <li><strong><code>src</code></strong> (source) &mdash; where the image file lives.</li>
@@ -37,7 +37,7 @@
     var images = doc.querySelectorAll('body img')
 
     if(images.length == 0)
-      return {ok: false, message: 'I don&rsquo;t see an ' + codeSample('<img>') + ' tag yet. Add ' + codeSample('<img src="/neocities.png" alt="The Neocities cat">') + ' below your paragraphs.'}
+      return {ok: false, message: 'I don&rsquo;t see an ' + codeSample('<img>') + ' element yet. Add ' + codeSample('<img src="/neocities.png" alt="The Neocities cat">') + ' below your paragraphs.'}
 
     var problem = null
 
@@ -47,7 +47,7 @@
       var alt = img.getAttribute('alt')
 
       if(src === null || src.trim() == '') {
-        problem = problem || ('Your image tag needs a src attribute so it knows which picture to show: ' + codeSample('src="/neocities.png"'))
+        problem = problem || ('Your image element needs a src attribute so it knows which picture to show: ' + codeSample('src="/neocities.png"'))
         continue
       }
 

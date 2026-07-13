@@ -1,0 +1,186 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Color names are fun, but there are only 140 of them. Time to unlock the other 16 million.</p>
+  </div>
+</div>
+
+<p>A <strong>hex code</strong> describes any color the screen can make: a <code>#</code> followed by six characters &mdash; two for <span style="color:#c0392b;font-weight:bold">red</span>, two for <span style="color:#27ae60;font-weight:bold">green</span>, two for <span style="color:#2980b9;font-weight:bold">blue</span>, each from <code>00</code> (none) to <code>ff</code> (maximum):</p>
+
+<pre><code class="css">body {
+  background-color: #ffe9f0;
+}</code></pre>
+
+<p>You never have to invent these by hand &mdash; color pickers speak hex for you. Here, try this one: slide to a hue, drag around the square, and copy the code of anything you love.</p>
+
+<div class="color-Picker">
+  <div class="picker-Area" id="pickerArea" tabindex="0" aria-label="Color square. Use the arrow keys to adjust the color.">
+    <div class="picker-Thumb" id="pickerThumb"></div>
+  </div>
+  <input type="range" id="pickerHue" class="picker-Hue" min="0" max="360" value="341" aria-label="Hue">
+  <div class="picker-Result">
+    <span class="picker-Swatch" id="pickerSwatch"></span>
+    <code class="hljs" id="pickerHex">#ffe9f0</code>
+    <button type="button" id="pickerCopy" class="picker-Copy">Copy</button>
+  </div>
+</div>
+
+<p>Or start from one of these:</p>
+
+<table class="cheat-Sheet">
+  <thead>
+    <tr><th>Hex code</th><th>&nbsp;</th><th>Vibe</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>#ffe9f0</code></td><td><span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:#ffe9f0;border:1px solid rgba(0,0,0,.25)"></span></td><td>Strawberry milk</td></tr>
+    <tr><td><code>#fdf6e3</code></td><td><span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:#fdf6e3;border:1px solid rgba(0,0,0,.25)"></span></td><td>Old paper</td></tr>
+    <tr><td><code>#d9f2e6</code></td><td><span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:#d9f2e6;border:1px solid rgba(0,0,0,.25)"></span></td><td>Seafoam</td></tr>
+    <tr><td><code>#e6e6fa</code></td><td><span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:#e6e6fa;border:1px solid rgba(0,0,0,.25)"></span></td><td>Lavender haze</td></tr>
+    <tr><td><code>#232946</code></td><td><span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:#232946;border:1px solid rgba(0,0,0,.25)"></span></td><td>Midnight (pair with light text!)</td></tr>
+  </tbody>
+</table>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Mix a background color you love in the picker and copy its code.</li>
+    <li>In your <code>body</code> rule, change the <code>background-color</code> value to your hex code.</li>
+    <li>If you go dark, keep your words readable: add <code>color: #f5f5f5;</code> to the body rule too.</li>
+    <li>Found a background that feels like you? Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Reading a hex code</h4>
+  <p>With the pattern #<span style="color:#c0392b">rr</span><span style="color:#27ae60">gg</span><span style="color:#2980b9">bb</span> you can eyeball it: <code>#ff0000</code> is pure red, <code>#000000</code> is all-off (black), <code>#ffffff</code> is all-on (white), and equal pairs like <code>#888888</code> are grays. There's also a short form &mdash; <code>#f0f</code> means <code>#ff00ff</code>.</p>
+</div>
+
+<script>
+  // --- The color picker ---
+  // Hue comes from the slider; saturation and brightness from the square
+  // (left-right: gray to vivid, top-bottom: bright to black), like every
+  // classic picker. Everything renders to a hex code the student can copy.
+  (function() {
+    // The exact hue/saturation/value of #ffe9f0, the lesson's example color
+    var hue = 340.909, sat = 22 / 255, val = 1
+
+    var area = document.getElementById('pickerArea')
+    var thumb = document.getElementById('pickerThumb')
+    var hueInput = document.getElementById('pickerHue')
+    var swatch = document.getElementById('pickerSwatch')
+    var hexOut = document.getElementById('pickerHex')
+    var copyButton = document.getElementById('pickerCopy')
+    var copyTimer
+
+    function hsvToHex(h, s, v) {
+      var c = v * s
+      var x = c * (1 - Math.abs((h / 60) % 2 - 1))
+      var m = v - c
+      var r, g, b
+
+      if(h < 60)       { r = c; g = x; b = 0 }
+      else if(h < 120) { r = x; g = c; b = 0 }
+      else if(h < 180) { r = 0; g = c; b = x }
+      else if(h < 240) { r = 0; g = x; b = c }
+      else if(h < 300) { r = x; g = 0; b = c }
+      else             { r = c; g = 0; b = x }
+
+      function channel(n) {
+        return ('0' + Math.round((n + m) * 255).toString(16)).slice(-2)
+      }
+
+      return '#' + channel(r) + channel(g) + channel(b)
+    }
+
+    function render() {
+      var hex = hsvToHex(hue, sat, val)
+
+      area.style.background = 'linear-gradient(to top, #000, rgba(0, 0, 0, 0)), linear-gradient(to right, #fff, hsl(' + hue + ', 100%, 50%))'
+      thumb.style.left = (sat * 100) + '%'
+      thumb.style.top = ((1 - val) * 100) + '%'
+      thumb.style.backgroundColor = hex
+      swatch.style.backgroundColor = hex
+      hexOut.textContent = hex
+    }
+
+    function pickFromEvent(e) {
+      var rect = area.getBoundingClientRect()
+      sat = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width))
+      val = Math.min(1, Math.max(0, 1 - (e.clientY - rect.top) / rect.height))
+      render()
+    }
+
+    area.addEventListener('pointerdown', function(e) {
+      e.preventDefault()
+      area.setPointerCapture(e.pointerId)
+      pickFromEvent(e)
+    })
+
+    area.addEventListener('pointermove', function(e) {
+      if(e.buttons)
+        pickFromEvent(e)
+    })
+
+    area.addEventListener('keydown', function(e) {
+      var step = 0.02
+      if(e.key == 'ArrowLeft') sat -= step
+      else if(e.key == 'ArrowRight') sat += step
+      else if(e.key == 'ArrowUp') val += step
+      else if(e.key == 'ArrowDown') val -= step
+      else return
+      e.preventDefault()
+      sat = Math.min(1, Math.max(0, sat))
+      val = Math.min(1, Math.max(0, val))
+      render()
+    })
+
+    hueInput.addEventListener('input', function() {
+      hue = parseInt(hueInput.value, 10) || 0
+      render()
+    })
+
+    function showCopied(label) {
+      copyButton.textContent = label
+      clearTimeout(copyTimer)
+      copyTimer = setTimeout(function() {
+        copyButton.textContent = 'Copy'
+      }, 1500)
+    }
+
+    copyButton.addEventListener('click', function() {
+      var hex = hexOut.textContent
+
+      function fallbackCopy() {
+        var scratch = document.createElement('textarea')
+        scratch.value = hex
+        document.body.appendChild(scratch)
+        scratch.select()
+        try { document.execCommand('copy') } catch(e) {}
+        document.body.removeChild(scratch)
+        showCopied('Copied!')
+      }
+
+      if(navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(hex).then(function() {
+          showCopied('Copied!')
+        }, fallbackCopy)
+      } else {
+        fallbackCopy()
+      }
+    })
+
+    render()
+  })()
+
+  function lessonCheck(doc, html) {
+    var css = styleText(doc)
+
+    if(/background(-color)?\s*:\s*[0-9a-f]{3,6}\b/i.test(css))
+      return {ok: false, message: 'So close! A hex code needs its ' + codeSample('#') + ' at the front, like ' + codeSample('background-color: #ffe9f0;')}
+
+    if(!/background(-color)?\s*:\s*#([0-9a-f]{3}|[0-9a-f]{6})\b/i.test(css))
+      return {ok: false, message: 'I don&rsquo;t see a hex background yet. Mix a color in the picker, then set it in your body rule: ' + codeSample('background-color: #ffe9f0;')}
+
+    return {ok: true, message: 'One color out of 16,777,216 &mdash; and it&rsquo;s yours. Hex unlocked!'}
+  }
+</script>

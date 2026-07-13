@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="row content txt-Center">
-          <% if request.path == '/welcome' %>
+          <% if request.path == '/welcome' || (current_site && current_site.tutorial_required) %>
             <a href="/tutorial" class="btn-Action">Continue</a>
           <% end %>
         </div>

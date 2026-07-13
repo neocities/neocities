@@ -3,48 +3,50 @@
     <a href="/">Neocities</a>
   </li>
 <% end %>
-  <li>
-    <a href="/browse" id="browse-link">Websites</a>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const browseLink = document.getElementById('browse-link');
+  <% unless signed_in? && current_site.tutorial_required %>
+    <li>
+      <a href="/browse" id="browse-link">Websites</a>
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const browseLink = document.getElementById('browse-link');
 
-        if (window.location.pathname === '/browse') {
-          const params = new URLSearchParams(window.location.search);
-          const persistParams = new URLSearchParams();
-          const validPattern = /^[a-zA-Z0-9 ]+$/;
+          if (window.location.pathname === '/browse') {
+            const params = new URLSearchParams(window.location.search);
+            const persistParams = new URLSearchParams();
+            const validPattern = /^[a-zA-Z0-9 ]+$/;
 
-          ['sort_by', 'tag'].forEach(key => {
-            if (params.has(key)) {
-              const value = params.get(key);
-              if (value.length <= <%= Tag::NAME_LENGTH_MAX %> && validPattern.test(value)) {
-                persistParams.set(key, value);
+            ['sort_by', 'tag'].forEach(key => {
+              if (params.has(key)) {
+                const value = params.get(key);
+                if (value.length <= <%= Tag::NAME_LENGTH_MAX %> && validPattern.test(value)) {
+                  persistParams.set(key, value);
+                }
               }
-            }
-          });
+            });
 
-          localStorage.setItem('browseQuery', persistParams.toString());
-        }
+            localStorage.setItem('browseQuery', persistParams.toString());
+          }
 
-        const savedQuery = localStorage.getItem('browseQuery');
+          const savedQuery = localStorage.getItem('browseQuery');
 
-        if (savedQuery) {
-          browseLink.href = `/browse?${savedQuery}`;
-        }
-      });
-    </script>
-  </li>
-  <li>
-    <a href="/search">Search</a>
-  </li>
-  <% unless is_education? %>
-  <li>
-    <a href="/activity">Activity</a>
-  </li>
+          if (savedQuery) {
+            browseLink.href = `/browse?${savedQuery}`;
+          }
+        });
+      </script>
+    </li>
+    <li>
+      <a href="/search">Search</a>
+    </li>
+    <% unless is_education? %>
+    <li>
+      <a href="/activity">Activity</a>
+    </li>
+    <% end %>
+    <li>
+      <a href="/tutorials">Learn</a>
+    </li>
   <% end %>
-  <li>
-    <a href="/tutorials">Learn</a>
-  </li>
 
   <% if signed_in? %>
     <% unless current_site.supporter? %>

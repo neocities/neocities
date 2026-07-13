@@ -1,0 +1,58 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Remember how browsers squish all your blank space together? Time to learn the element that fights back &mdash; and write a little poetry while we're at it.</p>
+  </div>
+</div>
+
+<p>Normally the browser decides where your lines wrap. But poems, song lyrics, and addresses need their line breaks <em>exactly</em> where you put them. That's the job of <code><%= '<br>' %></code> (line <strong>br</strong>eak):</p>
+
+<pre><code class="html"><%= "<p>\n  The web is wide,<br>\n  the night is deep,<br>\n  I made this page<br>\n  for you to keep.\n</p>" %></code></pre>
+
+<p>Like <code><%= '<img>' %></code>, the <code><%= '<br>' %></code> element stands alone as a single tag &mdash; no closing tag, because it doesn't wrap around anything. It just says: <em>new line, right here.</em></p>
+
+<p>Its cousin <code><%= '<hr>' %></code> (horizontal rule) draws a line clear across the page &mdash; a nice divider between sections. It stands alone too.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>At the bottom of your page, add an <code><%= '<hr>' %></code> to start a new section.</li>
+    <li>Below it, write a short poem (or song lyric, or haiku) in a <code><%= '<p>' %></code>, with a <code><%= '<br>' %></code> at the end of each line. Borrow mine if the muse is napping.</li>
+    <li>Give it a heading with <code><%= '<h2>A Little Poem</h2>' %></code> &mdash; you know how!</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>When to use &lt;br&gt;, when to use &lt;p&gt;</h4>
+  <p>A new <em>thought</em> gets a new <code><%= '<p>' %></code>. A new <em>line inside the same thought</em> gets a <code><%= '<br>' %></code>. If you catch yourself stacking <code><%= '<br><br><br>' %></code> to push things apart &mdash; that's usually a sign you want a new paragraph instead.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var hrs = doc.querySelectorAll('body hr')
+    var brs = (html.match(/<br\s*\/?>/gi) || []).length
+
+    if(hrs.length == 0 && brs == 0)
+      return {ok: false, message: 'I don&rsquo;t see an ' + codeSample('<hr>') + ' or any ' + codeSample('<br>') + ' tags yet. Start with the ' + codeSample('<hr>') + ' divider at the bottom of your page.'}
+
+    if(hrs.length == 0)
+      return {ok: false, message: 'Line breaks are in! Now add an ' + codeSample('<hr>') + ' divider line above your poem section.'}
+
+    if(brs == 0)
+      return {ok: false, message: 'Divider done! Now write your poem in a ' + codeSample('<p>') + ' with a ' + codeSample('<br>') + ' at the end of each line.'}
+
+    var paragraphs = doc.querySelectorAll('body p')
+    var poemFound = false
+
+    for(var i = 0; i < paragraphs.length; i++) {
+      if(paragraphs[i].querySelectorAll('br').length >= 2 && paragraphs[i].textContent.trim() != '')
+        poemFound = true
+    }
+
+    if(!poemFound)
+      return {ok: false, message: 'Almost there! Your poem needs at least three lines in one paragraph &mdash; that&rsquo;s two ' + codeSample('<br>') + ' tags, one at the end of each line except the last.'}
+
+    return {ok: true, message: 'A poet AND a programmer. The line breaks land exactly where you put them.'}
+  }
+</script>

@@ -1,0 +1,69 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat, waving hello">
+  <div class="penelope-Bubble">
+    <p>Look who's back! You know your tags &mdash; now for the fun stuff: poetry, secrets, and hidden passages.</p>
+  </div>
+</div>
+
+<p>This tutorial gives you a fresh page to build on. Everything you add rides along with you from step to step, and at the end you'll have a full page to be proud of.</p>
+
+<p>First up: making words <em>feel</em> like something. Two little elements change how text reads:</p>
+
+<ul class="lesson-List">
+  <li><strong><code><%= '<strong>' %></code></strong> &mdash; for important words. Browsers show them <strong>bold</strong>.</li>
+  <li><strong><code><%= '<em>' %></code></strong> &mdash; for <em>emphasis</em>, like a word you'd stress out loud. Browsers show it <em>italic</em>.</li>
+</ul>
+
+<pre><code class="html"><%= '<p>I am <strong>so glad</strong> you found my website.</p>' %></code></pre>
+
+<p>They work anywhere words do &mdash; inside paragraphs, list items, even headings. Just wrap the words you want, and remember the closing tag.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Pick a word or two in your welcome paragraphs and make them <strong>bold</strong> with <code><%= '<strong>' %></code>.</li>
+    <li>Pick different words &mdash; maybe in your other paragraph &mdash; and make them <em>italic</em> with <code><%= '<em>' %></code>.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>More word costumes</h4>
+  <p>There's a whole wardrobe: <code><%= '<mark>' %></code> highlights text like a marker pen, <code><%= '<small>' %></code> makes fine print, and <code><%= '<del>' %></code> crosses things out (great for to-do lists and dramatic corrections).</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    if(missingClosingTag(html, 'strong'))
+      return {ok: false, message: 'A ' + codeSample('<strong>') + ' element is missing its closing ' + codeSample('</strong>') + ' tag &mdash; without it, everything after it goes bold forever!'}
+
+    if(missingClosingTag(html, 'em'))
+      return {ok: false, message: 'An ' + codeSample('<em>') + ' element is missing its closing ' + codeSample('</em>') + ' tag &mdash; check the preview, the italics never stop!'}
+
+    var strongs = doc.querySelectorAll('body strong, body b')
+    var ems = doc.querySelectorAll('body em, body i')
+
+    var strongWithText = 0
+    for(var i = 0; i < strongs.length; i++) {
+      if(strongs[i].textContent.trim() != '')
+        strongWithText++
+    }
+
+    var emWithText = 0
+    for(var i = 0; i < ems.length; i++) {
+      if(ems[i].textContent.trim() != '')
+        emWithText++
+    }
+
+    if(strongWithText == 0 && emWithText == 0)
+      return {ok: false, message: 'I don&rsquo;t see any bold or italic words yet. Wrap a word like this: ' + codeSample('<strong>so glad</strong>')}
+
+    if(strongWithText == 0)
+      return {ok: false, message: 'Nice italics! Now make a word or two <strong>bold</strong> with ' + codeSample('<strong>') + ' and ' + codeSample('</strong>') + '.'}
+
+    if(emWithText == 0)
+      return {ok: false, message: 'Bold looks great! Now give a word some <em>emphasis</em> with ' + codeSample('<em>') + ' and ' + codeSample('</em>') + '.'}
+
+    return {ok: true, message: 'Bold <em>and</em> italic &mdash; your words have feelings now!'}
+  }
+</script>

@@ -1,0 +1,57 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Here's one of my favorite web traditions: writing notes that only appear in the code. Invisible ink, for websites.</p>
+  </div>
+</div>
+
+<p>Anything you wrap in <code><%= '<!--' %></code> and <code><%= '-->' %></code> is a <strong>comment</strong>. The browser skips it completely &mdash; it never shows up on the page:</p>
+
+<pre><code class="html"><%= '<!-- Hello, source reader! You found my secret note. -->' %></code></pre>
+
+<p>Comments are for two things:</p>
+
+<ul class="lesson-List">
+  <li><strong>Notes to yourself</strong> &mdash; like <code><%= '<!-- new sections go below this line -->' %></code>, so future-you remembers how the page is organized.</li>
+  <li><strong>Secret messages</strong> &mdash; anyone can read a page's code with <strong>View Page Source</strong>, and leaving a little hello for those explorers is a proud tradition of the handmade web.</li>
+</ul>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>At the top of your <code><%= '<body>' %></code>, add a comment with a secret message for anyone who reads your code.</li>
+    <li>Look at the preview: nothing changed! That's the whole point.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>The disappearing trick</h4>
+  <p>Comments can hide <em>working HTML</em> too. Wrap a whole section in <code><%= '<!--' %></code> and <code><%= '-->' %></code> and it vanishes from the page without deleting the code &mdash; handy for works-in-progress and seasonal decorations.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var opens = (html.match(/<!--/g) || []).length
+    var closes = (html.match(/-->/g) || []).length
+
+    if(opens > closes)
+      return {ok: false, message: 'Your comment never ends! Close it with ' + codeSample('-->') + ' &mdash; look at the preview, everything after it disappeared.'}
+
+    var comments = html.match(/<!--([\s\S]*?)-->/g) || []
+
+    if(comments.length == 0)
+      return {ok: false, message: 'I don&rsquo;t see a comment yet. Write one like ' + codeSample('<!-- your secret message -->') + ' at the top of your ' + codeSample('<body>') + '.'}
+
+    var withText = false
+    for(var i = 0; i < comments.length; i++) {
+      if(comments[i].replace('<!--', '').replace('-->', '').trim() != '')
+        withText = true
+    }
+
+    if(!withText)
+      return {ok: false, message: 'Your comment is empty &mdash; a secret message needs a message! Put some words between ' + codeSample('<!--') + ' and ' + codeSample('-->') + '.'}
+
+    return {ok: true, message: 'Invisible on the page, waiting in the source. Somebody will find it someday!'}
+  }
+</script>

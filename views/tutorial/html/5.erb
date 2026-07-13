@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<p>A link uses the <code><%= '<a>' %></code> tag (the <em>a</em> is for <em>anchor</em>). But a link needs to know <em>where to go</em>, so this tag introduces something new &mdash; an <strong>attribute</strong>. Attributes are extra settings written inside the opening tag:</p>
+<p>A link uses the <code><%= '<a>' %></code> element (the <em>a</em> is for <em>anchor</em>). But a link needs to know <em>where to go</em>, so this element introduces something new &mdash; an <strong>attribute</strong>. Attributes are extra settings written inside the opening tag:</p>
 
 <div class="tag-Anatomy" aria-label="The anatomy of a link">
   <span class="tag-Part"><code class="anatomy-Tag"><%= '<a' %></code><small>opening tag&hellip;</small></span>
@@ -29,8 +29,8 @@
 </div>
 
 <div class="bonus-Box">
-  <h4>Tags inside tags</h4>
-  <p>Your <code><%= '<a>' %></code> tag lives <em>inside</em> a <code><%= '<p>' %></code> tag. That's called <strong>nesting</strong>, and it's everywhere in HTML. The rule: whatever opens last closes first, like stacking bowls &mdash; <code><%= '<p> <a> </a> </p>' %></code>, never <code><%= '<p> <a> </p> </a>' %></code>.</p>
+  <h4>Elements inside elements</h4>
+  <p>Your <code><%= '<a>' %></code> element lives <em>inside</em> a <code><%= '<p>' %></code> element. That's called <strong>nesting</strong>, and it's everywhere in HTML. The rule: whatever opens last closes first, like stacking bowls &mdash; <code><%= '<p> <a> </a> </p>' %></code>, never <code><%= '<p> <a> </p> </a>' %></code>.</p>
 </div>
 
 <script>
@@ -79,7 +79,7 @@
         continue
       }
 
-      return {ok: true, message: 'Your page is officially part of the web now!'}
+      return {ok: true, message: 'Your page is part of the web now!'}
     }
 
     return {ok: false, message: problem}

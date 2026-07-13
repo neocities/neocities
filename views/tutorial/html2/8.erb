@@ -1,0 +1,76 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>One last element &mdash; and I'll be honest, it looks like it does nothing. But it's the key to everything in the next tutorial.</p>
+  </div>
+</div>
+
+<p>The <code><%= '<div>' %></code> element (division) is an invisible box. It doesn't <em>look</em> like anything &mdash; it just groups the things inside it, so you can treat them as one unit:</p>
+
+<pre><code class="html"><%= "<div class=\"keepsake\">\n  <blockquote>A website is a little home you build for your ideas.</blockquote>\n</div>" %></code></pre>
+
+<p>The <code>class</code> attribute gives the box a name &mdash; and here's how it differs from last lesson's <code>id</code>. An id is one-of-a-kind, like a street address: one per page, used for jumping to <em>that exact spot</em>. A class is a <strong>category</strong>, like &ldquo;bakery&rdquo;: you can stamp the same class on as many things as you like, and they all become findable as a group.</p>
+
+<p><strong>Why bother?</strong> Because next tutorial, one line of CSS will be able to say <em>&ldquo;every keepsake gets a white box with rounded corners&rdquo;</em> &mdash; and every box wearing that name changes at once. That only pays off if more than one thing wears it, so let's make two.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Wrap your poem &mdash; the <code><%= '<h2>' %></code> and the <code><%= '<p>' %></code> under it &mdash; in a div: <code><%= '<div class="keepsake">' %></code> on the line above, <code><%= '</div>' %></code> below.</li>
+    <li>Now wrap your blockquote in a second div with the <strong>same class</strong>. Two boxes, one name.</li>
+    <li>The preview will barely change &mdash; that's correct! The boxes are invisible <em>for now</em>.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>When to reach for which</h4>
+  <p>Need to link to or find <em>one specific thing</em>? That's an <code>id</code>. Marking a whole <em>family</em> of things to treat the same way? That's a <code>class</code>. And if you catch yourself writing a class that will only ever go on one element, it probably wanted to be an id.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    if(missingClosingTag(html, 'div'))
+      return {ok: false, message: 'A ' + codeSample('<div>') + ' is missing its closing ' + codeSample('</div>') + ' tag. Each box needs one on its own line after the content it wraps.'}
+
+    var divs = doc.querySelectorAll('body div')
+
+    if(divs.length == 0)
+      return {ok: false, message: 'I don&rsquo;t see a ' + codeSample('<div>') + ' yet. Start with your poem: ' + codeSample('<div class="keepsake">') + ' above it, ' + codeSample('</div>') + ' below.'}
+
+    // Count how many non-empty divs wear each class name
+    var counts = {}
+    var emptyBox = false
+    for(var i = 0; i < divs.length; i++) {
+      var cls = divs[i].getAttribute('class')
+      if(cls === null || cls.trim() == '')
+        continue
+
+      if(divs[i].textContent.trim() == '' && divs[i].children.length == 0) {
+        emptyBox = true
+        continue
+      }
+
+      var names = cls.trim().split(/\s+/)
+      for(var j = 0; j < names.length; j++)
+        counts[names[j]] = (counts[names[j]] || 0) + 1
+    }
+
+    var bestName = null
+    for(var name in counts) {
+      if(!bestName || counts[name] > counts[bestName])
+        bestName = name
+    }
+
+    if(!bestName) {
+      if(emptyBox)
+        return {ok: false, message: 'One of your boxes is empty &mdash; move the content <em>inside</em> it, between the opening ' + codeSample('<div>') + ' and the closing ' + codeSample('</div>') + '.'}
+      return {ok: false, message: 'Your div needs a name! Add a class to the opening tag: ' + codeSample('<div class="keepsake">')}
+    }
+
+    if(counts[bestName] < 2)
+      return {ok: false, message: 'One box named &ldquo;' + escapeText(bestName) + '&rdquo;! Now the part that makes it a <em>class</em>: stamp a second div with the same class.'}
+
+    return {ok: true, message: 'Two boxes, one name. In the CSS tutorial, a single rule will dress the whole &ldquo;' + escapeText(bestName) + '&rdquo; family at once.'}
+  }
+</script>

@@ -28,8 +28,8 @@
 </div>
 
 <div class="bonus-Box">
-  <h4>Two tags, one skill</h4>
-  <p>Notice you already knew how to do this &mdash; <code><%= '<title>' %></code> works just like <code><%= '<p>' %></code> and <code><%= '<h1>' %></code>: opening tag, content, closing tag. Most of HTML is this one pattern over and over.</p>
+  <h4>New element, same skill</h4>
+  <p>Notice you already knew how to do this &mdash; the <code><%= '<title>' %></code> element works just like <code><%= '<p>' %></code> and <code><%= '<h1>' %></code>: opening tag, content, closing tag. Most of HTML is this one pattern over and over.</p>
 </div>
 
 <script>
@@ -40,7 +40,7 @@
     var titleTag = doc.querySelector('title')
 
     if(!titleTag)
-      return {ok: false, message: 'Your page lost its ' + codeSample('<title>') + ' tag! Add ' + codeSample('<title>Your Title Here</title>') + ' inside the ' + codeSample('<head>') + '.'}
+      return {ok: false, message: 'Your page lost its ' + codeSample('<title>') + ' element! Add ' + codeSample('<title>Your Title Here</title>') + ' inside the ' + codeSample('<head>') + '.'}
 
     var titleText = titleTag.textContent.trim()
 

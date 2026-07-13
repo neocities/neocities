@@ -1,0 +1,54 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>Every language needs nouns. In JavaScript, you make your own: little named boxes that hold things. They're called <strong>variables</strong>.</p>
+  </div>
+</div>
+
+<p>The keyword <code>var</code> creates a variable and puts something inside it. From then on, writing its name means <em>whatever's in the box</em>:</p>
+
+<pre><code class="js">var greeting = 'Hello, friend!'
+document.getElementById('greeting').textContent = greeting</code></pre>
+
+<p>Notice the second line: no quotes around <code>greeting</code>. Quotes mean <em>literally these letters</em>; no quotes means <em>the variable with this name</em>. Same result as before &mdash; but now the sentence has a name you can reuse.</p>
+
+<p>Variables get truly fun when you combine them. The <code>+</code> glues text together:</p>
+
+<pre><code class="js">var visitor = 'friend'
+var greeting = 'Hello, ' + visitor + '! Welcome in.'</code></pre>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>Rewrite your script to use a variable: first line makes <code>var greeting = '...'</code> with words of your own, second line sets <code>.textContent = greeting</code> &mdash; no quotes.</li>
+    <li>Try the <code>+</code> trick with a second variable if you're feeling fancy.</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Boxes hold more than words</h4>
+  <p>Variables can hold numbers (<code>var pets = 0</code>), true/false switches (<code>var night = false</code>), and lists (we'll get to that soon).</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    var js = scriptText(doc)
+
+    if(js.trim() == '')
+      return {ok: false, message: 'Your script disappeared! Bring back the ' + codeSample('<script>') + ' element from the last step.'}
+
+    var hasVar = /\b(var|let|const)\s+[a-zA-Z_$][\w$]*\s*=/.test(js)
+
+    if(!hasVar)
+      return {ok: false, message: 'I don&rsquo;t see a variable yet. Start a line with ' + codeSample('var greeting = ') + ' and your words in quotes.'}
+
+    if(!/\.textContent\s*=\s*[a-zA-Z_$]/.test(js)) {
+      if(/\.textContent\s*=\s*['"]/.test(js))
+        return {ok: false, message: 'You made a variable &mdash; now <em>use</em> it! Set ' + codeSample('.textContent = greeting') + ' with no quotes, so it means the variable instead of the literal word.'}
+      return {ok: false, message: 'Now put the variable on the page: ' + codeSample(".getElementById('greeting').textContent = greeting")}
+    }
+
+    return {ok: true, message: 'A named box, and the page reads from it. Variables: acquired!'}
+  }
+</script>

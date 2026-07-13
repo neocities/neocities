@@ -30,24 +30,26 @@
             </span>
           </a>
           <ul class="dropdown-menu">
-            <% unless is_education? %>
-              <li><a href="/site/<%= current_site.username %>">Profile</a></li>
-              <li>
-                <a href="/?activity=mine"><span class="float-Left">Activity</span>
-                  <% if current_site.unseen_notifications_count > 0 %>
-                    <span class="notification-value"><%= current_site.unseen_notifications_count %></span>
-                  <% end %>
-                </a>
-              </li>
+            <% if current_site && !current_site.tutorial_required %>
+              <% unless is_education? %>
+                <li><a href="/site/<%= current_site.username %>">Profile</a></li>
+                <li>
+                  <a href="/?activity=mine"><span class="float-Left">Activity</span>
+                    <% if current_site.unseen_notifications_count > 0 %>
+                      <span class="notification-value"><%= current_site.unseen_notifications_count %></span>
+                    <% end %>
+                  </a>
+                </li>
+                <li class="divider"></li>
+              <% end %>
+              <% unless current_site.tutorial_required %>
+                <li><a href="/dashboard">Edit</a></li>
+              <% end %>
+              <li><a href="<%= current_site.uri %>" target="_blank">View</a></li>
+              <li><a href="/site/<%= current_site.username %>/stats">Stats</a></li>
               <li class="divider"></li>
-            <% end %>
-            <% unless current_site.tutorial_required %>
-              <li><a href="/dashboard">Edit</a></li>
-            <% end %>
-            <li><a href="<%= current_site.uri %>" target="_blank">View</a></li>
-            <li><a href="/site/<%= current_site.username %>/stats">Stats</a></li>
-            <li class="divider"></li>
             <li><a href="/settings">Settings</a></li>
+            <% end %>
 
             <% if current_site.other_sites_dataset.count > 0 %>
               <li class="dropdown-submenu pull-left">

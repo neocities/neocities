@@ -1,0 +1,55 @@
+<div class="penelope">
+  <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat">
+  <div class="penelope-Bubble">
+    <p>What if part of your page stayed hidden until a visitor <em>chose</em> to peek? No programming required &mdash; HTML can do this all by itself.</p>
+  </div>
+</div>
+
+<p>Meet <code><%= '<details>' %></code> and <code><%= '<summary>' %></code>, two elements that work as a team:</p>
+
+<pre><code class="html"><%= "<details>\n  <summary>Click for a secret</summary>\n  <p>This whole page is hand-made, one tag at a time.</p>\n</details>" %></code></pre>
+
+<ul class="lesson-List">
+  <li><strong><code><%= '<summary>' %></code></strong> is the part that always shows &mdash; the browser gives it a little arrow, and clicking it opens the box.</li>
+  <li>Everything else inside <strong><code><%= '<details>' %></code></strong> stays hidden until the click.</li>
+</ul>
+
+<p>Spoiler warnings, bonus lore, a hidden shrine, a Frequently Asked Questions (FAQ) section&hellip; personal sites find endless uses for a door that visitors get to open.</p>
+
+<div class="your-Turn">
+  <h4><i class="fa fa-pencil" aria-hidden="true"></i> Your turn</h4>
+  <ol>
+    <li>At the bottom of your page, add a <code><%= '<details>' %></code> box: a <code><%= '<summary>' %></code> label first, then something worth hiding &mdash; a secret, a spoiler, a confession.</li>
+    <li>Try clicking it open and closed in the preview!</li>
+    <li>Click <strong>Check My Work</strong>.</li>
+  </ol>
+</div>
+
+<div class="bonus-Box">
+  <h4>Starting open</h4>
+  <p>Want the box open when the page loads? Write <code><%= '<details open>' %></code>. That's an attribute with no value &mdash; just its presence flips the switch. Visitors can still click it shut.</p>
+</div>
+
+<script>
+  function lessonCheck(doc, html) {
+    if(missingClosingTag(html, 'details'))
+      return {ok: false, message: 'Your ' + codeSample('<details>') + ' is missing its closing ' + codeSample('</details>') + ' tag &mdash; everything after it is getting swallowed into the secret box!'}
+
+    var details = doc.querySelector('body details')
+
+    if(!details)
+      return {ok: false, message: 'I don&rsquo;t see a ' + codeSample('<details>') + ' box yet. Start with ' + codeSample('<details>') + ' on one line and ' + codeSample('</details>') + ' a few lines below.'}
+
+    var summary = details.querySelector('summary')
+
+    if(!summary || summary.textContent.trim() == '')
+      return {ok: false, message: 'Your box needs a label! Put a ' + codeSample('<summary>') + ' with some clickable words as the first thing inside ' + codeSample('<details>') + '.'}
+
+    var hidden = details.textContent.replace(summary.textContent, '').trim()
+
+    if(hidden == '')
+      return {ok: false, message: 'The label is ready, but the box is empty! Add the hidden part &mdash; a ' + codeSample('<p>') + ' with your secret &mdash; after the ' + codeSample('</summary>') + ' line.'}
+
+    return {ok: true, message: 'A working secret door, perfect for turning your homestead into a haunted house. Click it in the preview!'}
+  }
+</script>

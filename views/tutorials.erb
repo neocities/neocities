@@ -1,121 +1,72 @@
-<div class="header-Outro">
-  <div class="row content single-Col">
-  <h1>Learn How to Make Websites!</h1>
+<section class="section learn-Page">
+
+  <div class="learn-Hero">
+    <img src="/img/welcomingcat.png" alt="Penelope the Neocities cat, extending her paws out warmly" class="learn-Cat">
+    <div class="learn-Hero-Copy">
+      <h1>Learn How to Make Websites</h1>
+      <p>Never written a line of code? Perfect &mdash; this page is for you. Join Penelope the cat for four hands-on tutorials that take you from your very first HTML tag to a styled, interactive website &mdash; all built by hand, all yours.</p>
+      <p class="learn-Promise"><i class="fa fa-heart" aria-hidden="true"></i> Free, right in your browser, no experience needed. You'll build one real page the whole way through &mdash; and publish it to the actual web.</p>
+      <p class="learn-Cta-Row">
+        <a href="/tutorial/html/" class="btn btn-Action learn-Cta">Start the HTML tutorial</a>
+        <% if !signed_in? %><small class="learn-Cta-Note">(requires a free account)</small><% end %>
+      </p>
+      <p class="learn-Alt">Already know HTML? <a href="/dashboard">Head to your dashboard</a> and start building.</p>
+    </div>
   </div>
-</div>
 
-<div class="content single-Col misc-page">
-  <h2>Available now: <a href="/tutorial/html/">The Neocities HTML course</a>! <% if !signed_in? %><small style="display:inline">(requires login)</small><% end %></h2>
-  <a href="/tutorial/html/"><img src="/img/welcomingcat.png" alt="The Neocities cat warmly opening her paws at you" class="welcoming-cat"></a>
-  <p> Never coded before? Our fun interactive tutorial will show you the ropes! <a href="/tutorial/html/">Join Penelope the cat</a> in crafting your own personal spot on the web.</p>
-  <p>Learning how to make websites allows you to create any content you want, arrange that content in any way you like, and share that content with the world. It could be an information portal for teaching people <a href="http://sheldonbrown.com" target="_blank">how to repair bikes</a>, a graphics project, or a collection of your poetry.</p>
+  <div class="learn-Path">
+    <h2>Your learning path</h2>
+    <p class="learn-Path-Intro">The tutorials build on each other, so they're best taken in order. The first one ends with you publishing your page to the real web; after that, the tutorials are pure practice space. (That's a suggestion, not a rule: jump around freely and come back anytime.) Take them at your own pace, and publish early and often &mdash; half-finished pages are a proud tradition of the web.</p>
 
-  <h2>Other Resources</h2>
-  <h3>HTML</h3>
+    <div class="learn-Stage">
+      <h3><span class="stage-Num">1</span> Start with HTML</h3>
+      <p class="stage-Intro">HTML is the language every web page is written in. It's not really "programming" &mdash; it's more like labeling your writing so a browser knows what's a heading, what's a paragraph, and what's a link.</p>
+      <a href="/tutorial/html/" class="resource-Card stage-Card is-Featured">
+        <h4>The HTML Tutorial</h4>
+        <p>Build a real web page step by step with Penelope the cat: headings, links, pictures, lists, and a splash of color. You type, the page updates live, and by the end you've published an actual website.</p>
+      </a>
+    </div>
 
-  <p>HTML is short for "HyperText Markup Language", and is the basic building block used to build all websites.</p>
+    <div class="learn-Stage">
+      <h3><span class="stage-Num">2</span> Level up your HTML</h3>
+      <p class="stage-Intro">Now for the tags that give personal sites their charm: poetry with real line breaks, quotes, symbols like &hearts;, secret notes in your source code, and boxes that click open to reveal hidden things.</p>
+      <a href="/tutorial/html2/" class="resource-Card stage-Card">
+        <h4>The More HTML Tutorial</h4>
+        <p>Eight more lessons of expressive, creative HTML, each with its own little practice page &mdash; ending with the trick that introduces CSS.</p>
+      </a>
+    </div>
 
-  <ul>
-    <li>
-      <a href="https://www.htmldog.com/guides/html/beginner" title="Learn beginner HTML">HTML Beginner Tutorial</a>
-    </li>
-    <li>
-      <a href="https://developer.mozilla.org/en-US/learn/html" title="Learn beginner HTML from Mozilla">Mozilla Learn HTML Resources</a>
-    </li>
-    <li>
-      <a href="https://teamtreehouse.com">Learn how to build websites with Treehouse</a>
-    </li>
-    <li>
-      <a href="https://www.codecademy.com/tracks/web" title="online lessons">Online lessons at Codecademy</a>
-    </li>
-  </ul>
+    <div class="learn-Stage">
+      <h3><span class="stage-Num">3</span> Make it beautiful with CSS</h3>
+      <p class="stage-Intro">CSS is how your page gets its look: colors, fonts, boxes, and layout. If HTML is the house, CSS is the paint, the posters, and the beaded curtain. This is the makeover episode.</p>
+      <a href="/tutorial/css/" class="resource-Card stage-Card">
+        <h4>The CSS Tutorial</h4>
+        <p>Hex colors, fonts with personality, a centered column, links that light up when the mouse visits, and a gradient sky to finish. Dressing up pages is the best part.</p>
+      </a>
+    </div>
 
-  <h3>CSS</h3>
+    <div class="learn-Stage">
+      <h3><span class="stage-Num">4</span> Bring it to life with JavaScript</h3>
+      <p class="stage-Intro">JavaScript makes pages <em>do</em> things. It's real programming &mdash; and here's a secret: you don't need it to make a wonderful website. But if you're curious what you can do with it, dive in.</p>
+      <a href="/tutorial/js/" class="resource-Card stage-Card">
+        <h4>The JavaScript Tutorial</h4>
+        <p>Teach your page tricks: greet visitors with a random hello, switch between day and night skies at the press of a button, and keep count of how many times the cat gets petted.</p>
+      </a>
+    </div>
 
-  <p>CSS is short for "Cascading Style Sheets", which is the code used to set the style of your web pages. It is embedded in your HTML, and directs how your website should look. If HTML was your house, CSS would be what allows you to decorate the way it looks.</p>
+    <div class="learn-Stage">
+      <h3><span class="stage-Num">5</span> Build your own site</h3>
+      <p class="stage-Intro">From here the assignments end and the fun begins. Rewrite the poem. Add a page for something you love. Hide more secrets. Everything on your site from now on is there because <em>you</em> wanted it there.</p>
+      <a href="/dashboard" class="resource-Card stage-Card">
+        <h4>Your Dashboard</h4>
+        <p>Your site's workshop: edit your pages anytime, upload images, and add new pages &mdash; a file called <code>about.html</code> instantly becomes a new page you can link to. Tinker until it feels like yours.</p>
+      </a>
+    </div>
+  </div>
 
-  <ul>
-    <li>
-      <a href="https://developer.mozilla.org/en-US/learn/css" title="Learn beginner CSS from Mozilla">Mozilla Learn CSS Resources</a>
-    </li>
-  </ul>
+  <div class="learn-Further">
+    <h2>After the path</h2>
+    <p>The best web design school ever invented is the web itself. When you finish the tutorials, <a href="/browse">browse the sites people have built on Neocities</a> &mdash; and when one amazes you, right-click and hit <strong>View Page Source</strong>. Every page on the internet is made of the same HTML, CSS, and JavaScript you now write, and browsers will happily show you how anything was made.</p>
+  </div>
 
-  <h3>CSS Frameworks</h3>
-
-  <p>CSS frameworks are pre-built CSS styles that make it easy to quickly build a nice looking web page without having to "roll your own" set of styles. Neocities itself uses one as the basis for our design. They are definitely worth checking out once you have an understanding of how CSS works.</p>
-
-  <ul>
-    <li>
-      <a href="https://getbootstrap.com/" title="Bootstrap" target="_blank">Bootstrap</a>
-    </li>
-    <li>
-      <a href="https://picturepan2.github.io/spectre" title="Spectre">Spectre</a>
-    </li>
-    <li>
-      <a href="https://elementcss.neocities.org">Element CSS</a>
-    </li>
-    <li>
-      <a href="https://purecss.io/" title="Yahoo!'s Pure CSS" target="_blank">Pure</a>
-    </li>
-    <li>
-      <a href="https://github.com/scottaohara/Brass-Tacks" title="Brass Tacks Sass Framework" target="_blank">Brass Tacks</a>
-    </li>
-    <li>
-      <a href="https://github.com/owenversteeg/min" title="Min: the world's smallest (995 bytes) CSS framework" target="_blank">Min</a>
-    </li>
-    <li>
-      <a href="https://bulma.io/" title="Bulma: The Framework Built on Flexbox" target="_blank">Bulma</a>
-    </li>
-    <li>
-      <a href="https://chrisnager.github.io/ungrid/" title="ungrid: the simplest responsive css grid">ungrid</a>
-    </li>
-  </ul>
-
-  <h3>JavaScript</h3>
-  <p>JavaScript is the programming language that comes standard with all web browsers. You can embed JavaScript code into your HTML to allow you to program your websites to do things. JavaScript was once a weak language with a lot of problems, but it is now a very fast and powerful language that is used for both web browsers and for complicated server backends (with Node.js). It is a great beginners language if you want to learn how to program, and can be used to perform almost any kind of program.</p>
-
-  <ul>
-    <li><a href="https://developer.mozilla.org/en-US/learn/javascript">Mozilla Learn JavaScript Resources</a></li>
-  </ul>
-
-  <h3>Static Site Generators</h3>
-  <p>
-    Static site generators allow developers to make a web site that has many properties of dynamic web sites, except it generates static HTML which can then be uploaded to Neocities.
-  </p>
-
-  <ul>
-    <li>
-      <a href="https://gohugo.io/">Hugo</a>
-    </li>
-    <li>
-      <a href="https://jekyllrb.com/">Jekyll</a>
-    </li>
-    <li>
-      <a href="https://nextjs.org/learn/">Next.js</a>
-    </li>
-    <li>
-      <a href="https://www.gatsbyjs.org/">Gatsby</a>
-    </li>
-    <li>
-      <a href="https://v2.vuepress.vuejs.org/">VuePress</a>
-    </li>
-    <li>
-      <a href="https://astro.build/">Astro</a>
-    </li>
-  </ul>
-
-  <h3>WebGL</h3>
-  <p>WebGL is a JavaScript API for rendering interactive 2D and 3D graphics within any compatible web browser without the use of plug-ins. WebGL is fully integrated with other web standards, allowing GPU-accelerated usage of physics and image processing and effects as part of the web page canvas.</p>
-
-  <p>You can use WebGL frameworks for making 3D models and worlds in your browser!</p>
-
-  <ul>
-    <li>
-      <a href="https://aframe.io/">A-Frame</a> - A web framework for building virtual reality experiences.
-    </li>
-    <li>
-      <a href="https://threejs.org/">Three.js</a> - An easy to use, lightweight, 3D library with a default WebGL renderer.</a>
-    </li>
-  </ul>
-
-</div> <!-- end .content -->
+</section>

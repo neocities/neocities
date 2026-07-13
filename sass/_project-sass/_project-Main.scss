@@ -3421,6 +3421,13 @@ pre, code {
 }
 .section.tutorial-welcome {
   padding: 80px 18%;
+  // .page behind this section is $c-BG with min-height 600px; a section
+  // shorter than that leaves a bar of it showing above the footer.
+  min-height: 600px;
+
+  @media (max-device-width:480px), screen and (max-width:800px) {
+    min-height: 0;
+  }
 
   .option {
     margin: 3.5em 0;

@@ -1478,6 +1478,7 @@ class Site < Sequel::Model
 
   def plan_type=(val)
     @redis_proxy_change = true
+    self.tutorial_required = false if val && val != 'free' && tutorial_required
     super val&.dup
   end
 
