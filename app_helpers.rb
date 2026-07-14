@@ -38,9 +38,24 @@ EMAIL_LOGIN_ACCOUNT_LIMIT = 1
 EMAIL_LOGIN_IP_LIMIT = 60
 EMAIL_LOGIN_RATE_LIMIT_WINDOW = 1.minute.to_i
 SIGNIN_CAPTCHA_ATTEMPTS = 2
+SIGNIN_CAPTCHA_TTL = 1.hour.to_i
+NON_SIGNIN_PASSWORD_AUTH_ACCOUNT_LIMIT = 10
+NON_SIGNIN_PASSWORD_AUTH_IP_LIMIT = 30
+NON_SIGNIN_PASSWORD_AUTH_RATE_LIMIT_TTL = 10.minutes.to_i
 
-def signin_captcha_required?
-  session[:signin_attempts].to_i >= SIGNIN_CAPTCHA_ATTEMPTS
+def signin_captcha_attempt_keys(username, ip)
+  keys = []
+  identifier = username.to_s.strip.downcase
+  keys << "signin_captcha:account:#{email_login_digest(identifier)}" unless identifier.empty?
+  keys << "signin_captcha:ip:#{email_login_digest(ip.to_s)}" unless ip.to_s.empty?
+  keys
+end
+
+def signin_captcha_required?(username, ip)
+  keys = signin_captcha_attempt_keys username, ip
+  return false if keys.empty?
+
+  $redis_cache.mget(*keys).any? { |attempts| attempts.to_i >= SIGNIN_CAPTCHA_ATTEMPTS }
 end
 
 def signin_captcha_valid?
@@ -49,8 +64,50 @@ def signin_captcha_valid?
   hcaptcha_valid?
 end
 
-def record_failed_signin_attempt
-  session[:signin_attempts] = session[:signin_attempts].to_i + 1
+def record_failed_signin_attempt(username, ip)
+  signin_captcha_attempt_keys(username, ip).each do |key|
+    $redis_cache.incr key
+    $redis_cache.expire key, SIGNIN_CAPTCHA_TTL
+  end
+end
+
+def clear_failed_signin_attempts(username, ip)
+  keys = signin_captcha_attempt_keys username, ip
+  $redis_cache.del(*keys) unless keys.empty?
+end
+
+def non_signin_password_auth_attempt_limits(username, ip)
+  limits = {}
+  identifier = username.to_s.strip.downcase
+  unless identifier.empty?
+    limits["non_signin_password_auth:account:#{email_login_digest(identifier)}"] = NON_SIGNIN_PASSWORD_AUTH_ACCOUNT_LIMIT
+  end
+  unless ip.to_s.empty?
+    limits["non_signin_password_auth:ip:#{email_login_digest(ip.to_s)}"] = NON_SIGNIN_PASSWORD_AUTH_IP_LIMIT
+  end
+  limits
+end
+
+def non_signin_password_auth_rate_limited?(username, ip)
+  limits = non_signin_password_auth_attempt_limits username, ip
+  return false if limits.empty?
+
+  attempts = $redis_cache.mget(*limits.keys)
+  attempts.zip(limits.values).any? { |count, limit| count.to_i >= limit }
+end
+
+def record_failed_non_signin_password_auth(username, ip)
+  non_signin_password_auth_attempt_limits(username, ip).each_key do |key|
+    $redis_cache.incr key
+    $redis_cache.expire key, NON_SIGNIN_PASSWORD_AUTH_RATE_LIMIT_TTL
+  end
+end
+
+def clear_failed_non_signin_password_auth(username)
+  identifier = username.to_s.strip.downcase
+  return if identifier.empty?
+
+  $redis_cache.del "non_signin_password_auth:account:#{email_login_digest(identifier)}"
 end
 
 def email_login_digest(value)

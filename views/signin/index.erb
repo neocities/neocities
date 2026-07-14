@@ -10,7 +10,7 @@
     <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
     <fieldset>
       <label for="username">Username</label>
-      <input name="username" type="text" placeholder="sitename" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= flash[:username] %>" style="width: 290px">.neocities.org
+      <input name="username" type="text" placeholder="sitename" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= @username %>" style="width: 290px">.neocities.org
       <label for="password">Password</label>
       <input name="password" type="password" class="input-Area" placeholder="Your password" style="width: 400px">
       <% if @captcha_required %>

@@ -20,10 +20,35 @@ map '/webdav' do
     end
 
     username, password = auth.credentials
-    site = Site.get_site_from_login(username, password)
+    request_ip = Rack::Request.new(env).ip
+    if non_signin_password_auth_rate_limited?(username, request_ip)
+      return [
+        429,
+        { 'Retry-After' => NON_SIGNIN_PASSWORD_AUTH_RATE_LIMIT_TTL.to_s },
+        ['Too many authentication attempts - please try again later']
+      ]
+    end
+
+    site = Site.get_with_identifier(username)
     unless site
+      record_failed_non_signin_password_auth username, request_ip
       return [401, { 'WWW-Authenticate' => 'Basic realm="Restricted Area"' }, ['Not authorized']]
     end
+
+    unless site.non_signin_password_auth_allowed?
+      return [
+        401,
+        { 'WWW-Authenticate' => 'Basic realm="Restricted Area"' },
+        [Site::NON_SIGNIN_PASSWORD_AUTH_ERROR]
+      ]
+    end
+
+    unless site.valid_password?(password)
+      record_failed_non_signin_password_auth username, request_ip
+      return [401, { 'WWW-Authenticate' => 'Basic realm="Restricted Area"' }, ['Not authorized']]
+    end
+
+    clear_failed_non_signin_password_auth username
 
     request_method = env['REQUEST_METHOD']
     begin

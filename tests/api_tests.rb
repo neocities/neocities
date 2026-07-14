@@ -9,9 +9,14 @@ describe 'api' do
     Sinatra::Application
   end
 
+  before do
+    keys = $redis_cache.keys 'non_signin_password_auth:*'
+    $redis_cache.del(*keys) unless keys.empty?
+  end
+
   def create_site(opts={})
     site_attr = Fabricate.attributes_for :site
-    @site = Site.create site_attr.merge(opts)
+    @site = Site.create site_attr.merge(updated_at: Time.now, site_updated_at: Time.now).merge(opts)
     @user = site_attr[:username]
     @pass = site_attr[:password]
   end
@@ -190,7 +195,7 @@ describe 'api' do
     end
 
     it 'succeeds for valid sitename' do
-      create_site
+      create_site site_updated_at: nil
       @site.update hits: 31337, domain: 'derp.com', new_tags_string: 'derpie, man'
       get '/api/info', sitename: @user
       _(res[:result]).must_equal 'success'
@@ -458,6 +463,63 @@ describe 'api' do
       basic_authorize 'zero', 'cool'
       get '/api/key'
       _(res[:error_type]).must_equal 'invalid_auth'
+    end
+
+    it 'rate limits repeated password failures by account' do
+      create_site
+      NON_SIGNIN_PASSWORD_AUTH_ACCOUNT_LIMIT.times do
+        basic_authorize @user, 'incorrect password'
+        get '/api/key'
+        _(last_response.status).must_equal 403
+      end
+
+      get '/api/key'
+      _(last_response.status).must_equal 429
+      _(last_response.headers['Retry-After']).must_equal NON_SIGNIN_PASSWORD_AUTH_RATE_LIMIT_TTL.to_s
+      _(res[:error_type]).must_equal 'rate_limited'
+    end
+
+    it 'rate limits repeated password failures by IP' do
+      NON_SIGNIN_PASSWORD_AUTH_IP_LIMIT.times do |attempt|
+        basic_authorize "missing-site-#{attempt}", 'incorrect password'
+        get '/api/key'
+        _(last_response.status).must_equal 403
+      end
+
+      basic_authorize 'another-missing-site', 'incorrect password'
+      get '/api/key'
+      _(last_response.status).must_equal 429
+      _(res[:error_type]).must_equal 'rate_limited'
+    end
+
+    it 'rejects password authentication for stale sites' do
+      create_site site_updated_at: (Site::NON_SIGNIN_PASSWORD_AUTH_MAX_AGE + 1.day).ago
+      basic_authorize @user, 'incorrect password'
+      get '/api/key'
+
+      _(last_response.status).must_equal 403
+      _(res[:error_type]).must_equal 'invalid_auth'
+      _(res[:message]).must_equal Site::NON_SIGNIN_PASSWORD_AUTH_ERROR
+    end
+
+    it 'rejects password authentication when the site has never been updated' do
+      create_site site_updated_at: nil
+      basic_authorize @user, 'incorrect password'
+      get '/api/key'
+
+      _(last_response.status).must_equal 403
+      _(res[:error_type]).must_equal 'invalid_auth'
+      _(res[:message]).must_equal Site::NON_SIGNIN_PASSWORD_AUTH_ERROR
+    end
+
+    it 'allows bearer authentication for stale sites' do
+      create_site site_updated_at: (Site::NON_SIGNIN_PASSWORD_AUTH_MAX_AGE + 1.day).ago
+      @site.generate_api_key!
+      header 'Authorization', "Bearer #{@site.api_key}"
+      get '/api/list'
+
+      _(last_response.status).must_equal 200
+      _(res[:result]).must_equal 'success'
     end
   end
 

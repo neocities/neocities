@@ -61,6 +61,8 @@ class Site < Sequel::Model
   }
 
   MINIMUM_PASSWORD_LENGTH = 5
+  NON_SIGNIN_PASSWORD_AUTH_MAX_AGE = 200.days
+  NON_SIGNIN_PASSWORD_AUTH_ERROR = 'stale account - make a change through the UI to sign in this way'
   BAD_USERNAME_REGEX = /[^\w-]/i
   VALID_HOSTNAME = /^[a-z0-9][a-z0-9-]+?[a-z0-9]$/i # http://tools.ietf.org/html/rfc1123
 
@@ -455,6 +457,10 @@ class Site < Sequel::Model
     end
 
     is_valid_password
+  end
+
+  def non_signin_password_auth_allowed?
+    !site_updated_at.nil? && site_updated_at >= Time.now-NON_SIGNIN_PASSWORD_AUTH_MAX_AGE
   end
 
   def password=(plaintext)

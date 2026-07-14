@@ -2,14 +2,15 @@ get '/signin/?' do
   dashboard_if_signed_in
   @title = 'Sign In'
   @description = 'Sign in to your Neocities account.'
-  @captcha_required = signin_captcha_required?
+  @username = flash[:username]
+  @captcha_required = signin_captcha_required? @username, request.ip
   erb :'signin/index'
 end
 
 post '/signin' do
   dashboard_if_signed_in
 
-  if signin_captcha_required? && !signin_captcha_valid?
+  if signin_captcha_required?(params[:username], request.ip) && !signin_captcha_valid?
     flash[:error] = 'Please complete the captcha.'
     flash[:username] = params[:username]
     redirect '/signin'
@@ -18,7 +19,7 @@ post '/signin' do
   site = Site.get_site_from_login(params[:username], params[:password])
 
   if site && !site.is_banned
-    session.delete :signin_attempts
+    clear_failed_signin_attempts params[:username], request.ip
 
     if site.is_deleted && !site.is_banned
       session[:deleted_site_id] = site.id
@@ -33,7 +34,7 @@ post '/signin' do
 
     redirect '/signin/verify'
   else
-    record_failed_signin_attempt
+    record_failed_signin_attempt params[:username], request.ip
     flash[:error] = 'Invalid login.'
     flash[:username] = params[:username]
     redirect '/signin'

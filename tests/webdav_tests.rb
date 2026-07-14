@@ -19,10 +19,12 @@ describe 'webdav' do
 
   before do
     @site = Fabricate(:site)
-    @site.update(plan_type: 'supporter')
+    @site.update(plan_type: 'supporter', updated_at: Time.now, site_updated_at: Time.now)
     ThumbnailWorker.jobs.clear
     PurgeCacheWorker.jobs.clear
     ScreenshotWorker.jobs.clear
+    keys = $redis_cache.keys 'non_signin_password_auth:*'
+    $redis_cache.del(*keys) unless keys.empty?
   end
 
   def auth_put(path, body)
@@ -172,9 +174,30 @@ describe 'webdav' do
     _(last_response.headers['WWW-Authenticate']).must_include 'Basic'
   end
 
+  it 'rate limits repeated password failures' do
+    NON_SIGNIN_PASSWORD_AUTH_ACCOUNT_LIMIT.times do
+      basic_authorize @site.username, 'incorrect password'
+      get '/webdav/test.txt'
+      _(last_response.status).must_equal 401
+    end
+
+    get '/webdav/test.txt'
+    _(last_response.status).must_equal 429
+    _(last_response.headers['Retry-After']).must_equal NON_SIGNIN_PASSWORD_AUTH_RATE_LIMIT_TTL.to_s
+  end
+
+  it 'rejects password authentication for stale sites' do
+    @site.update site_updated_at: (Site::NON_SIGNIN_PASSWORD_AUTH_MAX_AGE + 1.day).ago
+    basic_authorize @site.username, 'incorrect password'
+    get '/webdav/test.txt'
+
+    _(last_response.status).must_equal 401
+    _(last_response.body).must_include Site::NON_SIGNIN_PASSWORD_AUTH_ERROR
+  end
+
   it 'requires supporter accounts' do
     free_site = Fabricate(:site)
-    free_site.update(plan_type: 'free')
+    free_site.update(plan_type: 'free', updated_at: Time.now, site_updated_at: Time.now)
     basic_authorize free_site.username, 'abcde'
     get '/webdav/test.txt'
     _(last_response.status).must_equal 402

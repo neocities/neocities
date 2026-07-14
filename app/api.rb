@@ -348,7 +348,16 @@ def init_api_credentials
   if defined?(api_key) && !api_key.blank?
     site = Site[api_key: api_key]
   elsif defined?(user) && defined?(pass)
-    site = Site.get_site_from_login user, pass
+    api_error_rate_limited if non_signin_password_auth_rate_limited?(user, request.ip)
+    site = Site.get_with_identifier user
+    if site && !site.non_signin_password_auth_allowed?
+      api_error_invalid_auth Site::NON_SIGNIN_PASSWORD_AUTH_ERROR
+    end
+    unless site&.valid_password?(pass)
+      record_failed_non_signin_password_auth user, request.ip
+      api_error_invalid_auth
+    end
+    clear_failed_non_signin_password_auth user
   else
     api_error_invalid_auth
   end
@@ -382,8 +391,13 @@ def api_error(status, error_type, message)
   api_response(status, result: 'error', error_type: error_type, message: message)
 end
 
-def api_error_invalid_auth
-  api_error 403, 'invalid_auth', 'invalid credentials - please check your username and password (or your api key)'
+def api_error_invalid_auth(message='invalid credentials - please check your username and password (or your api key)')
+  api_error 403, 'invalid_auth', message
+end
+
+def api_error_rate_limited
+  headers 'Retry-After' => NON_SIGNIN_PASSWORD_AUTH_RATE_LIMIT_TTL.to_s
+  api_error 429, 'rate_limited', 'too many authentication attempts - please try again later'
 end
 
 def api_not_found

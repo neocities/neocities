@@ -25,15 +25,15 @@ describe 'signin' do
     click_button 'Verify Sign In'
   end
 
-  def clear_email_login_redis
-    keys = $redis_cache.keys 'email_login:*'
+  def clear_signin_redis
+    keys = $redis_cache.keys('email_login:*') + $redis_cache.keys('signin_captcha:*')
     $redis_cache.del(*keys) unless keys.empty?
   end
 
   before do
     Capybara.reset_sessions!
     EmailWorker.jobs.clear
-    clear_email_login_redis
+    clear_signin_redis
   end
 
   it 'restores a deleted site' do
@@ -89,6 +89,18 @@ describe 'signin' do
       _(page).wont_have_content 'Fill out the captcha' if attempt.zero?
     end
 
+    keys = $redis_cache.keys 'signin_captcha:*'
+    _(keys.length).must_equal 2
+    keys.each do |key|
+      _($redis_cache.ttl(key)).must_be :>, 0
+      _($redis_cache.ttl(key)).must_be :<=, SIGNIN_CAPTCHA_TTL
+    end
+
+    _(signin_captcha_required?(site.username, '192.0.2.1')).must_equal true
+    _(signin_captcha_required?('another-user', '127.0.0.1')).must_equal true
+
+    Capybara.reset_sessions!
+    visit '/signin'
     _(page).must_have_content 'Fill out the captcha'
     fill_in 'username', with: site.username
     fill_in 'password', with: pass
@@ -105,7 +117,7 @@ describe 'signin' do
     }
 
     _(page).must_have_content 'Verify Your Sign In'
-    _(page.get_rack_session['signin_attempts']).must_be_nil
+    _($redis_cache.keys('signin_captcha:*')).must_be_empty
   end
 
   it 'signs in with proper credentials' do
