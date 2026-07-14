@@ -18,6 +18,6 @@
   <p>The code expires in 10 minutes.</p>
   <form method="POST" action="/signin/cancel">
     <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
-    <input type="submit" value="Cancel and sign in again">
+    <input class="btn cancel" type="submit" value="Cancel and sign in again">
   </form>
 </div>
