@@ -1,0 +1,23 @@
+<div class="header-Outro">
+  <div class="row content single-Col txt-Center">
+    <h1>Verify Your Sign In</h1>
+    <h3 class="subtitle">We sent a six-digit code to <%= @masked_email %>.</h3>
+  </div>
+</div>
+
+<div class="content txt-Center single-Col misc-page">
+  <form method="POST" action="/signin/verify" class="content">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <fieldset>
+      <label for="code">Verification code</label>
+      <input name="code" id="code" type="text" class="input-Area" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" autofocus style="width: 180px">
+    </fieldset>
+    <input class="btn-Action" type="submit" value="Verify Sign In">
+  </form>
+
+  <p>The code expires in 10 minutes.</p>
+  <form method="POST" action="/signin/cancel">
+    <input name="csrf_token" type="hidden" value="<%= csrf_token %>">
+    <input type="submit" value="Cancel and sign in again">
+  </form>
+</div>
