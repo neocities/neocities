@@ -13,6 +13,12 @@
       <input name="username" type="text" placeholder="sitename" class="input-Area" autocapitalize="off" autocorrect="off" value="<%= flash[:username] %>" style="width: 290px">.neocities.org
       <label for="password">Password</label>
       <input name="password" type="password" class="input-Area" placeholder="Your password" style="width: 400px">
+      <% if @captcha_required %>
+        <label>Fill out the captcha so we know you’re not a robot:</label>
+        <div class="signin-Captcha">
+          <%== hcaptcha_input size: 'normal' %>
+        </div>
+      <% end %>
     </fieldset>
     <input class="btn-Action" type="submit" value="Sign In">
   </form>

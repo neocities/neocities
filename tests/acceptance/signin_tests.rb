@@ -76,6 +76,38 @@ describe 'signin' do
     _(page).must_have_content 'Invalid login'
   end
 
+  it 'requires a captcha after two failed signin attempts' do
+    pass = SecureRandom.hex
+    site = Fabricate :site, password: pass
+    visit '/signin'
+
+    2.times do |attempt|
+      fill_in 'username', with: site.username
+      fill_in 'password', with: 'incorrect password'
+      click_button 'Sign In'
+      _(page).must_have_content 'Invalid login'
+      _(page).wont_have_content 'Fill out the captcha' if attempt.zero?
+    end
+
+    _(page).must_have_content 'Fill out the captcha'
+    fill_in 'username', with: site.username
+    fill_in 'password', with: pass
+    click_button 'Sign In'
+    _(page).must_have_content 'Please complete the captcha'
+    _(EmailWorker.jobs).must_be_empty
+
+    csrf = find('input[name="csrf_token"]', visible: false).value
+    page.driver.submit :post, '/signin', {
+      csrf_token: csrf,
+      username: site.username,
+      password: pass,
+      'h-captcha-response': 'test-response'
+    }
+
+    _(page).must_have_content 'Verify Your Sign In'
+    _(page.get_rack_session['signin_attempts']).must_be_nil
+  end
+
   it 'signs in with proper credentials' do
     pass = SecureRandom.hex
     @site = Fabricate :site, password: pass

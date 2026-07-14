@@ -34,11 +34,12 @@ helpers do
     redirect '/' unless signed_in? && current_site.is_admin
   end
 
-  def hcaptcha_input
+  def hcaptcha_input(size: nil)
     return '' if ENV['RACK_ENV'] == 'test'
+    size_attribute = size ? %{ data-size="#{size}"} : ''
     %{
       <script src="https://hcaptcha.com/1/api.js" async defer></script>
-      <div id="captcha_input" class="h-captcha" data-sitekey="#{$config['hcaptcha_site_key']}"></div>
+      <div id="captcha_input" class="h-captcha" data-sitekey="#{$config['hcaptcha_site_key']}"#{size_attribute}></div>
     }
   end
 end

@@ -37,6 +37,21 @@ EMAIL_LOGIN_MAX_ATTEMPTS = 5
 EMAIL_LOGIN_ACCOUNT_LIMIT = 1
 EMAIL_LOGIN_IP_LIMIT = 60
 EMAIL_LOGIN_RATE_LIMIT_WINDOW = 1.minute.to_i
+SIGNIN_CAPTCHA_ATTEMPTS = 2
+
+def signin_captcha_required?
+  session[:signin_attempts].to_i >= SIGNIN_CAPTCHA_ATTEMPTS
+end
+
+def signin_captcha_valid?
+  return false if params[:'h-captcha-response'].to_s.empty?
+
+  hcaptcha_valid?
+end
+
+def record_failed_signin_attempt
+  session[:signin_attempts] = session[:signin_attempts].to_i + 1
+end
 
 def email_login_digest(value)
   secret = Base64.strict_decode64($config['session_secret'])

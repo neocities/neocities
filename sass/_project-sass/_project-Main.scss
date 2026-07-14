@@ -3466,6 +3466,17 @@ pre, code {
   top: 105px!important;
 }
 
+.signin-Captcha {
+  margin: 12px auto 20px;
+  max-width: 100%;
+  width: 303px;
+
+  .h-captcha, .h-captcha iframe {
+    max-width: 100%;
+    width: 303px !important;
+  }
+}
+
 .h-captcha iframe {
   width: 90% !important;
   border-radius: 10px;
