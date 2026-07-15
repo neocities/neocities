@@ -33,6 +33,12 @@ describe 'site/settings' do
       _(@site.email).must_equal @new_email
       _(@site.password_reset_token).must_be_nil
 
+      history = SiteIdentifierHistory.where(
+        site_id: @site.id,
+        identifier_type: SiteIdentifierHistory::EMAIL
+      ).first
+      _(history.identifier).must_equal original_email
+
       _(EmailWorker.jobs.length).must_equal 2
 
       args = EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /confirm your email address/i}.first['args'].first

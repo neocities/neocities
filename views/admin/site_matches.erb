@@ -1,0 +1,48 @@
+<div class="header-Outro">
+  <div class="row content single-Col">
+    <div class="col col-50">
+      <h1>Site Info Matches</h1>
+    </div>
+    <div class="col col-50" style="text-align: right; padding-top: 10px;">
+      <form action="/admin/site/" method="get" style="display: inline-block;" onsubmit="this.action = '/admin/site/' + this.username.value; return true;">
+        <input type="text" name="username" placeholder="current/previous username, email, or domain" class="input-Area" style="width: 300px; margin-bottom: 0; margin-right: 10px; display: inline-block;" required>
+        <button type="submit" class="btn btn-Action" style="margin-bottom: 0; display: inline-block;">Go</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="content single-Col misc-page">
+  <article>
+    <div class="block">
+      <h3>Multiple sites matched <%= @identifier %></h3>
+      <p>This identifier has been reused. Choose the intended site.</p>
+
+      <table class="table-Border">
+        <thead>
+          <tr>
+            <th>Current Username</th>
+            <th>Matched As</th>
+            <th>Changed At</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @site_matches.each do |match| %>
+            <tr>
+              <td><a href="/admin/site/<%= match[:site].username %>?site_id=<%= match[:site].id %>"><strong><%= match[:site].username %></strong></a></td>
+              <td><%= match[:matched_as] %></td>
+              <td><%= match[:history] ? match[:history].changed_at.strftime('%B %d, %Y at %H:%M %Z') : 'Current' %></td>
+              <td>
+                <% statuses = [] %>
+                <% statuses << 'banned' if match[:site].is_banned %>
+                <% statuses << 'deleted' if match[:site].is_deleted %>
+                <%= statuses.empty? ? 'active' : statuses.join(', ') %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </article>
+</div>

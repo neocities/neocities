@@ -5,7 +5,7 @@
     </div>
     <div class="col col-50" style="text-align: right; padding-top: 10px;">
       <form action="/admin/site/" method="get" style="display: inline-block;" onsubmit="this.action = '/admin/site/' + this.username.value; return true;">
-        <input type="text" name="username" placeholder="username/email/domain" class="input-Area" style="width: 200px; margin-bottom: 0; margin-right: 10px; display: inline-block;" required>
+        <input type="text" name="username" placeholder="current/previous username, email, or domain" class="input-Area" style="width: 300px; margin-bottom: 0; margin-right: 10px; display: inline-block;" required>
         <button type="submit" class="btn btn-Action" style="margin-bottom: 0; display: inline-block;">Go</button>
       </form>
     </div>
@@ -14,6 +14,12 @@
 
 <div class="content single-Col misc-page">
   <article>
+    <% if @matched_identifier_history %>
+      <div class="block" id="historical-identifier-match">
+        <strong>Historical match:</strong> <%= @matched_identifier_type.downcase %> <strong><%= @matched_identifier_history.identifier %></strong>, changed <%= @matched_identifier_history.changed_at.strftime('%B %d, %Y at %H:%M %Z') %>.
+      </div>
+    <% end %>
+
     <div class="row">
 
       <div class="col col-50">
@@ -33,8 +39,13 @@
               <td><%= (@site.domain && !@site.domain.empty?) ? @site.domain : 'None' %></td>
             </tr>
             <tr>
-              <td>Email</td>
-              <td><%= @site.email %></td>
+              <td>Account Email</td>
+              <td>
+                <%= @email_owner.email %>
+                <% unless @site.parent? %>
+                  (parent: <a href="/admin/site/<%= @email_owner.username %>"><%= @email_owner.username %></a>)
+                <% end %>
+              </td>
             </tr>
             <tr>
               <td>IP Address</td>
@@ -113,6 +124,8 @@
         </div>
       </div>
     </div>
+
+    <%== erb :'admin/_identity_history' %>
 
     <div class="row">
       <div class="col col-50">

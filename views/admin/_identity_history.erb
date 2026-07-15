@@ -1,0 +1,51 @@
+<div class="row">
+  <div class="col col-100">
+    <div class="block" id="identity-history">
+      <h3>🪪 Identity History</h3>
+      <% unless @site.parent? %>
+        <p>Email history belongs to parent account <a href="/admin/site/<%= @email_owner.username %>"><%= @email_owner.username %></a>.</p>
+      <% end %>
+
+      <table class="table-Border">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Identifier</th>
+            <th>Status</th>
+            <th>Changed At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Username</td>
+            <td><strong><%= @site.username %></strong></td>
+            <td>Current</td>
+            <td>—</td>
+          </tr>
+          <% @username_history.each do |history| %>
+            <tr>
+              <td>Username</td>
+              <td><%= history.identifier %></td>
+              <td>Previous</td>
+              <td><%= history.changed_at.strftime('%B %d, %Y at %H:%M %Z') %></td>
+            </tr>
+          <% end %>
+          <tr>
+            <td>Account Email</td>
+            <td><strong><%= @email_owner.email %></strong></td>
+            <td>Current</td>
+            <td>—</td>
+          </tr>
+          <% @email_history.each do |history| %>
+            <tr>
+              <td>Account Email</td>
+              <td><%= history.identifier %></td>
+              <td>Previous</td>
+              <td><%= history.changed_at.strftime('%B %d, %Y at %H:%M %Z') %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

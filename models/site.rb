@@ -217,6 +217,8 @@ class Site < Sequel::Model
 
   one_to_many :site_changes
 
+  one_to_many :identifier_histories, class: :SiteIdentifierHistory
+
   many_to_one :parent, :key => :parent_site_id, :class => self
   one_to_many :children, :key => :parent_site_id, :class => self
 
@@ -940,6 +942,16 @@ class Site < Sequel::Model
     File.exist? files_path(path)
   end
 
+  def before_update
+    record_identifier_history SiteIdentifierHistory::USERNAME, @old_username if identifier_changed?(:username, @old_username)
+
+    if parent? && identifier_changed?(:email, @original_email)
+      record_identifier_history SiteIdentifierHistory::EMAIL, @original_email
+    end
+
+    super
+  end
+
   def after_save
     update_redis_proxy_record if @redis_proxy_change
     save_tags
@@ -968,6 +980,22 @@ class Site < Sequel::Model
   def email=(email)
     @original_email = values[:email] unless new?
     super(email.nil? ? nil : email.downcase)
+  end
+
+  def identifier_changed?(column, previous_identifier)
+    return false unless changed_columns.include? column
+    return false if previous_identifier.nil? || previous_identifier.empty?
+
+    previous_identifier.downcase != values[column]
+  end
+
+  def record_identifier_history(identifier_type, identifier)
+    SiteIdentifierHistory.create(
+      site_id: id,
+      identifier_type: identifier_type,
+      identifier: identifier,
+      changed_at: Time.now
+    )
   end
 
   def can_email?(col=nil)

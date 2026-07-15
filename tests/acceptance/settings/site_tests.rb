@@ -35,7 +35,26 @@ describe 'site/settings' do
     end
 
     after do
-      _(Site[username: @site[:username]]).wont_equal nil
+      _(Site[id: @site.id]).wont_be_nil
+    end
+
+    it 'changes username and records the previous username' do
+      previous_username = @site.username
+      new_username = "renamed-#{SecureRandom.hex(4)}"
+      FileUtils.mkdir_p @site.base_files_path
+
+      fill_in 'name', with: new_username
+      click_button 'Change Name'
+
+      _(page).must_have_content /Site\/user name has been changed/i
+      renamed_site = Site[id: @site.id]
+      _(renamed_site.username).must_equal new_username
+
+      history = SiteIdentifierHistory.where(
+        site_id: @site.id,
+        identifier_type: SiteIdentifierHistory::USERNAME
+      ).first
+      _(history.identifier).must_equal previous_username
     end
 
     it 'fails for blank username' do

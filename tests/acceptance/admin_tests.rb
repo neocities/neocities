@@ -272,6 +272,74 @@ describe '/admin' do
       end
     end
 
+    it 'finds sites by previous usernames and emails' do
+      previous_username = "previous-#{SecureRandom.hex(4)}"
+      previous_email = "previous-#{SecureRandom.hex(4)}@example.com"
+      site = Fabricate :site, username: previous_username, email: previous_email
+
+      site.username = "current-#{SecureRandom.hex(4)}"
+      site.save_changes
+      site.email = "current-#{SecureRandom.hex(4)}@example.com"
+      site.save_changes
+
+      [
+        [previous_username, 'previous username'],
+        [previous_email, 'previous email']
+      ].each do |identifier, match_type|
+        visit "/admin/site/#{identifier}"
+
+        _(page).must_have_content "Site Info: #{site.username}"
+        within '#historical-identifier-match' do
+          _(page).must_have_content match_type
+          _(page).must_have_content identifier
+        end
+      end
+
+      within '#identity-history' do
+        _(page).must_have_content previous_username
+        _(page).must_have_content previous_email
+        _(page).must_have_content site.username
+        _(page).must_have_content site.email
+      end
+    end
+
+    it 'shows parent account email history on child site info' do
+      previous_email = "parent-#{SecureRandom.hex(4)}@example.com"
+      parent_site = Fabricate :site, email: previous_email
+      child_site = Fabricate :site, parent_site_id: parent_site.id, email: nil
+      parent_site.email = "current-#{SecureRandom.hex(4)}@example.com"
+      parent_site.save_changes
+
+      visit "/admin/site/#{child_site.username}"
+
+      within '#identity-history' do
+        _(page).must_have_content "Email history belongs to parent account #{parent_site.username}"
+        _(page).must_have_content previous_email
+        _(page).must_have_content parent_site.email
+      end
+    end
+
+    it 'requires disambiguation when a previous username is reused' do
+      reused_username = "reused-#{SecureRandom.hex(4)}"
+      historical_site = Fabricate :site, username: reused_username
+      historical_site.username = "renamed-#{SecureRandom.hex(4)}"
+      historical_site.save_changes
+      current_site = Fabricate :site, username: reused_username
+
+      visit "/admin/site/#{reused_username}"
+
+      _(page).must_have_content 'Multiple sites matched'
+      _(page).must_have_content historical_site.username
+      _(page).must_have_content current_site.username
+      _(page).must_have_content 'Previous username'
+      _(page).must_have_content 'Current username'
+
+      visit "/admin/site/#{reused_username}?site_id=#{current_site.id}"
+
+      _(page).must_have_content "Site Info: #{current_site.username}"
+      _(page).wont_have_content 'Multiple sites matched'
+    end
+
     it 'shows deleted and banned child sites in relationships' do
       parent_site = Fabricate :site
       active_child = Fabricate :site, parent_site_id: parent_site.id

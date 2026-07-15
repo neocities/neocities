@@ -535,6 +535,53 @@ get '/admin/masquerade/:username' do
   redirect '/'
 end
 
+def add_admin_site_identifier_match(matches, site, matched_as, history=nil)
+  return if site.nil?
+
+  existing_match = matches[site.id]
+  return if existing_match && (existing_match[:history].nil? || !history.nil? && existing_match[:history].changed_at >= history.changed_at)
+
+  matches[site.id] = {site: site, matched_as: matched_as, history: history}
+end
+
+def admin_site_identifier_matches(identifier)
+  matches = {}
+  history_type = nil
+  current_site = nil
+  current_match_type = nil
+
+  if identifier.match?(/@/)
+    current_site = Site.get_with_email identifier
+    current_match_type = 'Current email'
+    history_type = SiteIdentifierHistory::EMAIL
+  elsif identifier.end_with?('.neocities.org')
+    identifier = identifier.sub(/\.neocities\.org\z/, '')
+    current_site = Site[username: identifier]
+    current_match_type = 'Current username'
+    history_type = SiteIdentifierHistory::USERNAME
+  elsif identifier.match?(/.+\..+$/)
+    current_site = Site.where(domain: identifier).first
+    current_match_type = 'Current domain'
+  else
+    current_site = Site[username: identifier]
+    current_match_type = 'Current username'
+    history_type = SiteIdentifierHistory::USERNAME
+  end
+
+  add_admin_site_identifier_match matches, current_site, current_match_type
+
+  if history_type
+    SiteIdentifierHistory.where(identifier_type: history_type, identifier: identifier).order(Sequel.desc(:changed_at)).each do |history|
+      matched_as = history_type == SiteIdentifierHistory::USERNAME ? 'Previous username' : 'Previous email'
+      add_admin_site_identifier_match matches, history.site, matched_as, history
+    end
+  end
+
+  matches.values.sort_by do |match|
+    [match[:history] ? 1 : 0, -(match[:history]&.changed_at || Time.at(0)).to_i, match[:site].username]
+  end
+end
+
 get %r{/admin/site/(.+)} do |username_or_email_or_domain|
   require_admin
   ident = request.path_info.sub(%r{\A/admin/site/}, '')
@@ -555,20 +602,31 @@ get %r{/admin/site/(.+)} do |username_or_email_or_domain|
 
   ident = ident.split('/').first.to_s.downcase
 
-  if ident =~ /@/
-    @site = Site[email: ident]
-  elsif ident.end_with?('.neocities.org')
-    @site = Site[username: ident.sub(/\.neocities\.org\z/, '')]
-  elsif ident =~ /.+\..+$/
-    @site = Site.where(domain: ident).first
-  else
-    @site = Site[username: ident]
+  @site_matches = admin_site_identifier_matches ident
+
+  if @site_matches.empty?
+    flash[:error] = 'site not found'
+    redirect request.referrer || '/admin'
   end
 
-  if @site.nil?
-    flash[:error] = "site not found"
-    redirect request.referrer
+  if params[:site_id]
+    selected_match = @site_matches.detect {|match| match[:site].id == params[:site_id].to_i }
+    @site_matches = [selected_match] if selected_match
   end
+
+  if @site_matches.length > 1
+    @identifier = ident
+    @title = "Site Info Matches - #{ident}"
+    next erb(:'admin/site_matches')
+  end
+
+  site_match = @site_matches.first
+  @site = site_match[:site]
+  @matched_identifier_history = site_match[:history]
+  @matched_identifier_type = site_match[:matched_as]
+  @username_history = @site.identifier_histories_dataset.where(identifier_type: SiteIdentifierHistory::USERNAME).order(Sequel.desc(:changed_at)).all
+  @email_owner = @site.owner
+  @email_history = @email_owner.identifier_histories_dataset.where(identifier_type: SiteIdentifierHistory::EMAIL).order(Sequel.desc(:changed_at)).all
 
   @title = "Site Info - #{@site.username}"
   @moderation_blur_categories = Array($config['moderation_blur_categories'])
