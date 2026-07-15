@@ -44,6 +44,28 @@ describe '/admin' do
       site_to_change.reload
       _(site_to_change.valid_password?('oldpass')).must_equal true
       _(site_to_change.valid_password?('newpass')).must_equal false
+
+      page.driver.post '/admin/site/email_recovery', {
+        username: site_to_change.username,
+        email: 'new@example.com'
+      }
+
+      _(page.driver.status_code).must_equal 302
+      _(site_to_change.reload.email_recovery_token_digest).must_be_nil
+
+      recovery_digest = SecureRandom.hex
+      site_to_change.update(
+        email_recovery_email: 'pending@example.com',
+        email_recovery_token_digest: recovery_digest,
+        email_recovery_expires_at: 1.hour.from_now
+      )
+
+      page.driver.post '/admin/site/email_recovery/cancel', {
+        username: site_to_change.username
+      }
+
+      _(page.driver.status_code).must_equal 302
+      _(site_to_change.reload.email_recovery_token_digest).must_equal recovery_digest
     end
 
     it 'blocks all /admin paths for non-admin users' do
@@ -57,7 +79,7 @@ describe '/admin' do
       end
       
       # Test POST routes
-      ['/admin/reports', '/admin/ban', '/admin/unban', '/admin/mark_nsfw', '/admin/feature', '/admin/email', '/admin/site/change_password'].each do |path|
+      ['/admin/reports', '/admin/ban', '/admin/unban', '/admin/mark_nsfw', '/admin/feature', '/admin/email', '/admin/site/change_password', '/admin/site/email_recovery', '/admin/site/email_recovery/cancel'].each do |path|
         page.driver.post path, {}
         _(page.driver.status_code).must_equal 302, "Expected redirect for POST #{path}"
         

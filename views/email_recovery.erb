@@ -1,0 +1,24 @@
+<div class="header-Outro">
+  <div class="row content single-Col txt-Center">
+    <h1>Recover Your Account Email</h1>
+    <h3 class="subtitle">Confirm the current account details for <%= @site.username %>.</h3>
+  </div>
+</div>
+
+<div class="content txt-Center single-Col misc-page">
+  <p>This recovery will change the account email to <strong><%= masked_email @site.email_recovery_email %></strong>.</p>
+
+  <form method="POST" action="/email_recovery/<%= Rack::Utils.escape_path @token %>" class="content">
+    <%== csrf_token_input_html %>
+    <fieldset>
+      <label for="old_email">Current email address</label>
+      <input name="old_email" id="old_email" type="email" class="input-Area" autocomplete="email" autocapitalize="off" autocorrect="off" style="width: 400px" required>
+
+      <label for="password">Current password</label>
+      <input name="password" id="password" type="password" class="input-Area" autocomplete="current-password" style="width: 400px" required>
+    </fieldset>
+    <input class="btn-Action" type="submit" value="Change Email Address">
+  </form>
+
+  <p>This link expires after 24 hours and can only be used once.</p>
+</div>

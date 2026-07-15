@@ -313,6 +313,9 @@ post '/settings/change_email' do
   parent_site.email_confirmation_token = SecureRandom.hex 3
   parent_site.email_confirmed = false
   parent_site.password_reset_token = nil
+  parent_site.email_recovery_email = nil
+  parent_site.email_recovery_token_digest = nil
+  parent_site.email_recovery_expires_at = nil
 
   if parent_site.valid?
     parent_site.save_changes

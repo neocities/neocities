@@ -57,6 +57,26 @@
 
               <p><input class="btn-Action" type="submit" value="Change Password" onclick="return confirm('Are you sure you want to change this password?');"></p>
             </form>
+
+            <form action="/admin/site/email_recovery" method="POST" style="margin-top: 30px;">
+              <input type="hidden" name="username" value="<%= @site.username %>">
+              <%== csrf_token_input_html %>
+
+              <h3>Send Email Recovery Link</h3>
+              <p>New Email:</p>
+              <input class="input-Area" id="email_recovery_email" name="email" type="email" required>
+
+              <p><input class="btn-Action" type="submit" value="Send Recovery Link" onclick="return confirm('Send an email recovery link for this account?');"></p>
+            </form>
+
+            <% if @site.email_recovery_token_digest %>
+              <form action="/admin/site/email_recovery/cancel" method="POST" style="margin-top: 15px;">
+                <input type="hidden" name="username" value="<%= @site.username %>">
+                <%== csrf_token_input_html %>
+
+                <p><input class="btn-Action" type="submit" value="Cancel Pending Recovery" onclick="return confirm('Cancel the pending email recovery request?');"></p>
+              </form>
+            <% end %>
           <% end %>
         </div>
       </div>

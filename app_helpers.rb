@@ -42,6 +42,7 @@ SIGNIN_CAPTCHA_TTL = 1.hour.to_i
 NON_SIGNIN_PASSWORD_AUTH_ACCOUNT_LIMIT = 10
 NON_SIGNIN_PASSWORD_AUTH_IP_LIMIT = 30
 NON_SIGNIN_PASSWORD_AUTH_RATE_LIMIT_TTL = 10.minutes.to_i
+EMAIL_RECOVERY_TTL = 24.hours.to_i
 
 def signin_captcha_attempt_keys(username, ip)
   keys = []

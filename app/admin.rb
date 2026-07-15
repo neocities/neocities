@@ -438,6 +438,95 @@ post '/admin/site/change_password' do
   redirect "/admin/site/#{site.username}"
 end
 
+post '/admin/site/email_recovery' do
+  require_admin
+  site = Site[username: params[:username]]
+  not_found if site.nil?
+
+  unless site.parent?
+    flash[:error] = 'Email recovery can only be created for parent sites.'
+    redirect "/admin/site/#{site.username}"
+  end
+
+  if site.is_banned
+    flash[:error] = 'Email recovery cannot be created for a banned site.'
+    redirect "/admin/site/#{site.username}"
+  end
+
+  candidate_site = Site[site.id]
+  candidate_site.email = params[:email].to_s.strip
+
+  if candidate_site.email == site.email
+    flash[:error] = 'The recovery email must be different from the current email.'
+    redirect "/admin/site/#{site.username}"
+  end
+
+  candidate_site.valid?
+  if candidate_site.errors[:email]
+    flash[:error] = candidate_site.errors[:email].first
+    redirect "/admin/site/#{site.username}"
+  end
+
+  token = SecureRandom.urlsafe_base64 32
+  site.email_recovery_email = candidate_site.email
+  site.email_recovery_token_digest = email_login_digest token
+  site.email_recovery_expires_at = Time.now+EMAIL_RECOVERY_TTL
+  site.save_changes validate: false
+
+  EmailWorker.perform_async({
+    from: Site::FROM_EMAIL,
+    to: site.email,
+    subject: '[Neocities] Email recovery requested',
+    body: Tilt.new('./views/templates/email/email_recovery_requested.erb', pretty: true).render(self),
+    no_footer: true
+  })
+
+  recovery_url = "https://neocities.org/email_recovery/#{token}"
+  EmailWorker.perform_async({
+    from: Site::FROM_EMAIL,
+    to: site.email_recovery_email,
+    subject: '[Neocities] Recover your account email',
+    body: Tilt.new('./views/templates/email/email_recovery.erb', pretty: true).render(self, site: site, recovery_url: recovery_url),
+    no_footer: true
+  })
+
+  flash[:success] = "Email recovery link sent to #{site.email_recovery_email}."
+  redirect "/admin/site/#{site.username}"
+end
+
+post '/admin/site/email_recovery/cancel' do
+  require_admin
+  site = Site[username: params[:username]]
+  not_found if site.nil?
+
+  unless site.parent?
+    flash[:error] = 'Email recovery can only be canceled for parent sites.'
+    redirect "/admin/site/#{site.username}"
+  end
+
+  canceled = false
+  DB.transaction do
+    site = Site.where(id: site.id).for_update.first
+    canceled = [
+      site.email_recovery_email,
+      site.email_recovery_token_digest,
+      site.email_recovery_expires_at
+    ].any? { |value| !value.nil? }
+
+    site.email_recovery_email = nil
+    site.email_recovery_token_digest = nil
+    site.email_recovery_expires_at = nil
+    site.save_changes validate: false
+  end
+
+  if canceled
+    flash[:success] = 'Email recovery request canceled.'
+  else
+    flash[:error] = 'No email recovery request is pending.'
+  end
+  redirect "/admin/site/#{site.username}"
+end
+
 get '/admin/masquerade/:username' do
   require_admin
   site = Site[username: params[:username]]
