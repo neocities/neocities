@@ -25,6 +25,31 @@ describe 'dashboard' do
         _(@site.reload.dashboard_accessed).must_equal true
       end
 
+      it 'defaults new sites to list view' do
+        Capybara.default_driver = :selenium_chrome_headless_largewindow
+
+        page.set_rack_session id: @site.id
+        visit '/dashboard'
+        page.execute_script("localStorage.removeItem('viewType')")
+        refresh
+
+        _(page).must_have_css('#filesDisplay.list-view')
+      end
+
+      it 'preserves user view preferences' do
+        Capybara.default_driver = :selenium_chrome_headless_largewindow
+
+        page.set_rack_session id: @site.id
+        visit '/dashboard'
+        page.execute_script("localStorage.setItem('viewType', 'list')")
+        refresh
+        _(page).must_have_css('#filesDisplay.list-view')
+
+        page.execute_script("localStorage.setItem('viewType', 'icon')")
+        refresh
+        _(page).wont_have_css('#filesDisplay.list-view')
+      end
+
       it 'creates a top-level directory' do
         visit '/dashboard'
         click_link 'New Folder'

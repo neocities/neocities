@@ -1,4 +1,6 @@
-if(localStorage && localStorage.getItem('viewType') == 'list')
+var dashboardViewType = localStorage && localStorage.getItem('viewType')
+
+if(dashboardViewType != 'icon')
   $('#filesDisplay').addClass('list-view')
 
 function confirmFileRename(path) {
@@ -282,7 +284,7 @@ function listView() {
 
 function iconView() {
   if(localStorage)
-    localStorage.removeItem('viewType')
+    localStorage.setItem('viewType', 'icon')
 
   $('#filesDisplay').removeClass('list-view')
 }
