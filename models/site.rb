@@ -2091,7 +2091,8 @@ class Site < Sequel::Model
   end
 
   def email_review_needed?
-    owner.email_reviewed_at.nil?
+    reviewed_at = owner.email_reviewed_at
+    reviewed_at.nil? || reviewed_at < 6.months.ago
   end
 
   def required_validations_met?

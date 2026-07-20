@@ -139,6 +139,13 @@ describe 'site/settings' do
       _(page.current_path).must_equal '/settings/email_review'
       _(@site.reload.email_reviewed_at).must_be_nil
     end
+
+    it 'prompts again after six months' do
+      @site.update email_reviewed_at: 6.months.ago
+      visit '/'
+
+      _(page.current_path).must_equal '/settings/email_review'
+    end
   end
 
   describe 'new account email review' do
