@@ -1,61 +1,69 @@
-<h2>Custom Domain</h2>
-
-<p>
-  Adding a custom domain allows you to have a domain name attached to your web site. So if you had a domain like <strong>yourdomain.com</strong>, you could have it point to your Neocities site. If you don't have the domain yet, you will have to purchase a domain name from a registrar like <a href="http://www.namecheap.com/?aff=87835" target="_blank">Namecheap</a> first.
-</p>
+<div class="settings-section-heading">
+  <span class="settings-section-icon"><i class="fa fa-link"></i></span>
+  <div>
+    <h2>Custom domain</h2>
+    <p>Connect a domain you own and keep your Neocities site behind a memorable address.</p>
+  </div>
+</div>
 
 <% if current_site.custom_domain_available? %>
-  <p>
-    We will be using <strong>yourdomain.com</strong> for the examples below, but you should replace it with your own domain name.
-  </p>
+  <div class="settings-domain-intro">
+    <i class="fa fa-info-circle"></i>
+    <p>You will make these changes at your domain registrar. The examples use <strong>yourdomain.com</strong>; replace it with your own domain. <a href="/img/namecheap-dns-example.png">View a DNS example</a>.</p>
+  </div>
 
-  <h3>Step 1</h3>
-  <p>
-  First, you need to add an "A record" to point your root domain (sometimes shown with an @ symbol) (yourdomain.com) to the following IP address (<a href="/img/namecheap-dns-example.png">see an example here</a>):
-  </p>
+  <div class="settings-step-list">
+    <section class="settings-step">
+      <span>1</span>
+      <div>
+        <h3>Point the root domain to Neocities</h3>
+        <p>Add this required A record. Your registrar may show the root domain as <strong>@</strong>.</p>
+        <div class="settings-dns-record"><span>A</span><code>198.51.233.1</code><small>Required</small></div>
+      </div>
+    </section>
 
-  <p><code>198.51.233.1</code></p>
+    <section class="settings-step">
+      <span>2</span>
+      <div>
+        <h3>Add IPv6 and www support</h3>
+        <p>These records are optional, but recommended for broader access and familiar www links.</p>
+        <div class="settings-dns-record"><span>AAAA</span><code>2620:2:6000::bad:dab:cafe</code><small>Recommended</small></div>
+        <div class="settings-dns-record"><span>CNAME</span><code>www → <span>yourdomain.com</span></code><small>Recommended</small></div>
+      </div>
+    </section>
 
-  <h3>Step 2 (optional but recommended)</h3>
+    <section class="settings-step">
+      <span>3</span>
+      <div>
+        <h3>Remove redirects and allow DNS to update</h3>
+        <p>Delete any URL Redirect records, then wait about five minutes. Some providers may take longer to publish changes.</p>
+      </div>
+    </section>
+  </div>
 
-  <p>
-    Next, you can add an "AAAA record" that also points to your root domain. This isn't strictly required, but provides IPv6 support which helps future proof your site. Use this address for the AAAA record (<a href="/img/namecheap-dns-example.png">see an example here</a>):
-  </p>
-
-  <p><code>2620:2:6000::bad:dab:cafe</code></p>
-
-  <h3>Step 3 (optional but recommended)</h3>
-
-  <p>
-    Sometimes users will type in www before a domain despite it no longer being necessary to load web sites. If you would like to have a <strong>www</strong> for your domain, create a CNAME record pointing <strong>www</strong> to <strong>yourdomain.com</strong> (<a href="/img/namecheap-dns-example.png">see an example here</a>):
-  </p>
-
-  <p><code>www CNAME yourdomain.com</code></p>
-
-  <p>Note that any requests to <strong>www.yourdomain.com</strong> will automatically be redirected to <strong>yourdomain.com</strong>.</p>
-
-  <h3>Step 4</h3>
-
-  <p>
-    Remove any "URL redirects" if they are present, they are not needed and cause issues with connecting the domain. For example, Namecheap has a <strong>URL Redirect Record</strong> on new domains that needs to be deleted.
-  </p>
-
-  <h3>Step 5</h3>
-
-  <p>Wait about 5 minutes for the nameserver changes to update. Sometimes it can take a short while for your domain provider to update their records.</p>
-
-  <h3>Step 6</h3>
-
-  <p>
-    Finally, add your domain name to the box below (just the <strong>yourdomain.com</strong>, don't add any subdomains), and your domain should come online within 5 minutes! We will automatically create SSL certs for your domain.
-  </p>
-
-  <form method="POST" action="/settings/<%= @site.username %>/custom_domain">
-    <%== csrf_token_input_html %>
-    <input name="domain" type="text" placeholder="yourdomain.com" value="<%= @site.domain %>">
-    <br>
-    <input class="btn-Action" type="submit" value="Update Domain">
-  </form>
+  <div class="settings-connect-card">
+    <div>
+      <span class="settings-kicker">Final step</span>
+      <h3>Connect your domain</h3>
+      <p>Enter only the root domain—no protocol, path, or www. SSL will be created automatically.</p>
+    </div>
+    <form method="POST" action="/settings/<%= @site.username %>/custom_domain" class="settings-form">
+      <%== csrf_token_input_html %>
+      <label for="custom_domain">Domain</label>
+      <div class="settings-input-action">
+        <input id="custom_domain" class="input-Area" name="domain" type="text" placeholder="yourdomain.com" value="<%= @site.domain %>" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <input class="btn-Action" type="submit" value="Update Domain">
+      </div>
+    </form>
+  </div>
 <% else %>
-  <strong>Custom domains require a Supporter account. <a href="/supporter">Upgrade now</a>.</strong>
+  <div class="settings-upgrade-card">
+    <span class="settings-upgrade-icon"><i class="fa fa-heart"></i></span>
+    <div>
+      <span class="settings-kicker">Supporter feature</span>
+      <h3>Use your own domain</h3>
+      <p>Custom domains are included with Neocities Supporter, along with more storage and multiple sites.</p>
+      <a class="btn-Action" href="/supporter">Explore Supporter</a>
+    </div>
+  </div>
 <% end %>

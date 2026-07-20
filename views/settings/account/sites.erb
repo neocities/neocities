@@ -1,36 +1,46 @@
-<h2>Your Sites</h2>
+<div class="settings-section-heading">
+  <span class="settings-section-icon"><i class="fa fa-sitemap"></i></span>
+  <div>
+    <h2>Your sites</h2>
+    <p>Manage your site settings.</p>
+  </div>
+</div>
 
-<table class="table">
-  <% current_site.account_sites_dataset.each_with_index do |site,i| %>
-    <tr>
-      <td <% if i == 0 %>style="border-top: 0px"<% end %>>
-        <a href="//<%= site.host %>" target="_blank"><%= site.username %></a>
-        <% if site.parent? %>
-          <strong>(parent account)</strong>
-        <% end %>
-      </td>
-      <td <% if i == 0 %>style="border-top: 0px"<% end %>>
-        <a href="/settings/<%= site.username %>">Manage Site Settings</a>
-      </td>
-    </tr>
-  <% end %>
-</table>
-
-<h3>Create New Site</h3>
-
-<% if current_site.plan_feature(:unlimited_site_creation) %>
-  <p>You can now create new sites that are linked to this account! All of your sites will share the free space you have available.</p>
-
-  <form action="/settings/create_child" method="POST">
-    <%== csrf_token_input_html %>
-
-    <p>Site Name:</p>
-    <input name="username" type="text">
-
-    <div>
-      <input class="btn-Action" type="submit" value="Create New Site">
+<div class="settings-site-list">
+  <% current_site.account_sites_dataset.each do |site| %>
+    <div class="settings-site-row">
+      <img class="settings-site-thumbnail" src="<%= site.screenshot_url('index.html', '50x50') %>" alt="" onerror="this.src='/img/50x50.png'">
+      <div class="settings-site-copy">
+        <a href="//<%= site.host %>" target="_blank" rel="noopener"><strong><%= site.username %></strong> <i class="fa fa-external-link"></i></a>
+        <span><%= site.host %></span>
+      </div>
+      <% if site.parent? %>
+        <span class="settings-badge">Parent</span>
+      <% end %>
+      <a class="settings-site-action" href="/settings/<%= site.username %>">Manage <i class="fa fa-chevron-right"></i></a>
     </div>
-  </form>
-<% else %>
-  <p>Multiple site creation is only available for supporter accounts. <a href="/supporter">Upgrade now</a>!</p>
-<% end %>
+  <% end %>
+</div>
+
+<div class="settings-subsection">
+  <h3>Create a new site</h3>
+  <% if current_site.plan_feature(:unlimited_site_creation) %>
+    <p>Linked sites share the storage available to this account.</p>
+    <form action="/settings/create_child" method="POST" class="settings-inline-form">
+      <%== csrf_token_input_html %>
+      <label for="new_site_username">Site name</label>
+      <div class="settings-input-action">
+        <input id="new_site_username" class="input-Area" name="username" type="text" placeholder="my-new-site">
+        <input class="btn-Action" type="submit" value="Create site">
+      </div>
+    </form>
+  <% else %>
+    <div class="settings-callout">
+      <i class="fa fa-heart"></i>
+      <div>
+        <strong>Create more sites with Supporter</strong>
+        <p>Supporter accounts can create multiple sites under one account. <a href="/supporter">See Supporter benefits</a>.</p>
+      </div>
+    </div>
+  <% end %>
+</div>

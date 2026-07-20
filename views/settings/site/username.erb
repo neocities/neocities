@@ -1,22 +1,36 @@
-<h2>Change Site (User) Name</h2>
-<form method="POST" action="/settings/<%= @site.username %>/change_name">
+<div class="settings-section-heading">
+  <span class="settings-section-icon"><i class="fa fa-pencil"></i></span>
+  <div>
+    <h2>Rename site</h2>
+    <p>Change the username and neocities.org address for this site.</p>
+  </div>
+</div>
+
+<div class="settings-warning-card">
+  <i class="fa fa-exclamation-triangle"></i>
+  <div>
+    <strong>Renaming an established site breaks existing links and is not recommended.</strong>
+    <p>Search results, bookmarks, and links from other websites will stop working. Rename only when you really need to, such as correcting a typo.</p>
+  </div>
+</div>
+
+<div class="settings-current-site">
+  <img src="<%= @site.screenshot_url('index.html', '50x50') %>" alt="" onerror="this.src='/img/50x50.png'">
+  <div><span class="settings-kicker">Current address</span><strong><%= @site.username %>.neocities.org</strong></div>
+</div>
+
+<form method="POST" action="/settings/<%= @site.username %>/change_name" class="settings-form settings-form-card">
   <%== csrf_token_input_html %>
-  <p class="tiny">
-    <strong>Warning:</strong>  It is very damaging to change your site name after it is already established, as this breaks search engine links to your site and will reduce your amount of site visitors. Unless you made a typo when editing your site, you really don't want to do this!
-  </p>
-  <p class="tiny">
-    It cannot contain spaces, cannot start or end with a hyphen (-), and can only use the following characters: a-z A-Z 0-9 -
-  </p>
+  <div class="settings-field">
+    <label for="new_site_name">New site name</label>
+    <div class="settings-domain-input">
+      <input id="new_site_name" name="name" class="input-Area" type="text" placeholder="newname" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <span>.neocities.org</span>
+    </div>
+    <small>Letters, numbers, and hyphens only. A hyphen cannot be first or last.</small>
+  </div>
 
-  <p>
-    Current Name:
-    <span style="color: green"><strong><%= @site.username %></strong></span>
-  </p>
-
-  <p>
-    New name:
-    <input name="name" class="input-Area" type="text" placeholder="newname" style="width: 200px">
-  </p>
-
-  <input class="btn-Action" type="submit" value="Change Name">
+  <div class="settings-actions">
+    <input class="btn-Action" type="submit" value="Change Name">
+  </div>
 </form>

@@ -109,6 +109,14 @@ describe 'site/settings' do
       click_button 'Generate API Key'
       _(@child_site.reload.api_key).wont_equal api_key
     end
+
+    it 'warns before replacing an existing api key' do
+      @child_site.generate_api_key!
+      visit "/settings/#{@child_site[:username]}#api_key"
+
+      form = find "form[action='/settings/#{@child_site.username}/generate_api_key']"
+      _(form[:onsubmit]).must_include 'Your old key will stop working immediately.'
+    end
   end
 
   describe 'tags tab' do
@@ -165,7 +173,7 @@ describe 'site/settings' do
     end
 
     it 'fails for incorrect entered username' do
-      fill_in 'username', with: 'NOPE'
+      fill_in 'confirm_username', with: 'NOPE'
       click_button 'Delete Site'
 
       _(page.body).must_match /Site user name and entered user name did not match/i

@@ -1,39 +1,65 @@
-<h2>Neocities Supporter</h2>
-<% if current_site.supporter? && !current_site.plan_ended %>
-  <p class="tiny">You currently have the <strong>Supporter Plan (<%= current_site.maximum_space.to_space_pretty %>)</strong>. Thank you! We love you.
-  </p>
+<div class="settings-section-heading">
+  <span class="settings-section-icon"><i class="fa fa-heart"></i></span>
+  <div>
+    <h2>Supporter plan</h2>
+    <p>Manage your plan and billing history.</p>
+  </div>
+</div>
 
-  <% if parent_site.paying_supporter? %>
-    <a href="/supporter" style="margin-bottom: 20px">Supporter Info</a>
-    <small><a href="#" onclick="$('#endSupporterConfirm').modal()" style="font-size: 8pt">End Supporter Membership</a></small>
-  <% end %>
-<% else %>
-  <p class="tiny">
-    You currently have the <strong>Free Plan (<%= current_site.maximum_space.to_space_pretty %>)</strong>.<br>Want to get more space and help Neocities? Become a supporter!
-  </p>
-  <a href="/supporter">Supporter Info</a>
-<% end %>
+<div class="settings-plan-card <% if current_site.supporter? && !current_site.plan_ended %>is-supporter<% end %>">
+  <div class="settings-plan-summary">
+    <span class="settings-plan-icon"><i class="fa fa-<%= current_site.supporter? && !current_site.plan_ended ? 'heart' : 'leaf' %>"></i></span>
+    <div>
+      <span class="settings-kicker">Current plan</span>
+      <% if current_site.supporter? && !current_site.plan_ended %>
+        <h3>Neocities Supporter</h3>
+        <p>Thank you for directly supporting Neocities.</p>
+      <% else %>
+        <h3>Free plan</h3>
+        <p>Upgrade for more storage, multiple sites, custom domains, and more.</p>
+      <% end %>
+    </div>
+    <div class="settings-plan-storage">
+      <strong><%= current_site.maximum_space.to_space_pretty %></strong>
+      <span>Storage</span>
+    </div>
+  </div>
 
-<% if parent_site.stripe_customer_id || parent_site.paypal_profile_id %>
-  <br>
-  <a href="/settings/invoices">Generated Invoices</a>
+  <div class="settings-plan-actions">
+    <a class="btn-Action" href="/supporter"><%= current_site.supporter? && !current_site.plan_ended ? 'View Supporter benefits' : 'Become a Supporter' %></a>
+    <% if parent_site.stripe_customer_id || parent_site.paypal_profile_id %>
+      <a class="settings-secondary-action" href="/settings/invoices"><i class="fa fa-file-text-o"></i> View invoices</a>
+    <% end %>
+  </div>
+</div>
+
+<div class="settings-benefit-grid">
+  <div><i class="fa fa-hdd-o"></i><strong>More storage</strong><span>More room for files and creative projects.</span></div>
+  <div><i class="fa fa-sitemap"></i><strong>Multiple sites</strong><span>Manage several websites from one account.</span></div>
+  <div><i class="fa fa-link"></i><strong>Custom domains</strong><span>Connect your own domain to your website.</span></div>
+</div>
+
+<% if current_site.supporter? && !current_site.plan_ended && parent_site.paying_supporter? %>
+  <div class="settings-muted-action">
+    <span>Need to stop your recurring membership?</span>
+    <a href="#endSupporterConfirm" data-toggle="modal">End Supporter membership</a>
+  </div>
 <% end %>
 
 <div class="modal hide" id="endSupporterConfirm" tabindex="-1" role="dialog" aria-labelledby="endSupporterConfirmLabel" aria-hidden="true">
   <form method="POST" action="/supporter/end">
     <%== csrf_token_input_html %>
-    <input type="hidden" value="<%= csrf_token %>" name="csrf_token">
-    <input type="hidden" value=" free" name="plan_type">
+    <input type="hidden" value="free" name="plan_type">
     <div class="modal-header">
-      <h3 id="endSupporterConfirmLabel">End Supporter Membership</h3>
+      <h3 id="endSupporterConfirmLabel">End Supporter membership?</h3>
     </div>
     <div class="modal-body">
-      <font style="color: red; font-weight: bold">Warning:</font><br>If you do this, it will end your supporter membership. You will no longer be billed. Your account will revert to a "free" account, and supporter features will no longer be available. Are you sure you want to do this?<br><br>
+      <div class="settings-modal-warning"><i class="fa fa-exclamation-triangle"></i><strong>Your recurring billing will stop.</strong></div>
+      <p>Your account will return to the Free plan and Supporter features will no longer be available.</p>
     </div>
     <div class="modal-footer">
-      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">No, cancel</button>
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <button type="submit" class="btn-Action">Yes, end supporter membership</button>
+      <button type="button" class="btn cancel" data-dismiss="modal">Keep membership</button>
+      <button type="submit" class="btn-Action">End membership</button>
     </div>
   </form>
 </div>

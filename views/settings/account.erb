@@ -1,82 +1,80 @@
-<div class="header-Outro">
+<div class="header-Outro settings-hero">
   <div class="row content single-Col">
-    <h1>Account Settings</h1>
-    <h3 class="subtitle">Manage the account for your sites</h3>
+    <span class="settings-eyebrow">Settings</span>
+    <h1>Account settings</h1>
+    <p class="settings-hero-copy">Manage your sites, membership, sign-in details, and email preferences.</p>
   </div>
 </div>
 
-<div class="content single-Col misc-page txt-Center">
-  <article>
-    <section>
-      <div class="tabbable" style="margin-top: 20px"> <!-- Only required for left/right tabs -->
-        <ul class="nav nav-tabs">
-
-          <li class="active"><a href="#sites" data-toggle="tab">Sites</a></li>
-          <li><a href="#supporter" data-toggle="tab">Supporter</a></li>
-          <li><a href="#password" data-toggle="tab">Password</a></li>
-          <li><a href="#email" data-toggle="tab">Email</a></li>
-          <% if current_site.stripe_paying_supporter? %>
-            <li><a href="#billing" data-toggle="tab">Change Card</a></li>
-          <% end %>
-          <% if parent_site == current_site && parent_site.children_dataset.count == 0 %>
-            <li><a href="#delete" data-toggle="tab">Delete Account</a></li>
-          <% end %>
-        </ul>
-        <div class="tab-content">
-          <div class="tab-pane active" id="sites">
-            <%== erb :'settings/account/sites' %>
-          </div>
-          <div class="tab-pane" id="supporter">
-            <%== erb :'settings/account/supporter' %>
-          </div>
-          <div class="tab-pane" id="password">
-            <%== erb :'settings/account/password' %>
-          </div>
-          <div class="tab-pane" id="email">
-            <%== erb :'settings/account/email' %>
-          </div>
-          <% if current_site.stripe_paying_supporter? %>
-            <div class="tab-pane" id="billing">
-              <%== erb :'settings/account/billing' %>
-            </div>
-          <% end %>
-          <% if parent_site == current_site && parent_site.children_dataset.count == 0 %>
-            <div class="tab-pane" id="delete">
-              <%== erb :'settings/site/delete' %>
-            </div>
-          <% end %>
-        </div>
+<main class="settings-page content">
+  <div class="settings-shell tabbable">
+    <ul class="nav nav-tabs settings-nav" aria-label="Account settings sections">
+      <li class="settings-sidebar-heading">
+        <span>Signed in as</span>
+        <strong><%= parent_site.username %></strong>
+      </li>
+      <li class="active"><a href="#sites" data-toggle="tab"><i class="fa fa-sitemap"></i><span><strong>Sites</strong><small>Manage your websites</small></span></a></li>
+      <li><a href="#supporter" data-toggle="tab"><i class="fa fa-heart"></i><span><strong>Supporter</strong><small>Plan and invoices</small></span></a></li>
+      <li><a href="#password" data-toggle="tab"><i class="fa fa-lock"></i><span><strong>Password</strong><small>Secure your account</small></span></a></li>
+      <li><a href="#email" data-toggle="tab"><i class="fa fa-envelope"></i><span><strong>Email</strong><small>Address and notifications</small></span></a></li>
+      <% if current_site.stripe_paying_supporter? %>
+        <li><a href="#billing" data-toggle="tab"><i class="fa fa-credit-card"></i><span><strong>Payment card</strong><small>Update billing details</small></span></a></li>
+      <% end %>
+      <% if parent_site == current_site && parent_site.children_dataset.count == 0 %>
+        <li class="settings-nav-danger"><a href="#delete" data-toggle="tab"><i class="fa fa-trash"></i><span><strong>Delete account</strong><small>Danger zone</small></span></a></li>
+      <% end %>
+    </ul>
+    <div class="tab-content settings-content">
+      <div class="tab-pane active settings-panel" id="sites">
+        <%== erb :'settings/account/sites' %>
       </div>
-    </section>
-  </article>
-</div>
-
-<div class="modal hide" id="deleteSite" tabindex="-1" role="dialog" aria-labelledby="deleteSiteLabel" aria-hidden="true">
-  <form method="POST" action="/site/delete">
-    <%== csrf_token_input_html %>
-    <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-      <h3 id="deleteSiteLabel">Permanently Delete Site</h3>
+      <div class="tab-pane settings-panel" id="supporter">
+        <%== erb :'settings/account/supporter' %>
+      </div>
+      <div class="tab-pane settings-panel" id="password">
+        <%== erb :'settings/account/password' %>
+      </div>
+      <div class="tab-pane settings-panel" id="email">
+        <%== erb :'settings/account/email' %>
+      </div>
+      <% if current_site.stripe_paying_supporter? %>
+        <div class="tab-pane settings-panel" id="billing">
+          <%== erb :'settings/account/billing' %>
+        </div>
+      <% end %>
+      <% if parent_site == current_site && parent_site.children_dataset.count == 0 %>
+        <div class="tab-pane settings-panel settings-panel-danger" id="delete">
+          <%== erb :'settings/site/delete' %>
+        </div>
+      <% end %>
     </div>
-    <div class="modal-body">
-      <strong style="color: red">WARNING: This will permanently delete your web site and Neocities account. You will not be able to use the same e-mail address to create a new site. There is no undo.</strong>
-
-      <p>Delete Site Name: <strong><%= current_site.username %></strong></p>
-      <p>Confirm your site name by typing it here:</p>
-      <input class="input-Area" name="username" type="text">
-    </div>
-    <div class="modal-footer">
-      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button type="submit" class="btn-Action">Permanently Delete Site</button>
-    </div>
-  </form>
-</div>
+  </div>
+</main>
 
 <script>
 $(document).ready(function() {
-    if (location.hash !== '') $('a[href="' + location.hash + '"]').tab('show');
-    return $('a[data-toggle="tab"]').on('shown', function(e) {
-      return location.hash = $(e.target).attr('href').substr(1);
-    });
+  if (window.history && 'scrollRestoration' in window.history) {
+    window.history.scrollRestoration = 'manual';
+  }
+
+  if (location.hash !== '') {
+    var initialTab = $('a[href="' + location.hash + '"]');
+    if (initialTab.length) {
+      initialTab.tab('show');
+      window.scrollTo(0, 0);
+      window.setTimeout(function() { window.scrollTo(0, 0); }, 0);
+    }
+  }
+
+  $('a[data-toggle="tab"]').on('shown', function(e) {
+    var tabHash = $(e.target).attr('href');
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, document.title, window.location.pathname + window.location.search + tabHash);
+    }
+  });
+});
+
+$(window).on('load', function() {
+  window.scrollTo(0, 0);
 });
 </script>

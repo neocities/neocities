@@ -2,15 +2,22 @@
 <% tags_remaining = Site::MAXIMUM_TAGS - tags_count %>
 
 <div class="settings-tags" id="settings-tags">
-  <h2>Tags</h2>
-  <p class="tiny">
-    Tags help people find your site on <a href="/browse">Browse</a>. Use short, descriptive keywords (letters and numbers only) so visitors can discover you more easily.
-  </p>
+  <div class="settings-section-heading">
+    <span class="settings-section-icon"><i class="fa fa-tags"></i></span>
+    <div>
+      <h2>Discovery tags</h2>
+      <p>Help people find your site on <a href="/browse">Browse</a> with a few clear, descriptive topics.</p>
+    </div>
+  </div>
 
-  <div class="tag-card tag-card-summary">
-    <strong>Current tags (<%= tags_count %>/<%= Site::MAXIMUM_TAGS %>)</strong>
+  <div class="settings-tag-summary">
+    <div class="settings-tag-summary-top">
+      <div><span class="settings-kicker">Your tags</span><strong><%= tags_count %> of <%= Site::MAXIMUM_TAGS %> used</strong></div>
+      <span><%= tags_remaining %> remaining</span>
+    </div>
+    <div class="settings-tag-progress"><span style="width: <%= tags_count * 100 / Site::MAXIMUM_TAGS %>%"></span></div>
     <% if tags_count.zero? %>
-      <p style="margin: 12px 0 0 0">You haven't added any tags yet.</p>
+      <div class="settings-empty-state"><i class="fa fa-tags"></i><span>No tags yet. Add a few below to help visitors discover your site.</span></div>
     <% else %>
       <div class="tag-pill-row">
         <% @site.tags.each do |tag| %>
@@ -20,20 +27,19 @@
     <% end %>
   </div>
 
-  <div class="tag-panel-row">
-    <div class="tag-panel">
-      <h3>Add Tags</h3>
+  <div class="settings-action-grid">
+    <section class="settings-action-card">
+      <span class="settings-card-icon"><i class="fa fa-plus"></i></span>
+      <h3>Add tags</h3>
       <% if tags_count >= Site::MAXIMUM_TAGS %>
-        <p class="tiny">You've reached the maximum number of tags. Remove one before adding another.</p>
+        <p>You have reached the maximum. Remove a tag before adding another.</p>
       <% else %>
-        <p class="tiny">
-          Separate multiple tags with commas.
-          <br>
-          <em><%= tags_remaining %> tag<%= tags_remaining == 1 ? '' : 's' %> remaining.</em>
-        </p>
+        <p>Use letters and numbers, and separate multiple tags with commas.</p>
         <form method="POST" action="/settings/<%= @site.username %>/tags/add" class="tag-form">
           <%== csrf_token_input_html %>
-          <input type="text"
+          <label for="site_tags">Tags</label>
+          <input id="site_tags"
+                 type="text"
                  name="tags"
                  class="input-Area typeahead"
                  placeholder="art, music, personal"
@@ -44,14 +50,15 @@
           <button class="btn-Action" type="submit">Add Tag(s)</button>
         </form>
       <% end %>
-    </div>
+    </section>
 
-    <div class="tag-panel">
-      <h3>Remove Tags</h3>
+    <section class="settings-action-card">
+      <span class="settings-card-icon"><i class="fa fa-minus"></i></span>
+      <h3>Remove tags</h3>
       <% if tags_count.zero? %>
-        <p class="tiny">Nothing to remove yet.</p>
+        <p>Once you add tags, you can select and remove them here.</p>
       <% else %>
-        <p class="tiny">Select one or more tags to remove, then click the button below.</p>
+        <p>Select any tags you no longer want associated with your site.</p>
         <form method="POST" action="/settings/<%= @site.username %>/tags/remove" class="tag-form">
           <%== csrf_token_input_html %>
           <div class="tag-chip-grid">
@@ -62,9 +69,9 @@
               </label>
             <% end %>
           </div>
-          <button class="btn-Action" type="submit">Remove Selected</button>
+          <button class="settings-remove-button" type="submit"><i class="fa fa-trash"></i> Remove Selected</button>
         </form>
       <% end %>
-    </div>
+    </section>
   </div>
 </div>

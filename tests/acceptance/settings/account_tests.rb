@@ -54,6 +54,23 @@ describe 'site/settings' do
       _(args['body']).must_match /new email.+#{@site.email}/
     end
 
+    it 'should notify the previous email when unsubscribed' do
+      original_email = @site.email
+      @site.update send_emails: false
+      new_email = "#{SecureRandom.uuid.gsub('-', '')}@exampleedsdfdsf.com"
+
+      fill_in 'email', with: new_email
+      click_button 'Change Email'
+
+      _(@site.reload.send_emails).must_equal false
+      _(EmailWorker.jobs.length).must_equal 2
+
+      confirmation = EmailWorker.jobs.find {|job| job['args'].first['subject'] =~ /confirm your email address/i}
+      notification = EmailWorker.jobs.find {|job| job['args'].first['subject'] =~ /your email address.+changed/i}
+      _(confirmation['args'].first['to']).must_equal new_email
+      _(notification['args'].first['to']).must_equal original_email
+    end
+
     it 'should fail for invalid email address' do
       @new_email = SecureRandom.uuid.gsub '-', ''
       fill_in 'email', with: @new_email

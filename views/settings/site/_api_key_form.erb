@@ -1,4 +1,4 @@
-<form method="POST" action="/settings/<%= @site.username %>/generate_api_key">
+<form method="POST" action="/settings/<%= @site.username %>/generate_api_key" class="settings-compact-form"<% if confirm_regeneration %> onsubmit="return window.confirm('Generate a new API key? Your old key will stop working immediately.');"<% end %>>
   <%== csrf_token_input_html %>
   <input class="btn-Action" type="submit" value="Generate API Key">
 </form>

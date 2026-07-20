@@ -28,24 +28,3 @@
     </section>
   </article>
 </div>
-
-<div class="modal hide" id="deleteSite" tabindex="-1" role="dialog" aria-labelledby="deleteSiteLabel" aria-hidden="true">
-  <form method="POST" action="/site/delete">
-    <%== csrf_token_input_html %>
-    <div class="modal-header">
-      <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-      <h3 id="deleteSiteLabel">Permanently Delete Site</h3>
-    </div>
-    <div class="modal-body">
-      <strong style="color: red">WARNING: This will permanently delete your web site and Neocities account. There is no undo!</strong>
-
-      <p>Delete Site Name: <strong><%= current_site.username %></strong></p>
-      <p>Confirm your site name by typing it here:</p>
-      <input class="input-Area" name="username" type="text">
-    </div>
-    <div class="modal-footer">
-      <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button type="submit" class="btn-Action">Permanently Delete Site</button>
-    </div>
-  </form>
-</div>

@@ -1,63 +1,69 @@
-<h2>Change Email</h2>
-<form method="POST" action="/settings/change_email">
-  <%== csrf_token_input_html %>
-
-  <p>Current Email: <strong><%= parent_site.email %></strong></p>
-  <p>New Email:</p>
-  <input class="input-Area" name="email" type="text">
-
+<div class="settings-section-heading">
+  <span class="settings-section-icon"><i class="fa fa-envelope"></i></span>
   <div>
+    <h2>Email address</h2>
+    <p>Update the address used for sign-in, recovery, and account notices.</p>
+  </div>
+</div>
+
+<form method="POST" action="/settings/change_email" class="settings-form">
+  <%== csrf_token_input_html %>
+  <div class="settings-current-value">
+    <span>Current email</span>
+    <strong><%= parent_site.email %></strong>
+  </div>
+  <label for="account_email">New email address</label>
+  <input id="account_email" class="input-Area" name="email" type="email" autocomplete="email">
+  <div class="settings-actions">
     <input class="btn-Action" type="submit" value="Change Email">
   </div>
 </form>
 
-<h2>Email Notification Settings</h2>
-<form method="POST" action="/settings/change_email_notification">
+<div class="settings-divider"></div>
+
+<div class="settings-subheading">
+  <h2>Email notifications</h2>
+  <p>Choose which account activity should reach your inbox.</p>
+</div>
+
+<form method="POST" action="/settings/change_email_notification" class="settings-form">
   <%== csrf_token_input_html %>
-
-  <p>
-    Receive Emails:
-    <input name="send_emails" type="hidden" value="false">
-    <input name="send_emails" type="checkbox" value="true"
-      <% if current_site.owner.send_emails %>
-        checked
-      <% end %>
-    >
-  </p>
-
-  <% if current_site.owner.stripe_paying_supporter? %>
-    <p>
-      Receive Invoice Receipts:
-      <input name="email_invoice" type="hidden" value="false">
-      <input name="email_invoice" type="checkbox" value="true"
-        <% if current_site.owner.email_invoice %>
-          checked
-        <% end %>
+  <div class="settings-option-list">
+    <label class="settings-option">
+      <input name="send_emails" type="hidden" value="false">
+      <input id="send_emails" name="send_emails" type="checkbox" value="true"
+        <% if current_site.owner.send_emails %>checked<% end %>
       >
-    </p>
-  <% end %>
+      <span><strong>Neocities emails</strong><small>Receive important product and community updates.</small></span>
+    </label>
 
-  <p>
-    Receive Comment Emails:
-    <input name="send_comment_emails" type="hidden" value="false">
-    <input name="send_comment_emails" type="checkbox" value="true"
-      <% if current_site.owner.send_comment_emails %>
-        checked
-      <% end %>
-    >
-  </p>
+    <% if current_site.owner.stripe_paying_supporter? %>
+      <label class="settings-option">
+        <input name="email_invoice" type="hidden" value="false">
+        <input id="email_invoice" name="email_invoice" type="checkbox" value="true"
+          <% if current_site.owner.email_invoice %>checked<% end %>
+        >
+        <span><strong>Invoice receipts</strong><small>Receive a receipt when your Supporter payment is processed.</small></span>
+      </label>
+    <% end %>
 
-  <p>
-    Receive Follow Emails:
-    <input name="send_follow_emails" type="hidden" value="false">
-    <input name="send_follow_emails" type="checkbox" value="true"
-      <% if current_site.owner.send_follow_emails %>
-        checked
-      <% end %>
-    >
-  </p>
+    <label class="settings-option">
+      <input name="send_comment_emails" type="hidden" value="false">
+      <input id="send_comment_emails" name="send_comment_emails" type="checkbox" value="true"
+        <% if current_site.owner.send_comment_emails %>checked<% end %>
+      >
+      <span><strong>New comments</strong><small>Get notified when someone comments on your profile.</small></span>
+    </label>
 
-  <div>
+    <label class="settings-option">
+      <input name="send_follow_emails" type="hidden" value="false">
+      <input id="send_follow_emails" name="send_follow_emails" type="checkbox" value="true"
+        <% if current_site.owner.send_follow_emails %>checked<% end %>
+      >
+      <span><strong>New followers</strong><small>Get notified when someone follows your site.</small></span>
+    </label>
+  </div>
+  <div class="settings-actions">
     <input class="btn-Action" type="submit" value="Update Notification Settings">
   </div>
 </form>

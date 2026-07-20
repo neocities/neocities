@@ -1,20 +1,32 @@
-<h2>18+ Content</h2>
+<div class="settings-section-heading">
+  <span class="settings-section-icon"><i class="fa fa-eye-slash"></i></span>
+  <div>
+    <h2>18+ content</h2>
+    <p>Classify this site so visitors can make an informed choice before viewing it.</p>
+  </div>
+</div>
 
-<p class="tiny">
-  If your site contains objectionable (18+) content, check this box. Your site will not be removed, but it will be listed on a special browse page. We don't have an official policy on what defines 18+ content yet, but basically it's just pornography and lewd/sick/gross images. Thanks for your patience and understanding as we try to find a way to balance out the needs of everyone.
-</p>
+<div class="settings-classification-note">
+  <i class="fa fa-info-circle"></i>
+  <div>
+    <strong>Marking a site 18+ does not remove it.</strong>
+    <p>It changes how the site appears on Browse and helps keep mature material away from visitors who do not want to see it. Use this setting for sites with content that is not age appropriate for all users.</p>
+  </div>
+</div>
 
-<form method="POST" action="/settings/<%= @site.username %>/change_nsfw">
+<form method="POST" action="/settings/<%= @site.username %>/change_nsfw" class="settings-form">
   <%== csrf_token_input_html %>
   <input name="is_nsfw" type="hidden" value="false">
-  <p>
-    <strong>
-      My page has 18+ content:&nbsp;&nbsp;&nbsp;
-      <input name="is_nsfw" type="checkbox" value="true" style="margin-top: 0px"
-        <% if @site.is_nsfw %>checked<% end %>
-      >
-    </strong>
-  </p>
+  <label class="settings-feature-toggle settings-feature-toggle-warning">
+    <span class="settings-toggle-icon"><i class="fa fa-eye-slash"></i></span>
+    <span><strong>This site contains 18+ content</strong></span>
+    <input class="settings-toggle-input" name="is_nsfw" type="checkbox" value="true"
+      <% if @site.is_nsfw %>checked<% end %>
+    >
+    <span class="settings-switch" aria-hidden="true"></span>
+  </label>
 
-  <input class="btn-Action" type="submit" value="Update">
+  <div class="settings-actions">
+    <input class="btn-Action" type="submit" value="Update">
+  </div>
 </form>

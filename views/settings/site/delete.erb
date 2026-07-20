@@ -1,52 +1,54 @@
-<h2>Delete Site</h2>
-<div>
-  <% if @site.parent? && @site.children_dataset.where(is_deleted: false).count > 0 %>
-    <p>
-      You cannot delete the parent site without deleting the children sites first.
-    </p>
-  <% else %>
-    <form method="POST" action="/settings/<%= @site.username %>/delete">
-      <%== csrf_token_input_html %>
-      <p>
-        <strong style="color: red; font-size: 30pt">WARNING</strong>
-        <ul style="text-align: left">
-          <li>
-            This will delete your site <strong><%= @site.username %> (<%= @site.host %>)</strong>.
-          </li>
-
-          <% if @site.parent? %>
-            <li>
-              <strong style="color: red;">You will not be able to use your email address to register a new Neocities account after deleting this one.</strong>
-            </li>
-          <% end %>
-
-          <li>
-            <strong style="color: red;">You will not be able to create a site again with this same username.</strong>
-          </li>
-
-          <li>
-            We can't reverse any of this via our contact form for security reasons.
-          </li>
-
-          <li>
-            There is no undo! Be very sure you want to do this.
-          </li>
-        </ul>
-      </p>
-
-      <% if @site.parent? %>
-        <p>
-          <label for="deleted_reason">We're sorry to see you go. What's the reason you're deleting your site?</label>
-           <textarea name="deleted_reason"></textarea>
-        </p>
-      <% end %>
-
-      <p>
-        <label for="confirm_username">Enter your user/site name to confirm deletion:</label>
-        <input name="confirm_username" type="text" autocapitalize="off" autocorrect="off" autocomplete="off">.neocities.org
-      </p>
-
-      <input class="btn-Action" type="submit" value="Delete Site">
-    </form>
-  <% end %>
+<div class="settings-section-heading">
+  <span class="settings-section-icon settings-section-icon-danger"><i class="fa fa-trash"></i></span>
+  <div>
+    <h2>Delete site</h2>
+    <p>Remove this website and its files from Neocities.</p>
+  </div>
 </div>
+
+<% if @site.parent? && @site.children_dataset.where(is_deleted: false).count > 0 %>
+  <div class="settings-blocked-card">
+    <i class="fa fa-ban"></i>
+    <div>
+      <strong>This site cannot be deleted yet</strong>
+      <p>You cannot delete the parent site without deleting the children sites first.</p>
+      <a href="/settings#sites">Return to your sites</a>
+    </div>
+  </div>
+<% else %>
+  <div class="settings-delete-warning">
+    <span><i class="fa fa-exclamation-triangle"></i></span>
+    <div>
+      <strong>This action is dangerous</strong>
+      <ul>
+        <li>All files for <strong><%= @site.host %></strong> will be deleted.</li>
+        <li>This username can not be used to create another site.</li>
+        <% if @site.parent? %>
+          <li>Your email address cannot be used to register another Neocities account.</li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <form method="POST" action="/settings/<%= @site.username %>/delete" class="settings-form settings-delete-form">
+    <%== csrf_token_input_html %>
+    <% if @site.parent? %>
+      <div class="settings-field">
+        <label for="deleted_reason">Why are you deleting your site? <span class="settings-optional">Optional</span></label>
+        <textarea id="deleted_reason" name="deleted_reason" placeholder="Your feedback can help us improve."></textarea>
+      </div>
+    <% end %>
+
+    <div class="settings-field">
+      <label for="confirm_username">Type <strong><%= @site.username %></strong> to confirm</label>
+      <div class="settings-domain-input">
+        <input id="confirm_username" name="confirm_username" type="text" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
+        <span>.neocities.org</span>
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <input class="btn-Action settings-delete-button" type="submit" value="Delete Site">
+    </div>
+  </form>
+<% end %>

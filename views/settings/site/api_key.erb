@@ -1,19 +1,30 @@
-<h2>API Key</h2>
+<div class="settings-section-heading">
+  <span class="settings-section-icon"><i class="fa fa-key"></i></span>
+  <div>
+    <h2>API key</h2>
+    <p>Deploy and manage files with the <a href="/api">Neocities API</a> without sharing your password.</p>
+  </div>
+</div>
 
-<p>
-  An API Key can be used with the <a href="https://neocities.org/api">Neocities API</a> to allow for changes to your site without requiring login credentials. <strong>This API key allows full write access to your site. Keep it secret, keep it safe.</strong>
-</p>
+<div class="settings-danger-note">
+  <i class="fa fa-shield"></i>
+  <div><strong>Treat this key like a password.</strong><span>It gives full write access to this site. Never put it in public code, screenshots, or support messages.</span></div>
+</div>
 
 <% if @site.api_key %>
-  <p>Your API key:<br><strong><%= @site.api_key %></strong></p>
+  <div class="settings-key-card">
+    <span class="settings-kicker">Active API key</span>
+    <code><%= @site.api_key %></code>
+  </div>
 
-  <p>
-    If you need to regenerate the key for some reason, you can do that below.
-    Keep in mind that this will make the old key no longer function.
-  </p>
-
-  <%== erb :'settings/site/_api_key_form', layout: false %>
+  <div class="settings-regenerate-row">
+    <div><strong>Need a new key?</strong><p>Generating another key immediately disables the one shown above.</p></div>
+    <%== erb :'settings/site/_api_key_form', layout: false, locals: {confirm_regeneration: true} %>
+  </div>
 <% else %>
-  <p>You haven't yet generated an API key, click the button to create one:</p>
-  <%== erb :'settings/site/_api_key_form', layout: false %>
+  <div class="settings-empty-action">
+    <span class="settings-card-icon"><i class="fa fa-key"></i></span>
+    <div><strong>No API key yet</strong><p>Generate one when you are ready to use a deployment tool or the API.</p></div>
+    <%== erb :'settings/site/_api_key_form', layout: false, locals: {confirm_regeneration: false} %>
+  </div>
 <% end %>

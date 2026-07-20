@@ -1,28 +1,33 @@
-<h2>General Settings</h2>
-
-<div>
-  <form method="POST" action="/settings/<%= @site.username %>/profile">
-    <%== csrf_token_input_html %>
-
-    <h3>Site Profile</h3>
-
-    <div style="text-align: center">
-      <div style="display: inline-block; text-align: left; margin-bottom: 10px">
-        <input name="site[profile_comments_enabled]" type="hidden" value="true">
-        <input name="site[profile_comments_enabled]" type="checkbox" value="false"
-          <% if @site.profile_comments_enabled == false %>checked<% end %>
-        > Disable Site Profile Comments
-        <br>
-
-        <input name="site[profile_enabled]" type="hidden" value="true">
-        <input name="site[profile_enabled]" type="checkbox" value="false"
-          <% if @site.profile_enabled == false %>checked<% end %>
-        > Disable Site Profile
-        <br>
-      </div>
-    </div>
-
-    <input class="btn-Action" type="submit" value="Update Settings">
-
-  </form>
+<div class="settings-section-heading">
+  <span class="settings-section-icon"><i class="fa fa-user"></i></span>
+  <div>
+    <h2>Profile &amp; visibility</h2>
+    <p>Choose how your site appears to the Neocities community.</p>
+  </div>
 </div>
+
+<form method="POST" action="/settings/<%= @site.username %>/profile" class="settings-form">
+  <%== csrf_token_input_html %>
+
+  <div class="settings-option-list">
+    <label class="settings-option">
+      <input name="site[profile_comments_enabled]" type="hidden" value="true">
+      <input name="site[profile_comments_enabled]" type="checkbox" value="false"
+        <% if @site.profile_comments_enabled == false %>checked<% end %>
+      >
+      <span><strong>Disable profile comments</strong><small>Visitors will no longer be able to leave comments on this site’s profile.</small></span>
+    </label>
+
+    <label class="settings-option">
+      <input name="site[profile_enabled]" type="hidden" value="true">
+      <input name="site[profile_enabled]" type="checkbox" value="false"
+        <% if @site.profile_enabled == false %>checked<% end %>
+      >
+      <span><strong>Hide the site profile</strong><small>Your profile will not be visible on Neocities, but your website will stay online.</small></span>
+    </label>
+  </div>
+
+  <div class="settings-actions">
+    <input class="btn-Action" type="submit" value="Save changes">
+  </div>
+</form>

@@ -1335,4 +1335,351 @@ html.dark-Mode {
       color: #dbe7e7;
     }
   }
+  .settings-nav.nav-tabs,
+  .settings-panel,
+  .settings-site-row,
+  .settings-panel label.settings-option {
+    background: #17262c;
+    border-color: #2d4b55;
+    color: #dbe7e7;
+  }
+
+  .settings-nav.nav-tabs {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+
+    > li > a {
+      color: #b9c9cb;
+
+      > .fa,
+      small {
+        color: #819ba0;
+      }
+
+      &:hover,
+      &:focus {
+        background: #20383f;
+        color: #eef7f7;
+      }
+    }
+
+    > .active > a,
+    > .active > a:hover,
+    > .active > a:focus {
+      background: #203f48;
+      color: #eef7f7;
+
+      small {
+        color: #a9c2c6;
+      }
+    }
+
+    > .settings-nav-danger > a:hover,
+    > .settings-nav-danger > a:focus,
+    > .settings-nav-danger.active > a {
+      background: #422a2e;
+      color: #ffabb7;
+    }
+  }
+
+  .settings-nav > li.settings-sidebar-heading,
+  .settings-divider,
+  .settings-subsection {
+    border-color: #2d4b55;
+  }
+
+  .settings-nav > li.settings-sidebar-heading {
+    span {
+      color: #7f989d;
+    }
+
+    strong {
+      color: #dbe7e7;
+    }
+  }
+
+  .settings-panel {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+
+    h2,
+    h3 {
+      color: #eef7f7;
+    }
+
+    p,
+    li,
+    label {
+      color: #b9c9cb;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    .input-Area {
+      background: #101c21;
+      border-color: #45636b;
+      color: #eef7f7;
+
+      &:focus {
+        background: #101c21;
+        border-color: #6babb8;
+      }
+    }
+
+    code {
+      background: #101c21;
+      border-color: #365963;
+      color: #bce6ef;
+    }
+  }
+
+  .settings-section-heading .settings-section-icon,
+  .settings-site-icon {
+    background: #203f48;
+    color: #ff7e92;
+  }
+
+  .settings-site-list,
+  .settings-option-list,
+  .settings-panel label.settings-option,
+  .settings-site-row {
+    border-color: #2d4b55;
+  }
+
+  .settings-site-copy span,
+  .settings-panel label.settings-option small {
+    color: #8fa6aa;
+  }
+
+  .settings-panel label.settings-option {
+    strong {
+      color: #dbe7e7;
+    }
+
+    &:hover {
+      background: #20383f;
+    }
+  }
+
+  .settings-badge {
+    background: #244537;
+    color: #a9dfbd;
+  }
+
+  .settings-callout,
+  .settings-current-value {
+    background: #101c21;
+    border-color: #2d4b55;
+  }
+
+  .settings-callout strong,
+  .settings-current-value strong {
+    color: #dbe7e7;
+  }
+
+  .settings-current-value span {
+    color: #819ba0;
+  }
+
+  .settings-site-thumbnail {
+    background: #101c21;
+    border-color: #365963;
+  }
+
+  .settings-kicker,
+  .settings-field > small,
+  .settings-tag-summary-top > span,
+  .settings-feature-toggle small,
+  .settings-benefit-grid > div span,
+  .settings-payment-option p,
+  .settings-regenerate-row p,
+  .settings-empty-action p,
+  .settings-instruction-list li p {
+    color: #8fa6aa;
+  }
+
+  .settings-panel form.settings-form-card,
+  .settings-tip-card,
+  .settings-payment-form,
+  .settings-tag-summary,
+  .settings-action-card,
+  .settings-dns-record,
+  .settings-connect-card,
+  .settings-upgrade-card,
+  .settings-current-site,
+  .settings-feature-toggle,
+  .settings-payment-option,
+  .settings-regenerate-row,
+  .settings-empty-action,
+  .settings-handle-card,
+  .settings-blocked-card,
+  .settings-panel form.settings-delete-form,
+  .settings-benefit-grid > div {
+    background: #101c21;
+    border-color: #2d4b55;
+  }
+
+  .settings-tip-card strong,
+  .settings-plan-storage strong,
+  .settings-benefit-grid > div strong,
+  .settings-security-note strong,
+  .settings-danger-note strong,
+  .settings-tag-summary-top strong,
+  .settings-current-site strong,
+  .settings-feature-toggle strong,
+  .settings-regenerate-row strong,
+  .settings-empty-action strong,
+  .settings-handle-card strong,
+  .settings-instruction-list li strong,
+  .settings-blocked-card strong {
+    color: #dbe7e7;
+  }
+
+  .settings-plan-card {
+    background: #17262c;
+    border-color: #365963;
+
+    &.is-supporter {
+      background: #2d2620;
+      border-color: #594637;
+    }
+  }
+
+  .settings-plan-icon,
+  .settings-card-icon,
+  .settings-step > span,
+  .settings-instruction-list li > span {
+    background: #203f48;
+    color: #ff7e92;
+  }
+
+  .settings-plan-card.is-supporter .settings-plan-icon,
+  .settings-upgrade-icon,
+  .settings-toggle-icon {
+    background: #422a2e;
+    color: #ff7e92;
+  }
+
+  .settings-plan-storage,
+  .settings-plan-actions,
+  .settings-muted-action,
+  .settings-step > div {
+    border-color: #365963;
+  }
+
+  .settings-plan-actions {
+    background: rgba(0, 0, 0, .12);
+  }
+
+  .settings-security-note,
+  .settings-privacy-note,
+  .settings-domain-intro,
+  .settings-classification-note {
+    background: #132329;
+    border-color: #365963;
+
+    strong,
+    span,
+    p {
+      color: #b9c9cb;
+    }
+  }
+
+  .settings-danger-note,
+  .settings-warning-card {
+    background: #2b241c;
+    border-color: #5b4934;
+
+    strong,
+    p,
+    span {
+      color: #e7c9a6;
+    }
+  }
+
+  .settings-tag-progress {
+    background: #2d4b55;
+  }
+
+  .settings-panel .settings-remove-button {
+    background: #17262c;
+    border-color: #45636b;
+    color: #ff9baa;
+  }
+
+  .settings-dns-record {
+    > span,
+    small {
+      color: #8fa6aa;
+    }
+
+    code {
+      color: #bce6ef;
+    }
+  }
+
+  .settings-domain-input > span {
+    background: #20383f;
+    border-color: #45636b;
+    color: #a9c2c6;
+  }
+
+  .settings-key-card {
+    background: #0b1519;
+    border: 1px solid #365963;
+  }
+
+  .settings-feature-toggle-warning .settings-toggle-icon {
+    background: #332a42;
+    color: #c8afea;
+  }
+
+  .settings-delete-warning {
+    background: #321f22;
+    border-color: #64363c;
+
+    strong,
+    li {
+      color: #efb4bb;
+    }
+  }
+}
+
+html.dark-Mode {
+  .settings-panel .settings-remove-button {
+    background: #2b1d21;
+    border-color: #70404a;
+    color: #ffb2bd;
+
+    &:hover,
+    &:focus {
+      background: #3a2228;
+      border-color: #9a5360;
+      color: #ffd0d6;
+    }
+  }
+
+  .settings-dns-record small {
+    background: #20383f;
+    color: #a9c2c6;
+  }
+
+  .settings-switch {
+    background: #2c4249;
+    border-color: #4c6870;
+
+    &::after {
+      background: #eef7f7;
+    }
+  }
+
+  .settings-toggle-input:checked + .settings-switch {
+    background: #e93250;
+    border-color: #ff6b82;
+  }
+
+  .settings-feature-toggle-warning .settings-toggle-input:checked + .settings-switch {
+    background: #765a9e;
+    border-color: #b79adb;
+  }
 }
