@@ -2,7 +2,9 @@
 	@import url(/fonts/fonts.css);
 	@import url(/css/bootstrap.min.css);
 	@import url(/css/bootstrap-responsive.min.css);
-	@import url(/css/font-awesome.css);
+	@import url(/fontawesome/css/all.min.css);
+	@import url(/fontawesome/css/v4-shims.min.css);
+	@import url(/fontawesome/css/v4-font-face.min.css);
 
 // Variables and Mixins
 	@import '_project-sass/project-Vars';	  // misc. layout and additional styling vars
