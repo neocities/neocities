@@ -23,6 +23,7 @@ describe 'site/settings' do
       click_button 'Change Email'
 
       _(page).must_have_content /enter the confirmation code here/
+      _(page).wont_have_content 'With great power comes great responsibility'
 
       fill_in 'token', with: @site.reload.email_confirmation_token
       click_button 'Confirm Email'
@@ -48,6 +49,7 @@ describe 'site/settings' do
       _(args['body']).must_match /#{@site.email_confirmation_token}/
 
       args = EmailWorker.jobs.select {|job| job['args'].first['subject'] =~ /your email address.+changed/i}.first['args'].first
+      _(args['to']).must_equal original_email
       _(args['body']).must_match /previous email.+#{original_email}/
       _(args['body']).must_match /new email.+#{@site.email}/
     end
@@ -88,6 +90,64 @@ describe 'site/settings' do
       _(@site.send_emails).must_equal false
       _(@site.send_comment_emails).must_equal false
       _(@site.send_follow_emails).must_equal false
+    end
+  end
+
+  describe 'email review' do
+    before do
+      @site = Fabricate :site
+      @site.update email_reviewed_at: nil
+      page.set_rack_session id: @site.id
+    end
+
+    it 'prompts from the home page until the user confirms' do
+      visit '/dashboard'
+
+      _(page.current_path).must_equal '/dashboard'
+      _(@site.reload.email_reviewed_at).must_be_nil
+
+      visit '/'
+
+      _(page.current_path).must_equal '/settings/email_review'
+      _(page).must_have_content @site.email
+      _(@site.reload.email_reviewed_at).must_be_nil
+
+      click_button 'Yes, this is correct'
+
+      _(page.current_path).must_equal '/'
+      _(@site.reload.email_reviewed_at).wont_be_nil
+    end
+
+    it 'changes the email from the review page' do
+      new_email = "#{SecureRandom.hex}@example.net"
+      visit '/'
+
+      fill_in 'New Email Address', with: new_email
+      click_button 'Change Email Address'
+
+      @site.reload
+      _(@site.email).must_equal new_email
+      _(@site.email_reviewed_at).wont_be_nil
+      _(page.current_path).must_equal "/site/#{@site.username}/confirm_email"
+    end
+
+    it 'does not complete the review for an invalid email' do
+      visit '/'
+      fill_in 'New Email Address', with: 'not-an-email'
+      click_button 'Change Email Address'
+
+      _(page.current_path).must_equal '/settings/email_review'
+      _(@site.reload.email_reviewed_at).must_be_nil
+    end
+  end
+
+  describe 'new account email review' do
+    it 'does not prompt new accounts' do
+      site = Fabricate :site
+      page.set_rack_session id: site.id
+      visit '/'
+
+      _(page.current_path).must_equal '/'
     end
   end
 

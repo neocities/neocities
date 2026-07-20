@@ -52,6 +52,7 @@ describe 'signup' do
     site_created?
     click_link 'Continue'
     _(current_path).must_equal "/site/#{@site[:username]}/confirm_email"
+    _(page).must_have_content 'With great power comes great responsibility'
     _(page).must_have_content /almost ready!/
     fill_in 'token', with: Site[username: @site[:username]].email_confirmation_token
     click_button 'Confirm Email'

@@ -1,0 +1,34 @@
+<div class="header-Outro">
+  <div class="row content single-Col txt-Center">
+    <h1>Is This Still Your Email?</h1>
+    <h3 class="subtitle">Please take a moment to make sure your account email is up to date.</h3>
+  </div>
+</div>
+
+<div class="content txt-Center single-Col misc-page">
+  <div class="alert alert-block">
+    <h2>Important: Confirm Your Login Email</h2>
+    <p>If your email address no longer works, you could be locked out of your account. Please make sure the address below is one you can access.</p>
+  </div>
+
+  <h2><%= parent_site.email %></h2>
+
+  <form method="POST" action="/settings/email_review" class="content" onsubmit="return confirm('Are you sure this email address is correct and you can access it?');">
+    <%== csrf_token_input_html %>
+    <input class="btn-Action" type="submit" value="Yes, this is correct">
+  </form>
+
+  <hr>
+  <h2>Need to change it?</h2>
+
+  <form method="POST" action="/settings/change_email" class="content">
+    <%== csrf_token_input_html %>
+    <input name="from_email_review" type="hidden" value="1">
+    <fieldset>
+      <label for="email">New Email Address</label>
+      <input name="email" id="email" type="email" class="input-Area" autocomplete="email" autocapitalize="off" autocorrect="off" style="width: 400px" required>
+    </fieldset>
+    <input class="btn-Action" type="submit" value="Change Email Address">
+  </form>
+
+</div>

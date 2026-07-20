@@ -78,6 +78,7 @@ post '/email_recovery/:token' do
     recovered_site.email_confirmed = true
     recovered_site.email_confirmation_token = nil
     recovered_site.email_confirmation_count = 0
+    recovered_site.email_reviewed_at = Time.now
     recovered_site.password_reset_token = nil
     recovered_site.password_reset_confirmed = false
     recovered_site.email_recovery_email = nil

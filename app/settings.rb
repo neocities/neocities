@@ -7,6 +7,26 @@ get '/settings/?' do
   erb :'settings/account'
 end
 
+get '/settings/email_review' do
+  require_login
+
+  dont_browser_cache
+  @title = 'Check Your Email Address'
+
+  erb :'settings/email_review'
+end
+
+post '/settings/email_review' do
+  require_login
+
+  owner = current_site.owner
+  owner.email_reviewed_at ||= Time.now
+  owner.save_changes validate: false
+
+  flash[:success] = 'Thanks for confirming your email address.'
+  redirect '/'
+end
+
 def require_ownership_for_settings
   @site = Site[username: params[:username]]
 
@@ -297,7 +317,9 @@ end
 post '/settings/change_email' do
   require_login
 
-  if params[:from_confirm]
+  if params[:from_email_review]
+    redirect_url = '/settings/email_review'
+  elsif params[:from_confirm]
     redirect_url = "/site/#{parent_site.username}/confirm_email"
   else
     redirect_url = '/settings#email'
@@ -316,15 +338,20 @@ post '/settings/change_email' do
   parent_site.email_recovery_email = nil
   parent_site.email_recovery_token_digest = nil
   parent_site.email_recovery_expires_at = nil
+  parent_site.email_reviewed_at = Time.now if params[:from_email_review]
 
   if parent_site.valid?
     parent_site.save_changes
     send_confirmation_email
 
-    parent_site.send_email(
-      subject: "[Neocities] Your email address has been changed",
-      body: Tilt.new('./views/templates/email/email_changed.erb', pretty: true).render(self, site: parent_site, previous_email: previous_email)
-    )
+    if parent_site.can_email?
+      EmailWorker.perform_async({
+        from: Site::FROM_EMAIL,
+        to: previous_email,
+        subject: '[Neocities] Your email address has been changed',
+        body: Tilt.new('./views/templates/email/email_changed.erb', pretty: true).render(self, site: parent_site, previous_email: previous_email)
+      })
+    end
 
     if !parent_site.supporter?
       session[:fromsettings] = true

@@ -227,6 +227,7 @@ get '/site/:username/confirm_email/:token' do
     site.email_confirmation_token = nil
     site.email_confirmation_count = 0
     site.email_confirmed = true
+    site.email_reviewed_at = Time.now
     site.save_changes
 
     erb :'site_email_confirmed'
@@ -274,6 +275,7 @@ post '/site/:username/confirm_email' do
     current_site.email_confirmation_token = nil
     current_site.email_confirmation_count = 0
     current_site.email_confirmed = true
+    current_site.email_reviewed_at = Time.now
     current_site.save_changes
 
     if session[:fromsettings]

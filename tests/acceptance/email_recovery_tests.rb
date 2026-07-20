@@ -41,7 +41,7 @@ describe 'email recovery' do
   end
 
   it 'changes the email after verifying the old email and password' do
-    @site.update password_reset_token: 'reset-token', password_reset_confirmed: true
+    @site.update password_reset_token: 'reset-token', password_reset_confirmed: true, email_reviewed_at: nil
     token = issue_recovery_link
 
     recovery_email = EmailWorker.jobs.find do |job|
@@ -71,6 +71,7 @@ describe 'email recovery' do
     _(@site.email).must_equal @new_email
     _(@site.email_confirmed).must_equal true
     _(@site.email_confirmation_token).must_be_nil
+    _(@site.email_reviewed_at).wont_be_nil
     _(@site.password_reset_token).must_be_nil
     _(@site.password_reset_confirmed).must_equal false
     _(@site.email_recovery_email).must_be_nil
