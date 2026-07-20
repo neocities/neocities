@@ -344,14 +344,12 @@ post '/settings/change_email' do
     parent_site.save_changes
     send_confirmation_email
 
-    if parent_site.can_email?
-      EmailWorker.perform_async({
-        from: Site::FROM_EMAIL,
-        to: previous_email,
-        subject: '[Neocities] Your email address has been changed',
-        body: Tilt.new('./views/templates/email/email_changed.erb', pretty: true).render(self, site: parent_site, previous_email: previous_email)
-      })
-    end
+    EmailWorker.perform_async({
+      from: Site::FROM_EMAIL,
+      to: previous_email,
+      subject: '[Neocities] Your email address has been changed',
+      body: Tilt.new('./views/templates/email/email_changed.erb', pretty: true).render(self, site: parent_site, previous_email: previous_email)
+    })
 
     if !parent_site.supporter?
       session[:fromsettings] = true
