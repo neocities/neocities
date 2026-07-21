@@ -1439,6 +1439,13 @@ html.dark-Mode {
     color: #ff7e92;
   }
 
+  .settings-nav.nav-tabs > .active > a > .fa-bluesky,
+  .settings-nav.nav-tabs > .active > a:hover > .fa-bluesky,
+  .settings-nav.nav-tabs > .active > a:focus > .fa-bluesky,
+  .settings-section-heading .settings-section-icon > .fa-bluesky {
+    color: #0560ff;
+  }
+
   .settings-site-list,
   .settings-option-list,
   .settings-panel label.settings-option,

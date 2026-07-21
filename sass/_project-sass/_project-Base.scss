@@ -580,6 +580,13 @@ a{
   }
 }
 
+.settings-nav.nav-tabs > .active > a > .fa-bluesky,
+.settings-nav.nav-tabs > .active > a:hover > .fa-bluesky,
+.settings-nav.nav-tabs > .active > a:focus > .fa-bluesky,
+.settings-section-heading .settings-section-icon > .fa-bluesky {
+  color: #0560ff;
+}
+
 .settings-subheading {
   h2 {
     font-size: 22px;
