@@ -73,6 +73,19 @@
   }
 }
 
+.admin-card-note {
+  background: #f9f9f9;
+  border-left: 3px solid #ddd;
+}
+
+.admin-card-empty {
+  color: #999;
+}
+
+.admin-card-stats {
+  color: #666;
+}
+
 html.dark-Mode {
   color-scheme: dark;
 
@@ -290,6 +303,44 @@ html.dark-Mode {
     background: #17262c;
     border-color: #2d4b55;
     color: #dbe7e7;
+  }
+
+  .block,
+  .site-card {
+    background: #101c21;
+    color: #dbe7e7;
+  }
+
+  .site-card {
+    border-color: #2d4b55;
+
+    .site-thumbnail img {
+      border-color: #365963;
+    }
+
+    .ban-reason {
+      background: #17262c;
+      border-left-color: #456b75;
+    }
+
+    .ban-reason .no-reason,
+    .site-stats {
+      color: #8fa6aa;
+    }
+
+    .site-actions {
+      border-top-color: #2d4b55;
+    }
+  }
+
+  .admin-card-note {
+    background: #17262c;
+    border-left-color: #456b75;
+  }
+
+  .admin-card-empty,
+  .admin-card-stats {
+    color: #8fa6aa;
   }
 
   .content.misc-page.columns {

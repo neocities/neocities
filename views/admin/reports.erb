@@ -59,15 +59,15 @@
               <p><strong><%= report.type %></strong> • <%= report.created_at.ago %><% if report.reporting_site %> • reported by <a href="<%= report.reporting_site.uri %>" target="_blank"><%= report.reporting_site.username %></a><% end %>
               </p>
               
-              <div style="background: #f9f9f9; padding: 8px; margin-bottom: 10px; border-left: 3px solid #ddd; font-size: 12px; height: 60px; overflow-y: auto;">
+              <div class="admin-card-note" style="padding: 8px; margin-bottom: 10px; font-size: 12px; height: 60px; overflow-y: auto;">
                 <% if report.comments && !report.comments.empty? %>
                   <%= report.comments[0..200] %><%= report.comments.length > 200 ? '...' : '' %>
                 <% else %>
-                  <span style="color: #999; font-style: italic;">No comments</span>
+                  <span class="admin-card-empty" style="font-style: italic;">No comments</span>
                 <% end %>
               </div>
               
-              <small style="color: #666; margin-bottom: 15px; display: block; flex-grow: 1;">
+              <small class="admin-card-stats" style="margin-bottom: 15px; display: block; flex-grow: 1;">
                 <%= report.site.views.format_large_number %> views
               </small>
               
