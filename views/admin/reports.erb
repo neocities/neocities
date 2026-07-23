@@ -29,7 +29,13 @@
               <div style="position: relative; margin-bottom: 10px;">
                 <a href="<%= report.site.uri + '/' + screenshot_path %>" target="_blank">
                   <img src="<%= report.site.screenshot_url(screenshot_path, '540x405') %>"
-                       style="width: 100%; height: auto; border: 1px solid #ddd;<%= ' filter: blur(4px);' if blur_sensitive_screenshot %>">
+                       alt="Screenshot of <%= report.site.username %>"
+                       <% if blur_sensitive_screenshot %>
+                         class="moderation-blurred-screenshot"
+                         data-reveal-percent="0"
+                         title="Click repeatedly to reduce the blur"
+                       <% end %>
+                       style="width: 100%; height: auto; border: 1px solid #ddd;<%= ' cursor: pointer; filter: blur(4px); transition: filter 150ms ease;' if blur_sensitive_screenshot %>">
                 </a>
                 <% if report.type && !report.type.empty? %>
                   <span class="alert-error" style="position: absolute; top: 5px; right: 5px; padding: 2px 6px; font-size: 11px; border-radius: 3px;">
@@ -95,6 +101,28 @@
 </div>
 
 <script>
+function revealReportScreenshot(event) {
+  var screenshot = event.currentTarget;
+  var revealPercent = parseInt(screenshot.getAttribute('data-reveal-percent'), 10);
+
+  event.preventDefault();
+
+  if (revealPercent >= 100) {
+    return;
+  }
+
+  revealPercent = Math.min(revealPercent + 5, 100);
+
+  var blurRadius = 4 * (1 - revealPercent / 100);
+  screenshot.setAttribute('data-reveal-percent', revealPercent);
+  screenshot.style.filter = revealPercent === 100 ? 'none' : 'blur(' + blurRadius.toFixed(2) + 'px)';
+  screenshot.title = revealPercent === 100 ? 'Fully revealed' : 'Click to reduce the blur (' + revealPercent + '% revealed)';
+}
+
+Array.prototype.forEach.call(document.querySelectorAll('.moderation-blurred-screenshot'), function(screenshot) {
+  screenshot.addEventListener('click', revealReportScreenshot);
+});
+
 function banSite(username, reportId, reportType) {
   var formData = new FormData();
   formData.append('usernames', username);

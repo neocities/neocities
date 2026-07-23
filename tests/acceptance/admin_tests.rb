@@ -548,6 +548,49 @@ describe '/admin' do
       _(page.body).must_match /Test report comment/
     end
 
+    it 'gradually reveals blurred report screenshots without opening them' do
+      blur_category = Array($config['moderation_blur_categories']).first
+      @report.update(type: blur_category)
+
+      visit '/admin/reports'
+
+      screenshot_selector = "#report-#{@report.id} .moderation-blurred-screenshot"
+      screenshot = find(screenshot_selector)
+
+      _(screenshot[:style]).must_match(/filter:\s*blur\(4px\)/)
+      _(screenshot['data-reveal-percent']).must_equal '0'
+
+      screenshot.click
+      screenshot = find(screenshot_selector)
+
+      _(page.current_path).must_equal '/admin/reports'
+      _(screenshot[:style]).must_match(/filter:\s*blur\(3\.8(?:0)?px\)/)
+      _(screenshot['data-reveal-percent']).must_equal '5'
+
+      19.times { screenshot.click }
+      screenshot = find(screenshot_selector)
+
+      _(page.current_path).must_equal '/admin/reports'
+      _(screenshot[:style]).must_match(/filter:\s*none/)
+      _(screenshot['data-reveal-percent']).must_equal '100'
+
+      open_window_count = page.windows.length
+      screenshot.click
+
+      _(page.current_path).must_equal '/admin/reports'
+      _(page.windows.length).must_equal open_window_count
+      _(screenshot['data-reveal-percent']).must_equal '100'
+    end
+
+    it 'does not add progressive blur to other report categories' do
+      visit '/admin/reports'
+
+      within("#report-#{@report.id}") do
+        _(page).wont_have_selector('.moderation-blurred-screenshot')
+        _(find('img')[:style]).wont_match(/filter:\s*blur/)
+      end
+    end
+
     it 'displays anonymous reports without reporter' do
       # Clear existing reports to avoid interference
       Report.where(site: @reported_site).destroy
