@@ -298,3 +298,36 @@ task :generatehtmlurls => [:environment] do
     end
   end
 end
+
+desc 'generate sites search csv'
+task :generatesitessearch => [:environment] do
+  require 'csv'
+
+  CSV.open('sites-search.csv', 'w') do |csv|
+    csv << ['url', 'score']
+
+    Site.
+      select(:id, :username, :updated_at, :profile_enabled, :score).
+      where(site_changed: true).
+      exclude(updated_at: nil).
+      exclude(is_deleted: true).
+      order(:score).
+      each do |site|
+
+      site.site_files_dataset.
+        exclude(path: 'not_found.html').
+        where(path: /\.html?$/).
+        each do |site_file|
+
+        priority =
+          if site.uri(site_file.path) == site.uri
+            0.5
+          else
+            0.4
+          end
+
+        csv << [site.uri(site_file.path), site.score]
+      end
+    end
+  end
+end
