@@ -1,0 +1,38 @@
+development:
+  database: 'postgres://neocities:neocities@db/neocities'
+  database_pool: 5
+  redis_url: "redis://redis:6379"
+  redis_proxy: "redis://redis:6379"
+  session_secret: "SSBqdXN0IHdhbnRlZCB0byBzZWUgd2hhdCB5b3UgbG9va2VkIGxpa2UgaW4gYSBkcmVzcywgRGFkZSBNdXJwaHk="
+  hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
+  hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
+  sidekiq_url: "redis://redis:6379"
+  sidekiq_user: "admin"
+  sidekiq_pass: "password"
+  stripe_publishable_key: "ENTER KEY HERE"
+  stripe_api_key: "ENTER KEY HERE"
+  ip_hash_salt: "400$8$1$fc21863da5d531c1"
+  proxy_pass: 'somethinglongandrandom'
+  email_unsubscribe_token: 'somethingrandom'
+  logs_path: /tmp/neocities-logs
+  paypal_api_username: derp
+  paypal_api_password: ing
+  paypal_api_signature: tonz
+  letsencrypt_key: ./tests/files/letsencrypt.key
+  letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
+  minfraud_account_id: 696969420
+  minfraud_license_key: DERPDERPDERP
+  proxy_ips:
+    - 10.0.0.1
+  screenshot_urls:
+    - http://screenshots:derp@127.0.0.1:12345
+  stop_forum_spam_api_key: testkey
+  google_custom_search_key: herpderp
+  google_custom_search_cx: herpderp
+  google_custom_search_query_limit: 69
+  support_email: derp@example.com
+  moderation_blur_categories: []
+  search_url: https://example.com/customsearch/v1
+  search_connect_timeout: 1
+  search_read_timeout: 1
+  search_write_timeout: 1
