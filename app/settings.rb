@@ -38,6 +38,21 @@ def require_ownership_for_settings
   end
 end
 
+post '/settings/:username/switch' do
+  require_login
+  site = Site[username: params[:username]]
+
+  not_found if site.nil? || site.is_deleted
+
+  unless site.owned_by? parent_site
+    flash[:error] = 'Cannot switch to this site, you do not have permission.'
+    redirect '/settings#sites'
+  end
+
+  session[:id] = site.id
+  redirect '/dashboard'
+end
+
 get '/settings/invoices/?' do
   require_login
   @title = 'Invoices'

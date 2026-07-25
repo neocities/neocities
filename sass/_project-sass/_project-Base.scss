@@ -673,11 +673,45 @@ a{
   text-transform: uppercase;
 }
 
+.settings-site-badges,
+.settings-site-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
+.settings-current-badge {
+  background: #edf3f8;
+  color: #496b83;
+}
+
+form.settings-site-switch-form {
+  align-items: center;
+  display: flex;
+  margin: 0;
+}
+
 .settings-site-action {
+  align-items: center;
+  background: none;
+  border: 0;
+  color: $c-Link;
+  cursor: pointer;
+  display: inline-flex;
   font-family: $arial;
   font-size: 12px;
   font-weight: bold;
+  line-height: 18px;
+  margin: 0;
+  padding: 0;
   text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: darken($c-Link, 15%);
+    text-decoration: underline;
+  }
 
   .fa {
     font-size: 9px;
@@ -934,11 +968,11 @@ a{
     min-width: calc(100% - 52px);
   }
 
-  .settings-badge {
+  .settings-site-badges {
     margin-left: 50px;
   }
 
-  .settings-site-action {
+  .settings-site-actions {
     margin-left: auto;
   }
 }

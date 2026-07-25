@@ -151,11 +151,6 @@ html.dark-Mode {
       }
     }
 
-    .dropdown-submenu {
-      &:hover > a, &:focus > a {
-        background: #173139;
-      }
-    }
   }
 
 
@@ -341,6 +336,53 @@ html.dark-Mode {
   .admin-card-empty,
   .admin-card-stats {
     color: #8fa6aa;
+  }
+
+  .site-switcher-description,
+  .site-switcher-empty,
+  .site-switcher-copy span {
+    color: #8fa6aa;
+  }
+
+  .site-switcher-search {
+    .fa {
+      color: #8fa6aa;
+    }
+
+    input[type="search"] {
+      background: #101c21;
+      border-color: #45636b;
+      color: #eef7f7;
+
+      &:focus {
+        background: #101c21;
+        border-color: #6babb8;
+      }
+    }
+  }
+
+  .site-switcher-list,
+  .site-switcher-row {
+    border-color: #2d4b55;
+  }
+
+  .site-switcher-row[aria-current="true"] {
+    background: #20383f;
+  }
+
+  .site-switcher-icon {
+    background: #203f48;
+    color: #ff7e92;
+  }
+
+  .site-switcher-badge {
+    background: #244537;
+    color: #a9dfbd;
+  }
+
+  .site-switcher-current {
+    background: #203f48;
+    color: #bce6ef;
   }
 
   .content.misc-page.columns {
@@ -1522,6 +1564,11 @@ html.dark-Mode {
   .settings-badge {
     background: #244537;
     color: #a9dfbd;
+  }
+
+  .settings-current-badge {
+    background: #203f48;
+    color: #bce6ef;
   }
 
   .settings-callout,

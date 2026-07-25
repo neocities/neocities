@@ -143,21 +143,6 @@ post '/signin/restore' do
   redirect '/signin/verify'
 end
 
-get '/signin/:username' do
-  require_login
-  @site = Site[username: params[:username]]
-
-  not_found if @site.nil?
-
-  if @site.owned_by? current_site
-    session[:id] = @site.id
-    redirect request.referrer
-  end
-
-  flash[:error] = 'You do not have permission to switch to this site.'
-  redirect request.referrer
-end
-
 post '/signout' do
   require_login
   signout

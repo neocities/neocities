@@ -5,6 +5,133 @@ describe 'site/settings' do
   include Capybara::DSL
   include Capybara::Minitest::Assertions
 
+  describe 'sites' do
+    before do
+      Capybara.reset_sessions!
+      @parent_site = Fabricate :site
+      @child_site = Fabricate :site, parent_site_id: @parent_site.id
+      @other_site = Fabricate :site
+      page.set_rack_session id: @parent_site.id
+      visit '/settings'
+    end
+
+    it 'shows the current site and offers both switch interfaces' do
+      parent_row = find('.settings-site-row', text: @parent_site.username)
+      child_row = find('.settings-site-row', text: @child_site.username)
+
+      _(parent_row).must_have_content 'Parent'
+      _(parent_row).must_have_content 'Current'
+      _(parent_row).wont_have_button 'Switch'
+      _(child_row).must_have_button 'Switch'
+      _(page).must_have_link 'Switch Site', href: '#siteSwitcher'
+      _(page).wont_have_selector "a[href='/signin/#{@child_site.username}']"
+
+      switcher = find('#siteSwitcher', visible: :all)
+      _(switcher).must_have_selector '#siteSwitcherSearch', visible: :all
+      _(switcher).must_have_selector(
+        "form[action='/settings/#{@child_site.username}/switch'] input[name='csrf_token']",
+        visible: :all
+      )
+      _(switcher).must_have_selector(
+        "[data-site-switcher-row][aria-current='true']",
+        text: @parent_site.username,
+        visible: :all
+      )
+      _(switcher).must_have_link 'Manage sites', href: '/settings#sites', visible: :all
+    end
+
+    it 'switches between parent and child sites from the site list' do
+      within('.settings-site-row', text: @child_site.username) do
+        click_button 'Switch'
+      end
+
+      _(page.current_path).must_equal '/dashboard'
+      _(page.get_rack_session['id']).must_equal @child_site.id
+
+      visit '/settings'
+      child_row = find('.settings-site-row', text: @child_site.username)
+      _(child_row).must_have_content 'Current'
+      _(child_row).wont_have_button 'Switch'
+
+      within('.settings-site-row', text: @parent_site.username) do
+        click_button 'Switch'
+      end
+
+      _(page.current_path).must_equal '/dashboard'
+      _(page.get_rack_session['id']).must_equal @parent_site.id
+    end
+
+    it 'does not switch to a site owned by another account' do
+      csrf = find(
+        ".settings-site-list form[action='/settings/#{@child_site.username}/switch'] input[name='csrf_token']",
+        visible: false
+      ).value
+
+      page.driver.post "/settings/#{@other_site.username}/switch", csrf_token: csrf
+
+      _(page.driver.status_code).must_equal 302
+      location = URI.parse page.driver.response_headers['Location']
+      _(location.path).must_equal '/settings'
+      _(location.fragment).must_equal 'sites'
+      _(page.get_rack_session['id']).must_equal @parent_site.id
+    end
+
+    it 'does not switch to missing or deleted sites' do
+      csrf = find(
+        ".settings-site-list form[action='/settings/#{@child_site.username}/switch'] input[name='csrf_token']",
+        visible: false
+      ).value
+
+      page.driver.post "/settings/#{SecureRandom.hex}/switch", csrf_token: csrf
+
+      _(page.driver.status_code).must_equal 404
+      _(page.get_rack_session['id']).must_equal @parent_site.id
+
+      deleted_site = Fabricate :site, parent_site_id: @parent_site.id
+      deleted_site.destroy
+      page.driver.post "/settings/#{deleted_site.username}/switch", csrf_token: csrf
+
+      _(page.driver.status_code).must_equal 404
+      _(page.get_rack_session['id']).must_equal @parent_site.id
+    end
+
+    it 'requires a CSRF token to switch sites' do
+      page.driver.post "/settings/#{@child_site.username}/switch"
+
+      _(page.driver.status_code).must_equal 302
+      _(URI.parse(page.driver.response_headers['Location']).path).must_equal '/'
+      _(page.get_rack_session['id']).must_equal @parent_site.id
+    end
+
+    it 'does not switch sites with a GET request' do
+      page.driver.get "/signin/#{@child_site.username}"
+
+      _(page.driver.status_code).must_equal 404
+      _(page.get_rack_session['id']).must_equal @parent_site.id
+    end
+  end
+
+  describe 'supporter' do
+    before do
+      Capybara.reset_sessions!
+      @site = Fabricate :site,
+        plan_type: 'supporter',
+        stripe_customer_id: 'cus_supporter',
+        stripe_subscription_id: 'sub_supporter'
+      page.set_rack_session id: @site.id
+      visit '/settings'
+    end
+
+    it 'renders the membership confirmation outside the settings panel' do
+      _(page).must_have_link 'End Supporter membership', href: '#endSupporterConfirm'
+
+      dialog = find('#endSupporterConfirm', visible: :all)
+      _(dialog[:role]).must_equal 'dialog'
+      _(dialog['aria-labelledby']).must_equal 'endSupporterConfirmLabel'
+      _(page).wont_have_selector '.settings-panel #endSupporterConfirm', visible: :all
+    end
+  end
+
   describe 'email' do
     before do
       EmailWorker.jobs.clear

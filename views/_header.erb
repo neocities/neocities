@@ -1,3 +1,8 @@
+<%
+  header_account_sites = current_site ? current_site.account_sites_dataset.
+    select(:id, :username, :domain, :parent_site_id).all : []
+%>
+
 <header class="header-Base">
 
   <nav class="header-Nav clearfix" role="navigation">
@@ -51,17 +56,8 @@
             <li><a href="/settings">Settings</a></li>
             <% end %>
 
-            <% if current_site.other_sites_dataset.count > 0 %>
-              <li class="dropdown-submenu pull-left">
-                <a tabindex="-1" href="#" onclick="return false">Switch Site</a>
-                <ul class="dropdown-menu">
-                  <% current_site.other_sites_dataset.select(:username).all.each do |site| %>
-                    <li>
-                      <a href="/signin/<%= site.username %>"><%= site.username %></a>
-                    </li>
-                  <% end %>
-                </ul>
-              </li>
+            <% if header_account_sites.length > 1 %>
+              <li><a href="#siteSwitcher" data-toggle="modal">Switch Site</a></li>
             <% end %>
 
             <% if current_site.is_admin %>
@@ -87,3 +83,80 @@
     </a>
   </div>
 </header>
+
+<% if header_account_sites.length > 1 %>
+  <div class="modal hide fade site-switcher-modal" id="siteSwitcher" tabindex="-1" role="dialog" aria-labelledby="siteSwitcherLabel" aria-describedby="siteSwitcherDescription" aria-hidden="true">
+    <div class="modal-header">
+      <button class="close" type="button" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i></button>
+      <h3 id="siteSwitcherLabel">Switch Site</h3>
+    </div>
+    <div class="modal-body">
+      <p id="siteSwitcherDescription" class="site-switcher-description">Choose which site you want to use.</p>
+      <label class="site-switcher-search-label" for="siteSwitcherSearch">Find a site</label>
+      <div class="site-switcher-search">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <input id="siteSwitcherSearch" type="search" placeholder="Search by site name" autocomplete="off" aria-controls="siteSwitcherList">
+      </div>
+
+      <div class="site-switcher-list" id="siteSwitcherList" role="list">
+        <% header_account_sites.each do |site| %>
+          <div class="site-switcher-row" data-site-switcher-row data-site-name="<%= site.username.downcase %> <%= site.host.downcase %>" role="listitem"<% if site.id == current_site.id %> aria-current="true"<% end %>>
+            <span class="site-switcher-icon" aria-hidden="true"><i class="fa fa-globe"></i></span>
+            <div class="site-switcher-copy">
+              <strong><%= site.username %></strong>
+              <span><%= site.host %></span>
+            </div>
+            <div class="site-switcher-meta">
+              <% if site.parent? %>
+                <span class="site-switcher-badge">Parent</span>
+              <% end %>
+              <% if site.id == current_site.id %>
+                <span class="site-switcher-badge site-switcher-current">Current</span>
+              <% else %>
+                <form action="/settings/<%= site.username %>/switch" method="POST">
+                  <%== csrf_token_input_html %>
+                  <button class="btn-Action site-switcher-action" type="submit">Switch</button>
+                </form>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <p class="site-switcher-empty hide" role="status">No sites match your search.</p>
+    </div>
+    <div class="modal-footer">
+      <a class="site-switcher-manage" href="/settings#sites">Manage sites</a>
+      <button class="btn cancel" type="button" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+
+  <script>
+    $(function() {
+      var $siteSwitcher = $('#siteSwitcher')
+      var $siteSearch = $('#siteSwitcherSearch')
+      var $siteRows = $siteSwitcher.find('[data-site-switcher-row]')
+      var $siteEmpty = $siteSwitcher.find('.site-switcher-empty')
+
+      function filterSites() {
+        var query = $.trim($siteSearch.val()).toLowerCase()
+        var visibleSites = 0
+
+        $siteRows.each(function() {
+          var matches = $(this).data('site-name').indexOf(query) !== -1
+          $(this).toggle(matches)
+          if(matches) visibleSites += 1
+        })
+
+        $siteEmpty.toggle(visibleSites === 0)
+      }
+
+      $siteSearch.on('input', filterSites)
+      $siteSwitcher.on('shown', function() { $siteSearch.focus() })
+      $siteSwitcher.on('hidden', function() {
+        $siteSearch.val('')
+        filterSites()
+      })
+    })
+  </script>
+<% end %>

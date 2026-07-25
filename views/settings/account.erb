@@ -51,6 +51,24 @@
   </div>
 </main>
 
+<div class="modal hide" id="endSupporterConfirm" tabindex="-1" role="dialog" aria-labelledby="endSupporterConfirmLabel" aria-hidden="true">
+  <form method="POST" action="/supporter/end">
+    <%== csrf_token_input_html %>
+    <input type="hidden" value="free" name="plan_type">
+    <div class="modal-header">
+      <h3 id="endSupporterConfirmLabel">End Supporter membership?</h3>
+    </div>
+    <div class="modal-body">
+      <div class="settings-modal-warning"><i class="fa fa-exclamation-triangle"></i><strong>Your recurring billing will stop.</strong></div>
+      <p>Your account will return to the Free plan and Supporter features will no longer be available.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn cancel" data-dismiss="modal">Keep membership</button>
+      <button type="submit" class="btn-Action">End membership</button>
+    </div>
+  </form>
+</div>
+
 <script>
 $(document).ready(function() {
   if (window.history && 'scrollRestoration' in window.history) {

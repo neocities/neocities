@@ -14,10 +14,23 @@
         <a href="//<%= site.host %>" target="_blank" rel="noopener"><strong><%= site.username %></strong> <i class="fa fa-external-link"></i></a>
         <span><%= site.host %></span>
       </div>
-      <% if site.parent? %>
-        <span class="settings-badge">Parent</span>
-      <% end %>
-      <a class="settings-site-action" href="/settings/<%= site.username %>">Manage <i class="fa fa-chevron-right"></i></a>
+      <div class="settings-site-badges">
+        <% if site.parent? %>
+          <span class="settings-badge">Parent</span>
+        <% end %>
+        <% if site.id == current_site.id %>
+          <span class="settings-badge settings-current-badge">Current</span>
+        <% end %>
+      </div>
+      <div class="settings-site-actions">
+        <% unless site.id == current_site.id %>
+          <form action="/settings/<%= site.username %>/switch" method="POST" class="settings-site-switch-form">
+            <%== csrf_token_input_html %>
+            <button class="settings-site-action" type="submit">Switch</button>
+          </form>
+        <% end %>
+        <a class="settings-site-action" href="/settings/<%= site.username %>">Manage <i class="fa fa-chevron-right"></i></a>
+      </div>
     </div>
   <% end %>
 </div>
