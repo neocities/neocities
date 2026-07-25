@@ -101,7 +101,7 @@
       <div class="site-switcher-list" id="siteSwitcherList" role="list">
         <% header_account_sites.each do |site| %>
           <div class="site-switcher-row" data-site-switcher-row data-site-name="<%= site.username.downcase %> <%= site.host.downcase %>" role="listitem"<% if site.id == current_site.id %> aria-current="true"<% end %>>
-            <span class="site-switcher-icon" aria-hidden="true"><i class="fa fa-globe"></i></span>
+            <img class="site-switcher-thumbnail" src="<%= site.screenshot_url('index.html', '50x50') %>" alt="" onerror="this.src='/img/50x50.png'">
             <div class="site-switcher-copy">
               <strong><%= site.username %></strong>
               <span><%= site.host %></span>

@@ -37,6 +37,17 @@ describe 'site/settings' do
         text: @parent_site.username,
         visible: :all
       )
+      [@parent_site, @child_site].each do |site|
+        row = switcher.find(
+          "[data-site-switcher-row][data-site-name^='#{site.username.downcase} ']",
+          visible: :all
+        )
+        thumbnail = row.find('img.site-switcher-thumbnail', visible: :all)
+
+        _(thumbnail[:src]).must_equal site.screenshot_url('index.html', '50x50')
+        _(thumbnail[:alt]).must_equal ''
+        _(thumbnail[:onerror]).must_equal "this.src='/img/50x50.png'"
+      end
       _(switcher).must_have_link 'Manage sites', href: '/settings#sites', visible: :all
     end
 
