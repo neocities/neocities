@@ -133,6 +133,28 @@ describe 'signin' do
     _(page).must_have_content 'Your Feed'
   end
 
+  it 'skips email verification in development' do
+    pass = SecureRandom.hex
+    @site = Fabricate :site, password: pass
+    original_environment = Sinatra::Application.environment
+    Sinatra::Application.set :environment, :development
+
+    begin
+      visit '/signin'
+      fill_in 'username', with: @site.username
+      fill_in 'password', with: pass
+      click_button 'Sign In'
+
+      _(page).must_have_content 'Your Feed'
+      _(page).wont_have_content 'Verify Your Sign In'
+      _(page.get_rack_session['id']).must_equal @site.id
+      _(EmailWorker.jobs).must_be_empty
+      _($redis_cache.keys('email_login:*')).must_be_empty
+    ensure
+      Sinatra::Application.set :environment, original_environment
+    end
+  end
+
   it 'signs in with invalid case username' do
     pass = SecureRandom.hex
     @site = Fabricate :site, password: pass

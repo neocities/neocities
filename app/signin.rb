@@ -26,6 +26,11 @@ post '/signin' do
       redirect '/signin/restore'
     end
 
+    if self.class.development?
+      session[:id] = site.id
+      redirect '/'
+    end
+
     unless begin_email_login site, request.ip
       flash[:error] = 'Please wait before requesting another sign in verification code.'
       flash[:username] = params[:username]
