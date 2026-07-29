@@ -59,7 +59,9 @@
         <% end %>
       </div>
       <div class="stat"><span>Created</span><strong><%= site.created_at.strftime('%b %-d, %Y') %></strong></div>
-      <a href="/site/<%= site.username %>/stats">Site Traffic Stats</a>
+      <% if current_site && (current_site.is_admin || site.owned_by?(current_site)) %>
+        <a href="/site/<%= site.username %>/stats">Site Traffic Stats</a>
+      <% end %>
     </div>
 
     <%== erb :'_follows', layout: false, locals: {site: site, is_current_site: site == current_site} %>

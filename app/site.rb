@@ -45,56 +45,37 @@ end
 
 MAX_STAT_POINTS = 30
 get '/site/:username/stats' do
+  require_login
+
   @default_stat_points = 7
   @site = Site[username: params[:username]]
-  not_found if @site.nil? || @site.is_banned || @site.is_deleted || (current_site && @site.is_blocking?(current_site))
+  not_found if @site.nil? || @site.is_banned || @site.is_deleted
 
-  @title = "Site stats for #{@site.host}"
-  @description = "Traffic and engagement stats for #{@site.username}'s Neocities site."
+  @can_view_site_stats = current_site.is_admin || @site.owned_by?(current_site)
+  not_found unless @can_view_site_stats
 
+  @title = "Traffic stats for #{@site.host}"
+  @description = "See daily visits and file requests for #{@site.username}'s Neocities site."
   @stats = {}
 
-  %i{referrers locations paths}.each do |stat|
-    @stats[stat] = @site.send("stat_#{stat}_dataset".to_sym).order(:views.desc).limit(100).all
-  end
-
-  @stats[:locations].collect! do |location|
-    location_name = ''
-
-    location_name += location.city_name if location.city_name
-
-    if location.region_name
-      # Some of the region names are numbers for some reason.
-      begin
-        Integer(location.region_name)
-      rescue
-        location_name += ', ' unless location_name == ''
-        location_name += location.region_name
-      end
-    end
-
-    if location.country_code2 && !$country_codes[location.country_code2].nil?
-      location_name += ', ' unless location_name == ''
-      location_name += $country_codes[location.country_code2]
-    end
-
-    location_hash = {name: location_name, views: location.views}
-    if location.latitude && location.longitude
-      location_hash.merge! latitude: location.latitude, longitude: location.longitude
-    end
-    location_hash
-  end
-
   stats_dataset = @site.stats_dataset.order(:created_at.desc).exclude(created_at: Date.today)
+  @selected_stat_range = @default_stat_points
 
   if @site.supporter?
-    unless params[:days].to_s == 'sincethebigbang'
+    if params[:days].to_s == 'sincethebigbang'
+      @selected_stat_range = 'sincethebigbang'
+    else
       unless params[:days].not_an_integer?
         days_param = params[:days].to_i
-        if days_param < 9000
+        if days_param.positive? && days_param < 9000
           stats_dataset = stats_dataset.limit days_param
-        else
+          @selected_stat_range = days_param
+        elsif days_param >= 9000
           params[:days] = 'sincethebigbang'
+          @selected_stat_range = 'sincethebigbang'
+        else
+          params[:days] = @default_stat_points
+          stats_dataset = stats_dataset.limit @default_stat_points
         end
       else
         params[:days] = @default_stat_points
@@ -107,9 +88,9 @@ get '/site/:username/stats' do
 
   stats = stats_dataset.all.reverse
 
-  if current_site && @site.owned_by?(current_site) && params[:format] == 'csv'
+  if @can_view_site_stats && params[:format] == 'csv'
     content_type 'application/csv'
-    attachment "#{current_site.username}-stats.csv"
+    attachment "#{@site.username}-stats.csv"
 
     return CSV.generate do |csv|
       csv << ['day', 'hits', 'views', 'bandwidth']
@@ -119,12 +100,33 @@ get '/site/:username/stats' do
     end
   end
 
+  total_views = stats.sum {|stat| stat.views || 0}
+  total_hits = stats.sum {|stat| stat.hits || 0}
+  @stat_summary = {
+    views: total_views,
+    hits: total_hits,
+    average_views: stats.empty? ? 0 : (total_views.to_f / stats.length).round,
+    days: stats.length
+  }
+  @stat_range_label = if @selected_stat_range == 'sincethebigbang'
+    'All available history'
+  else
+    "Last #{@selected_stat_range} days"
+  end
+  @stat_range_options = {
+    7 => '7 days',
+    30 => '30 days',
+    90 => '90 days',
+    365 => '1 year',
+    'sincethebigbang' => 'All time'
+  }
+  @follow_count = @site.follows_dataset.count
+
   if stats.length > MAX_STAT_POINTS
     stats = stats.select.with_index {|a, i| (i % (stats.length / MAX_STAT_POINTS.to_f).round) == 0}
   end
 
   @stats[:stat_days] = stats
-  @multi_tooltip_template = "<%= datasetLabel %> - <%= value %>"
 
   erb :'site/stats', locals: {site: @site}
 end
