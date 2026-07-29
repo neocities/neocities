@@ -3037,11 +3037,16 @@ a.tag:hover {
   padding-bottom: 4px;
 }
 .fa-heart {
-  font-size: 0.7em;
   color: #e93250;
-  vertical-align: .45em;
-  margin-left: -.15em;
+}
+
+// supporter badge heart tucked beside the user icon next to usernames;
+// hearts everywhere else render as ordinary inline icons
+.fa-user > .fa-heart {
   display: inline;
+  font-size: 0.7em;
+  margin-left: -.15em;
+  vertical-align: .45em;
 }
 .fa-user {
   margin-right: 0.25em;
@@ -3477,4 +3482,1019 @@ pre, code {
 .h-captcha iframe {
   width: 90% !important;
   border-radius: 10px;
+}
+
+
+// Supporter page
+.supporter-page {
+  background: $c-Warm-Page;
+  color: $c-Dark;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1,
+  h2 {
+    letter-spacing: -.025em;
+  }
+
+  h2 {
+    color: $c-Teal-Dark;
+    font-size: $gamma;
+    line-height: 1.18;
+  }
+
+  h3 {
+    color: $c-Teal-Dark;
+  }
+
+  .btn-Action {
+    font-size: 1em;
+    line-height: 1.2;
+    padding: 13px 21px;
+  }
+
+  a:not(.btn-Action):focus,
+  button:not(.btn-Action):focus,
+  [tabindex]:not(.btn-Action):focus {
+    outline: 3px solid $c-Focus;
+    outline-offset: 3px;
+  }
+}
+
+.supporter-shell {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding-left: 5%;
+  padding-right: 5%;
+  width: 100%;
+}
+
+.supporter-hero {
+  background: #06181c radial-gradient(115% 95% at 57% 68%, #2e7d7d 0%, #16454a 46%, #06181c 82%);
+  border-bottom: 1px solid #31535e;
+  color: #edf6f5;
+  overflow: hidden;
+  padding: 100px 0 106px;
+  position: relative;
+
+  &::after {
+    background: $c-Brand-1;
+    bottom: 0;
+    content: '';
+    height: 5px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
+
+// retro 90s browser splash-style animated backdrop
+.supporter-hero-retro {
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  .retro-scene {
+    display: block;
+    height: 100%;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: pixelated;
+    width: 100%;
+  }
+
+  // dimming scrim so the hero copy stays readable over the animation
+  &::after {
+    background: linear-gradient(97deg, rgba(2, 11, 15, .82) 0%, rgba(2, 11, 15, .74) 34%, rgba(2, 11, 15, .52) 54%, rgba(2, 11, 15, .18) 76%, rgba(2, 11, 15, .1) 100%);
+    bottom: 0;
+    content: '';
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.supporter-hero .supporter-eyebrow {
+  color: #f0fff9;
+  font-family: 'Times New Roman', Times, Georgia, serif;
+  font-size: 1.05em;
+  letter-spacing: .04em;
+  text-shadow: 0 0 10px rgba(150, 255, 235, .5), 1px 1px 0 rgba(0, 12, 16, .75);
+  text-transform: none;
+}
+
+
+.supporter-hero-layout {
+  align-items: center;
+  display: flex;
+  gap: 8%;
+  justify-content: space-between;
+  position: relative;
+  z-index: 4;
+}
+
+.supporter-hero-copy {
+  max-width: 660px;
+  position: relative;
+  width: 62%;
+  z-index: 2;
+
+  h1 {
+    color: #fff;
+    font-family: 'Times New Roman', Times, Georgia, serif;
+    font-size: 3.35em;
+    line-height: 1.03;
+    margin-bottom: 22px;
+    max-width: 640px;
+    text-shadow: 0 0 24px rgba(150, 255, 235, .8), 0 0 6px rgba(220, 255, 248, .9), 2px 2px 0 rgba(0, 12, 16, .85);
+  }
+}
+
+.supporter-eyebrow,
+.supporter-section-kicker {
+  font-family: $brand;
+  font-size: .78em;
+  font-weight: bold;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.supporter-eyebrow {
+  color: #bfe0df;
+  margin-bottom: 18px;
+
+  .fa {
+    color: #ff6b82;
+    margin-right: 7px;
+  }
+}
+
+.supporter-lede {
+  color: #d7e7e7;
+  font-size: 1.22em;
+  line-height: 1.65;
+  margin-bottom: 28px;
+  max-width: 630px;
+}
+
+// keep the hero copy legible over the animated backdrop
+.supporter-hero .supporter-lede,
+.supporter-hero .supporter-hero-actions,
+.supporter-hero .supporter-quick-stats {
+  text-shadow: 0 1px 2px rgba(0, 10, 14, .85), 0 0 14px rgba(0, 10, 14, .6);
+}
+
+.supporter-hero-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+
+.supporter-page .supporter-primary-action {
+  color: #fff;
+}
+
+.supporter-text-action {
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .fa {
+    font-size: .8em;
+    margin-left: 5px;
+  }
+}
+
+.supporter-quick-stats {
+  display: flex;
+  list-style: none;
+  margin: 38px 0 0;
+  padding: 0;
+
+  li {
+    border-left: 1px solid rgba(255, 255, 255, .2);
+    margin: 0;
+    min-width: 118px;
+    padding: 0 24px;
+
+    &:first-child {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+
+  strong,
+  span {
+    display: block;
+  }
+
+  strong {
+    color: #fff;
+    font-family: $brand;
+    font-size: 1.35em;
+    line-height: 1.2;
+  }
+
+  span {
+    color: #aecaCD;
+    font-size: .78em;
+    letter-spacing: .07em;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+}
+
+.supporter-hero-art {
+  flex: 0 0 290px;
+  min-height: 330px;
+  position: relative;
+  width: 290px;
+}
+
+.supporter-mascot-card {
+  background: #f7f1e8;
+  border: 1px solid rgba(255, 255, 255, .75);
+  border-radius: 16px;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, .3);
+  color: $c-Teal-Dark;
+  left: 50%;
+  padding: 30px 28px 22px;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(2deg);
+  width: 225px;
+  z-index: 2;
+
+  &::before {
+    border: 2px dashed rgba(94, 149, 161, .3);
+    border-radius: 12px;
+    bottom: 8px;
+    content: '';
+    left: 8px;
+    pointer-events: none;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+  }
+
+  img {
+    height: auto;
+    margin: -18px auto 4px;
+    position: relative;
+    width: 122px;
+  }
+
+  p {
+    color: #71888d;
+    font-size: .76em;
+    letter-spacing: .08em;
+    margin-bottom: 0;
+    text-transform: uppercase;
+  }
+}
+
+.supporter-price {
+  align-items: baseline;
+  display: flex;
+  justify-content: center;
+  margin: -2px 0 8px;
+
+  strong {
+    color: $c-Brand-1;
+    font-family: $brand;
+    font-size: 3.1em;
+    line-height: 1;
+
+    sup {
+      font-size: .43em;
+      top: -.85em;
+    }
+  }
+
+  span {
+    color: #657d82;
+    font-size: .82em;
+    margin-left: 6px;
+  }
+}
+
+.supporter-upgrade-section,
+.supporter-visitor-section {
+  position: relative;
+  z-index: 3;
+}
+
+.supporter-upgrade-section {
+  margin-top: -52px;
+  padding-bottom: 58px;
+}
+
+.supporter-upgrade-card {
+  background: #fff;
+  border: 1px solid #dfd7cb;
+  border-radius: 10px;
+  box-shadow: $bs-Panel, 0 18px 50px rgba(48, 66, 75, .1);
+  display: flex;
+  overflow: hidden;
+}
+
+.supporter-upgrade-summary,
+.supporter-checkout {
+  padding: 46px 48px;
+  width: 50%;
+}
+
+.supporter-upgrade-summary {
+  background:
+    radial-gradient(circle at 92% 9%, rgba(233, 50, 80, .08), transparent 26%),
+    $c-Warm-Panel;
+  border-right: 1px solid #e3dcd0;
+
+  > p:not(.supporter-section-kicker):not(.supporter-guarantee) {
+    color: #607277;
+    line-height: 1.65;
+  }
+}
+
+.supporter-section-kicker {
+  color: $c-Brand-1;
+  margin-bottom: 10px;
+}
+
+.supporter-upgrade-features {
+  list-style: none;
+  margin: 29px 0;
+  padding: 0;
+
+  li {
+    align-items: flex-start;
+    display: flex;
+    line-height: 1.45;
+    margin: 17px 0;
+  }
+
+  .fa {
+    align-items: center;
+    background: #dcecbc;
+    border-radius: 50%;
+    color: #42651d;
+    display: flex;
+    flex: 0 0 24px;
+    font-size: .72em;
+    height: 24px;
+    justify-content: center;
+    margin: 0 12px 0 0;
+  }
+
+  strong {
+    color: $c-Teal-Dark;
+    display: block;
+  }
+}
+
+.supporter-guarantee {
+  border-top: 1px solid #dfd7cb;
+  color: #64787c;
+  font-size: .86em;
+  line-height: 1.5;
+  margin: 25px 0 0;
+  padding-top: 20px;
+
+  .fa {
+    color: $c-Teal;
+    margin-right: 6px;
+  }
+}
+
+// welcome-flow escape hatch under the checkout
+.supporter-skip-action {
+  color: #64787c;
+  display: block;
+  font-size: .92em;
+  margin-top: 20px;
+  text-align: center;
+  text-decoration: underline;
+
+  &:hover,
+  &:focus {
+    color: $c-Teal-Dark;
+  }
+}
+
+.supporter-checkout {
+  background: #fff;
+
+  // the interactive credit card preview from views/_card.erb
+  .container {
+    margin: 16px auto 0;
+    padding: 0;
+  }
+
+  .form-container {
+    display: grid;
+    grid-column-gap: 14px;
+    margin: 25px auto 0 !important;
+    max-width: none;
+    padding: 0;
+    width: 100%;
+  }
+
+  .field-container {
+    label {
+      color: #53676c;
+      display: block;
+      font-family: $brand;
+      font-size: .78em;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    input {
+      background: #fff;
+      border: 1px solid #b9c5c7;
+      border-radius: 5px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, .05);
+      color: $c-Dark;
+      font-family: $brand;
+      font-size: 1em;
+      height: 48px;
+      padding: 10px 12px;
+
+      &:focus {
+        border-color: $c-Focus;
+        box-shadow: 0 0 0 3px rgba(80, 182, 213, .2);
+        outline: 0;
+      }
+    }
+  }
+
+  #plan_error {
+    margin: 22px 0 0;
+  }
+}
+
+.supporter-checkout-heading {
+  align-items: flex-end;
+  border-bottom: 1px solid #e4e8e8;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 20px;
+
+  h2,
+  p {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: 1.55em;
+  }
+}
+
+.supporter-checkout-price {
+  align-items: baseline;
+  color: #687c80;
+  display: flex;
+  white-space: nowrap;
+
+  strong {
+    color: $c-Brand-1;
+    font-family: $brand;
+    font-size: 1.55em;
+  }
+
+  span {
+    font-size: .78em;
+    margin-left: 3px;
+  }
+}
+
+.supporter-payment-actions {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.supporter-page .supporter-payment-button {
+  cursor: pointer;
+  width: 100%;
+}
+
+.supporter-page .supporter-payment-note {
+  color: #728388;
+  font-size: .77em;
+  margin: 15px 0 18px;
+
+  .fa {
+    color: $c-Teal;
+    margin-right: 4px;
+  }
+}
+
+.supporter-payment-divider {
+  border-top: 1px solid #e1e6e6;
+  height: 11px;
+  margin: 4px 0 14px;
+  text-align: center;
+
+  span {
+    background: #fff;
+    color: #849397;
+    display: inline-block;
+    font-size: .76em;
+    padding: 0 10px;
+    position: relative;
+    top: -11px;
+  }
+}
+
+.supporter-paypal-action {
+  color: #405c65;
+  font-size: .9em;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: $c-Brand-1;
+    text-decoration: underline;
+  }
+
+  strong span:first-child {
+    color: #003087;
+  }
+
+  strong span:last-child {
+    color: #009cde;
+  }
+}
+
+.supporter-visitor-section {
+  margin-top: -45px;
+  padding-bottom: 75px;
+}
+
+.supporter-visitor-card {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ded6ca;
+  border-radius: 10px;
+  box-shadow: $bs-Panel;
+  display: flex;
+  justify-content: space-between;
+  max-width: 940px;
+  padding-bottom: 30px;
+  padding-top: 30px;
+
+  h2 {
+    font-size: 1.5em;
+    margin-bottom: 7px;
+  }
+
+  p:last-child {
+    color: #64777b;
+    margin-bottom: 0;
+  }
+}
+
+.supporter-visitor-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 22px;
+  margin-left: 40px;
+
+  > a:last-child {
+    font-weight: bold;
+  }
+}
+
+.supporter-benefits-section {
+  padding: 38px 0 90px;
+}
+
+.supporter-section-heading {
+  margin: 0 auto 42px;
+  max-width: 690px;
+  text-align: center;
+
+  h2 {
+    font-size: 2.35em;
+    margin-bottom: 14px;
+  }
+
+  > p:last-child {
+    color: #63767a;
+    font-size: 1.05em;
+    line-height: 1.65;
+    margin-bottom: 0;
+  }
+}
+
+.supporter-benefit-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.supporter-benefit-card {
+  background: $c-Warm-Panel;
+  border: 1px solid #e1d8ca;
+  border-radius: 7px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .7);
+  padding: 29px 28px 25px;
+  width: calc(33.333% - 14px);
+
+  h3 {
+    font-family: $brand;
+    font-size: 1.05em;
+    margin: 17px 0 9px;
+  }
+
+  p {
+    color: #66777a;
+    font-size: .91em;
+    line-height: 1.62;
+    margin-bottom: 0;
+  }
+}
+
+.supporter-benefit-icon {
+  align-items: center;
+  background: #e4eee1;
+  border-radius: 7px;
+  color: #4c752c;
+  display: flex;
+  font-size: 1.12em;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.supporter-benefit-card-mission {
+  background: #f9edf0;
+  border-color: #ecd0d6;
+
+  .supporter-benefit-icon {
+    background: #f5dce2;
+    color: $c-Brand-1;
+  }
+}
+
+.supporter-mission-section {
+  background: #345f69;
+  color: #eef7f6;
+  padding: 74px 0;
+}
+
+.supporter-mission-layout {
+  align-items: center;
+  display: flex;
+  gap: 9%;
+}
+
+.supporter-mission-copy {
+  width: 48%;
+
+  h2 {
+    color: #fff;
+    font-size: 2.35em;
+    margin-bottom: 17px;
+  }
+
+  > p:last-child {
+    color: #d6e6e5;
+    line-height: 1.72;
+    margin-bottom: 0;
+  }
+
+  .supporter-section-kicker {
+    color: #e4f3b9;
+  }
+}
+
+.supporter-trust-list {
+  border-left: 1px solid rgba(255, 255, 255, .18);
+  padding-left: 8%;
+  width: 48%;
+
+  > div {
+    align-items: center;
+    display: flex;
+    margin: 20px 0;
+  }
+
+  .fa {
+    align-items: center;
+    background: rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .17);
+    border-radius: 50%;
+    color: #dff1aa;
+    display: flex;
+    flex: 0 0 44px;
+    height: 44px;
+    justify-content: center;
+    margin-right: 16px;
+  }
+
+  strong {
+    color: #fff;
+    display: block;
+  }
+
+  span {
+    color: #c7dddd;
+    font-size: .9em;
+    line-height: 1.4;
+  }
+}
+
+.supporter-compare-section {
+  background: #fff;
+  color: $c-Dark;
+  padding: 86px 0 100px;
+}
+
+// tooltip variant for the plan comparison: never intercepts the pointer, so
+// hovering near the trigger can't flicker the tooltip closed
+.tooltip.supporter-tooltip {
+  pointer-events: none;
+}
+
+.supporter-comparison-table {
+  border: 1px solid #dce2e2;
+  border-radius: 8px;
+  box-shadow: $bs-Panel;
+  overflow-x: auto;
+
+  .plan-chart {
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+    min-width: 610px;
+    width: 100%;
+
+    h3 {
+      font-family: $brand;
+      font-size: 1em;
+      margin: 0;
+    }
+
+    th {
+      background: #edf1f1;
+      border-bottom: 1px solid #dce2e2;
+      color: $c-Teal-Dark;
+      padding: 18px 14px;
+    }
+
+    th.professional {
+      background: $c-Teal;
+      color: #fff;
+
+      h3 {
+        color: #fff;
+      }
+    }
+
+    td {
+      background: #fff;
+      border: 0;
+      border-bottom: 1px solid #e6eaea;
+      color: #53666a;
+      padding: 11px 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td:nth-child(3) {
+      background: #f4f8ea;
+      border-left: 1px solid #e2e9d1;
+    }
+
+    td:empty::after {
+      color: #b7c0c1;
+      content: '\2014';
+    }
+
+    .feature-column {
+      background: #fff;
+      color: #42565b;
+      font-size: .86em;
+      padding-left: 22px;
+      text-align: left;
+      width: 46%;
+
+      span {
+        border-bottom-color: #aebcbe;
+      }
+    }
+
+    .fa-check {
+      align-items: center;
+      background: #dcecc1;
+      border-radius: 50%;
+      color: #42651d;
+      display: inline-flex;
+      font-size: .7em;
+      height: 22px;
+      justify-content: center;
+      width: 22px;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .supporter-hero-layout {
+    gap: 3%;
+  }
+
+  .supporter-hero-copy {
+    width: 67%;
+
+    h1 {
+      font-size: 2.8em;
+    }
+  }
+
+  .supporter-upgrade-summary,
+  .supporter-checkout {
+    padding-left: 34px;
+    padding-right: 34px;
+  }
+
+  .supporter-benefit-card {
+    width: calc(50% - 10px);
+  }
+}
+
+@media (max-device-width:480px), screen and (max-width:700px) {
+
+  .supporter-page h2 {
+    font-size: 1.85em;
+  }
+
+  .supporter-hero {
+    padding: 82px 0 88px;
+  }
+
+  // copy spans the full width on small screens, so dim more evenly
+  .supporter-hero-retro::after {
+    background: linear-gradient(180deg, rgba(2, 11, 15, .74) 0%, rgba(2, 11, 15, .6) 45%, rgba(2, 11, 15, .38) 100%);
+  }
+
+  .supporter-hero-layout,
+  .supporter-upgrade-card,
+  .supporter-visitor-card,
+  .supporter-mission-layout {
+    display: block;
+  }
+
+  .supporter-hero-copy,
+  .supporter-mission-copy,
+  .supporter-trust-list {
+    width: 100%;
+  }
+
+  .supporter-hero-copy h1 {
+    font-size: 2.5em;
+  }
+
+  .supporter-lede {
+    font-size: 1.07em;
+  }
+
+  .supporter-hero-art {
+    margin: 42px auto -18px;
+    min-height: 295px;
+  }
+
+  .supporter-quick-stats {
+    justify-content: space-between;
+
+    li {
+      min-width: 0;
+      padding: 0 16px;
+      width: 33.333%;
+    }
+  }
+
+  .supporter-upgrade-summary,
+  .supporter-checkout {
+    padding: 36px 7%;
+    width: 100%;
+  }
+
+  .supporter-upgrade-summary {
+    border-bottom: 1px solid #e3dcd0;
+    border-right: 0;
+  }
+
+  .supporter-visitor-card {
+    padding-bottom: 28px;
+    padding-top: 28px;
+  }
+
+  .supporter-visitor-actions {
+    margin: 25px 0 0;
+  }
+
+  .supporter-benefits-section,
+  .supporter-compare-section {
+    padding-bottom: 70px;
+    padding-top: 65px;
+  }
+
+  .supporter-benefit-card {
+    width: 100%;
+  }
+
+  .supporter-mission-section {
+    padding: 62px 0;
+  }
+
+  .supporter-trust-list {
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, .18);
+    margin-top: 34px;
+    padding-left: 0;
+    padding-top: 13px;
+  }
+
+  .supporter-comparison-table .plan-chart {
+    font-size: .9em;
+  }
+}
+
+@media (max-device-width:480px), screen and (max-width:430px) {
+  .supporter-hero-copy h1 {
+    font-size: 2.15em;
+  }
+
+  .supporter-hero-actions,
+  .supporter-visitor-actions {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .supporter-page .btn-Action {
+    display: block;
+    width: 100%;
+  }
+
+  .supporter-quick-stats {
+    li {
+      padding: 0 10px;
+    }
+
+    strong {
+      font-size: 1.12em;
+    }
+
+    span {
+      font-size: .68em;
+    }
+  }
+
+  .supporter-hero-art {
+    transform: scale(.9);
+  }
+
+  .supporter-checkout-heading {
+    align-items: flex-start;
+    display: block;
+  }
+
+  .supporter-checkout-price {
+    margin-top: 12px;
+  }
+
+  .supporter-checkout .form-container {
+    grid-column-gap: 9px;
+  }
+
+  .supporter-benefit-card {
+    padding: 25px 23px 22px;
+  }
 }

@@ -1,12 +1,15 @@
-<h2 style="margin-top: 2em">What You Get</h2>
+<% if !defined?(show_heading) || show_heading %>
+  <h2 style="margin-top: 2em">What You Get</h2>
+<% end %>
 <table class="plan-chart">
+  <caption class="hidden">Features included with Neocities Free and Supporter plans</caption>
   <tr>
-    <th class="feature-column"></th>
+    <th class="feature-column"><span class="hidden">Feature</span></th>
     <th>
       <h3>Free</h3>
     </th>
     <th class="professional">
-      <h3>Supporter ($5/mo)</h3>
+      <h3>Supporter ($<%= Site::PLAN_FEATURES[:supporter][:price] %>/mo)</h3>
     </th>
   </tr>
   <tr>
@@ -60,7 +63,7 @@
   </tr>
   <tr>
     <td class="feature-column">
-      <span data-original-title="Downloading your neocities site is as easy as clicking a button.">One-Click Backups</span>
+      <span data-original-title="Downloading your Neocities site is as easy as clicking a button.">One-Click Backups</span>
     </td>
     <td><i class="fa fa-check"></i></td>
     <td><i class="fa fa-check"></i></td>
@@ -74,7 +77,7 @@
   </tr>
   <tr>
     <td class="feature-column">
-      <span data-original-title="Each site has its own RSS feed that make it easy to let people know when your site changes.">RSS Feed</span>
+      <span data-original-title="Each site has its own RSS feed that makes it easy to let people know when your site changes.">RSS Feed</span>
     </td>
     <td><i class="fa fa-check"></i></td>
     <td><i class="fa fa-check"></i></td>
@@ -185,11 +188,3 @@
     <td><i class="fa fa-check"></i></td>
   </tr>
 </table>
-
-<script>
-  $(function() {
-    $('.feature-column span').tooltip({
-      placement: 'right'
-    })
-  })
-</script>

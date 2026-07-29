@@ -5,15 +5,6 @@
 .tutorial {
   padding-top: 40px;
 
-  // The global .fa-heart styling shrinks and raises the icon to sit as a
-  // supporter badge after usernames; hearts in lesson content are ordinary
-  // inline icons.
-  .fa-heart {
-    font-size: inherit;
-    vertical-align: baseline;
-    margin-left: 0;
-  }
-
   // Flat buttons, no gradient. Bootstrap's .btn:focus (imported at the top of
   // neo.css) shifts background-position -15px, which made the .btn-Action
   // gradient wrap into a two-tone split on a clicked (still focused) button,

@@ -1,0 +1,214 @@
+<% is_supporter = signed_in? && parent_site.supporter? %>
+<% is_welcome = request.path == '/welcome' %>
+
+<main class="supporter-page">
+  <section class="supporter-hero">
+    <div class="supporter-hero-retro" aria-hidden="true">
+      <canvas class="retro-scene"></canvas>
+    </div>
+    <div class="supporter-shell supporter-hero-layout">
+      <div class="supporter-hero-copy">
+        <% if is_welcome %>
+          <p class="supporter-eyebrow"><i class="fa fa-heart" aria-hidden="true"></i> Welcome to Neocities, <%= current_site.username %>!</p>
+        <% else %>
+          <p class="supporter-eyebrow"><i class="fa fa-heart" aria-hidden="true"></i> Community-powered since 2013</p>
+        <% end %>
+
+        <% if is_supporter %>
+          <h1>Thanks for keeping the web weird.</h1>
+          <p class="supporter-lede">Your support keeps Neocities independent, ad-free, and focused on giving people a place to make something of their own.</p>
+          <div class="supporter-hero-actions">
+            <a href="/dashboard" class="btn-Action supporter-primary-action">Go to your dashboard</a>
+          </div>
+        <% else %>
+          <h1>Help us keep the web weird.</h1>
+          <p class="supporter-lede">Neocities is powered by <strong>you</strong>. Help us bring back creative web sites by becoming a supporter.<!-- Support independent web publishing and give your sites more room to grow—with no ads, no data selling, and no investors calling the shots. --></p>
+          <div class="supporter-hero-actions">
+            <% if signed_in? %>
+              <a href="#upgrade" class="btn-Action supporter-primary-action">Become a Supporter</a>
+              <% if is_welcome %>
+                <!-- <a href="/tutorial" class="supporter-text-action">Continue with the free plan <i class="fa fa-arrow-right" aria-hidden="true"></i> --></a>
+              <% end %>
+            <% else %>
+              <a href="/#new" class="btn-Action supporter-primary-action">Create a free site</a>
+              <a href="/signin" class="supporter-text-action">Already have a site? Sign in <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+            <% end %>
+          </div>
+        <% end %>
+
+        <ul class="supporter-quick-stats" aria-label="Supporter plan highlights">
+          <li><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_f('GB').round %> GB</strong><span>storage</span></li>
+          <li><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_f('TB').round %> TB</strong><span>bandwidth</span></li>
+          <li><strong><%= Site::CHILD_SITES_MAX %></strong><span>sites</span></li>
+        </ul>
+      </div>
+
+      <div class="supporter-hero-art" aria-hidden="true">
+        <div class="supporter-mascot-card">
+          <img src="/img/sailor-cat.svg" alt="Penelope wearing a ship captain hat" style="width: 100%">
+          <div class="supporter-price">
+            <strong><sup>$</sup><%= Site::PLAN_FEATURES[:supporter][:price] %></strong>
+            <span>per month</span>
+          </div>
+          <p>Cancel anytime</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <% if signed_in? && !is_supporter %>
+    <section class="supporter-upgrade-section" id="upgrade">
+      <div class="supporter-shell">
+        <div class="supporter-upgrade-card">
+          <div class="supporter-upgrade-summary">
+            <p class="supporter-section-kicker">One simple plan</p>
+            <h2>Everything your site needs to grow</h2>
+            <p>Upgrade your account and directly fund a more creative, independent web.</p>
+
+            <ul class="supporter-upgrade-features">
+              <li><i class="fa fa-check" aria-hidden="true"></i><span><strong><%= Site::PLAN_FEATURES[:supporter][:space].to_f('GB').round %> GB storage</strong> to build your masterpiece</span></li>
+              <li><i class="fa fa-check" aria-hidden="true"></i><span><strong><%= Site::PLAN_FEATURES[:supporter][:bandwidth].to_f('TB').round %> TB monthly bandwidth</strong> on our fast global network</span></li>
+              <li><i class="fa fa-check" aria-hidden="true"></i><span><strong>Custom domains and SSL</strong> for a home that is truly yours</span></li>
+              <li><i class="fa fa-check" aria-hidden="true"></i><span><strong>Up to <%= Site::CHILD_SITES_MAX %> sites</strong> from one account</span></li>
+            </ul>
+
+            <p class="supporter-guarantee"><i class="fa fa-refresh" aria-hidden="true"></i> Downgrade whenever you like. We’ll refund any unused time.</p>
+          </div>
+
+          <div class="supporter-checkout">
+            <div class="supporter-checkout-heading">
+              <div>
+                <p class="supporter-section-kicker">Secure checkout</p>
+                <h2>Become a Supporter</h2>
+              </div>
+              <div class="supporter-checkout-price"><strong>$<%= Site::PLAN_FEATURES[:supporter][:price] %></strong><span>/ month</span></div>
+            </div>
+
+            <div id="plan_error" class="alert alert-block alert-error" style="display:none" role="alert" aria-live="polite"></div>
+            <form id="upgradeForm" method="POST" action="/supporter/update">
+              <%== csrf_token_input_html %>
+              <input type="hidden" value="supporter" name="plan_type">
+              <input id="stripe_token" name="stripe_token" type="hidden" value="<%= params[:stripe_token] %>">
+              <%== erb :'_card', layout: false %>
+
+              <div id="upgradeDiv" class="supporter-payment-actions">
+                <button id="upgradeLink" type="submit" class="btn-Action supporter-payment-button">
+                  Upgrade for $<%= Site::PLAN_FEATURES[:supporter][:price] %>/month
+                </button>
+                <p class="supporter-payment-note"><i class="fa fa-lock" aria-hidden="true"></i> Card details are securely handled by Stripe.</p>
+                <div class="supporter-payment-divider"><span>or</span></div>
+                <a href="/supporter/paypal" class="supporter-paypal-action">Continue with <strong><span>Pay</span><span>Pal</span></strong></a>
+                <% if is_welcome %>
+                  <a href="/tutorial" class="supporter-skip-action">Maybe later &mdash; start with the free plan</a>
+                <% end %>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  <% elsif !signed_in? %>
+    <section class="supporter-visitor-section">
+      <div class="supporter-shell supporter-visitor-card">
+        <div>
+          <p class="supporter-section-kicker">Ready when you are</p>
+          <h2>Supporter plans are attached to your Neocities account.</h2>
+          <p>Create a free site first, or sign in to upgrade an existing account.</p>
+        </div>
+        <div class="supporter-visitor-actions">
+          <a href="/#new" class="btn-Action">Create a free site</a>
+          <a href="/signin">Sign in</a>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+
+  <section class="supporter-benefits-section">
+    <div class="supporter-shell">
+      <div class="supporter-section-heading">
+        <p class="supporter-section-kicker">More space to create</p>
+        <h2>Build the site you always wanted to make.</h2>
+        <p>Supporter increases the limits while keeping the simple, static hosting experience you already know.</p>
+      </div>
+
+      <div class="supporter-benefit-grid">
+        <article class="supporter-benefit-card">
+          <span class="supporter-benefit-icon"><i class="fa fa-globe" aria-hidden="true"></i></span>
+          <h3>Your own custom domain</h3>
+          <p>Connect your own custom domain with free SSL, so your site has an address that is completely yours.</p>
+        </article>
+        <article class="supporter-benefit-card">
+          <span class="supporter-benefit-icon"><i class="fa fa-file-code-o" aria-hidden="true"></i></span>
+          <h3>More ways to publish</h3>
+          <p>Upload more static file types, enable hotlinking and CORS, and use a less restrictive content security policy.</p>
+        </article>
+        <article class="supporter-benefit-card">
+          <span class="supporter-benefit-icon"><i class="fa fa-files-o" aria-hidden="true"></i></span>
+          <h3>Room for every idea</h3>
+          <p>Create up to <%= Site::CHILD_SITES_MAX %> sites and switch between experiments, portfolios, shrines, and whatever comes next.</p>
+        </article>
+        <article class="supporter-benefit-card">
+          <span class="supporter-benefit-icon"><i class="fa fa-line-chart" aria-hidden="true"></i></span>
+          <h3>Stats that stick around</h3>
+          <p>Keep your full site stats history instead of the limited 30 day history included with free sites.</p>
+        </article>
+        <article class="supporter-benefit-card">
+          <span class="supporter-benefit-icon"><i class="fa fa-cloud-upload" aria-hidden="true"></i></span>
+          <h3>Use your favorite tools</h3>
+          <p>Publish with WebDAV when you want a workflow beyond the browser editor.</p>
+        </article>
+        <article class="supporter-benefit-card supporter-benefit-card-mission">
+          <span class="supporter-benefit-icon"><i class="fa fa-heart" aria-hidden="true"></i></span>
+          <h3>Fund an independent web</h3>
+          <p>Your support directly funds our infrastructure and development.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="supporter-mission-section">
+    <div class="supporter-shell supporter-mission-layout">
+      <div class="supporter-mission-copy">
+        <p class="supporter-section-kicker">The creative web</p>
+        <h2>We're powered by you.</h2>
+        <p>Neocities is funded directly by supporters and donations. That lets us make decisions for the people building sites here, not for advertising companies.</p>
+      </div>
+      <div class="supporter-trust-list">
+        <div><i class="fa fa-ban" aria-hidden="true"></i><span><strong>Zero ads</strong> on every Neocities site</span></div>
+        <div><i class="fa fa-user-secret" aria-hidden="true"></i><span><strong>We don't sell personal data</strong> to anyone, ever</span></div>
+        <div><i class="fa fa-graduation-cap" aria-hidden="true"></i><span><strong>Great for learning HTML</strong> and used by people all around the world</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="supporter-compare-section">
+    <div class="supporter-shell">
+      <div class="supporter-section-heading">
+        <p class="supporter-section-kicker">Side by side</p>
+        <h2>Free is generous. Supporter goes further.</h2>
+        <p>Both plans stay ad-free and include the core tools you need to make a great site.</p>
+      </div>
+      <div class="supporter-comparison-table" tabindex="0" aria-label="Scrollable plan comparison">
+        <%== erb :'supporter/_compare', layout: false, locals: {show_heading: false} %>
+      </div>
+    </div>
+  </section>
+</main>
+
+<% if signed_in? && !is_supporter %>
+  <%== erb :'supporter/_signupcode', layout: false %>
+<% end %>
+
+<script src="/js/retro-hero.js"></script>
+<script>
+  $(function() {
+    $('.supporter-page [data-original-title]').tooltip({
+      placement: 'top',
+      container: 'body',
+      delay: { show: 50, hide: 100 },
+      template: '<div class="tooltip supporter-tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+    })
+  })
+</script>
+

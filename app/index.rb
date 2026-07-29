@@ -120,7 +120,7 @@ get '/welcome' do
   require_login
   redirect '/' if current_site.supporter?
   @title = 'Welcome!'
-  erb :'welcome', locals: {site: current_site}
+  erb :'supporter/index'
 end
 
 get '/education' do

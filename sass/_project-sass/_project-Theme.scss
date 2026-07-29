@@ -1788,3 +1788,240 @@ html.dark-Mode {
     border-color: #b79adb;
   }
 }
+
+
+html.dark-Mode {
+  .supporter-page {
+    background: #101c21;
+    color: #dbe7e7;
+
+    h2,
+    h3 {
+      color: #f3f8f8;
+    }
+  }
+
+  .supporter-mascot-card {
+    background: #1d3037;
+    border-color: rgba(255, 255, 255, .14);
+    box-shadow: 0 22px 50px rgba(0, 0, 0, .5);
+    color: #dbe7e7;
+
+    &::before {
+      border-color: rgba(148, 196, 205, .28);
+    }
+
+    p {
+      color: #9db4b9;
+    }
+  }
+
+  .supporter-price span {
+    color: #9db4b9;
+  }
+
+  .supporter-upgrade-card,
+  .supporter-visitor-card {
+    background: #17262c;
+    border-color: #35525a;
+    box-shadow: 0 16px 42px rgba(0, 0, 0, .28);
+  }
+
+  .supporter-upgrade-summary {
+    background:
+      radial-gradient(circle at 92% 9%, rgba(255, 107, 130, .08), transparent 26%),
+      #1d3037;
+    border-color: #35525a;
+
+    > p:not(.supporter-section-kicker):not(.supporter-guarantee) {
+      color: #bfd0d2;
+    }
+  }
+
+  .supporter-upgrade-features {
+    color: #cbd9da;
+
+    strong {
+      color: #f1f7f7;
+    }
+
+    .fa {
+      background: #3f5b32;
+      color: #dff1aa;
+    }
+  }
+
+  .supporter-guarantee {
+    border-color: #35525a;
+    color: #aec2c5;
+
+    .fa {
+      color: #8fd0de;
+    }
+  }
+
+  .supporter-checkout {
+    background: #17262c;
+
+    .field-container {
+      label {
+        color: #c3d1d3;
+      }
+
+      input {
+        background: #102027;
+        border-color: #48656c;
+        color: #f1f7f7;
+
+        &:focus {
+          border-color: #67c6dc;
+          box-shadow: 0 0 0 3px rgba(80, 182, 213, .18);
+        }
+      }
+    }
+  }
+
+  .supporter-checkout-heading {
+    border-color: #35525a;
+  }
+
+  .supporter-checkout-price {
+    color: #a9bdc0;
+
+    strong {
+      color: #ff7f93;
+    }
+  }
+
+  .supporter-payment-note {
+    color: #aabdc0;
+
+    .fa {
+      color: #8fd0de;
+    }
+  }
+
+  .supporter-payment-divider {
+    border-color: #35525a;
+
+    span {
+      background: #17262c;
+      color: #9eb1b4;
+    }
+  }
+
+  .supporter-paypal-action {
+    color: #cae0e2;
+
+    &:hover,
+    &:focus {
+      color: #ff8fa0;
+    }
+
+    strong span:first-child {
+      color: #8fb3ff;
+    }
+
+    strong span:last-child {
+      color: #69cef4;
+    }
+  }
+
+  .supporter-visitor-card {
+    h2 {
+      color: #f3f8f8;
+    }
+
+    p:last-child {
+      color: #b8cacc;
+    }
+  }
+
+  .supporter-section-heading > p:last-child {
+    color: #b5c8ca;
+  }
+
+  .supporter-benefit-card {
+    background: #17262c;
+    border-color: #2d4b55;
+    box-shadow: none;
+
+    h3 {
+      color: #f2f7f7;
+    }
+
+    p {
+      color: #b9cacc;
+    }
+  }
+
+  .supporter-benefit-icon {
+    background: #304b3a;
+    color: #cbe99c;
+  }
+
+  .supporter-benefit-card-mission {
+    background: #2b1d21;
+    border-color: #64363c;
+
+    .supporter-benefit-icon {
+      background: #48272e;
+      color: #ff8fa0;
+    }
+  }
+
+  .supporter-mission-section {
+    background: #203c44;
+  }
+
+  .supporter-compare-section {
+    background: #101c21;
+    color: #dbe7e7;
+  }
+
+  .supporter-comparison-table {
+    border-color: #35525a;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .24);
+
+    .plan-chart {
+      th {
+        background: #26383f;
+        border-color: #35525a;
+        color: #f3f8f8;
+      }
+
+      th.professional {
+        background: #3f7480;
+      }
+
+      td {
+        background: #17262c;
+        border-color: #2d4b55;
+        color: #c3d2d4;
+      }
+
+      td:nth-child(3) {
+        background: #21372f;
+        border-color: #385346;
+      }
+
+      td:empty::after {
+        color: #60757a;
+      }
+
+      .feature-column {
+        background: #17262c;
+        color: #d3dfe0;
+
+        span {
+          border-bottom-color: #648088;
+        }
+      }
+
+      .fa-check {
+        background: #3f5b32;
+        color: #dff1aa;
+      }
+    }
+  }
+}

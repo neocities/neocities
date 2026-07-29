@@ -2,7 +2,8 @@
 
 get '/supporter/?' do
   @title = 'Become a Supporter'
-  erb :'welcome'
+  @description = 'Support Neocities and unlock more space, bandwidth, custom domains, and more.'
+  erb :'supporter/index'
 end
 
 post '/supporter/end' do
@@ -104,13 +105,7 @@ post '/supporter/update' do
     redirect '/admin'
   end
 
-  redirect '/supporter/thanks'
-end
-
-get '/supporter/thanks' do
-  @title = 'Supporter Confirmation'
-  require_login
-  erb :'supporter/thanks'
+  redirect '/supporter'
 end
 
 get '/supporter/paypal' do
@@ -180,7 +175,7 @@ get '/supporter/paypal/return' do
   site.plan_ended = false
   site.save_changes validate: false
 
-  redirect '/supporter/thanks'
+  redirect '/supporter'
 end
 
 def paypal_recurring_hash

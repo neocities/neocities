@@ -5,15 +5,6 @@
 .learn-Page {
   padding: 50px 8% 70px;
 
-  // The global .fa-heart styling shrinks and raises the icon to sit as a
-  // supporter badge after usernames; hearts in page copy are ordinary
-  // inline icons.
-  .fa-heart {
-    font-size: inherit;
-    vertical-align: baseline;
-    margin-left: 0;
-  }
-
   .learn-Hero,
   .learn-Path,
   .learn-Further {

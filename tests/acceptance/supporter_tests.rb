@@ -22,6 +22,19 @@ describe '/supporter' do
   #it 'should work for paypal' do
   #end
 
+  it 'allows masked card details through browser pattern validation' do
+    visit '/supporter'
+
+    find('#cardnumber').set '4242424242424242'
+    find('#expirationdate').set '0127'
+    find('#securitycode').set '123'
+
+    _(find('#cardnumber').value).must_equal '4242 4242 4242 4242'
+    _(find('#expirationdate').value).must_equal '01/27'
+    _(page.evaluate_script("document.getElementById('cardnumber').validity.patternMismatch")).must_equal false
+    _(page.evaluate_script("document.getElementById('expirationdate').validity.patternMismatch")).must_equal false
+  end
+
   # FIXME
 =begin
   it 'should work for fresh signup' do
@@ -34,7 +47,7 @@ describe '/supporter' do
     find('.cc-cvc').set '123'
     page.evaluate_script("document.getElementById('stripe_token').value = '#{$stripe_helper.generate_card_token}'")
     click_link 'Upgrade for $5/mo'
-    _(page.current_path).must_equal '/supporter/thanks'
+    _(page.current_path).must_equal '/supporter'
     all('.txt-Center')
     _(page.body).must_match /You have become a Neocities Supporter/
     @site.reload
