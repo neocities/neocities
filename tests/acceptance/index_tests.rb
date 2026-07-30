@@ -79,6 +79,16 @@ describe '/' do
         _(page.current_path).must_equal "/#{l.last}"
       end
     end
+
+    it 'presents clear ways to support Neocities' do
+      visit '/donate'
+
+      _(page).must_have_selector 'h1', text: 'Help keep the web creative and independent.'
+      _(page).must_have_link 'Donate now', href: 'https://donorbox.org/neocities'
+      _(page).must_have_link 'Explore the Supporter plan', href: '/supporter'
+      _(page).must_have_content 'Checkout provided by Donorbox.'
+      _(page).must_have_selector 'img[src="/img/heartcat.svg"][alt="The Neocities cat holding a heart"]'
+    end
   end
 
   describe 'username lookup' do

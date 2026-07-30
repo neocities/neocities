@@ -1788,3 +1788,53 @@ html.dark-Mode {
     border-color: #b79adb;
   }
 }
+
+html.dark-Mode {
+  .donate-Page {
+    background: #101c21;
+  }
+
+  .donate-Card--primary {
+    background: #17262c;
+    border-top-color: #ff5d73;
+  }
+
+  .donate-Card h2,
+  .donate-Impact h2,
+  .donate-ImpactList h3 {
+    color: #f3f8f8;
+  }
+
+  .donate-CardLead,
+  .donate-ImpactList p,
+  .donate-Thanks {
+    color: #b9c9cb;
+  }
+
+  .donate-Kicker {
+    color: #ff8294;
+  }
+
+  .donate-Checkout {
+    color: #98adb1;
+  }
+
+  .donate-Checkout .fa {
+    color: #83cbc6;
+  }
+
+  .donate-Impact {
+    background: #182b2c;
+    border-color: #365447;
+  }
+
+  .donate-ImpactIcon {
+    background: #101c21;
+    border-color: #456b58;
+    color: #ff8294;
+  }
+
+  .donate-Next {
+    background: #203f48;
+  }
+}
