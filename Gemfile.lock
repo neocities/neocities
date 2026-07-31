@@ -212,7 +212,7 @@ GEM
     money (7.0.2)
       bigdecimal
       i18n (~> 1.9)
-    msgpack (1.8.0)
+    msgpack (1.8.2)
     multi_json (1.19.1)
     multipart-post (2.4.1)
     mustermann (3.0.4)
