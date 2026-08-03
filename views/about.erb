@@ -1,46 +1,145 @@
-<div class="header-Outro">
-  <div class="row content single-Col">
-  <h1>About Neocities</h1>
-  <h2 class="subtitle">Your free web page is waiting&#8230; once again.</h2>
+<div class="header-Outro about-Hero">
+  <div class="content about-HeroInner">
+    <div class="about-HeroCopy">
+      <p class="about-Eyebrow">A home for handmade websites</p>
+      <h1>The web is yours.</h1>
+      <p class="about-HeroLead">
+        Neocities gives you a free place to create a personal, static HTML web site that looks, sounds, and feels like you.
+      </p>
+      <div class="about-Actions">
+        <% if signed_in? %>
+          <a class="btn-Action about-PrimaryAction" href="/dashboard">Keep building your site</a>
+        <% else %>
+          <a class="btn-Action about-PrimaryAction" href="/#new">Create your free site</a>
+        <% end %>
+        <a class="about-SecondaryAction" href="/browse">Explore sites</a>
+      </div>
+    </div>
+
+    <div class="about-HeroArt" aria-hidden="true">
+      <div class="about-BrowserWindow">
+        <div class="about-BrowserBar">
+          <span></span>
+          <span></span>
+          <span></span>
+          <div class="about-AddressBar">yoursite.neocities.org</div>
+        </div>
+        <div class="about-BrowserBody">
+          <p><span>&lt;h1&gt;</span>Make something only you could make.<span>&lt;/h1&gt;</span></p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="content single-Col misc-page">
-  <article role="article">
-    <h1>Since 2013, Neocities has been bringing back the fun, creativity and independence that made the web great.</h1>
+<main class="about-Page">
+  <section class="content about-Intro" aria-labelledby="about-why-heading">
+    <p class="about-SectionLabel">Why Neocities</p>
+    <h2 id="about-why-heading">A bulwark for the web&rsquo;s independent spirit.</h2>
+    <div class="about-IntroColumns">
+      <p>
+        Since 2013, Neocities has helped people build independent, static HTML websites. Today, we&rsquo;ve become one of the last, best hopes for the web.<br><br>
+        As social media gets increasingly divisive, shill and evil, we stand as a last line of defense for the creativity and independence of the web.<br><br>
+        A personal website on Neocities is a clean break from garbage social media like Facebook and Twitter: a place you shape from the first heading to the last pixel. Unlike social media, sites don&rsquo;t succeed here by making people hate each other to maximize ad clicks. They succeed by being awesome.
+        <br><br>
+        We believe the web gets better when more people can make it, not just doomscroll through it. Neocities exists to keep that door open, so anyone can learn, experiment, share what they love, and build at their own pace. It's becoming more important with each passing year, not just for the future of the web, but for the future of humanity. Break out of the social media dungeons and join us.
+      </p>
 
-    <p>
-      We are tired of living in an online world where people are isolated from each other on boring, generic social networks that don't let us truly express ourselves. It's time we took back our personalities from these sterilized, lifeless, monetized, data mined, monitored addiction machines and let our creativity flourish again.
-    </p>
+    </div>
+  </section>
 
-    <p>
-      That's where Neocities comes in. We provide a canvas for you to make any web site you want.
-      Whether it's about something you're good at, something you love, something you want to criticize, or your own completely customized profile where they can introduce yourself in a way that actually matters to you.
-    </p>
-    <p>
-      <strong>Our goal: to enable you to harness the creativity, beauty, and power of creating your own web site. To rebuild the web we lost to algorithms and monotony, and make it as fun and creative as it was back in the 90s.</strong>
-    </p>
-    <p>
-      We strongly believe that, with your help, we're going to continue to shake things up on the web. Thank you for believing in us (and yourself).
-    </p>
-    <p>
-      Long Live the Web!
-    </p>
-    <p>
-      PS: What are you waiting for? <strong><a href="/#new">Go make your web site!</a></strong>
-    </p>
-    <h1>Neocities is:</h1>
-    <ul>
-      <li><strong>Helping the web.</strong> We are here to empower people to develop independent, creative sites.</li>
-      <li><strong>Free.</strong> We will always have a free web site option.</li>
-      <li><strong>Open source.</strong> Neocities believes in <a href="https://github.com/neocities">open source</a>, and we share code back with the community.</li>
-      <li><strong>Not an advertising company.</strong> We'll never put ads or watermarks on sites, and we'll never sell your data to marketers or AI companies.</li>
-      <li><strong>Anti lock-in.</strong> Easy site downloading, and support for custom domains.</li>
-      <li><strong>Sustainable.</strong> We want to grow, but that growth cannot risk the site (or compromise our principles).</li>
+  <section class="about-Values" aria-labelledby="about-values-heading">
+    <div class="content">
+      <p class="about-SectionLabel">What we stand for</p>
+      <h2 id="about-values-heading">Your creativity comes first.</h2>
+      <p class="about-SectionIntro">The service is designed around a few promises that keep your corner of the web yours.</p>
+
+      <div class="about-ValueGrid">
+        <article class="about-ValueCard">
+          <i class="fa fa-paint-brush" aria-hidden="true"></i>
+          <h3>Freedom to create</h3>
+          <p>No tiny text box prisons here. You get the <em>entire browser window</em>.</p>
+        </article>
+
+        <article class="about-ValueCard">
+          <i class="fa fa-heart" aria-hidden="true"></i>
+          <h3>Free to start</h3>
+          <p>Neocities will always offer a free way to make and host a website. Curiosity is all you need to get started.</p>
+        </article>
+
+        <article class="about-ValueCard">
+          <i class="fa fa-download" aria-hidden="true"></i>
+          <h3>Your site stays yours</h3>
+          <p>You own your site, we just host it. Download your files whenever you want.</p>
+        </article>
+
+        <article class="about-ValueCard">
+          <i class="fa fa-ban" aria-hidden="true"></i>
+          <h3>No ad business</h3>
+          <p>We do not put ads or watermarks on your site, and we do not sell your data to marketers or AI companies.</p>
+        </article>
+
+        <article class="about-ValueCard">
+          <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+          <h3>Learn by making</h3>
+          <p>Build a real site while you learn HTML and CSS. Experiment freely, see your changes online, and grow your skills at your own pace.</p>
+        </article>
+
+        <article class="about-ValueCard">
+          <i class="fa fa-tree-city" aria-hidden="true"></i>
+          <h3>Built to last</h3>
+          <p>Supporter plans and donations help us grow sustainably without compromising the principles that brought us here.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="content about-Possibilities" aria-labelledby="about-possibilities-heading">
+    <div class="about-PossibilitiesCopy">
+      <p class="about-SectionLabel">What will you make?</p>
+      <h2 id="about-possibilities-heading">Make a place that could only be yours.</h2>
+      <p>
+        A site can be useful, personal, serious, silly, polished, unfinished, or all of those at once. On Neocities, weird is a good thing.
+      </p>
+    </div>
+    <ul class="about-IdeaList" aria-label="Website ideas">
+      <li>Personal homepage</li>
+      <li>Art portfolio</li>
+      <li>Fan shrine</li>
+      <li>Digital garden</li>
+      <li>Project notes</li>
+      <li>Online zine</li>
+      <li>Community archive</li>
+      <li>Strange experiment</li>
+      <li>Affront to sanity</li>
     </ul>
+  </section>
 
-    <p style="margin-top:20px">
-      If you share our values, we would love your support. Spread the word! We also have a <a href="/supporter">supporter plan</a> to help pay for the site, and we accept <a href="/donate">donations</a> through multiple options.
-    </p>
-  </article>
-</div>
+  <section class="content about-Invitation" aria-labelledby="about-invitation-heading">
+    <p class="about-SectionLabel">Long live the web</p>
+    <h2 id="about-invitation-heading">You do not need permission to make something meaningful.</h2>
+    <p>You just need an idea and a blank page.</p>
+    <div class="about-Actions about-InvitationActions">
+      <% if signed_in? %>
+        <a class="btn-Action about-PrimaryAction" href="/dashboard">Open your dashboard</a>
+      <% else %>
+        <a class="btn-Action about-PrimaryAction" href="/#new">Start building for free</a>
+      <% end %>
+      <a class="about-TextAction" href="/tutorials">Learn how to make a site <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </section>
+
+  <aside class="about-Support" aria-labelledby="about-support-heading">
+    <div class="content about-SupportInner">
+      <div>
+        <p class="about-SectionLabel">Help keep it independent</p>
+        <h2 id="about-support-heading">Support a people-powered web.</h2>
+        <p>Neocities is funded by people who believe everyone deserves a place to create online.</p>
+      </div>
+      <div class="about-SupportLinks">
+        <a href="/supporter">Become a supporter</a>
+        <a href="/donate">Make a donation</a>
+      </div>
+    </div>
+  </aside>
+</main>

@@ -135,7 +135,8 @@ get '/donate' do
 end
 
 get '/about' do
-  @description = 'Read about the Neocities mission and the team building a better web.'
+  @title = 'About'
+  @description = 'Learn about our mission to save the web from garbage social media.'
   erb :'about'
 end
 

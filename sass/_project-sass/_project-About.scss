@@ -1,0 +1,651 @@
+// ----------------------------------------------------------------
+// About page
+// ----------------------------------------------------------------
+
+.interior .about-Hero {
+  background: $c-Teal-Deeper;
+  @include linear-gradient(135deg, #243b44 0%, #355d68 58%, #5e95a1 100%);
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+
+  &:before {
+    background-image: radial-gradient(rgba(255,255,255,.14) 1px, transparent 1px);
+    background-size: 18px 18px;
+    content: '';
+    height: 240px;
+    opacity: .55;
+    position: absolute;
+    right: -40px;
+    top: -35px;
+    transform: rotate(8deg);
+    width: 410px;
+  }
+}
+
+.about-HeroInner {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  gap: 7%;
+  min-height: 490px;
+  padding-bottom: 66px;
+  padding-top: 62px;
+  position: relative;
+}
+
+.about-HeroCopy {
+  flex: 1 1 56%;
+  max-width: 660px;
+  position: relative;
+  z-index: 1;
+}
+
+.about-Eyebrow,
+.about-SectionLabel {
+  font-family: $arial;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.8px;
+  line-height: 1.4;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+.about-Eyebrow {
+  color: #bce4e8;
+}
+
+.interior .about-Hero h1 {
+  color: #fff;
+  font-size: 3.65em;
+  line-height: 1.03;
+  margin: 0 0 20px;
+  max-width: 650px;
+  text-shadow: 0 2px 1px rgba(0,0,0,.12);
+}
+
+.about-HeroLead {
+  color: #e6f0f1;
+  font-family: $arial;
+  font-size: 18px;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 640px;
+}
+
+.about-Actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 30px;
+}
+
+.about-PrimaryAction {
+  font-size: 15px;
+  font-weight: bold;
+  padding: 13px 22px;
+}
+
+.interior .about-Hero .about-SecondaryAction {
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 5px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 12px 21px;
+  text-decoration: none;
+  transition: background .15s ease, border-color .15s ease;
+
+  &:hover, &:focus {
+    background: rgba(255,255,255,.12);
+    border-color: #fff;
+    color: #fff;
+  }
+}
+
+.about-HeroArt {
+  flex: 0 1 405px;
+  min-height: 345px;
+  position: relative;
+  z-index: 1;
+}
+
+.about-BrowserWindow {
+  background: #fffdf7;
+  border: 5px solid #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 38px rgba(10,27,33,.28);
+  box-sizing: border-box;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+}
+
+.about-BrowserBar {
+  align-items: center;
+  background: #edf3f3;
+  border-bottom: 1px solid #cedddd;
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+
+  > span {
+    background: #e93250;
+    border-radius: 50%;
+    display: block;
+    height: 9px;
+    width: 9px;
+  }
+
+  > span:nth-child(2) {
+    background: #f0bb51;
+  }
+
+  > span:nth-child(3) {
+    background: #66b890;
+  }
+}
+
+.about-AddressBar {
+  background: #fff;
+  border: 1px solid #d7e0e0;
+  border-radius: 3px;
+  color: #728487;
+  flex: 1;
+  font-family: $arial;
+  font-size: 10px;
+  margin-left: 5px;
+  overflow: hidden;
+  padding: 4px 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.about-BrowserBody {
+  align-items: center;
+  background: #fff9e8;
+  display: flex;
+  justify-content: center;
+  min-height: 275px;
+  overflow: hidden;
+  padding: 14px 18px;
+  position: relative;
+
+
+  p {
+    color: #30424b;
+    font-family: $headings;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1.35;
+    margin: 0;
+    max-width: 245px;
+    text-align: center;
+
+    span {
+      color: #e93250;
+      display: block;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: normal;
+      margin: 5px 0;
+    }
+  }
+}
+
+.about-Page {
+  background: $c-Warm-Page;
+  color: $c-Dark;
+}
+
+.about-Page h2,
+.about-Page h3 {
+  color: $c-Teal-Dark;
+}
+
+.about-Page h2 {
+  font-size: 2.25em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.about-Page h3 {
+  font-size: 1.25em;
+  line-height: 1.3;
+  margin: 0 0 10px;
+}
+
+.about-SectionLabel {
+  color: $c-Brand-1;
+}
+
+.about-Intro {
+  box-sizing: border-box;
+  padding-bottom: 74px;
+  padding-top: 78px;
+  text-align: center;
+}
+
+.about-Intro h2 {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 740px;
+}
+
+.about-IntroColumns {
+  display: flex;
+  gap: 50px;
+  margin: 38px auto 0;
+  max-width: 930px;
+  text-align: left;
+
+  p {
+    flex: 1;
+    font-family: $arial;
+    font-size: 16px;
+    line-height: 1.75;
+    margin: 0;
+  }
+}
+
+.about-Values {
+  background: #fff;
+  border-bottom: 1px solid #e8e0d5;
+  border-top: 1px solid #e8e0d5;
+  padding: 72px 0 54px;
+  text-align: center;
+
+  > .content {
+    box-sizing: border-box;
+  }
+}
+
+.about-SectionIntro {
+  color: #667579;
+  font-family: $arial;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 14px auto 0;
+  max-width: 650px;
+}
+
+.about-ValueGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 42px;
+  text-align: left;
+}
+
+.about-ValueCard {
+  background: #fbf8f2;
+  border: 1px solid #ece4d9;
+  border-radius: 10px;
+  box-sizing: border-box;
+  flex: 1 1 31%;
+  min-width: 280px;
+  padding: 27px 25px 25px;
+  position: relative;
+  transition: border-color .15s ease;
+
+  &:hover {
+    border-color: #d7cabe;
+  }
+
+  > .fa {
+    align-items: center;
+    background: #f8dde1;
+    border-radius: 50%;
+    color: $c-Brand-1;
+    display: flex;
+    font-size: 16px;
+    height: 38px;
+    justify-content: center;
+    margin-bottom: 19px;
+    width: 38px;
+  }
+
+  p {
+    color: #536166;
+    font-family: $arial;
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0;
+  }
+}
+
+.about-Possibilities {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  gap: 80px;
+  padding-bottom: 84px;
+  padding-top: 84px;
+}
+
+.about-PossibilitiesCopy {
+  flex: 1 1 48%;
+
+  > p:last-child {
+    font-family: $arial;
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 20px 0 0;
+    max-width: 570px;
+  }
+}
+
+.about-IdeaList {
+  display: grid;
+  flex: 1 1 45%;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #dfd6c9;
+    border-radius: 999px;
+    box-sizing: border-box;
+    color: #45565b;
+    display: flex;
+    font-family: $arial;
+    font-size: 13px;
+    font-weight: bold;
+    height: 40px;
+    justify-content: center;
+    padding: 0 14px;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+.about-Invitation {
+  background: $c-Teal-Dark;
+  border-radius: 14px;
+  box-shadow: $bs-Panel;
+  box-sizing: border-box;
+  color: #e9f0f1;
+  margin-bottom: 82px;
+  overflow: hidden;
+  padding: 50px 58px 52px;
+  position: relative;
+
+  .about-SectionLabel {
+    color: #bce4e8;
+  }
+
+  h2 {
+    color: #fff;
+    font-size: 2.05em;
+    max-width: 710px;
+  }
+
+  > p:not(.about-SectionLabel) {
+    font-family: $arial;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 16px 0 0;
+  }
+}
+
+.about-InvitationActions {
+  margin-top: 24px;
+}
+
+.about-TextAction {
+  color: #fff!important;
+  font-weight: bold;
+  text-decoration: none;
+
+  &:hover, &:focus {
+    text-decoration: underline;
+  }
+}
+
+.about-Support {
+  background: #efe6d8;
+  border-top: 1px solid #dfd1bd;
+}
+
+.about-SupportInner {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  gap: 50px;
+  justify-content: space-between;
+  padding-bottom: 42px;
+  padding-top: 42px;
+
+  h2 {
+    font-size: 1.7em;
+  }
+
+  p:last-child {
+    color: #5a686b;
+    font-family: $arial;
+    line-height: 1.6;
+    margin: 10px 0 0;
+  }
+}
+
+.about-SupportLinks {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 12px;
+
+  a {
+    border: 1px solid #cdbda7;
+    border-radius: 5px;
+    color: $c-Burgundy;
+    font-weight: bold;
+    padding: 11px 16px;
+    text-decoration: none;
+
+    &:hover, &:focus {
+      background: #fff;
+      border-color: #b9a58a;
+    }
+  }
+}
+
+@media (max-device-width:480px), screen and (max-width:800px) {
+  .about-HeroInner {
+    display: block;
+    min-height: 0;
+    padding-bottom: 45px;
+    padding-top: 42px;
+  }
+
+  .interior .about-Hero h1 {
+    font-size: 2.7em;
+  }
+
+  .about-HeroLead {
+    font-size: 16px;
+  }
+
+  .about-HeroArt {
+    margin: 42px auto 0;
+    max-width: 405px;
+  }
+
+  .about-Intro {
+    padding-bottom: 52px;
+    padding-top: 55px;
+  }
+
+  .about-IntroColumns,
+  .about-Possibilities,
+  .about-SupportInner {
+    display: block;
+  }
+
+  .about-IntroColumns {
+    margin-top: 30px;
+
+    p + p {
+      margin-top: 18px;
+    }
+  }
+
+  .about-Values {
+    padding-bottom: 38px;
+    padding-top: 52px;
+  }
+
+  .about-ValueGrid {
+    margin-top: 32px;
+  }
+
+  .about-ValueCard {
+    flex-basis: 45%;
+    min-width: 250px;
+  }
+
+  .about-Possibilities {
+    padding-bottom: 60px;
+    padding-top: 60px;
+  }
+
+  .about-IdeaList {
+    margin-top: 30px;
+  }
+
+  .about-Invitation {
+    border-radius: 0;
+    margin-bottom: 0;
+    max-width: none;
+    padding: 45px 7% 48px;
+  }
+
+  .about-SupportInner {
+    padding-bottom: 38px;
+    padding-top: 38px;
+  }
+
+  .about-SupportLinks {
+    margin-top: 24px;
+  }
+}
+
+@media screen and (max-width:560px) {
+  .about-Page h2 {
+    font-size: 1.8em;
+  }
+
+  .interior .about-Hero h1 {
+    font-size: 2.25em;
+  }
+
+  .about-Actions,
+  .about-SupportLinks {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .about-Actions a,
+  .about-SupportLinks a {
+    box-sizing: border-box;
+    text-align: center;
+    width: 100%;
+  }
+
+  .about-HeroArt {
+    min-height: 285px;
+  }
+
+  .about-BrowserBody {
+    min-height: 225px;
+
+    p {
+      font-size: 16px;
+    }
+  }
+
+  .about-ValueGrid {
+    display: block;
+  }
+
+  .about-ValueCard {
+    margin-bottom: 14px;
+    min-width: 0;
+  }
+
+  .about-IdeaList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .about-Invitation {
+    padding: 42px 7%;
+  }
+}
+
+html.dark-Mode {
+  .about-Page {
+    background: #101c21;
+    color: #dbe7e7;
+  }
+
+  .about-Page h2,
+  .about-Page h3 {
+    color: #f1f7f7;
+  }
+
+  .about-Values {
+    background: #17262c;
+    border-color: #2d4b55;
+  }
+
+  .about-SectionIntro,
+  .about-ValueCard p,
+  .about-SupportInner p:last-child {
+    color: #afc0c3;
+  }
+
+  .about-ValueCard {
+    background: #101c21;
+    border-color: #2d4b55;
+
+    &:hover {
+      border-color: #456b75;
+    }
+
+    > .fa {
+      background: #43232b;
+      color: #ff7f92;
+    }
+  }
+
+  .about-IdeaList li {
+    background: #17262c;
+    border-color: #365963;
+    color: #dbe7e7;
+  }
+
+  .about-Invitation {
+    background: #203a43;
+  }
+
+  .about-Support {
+    background: #17262c;
+    border-color: #2d4b55;
+  }
+
+  .about-SupportLinks a {
+    border-color: #456b75;
+    color: #ff8fa0;
+
+    &:hover, &:focus {
+      background: #20383f;
+      border-color: #6babb8;
+    }
+  }
+}

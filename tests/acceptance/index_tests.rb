@@ -89,6 +89,19 @@ describe '/' do
       _(page).must_have_content 'Checkout provided by Donorbox.'
       _(page).must_have_selector 'img[src="/img/heartcat.svg"][alt="The Neocities cat holding a heart"]'
     end
+
+    it 'presents the Neocities mission and ways to get involved' do
+      Capybara.reset_sessions!
+      visit '/about'
+
+      _(page).must_have_css 'main.about-Page'
+      _(page).must_have_content 'The web is yours.'
+      _(page).must_have_content 'Your creativity comes first.'
+      _(page).must_have_content 'Learn by making'
+      _(page).must_have_link 'Create your free site', href: '/#new'
+      _(page).must_have_link 'Explore sites', href: '/browse'
+      _(page).must_have_link 'Become a supporter', href: '/supporter'
+    end
   end
 
   describe 'username lookup' do
