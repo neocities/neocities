@@ -150,11 +150,6 @@ get '/privacy' do
   erb :'privacy'
 end
 
-get '/press' do
-  @description = 'Press resources, facts, and media information about Neocities.'
-  erb :'press'
-end
-
 get '/legal/?' do
   @title = 'Legal Guide to Neocities'
   @description = 'Browse legal information and policy guidance for Neocities.'

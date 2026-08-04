@@ -8,7 +8,6 @@
 0.9,monthly,https://neocities.org/about
 0.9,monthly,https://neocities.org/donate
 0.9,monthly,https://neocities.org/api
-0.9,monthly,https://neocities.org/press
 0.8,monthly,https://neocities.org/terms
 0.8,weekly,https://blog.neocities.org
 0.7,monthly,https://neocities.org/contact

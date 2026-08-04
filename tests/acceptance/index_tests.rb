@@ -68,8 +68,7 @@ describe '/' do
         ['Learn', 'tutorials'],
         ['Donate', 'donate'],
         ['API', 'api'],
-        ['Terms', 'terms'],
-        ['Press', 'press']
+        ['Terms', 'terms']
       ]
 
       links.each do |l|
