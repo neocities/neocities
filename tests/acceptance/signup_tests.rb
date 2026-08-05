@@ -50,7 +50,7 @@ describe 'signup' do
     fill_in_valid
     click_signup_button
     site_created?
-    click_link 'Continue'
+    find('a.supporter-skip-action[href="/tutorial"]').click
     _(current_path).must_equal "/site/#{@site[:username]}/confirm_email"
     _(page).must_have_content 'With great power comes great responsibility'
     _(page).must_have_content /almost ready!/
@@ -74,7 +74,7 @@ describe 'signup' do
     fill_in_valid
     click_signup_button
     site_created?
-    click_link 'Continue'
+    find('a.supporter-skip-action[href="/tutorial"]').click
 
     EmailWorker.jobs.clear
 
