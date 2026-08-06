@@ -360,7 +360,7 @@ describe '/admin' do
       _(page.body).must_match(/\b1 deleted\b/)
     end
 
-    it 'blurs page screenshots only for reported blur-category paths on the current site' do
+    it 'blurs all page screenshots when the current site has a blur-category report' do
       site = Fabricate :site
       reporting_site = Fabricate :site
       other_site = Fabricate :site
@@ -382,7 +382,7 @@ describe '/admin' do
         site: site,
         reporting_site: reporting_site,
         type: 'phishing',
-        comments: 'Do not blur this page',
+        comments: 'Another report on the same site',
         site_file_path: 'clear.html'
       )
       Report.create(
@@ -399,7 +399,7 @@ describe '/admin' do
       clear_image = find("img[data-site-file-path='clear.html']")
 
       _(blurred_image[:style].to_s).must_match(/filter:\s*blur\(4px\)/)
-      _(clear_image[:style].to_s).wont_match(/filter:\s*blur\(4px\)/)
+      _(clear_image[:style].to_s).must_match(/filter:\s*blur\(4px\)/)
     end
 
     it 'changes a parent site password' do
@@ -588,6 +588,26 @@ describe '/admin' do
       within("#report-#{@report.id}") do
         _(page).wont_have_selector('.moderation-blurred-screenshot')
         _(find('img')[:style]).wont_match(/filter:\s*blur/)
+      end
+    end
+
+    it 'blurs every report for a site with a blur-category report' do
+      blur_category = Array($config['moderation_blur_categories']).first
+      sensitive_report = Report.create(
+        site: @reported_site,
+        reporting_site: @reporting_site,
+        type: blur_category,
+        comments: 'Sensitive content',
+        site_file_path: 'sensitive.html'
+      )
+
+      visit '/admin/reports'
+
+      [@report, sensitive_report].each do |report|
+        within("#report-#{report.id}") do
+          _(page).must_have_selector('.moderation-blurred-screenshot')
+          _(find('img')[:style]).must_match(/filter:\s*blur\(4px\)/)
+        end
       end
     end
 

@@ -23,7 +23,7 @@
                   screenshot_path = 'index.html'
                 end
 
-                blur_sensitive_screenshot = @moderation_blur_categories.include?(report.type)
+                blur_sensitive_screenshot = @moderation_blur_site_ids.include?(report.site_id)
               %>
               
               <div style="position: relative; margin-bottom: 10px;">

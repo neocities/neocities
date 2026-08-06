@@ -11,7 +11,11 @@ get '/admin/reports' do
   @page = 1 if @page < 1
   @per_page = 51
 
-  @moderation_blur_categories = $config['moderation_blur_categories']
+  @moderation_blur_categories = Array($config['moderation_blur_categories'])
+  @moderation_blur_site_ids = Report
+    .where(type: @moderation_blur_categories)
+    .select_map(:site_id)
+    .uniq
   
   @reports = Report.join(:sites, id: :site_id).where(sites__is_deleted: false, sites__is_banned: false).order(:reports__created_at.desc).select_all(:reports).paginate(@page, @per_page)
   @pagination_dataset = @reports
@@ -630,14 +634,9 @@ get %r{/admin/site/(.+)} do |username_or_email_or_domain|
 
   @title = "Site Info - #{@site.username}"
   @moderation_blur_categories = Array($config['moderation_blur_categories'])
-  @moderation_blur_paths = Report
+  @moderation_blur_site = Report
     .where(site_id: @site.id, type: @moderation_blur_categories)
-    .all
-    .map do |report|
-      path = report.site_file_path.to_s.sub(%r{\A/+}, '')
-      path.empty? ? 'index.html' : path
-    end
-    .uniq
+    .any?
 
   erb :'admin/site'
 end

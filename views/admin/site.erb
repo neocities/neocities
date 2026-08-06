@@ -375,7 +375,7 @@
           <% if @site.site_files_dataset.where(path: /\.html/).count > 0 %>
             <div class="row">
               <% @site.site_files_dataset.where(path: /\.html/).order(:path).all.each do |site_file| %>
-                <% blur_sensitive_screenshot = @moderation_blur_paths.include?(site_file.path) %>
+                <% blur_sensitive_screenshot = @moderation_blur_site %>
                 <div class="col col-33">
                   <div class="block">
                     <div class="center">
