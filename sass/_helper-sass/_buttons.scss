@@ -3,18 +3,18 @@
 // ----------------------------------------------------------------
 .btn, %btn{
     background:$c-Dark; 
-    border:1px solid rgba(0,0,0,.12);
-    @include border-radius(5px);
-    @include box-shadow(0 1px 2px rgba(0,0,0,.18));
+    border: 1px solid #b51f38;
+    @include border-radius(4px);
+    @include box-shadow(0 1px 2px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3));
     color:$c-Lighter!important;
     cursor:pointer;
     display:inline-block;
     font:{family:$brand; size:$base}
     line-height:1;
-    padding:$spacing*2 $spacing*5; 
+    padding:$spacing*1.5 $spacing*4; 
     text-align:center;
     text-decoration:none!important; // set to !important so that if used inside of a .nav, no decoration doesn't get overridden
-    text-shadow:0 1px 1px rgba(0,0,0,.4);
+    text-shadow:0 -1px rgba(0,0,0,.4);
     @include vendor(transition, background .15s ease, box-shadow .15s ease, transform .15s ease);
     vertical-align:middle;
     -webkit-appearance:none;
@@ -23,20 +23,36 @@
 	    padding:$spacing*2 $spacing*4
     }
     
-    &:hover, &:active{
-        background:$c-Darker; 
+    &:hover{
+        background: -webkit-linear-gradient(top, #ed516a, #b51f38);
+        background: -moz-linear-gradient(top, #ed516a,#b51f38);
+        background: -o-linear-gradient(top, #ed516a,#b51f38);
+        background: linear-gradient(top, #ed516a,#b51f38);
+        color:$c-Lighter;
+    }
+
+    &:active{
+        background: -webkit-linear-gradient(bottom, #ed516a, #b51f38);
+        background: -moz-linear-gradient(bottom, #ed516a,#b51f38);
+        background: -o-linear-gradient(bottom, #ed516a,#b51f38);
+        background: linear-gradient(bottom, #ed516a,#b51f38);
+        @include box-shadow(inset 0 2px 6px #00000090);
         color:$c-Lighter;
     }
 
     &:focus{
         @include box-shadow(0 0 0 3px rgba(80,182,213,.35));
+        outline: none;
     }
     
     &:visited{color:$c-Lighter;}
     
     &.cancel {
-      background: #999;
-      text-shadow: none;
+        background: #666;
+        border-color: #666;
+        border-bottom-color: #555;
+        text-shadow: 0 -1px #00000050;
+        line-height: 1.1;
     }
 }
 
