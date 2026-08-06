@@ -237,6 +237,48 @@ api.info('madamfrp', function(resp) {
   <pre><code class="bash">$ curl -H "Authorization: Bearer da77c3530c30593663bf7b797323e48c" \
 https://neocities.org/api/info</code></pre>
 
+<h2>GET /api/export</h2>
+<p>
+  Downloads your entire website as a single compressed ZIP archive. 
+  This endpoint does not require any parameters and provides a fast, efficient backup of your files.
+</p>
+
+<h3>Arguments</h3>
+<p>This endpoint does not accept any arguments.</p>
+
+<h3>Examples</h3>
+
+<h6>Using cURL</h6>
+<pre><code class="bash">$ curl -u "YOURUSERNAME:YOURPASSWORD" "https://neocities.org/api/export" -o mysite.zip</code></pre>
+
+<h6>Successful Response</h6>
+<p>
+  The server will respond with a binary stream (<code>application/zip</code>) containing the entire directory structure of your website. 
+  Your HTTP client or browser will automatically download it as a <code>.zip</code> file.
+</p>
+
+<h6>Error Responses</h6>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>403</td>
+      <td><code>invalid_auth</code></td>
+      <td>The username or password provided is incorrect, or the API token is invalid.</td>
+    </tr>
+    <tr>
+      <td>429</td>
+      <td><code>rate_limit_exceeded</code></td>
+      <td>The rate limit for API requests has been exceeded.(no more than once an hour)</td>
+    </tr>
+  </tbody>
+</table>
   <h2>Need something the API doesn't provide?</h2>
   <p>
     If the API does not supply something you need, <a href="/contact">contact us</a> and we will try to add it!
