@@ -42,6 +42,21 @@ describe 'site page' do
       click_button 'Post'
       _(EmailWorker.jobs.length).must_equal 0
     end
+
+    it 'confirms before deleting a reply' do
+      @site.add_profile_comment actioning_site_id: @site.id, message: 'A comment'
+      event = @site.profile_comments.first.event
+      comment = event.add_site_comment @commenting_site, 'A reply'
+
+      visit "/site/#{@site.username}"
+
+      delete_link = find("a[href='#deleteEventComment#{comment.id}']")
+      _(delete_link['data-toggle']).must_equal 'modal'
+
+      modal = find("#deleteEventComment#{comment.id}", visible: :all)
+      delete_button = modal.find('button.btn-Action')
+      _(delete_button['onclick']).must_include "Comment.delete(#{comment.id},"
+    end
   end
 
 

@@ -124,9 +124,10 @@
   <% end %>
 
   <% if event.undeleted_comments_count > 0 %>
+    <% comments = event.undeleted_comments(current_site ? current_site.blocking_site_ids : nil) %>
     <div class="content">
       <div class="comments">
-        <% event.undeleted_comments(current_site ? current_site.blocking_site_ids : nil).each do |comment| %>
+        <% comments.each do |comment| %>
           <% comment_actioning_site = comment.actioning_site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <% comment_event_site = comment.event.site_dataset.select(:id, :title, :domain, :username, :stripe_customer_id, :plan_type).first %>
           <div class="comment" id="comment_<%= comment.id %>">
@@ -149,13 +150,33 @@
 
             <% if current_site %>
               <% if event.site_id == current_site.id || comment.actioning_site_id == current_site.id %>
-                <a href="#" onclick="Comment.delete(<%= comment.id %>, '<%= csrf_token %>'); return false">Delete</a>
+                <a href="#deleteEventComment<%= comment.id %>" data-toggle="modal">Delete</a>
               <% end %>
             <% end %>
           </div>
         <% end %>
       </div>
     </div>
+
+    <% if current_site %>
+      <% comments.each do |comment| %>
+        <div class="modal hide" id="deleteEventComment<%= comment.id %>" tabindex="-1" role="dialog" aria-labelledby="deleteEventCommentLabel<%= comment.id %>" aria-hidden="true">
+          <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h3 id="addTagLabel">Delete</h3>
+          </div>
+          <div class="modal-body">
+            <p>
+              Are you sure you want to remove this comment from the news feed?
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button type="submit" class="btn-Action" onclick="Comment.delete(<%= comment.id %>, '<%= csrf_token %>'); return false">Delete</button>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
   <% end %>
 
   </div>
