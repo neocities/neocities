@@ -24,23 +24,33 @@
 //    display:block;
 //  }
   .site-info {
+    display: flex;
+    flex-wrap: wrap;
+
     a, a:visited {
       color: #666;
       font-size: 80%;
     }
     .username {
+      flex: 1;
       float: left;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
-      width: 63%;
+      width: auto;
       height: 1.3em;
       white-space: nowrap;
     }
     .site-stats {
+      flex: none;
       float: right;
       overflow: hidden;
-      width: 35%;
+      width: auto;
       text-align: right;
+      white-space: nowrap;
+    }
+    .site-stats a {
+      font-size: 70%;
     }
     .site-tags {
       width: 100%;
