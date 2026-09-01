@@ -3,8 +3,6 @@ var dashboardViewType = localStorage && localStorage.getItem('viewType')
 if(dashboardViewType != 'icon')
   $('#filesDisplay').addClass('list-view')
 
-// Copies text to the user's clipboard using the modern Async Clipboard API,
-// falling back to a hidden textarea + execCommand for older browsers or restricted contexts.
 function copyTextToClipboard(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     return navigator.clipboard.writeText(text);
@@ -14,7 +12,6 @@ function copyTextToClipboard(text) {
     try {
       var textArea = document.createElement('textarea');
       textArea.value = text;
-      // Position off-screen without hiding so execCommand('copy') succeeds reliably
       textArea.style.position = 'fixed';
       textArea.style.top = '-9999px';
       textArea.style.left = '-9999px';
@@ -29,7 +26,7 @@ function copyTextToClipboard(text) {
       if (successful) {
         resolve();
       } else {
-        reject(new Error('execCommand copy was unsuccessful'));
+        reject(new Error('Copy command failed'));
       }
     } catch (err) {
       reject(err);
@@ -37,9 +34,6 @@ function copyTextToClipboard(text) {
   });
 }
 
-// Handles the "Copy Code" quick action for individual text/editable files.
-// Fetches the raw file content from the same-origin download endpoint,
-// writes it to the clipboard, and triggers a smooth feedback transition on the button.
 function copyFileCode(event, path, el) {
   if (event) {
     event.preventDefault();
@@ -49,7 +43,6 @@ function copyFileCode(event, path, el) {
   var $el = $(el);
   var originalHtml = $el.html();
 
-  // Prevent double-clicks while an operation is currently in flight
   if ($el.data('copying')) {
     return;
   }
@@ -58,7 +51,6 @@ function copyFileCode(event, path, el) {
   $el.removeClass('is-copied is-error');
   $el.html('<i class="fa fa-spinner fa-spin"></i> Copying...');
 
-  // URL-encode path segments while preserving directory slashes for Sinatra's wildcard route
   var encodedPath = path.split('/').map(function(segment) {
     return encodeURIComponent(segment);
   }).join('/');

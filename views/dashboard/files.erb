@@ -103,19 +103,16 @@
 
           <div class="overlay">
             <div id="<%= file_dom_id %>" style="display: none"><%= file[:path] %></div>
-            <%# Quick actions for text and code files %>
             <% if file[:is_editable] && !file[:is_directory] %>
               <a href="/site_files/text_editor?filename=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
               <a href="javascript:void(0)" class="action-copy-code" onclick="copyFileCode(event, $('#<%= file_dom_id %>').text(), this)"><i class="fa fa-copy" title="Copy Code"></i> Copy Code</a>
             <% end %>
-            <%# Direct download quick action for media and asset files %>
             <% if !file[:is_editable] && !file[:is_directory] %>
               <a href="/site_files/download/<%= Rack::Utils.escape file[:path] %>" download="<%= Rack::Utils.escape_html(file[:name]) %>"><i class="fa fa-download" title="Download"></i> Download</a>
             <% end %>
             <% if file[:is_directory] %>
               <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
             <% end %>
-            <%# Allow rename and delete for any file except the required root index.html %>
             <% if !file[:is_root_index] %>
               <a href="#" onclick="confirmFileRename($('#<%= file_dom_id %>').text())"><i class="fa fa-file" title="Rename"></i> Rename</a>
               <a href="#" onclick="confirmFileDelete($('#<%= file_dom_id %>').text())"><i class="fa fa-trash" title="Delete"></i> Delete</a>

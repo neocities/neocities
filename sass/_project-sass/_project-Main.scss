@@ -755,7 +755,6 @@
   display: block;
   padding-top: 35px;
 }
-// File action overlay displayed when hovering over files in the dashboard file manager
 .overlay a {
   color: $c-White;
   text-decoration: none;
@@ -787,7 +786,6 @@
   @include vendor(transform, translateX(1px) scale(0.98));
 }
 
-// Micro-animation for quick action button state changes (Copied / Error)
 @keyframes quickActionPop {
   0% { transform: scale(0.92); opacity: 0.7; }
   50% { transform: scale(1.06); }
