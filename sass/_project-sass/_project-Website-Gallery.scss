@@ -26,26 +26,23 @@
   .site-info {
     display: flex;
     flex-wrap: wrap;
+    gap: 0 0.5em;
+    width: 100%;
 
     a, a:visited {
       color: #666;
       font-size: 80%;
     }
     .username {
-      flex: 1;
-      float: left;
-      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
-      width: auto;
       height: 1.3em;
       white-space: nowrap;
     }
     .site-stats {
-      flex: none;
-      float: right;
+      flex: 1;
       overflow: hidden;
-      width: auto;
+      text-overflow: ellipsis;
       text-align: right;
       white-space: nowrap;
     }
