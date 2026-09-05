@@ -56,6 +56,23 @@
           </table>
 
           <% if @site.parent? %>
+            <form action="/admin/site/change_email" method="POST" style="margin-top: 15px;">
+              <input type="hidden" name="username" value="<%= @site.username %>">
+              <%== csrf_token_input_html %>
+
+              <h3>Admin Email Recovery (Dangerous)</h3>
+              <p>Use this when the user has forgotten both their old email address and password.</p>
+              <div class="alert alert-block alert-error">
+                <strong>Danger:</strong> This changes the email immediately without verifying the old email or password. Anyone with access to the new address can reset the password and take control of the account. Confirm account ownership before proceeding.
+              </div>
+
+              <p><label for="new_email">New Email:</label></p>
+              <input class="input-Area" id="new_email" name="email" type="email" required>
+              <p>A confirmation email will be sent to the new address. The old address will be notified, but no response is required.</p>
+
+              <p><input class="btn-Action" type="submit" value="Force Change Email" onclick="return confirm('Danger: This changes the email without verifying the old email or password and lets the new address reset the password. Continue?');"></p>
+            </form>
+
             <form action="/admin/site/change_password" method="POST" style="margin-top: 15px;">
               <input type="hidden" name="username" value="<%= @site.username %>">
               <%== csrf_token_input_html %>
@@ -74,6 +91,7 @@
               <%== csrf_token_input_html %>
 
               <h3>Send Email Recovery Link</h3>
+              <p>The user must know their old email address and password to complete this recovery.</p>
               <p>New Email:</p>
               <input class="input-Area" id="email_recovery_email" name="email" type="email" required>
 

@@ -442,6 +442,53 @@ post '/admin/site/change_password' do
   redirect "/admin/site/#{site.username}"
 end
 
+post '/admin/site/change_email' do
+  require_admin
+  site = Site[username: params[:username]]
+  not_found if site.nil?
+
+  unless site.parent?
+    flash[:error] = 'Email can only be changed on parent sites.'
+    redirect "/admin/site/#{site.username}"
+  end
+
+  previous_email = site.email
+  site.email = params[:email].to_s.strip
+
+  if site.email == previous_email
+    flash[:error] = 'This account is already using this email address.'
+    redirect "/admin/site/#{site.username}"
+  end
+
+  if site.valid?
+    site.email_confirmed = false
+    site.email_confirmation_token = SecureRandom.hex 3
+    site.email_confirmation_count = 0
+    site.password_reset_token = nil
+    site.password_reset_confirmed = false
+    site.email_recovery_email = nil
+    site.email_recovery_token_digest = nil
+    site.email_recovery_expires_at = nil
+    site.save_changes
+
+    invalidate_email_login_challenges site
+    send_confirmation_email site
+
+    EmailWorker.perform_async({
+      from: Site::FROM_EMAIL,
+      to: previous_email,
+      subject: '[Neocities] Your email address has been changed',
+      body: Tilt.new('./views/templates/email/email_changed.erb', pretty: true).render(self, site: site, previous_email: previous_email)
+    })
+
+    flash[:success] = 'Email address changed.'
+  else
+    flash[:error] = site.errors.first.last.first
+  end
+
+  redirect "/admin/site/#{site.username}"
+end
+
 post '/admin/site/email_recovery' do
   require_admin
   site = Site[username: params[:username]]

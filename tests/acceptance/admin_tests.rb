@@ -45,6 +45,15 @@ describe '/admin' do
       _(site_to_change.valid_password?('oldpass')).must_equal true
       _(site_to_change.valid_password?('newpass')).must_equal false
 
+      original_email = site_to_change.email
+      page.driver.post '/admin/site/change_email', {
+        username: site_to_change.username,
+        email: 'new@example.com'
+      }
+
+      _(page.driver.status_code).must_equal 302
+      _(site_to_change.reload.email).must_equal original_email
+
       page.driver.post '/admin/site/email_recovery', {
         username: site_to_change.username,
         email: 'new@example.com'
@@ -79,7 +88,7 @@ describe '/admin' do
       end
       
       # Test POST routes
-      ['/admin/reports', '/admin/ban', '/admin/unban', '/admin/mark_nsfw', '/admin/feature', '/admin/email', '/admin/site/change_password', '/admin/site/email_recovery', '/admin/site/email_recovery/cancel'].each do |path|
+      ['/admin/reports', '/admin/ban', '/admin/unban', '/admin/mark_nsfw', '/admin/feature', '/admin/email', '/admin/site/change_password', '/admin/site/change_email', '/admin/site/email_recovery', '/admin/site/email_recovery/cancel'].each do |path|
         page.driver.post path, {}
         _(page.driver.status_code).must_equal 302, "Expected redirect for POST #{path}"
         
@@ -468,6 +477,96 @@ describe '/admin' do
       _(site.valid_password?('newpass')).must_equal false
     end
 
+  end
+
+  describe 'email changes' do
+    before do
+      EmailWorker.jobs.clear
+      @site = Fabricate :site
+      visit "/admin/site/#{@site.username}"
+    end
+
+    it 'changes a parent account email and sends confirmation and notification emails' do
+      original_email = @site.email
+      original_token = @site.email_confirmation_token
+      new_email = "#{SecureRandom.hex}@example.com"
+      @site.update(
+        send_emails: false,
+        email_confirmation_count: Site::MAXIMUM_EMAIL_CONFIRMATIONS + 1,
+        password_reset_token: 'reset-token',
+        password_reset_confirmed: true,
+        email_recovery_email: 'pending@example.com',
+        email_recovery_token_digest: SecureRandom.hex,
+        email_recovery_expires_at: 1.hour.from_now
+      )
+
+      within(:css, 'form[action="/admin/site/change_email"]') do
+        fill_in 'New Email', with: " #{new_email.upcase} "
+        click_button 'Force Change Email'
+      end
+
+      _(page.current_path).must_equal "/admin/site/#{@site.username}"
+      _(page.get_rack_session['id']).must_equal @admin.id
+      @site.reload
+      _(@site.email).must_equal new_email
+      _(@site.email_confirmed).must_equal false
+      _(@site.email_confirmation_token).wont_be_nil
+      _(@site.email_confirmation_token).wont_equal original_token
+      _(@site.email_confirmation_count).must_equal 1
+      _(@site.password_reset_token).must_be_nil
+      _(@site.password_reset_confirmed).must_equal false
+      _(@site.email_recovery_email).must_be_nil
+      _(@site.email_recovery_token_digest).must_be_nil
+      _(@site.email_recovery_expires_at).must_be_nil
+      history = @site.identifier_histories_dataset.where(identifier_type: SiteIdentifierHistory::EMAIL).first
+      _(history.identifier).must_equal original_email
+
+      _(EmailWorker.jobs.length).must_equal 2
+      confirmation = EmailWorker.jobs.find {|job| job['args'].first['subject'] == '[Neocities] Confirm your email address'}
+      notification = EmailWorker.jobs.find {|job| job['args'].first['subject'] == '[Neocities] Your email address has been changed'}
+      _(confirmation['args'].first['to']).must_equal new_email
+      _(notification['args'].first['to']).must_equal original_email
+    end
+
+    it 'rejects missing, invalid, duplicate and unchanged email addresses' do
+      existing_site = Fabricate :site
+      original_values = @site.values.dup
+      token = find('form[action="/admin/site/change_email"] input[name="csrf_token"]', visible: false).value
+
+      [nil, '', 'invalid', existing_site.email.upcase, " #{@site.email.upcase} "].each do |email|
+        page.driver.post '/admin/site/change_email', {
+          username: @site.username,
+          email: email,
+          csrf_token: token
+        }
+
+        _(page.driver.status_code).must_equal 302
+        _(@site.reload.values).must_equal original_values
+        _(@site.identifier_histories_dataset.count).must_equal 0
+        _(EmailWorker.jobs).must_be_empty
+      end
+    end
+
+    it 'requires email changes to use the parent account' do
+      child_site = Fabricate :site, parent_site_id: @site.id
+      original_email = @site.email
+      child_email = child_site.email
+      token = find('form[action="/admin/site/change_email"] input[name="csrf_token"]', visible: false).value
+
+      visit "/admin/site/#{child_site.username}"
+      _(page).wont_have_selector('form[action="/admin/site/change_email"]')
+
+      page.driver.post '/admin/site/change_email', {
+        username: child_site.username,
+        email: "#{SecureRandom.hex}@example.com",
+        csrf_token: token
+      }
+
+      _(page.driver.status_code).must_equal 302
+      _(@site.reload.email).must_equal original_email
+      _(child_site.reload.email).must_equal child_email
+      _(EmailWorker.jobs).must_be_empty
+    end
   end
 
   describe 'email blasting' do
