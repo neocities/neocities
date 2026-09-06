@@ -36,6 +36,60 @@ describe 'signin' do
     clear_signin_redis
   end
 
+  it 'keeps existing parent and child sessions signed in without a version' do
+    owner = Fabricate :site
+    child = Fabricate :site, parent_site_id: owner.id
+
+    [owner, child].each do |site|
+      Capybara.reset_sessions!
+      page.set_rack_session id: site.id
+      visit '/settings'
+
+      _(page.current_path).must_equal '/settings'
+      _(page.get_rack_session['id']).must_equal site.id
+    end
+  end
+
+  it 'revokes old sessions only for the selected site' do
+    owner = Fabricate :site
+    child = Fabricate :site, parent_site_id: owner.id
+    sibling = Fabricate :site, parent_site_id: owner.id
+    other = Fabricate :site
+    child.revoke_sessions!
+
+    [owner, child, sibling, other].each do |site|
+      Capybara.reset_sessions!
+      page.set_rack_session id: site.id
+      visit '/settings'
+
+      if site == child
+        _(page.get_rack_session['id']).must_be_nil
+      else
+        _(page.get_rack_session['id']).must_equal site.id
+      end
+    end
+  end
+
+  it 'allows a new sign in after revoking an existing session' do
+    site = Fabricate :site
+    page.set_rack_session id: site.id, session_version: 0
+    visit '/settings'
+    site.revoke_sessions!
+    visit '/settings'
+    _(page.get_rack_session['id']).must_be_nil
+
+    visit '/signin'
+    fill_in 'username', with: site.username
+    fill_in 'password', with: 'abcde'
+    click_button 'Sign In'
+    complete_email_verification
+    _(page.get_rack_session['id']).must_equal site.id
+
+    site.revoke_sessions!
+    visit '/settings'
+    _(page.get_rack_session['id']).must_be_nil
+  end
+
   it 'restores a deleted site' do
     pass = SecureRandom.hex
     @site = Fabricate :site, password: pass

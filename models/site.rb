@@ -287,6 +287,11 @@ class Site < Sequel::Model
     !account_sites_dataset.select(:id).where(id: site.id).first.nil?
   end
 
+  def revoke_sessions!
+    this.update(session_version: Sequel[:session_version] + 1)
+    refresh
+  end
+
   def add_profile_comment(opts)
     DB.transaction {
       profile_comment = super

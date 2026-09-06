@@ -52,6 +52,8 @@ describe 'site/settings' do
     end
 
     it 'switches between parent and child sites from the site list' do
+      @child_site.revoke_sessions!
+
       within('.settings-site-row', text: @child_site.username) do
         click_button 'Switch'
       end

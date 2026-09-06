@@ -31,6 +31,19 @@ describe Site do
     end
   end
 
+  describe 'session revocation' do
+    it 'increments the version even from a previously loaded instance' do
+      site = Fabricate :site
+      other_instance = Site[site.id]
+
+      _(site.session_version).must_equal 0
+      site.revoke_sessions!
+      other_instance.revoke_sessions!
+
+      _(site.reload.session_version).must_equal 2
+    end
+  end
+
   describe 'file type validation' do
     it 'allows css files when libmagic misidentifies them as appleworks' do
       _(Site.valid_file_mime_type_and_ext?('application/x-appleworks3', '.css')).must_equal true

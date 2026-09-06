@@ -258,12 +258,20 @@ def masked_email(email)
   "#{visible}#{'*' * [local.length-visible.length, 3].max}@#{domain}"
 end
 
+def set_current_site(site)
+  session[:id] = site.id
+  session[:session_version] = site.session_version
+  @_site = nil
+  @_parent_site = nil
+end
+
 def current_site
   return nil if session[:id].nil?
   @_site ||= Site[id: session[:id]]
   @_parent_site ||= @_site.parent
 
-  if @_site.is_banned || @_site.is_deleted || (@_parent_site && (@_parent_site.is_banned || @_parent_site.is_deleted))
+  if (session[:session_version] || 0) != @_site.session_version ||
+      @_site.is_banned || @_site.is_deleted || (@_parent_site && (@_parent_site.is_banned || @_parent_site.is_deleted))
     signout
   end
 

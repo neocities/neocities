@@ -368,7 +368,7 @@ def init_api_credentials
 
   DB['update sites set api_calls=api_calls+1 where id=?', site.id].first
 
-  session[:id] = site.id
+  set_current_site site
 end
 
 def api_success(message_or_obj)

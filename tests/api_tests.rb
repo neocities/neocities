@@ -429,6 +429,7 @@ describe 'api' do
     it 'does not convert api key auth into a dashboard session' do
       create_site
       @site.generate_api_key!
+      @site.revoke_sessions!
       header 'Authorization', "Bearer #{@site.api_key}"
 
       post '/api/create_directory', path: 'images', from_dashboard: 'true'
@@ -439,11 +440,23 @@ describe 'api' do
       _(last_response.headers['Set-Cookie']).must_be_nil
       _(File.directory?(@site.files_path('images'))).must_equal true
     end
+
+    it 'rejects revoked session auth' do
+      create_site
+      @site.revoke_sessions!
+      post '/api/create_directory',
+           {'path' => 'images', 'csrf_token' => 'abcd'},
+           {'rack.session' => { 'id' => @site.id, '_csrf_token' => 'abcd' }}
+
+      _(res[:error_type]).must_equal 'invalid_auth'
+      _(File.directory?(@site.files_path('images'))).must_equal false
+    end
   end
 
   describe 'key' do
     it 'generates new key with valid login' do
       create_site
+      @site.revoke_sessions!
       basic_authorize @user, @pass
       get '/api/key'
       _(res[:result]).must_equal 'success'

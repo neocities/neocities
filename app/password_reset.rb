@@ -93,7 +93,7 @@ get '/password_reset_confirm' do
   reset_site.password_reset_confirmed = true
   reset_site.save_changes
 
-  session[:id] = reset_site.id
+  set_current_site reset_site
 
   redirect '/settings#password'
 end

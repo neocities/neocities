@@ -49,7 +49,7 @@ post '/settings/:username/switch' do
     redirect '/settings#sites'
   end
 
-  session[:id] = site.id
+  set_current_site site
   redirect '/dashboard'
 end
 

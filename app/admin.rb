@@ -582,7 +582,7 @@ get '/admin/masquerade/:username' do
   require_admin
   site = Site[username: params[:username]]
   not_found if site.nil?
-  session[:id] = site.id
+  set_current_site site
   redirect '/'
 end
 

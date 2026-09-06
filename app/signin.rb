@@ -27,7 +27,7 @@ post '/signin' do
     end
 
     if self.class.development?
-      session[:id] = site.id
+      set_current_site site
       redirect '/'
     end
 
@@ -91,7 +91,7 @@ post '/signin/verify' do
       redirect '/'
     end
 
-    session[:id] = site.id
+    set_current_site site
     redirect '/'
   end
 

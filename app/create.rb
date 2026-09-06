@@ -149,6 +149,6 @@ post '/create' do
     )
   end
 
-  session[:id] = @site.id
+  set_current_site @site
   {result: 'ok'}.to_json
 end
