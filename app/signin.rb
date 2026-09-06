@@ -28,7 +28,7 @@ post '/signin' do
 
     if self.class.development?
       set_current_site site
-      redirect '/'
+      redirect session.delete(:site_transfer_return_to) || '/'
     end
 
     unless begin_email_login site, request.ip
@@ -92,7 +92,7 @@ post '/signin/verify' do
     end
 
     set_current_site site
-    redirect '/'
+    redirect session.delete(:site_transfer_return_to) || '/'
   end
 
   attempts = record_failed_email_login_attempt challenge

@@ -16,7 +16,7 @@ describe 'site/settings' do
       page.set_rack_session id: @other_site.id
 
       visit "/settings/#{@parent_site.username}"
-      _(page.current_path).must_equal '/' # This could be better
+      _(page.current_path).must_equal '/settings'
     end
 
     it 'allows child site editing from parent' do

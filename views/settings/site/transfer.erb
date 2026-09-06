@@ -1,0 +1,40 @@
+<div class="settings-section-heading">
+  <span class="settings-section-icon"><i class="fa fa-exchange"></i></span>
+  <div>
+    <h2>Transfer site</h2>
+    <p>Move this site to another Supporter account.</p>
+  </div>
+</div>
+
+<p>The receiving account must accept the transfer. Once accepted, you will lose access to this site. Its address and files will stay the same, and its old API key will stop working.</p>
+
+<% if @transfer_url %>
+  <div class="settings-connect-card">
+    <span class="settings-kicker">Pending transfer</span>
+    <p>Share this link with <strong><%= @transfer_recipient&.username %></strong> to complete the transfer.</p>
+    <div class="settings-field">
+      <label for="transfer_link">Transfer link</label>
+      <div class="settings-input-action settings-transfer-link">
+        <input id="transfer_link" class="input-Area" type="text" value="<%= @transfer_url %>" readonly onclick="this.select()" aria-describedby="transfer_link_help">
+        <button id="copy_transfer_link" class="btn-Action" type="button">Copy link</button>
+      </div>
+      <small id="transfer_link_help">This link expires 24 hours after creation.</small>
+      <small id="transfer_copy_status" role="status"></small>
+    </div>
+    <form method="POST" action="/settings/<%= @site.username %>/transfer" class="settings-compact-form">
+      <%== csrf_token_input_html %>
+      <button class="settings-site-action" name="cancel" value="true" type="submit">Cancel transfer</button>
+    </form>
+  </div>
+<% else %>
+  <form method="POST" action="/settings/<%= @site.username %>/transfer" class="settings-form settings-form-card">
+    <%== csrf_token_input_html %>
+    <div class="settings-field">
+      <label for="transfer_recipient">Receiving parent site</label>
+      <input id="transfer_recipient" name="recipient" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+    </div>
+    <div class="settings-actions">
+      <button class="btn-Action" type="submit">Create transfer link</button>
+    </div>
+  </form>
+<% end %>

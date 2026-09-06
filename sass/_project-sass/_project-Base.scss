@@ -1518,6 +1518,21 @@ form.settings-site-switch-form {
   }
 }
 
+.settings-panel .settings-transfer-link {
+  display: flex;
+  flex-wrap: wrap;
+
+  .input-Area {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  .btn-Action {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
 .settings-upgrade-card {
   align-items: flex-start;
   display: flex;

@@ -1,0 +1,19 @@
+<div class="header-Outro">
+  <div class="row content single-Col txt-Center">
+    <h1>Transfer site</h1>
+  </div>
+</div>
+
+<div class="content txt-Center single-Col misc-page">
+  <% if @transfer_error %>
+    <p><%= @transfer_error %></p>
+  <% else %>
+    <p>Accept <strong><%= @site.username %></strong> as a child of <strong><%= @recipient.username %></strong>?</p>
+    <p>You will control this site and its files. It will use your account's storage.</p>
+    <form method="POST" action="/site_transfer/<%= @site.id %>/<%= @transfer['token'] %>">
+      <%== csrf_token_input_html %>
+      <button class="btn-Action" type="submit">Accept transfer</button>
+    </form>
+  <% end %>
+  <p><a href="/settings#sites">Back to your sites</a></p>
+</div>

@@ -24,6 +24,7 @@
         <li><a href="#nsfw" data-toggle="tab"><i class="fa fa-eye-slash"></i><span><strong>18+ content</strong><small>Audience classification</small></span></a></li>
       <% end %>
       <li><a href="#bluesky" data-toggle="tab"><i class="fa fa-brands fa-bluesky"></i><span><strong>Bluesky</strong><small>Verify your handle</small></span></a></li>
+      <li><a href="#transfer" data-toggle="tab"><i class="fa fa-exchange"></i><span><strong>Transfer site</strong><small>Change parent account</small></span></a></li>
       <li class="settings-nav-danger"><a href="#delete" data-toggle="tab"><i class="fa fa-trash"></i><span><strong>Delete site</strong><small>Permanent removal</small></span></a></li>
     </ul>
     <div class="tab-content settings-content">
@@ -56,6 +57,9 @@
       <div class="tab-pane settings-panel settings-panel-danger" id="delete">
         <%== erb :'settings/site/delete' %>
       </div>
+      <div class="tab-pane settings-panel" id="transfer">
+        <%== erb :'settings/site/transfer' %>
+      </div>
     </div>
   </div>
 </main>
@@ -79,6 +83,27 @@ $(document).ready(function() {
     var tabHash = $(e.target).attr('href');
     if (window.history && window.history.replaceState) {
       window.history.replaceState(null, document.title, window.location.pathname + window.location.search + tabHash);
+    }
+  });
+
+  $('#copy_transfer_link').on('click', function() {
+    var link = document.getElementById('transfer_link');
+    var status = $('#transfer_copy_status');
+
+    function fallbackCopy() {
+      link.focus();
+      link.select();
+      var copied = false;
+      try { copied = document.execCommand('copy'); } catch(e) {}
+      status.text(copied ? 'Link copied.' : 'Copy the selected link.');
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link.value).then(function() {
+        status.text('Link copied.');
+      }, fallbackCopy);
+    } else {
+      fallbackCopy();
     }
   });
 });

@@ -34,7 +34,7 @@ def require_ownership_for_settings
 
   unless @site.owned_by? parent_site
     flash[:error] = 'Cannot edit this site, you do not have permission.'
-    redirect request.referrer
+    redirect '/settings#sites'
   end
 end
 
@@ -67,6 +67,12 @@ get '/settings/:username/?' do |username|
   require_ownership_for_settings
 
   @title = "Site settings for #{username}"
+  @transfer = pending_site_transfer @site
+  if @transfer
+    dont_browser_cache
+    @transfer_recipient = Site[@transfer['recipient_id']]
+    @transfer_url = "https://neocities.org/site_transfer/#{@site.id}/#{@transfer['token']}"
+  end
   erb :'settings/site'
 end
 
