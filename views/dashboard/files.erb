@@ -105,6 +105,10 @@
             <div id="<%= file_dom_id %>" style="display: none"><%= file[:path] %></div>
             <% if file[:is_editable] && !file[:is_directory] %>
               <a href="/site_files/text_editor?filename=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Edit"></i> Edit</a>
+              <a href="javascript:void(0)" class="action-copy-code" onclick="copyFileCode(event, $('#<%= file_dom_id %>').text(), this)"><i class="fa fa-copy" title="Copy Code"></i> Copy Code</a>
+            <% end %>
+            <% if !file[:is_editable] && !file[:is_directory] %>
+              <a href="/site_files/download/<%= Site.escape_path file[:path] %>" download="<%= Rack::Utils.escape_html(file[:name]) %>"><i class="fa fa-download" title="Download"></i> Download</a>
             <% end %>
             <% if file[:is_directory] %>
               <a href="?dir=<%= Rack::Utils.escape file[:path] %>"><i class="fa fa-edit" title="Manage"></i> Manage</a>
