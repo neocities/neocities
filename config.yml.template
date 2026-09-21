@@ -9,7 +9,6 @@ development:
   sidekiq_pass: "ENTER PASS HERE"
   stripe_publishable_key: "ENTER KEY HERE"
   stripe_api_key: "ENTER KEY HERE"
-  ip_hash_salt: "400$8$1$fc21863da5d531c1"
   proxy_pass: 'somethinglongandrandom'
   email_unsubscribe_token: 'somethingrandom'
   logs_path: /path/to/nginx/logs
@@ -17,20 +16,13 @@ development:
   paypal_api_password: ing
   paypal_api_signature: tonz
   letsencrypt_key: ./tests/files/letsencrypt.key
-  letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
   minfraud_account_id: 696969420
   minfraud_license_key: DERPDERPDERP
-  proxy_ips:
-    - 10.0.0.1
-    - 10.0.0.2
   education_tag_whitelist:
     - mrteacher
   screenshot_urls:
     - http://screenshots:derp@127.0.0.1:12345
   stop_forum_spam_api_key: testkey
-  google_custom_search_key: herpderp
-  google_custom_search_cx: herpderp
-  google_custom_search_query_limit: 69
   support_email: derp@example.com
   moderation_blur_categories: [ cats, dogs ]
   search_url: https://example.com/customsearch/v1
@@ -47,17 +39,12 @@ test:
   sidekiq_pass: "ENTER PASS HERE"
   stripe_publishable_key: "ENTER KEY HERE"
   stripe_api_key: "ENTER KEY HERE"
-  ip_hash_salt: "400$8$1$fc21863da5d531c1"
   proxy_pass: 'somethinglongandrandom'
   email_unsubscribe_token: 'somethingrandom'
   paypal_api_username: derp
   paypal_api_password: ing
   paypal_api_signature: tonz
   letsencrypt_key: ./tests/files/letsencrypt.key
-  letsencrypt_endpoint: https://acme-staging.api.letsencrypt.org/
-  proxy_ips:
-    - 10.0.0.1
-    - 10.0.0.2
   education_tag_whitelist:
     - mrteacher
   stop_forum_spam_api_key: testkey
@@ -71,9 +58,6 @@ test:
   twilio_service_sid: VADERPDERPDERP
   minfraud_account_id: 696969420
   minfraud_license_key: DERPDERPDERP
-  google_custom_search_key: herpderp
-  google_custom_search_cx: herpderp
-  google_custom_search_query_limit: 69
   support_email: derp@example.com
   moderation_blur_categories: [ cats, dogs ]
   search_url: https://example.com/customsearch/v1
