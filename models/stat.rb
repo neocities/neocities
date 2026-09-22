@@ -33,15 +33,19 @@ class Stat < Sequel::Model
 
         begin
           while hit = logfile.gets
-            hit_array = hit.strip.split "\t"
+            raise ArgumentError, 'missing newline' unless hit.end_with?("\n")
 
-            raise ArgumentError, hit.inspect if hit_array.length > 6
+            hit_array = hit.chomp.split("\t", -1)
+
+            raise ArgumentError, 'expected 6 fields' unless hit_array.length == 6
 
             time, username, size, path, ip, referrer = hit_array
 
             next if cache_control_ips.include?(ip)
 
-            log_time = Time.parse time
+            raise ArgumentError, 'invalid timestamp' unless /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}\z/.match?(time)
+
+            log_time = Time.iso8601 time
 
             next if !referrer.nil? && referrer.match(/bot/i)
 
@@ -88,7 +92,8 @@ class Stat < Sequel::Model
           logfile.close
           FileUtils.rm log_path
         rescue => e
-          puts "Log parse exception: #{e.inspect}"
+          line_number = logfile.closed? ? 'unknown' : logfile.lineno
+          puts "Log parse exception: #{log_path}:#{line_number}: #{e.class}: #{e.message}"
           logfile.close
           FileUtils.mv log_path, log_path.gsub('.log', '.brokenlog')
           next

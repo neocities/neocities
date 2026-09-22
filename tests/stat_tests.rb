@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require_relative './environment.rb'
+require 'tmpdir'
 
 STAT_LOGS_PATH = 'tests/stat_logs'
 STAT_LOGS_DIR_MATCH = "#{STAT_LOGS_PATH}/*.log.gz"
@@ -24,13 +25,13 @@ describe 'stats' do
     ]
 
     Zlib::GzipWriter.open("tests/stat_logs/#{SecureRandom.uuid}.log.gz") do |gz|
-      gz.write @log.join("\n")
+      gz.write @log.join("\n") + "\n"
     end
   end
 
   it 'works with two logfiles' do
     Zlib::GzipWriter.open("tests/stat_logs/#{SecureRandom.uuid}.log.gz") do |gz|
-      gz.write @log.join("\n")
+      gz.write @log.join("\n") + "\n"
     end
     Stat.parse_logfiles STAT_LOGS_PATH
     stat = @site_one.stats.first
@@ -85,6 +86,44 @@ describe 'stats' do
     end
 
     Stat.parse_logfiles STAT_LOGS_PATH
+  end
+
+  {
+    'joined timestamps' => ->(hit, time) { hit.sub(time, "#{time}#{time}") + "\n" },
+    'long years' => ->(hit, _) { hit.sub(/\A\d{4}/, '22026') + "\n" },
+    'too few fields' => ->(hit, _) { hit.rpartition("\t").first + "\n" },
+    'too many fields' => ->(hit, _) { hit + "\textra\n" },
+    'missing final newlines' => ->(hit, _) { hit }
+  }.each do |description, malformed_hit|
+    it "quarantines logs with #{description} and retains preceding counts" do
+      Dir.mktmpdir('stat-logs') do |log_dir|
+        log_path = File.join(log_dir, '01-broken.log.gz')
+        good_path = File.join(log_dir, '02-good.log.gz')
+        bad_hit = malformed_hit.call(@log.first, @time_iso8601)
+
+        Zlib::GzipWriter.open(log_path) do |gz|
+          gz.write @log.first + "\n"
+          gz.write bad_hit
+          gz.write @log[2] + "\n" if bad_hit.end_with?("\n")
+        end
+
+        Zlib::GzipWriter.open(good_path) do |gz|
+          gz.write @log[2] + "\n"
+        end
+
+        daily_hits = DailySiteStat.where(created_at: @time.to_date).get(:hits) || 0
+        capture_io { Stat.parse_logfiles log_dir }
+
+        _(@site_one.reload.hits).must_equal 2
+        _(@site_one.views).must_equal 2
+        _(@site_one.stats.map {|stat| [stat.created_at, stat.hits, stat.views, stat.bandwidth]}).
+          must_equal [[@time.to_date, 2, 2, 10000]]
+        _(DailySiteStat.where(created_at: @time.to_date).get(:hits)).must_equal daily_hits + 2
+        _(File.exist?(log_path)).must_equal false
+        _(File.exist?(log_path.sub('.log.gz', '.brokenlog.gz'))).must_equal true
+        _(File.exist?(good_path)).must_equal false
+      end
+    end
   end
 
   it 'prunes logs for free sites' do
