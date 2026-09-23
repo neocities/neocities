@@ -3,6 +3,88 @@ var dashboardViewType = localStorage && localStorage.getItem('viewType')
 if(dashboardViewType != 'icon')
   $('#filesDisplay').addClass('list-view')
 
+function copyTextToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+
+  return new Promise(function(resolve, reject) {
+    try {
+      var textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.top = '-9999px';
+      textArea.style.left = '-9999px';
+      textArea.setAttribute('readonly', '');
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      var successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        resolve();
+      } else {
+        reject(new Error('Copy command failed'));
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function copyFileCode(event, path, el) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  var $el = $(el);
+  var originalHtml = $el.html();
+
+  if ($el.data('copying')) {
+    return;
+  }
+
+  $el.data('copying', true);
+  $el.removeClass('is-copied is-error');
+  $el.html('<i class="fa fa-spinner fa-spin"></i> Copying...');
+
+  var encodedPath = path.split('/').map(function(segment) {
+    return encodeURIComponent(segment);
+  }).join('/');
+
+  $.ajax({
+    url: '/site_files/download/' + encodedPath,
+    type: 'GET',
+    dataType: 'text',
+    cache: false,
+    success: function(content) {
+      copyTextToClipboard(content).then(function() {
+        $el.addClass('is-copied').html('<i class="fa fa-check"></i> Copied!');
+        setTimeout(function() {
+          $el.removeClass('is-copied').html(originalHtml);
+          $el.data('copying', false);
+        }, 2000);
+      }).catch(function() {
+        $el.addClass('is-error').html('<i class="fa fa-times"></i> Error');
+        setTimeout(function() {
+          $el.removeClass('is-error').html(originalHtml);
+          $el.data('copying', false);
+        }, 2000);
+      });
+    },
+    error: function() {
+      $el.addClass('is-error').html('<i class="fa fa-times"></i> Error');
+      setTimeout(function() {
+        $el.removeClass('is-error').html(originalHtml);
+        $el.data('copying', false);
+      }, 2000);
+    }
+  });
+}
+
 function confirmFileRename(path) {
   $('#renamePathInput').val(path);
   $('#renameNewPathInput').val(path);

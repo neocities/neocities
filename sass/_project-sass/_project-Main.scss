@@ -756,15 +756,50 @@
   padding-top: 35px;
 }
 .overlay a {
-  color: white;
+  color: $c-White;
   text-decoration: none;
   font-size: 12px;
   display: block;
   margin-left: 5px;
+  line-height: 1.5;
+  @include vendor(transition, color .15s ease, transform .15s ease, text-shadow .15s ease);
+
+  i.fa {
+    width: 14px;
+    text-align: center;
+    margin-right: 3px;
+    @include vendor(transition, transform .15s ease);
+  }
 }
 
 .overlay a:hover {
-  font-size: 14px;
+  color: $c-White;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  @include vendor(transform, translateX(3px));
+
+  i.fa {
+    @include vendor(transform, scale(1.15));
+  }
+}
+
+.overlay a:active {
+  @include vendor(transform, translateX(1px) scale(0.98));
+}
+
+@keyframes quickActionPop {
+  0% { transform: scale(0.92); opacity: 0.7; }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.action-copy-code.is-copied {
+  color: #79d799 !important;
+  animation: quickActionPop .2s ease-in-out;
+}
+
+.action-copy-code.is-error {
+  color: #ff7675 !important;
+  animation: quickActionPop .2s ease-in-out;
 }
 
 .overlay .fa-trash, .modal .fa-trash {
@@ -862,9 +897,29 @@
     width: 94%;
 
     a {
-      color: #e93250;
+      color: $c-Brand-1;
       display: inline;
-      margin-right: 5px;
+      margin-right: 8px;
+      font-size: 12px;
+      @include vendor(transition, color .15s ease, transform .15s ease);
+
+      i.fa {
+        margin-right: 3px;
+        @include vendor(transition, transform .15s ease);
+      }
+
+      &:hover {
+        color: $c-Burgundy;
+        text-decoration: none;
+
+        i.fa {
+          @include vendor(transform, translateY(-1px) scale(1.1));
+        }
+      }
+
+      &:active {
+        @include vendor(transform, scale(0.97));
+      }
     }
     .link-overlay {
       width: 30%;
