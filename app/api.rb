@@ -1,5 +1,6 @@
 require 'base64'
 require 'rack/mime'
+require 'zip_tricks'
 
 get '/api' do
   @title = 'Developers API'
@@ -77,6 +78,48 @@ get '/api/download' do
           'Cache-Control' => 'private, no-store'
 
   send_file file_path, type: Rack::Mime.mime_type(File.extname(path), 'application/octet-stream')
+end
+
+get '/api/export' do
+  require_api_credentials
+
+  if !current_site.dl_queued_at.nil? && current_site.dl_queued_at > 1.hour.ago
+    api_error 429, 'rate_limited', 'site downloads are currently limited to once per hour, please try again later'
+  end
+
+  directory_path = current_site.files_path
+  api_error 404, 'missing_site_files', 'could not find your web site files' unless File.directory?(directory_path)
+
+  current_site.dl_queued_at = Time.now
+  current_site.save_changes validate: false
+
+  headers 'Content-Type' => 'application/zip',
+          'Content-Disposition' => "attachment; filename=\"neocities-#{current_site.username}.zip\"",
+          'Cache-Control' => 'private, no-store',
+          'X-Accel-Buffering' => 'no'
+
+  root_path = File.realpath(directory_path)
+
+  stream do |out|
+    ZipTricks::Streamer.open(out) do |zip|
+      Dir["#{directory_path}/**/*"].each do |file|
+        next if File.directory?(file)
+        next if File.symlink?(file)
+
+        file_path = File.realpath(file)
+        next unless file_path.start_with?(root_path + File::SEPARATOR)
+
+        zip_path = file_path.sub("#{root_path}#{File::SEPARATOR}", '')
+        next if zip_path.empty? || zip_path.include?('..') || zip_path.start_with?('/')
+
+        zip.write_stored_file(zip_path) do |file_writer|
+          File.open(file_path, 'rb') do |site_file|
+            IO.copy_stream(site_file, file_writer)
+          end
+        end
+      end
+    end
+  end
 end
 
 def extract_files(params, files = [])
