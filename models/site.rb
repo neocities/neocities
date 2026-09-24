@@ -33,6 +33,7 @@ class Site < Sequel::Model
     image/avif
     image/gif
     image/jpeg
+    image/jxl
     image/png
     image/svg
     image/svg+xml
