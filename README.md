@@ -1,37 +1,14 @@
-### NOTE: THIS IS NOT FOR NEOCITIES SUPPORT! Any issues filed not related to the source code itself will be closed. For support please contact: https://neocities.org/contact
+### NOTE: THIS IS NOT FOR NEOCITIES SUPPORT! This repo is not monitored by our support staff. Any issues filed not related to the source code itself will be removed. For support please contact: https://neocities.org/contact
 
-# Neocities.org
+Due to recent high levels of AI abuse on the internet, there is currently a delay in publishing the source code for the backend and a verification process for viewing the latest version.
 
-[![Build Status](https://github.com/neocities/neocities/actions/workflows/ci.yml/badge.svg)](https://github.com/neocities/neocities/actions?query=workflow%3ACI)
-[![Coverage Status](https://coveralls.io/repos/neocities/neocities/badge.svg?branch=master&service=github)](https://coveralls.io/github/neocities/neocities?branch=master)
+We're not closing the source code, we're being safe. We still want (human) developers to be able to access, audit, and make changes. To request access, please reach out to support at https://neocities.org/contact with the subject "Source Code Access Request" and the following info:
 
-The web site for Neocities! It's open source. Want a feature on the site? Send a pull request!
+- Your name
+- Personal web site URL on Neocities
+- Evidence of your flawed humanity (photos with bad lighting, bad posts on old social media accounts, stories about your cat that only you think are interesting, potato gun related arrest records, etc)
+- Github username. Evidence of previous ruby/sysops contributions strongly preferred.
+- Whether you're potentially interested in working at Neocities on development and sysops (we're hiring!). This is not required for access.
+- a/s/l, what AOL chat room you prefer, IP address of your WaReZ server that's stocked to the limits of technological capabilities with Smashing Pumpkins b-side mp3s and Windows 95 nukers that never worked (j/k)
 
-## Getting Started
-
-Neocities can be quickly launched in development mode with [Vagrant](https://www.vagrantup.com). Vagrant builds a virtual machine that automatically installs everything you need to run Neocities as a developer. Install Vagrant, then from the command line:
-
-```
-vagrant up --provision
-```
-
-![Vagrant takes a while, make a pizza while waiting](https://i.imgur.com/dKa8LUs.png)
-
-Make a copy of `config.yml.template` in the root directory, and rename it to `config.yml`. Then:
-
-```
-vagrant ssh
-bundle exec rackup -o 0.0.0.0
-```
-
-Now you can access the running site from your browser: http://127.0.0.1:9292
-
-## Want to contribute?
-
-If you'd like to fix a bug, or make an improvement, or add a new feature, it's easy! Just send us a Pull Request.
-
-1. Fork it (https://github.com/neocities/neocities/fork)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+Expect a delay in response, we will be going through all requests in a batch.
